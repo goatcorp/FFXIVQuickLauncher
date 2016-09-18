@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="XIVLauncher.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="isdx11" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
+    <Setting Name="gamepath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="language" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="savedid" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="savedpw" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="autologin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
+    <Setting Name="setupcomplete" Type="System.String" Scope="User">
+      <Value Profile="(Default)">false</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
