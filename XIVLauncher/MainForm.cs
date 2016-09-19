@@ -15,8 +15,8 @@ namespace XIVLauncher
         public MainForm()
         {
             InitializeComponent();
-            textBox1.Text = Properties.Settings.Default.savedid;
-            textBox2.Text = Properties.Settings.Default.savedpw;
+            IDTextBox.Text = Properties.Settings.Default.savedid;
+            PWTextBox.Text = Properties.Settings.Default.savedpw;
 
             if(Properties.Settings.Default.setupcomplete != "true")
             {
@@ -28,7 +28,7 @@ namespace XIVLauncher
                 try
                 {
                     this.Enabled = false;
-                    XIVGame.LaunchGame(XIVGame.GetRealSID(textBox1.Text, textBox2.Text, textBox3.Text), Settings.GetLanguage(), Settings.isDX11());
+                    XIVGame.LaunchGame(XIVGame.GetRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.isDX11());
                     this.Close();
                 }
                 catch
@@ -36,6 +36,11 @@ namespace XIVLauncher
                     this.Enabled = true;
                     MessageBox.Show("Logging in failed, check your login information or try again.", "Login failed", MessageBoxButtons.OK);
                 }
+            }
+            else
+            {
+                Properties.Settings.Default["autologin"] = "false";
+                Properties.Settings.Default.Save();
             }
         }
 
@@ -51,8 +56,8 @@ namespace XIVLauncher
         {
             if (SaveBox.Checked)
             {
-                Properties.Settings.Default["savedid"] = textBox1.Text;
-                Properties.Settings.Default["savedpw"] = textBox2.Text;
+                Properties.Settings.Default["savedid"] = IDTextBox.Text;
+                Properties.Settings.Default["savedpw"] = PWTextBox.Text;
                 if (AutoLoginBox.Checked)
                 {
                     DialogResult result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButtons.YesNo);
@@ -75,7 +80,7 @@ namespace XIVLauncher
             label4.Text = "Logging in...";
             try
             {
-                XIVGame.LaunchGame(XIVGame.GetRealSID(textBox1.Text, textBox2.Text, textBox3.Text), Settings.GetLanguage(), Settings.isDX11());
+                XIVGame.LaunchGame(XIVGame.GetRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.isDX11());
             }
             catch
             {
@@ -107,7 +112,7 @@ It should contain the folders ""game"" and ""boot"".", "Select Game Path", Messa
             }
             else
             {
-                this.Close();
+                Environment.Exit(0);
             }
 
             DialogResult result = MessageBox.Show("Do you want to use DirectX 11?", "", MessageBoxButtons.YesNo);

@@ -28,56 +28,56 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.IDTextBox = new System.Windows.Forms.TextBox();
+            this.PWTextBox = new System.Windows.Forms.TextBox();
+            this.OptionButton = new System.Windows.Forms.Button();
+            this.LoginButton = new System.Windows.Forms.Button();
             this.SaveBox = new System.Windows.Forms.CheckBox();
             this.AutoLoginBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.OTPTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.GamePathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
-            // textBox1
+            // IDTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(91, 29);
-            this.textBox1.MaxLength = 16;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(129, 20);
-            this.textBox1.TabIndex = 0;
+            this.IDTextBox.Location = new System.Drawing.Point(91, 29);
+            this.IDTextBox.MaxLength = 16;
+            this.IDTextBox.Name = "IDTextBox";
+            this.IDTextBox.Size = new System.Drawing.Size(129, 20);
+            this.IDTextBox.TabIndex = 0;
             // 
-            // textBox2
+            // PWTextBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(91, 67);
-            this.textBox2.MaxLength = 32;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(129, 20);
-            this.textBox2.TabIndex = 1;
-            this.textBox2.UseSystemPasswordChar = true;
+            this.PWTextBox.Location = new System.Drawing.Point(91, 67);
+            this.PWTextBox.MaxLength = 32;
+            this.PWTextBox.Name = "PWTextBox";
+            this.PWTextBox.Size = new System.Drawing.Size(129, 20);
+            this.PWTextBox.TabIndex = 1;
+            this.PWTextBox.UseSystemPasswordChar = true;
             // 
-            // button1
+            // OptionButton
             // 
-            this.button1.Location = new System.Drawing.Point(40, 181);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Options";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.OptionButton.Location = new System.Drawing.Point(40, 181);
+            this.OptionButton.Name = "OptionButton";
+            this.OptionButton.Size = new System.Drawing.Size(75, 23);
+            this.OptionButton.TabIndex = 2;
+            this.OptionButton.Text = "Options";
+            this.OptionButton.UseVisualStyleBackColor = true;
+            this.OptionButton.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // LoginButton
             // 
-            this.button2.Location = new System.Drawing.Point(121, 181);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Login";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.LoginButton.Location = new System.Drawing.Point(121, 181);
+            this.LoginButton.Name = "LoginButton";
+            this.LoginButton.Size = new System.Drawing.Size(75, 23);
+            this.LoginButton.TabIndex = 3;
+            this.LoginButton.Text = "Login";
+            this.LoginButton.UseVisualStyleBackColor = true;
+            this.LoginButton.Click += new System.EventHandler(this.button2_Click);
             // 
             // SaveBox
             // 
@@ -128,14 +128,14 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "OTP";
             // 
-            // textBox3
+            // OTPTextBox
             // 
-            this.textBox3.Location = new System.Drawing.Point(91, 93);
-            this.textBox3.MaxLength = 6;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(129, 20);
-            this.textBox3.TabIndex = 8;
-            this.textBox3.UseSystemPasswordChar = true;
+            this.OTPTextBox.Location = new System.Drawing.Point(91, 93);
+            this.OTPTextBox.MaxLength = 6;
+            this.OTPTextBox.Name = "OTPTextBox";
+            this.OTPTextBox.Size = new System.Drawing.Size(129, 20);
+            this.OTPTextBox.TabIndex = 8;
+            this.OTPTextBox.UseSystemPasswordChar = true;
             // 
             // label4
             // 
@@ -159,15 +159,15 @@
             this.ClientSize = new System.Drawing.Size(243, 260);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.OTPTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.AutoLoginBox);
             this.Controls.Add(this.SaveBox);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.LoginButton);
+            this.Controls.Add(this.OptionButton);
+            this.Controls.Add(this.PWTextBox);
+            this.Controls.Add(this.IDTextBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "MainForm";
             this.ShowIcon = false;
@@ -179,16 +179,16 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox IDTextBox;
+        private System.Windows.Forms.TextBox PWTextBox;
+        private System.Windows.Forms.Button OptionButton;
+        private System.Windows.Forms.Button LoginButton;
         private System.Windows.Forms.CheckBox SaveBox;
         private System.Windows.Forms.CheckBox AutoLoginBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox OTPTextBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.FolderBrowserDialog GamePathDialog;
     }
