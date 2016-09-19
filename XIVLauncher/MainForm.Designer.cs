@@ -67,7 +67,7 @@
             this.OptionButton.TabIndex = 2;
             this.OptionButton.Text = "Options";
             this.OptionButton.UseVisualStyleBackColor = true;
-            this.OptionButton.Click += new System.EventHandler(this.button1_Click);
+            this.OptionButton.Click += new System.EventHandler(this.OpenOptions);
             // 
             // LoginButton
             // 
@@ -77,7 +77,7 @@
             this.LoginButton.TabIndex = 3;
             this.LoginButton.Text = "Login";
             this.LoginButton.UseVisualStyleBackColor = true;
-            this.LoginButton.Click += new System.EventHandler(this.button2_Click);
+            this.LoginButton.Click += new System.EventHandler(this.login);
             // 
             // SaveBox
             // 

@@ -44,7 +44,7 @@ namespace XIVLauncher
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void OpenOptions(object sender, EventArgs e)
         {
             this.Enabled = false;
             OptionsForm options = new OptionsForm();
@@ -52,7 +52,7 @@ namespace XIVLauncher
             this.Enabled = true;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void login(object sender, EventArgs e)
         {
             if (SaveBox.Checked)
             {
@@ -82,7 +82,7 @@ namespace XIVLauncher
             {
                 XIVGame.LaunchGame(XIVGame.GetRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.isDX11());
             }
-            catch
+            catch(Exception exc)
             {
                 MessageBox.Show("Logging in failed, check your login information or try again.", "Login failed", MessageBoxButtons.OK);
                 label4.Text = "";

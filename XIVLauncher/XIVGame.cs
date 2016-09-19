@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace XIVLauncher
 {
@@ -15,10 +16,15 @@ namespace XIVLauncher
 
         public static void LaunchGame(string realsid, int language, bool dx11)
         {
-            Process ffxivgame = new Process();
-            if (dx11) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-            ffxivgame.StartInfo.Arguments = "DEV.TestSID=" + realsid + " language=" + language;
-            ffxivgame.Start();
+            try {
+                Process ffxivgame = new Process();
+                if (dx11) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
+                ffxivgame.StartInfo.Arguments = "DEV.TestSID=" + realsid + " language=" + language;
+                ffxivgame.Start();
+            }catch(Exception exc)
+            {
+                MessageBox.Show("Could not launch ffxiv. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButtons.OK);
+            }
         }
 
         private static string GetSTORED() //this is needed to be able to access the login site correctly
@@ -64,7 +70,13 @@ namespace XIVLauncher
         
         public static string GetRealSID(string username, string password, string otp)
         {
-            string hashstr = "ffxivboot.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot.exe") + ",ffxivlauncher.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher.exe") + ",ffxivupdater.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater.exe"); //make the string of hashed files to prove game version
+            string hashstr = "";
+            try {
+                hashstr = "ffxivboot.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot.exe") + ",ffxivlauncher.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher.exe") + ",ffxivupdater.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater.exe"); //make the string of hashed files to prove game version
+            }catch(Exception exc)
+            {
+                MessageBox.Show("Could not generate hashes. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButtons.OK);
+            }
 
             WebClient SidClient = new WebClient();
             SidClient.Headers.Add("X-Hash-Check", "enabled");
