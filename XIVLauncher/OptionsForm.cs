@@ -17,14 +17,16 @@ namespace XIVLauncher
         {
             InitializeComponent();
             LanguageSelector.SelectedIndex = System.Convert.ToInt32(Properties.Settings.Default.language);
-            dxBox.Checked = System.Convert.ToBoolean(Properties.Settings.Default.isdx11);
+            dxCheckBox.Checked = Properties.Settings.Default.isdx11;
+            if (Properties.Settings.Default.expansionlevel == 1) { hwCheckBox.Checked = true; }
             pathLabel.Text = "Current Game Path:\n" + Properties.Settings.Default.gamepath;
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default["language"] = LanguageSelector.SelectedIndex.ToString();
-            if (dxBox.Checked) { Properties.Settings.Default["isdx11"] = "true"; } else { Properties.Settings.Default["isdx11"] = "false"; }
+            Properties.Settings.Default["language"] = LanguageSelector.SelectedIndex;
+            if (hwCheckBox.Checked) { Properties.Settings.Default["expansionlevel"] = 1; } else { Properties.Settings.Default["expansionlevel"] = 0; }
+            if (dxCheckBox.Checked) { Properties.Settings.Default["isdx11"] = true; } else { Properties.Settings.Default["isdx11"] = false; }
             Properties.Settings.Default.Save();
             this.Close();
         }

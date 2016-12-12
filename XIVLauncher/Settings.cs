@@ -21,9 +21,14 @@ namespace XIVLauncher
             return System.Convert.ToInt32(Properties.Settings.Default.language);
         }
 
-        public static bool isDX11()
+        public static bool IsDX11()
         {
             return System.Convert.ToBoolean(Properties.Settings.Default.isdx11);
+        }
+
+        public static int GetExpansionLevel()
+        {
+            return Properties.Settings.Default.expansionlevel;
         }
 
         public static bool IsAdministrator()

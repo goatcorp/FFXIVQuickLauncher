@@ -31,11 +31,12 @@
             this.LanguageSelector = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SaveButton = new System.Windows.Forms.Button();
-            this.dxBox = new System.Windows.Forms.CheckBox();
+            this.dxCheckBox = new System.Windows.Forms.CheckBox();
             this.LaunchBackupButton = new System.Windows.Forms.Button();
             this.ChangePathButton = new System.Windows.Forms.Button();
             this.GamePathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.pathLabel = new System.Windows.Forms.Label();
+            this.hwCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // LanguageSelector
@@ -71,15 +72,15 @@
             this.SaveButton.UseVisualStyleBackColor = true;
             this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
-            // dxBox
+            // dxCheckBox
             // 
-            this.dxBox.AutoSize = true;
-            this.dxBox.Location = new System.Drawing.Point(15, 55);
-            this.dxBox.Name = "dxBox";
-            this.dxBox.Size = new System.Drawing.Size(95, 17);
-            this.dxBox.TabIndex = 3;
-            this.dxBox.Text = "Use DirectX11";
-            this.dxBox.UseVisualStyleBackColor = true;
+            this.dxCheckBox.AutoSize = true;
+            this.dxCheckBox.Location = new System.Drawing.Point(15, 55);
+            this.dxCheckBox.Name = "dxCheckBox";
+            this.dxCheckBox.Size = new System.Drawing.Size(95, 17);
+            this.dxCheckBox.TabIndex = 3;
+            this.dxCheckBox.Text = "Use DirectX11";
+            this.dxCheckBox.UseVisualStyleBackColor = true;
             // 
             // LaunchBackupButton
             // 
@@ -87,7 +88,7 @@
             this.LaunchBackupButton.Name = "LaunchBackupButton";
             this.LaunchBackupButton.Size = new System.Drawing.Size(121, 23);
             this.LaunchBackupButton.TabIndex = 4;
-            this.LaunchBackupButton.Text = "Launch Backup Utility";
+            this.LaunchBackupButton.Text = "Launch Backup Tool";
             this.LaunchBackupButton.UseVisualStyleBackColor = true;
             this.LaunchBackupButton.Click += new System.EventHandler(this.LaunchBackupTool);
             // 
@@ -115,15 +116,26 @@
             this.pathLabel.TabIndex = 7;
             this.pathLabel.Text = "Current Game Path:";
             // 
+            // hwCheckBox
+            // 
+            this.hwCheckBox.AutoSize = true;
+            this.hwCheckBox.Location = new System.Drawing.Point(116, 55);
+            this.hwCheckBox.Name = "hwCheckBox";
+            this.hwCheckBox.Size = new System.Drawing.Size(142, 17);
+            this.hwCheckBox.TabIndex = 8;
+            this.hwCheckBox.Text = "Load Heavensward(ex1)";
+            this.hwCheckBox.UseVisualStyleBackColor = true;
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(371, 198);
+            this.Controls.Add(this.hwCheckBox);
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.ChangePathButton);
             this.Controls.Add(this.LaunchBackupButton);
-            this.Controls.Add(this.dxBox);
+            this.Controls.Add(this.dxCheckBox);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.LanguageSelector);
@@ -142,10 +154,11 @@
         private System.Windows.Forms.ComboBox LanguageSelector;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button SaveButton;
-        private System.Windows.Forms.CheckBox dxBox;
+        private System.Windows.Forms.CheckBox dxCheckBox;
         private System.Windows.Forms.Button LaunchBackupButton;
         private System.Windows.Forms.Button ChangePathButton;
         private System.Windows.Forms.FolderBrowserDialog GamePathDialog;
         private System.Windows.Forms.Label pathLabel;
+        private System.Windows.Forms.CheckBox hwCheckBox;
     }
 }

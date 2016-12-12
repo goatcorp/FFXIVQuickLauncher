@@ -13,67 +13,41 @@ namespace XIVLauncher
 {
     static class XIVGame
     {
-
-        public static void LaunchGame(string realsid, int language, bool dx11)
+        /// <summary>
+        /// Launches FFXIV with the supplied parameters.
+        /// </summary>
+        /// <param name="realsid">Real SessionID</param>
+        /// <param name="language">language(0=japanese,1=english,2=french,3=german)</param>
+        /// <param name="dx11">Runs the game in dx11 mode if true</param>
+        /// <param name="expansionlevel">current level of expansions loaded(0=ARR/default,1=Heavensward)</param>
+        public static void launchGame(string realsid, int language, bool dx11, int expansionlevel)
         {
             try {
                 Process ffxivgame = new Process();
                 if (dx11) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                ffxivgame.StartInfo.Arguments = "DEV.TestSID=" + realsid + " language=" + language;
+                ffxivgame.StartInfo.Arguments = $"DEV.TestSID={realsid} DEV.MaxEntitledExpansionID={expansionlevel} language={language}";
                 ffxivgame.Start();
             }catch(Exception exc)
             {
-                MessageBox.Show("Could not launch ffxiv. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButtons.OK);
+                MessageBox.Show("Could not launch executable. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButtons.OK);
             }
         }
 
-        private static string GetSTORED() //this is needed to be able to access the login site correctly
-        {
-            WebClient LoginInfo = new WebClient();
-            LoginInfo.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
-            string reply = LoginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
-
-            
-            Regex storedre = new Regex(@"value=""(.*)""");
-
-            var test = storedre.Matches(reply);
-            return test[0].Value.Substring(7,754);
-        }
-
-        private static string GetSID(string username, string password, string otp)
-        {
-
-            using (WebClient LoginData = new WebClient())
-            {
-                LoginData.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
-                LoginData.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
-                LoginData.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-
-                byte[] response =
-                LoginData.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send", new NameValueCollection() //get the session id with user credentials
-                {
-                    { "_STORED_", GetSTORED() },
-                    { "sqexid", username },
-                    { "password", password },
-                    { "otppw", otp }
-                });
-
-                string reply = System.Text.Encoding.UTF8.GetString(response);
-
-                Regex sidre = new Regex(@"sid,(.+?),");
-
-                var test = sidre.Matches(reply);
-                return test[0].Value.Substring(4, 56);
-            }
-        }
-
-        
-        public static string GetRealSID(string username, string password, string otp)
+        /// <summary>
+        /// Gets a real SessionID for the supplied credentials.
+        /// </summary>
+        /// <param name="username">Sqare Enix ID</param>
+        /// <param name="password">Password</param>
+        /// <param name="otp">OTP</param>
+        /// <returns></returns>
+        public static string getRealSID(string username, string password, string otp)
         {
             string hashstr = "";
-            try {
-                hashstr = "ffxivboot.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot.exe") + ",ffxivlauncher.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher.exe") + ",ffxivupdater.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater.exe"); //make the string of hashed files to prove game version
-            }catch(Exception exc)
+            try
+            {
+                hashstr = "ffxivboot.exe/" + generateHash(Settings.GetGamePath() + "/boot/ffxivboot.exe") + ",ffxivlauncher.exe/" + generateHash(Settings.GetGamePath() + "/boot/ffxivlauncher.exe") + ",ffxivupdater.exe/" + generateHash(Settings.GetGamePath() + "/boot/ffxivupdater.exe"); //make the string of hashed files to prove game version
+            }
+            catch (Exception exc)
             {
                 MessageBox.Show("Could not generate hashes. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButtons.OK);
             }
@@ -83,16 +57,50 @@ namespace XIVLauncher
             SidClient.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
             SidClient.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
             SidClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-       
-            InitiateSSLTrust();
 
-            SidClient.UploadString("https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() + "/" + GetSID(username,password,otp), hashstr); //request real session id
+            initiateSSLTrust();
+
+            SidClient.UploadString("https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + getLocalGamever() + "/" + getSID(username, password, otp), hashstr); //request real session id
 
             return SidClient.ResponseHeaders["X-Patch-Unique-Id"];
         }
-        
 
-        private static string GetLocalGamever()
+
+        private static string getSTORED() //this is needed to be able to access the login site correctly
+        {
+            WebClient LoginInfo = new WebClient();
+            LoginInfo.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
+            string reply = LoginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
+
+            Regex storedre = new Regex(@"value=""(.*)""");
+            return storedre.Matches(reply)[0].Value.Substring(7,754);
+        }
+
+        private static string getSID(string username, string password, string otp)
+        {
+            using (WebClient LoginData = new WebClient())
+            {
+                LoginData.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
+                LoginData.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
+                LoginData.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+                byte[] response =
+                LoginData.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send", new NameValueCollection() //get the session id with user credentials
+                {
+                    { "_STORED_", getSTORED() },
+                    { "sqexid", username },
+                    { "password", password },
+                    { "otppw", otp }
+                });
+
+                string reply = System.Text.Encoding.UTF8.GetString(response);
+
+                Regex sidre = new Regex(@"sid,(.+?),");
+                return sidre.Matches(reply)[0].Value.Substring(4, 56);
+            }
+        }
+
+        private static string getLocalGamever()
         {
             try
             {
@@ -108,7 +116,7 @@ namespace XIVLauncher
             }
         }
 
-        private static string GenerateHash(string file) //thanks SO
+        private static string generateHash(string file)
         {
             byte[] filebytes = File.ReadAllBytes(file);
 
@@ -120,21 +128,14 @@ namespace XIVLauncher
             return length + "/" + hashstring;
         }
 
-        private static void InitiateSSLTrust()
+        private static void initiateSSLTrust()
         {
-            try
-            {
-                //Change SSL checks so that all checks pass, squares gamever server does strange things
-                ServicePointManager.ServerCertificateValidationCallback =
-                   new RemoteCertificateValidationCallback(
-                        delegate
-                        { return true; }
-                    );
-            }
-            catch (Exception ex)
-            {
-                
-            }
+            //Change SSL checks so that all checks pass, squares gamever server does strange things
+            ServicePointManager.ServerCertificateValidationCallback =
+                new RemoteCertificateValidationCallback(
+                    delegate
+                    { return true; }
+                );
         }
     }
 }

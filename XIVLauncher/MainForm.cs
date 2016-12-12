@@ -15,21 +15,26 @@ namespace XIVLauncher
         public MainForm()
         {
             InitializeComponent();
-            IDTextBox.Text = Properties.Settings.Default.savedid;
-            PWTextBox.Text = Properties.Settings.Default.savedpw;
 
-            if(Properties.Settings.Default.setupcomplete != "true")
+            if(Properties.Settings.Default.savedid != "")
             {
-                InitialSetup();
+                IDTextBox.Text = Properties.Settings.Default.savedid;
+                PWTextBox.Text = Properties.Settings.Default.savedpw;
+                saveCheckBox.Checked = true;
             }
 
-            if(Properties.Settings.Default.autologin == "true" && !Settings.IsAdministrator())
+            if(Properties.Settings.Default.setupcomplete != true)
+            {
+                initialSetup();
+            }
+
+            if(Properties.Settings.Default.autologin == true && !Settings.IsAdministrator())
             {
                 try
                 {
                     this.Enabled = false;
-                    XIVGame.LaunchGame(XIVGame.GetRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.isDX11());
-                    this.Close();
+                    XIVGame.launchGame(XIVGame.getRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
+                    Environment.Exit(0);
                 }
                 catch
                 {
@@ -39,7 +44,7 @@ namespace XIVLauncher
             }
             else
             {
-                Properties.Settings.Default["autologin"] = "false";
+                Properties.Settings.Default["autologin"] = false;
                 Properties.Settings.Default.Save();
             }
         }
@@ -54,54 +59,57 @@ namespace XIVLauncher
 
         private void login(object sender, EventArgs e)
         {
-            if (SaveBox.Checked)
+            if (saveCheckBox.Checked)
             {
                 Properties.Settings.Default["savedid"] = IDTextBox.Text;
                 Properties.Settings.Default["savedpw"] = PWTextBox.Text;
-                if (AutoLoginBox.Checked)
+                if (autoLoginCheckBox.Checked)
                 {
                     DialogResult result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButtons.YesNo);
 
                     if (result == System.Windows.Forms.DialogResult.No)
                     {
-                        AutoLoginBox.Checked = false;
+                        autoLoginCheckBox.Checked = false;
 
                     }
                     else
                     {
-                        Properties.Settings.Default["autologin"] = "true";
+                        Properties.Settings.Default["autologin"] = true;
                     }
-                } else { Properties.Settings.Default["autologin"] = "false"; }
+                } else { Properties.Settings.Default["autologin"] = false; }
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                Properties.Settings.Default["savedid"] = "";
+                Properties.Settings.Default["savedpw"] = "";
                 Properties.Settings.Default.Save();
             }
 
-            
-
-            label4.Text = "Logging in...";
+            StatusLabel.Text = "Logging in...";
             try
             {
-                XIVGame.LaunchGame(XIVGame.GetRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.isDX11());
+                XIVGame.launchGame(XIVGame.getRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
+                Environment.Exit(0);
             }
-            catch(Exception exc)
+            catch
             {
                 MessageBox.Show("Logging in failed, check your login information or try again.", "Login failed", MessageBoxButtons.OK);
-                label4.Text = "";
+                StatusLabel.Text = "";
                 return;
             }
-            
-            this.Close();
         }
 
         private void SaveBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (SaveBox.Checked) { AutoLoginBox.Enabled = true; } else
+            if (saveCheckBox.Checked) { autoLoginCheckBox.Enabled = true; } else
             {
-                AutoLoginBox.Enabled = false;
-                AutoLoginBox.Checked = false;
+                autoLoginCheckBox.Enabled = false;
+                autoLoginCheckBox.Checked = false;
             }
         }
 
-        public void InitialSetup()
+        public void initialSetup()
         {
             MessageBox.Show(@"You will now be asked to select the path your game is installed in.
 It should contain the folders ""game"" and ""boot"".", "Select Game Path", MessageBoxButtons.OK);
@@ -115,11 +123,16 @@ It should contain the folders ""game"" and ""boot"".", "Select Game Path", Messa
                 Environment.Exit(0);
             }
 
-            DialogResult result = MessageBox.Show("Do you want to use DirectX 11?", "", MessageBoxButtons.YesNo);
+            DialogResult dxresult = MessageBox.Show("Do you want to use DirectX 11?", " ", MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
 
-            if (result == System.Windows.Forms.DialogResult.Yes) { Properties.Settings.Default["isdx11"] = "true"; } else { Properties.Settings.Default["isdx11"] = "false"; }
+            if (dxresult == System.Windows.Forms.DialogResult.Yes) { Properties.Settings.Default["isdx11"] = true; } else { Properties.Settings.Default["isdx11"] = false; }
 
-            Properties.Settings.Default["setupcomplete"] = "true";
+            DialogResult hwresult = MessageBox.Show("Do you want to load Heavensward?", " ", MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+
+            if (hwresult == System.Windows.Forms.DialogResult.Yes) { Properties.Settings.Default["expansionlevel"] = 1; } else { Properties.Settings.Default["expansionlevel"] = 0; }
+
+            Properties.Settings.Default["setupcomplete"] = true;
+            Properties.Settings.Default.Save();
         }
     }
 }

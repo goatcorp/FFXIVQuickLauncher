@@ -30,15 +30,15 @@
         {
             this.IDTextBox = new System.Windows.Forms.TextBox();
             this.PWTextBox = new System.Windows.Forms.TextBox();
-            this.OptionButton = new System.Windows.Forms.Button();
-            this.LoginButton = new System.Windows.Forms.Button();
-            this.SaveBox = new System.Windows.Forms.CheckBox();
-            this.AutoLoginBox = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.optionsButton = new System.Windows.Forms.Button();
+            this.loginButton = new System.Windows.Forms.Button();
+            this.saveCheckBox = new System.Windows.Forms.CheckBox();
+            this.autoLoginCheckBox = new System.Windows.Forms.CheckBox();
+            this.IDLabel = new System.Windows.Forms.Label();
+            this.PWLabel = new System.Windows.Forms.Label();
+            this.OTPLabel = new System.Windows.Forms.Label();
             this.OTPTextBox = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.StatusLabel = new System.Windows.Forms.Label();
             this.GamePathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
@@ -59,74 +59,74 @@
             this.PWTextBox.TabIndex = 1;
             this.PWTextBox.UseSystemPasswordChar = true;
             // 
-            // OptionButton
+            // optionsButton
             // 
-            this.OptionButton.Location = new System.Drawing.Point(40, 181);
-            this.OptionButton.Name = "OptionButton";
-            this.OptionButton.Size = new System.Drawing.Size(75, 23);
-            this.OptionButton.TabIndex = 2;
-            this.OptionButton.Text = "Options";
-            this.OptionButton.UseVisualStyleBackColor = true;
-            this.OptionButton.Click += new System.EventHandler(this.OpenOptions);
+            this.optionsButton.Location = new System.Drawing.Point(40, 181);
+            this.optionsButton.Name = "optionsButton";
+            this.optionsButton.Size = new System.Drawing.Size(75, 23);
+            this.optionsButton.TabIndex = 2;
+            this.optionsButton.Text = "Options";
+            this.optionsButton.UseVisualStyleBackColor = true;
+            this.optionsButton.Click += new System.EventHandler(this.OpenOptions);
             // 
-            // LoginButton
+            // loginButton
             // 
-            this.LoginButton.Location = new System.Drawing.Point(121, 181);
-            this.LoginButton.Name = "LoginButton";
-            this.LoginButton.Size = new System.Drawing.Size(75, 23);
-            this.LoginButton.TabIndex = 3;
-            this.LoginButton.Text = "Login";
-            this.LoginButton.UseVisualStyleBackColor = true;
-            this.LoginButton.Click += new System.EventHandler(this.login);
+            this.loginButton.Location = new System.Drawing.Point(121, 181);
+            this.loginButton.Name = "loginButton";
+            this.loginButton.Size = new System.Drawing.Size(75, 23);
+            this.loginButton.TabIndex = 3;
+            this.loginButton.Text = "Login";
+            this.loginButton.UseVisualStyleBackColor = true;
+            this.loginButton.Click += new System.EventHandler(this.login);
             // 
-            // SaveBox
+            // saveCheckBox
             // 
-            this.SaveBox.AutoSize = true;
-            this.SaveBox.Location = new System.Drawing.Point(40, 135);
-            this.SaveBox.Name = "SaveBox";
-            this.SaveBox.Size = new System.Drawing.Size(122, 17);
-            this.SaveBox.TabIndex = 4;
-            this.SaveBox.Text = "save for next startup";
-            this.SaveBox.UseVisualStyleBackColor = true;
-            this.SaveBox.CheckedChanged += new System.EventHandler(this.SaveBox_CheckedChanged);
+            this.saveCheckBox.AutoSize = true;
+            this.saveCheckBox.Location = new System.Drawing.Point(40, 135);
+            this.saveCheckBox.Name = "saveCheckBox";
+            this.saveCheckBox.Size = new System.Drawing.Size(122, 17);
+            this.saveCheckBox.TabIndex = 4;
+            this.saveCheckBox.Text = "save for next startup";
+            this.saveCheckBox.UseVisualStyleBackColor = true;
+            this.saveCheckBox.CheckedChanged += new System.EventHandler(this.SaveBox_CheckedChanged);
             // 
-            // AutoLoginBox
+            // autoLoginCheckBox
             // 
-            this.AutoLoginBox.AutoSize = true;
-            this.AutoLoginBox.Enabled = false;
-            this.AutoLoginBox.Location = new System.Drawing.Point(40, 158);
-            this.AutoLoginBox.Name = "AutoLoginBox";
-            this.AutoLoginBox.Size = new System.Drawing.Size(115, 17);
-            this.AutoLoginBox.TabIndex = 5;
-            this.AutoLoginBox.Text = "log in automatically";
-            this.AutoLoginBox.UseVisualStyleBackColor = true;
+            this.autoLoginCheckBox.AutoSize = true;
+            this.autoLoginCheckBox.Enabled = false;
+            this.autoLoginCheckBox.Location = new System.Drawing.Point(40, 158);
+            this.autoLoginCheckBox.Name = "autoLoginCheckBox";
+            this.autoLoginCheckBox.Size = new System.Drawing.Size(115, 17);
+            this.autoLoginCheckBox.TabIndex = 5;
+            this.autoLoginCheckBox.Text = "log in automatically";
+            this.autoLoginCheckBox.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // IDLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 32);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Square Enix ID";
+            this.IDLabel.AutoSize = true;
+            this.IDLabel.Location = new System.Drawing.Point(12, 32);
+            this.IDLabel.Name = "IDLabel";
+            this.IDLabel.Size = new System.Drawing.Size(78, 13);
+            this.IDLabel.TabIndex = 6;
+            this.IDLabel.Text = "Square Enix ID";
             // 
-            // label2
+            // PWLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 70);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Password";
+            this.PWLabel.AutoSize = true;
+            this.PWLabel.Location = new System.Drawing.Point(12, 70);
+            this.PWLabel.Name = "PWLabel";
+            this.PWLabel.Size = new System.Drawing.Size(53, 13);
+            this.PWLabel.TabIndex = 7;
+            this.PWLabel.Text = "Password";
             // 
-            // label3
+            // OTPLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 96);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 13);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "OTP";
+            this.OTPLabel.AutoSize = true;
+            this.OTPLabel.Location = new System.Drawing.Point(12, 96);
+            this.OTPLabel.Name = "OTPLabel";
+            this.OTPLabel.Size = new System.Drawing.Size(29, 13);
+            this.OTPLabel.TabIndex = 9;
+            this.OTPLabel.Text = "OTP";
             // 
             // OTPTextBox
             // 
@@ -137,15 +137,15 @@
             this.OTPTextBox.TabIndex = 8;
             this.OTPTextBox.UseSystemPasswordChar = true;
             // 
-            // label4
+            // StatusLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.label4.Location = new System.Drawing.Point(88, 225);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(0, 13);
-            this.label4.TabIndex = 10;
-            this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.StatusLabel.AutoSize = true;
+            this.StatusLabel.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.StatusLabel.Location = new System.Drawing.Point(88, 225);
+            this.StatusLabel.Name = "StatusLabel";
+            this.StatusLabel.Size = new System.Drawing.Size(0, 13);
+            this.StatusLabel.TabIndex = 10;
+            this.StatusLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // GamePathDialog
             // 
@@ -157,15 +157,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(243, 260);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.StatusLabel);
+            this.Controls.Add(this.OTPLabel);
             this.Controls.Add(this.OTPTextBox);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.AutoLoginBox);
-            this.Controls.Add(this.SaveBox);
-            this.Controls.Add(this.LoginButton);
-            this.Controls.Add(this.OptionButton);
+            this.Controls.Add(this.PWLabel);
+            this.Controls.Add(this.IDLabel);
+            this.Controls.Add(this.autoLoginCheckBox);
+            this.Controls.Add(this.saveCheckBox);
+            this.Controls.Add(this.loginButton);
+            this.Controls.Add(this.optionsButton);
             this.Controls.Add(this.PWTextBox);
             this.Controls.Add(this.IDTextBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -181,15 +181,15 @@
 
         private System.Windows.Forms.TextBox IDTextBox;
         private System.Windows.Forms.TextBox PWTextBox;
-        private System.Windows.Forms.Button OptionButton;
-        private System.Windows.Forms.Button LoginButton;
-        private System.Windows.Forms.CheckBox SaveBox;
-        private System.Windows.Forms.CheckBox AutoLoginBox;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button optionsButton;
+        private System.Windows.Forms.Button loginButton;
+        private System.Windows.Forms.CheckBox saveCheckBox;
+        private System.Windows.Forms.CheckBox autoLoginCheckBox;
+        private System.Windows.Forms.Label IDLabel;
+        private System.Windows.Forms.Label PWLabel;
+        private System.Windows.Forms.Label OTPLabel;
         private System.Windows.Forms.TextBox OTPTextBox;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.FolderBrowserDialog GamePathDialog;
     }
 }
