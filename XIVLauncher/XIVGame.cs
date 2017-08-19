@@ -72,8 +72,13 @@ namespace XIVLauncher
             LoginInfo.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
             string reply = LoginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
 
-            Regex storedre = new Regex(@"value=""(.*)""");
-            return storedre.Matches(reply)[0].Value.Substring(7,754);
+            Regex storedre = new Regex(@"<\s*input[^>]*>(.*?)");
+
+            string test = storedre.Matches(reply)[0].Value;
+
+            MessageBox.Show(test);
+
+            return test.Substring(44,626);
         }
 
         private static string getSID(string username, string password, string otp)

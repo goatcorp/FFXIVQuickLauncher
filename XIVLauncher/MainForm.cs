@@ -36,10 +36,10 @@ namespace XIVLauncher
                     XIVGame.launchGame(XIVGame.getRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
                     Environment.Exit(0);
                 }
-                catch
+                catch(Exception e)
                 {
                     this.Enabled = true;
-                    MessageBox.Show("Logging in failed, check your login information or try again.", "Login failed", MessageBoxButtons.OK);
+                    MessageBox.Show("Logging in failed, check your login information or try again.\n\n" + e, "Login failed", MessageBoxButtons.OK);
                 }
             }
             else
@@ -92,9 +92,9 @@ namespace XIVLauncher
                 XIVGame.launchGame(XIVGame.getRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
                 Environment.Exit(0);
             }
-            catch
+            catch(Exception exc)
             {
-                MessageBox.Show("Logging in failed, check your login information or try again.", "Login failed", MessageBoxButtons.OK);
+                MessageBox.Show("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed", MessageBoxButtons.OK);
                 StatusLabel.Text = "";
                 return;
             }
@@ -127,9 +127,8 @@ It should contain the folders ""game"" and ""boot"".", "Select Game Path", Messa
 
             if (dxresult == System.Windows.Forms.DialogResult.Yes) { Properties.Settings.Default["isdx11"] = true; } else { Properties.Settings.Default["isdx11"] = false; }
 
-            DialogResult hwresult = MessageBox.Show("Do you want to load Heavensward?", " ", MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-
-            if (hwresult == System.Windows.Forms.DialogResult.Yes) { Properties.Settings.Default["expansionlevel"] = 1; } else { Properties.Settings.Default["expansionlevel"] = 0; }
+            ExpansionSelector exSelector = new ExpansionSelector();
+            exSelector.ShowDialog();
 
             Properties.Settings.Default["setupcomplete"] = true;
             Properties.Settings.Default.Save();

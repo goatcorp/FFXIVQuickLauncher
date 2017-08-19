@@ -36,7 +36,8 @@
             this.ChangePathButton = new System.Windows.Forms.Button();
             this.GamePathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.pathLabel = new System.Windows.Forms.Label();
-            this.hwCheckBox = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // LanguageSelector
@@ -116,22 +117,35 @@
             this.pathLabel.TabIndex = 7;
             this.pathLabel.Text = "Current Game Path:";
             // 
-            // hwCheckBox
+            // label2
             // 
-            this.hwCheckBox.AutoSize = true;
-            this.hwCheckBox.Location = new System.Drawing.Point(116, 55);
-            this.hwCheckBox.Name = "hwCheckBox";
-            this.hwCheckBox.Size = new System.Drawing.Size(142, 17);
-            this.hwCheckBox.TabIndex = 8;
-            this.hwCheckBox.Text = "Load Heavensward(ex1)";
-            this.hwCheckBox.UseVisualStyleBackColor = true;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(155, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Expansion";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "A Realm Reborn",
+            "Heavensward",
+            "Stormblood"});
+            this.comboBox1.Location = new System.Drawing.Point(155, 28);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 9;
             // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(371, 198);
-            this.Controls.Add(this.hwCheckBox);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.ChangePathButton);
             this.Controls.Add(this.LaunchBackupButton);
@@ -159,6 +173,7 @@
         private System.Windows.Forms.Button ChangePathButton;
         private System.Windows.Forms.FolderBrowserDialog GamePathDialog;
         private System.Windows.Forms.Label pathLabel;
-        private System.Windows.Forms.CheckBox hwCheckBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
