@@ -77,7 +77,7 @@
             this.loginButton.TabIndex = 3;
             this.loginButton.Text = "Login";
             this.loginButton.UseVisualStyleBackColor = true;
-            this.loginButton.Click += new System.EventHandler(this.login);
+            this.loginButton.Click += new System.EventHandler(this.Login);
             // 
             // saveCheckBox
             // 

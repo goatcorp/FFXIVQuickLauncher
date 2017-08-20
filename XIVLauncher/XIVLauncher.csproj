@@ -58,6 +58,7 @@
     <Compile Include="ExpansionSelector.Designer.cs">
       <DependentUpon>ExpansionSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="FolderSelectDialog.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +73,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflector.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="XIVGame.cs" />
     <EmbeddedResource Include="ExpansionSelector.resx">

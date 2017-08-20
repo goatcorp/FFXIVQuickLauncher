@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FolderSelect;
 
 namespace XIVLauncher
 {
@@ -25,7 +26,7 @@ namespace XIVLauncher
 
             if(Properties.Settings.Default.setupcomplete != true)
             {
-                initialSetup();
+                InitialSetup();
             }
 
             if(Properties.Settings.Default.autologin == true && !Settings.IsAdministrator())
@@ -33,7 +34,7 @@ namespace XIVLauncher
                 try
                 {
                     this.Enabled = false;
-                    XIVGame.launchGame(XIVGame.getRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
+                    XIVGame.LaunchGame(XIVGame.GetRealSid(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
                     Environment.Exit(0);
                 }
                 catch(Exception e)
@@ -57,7 +58,7 @@ namespace XIVLauncher
             this.Enabled = true;
         }
 
-        private void login(object sender, EventArgs e)
+        private void Login(object sender, EventArgs e)
         {
             if (saveCheckBox.Checked)
             {
@@ -89,7 +90,7 @@ namespace XIVLauncher
             StatusLabel.Text = "Logging in...";
             try
             {
-                XIVGame.launchGame(XIVGame.getRealSID(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
+                XIVGame.LaunchGame(XIVGame.GetRealSid(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
                 Environment.Exit(0);
             }
             catch(Exception exc)
@@ -109,14 +110,17 @@ namespace XIVLauncher
             }
         }
 
-        public void initialSetup()
+        public void InitialSetup()
         {
             MessageBox.Show(@"You will now be asked to select the path your game is installed in.
 It should contain the folders ""game"" and ""boot"".", "Select Game Path", MessageBoxButtons.OK);
 
-            if (GamePathDialog.ShowDialog() == DialogResult.OK)
+            FolderSelectDialog fsd = new FolderSelectDialog();
+            fsd.Title = "Choose your game path";
+            
+            if (fsd.ShowDialog(IntPtr.Zero))
             {
-                Properties.Settings.Default["gamepath"] = GamePathDialog.SelectedPath;
+                Properties.Settings.Default["gamepath"] = fsd.FileName;
             }
             else
             {
