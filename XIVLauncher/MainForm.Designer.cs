@@ -44,7 +44,7 @@
             // 
             // IDTextBox
             // 
-            this.IDTextBox.Location = new System.Drawing.Point(91, 29);
+            this.IDTextBox.Location = new System.Drawing.Point(99, 27);
             this.IDTextBox.MaxLength = 16;
             this.IDTextBox.Name = "IDTextBox";
             this.IDTextBox.Size = new System.Drawing.Size(129, 20);
@@ -52,7 +52,7 @@
             // 
             // PWTextBox
             // 
-            this.PWTextBox.Location = new System.Drawing.Point(91, 67);
+            this.PWTextBox.Location = new System.Drawing.Point(99, 62);
             this.PWTextBox.MaxLength = 32;
             this.PWTextBox.Name = "PWTextBox";
             this.PWTextBox.Size = new System.Drawing.Size(129, 20);
@@ -61,17 +61,17 @@
             // 
             // optionsButton
             // 
-            this.optionsButton.Location = new System.Drawing.Point(40, 181);
+            this.optionsButton.Location = new System.Drawing.Point(40, 167);
             this.optionsButton.Name = "optionsButton";
             this.optionsButton.Size = new System.Drawing.Size(75, 23);
-            this.optionsButton.TabIndex = 2;
+            this.optionsButton.TabIndex = 4;
             this.optionsButton.Text = "Options";
             this.optionsButton.UseVisualStyleBackColor = true;
             this.optionsButton.Click += new System.EventHandler(this.OpenOptions);
             // 
             // loginButton
             // 
-            this.loginButton.Location = new System.Drawing.Point(121, 181);
+            this.loginButton.Location = new System.Drawing.Point(121, 167);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(75, 23);
             this.loginButton.TabIndex = 3;
@@ -82,10 +82,10 @@
             // saveCheckBox
             // 
             this.saveCheckBox.AutoSize = true;
-            this.saveCheckBox.Location = new System.Drawing.Point(40, 135);
+            this.saveCheckBox.Location = new System.Drawing.Point(40, 119);
             this.saveCheckBox.Name = "saveCheckBox";
             this.saveCheckBox.Size = new System.Drawing.Size(122, 17);
-            this.saveCheckBox.TabIndex = 4;
+            this.saveCheckBox.TabIndex = 5;
             this.saveCheckBox.Text = "save for next startup";
             this.saveCheckBox.UseVisualStyleBackColor = true;
             this.saveCheckBox.CheckedChanged += new System.EventHandler(this.SaveBox_CheckedChanged);
@@ -94,17 +94,17 @@
             // 
             this.autoLoginCheckBox.AutoSize = true;
             this.autoLoginCheckBox.Enabled = false;
-            this.autoLoginCheckBox.Location = new System.Drawing.Point(40, 158);
+            this.autoLoginCheckBox.Location = new System.Drawing.Point(40, 141);
             this.autoLoginCheckBox.Name = "autoLoginCheckBox";
             this.autoLoginCheckBox.Size = new System.Drawing.Size(115, 17);
-            this.autoLoginCheckBox.TabIndex = 5;
+            this.autoLoginCheckBox.TabIndex = 6;
             this.autoLoginCheckBox.Text = "log in automatically";
             this.autoLoginCheckBox.UseVisualStyleBackColor = true;
             // 
             // IDLabel
             // 
             this.IDLabel.AutoSize = true;
-            this.IDLabel.Location = new System.Drawing.Point(12, 32);
+            this.IDLabel.Location = new System.Drawing.Point(12, 30);
             this.IDLabel.Name = "IDLabel";
             this.IDLabel.Size = new System.Drawing.Size(78, 13);
             this.IDLabel.TabIndex = 6;
@@ -113,7 +113,7 @@
             // PWLabel
             // 
             this.PWLabel.AutoSize = true;
-            this.PWLabel.Location = new System.Drawing.Point(12, 70);
+            this.PWLabel.Location = new System.Drawing.Point(12, 65);
             this.PWLabel.Name = "PWLabel";
             this.PWLabel.Size = new System.Drawing.Size(53, 13);
             this.PWLabel.TabIndex = 7;
@@ -122,7 +122,7 @@
             // OTPLabel
             // 
             this.OTPLabel.AutoSize = true;
-            this.OTPLabel.Location = new System.Drawing.Point(12, 96);
+            this.OTPLabel.Location = new System.Drawing.Point(12, 89);
             this.OTPLabel.Name = "OTPLabel";
             this.OTPLabel.Size = new System.Drawing.Size(29, 13);
             this.OTPLabel.TabIndex = 9;
@@ -130,18 +130,18 @@
             // 
             // OTPTextBox
             // 
-            this.OTPTextBox.Location = new System.Drawing.Point(91, 93);
+            this.OTPTextBox.Location = new System.Drawing.Point(99, 87);
             this.OTPTextBox.MaxLength = 6;
             this.OTPTextBox.Name = "OTPTextBox";
             this.OTPTextBox.Size = new System.Drawing.Size(129, 20);
-            this.OTPTextBox.TabIndex = 8;
+            this.OTPTextBox.TabIndex = 2;
             this.OTPTextBox.UseSystemPasswordChar = true;
             // 
             // StatusLabel
             // 
             this.StatusLabel.AutoSize = true;
             this.StatusLabel.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.StatusLabel.Location = new System.Drawing.Point(88, 225);
+            this.StatusLabel.Location = new System.Drawing.Point(88, 208);
             this.StatusLabel.Name = "StatusLabel";
             this.StatusLabel.Size = new System.Drawing.Size(0, 13);
             this.StatusLabel.TabIndex = 10;
@@ -155,6 +155,7 @@
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AcceptButton = this.loginButton;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(243, 260);
             this.Controls.Add(this.StatusLabel);
