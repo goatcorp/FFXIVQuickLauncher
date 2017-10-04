@@ -40,6 +40,7 @@
             this.OTPTextBox = new System.Windows.Forms.TextBox();
             this.StatusLabel = new System.Windows.Forms.Label();
             this.GamePathDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.QueueButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // IDTextBox
@@ -141,7 +142,7 @@
             // 
             this.StatusLabel.AutoSize = true;
             this.StatusLabel.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.StatusLabel.Location = new System.Drawing.Point(88, 208);
+            this.StatusLabel.Location = new System.Drawing.Point(117, 208);
             this.StatusLabel.Name = "StatusLabel";
             this.StatusLabel.Size = new System.Drawing.Size(0, 13);
             this.StatusLabel.TabIndex = 10;
@@ -152,12 +153,23 @@
             this.GamePathDialog.Description = "Please select your game path.";
             this.GamePathDialog.ShowNewFolderButton = false;
             // 
+            // QueueButton
+            // 
+            this.QueueButton.Location = new System.Drawing.Point(61, 240);
+            this.QueueButton.Name = "QueueButton";
+            this.QueueButton.Size = new System.Drawing.Size(116, 20);
+            this.QueueButton.TabIndex = 11;
+            this.QueueButton.Text = "Maintenance Queue";
+            this.QueueButton.UseVisualStyleBackColor = true;
+            this.QueueButton.Click += new System.EventHandler(this.QueueButton_Click);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AcceptButton = this.loginButton;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(243, 260);
+            this.ClientSize = new System.Drawing.Size(243, 272);
+            this.Controls.Add(this.QueueButton);
             this.Controls.Add(this.StatusLabel);
             this.Controls.Add(this.OTPLabel);
             this.Controls.Add(this.OTPTextBox);
@@ -192,6 +204,7 @@
         private System.Windows.Forms.TextBox OTPTextBox;
         private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.FolderBrowserDialog GamePathDialog;
+        private System.Windows.Forms.Button QueueButton;
     }
 }
 

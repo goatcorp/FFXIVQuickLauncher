@@ -17,7 +17,7 @@ namespace XIVLauncher
         {
             InitializeComponent();
 
-            if(Properties.Settings.Default.savedid != "")
+            if (Properties.Settings.Default.savedid != "")
             {
                 IDTextBox.Text = Properties.Settings.Default.savedid;
                 PWTextBox.Text = Properties.Settings.Default.savedpw;
@@ -34,8 +34,21 @@ namespace XIVLauncher
                 try
                 {
                     this.Enabled = false;
-                    XIVGame.LaunchGame(XIVGame.GetRealSid(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
-                    Environment.Exit(0);
+
+                    if (!XIVGame.GetGateStatus())
+                    {
+                        this.Enabled = true;
+                        MessageBox.Show(
+                            "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.");
+
+                        Properties.Settings.Default["autologin"] = false;
+                        Properties.Settings.Default.Save();
+                    }
+                    else
+                    {
+                        XIVGame.LaunchGame(XIVGame.GetRealSid(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
+                        Environment.Exit(0);
+                    }
                 }
                 catch(Exception e)
                 {
@@ -60,6 +73,14 @@ namespace XIVLauncher
 
         private void Login(object sender, EventArgs e)
         {
+            if (!XIVGame.GetGateStatus())
+            {
+                MessageBox.Show(
+                    "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.");
+
+                return;
+            }
+
             if (saveCheckBox.Checked)
             {
                 Properties.Settings.Default["savedid"] = IDTextBox.Text;
@@ -136,6 +157,43 @@ It should contain the folders ""game"" and ""boot"".", "Select Game Path", Messa
 
             Properties.Settings.Default["setupcomplete"] = true;
             Properties.Settings.Default.Save();
+        }
+
+        private void QueueButton_Click(object sender, EventArgs e) //TODO: please do this in a thread when you care enough at some point
+        {
+            DialogResult result = MessageBox.Show("This will be querying the maintenance status server, until the maintenance is over and then launch the game. Make sure the login information you entered is correct." +
+                                                  "\n\n!!!The application will be unresponsive!!!\n\nDo you want to continue?", "Maintenance Queue", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                this.BringToFront();
+
+                while (true)
+                {
+                    if (XIVGame.GetGateStatus())
+                        break;
+                    System.Threading.Thread.Sleep(5000);
+                }
+
+                Console.Beep(529, 130);
+                System.Threading.Thread.Sleep(200);
+                Console.Beep(529, 100);
+                System.Threading.Thread.Sleep(30);
+                Console.Beep(529, 100);
+                System.Threading.Thread.Sleep(300);
+                Console.Beep(420, 140);
+                System.Threading.Thread.Sleep(300);
+                Console.Beep(466, 100);
+                System.Threading.Thread.Sleep(300);
+                Console.Beep(529, 160);
+                System.Threading.Thread.Sleep(200);
+                Console.Beep(466, 100);
+                System.Threading.Thread.Sleep(30);
+                Console.Beep(529, 900);
+
+                Login(null, null);
+            }
+
         }
     }
 }

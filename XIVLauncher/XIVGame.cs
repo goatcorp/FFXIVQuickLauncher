@@ -129,6 +129,26 @@ namespace XIVLauncher
             return length + "/" + hashstring;
         }
 
+        public static bool GetGateStatus()
+        {
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    string reply = client.DownloadString("http://frontier.ffxiv.com/worldStatus/gate_status.json");
+
+                    return Convert.ToBoolean(int.Parse(reply[10].ToString()));
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show("Failed getting gate status.\n\n" + exc, "Launch failed", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return false;
+            }
+            
+        }
+
         private static void InitiateSslTrust()
         {
             //Change SSL checks so that all checks pass, squares gamever server does strange things
