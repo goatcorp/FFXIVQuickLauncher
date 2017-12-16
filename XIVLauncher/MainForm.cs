@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using FolderSelect;
 
@@ -138,7 +131,7 @@ It should contain the folders ""game"" and ""boot"".", "Select Game Path", Messa
 
             FolderSelectDialog fsd = new FolderSelectDialog();
             fsd.Title = "Choose your game path";
-            
+
             if (fsd.ShowDialog(IntPtr.Zero))
             {
                 Properties.Settings.Default["gamepath"] = fsd.FileName;
