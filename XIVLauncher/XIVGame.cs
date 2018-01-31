@@ -54,7 +54,7 @@ namespace XIVLauncher
 
             WebClient sidClient = new WebClient();
             sidClient.Headers.Add("X-Hash-Check", "enabled");
-            sidClient.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
+            sidClient.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 9e75ab3012)");
             sidClient.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
             sidClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
@@ -69,20 +69,20 @@ namespace XIVLauncher
         private static string GetStored() //this is needed to be able to access the login site correctly
         {
             WebClient loginInfo = new WebClient();
-            loginInfo.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
-            string reply = loginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
+            loginInfo.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 9e75ab3012)");
+            string reply = loginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
 
-            Regex storedre = new Regex(@"<\s*input[^>]*>(.*?)");
+            Regex storedre = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
 
-            return storedre.Matches(reply)[0].Value.Substring(44,626);
+            return storedre.Matches(reply)[0].Groups["stored"].Value;
         }
 
-        private static string GetSid(string username, string password, string otp)
+        public static string GetSid(string username, string password, string otp)
         {
             using (WebClient loginData = new WebClient())
             {
-                loginData.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 15c5fd77b2)");
-                loginData.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
+                loginData.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 9e75ab3012)");
+                loginData.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
                 loginData.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
                 byte[] response =
@@ -96,8 +96,8 @@ namespace XIVLauncher
 
                 string reply = System.Text.Encoding.UTF8.GetString(response);
 
-                Regex sidre = new Regex(@"sid,(.+?),");
-                return sidre.Matches(reply)[0].Value.Substring(4, 56);
+                Regex sidre = new Regex(@"sid,(?<sid>.*),terms");
+                return sidre.Matches(reply)[0].Groups["sid"].Value;
             }
         }
 
@@ -146,7 +146,7 @@ namespace XIVLauncher
                     MessageBoxIcon.Error);
                 return false;
             }
-            
+
         }
 
         private static void InitiateSslTrust()
