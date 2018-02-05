@@ -6,6 +6,38 @@ image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
 
+before_build:
+- ps: >-
+    $env:GIT_HASH = $env:APPVEYOR_REPO_COMMIT.Substring(0, 7)
+    
+    ($env:APPVEYOR_REPO_NAME) >> VERSION
+    
+    ($env:APPVEYOR_REPO_BRANCH) >> VERSION
+    
+    ($env:GIT_HASH) >> VERSION
+    
+    ($env:APPVEYOR_BUILD_VERSION) >> VERSION
+    
+    ($env:APPVEYOR_REPO_COMMIT_TIMESTAMP) >> VERSION
+
 build:
   project: XIVLauncher.sln
   verbosity: minimal
+
+after_build:
+- cmd: >-
+    cp .\XIVLauncher\bin\Release
+    
+    7z a XIVLauncher-%APPVEYOR_REPO_BRANCH%-b%APPVEYOR_BUILD_NUMBER%-%GIT_HASH%.zip .\XIVLauncher\bin\Release\* -mx=7
+
+artifacts:
+- path: XIVLauncher-$(APPVEYOR_REPO_BRANCH)-b$(APPVEYOR_BUILD_NUMBER)-$(GIT_HASH).zip
+  name: XIVLauncher
+
+deploy:
+- provider: GitHub
+  release: $(APPVEYOR_BUILD_VERSION)
+  description: ""
+  artifact: XIVLauncher
+  auth_token:
+    secure: 78694808eca20cc1a9d4bff96beb084abf277092
