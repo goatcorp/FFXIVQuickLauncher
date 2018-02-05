@@ -1,0 +1,11 @@
+version: 'Build {build}'
+
+skip_tags: true
+
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+
+build:
+  project: XIVLauncher.sln
+  verbosity: minimal
