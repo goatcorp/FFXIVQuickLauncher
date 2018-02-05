@@ -31,9 +31,9 @@ build:
 
 after_build:
 - cmd: >-
-    cp .\XIVLauncher\bin\Release
+    cp C:\projects\ffxivquicklauncher\XIVLauncher\bin\Release
     
-    7z a XIVLauncher-%APPVEYOR_REPO_BRANCH%-b%APPVEYOR_BUILD_NUMBER%-%GIT_HASH%.zip .\XIVLauncher\bin\Release\* -mx=7
+    7z a XIVLauncher-%APPVEYOR_REPO_BRANCH%-b%APPVEYOR_BUILD_NUMBER%-%GIT_HASH%.zip C:\projects\ffxivquicklauncher\XIVLauncher\bin\Release\* -mx=7
 
 artifacts:
 - path: XIVLauncher-$(APPVEYOR_REPO_BRANCH)-b$(APPVEYOR_BUILD_NUMBER)-$(GIT_HASH).zip
