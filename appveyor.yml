@@ -42,5 +42,4 @@ deploy:
   release: $(APPVEYOR_BUILD_VERSION)
   description: ""
   artifact: XIVLauncher
-  auth_token:
-    secure: e0b9592d1bebadfb4dc30d17d4894b4c21536d60
+  secure: LUPIjwWT1cLC+dXi4C3Hm3Yl1yjsfEeM8p87vS32VPqIUvQK2n9ol78KV2COnvYg
