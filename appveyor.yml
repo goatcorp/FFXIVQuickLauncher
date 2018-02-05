@@ -43,4 +43,4 @@ deploy:
   description: ""
   artifact: XIVLauncher
   auth_token:
-    secure: 78694808eca20cc1a9d4bff96beb084abf277092
+    secure: e0b9592d1bebadfb4dc30d17d4894b4c21536d60
