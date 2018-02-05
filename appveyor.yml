@@ -2,9 +2,12 @@ version: 'Build {build}'
 
 skip_tags: true
 
-image: Visual Studio 2017
+image: Visual Studio 2015
 configuration: Release
 platform: Any CPU
+
+cache:
+  - packages -> **\packages.config
 
 before_build:
 - ps: >-
@@ -19,6 +22,8 @@ before_build:
     ($env:APPVEYOR_BUILD_VERSION) >> VERSION
     
     ($env:APPVEYOR_REPO_COMMIT_TIMESTAMP) >> VERSION
+    
+- appveyor-retry nuget restore
 
 build:
   project: XIVLauncher.sln
