@@ -13,6 +13,8 @@ namespace XIVLauncher
 {
     static class XIVGame
     {
+        private static string UserAgent = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 45d19cc985)";
+        
         /// <summary>
         /// Launches FFXIV with the supplied parameters.
         /// </summary>
@@ -54,7 +56,7 @@ namespace XIVLauncher
 
             WebClient sidClient = new WebClient();
             sidClient.Headers.Add("X-Hash-Check", "enabled");
-            sidClient.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 9e75ab3012)");
+            sidClient.Headers.Add("user-agent", UserAgent);
             sidClient.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
             sidClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
@@ -69,7 +71,7 @@ namespace XIVLauncher
         private static string GetStored() //this is needed to be able to access the login site correctly
         {
             WebClient loginInfo = new WebClient();
-            loginInfo.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 9e75ab3012)");
+            loginInfo.Headers.Add("user-agent", UserAgent);
             string reply = loginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
 
             Regex storedre = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
@@ -81,7 +83,7 @@ namespace XIVLauncher
         {
             using (WebClient loginData = new WebClient())
             {
-                loginData.Headers.Add("user-agent", "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 9e75ab3012)");
+                loginData.Headers.Add("user-agent", UserAgent);
                 loginData.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
                 loginData.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
