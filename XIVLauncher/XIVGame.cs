@@ -27,7 +27,7 @@ namespace XIVLauncher
             try {
                 Process ffxivgame = new Process();
                 if (dx11) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                ffxivgame.StartInfo.Arguments = $"DEV.TestSID={realsid} DEV.MaxEntitledExpansionID={expansionlevel} language={language}";
+                ffxivgame.StartInfo.Arguments = $"DEV.TestSID={realsid} DEV.MaxEntitledExpansionID={expansionlevel} language={language} region=1";
                 ffxivgame.Start();
             }catch(Exception exc)
             {
@@ -47,7 +47,12 @@ namespace XIVLauncher
             string hashstr = "";
             try
             {
-                hashstr = "ffxivboot.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot.exe") + ",ffxivlauncher.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher.exe") + ",ffxivupdater.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater.exe"); //make the string of hashed files to prove game version
+                hashstr = "ffxivboot.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot.exe") +
+                          ",ffxivboot64.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot64.exe") +
+                          ",ffxivlauncher.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher.exe") + 
+                          ",ffxivlauncher64.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher64.exe") + 
+                          ",ffxivupdater.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater.exe") +
+                          ",ffxivupdater64.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater64.exe"); //make the string of hashed files to prove game version//make the string of hashed files to prove game version
             }
             catch (Exception exc)
             {
@@ -62,7 +67,9 @@ namespace XIVLauncher
 
             InitiateSslTrust();
 
-            sidClient.UploadString("https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() + "/" + GetSid(username, password, otp), hashstr); //request real session id
+            var url = "https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() + "/" +
+                      GetSid(username, password, otp);
+            sidClient.UploadString(url, hashstr); //request real session id
 
             return sidClient.ResponseHeaders["X-Patch-Unique-Id"];
         }
@@ -76,7 +83,8 @@ namespace XIVLauncher
 
             Regex storedre = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
 
-            return storedre.Matches(reply)[0].Groups["stored"].Value;
+            var stored = storedre.Matches(reply)[0].Groups["stored"].Value;
+            return stored;
         }
 
         public static string GetSid(string username, string password, string otp)
@@ -99,7 +107,8 @@ namespace XIVLauncher
                 string reply = System.Text.Encoding.UTF8.GetString(response);
 
                 Regex sidre = new Regex(@"sid,(?<sid>.*),terms");
-                return sidre.Matches(reply)[0].Groups["sid"].Value;
+                var sid = sidre.Matches(reply)[0].Groups["sid"].Value;
+                return sid;
             }
         }
 
