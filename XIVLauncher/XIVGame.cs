@@ -13,21 +13,46 @@ namespace XIVLauncher
 {
     static class XIVGame
     {
-        private static string UserAgent = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 45d19cc985)";
-        
-        /// <summary>
-        /// Launches FFXIV with the supplied parameters.
-        /// </summary>
-        /// <param name="realsid">Real SessionID</param>
-        /// <param name="language">language(0=japanese,1=english,2=french,3=german)</param>
-        /// <param name="dx11">Runs the game in dx11 mode if true</param>
-        /// <param name="expansionlevel">current level of expansions loaded(0=ARR/default,1=Heavensward)</param>
-        public static void LaunchGame(string realsid, int language, bool dx11, int expansionlevel)
+        private static readonly string UserAgent = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 45d19cc985)";
+        private static readonly string[] FilesToHash =
+        {
+            "ffxivboot.exe", 
+            "ffxivboot64.exe",
+            "ffxivlauncher.exe",
+            "ffxivlauncher64.exe",
+            "ffxivupdater.exe",
+            "ffxivupdater64.exe",
+        };
+
+        public static void Login(string username, string password, string otp)
+        {
+            var loginResult = OauthLogin(username, password, otp);
+
+            if (!loginResult.Playable)
+            {
+                MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!loginResult.TermsAccepted)
+            {
+                MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Clamp the expansion level to what the account is allowed to access
+            var expansionLevel = Math.Min(Math.Max(loginResult.MaxExpansion, 0), Settings.GetExpansionLevel());
+            var lobbySessionId = GetLobbySessionId(loginResult);
+
+            LaunchGame(lobbySessionId, loginResult.Region, expansionLevel);
+        }
+
+        private static void LaunchGame(string sessionId, int region, int expansionLevel)
         {
             try {
                 Process ffxivgame = new Process();
-                if (dx11) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                ffxivgame.StartInfo.Arguments = $"DEV.TestSID={realsid} DEV.MaxEntitledExpansionID={expansionlevel} language={language} region=3";
+                if (Settings.IsDX11()) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
+                ffxivgame.StartInfo.Arguments = $"DEV.TestSID={sessionId} DEV.MaxEntitledExpansionID={expansionLevel} language={Settings.GetLanguage()} region={region}";
                 ffxivgame.Start();
             }catch(Exception exc)
             {
@@ -35,43 +60,42 @@ namespace XIVLauncher
             }
         }
 
-        /// <summary>
-        /// Gets a real SessionID for the supplied credentials.
-        /// </summary>
-        /// <param name="username">Sqare Enix ID</param>
-        /// <param name="password">Password</param>
-        /// <param name="otp">OTP</param>
-        /// <returns></returns>
-        public static string GetRealSid(string username, string password, string otp)
+        private static string GetBootVersionHash()
         {
-            string hashstr = "";
-            try
+            string result = "";
+
+            for (int i = 0; i < FilesToHash.Length; i++)
             {
-                hashstr = "ffxivboot.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot.exe") +
-                          ",ffxivboot64.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivboot64.exe") +
-                          ",ffxivlauncher.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher.exe") + 
-                          ",ffxivlauncher64.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivlauncher64.exe") + 
-                          ",ffxivupdater.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater.exe") +
-                          ",ffxivupdater64.exe/" + GenerateHash(Settings.GetGamePath() + "/boot/ffxivupdater64.exe"); //make the string of hashed files to prove game version//make the string of hashed files to prove game version
-            }
-            catch (Exception exc)
-            {
-                MessageBox.Show("Could not generate hashes. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButtons.OK);
+                result += $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GetGamePath(), "boot", FilesToHash[i]))}";
+
+                if (i != FilesToHash.Length - 1)
+                    result += ",";
             }
 
-            WebClient sidClient = new WebClient();
-            sidClient.Headers.Add("X-Hash-Check", "enabled");
-            sidClient.Headers.Add("user-agent", UserAgent);
-            sidClient.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3");
-            sidClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+            return result;
+        }
 
-            InitiateSslTrust();
+        private static string GetLobbySessionId(OauthLoginResult loginResult)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Headers.Add("X-Hash-Check", "enabled");
+                client.Headers.Add("user-agent", UserAgent);
+                client.Headers.Add("Referer", $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
+                client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-            var url = "https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() + "/" +
-                      GetSid(username, password, otp);
-            sidClient.UploadString(url, hashstr); //request real session id
+                InitiateSslTrust();
 
-            return sidClient.ResponseHeaders["X-Patch-Unique-Id"];
+                var url = "https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() +
+                          "/" + loginResult.SessionId;
+
+                client.UploadString(url, GetBootVersionHash());
+
+                if(client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
+                    return client.ResponseHeaders["X-Patch-Unique-Id"];
+                
+                throw new Exception("Could not validate game version.");
+            }
         }
 
 
@@ -87,16 +111,25 @@ namespace XIVLauncher
             return stored;
         }
 
-        public static string GetSid(string username, string password, string otp)
+        internal class OauthLoginResult
         {
-            using (WebClient loginData = new WebClient())
+            public string SessionId { get; set; }
+            public int Region { get; set; }
+            public bool TermsAccepted { get; set; }
+            public bool Playable { get; set; }
+            public int MaxExpansion { get; set; }
+        }
+
+        private static OauthLoginResult OauthLogin(string username, string password, string otp)
+        {
+            using (WebClient client = new WebClient())
             {
-                loginData.Headers.Add("user-agent", UserAgent);
-                loginData.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
-                loginData.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                client.Headers.Add("user-agent", UserAgent);
+                client.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
+                client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
                 byte[] response =
-                loginData.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send", new NameValueCollection() //get the session id with user credentials
+                client.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send", new NameValueCollection() //get the session id with user credentials
                 {
                     { "_STORED_", GetStored() },
                     { "sqexid", username },
@@ -106,9 +139,22 @@ namespace XIVLauncher
 
                 string reply = System.Text.Encoding.UTF8.GetString(response);
 
-                Regex sidre = new Regex(@"sid,(?<sid>.*),terms");
-                var sid = sidre.Matches(reply)[0].Groups["sid"].Value;
-                return sid;
+                var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
+                var matches = regex.Matches(reply);
+
+                if(matches.Count == 0)
+                    throw new Exception("Could not log in to oauth.");
+
+                var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
+                
+                return new OauthLoginResult
+                {
+                    SessionId = launchParams[1],
+                    Region = int.Parse(launchParams[5]),
+                    TermsAccepted = launchParams[3] != "0",
+                    Playable = launchParams[9] != "0",
+                    MaxExpansion = int.Parse(launchParams[13])
+                };
             }
         }
 
@@ -116,23 +162,19 @@ namespace XIVLauncher
         {
             try
             {
-                using (StreamReader sr = new StreamReader(Settings.GetGamePath()+@"/game/ffxivgame.ver"))
-                {
-                    string line = sr.ReadToEnd();
-                    return line;
-                }
+                return File.ReadAllText(Path.Combine(Settings.GetGamePath(), "game", "ffxivgame.ver"));
             }
-            catch (Exception e)
+            catch (Exception exc)
             {
-                return "0";
+                throw new Exception("Could not get local game version.", exc);
             }
         }
 
-        private static string GenerateHash(string file)
+        private static string GetFileHash(string file)
         {
-            byte[] filebytes = File.ReadAllBytes(file);
+            byte[] bytes = File.ReadAllBytes(file);
 
-            var hash = (new SHA1Managed()).ComputeHash(filebytes);
+            var hash = new SHA1Managed().ComputeHash(bytes);
             string hashstring = string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
 
             long length = new System.IO.FileInfo(file).Length;
@@ -153,9 +195,7 @@ namespace XIVLauncher
             }
             catch (Exception exc)
             {
-                MessageBox.Show("Failed getting gate status.\n\n" + exc, "Launch failed", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return false;
+                throw new Exception("Could not get gate status.", exc);
             }
 
         }
