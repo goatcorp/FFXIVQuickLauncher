@@ -39,7 +39,7 @@ namespace XIVLauncher
                     }
                     else
                     {
-                        XIVGame.LaunchGame(XIVGame.GetRealSid(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
+                        XIVGame.Login(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text);
                         Environment.Exit(0);
                     }
                 }
@@ -104,7 +104,7 @@ namespace XIVLauncher
             StatusLabel.Text = "Logging in...";
             try
             {
-                XIVGame.LaunchGame(XIVGame.GetRealSid(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text), Settings.GetLanguage(), Settings.IsDX11(), Settings.GetExpansionLevel());
+                XIVGame.Login(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text);
                 Environment.Exit(0);
             }
             catch(Exception exc)
@@ -141,7 +141,7 @@ It should contain the folders ""game"" and ""boot"".", "Select Game Path", Messa
                 Environment.Exit(0);
             }
 
-            DialogResult dxresult = MessageBox.Show("Do you want to use DirectX 11?", " ", MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            DialogResult dxresult = MessageBox.Show("Do you want to use DirectX 11?", "XIV Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
 
             if (dxresult == System.Windows.Forms.DialogResult.Yes) { Properties.Settings.Default["isdx11"] = true; } else { Properties.Settings.Default["isdx11"] = false; }
 
