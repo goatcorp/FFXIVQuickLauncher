@@ -36,11 +36,10 @@
             this.autoLoginCheckBox = new System.Windows.Forms.CheckBox();
             this.IDLabel = new System.Windows.Forms.Label();
             this.PWLabel = new System.Windows.Forms.Label();
-            this.OTPLabel = new System.Windows.Forms.Label();
-            this.OTPTextBox = new System.Windows.Forms.TextBox();
             this.StatusLabel = new System.Windows.Forms.Label();
             this.GamePathDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.QueueButton = new System.Windows.Forms.Button();
+            this.otpCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // IDTextBox
@@ -120,24 +119,6 @@
             this.PWLabel.TabIndex = 7;
             this.PWLabel.Text = "Password";
             // 
-            // OTPLabel
-            // 
-            this.OTPLabel.AutoSize = true;
-            this.OTPLabel.Location = new System.Drawing.Point(12, 89);
-            this.OTPLabel.Name = "OTPLabel";
-            this.OTPLabel.Size = new System.Drawing.Size(29, 13);
-            this.OTPLabel.TabIndex = 9;
-            this.OTPLabel.Text = "OTP";
-            // 
-            // OTPTextBox
-            // 
-            this.OTPTextBox.Location = new System.Drawing.Point(99, 87);
-            this.OTPTextBox.MaxLength = 6;
-            this.OTPTextBox.Name = "OTPTextBox";
-            this.OTPTextBox.Size = new System.Drawing.Size(129, 20);
-            this.OTPTextBox.TabIndex = 2;
-            this.OTPTextBox.UseSystemPasswordChar = true;
-            // 
             // StatusLabel
             // 
             this.StatusLabel.AutoSize = true;
@@ -163,16 +144,25 @@
             this.QueueButton.UseVisualStyleBackColor = true;
             this.QueueButton.Click += new System.EventHandler(this.QueueButton_Click);
             // 
+            // otpCheckBox
+            // 
+            this.otpCheckBox.AutoSize = true;
+            this.otpCheckBox.Location = new System.Drawing.Point(40, 96);
+            this.otpCheckBox.Name = "otpCheckBox";
+            this.otpCheckBox.Size = new System.Drawing.Size(139, 17);
+            this.otpCheckBox.TabIndex = 12;
+            this.otpCheckBox.Text = "use one-time passwords";
+            this.otpCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.loginButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(243, 272);
+            this.Controls.Add(this.otpCheckBox);
             this.Controls.Add(this.QueueButton);
             this.Controls.Add(this.StatusLabel);
-            this.Controls.Add(this.OTPLabel);
-            this.Controls.Add(this.OTPTextBox);
             this.Controls.Add(this.PWLabel);
             this.Controls.Add(this.IDLabel);
             this.Controls.Add(this.autoLoginCheckBox);
@@ -200,11 +190,10 @@
         private System.Windows.Forms.CheckBox autoLoginCheckBox;
         private System.Windows.Forms.Label IDLabel;
         private System.Windows.Forms.Label PWLabel;
-        private System.Windows.Forms.Label OTPLabel;
-        private System.Windows.Forms.TextBox OTPTextBox;
         private System.Windows.Forms.Label StatusLabel;
         private System.Windows.Forms.FolderBrowserDialog GamePathDialog;
         private System.Windows.Forms.Button QueueButton;
+        private System.Windows.Forms.CheckBox otpCheckBox;
     }
 }
 

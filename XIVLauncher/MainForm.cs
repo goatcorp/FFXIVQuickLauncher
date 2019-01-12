@@ -14,6 +14,7 @@ namespace XIVLauncher
             {
                 IDTextBox.Text = Properties.Settings.Default.savedid;
                 PWTextBox.Text = Properties.Settings.Default.savedpw;
+                otpCheckBox.Checked = Properties.Settings.Default.otprequired;
                 saveCheckBox.Checked = true;
             }
 
@@ -39,7 +40,7 @@ namespace XIVLauncher
                     }
                     else
                     {
-                        XIVGame.Login(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text);
+                        XIVGame.Login(IDTextBox.Text, PWTextBox.Text, "");
                         Environment.Exit(0);
                     }
                 }
@@ -78,6 +79,8 @@ namespace XIVLauncher
             {
                 Properties.Settings.Default["savedid"] = IDTextBox.Text;
                 Properties.Settings.Default["savedpw"] = PWTextBox.Text;
+                Properties.Settings.Default.otprequired = otpCheckBox.Checked;
+
                 if (autoLoginCheckBox.Checked)
                 {
                     DialogResult result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButtons.YesNo);
@@ -100,11 +103,24 @@ namespace XIVLauncher
                 Properties.Settings.Default["savedpw"] = "";
                 Properties.Settings.Default.Save();
             }
+            if (otpCheckBox.Checked)
+            {
+                OTPForm otpForm = new OTPForm();
+                otpForm.ShowDialog();
+                if (otpForm.Success)
+                {
+                    Close();
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             StatusLabel.Text = "Logging in...";
             try
             {
-                XIVGame.Login(IDTextBox.Text, PWTextBox.Text, OTPTextBox.Text);
+                XIVGame.Login(IDTextBox.Text, PWTextBox.Text, "");
                 Environment.Exit(0);
             }
             catch(Exception exc)
