@@ -74,6 +74,12 @@
     <Compile Include="OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="OTPForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OTPForm.Designer.cs">
+      <DependentUpon>OTPForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflector.cs" />
@@ -87,6 +93,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OTPForm.resx">
+      <DependentUpon>OTPForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
