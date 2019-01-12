@@ -52,7 +52,7 @@ namespace XIVLauncher
             try {
                 Process ffxivgame = new Process();
                 if (Settings.IsDX11()) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                ffxivgame.StartInfo.Arguments = $"DEV.TestSID={sessionId} DEV.MaxEntitledExpansionID={expansionLevel} language={Settings.GetLanguage()} region={region}";
+                ffxivgame.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={Settings.GetLanguage()} ver={GetLocalGamever()}";
                 ffxivgame.Start();
             }catch(Exception exc)
             {
