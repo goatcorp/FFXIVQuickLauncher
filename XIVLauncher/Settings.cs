@@ -1,9 +1,25 @@
-﻿using System.Security.Principal;
+﻿using System.Net;
+using System.Security.Principal;
+using AdysTech.CredentialManager;
 
 namespace XIVLauncher
 {
     static class Settings
     {
+        public static NetworkCredential GetCredentials(string app)
+        {
+            return CredentialManager.GetCredentials(app);
+        }
+
+        public static void SaveCredentials(string app, string username, string password)
+        {
+            CredentialManager.SaveCredentials(app, new NetworkCredential(username, password));
+        }
+
+        public static void ResetCredentials(string app)
+        {
+            CredentialManager.RemoveCredentials(app);
+        }
 
         public static string GetGamePath()
         {

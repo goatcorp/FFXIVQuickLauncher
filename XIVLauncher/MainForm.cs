@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Windows.Forms;
+using AdysTech.CredentialManager;
 using FolderSelect;
 
 namespace XIVLauncher
 {
     public partial class MainForm : Form
     {
+        private const string _appName = "FINAL FANTASY XIV";
+        
         public MainForm()
         {
             InitializeComponent();
 
-            if (Properties.Settings.Default.savedid != "")
+            var savedCredentials = CredentialManager.GetCredentials(_appName);
+
+            if (savedCredentials != null)
             {
-                IDTextBox.Text = Properties.Settings.Default.savedid;
-                PWTextBox.Text = Properties.Settings.Default.savedpw;
+                IDTextBox.Text = savedCredentials.UserName;
+                PWTextBox.Text = savedCredentials.Password;
                 otpCheckBox.Checked = Properties.Settings.Default.otprequired;
                 saveCheckBox.Checked = true;
             }
@@ -77,8 +82,7 @@ namespace XIVLauncher
 
             if (saveCheckBox.Checked)
             {
-                Properties.Settings.Default["savedid"] = IDTextBox.Text;
-                Properties.Settings.Default["savedpw"] = PWTextBox.Text;
+                Settings.SaveCredentials(_appName, IDTextBox.Text, PWTextBox.Text);
                 Properties.Settings.Default.otprequired = otpCheckBox.Checked;
 
                 if (autoLoginCheckBox.Checked)
@@ -99,10 +103,10 @@ namespace XIVLauncher
             }
             else
             {
-                Properties.Settings.Default["savedid"] = "";
-                Properties.Settings.Default["savedpw"] = "";
+                Settings.ResetCredentials(_appName);
                 Properties.Settings.Default.Save();
             }
+            
             if (otpCheckBox.Checked)
             {
                 OTPForm otpForm = new OTPForm();
