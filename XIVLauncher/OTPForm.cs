@@ -31,7 +31,8 @@ namespace XIVLauncher
             {
                 try
                 {
-                    XIVGame.Login(Properties.Settings.Default.savedid, Properties.Settings.Default.savedpw, otpField.Text);
+                    var credentials = Settings.GetCredentials(MainForm.AppName);
+                    XIVGame.Login(credentials.UserName, credentials.Password, otpField.Text);
                     Success = true;
                     Close();
                 }

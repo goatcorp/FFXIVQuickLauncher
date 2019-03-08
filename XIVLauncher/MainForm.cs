@@ -7,7 +7,7 @@ namespace XIVLauncher
 {
     public partial class MainForm : Form
     {
-        private const string AppName = "FINAL FANTASY XIV";
+        public const string AppName = "FINAL FANTASY XIV";
         
         public MainForm()
         {
