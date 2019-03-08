@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Security;
 using System.Windows.Forms;
 
 namespace XIVLauncher
@@ -33,14 +34,17 @@ namespace XIVLauncher
             }    
         }
 
-        public static GitHubCommit GetNewestCommit()
+        private static GitHubCommit GetNewestCommit()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            
             using (WebClient client = new WebClient())
             {
                 client.Headers.Add("User-Agent", "XIVMon");
                 var result =
                     client.DownloadString($"https://api.github.com/repos/{Repo}/commits");
                 
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
                 return GitHubCommit.FromJson(result)[0];
             }
         }

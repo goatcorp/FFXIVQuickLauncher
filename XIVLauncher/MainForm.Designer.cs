@@ -163,6 +163,7 @@ namespace XIVLauncher
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.ClientSize = new System.Drawing.Size(243, 272);
+            this.MaximizeBox = false;
             this.Controls.Add(this.otpCheckBox);
             this.Controls.Add(this.QueueButton);
             this.Controls.Add(this.StatusLabel);
