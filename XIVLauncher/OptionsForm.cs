@@ -13,6 +13,8 @@ namespace XIVLauncher
             dxCheckBox.Checked = Properties.Settings.Default.isdx11;
             comboBox1.SelectedIndex = Properties.Settings.Default.expansionlevel;
             pathLabel.Text = "Current Game Path:\n" + Properties.Settings.Default.gamepath;
+
+            this.Text += " - v" + Util.GetGitHash();
         }
 
         private void SaveButton_Click(object sender, EventArgs e)

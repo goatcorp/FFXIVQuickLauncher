@@ -12,6 +12,8 @@ namespace XIVLauncher
         public MainForm()
         {
             InitializeComponent();
+            
+            VersionChecker.CheckVersion();
 
             var savedCredentials = CredentialManager.GetCredentials(AppName);
 
