@@ -1,4 +1,6 @@
-﻿namespace XIVLauncher
+﻿using System.Windows.Forms;
+
+namespace XIVLauncher
 {
     partial class OptionsForm
     {
@@ -144,6 +146,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(371, 198);
+            this.StartPosition = FormStartPosition.CenterParent;
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.pathLabel);

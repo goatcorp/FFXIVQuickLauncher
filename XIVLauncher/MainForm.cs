@@ -7,13 +7,13 @@ namespace XIVLauncher
 {
     public partial class MainForm : Form
     {
-        private const string _appName = "FINAL FANTASY XIV";
+        private const string AppName = "FINAL FANTASY XIV";
         
         public MainForm()
         {
             InitializeComponent();
 
-            var savedCredentials = CredentialManager.GetCredentials(_appName);
+            var savedCredentials = CredentialManager.GetCredentials(AppName);
 
             if (savedCredentials != null)
             {
@@ -45,14 +45,13 @@ namespace XIVLauncher
                     }
                     else
                     {
-                        XIVGame.Login(IDTextBox.Text, PWTextBox.Text, "");
-                        Environment.Exit(0);
+                        DoLogin();
                     }
                 }
-                catch(Exception e)
+                catch(Exception exc)
                 {
                     this.Enabled = true;
-                    MessageBox.Show("Logging in failed, check your login information or try again.\n\n" + e, "Login failed", MessageBoxButtons.OK);
+                    Util.ShowError("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed");
                 }
             }
             else
@@ -62,7 +61,7 @@ namespace XIVLauncher
             }
         }
 
-        private void OpenOptions(object sender, EventArgs e)
+        private void OptionsButton_Click(object sender, EventArgs e)
         {
             this.Enabled = false;
             OptionsForm options = new OptionsForm();
@@ -70,24 +69,16 @@ namespace XIVLauncher
             this.Enabled = true;
         }
 
-        private void Login(object sender, EventArgs e)
+        private void LoginButton_Click(object sender, EventArgs e)
         {
-            if (!XIVGame.GetGateStatus())
-            {
-                MessageBox.Show(
-                    "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.");
-
-                return;
-            }
-
             if (saveCheckBox.Checked)
             {
-                Settings.SaveCredentials(_appName, IDTextBox.Text, PWTextBox.Text);
+                Settings.SaveCredentials(AppName, IDTextBox.Text, PWTextBox.Text);
                 Properties.Settings.Default.otprequired = otpCheckBox.Checked;
 
                 if (autoLoginCheckBox.Checked)
                 {
-                    DialogResult result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButtons.YesNo);
+                    var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButtons.YesNo);
 
                     if (result == System.Windows.Forms.DialogResult.No)
                     {
@@ -103,8 +94,30 @@ namespace XIVLauncher
             }
             else
             {
-                Settings.ResetCredentials(_appName);
+                Settings.ResetCredentials(AppName);
                 Properties.Settings.Default.Save();
+            }
+            
+            try
+            {
+                DoLogin();
+            }
+            catch(Exception exc)
+            {
+                Util.ShowError("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed");
+                StatusLabel.Text = "";
+                return;
+            }
+        }
+
+        private void DoLogin()
+        {
+            if (!XIVGame.GetGateStatus())
+            {
+                MessageBox.Show(
+                    "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.");
+
+                return;
             }
             
             if (otpCheckBox.Checked)
@@ -122,17 +135,9 @@ namespace XIVLauncher
             }
 
             StatusLabel.Text = "Logging in...";
-            try
-            {
-                XIVGame.Login(IDTextBox.Text, PWTextBox.Text, "");
-                Environment.Exit(0);
-            }
-            catch(Exception exc)
-            {
-                MessageBox.Show("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed", MessageBoxButtons.OK);
-                StatusLabel.Text = "";
-                return;
-            }
+            
+            XIVGame.Login(IDTextBox.Text, PWTextBox.Text, "");
+            Environment.Exit(0);
         }
 
         private void SaveBox_CheckedChanged(object sender, EventArgs e)
@@ -204,7 +209,7 @@ It should contain the folders ""game"" and ""boot"".", "Select Game Path", Messa
                 System.Threading.Thread.Sleep(30);
                 Console.Beep(529, 900);
 
-                Login(null, null);
+                LoginButton_Click(null, null);
             }
 
         }

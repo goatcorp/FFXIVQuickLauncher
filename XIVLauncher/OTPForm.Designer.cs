@@ -1,4 +1,6 @@
-﻿namespace XIVLauncher
+﻿using System.Windows.Forms;
+
+namespace XIVLauncher
 {
     partial class OTPForm
     {
@@ -43,6 +45,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.StartPosition = FormStartPosition.CenterParent;
             this.ClientSize = new System.Drawing.Size(284, 58);
             this.Controls.Add(this.otpField);
             this.MaximizeBox = false;

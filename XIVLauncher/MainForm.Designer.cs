@@ -1,4 +1,6 @@
-﻿namespace XIVLauncher
+﻿using System.Windows.Forms;
+
+namespace XIVLauncher
 {
     partial class MainForm
     {
@@ -67,7 +69,7 @@
             this.optionsButton.TabIndex = 4;
             this.optionsButton.Text = "Options";
             this.optionsButton.UseVisualStyleBackColor = true;
-            this.optionsButton.Click += new System.EventHandler(this.OpenOptions);
+            this.optionsButton.Click += new System.EventHandler(this.OptionsButton_Click);
             // 
             // loginButton
             // 
@@ -77,7 +79,7 @@
             this.loginButton.TabIndex = 3;
             this.loginButton.Text = "Login";
             this.loginButton.UseVisualStyleBackColor = true;
-            this.loginButton.Click += new System.EventHandler(this.Login);
+            this.loginButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // saveCheckBox
             // 
@@ -159,6 +161,7 @@
             this.AcceptButton = this.loginButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.ClientSize = new System.Drawing.Size(243, 272);
             this.Controls.Add(this.otpCheckBox);
             this.Controls.Add(this.QueueButton);

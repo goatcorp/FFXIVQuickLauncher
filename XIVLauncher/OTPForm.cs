@@ -35,10 +35,10 @@ namespace XIVLauncher
                     Success = true;
                     Close();
                 }
-                catch (Exception ex)
+                catch (Exception exc)
                 {
                     Success = false;
-                    MessageBox.Show("Logging in failed, check your login information or try again.\n\n" + e, "Login failed", MessageBoxButtons.OK);
+                    Util.ShowError("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed");
                     Properties.Settings.Default.autologin = false;
                     Close();
                 }
