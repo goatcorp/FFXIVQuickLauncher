@@ -1,0 +1,107 @@
+﻿<Window x:Class="XIVLauncher.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XIVLauncher"
+        xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="XIVLauncher Settings" Height="241.747" Width="533.495" WindowStartupLocation="CenterOwner"
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing">
+    <Grid>
+        <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="4" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
+            <TabItem Header="Game Path">
+                <Grid>
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
+                        Please select the folder your game is installed in.
+                        <LineBreak/>
+                        It should contain the folders "game" and "boot".
+                    </TextBlock>
+                    <local:FolderEntry x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="DirectX">
+                <Grid>
+                    <StackPanel Margin="10,10,0,0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" >
+                            Please select, which DirectX version you want to use.
+                        </TextBlock>
+
+                        <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton">DirectX 11</RadioButton>
+                        <RadioButton GroupName="dx">DirectX 9</RadioButton>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Expansions">
+                <Grid>
+                    <StackPanel Margin="10,10,10,0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" >
+                            Please select, which expansion you want to load the game with.
+                        </TextBlock>
+
+                        <ComboBox SelectedIndex="2" Margin="0, 5, 0, 0" x:Name="ExpansionLevelComboBox">
+                            <ComboBoxItem>A Realm Reborn</ComboBoxItem>
+                            <ComboBoxItem>Heavensward</ComboBoxItem>
+                            <ComboBoxItem>Stormblood</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Language">
+                <Grid>
+                    <StackPanel Margin="10,10,10,0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" >
+                            Please select, which language you want to load the game with.
+                        </TextBlock>
+
+                        <ComboBox SelectedIndex="1" Margin="0, 5, 0, 0" x:Name="LanguageComboBox">
+                            <ComboBoxItem>Japanese</ComboBoxItem>
+                            <ComboBoxItem>English</ComboBoxItem>
+                            <ComboBoxItem>German</ComboBoxItem>
+                            <ComboBoxItem>French</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Miscellaneous">
+                <Grid>
+                    <StackPanel Margin="10,10,10,0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="VersionLabel">
+                            FFXIVQuickLauncher
+                        </TextBlock>
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top">
+                            Made by goat.
+                        </TextBlock>
+
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                                x:Name="GitHubButton" Click="GitHubButton_OnClick" Margin="0 10 0 0">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="GithubCircle" />
+                                <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                                x:Name="BackupToolButton" Click="BackupToolButton_OnClick">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Wrench" />
+                                <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Start Backup Tool</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                                x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Launch" />
+                                <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Start Original Launcher</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </dragablz:TabablzControl>
+        <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="MaterialDesignFloatingActionMiniLightButton" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="AcceptButton_Click">
+            <materialDesign:PackIcon Kind="Check" Height="24" Width="24" />
+        </Button>
+    </Grid>
+</Window>

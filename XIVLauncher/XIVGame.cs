@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Windows;
 
 namespace XIVLauncher
 {
@@ -30,33 +30,42 @@ namespace XIVLauncher
 
             if (!loginResult.Playable)
             {
-                MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             if (!loginResult.TermsAccepted)
             {
-                MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             // Clamp the expansion level to what the account is allowed to access
             var expansionLevel = Math.Min(Math.Max(loginResult.MaxExpansion, 0), Settings.GetExpansionLevel());
-            var lobbySessionId = GetLobbySessionId(loginResult);
+            var (sid, needsUpdate) = RegisterSession(loginResult);
 
-            LaunchGame(lobbySessionId, loginResult.Region, expansionLevel);
+            if (needsUpdate)
+            {
+                MessageBox.Show(
+                    "Your game is out of date. Please start the official launcher and update it, before trying to log in.",
+                    "Out of date", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return;
+            }
+
+            LaunchGame(sid, loginResult.Region, expansionLevel);
         }
 
         private static void LaunchGame(string sessionId, int region, int expansionLevel)
         {
             try {
-                Process ffxivgame = new Process();
-                if (Settings.IsDX11()) { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { ffxivgame.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                ffxivgame.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={Settings.GetLanguage()} ver={GetLocalGamever()}";
-                ffxivgame.Start();
+                var game = new Process();
+                if (Settings.IsDX11()) { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
+                game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGamever()}";
+                game.Start();
             }catch(Exception exc)
             {
-                MessageBox.Show("Could not launch executable. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButtons.OK);
+                MessageBox.Show("Could not launch executable. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -75,7 +84,7 @@ namespace XIVLauncher
             return result;
         }
 
-        private static string GetLobbySessionId(OauthLoginResult loginResult)
+        private static (string Sid, bool NeedsUpdate) RegisterSession(OauthLoginResult loginResult)
         {
             using (WebClient client = new WebClient())
             {
@@ -89,10 +98,14 @@ namespace XIVLauncher
                 var url = "https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() +
                           "/" + loginResult.SessionId;
 
-                client.UploadString(url, GetBootVersionHash());
+                var result = client.UploadString(url, GetBootVersionHash());
 
-                if(client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
-                    return client.ResponseHeaders["X-Patch-Unique-Id"];
+                if (client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
+                {
+                    var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
+
+                    return (sid, result != string.Empty);
+                }
                 
                 throw new Exception("Could not validate game version.");
             }

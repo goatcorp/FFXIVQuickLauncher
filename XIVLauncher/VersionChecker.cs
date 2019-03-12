@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Security;
-using System.Windows.Forms;
+using System.Windows;
 
 namespace XIVLauncher
 {
@@ -27,7 +27,7 @@ namespace XIVLauncher
             {
                 MessageBox.Show(
                     "There is a new version available. Please download it from the github repo.",
-                    "New Version available", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                    "New Version available", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 
                 System.Diagnostics.Process.Start($"https://github.com/{Repo}/releases");
                 Environment.Exit(0);

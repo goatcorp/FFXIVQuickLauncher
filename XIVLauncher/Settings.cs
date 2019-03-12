@@ -18,27 +18,65 @@ namespace XIVLauncher
 
         public static void ResetCredentials(string app)
         {
-            CredentialManager.RemoveCredentials(app);
+            if (CredentialManager.GetCredentials(app) != null)
+            {
+                CredentialManager.RemoveCredentials(app);
+            }
         }
 
         public static string GetGamePath()
         {
-            return Properties.Settings.Default.gamepath;
+            return Properties.Settings.Default.GamePath;
         }
 
-        public static int GetLanguage()
+        public static void SetGamePath(string path)
         {
-            return System.Convert.ToInt32(Properties.Settings.Default.language);
+            Properties.Settings.Default.GamePath = path;
+        }
+
+        public static ClientLanguage GetLanguage()
+        {
+            return (ClientLanguage) Properties.Settings.Default.Language;
+        }
+
+        public static void SetLanguage(ClientLanguage language)
+        {
+            Properties.Settings.Default.Language = (int) language;
         }
 
         public static bool IsDX11()
         {
-            return System.Convert.ToBoolean(Properties.Settings.Default.isdx11);
+            return Properties.Settings.Default.IsDx11;
+        }
+
+        public static void SetDx11(bool value)
+        {
+            Properties.Settings.Default.IsDx11 = value;
+        }
+
+        public static bool IsAutologin()
+        {
+            return Properties.Settings.Default.AutoLogin;
+        }
+
+        public static void SetAutologin(bool value)
+        {
+            Properties.Settings.Default.AutoLogin = value;
         }
 
         public static int GetExpansionLevel()
         {
-            return Properties.Settings.Default.expansionlevel;
+            return Properties.Settings.Default.ExpansionLevel;
+        }
+
+        public static void SetExpansionLevel(int level)
+        {
+            Properties.Settings.Default.ExpansionLevel = level;
+        }
+
+        public static void Save()
+        {
+            Properties.Settings.Default.Save();
         }
 
         public static bool IsAdministrator()

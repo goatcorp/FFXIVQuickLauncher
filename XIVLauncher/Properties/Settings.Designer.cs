@@ -12,7 +12,7 @@ namespace XIVLauncher.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,85 +25,73 @@ namespace XIVLauncher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool isdx11 {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GamePath {
             get {
-                return ((bool)(this["isdx11"]));
+                return ((string)(this["GamePath"]));
             }
             set {
-                this["isdx11"] = value;
+                this["GamePath"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string gamepath {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsDx11 {
             get {
-                return ((string)(this["gamepath"]));
+                return ((bool)(this["IsDx11"]));
             }
             set {
-                this["gamepath"] = value;
+                this["IsDx11"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int language {
+        public int Language {
             get {
-                return ((int)(this["language"]));
+                return ((int)(this["Language"]));
             }
             set {
-                this["language"] = value;
+                this["Language"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int ExpansionLevel {
+            get {
+                return ((int)(this["ExpansionLevel"]));
+            }
+            set {
+                this["ExpansionLevel"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool autologin {
+        public bool NeedsOtp {
             get {
-                return ((bool)(this["autologin"]));
+                return ((bool)(this["NeedsOtp"]));
             }
             set {
-                this["autologin"] = value;
+                this["NeedsOtp"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool setupcomplete {
+        public bool AutoLogin {
             get {
-                return ((bool)(this["setupcomplete"]));
+                return ((bool)(this["AutoLogin"]));
             }
             set {
-                this["setupcomplete"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int expansionlevel {
-            get {
-                return ((int)(this["expansionlevel"]));
-            }
-            set {
-                this["expansionlevel"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool otprequired {
-            get {
-                return ((bool)(this["otprequired"]));
-            }
-            set {
-                this["otprequired"] = value;
+                this["AutoLogin"] = value;
             }
         }
     }
