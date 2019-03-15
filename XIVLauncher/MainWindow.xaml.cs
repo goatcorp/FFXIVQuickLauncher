@@ -39,10 +39,12 @@ namespace XIVLauncher
         {
             InitializeComponent();
 
+            #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 Util.ShowError("An unknown error occured. Please report this error on GitHub.\n\n" + args.ExceptionObject, "Unknown Error");
             };
+            #endif
 
             try
             {
@@ -66,7 +68,8 @@ namespace XIVLauncher
             {
                 LoginUsername.Text = savedCredentials.UserName;
                 LoginPassword.Password = savedCredentials.Password;
-                OtpCheckBox.IsChecked = Properties.Settings.Default.NeedsOtp;
+                OtpCheckBox.IsChecked = Settings.NeedsOtp();
+                AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
                 SaveLoginCheckBox.IsChecked = true;
             }
 
@@ -78,19 +81,23 @@ namespace XIVLauncher
                     {
                         MessageBox.Show(
                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.");
+                        Settings.SetAutologin(false);
                     }
                     else
                     {
-                        LoginButton_Click(null, null);
+                        HandleLogin(true);
                     }
                 }
                 catch(Exception exc)
                 {
                     Util.ShowError("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed");
+                    Settings.SetAutologin(false);
                 }
+
+                Settings.Save();
             }
 
-            if(Properties.Settings.Default.GamePath == string.Empty)
+            if(Settings.GetGamePath() == string.Empty)
             {
                 var setup = new FirstTimeSetup();
                 setup.ShowDialog();
@@ -157,6 +164,11 @@ namespace XIVLauncher
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            HandleLogin(false);
+        }
+
+        private void HandleLogin(bool autoLogin)
+        {
             OtpTextBox.Text = "";
 
             if (OtpCheckBox.IsChecked == true)
@@ -167,41 +179,44 @@ namespace XIVLauncher
             if (SaveLoginCheckBox.IsChecked == true)
             {
                 Settings.SaveCredentials(AppName, LoginUsername.Text, LoginPassword.Password);
-                Properties.Settings.Default.NeedsOtp = OtpCheckBox.IsChecked == true;
+                Settings.SetNeedsOtp(OtpCheckBox.IsChecked == true);
 
-                if (AutoLoginCheckBox.IsChecked == true)
+                if (!autoLogin)
                 {
-                    var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
-
-                    if (result == MessageBoxResult.No)
+                    if (AutoLoginCheckBox.IsChecked == true)
                     {
-                        AutoLoginCheckBox.IsChecked = false;
+                        var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
+
+                        if (result == MessageBoxResult.No)
+                        {
+                            AutoLoginCheckBox.IsChecked = false;
+
+                        }
+                        else
+                        {
+                            Settings.SetAutologin(true);
+                        }
 
                     }
                     else
                     {
-                        Properties.Settings.Default.AutoLogin = true;
+                        AutoLoginCheckBox.IsChecked = false;
                     }
-
-                }
-                else
-                {
-                    Properties.Settings.Default.AutoLogin = false;
                 }
 
-                Properties.Settings.Default.Save();
+                Settings.Save();
             }
             else
             {
                 Settings.ResetCredentials(AppName);
-                Properties.Settings.Default.Save();
+                Settings.Save();
             }
             
             try
             {
                 if (OtpCheckBox.IsChecked == false)
                 {
-                    DoLogin();
+                    StartGame();
                 }
             }
             catch(Exception exc)
@@ -211,7 +226,7 @@ namespace XIVLauncher
             }
         }
 
-        private void DoLogin()
+        private void StartGame()
         {
             if (!XIVGame.GetGateStatus())
             {
@@ -335,7 +350,7 @@ namespace XIVLauncher
             if (OtpTextBox.Text.Length > 5)
             {
                 DialogHost.CloseDialogCommand.Execute(null, OtpDialogHost);
-                DoLogin();
+                StartGame();
             }
         }
     }

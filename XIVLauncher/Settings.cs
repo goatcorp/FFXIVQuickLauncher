@@ -64,6 +64,16 @@ namespace XIVLauncher
             Properties.Settings.Default.AutoLogin = value;
         }
 
+        public static bool NeedsOtp()
+        {
+            return Properties.Settings.Default.NeedsOtp;
+        }
+
+        public static void SetNeedsOtp(bool value)
+        {
+            Properties.Settings.Default.NeedsOtp = value;
+        }
+
         public static int GetExpansionLevel()
         {
             return Properties.Settings.Default.ExpansionLevel;
