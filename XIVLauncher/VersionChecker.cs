@@ -11,10 +11,7 @@ namespace XIVLauncher
 
         public static void CheckVersion()
         {
-#if DEBUG
-            return;
-#endif
-            
+#if !DEBUG
             var currentHash = Util.GetGitHash();
 
             // If this is a working copy, don't alert about new versions
@@ -31,7 +28,8 @@ namespace XIVLauncher
                 
                 System.Diagnostics.Process.Start($"https://github.com/{Repo}/releases");
                 Environment.Exit(0);
-            }    
+            }
+#endif
         }
 
         private static GitHubCommit GetNewestCommit()
