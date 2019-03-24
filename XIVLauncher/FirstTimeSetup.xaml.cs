@@ -43,6 +43,11 @@ namespace XIVLauncher
                 }
             }
 
+            if(SetupTabControl.SelectedIndex == 2)
+            {
+                ExpansionLevelComboBox.SelectedIndex = ExpansionLevelComboBox.Items.Count-1;
+            }
+
             if (SetupTabControl.SelectedIndex == 3)
             {
                 Settings.SetGamePath(GamePathEntry.Text);
