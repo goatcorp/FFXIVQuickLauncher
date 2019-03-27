@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,9 @@ namespace XIVLauncher
 
         public static bool IsValidFFXIVPath(string path)
         {
+            if (String.IsNullOrEmpty(path))
+                return false;
+
             return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
         }
 
