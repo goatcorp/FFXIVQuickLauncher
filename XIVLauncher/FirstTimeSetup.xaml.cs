@@ -20,8 +20,6 @@ namespace XIVLauncher
     /// </summary>
     public partial class FirstTimeSetup : Window
     {
-        private int _step = 0;
-
         public FirstTimeSetup()
         {
             InitializeComponent();

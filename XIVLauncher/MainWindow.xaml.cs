@@ -412,5 +412,13 @@ namespace XIVLauncher
                 StartGame();
             }
         }
+
+        private void Card_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Return)
+            {
+                HandleLogin(false);
+            }
+        }
     }
 }

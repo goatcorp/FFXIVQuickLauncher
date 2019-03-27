@@ -111,7 +111,7 @@
                                  PreviewTextInput="OtpTextBox_OnPreviewTextInput" TextChanged="OtpTextBox_OnTextChanged"  MaxLength="6" x:Name="OtpTextBox" />
                     </StackPanel>
                 </materialDesign:DialogHost.DialogContent>
-                <materialDesign:Card Margin="559,10,0,0" Height="213" HorizontalAlignment="Left" Width="192">
+                <materialDesign:Card Margin="559,10,0,0" Height="213" HorizontalAlignment="Left" Width="192" KeyDown="Card_KeyDown">
                     <Grid VerticalAlignment="Stretch" Margin="-122,-38,-114,-51">
                         <TextBox x:Name="LoginUsername" HorizontalAlignment="Left" Height="23" Margin="155,65,0,0"
                                  TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
