@@ -7,7 +7,7 @@
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="XIVLauncher Settings" Height="241.747" Width="533.495" WindowStartupLocation="CenterOwner"
+        Title="XIVLauncher Settings" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing">
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="4" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
@@ -64,7 +64,7 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Miscellaneous">
+            <TabItem Header="About">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="VersionLabel">

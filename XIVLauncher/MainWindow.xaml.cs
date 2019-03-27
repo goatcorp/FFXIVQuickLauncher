@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AdysTech.CredentialManager;
+using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
 using XIVLauncher;
 using Color = System.Windows.Media.Color;
@@ -27,8 +28,8 @@ namespace XIVLauncher
     public partial class MainWindow : Window
     {
         private System.Timers.Timer _bannerChangeTimer;
-        private readonly Headlines _headlines;
-        private readonly BitmapImage[] _bannerBitmaps;
+        private Headlines _headlines;
+        private BitmapImage[] _bannerBitmaps;
         private int _currentBannerIndex = 0;
 
         private System.Timers.Timer _maintenanceQueueTimer;
@@ -39,22 +40,39 @@ namespace XIVLauncher
         {
             InitializeComponent();
 
+            this.Visibility = Visibility.Hidden;
+
+            // Upgrade the stored settings if needed
+            if (Properties.Settings.Default.UpgradeRequired)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
+
             #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 Util.ShowError("An unknown error occured. Please report this error on GitHub.\n\n" + args.ExceptionObject, "Unknown Error");
             };
+
+            AutoUpdater.ShowSkipButton = false;
+            AutoUpdater.ShowRemindLaterButton = false;
+            AutoUpdater.Mandatory = true;
+            AutoUpdater.UpdateMode = Mode.Forced;
+
+            AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
+
+            AutoUpdater.Start("https://goaaats.github.io/ffxiv/tools/launcher/update.xml");
+            #else
+            InitializeWindow();
             #endif
 
-            try
-            {
-                VersionChecker.CheckVersion();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            this.Title += " v" + Util.GetAssemblyVersion();
+        }
 
+        private void InitializeWindow()
+        {
             var gateStatus = XIVGame.GetGateStatus();
 
             if (!gateStatus)
@@ -153,6 +171,47 @@ namespace XIVLauncher
                     Title = "Could not download news data.",
                     Tag = "DlError"
                 });
+            }
+
+            this.Visibility = Visibility.Visible;
+        }
+
+        private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
+        {
+            if (args != null)
+            {
+                if (args.IsUpdateAvailable)
+                {
+                    try
+                    {
+                        MessageBox.Show("An update is available. It will now be downloaded, the application will restart.",
+                            "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+
+                        if (AutoUpdater.DownloadUpdate())
+                        {
+                            Environment.Exit(0);
+                        }
+                        else
+                        {
+                            Util.ShowError($"Could not download update. Please try again later.", "Update failed");
+                            Environment.Exit(0);
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        Util.ShowError($"Update failed. Please report this error and try again later. \n\n{exc}", "Update failed");
+                        Environment.Exit(0);
+                    }
+                }
+                else
+                {
+                    InitializeWindow();
+                }
+            }
+            else
+            {
+                Util.ShowError($"Could not check for updates. Please try again later.", "Update failed");
+                Environment.Exit(0);
             }
         }
 
