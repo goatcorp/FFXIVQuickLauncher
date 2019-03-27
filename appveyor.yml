@@ -28,19 +28,3 @@ before_build:
 build:
   project: XIVLauncher.sln
   verbosity: minimal
-
-after_build:
-- cmd: >-
-    7z a XIVLauncher-%APPVEYOR_REPO_BRANCH%-b%APPVEYOR_BUILD_NUMBER%-%GIT_HASH%.zip .\XIVLauncher\bin\Release\* -mx=7
-
-artifacts:
-- path: XIVLauncher-$(APPVEYOR_REPO_BRANCH)-b$(APPVEYOR_BUILD_NUMBER)-$(GIT_HASH).zip
-  name: XIVLauncher
-
-deploy:
-- provider: GitHub
-  release: $(APPVEYOR_BUILD_VERSION)
-  description: ""
-  artifact: XIVLauncher
-  auth_token:
-   secure: sK0IFC1Nr/kDN0C3RsPwe/uLR9/5ZxVhpXuosQxarP5QRNV4xKyDRAJY4PJBgsbu

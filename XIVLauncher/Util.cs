@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -21,6 +22,13 @@ namespace XIVLauncher
             var asm = typeof(Util).Assembly;
             var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
             return attrs.FirstOrDefault(a => a.Key == "GitHash")?.Value;
+        }
+
+        public static string GetAssemblyVersion()
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fvi.FileVersion;
         }
 
         public static bool IsValidFFXIVPath(string path)

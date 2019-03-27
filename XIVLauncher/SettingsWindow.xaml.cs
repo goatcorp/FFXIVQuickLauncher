@@ -31,7 +31,7 @@ namespace XIVLauncher
             ExpansionLevelComboBox.SelectedIndex = Settings.GetExpansionLevel();
             LanguageComboBox.SelectedIndex = (int) Settings.GetLanguage();
 
-            VersionLabel.Text += " - " + Util.GetGitHash();
+            VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
         }
 
         private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)
