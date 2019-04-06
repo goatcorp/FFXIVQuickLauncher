@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using XIVLauncher;
+using Microsoft.Win32;
+using XIVLauncher.Addon;
 
 namespace XIVLauncher
 {
@@ -32,6 +22,34 @@ namespace XIVLauncher
             }
         }
 
+        private string FindAct()
+        {
+            try
+            {
+                RegistryKey parentKey =
+                    Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall");
+
+                var nameList = parentKey.GetSubKeyNames();
+                foreach (var name in nameList)
+                {
+                    var regKey = parentKey.OpenSubKey(name);
+
+                    var value = regKey.GetValue("DisplayName");
+                    if (value != null && value.ToString() == "Advanced Combat Tracker (remove only)")
+                    {
+                        return System.IO.Path.GetDirectoryName(regKey.GetValue("UninstallString").ToString()
+                            .Replace("\"", string.Empty));
+                    }
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (SetupTabControl.SelectedIndex == 0)
@@ -43,12 +61,51 @@ namespace XIVLauncher
                 }
             }
 
-            if (SetupTabControl.SelectedIndex == 3)
+            if (SetupTabControl.SelectedIndex == 4)
+            {
+                // Check if ACT is installed, if it isn't, just skip this step
+                var actPath = FindAct();
+
+                if (actPath == null)
+                {
+                    SetupTabControl.SelectedIndex++;
+                    NextButton_Click(null, null);
+                    return;
+                }
+            }
+
+            if (SetupTabControl.SelectedIndex == 5)
             {
                 Settings.SetGamePath(GamePathEntry.Text);
                 Settings.SetDx11(Dx11RadioButton.IsChecked == true);
                 Settings.SetExpansionLevel(ExpansionLevelComboBox.SelectedIndex);
                 Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
+
+                var addonList = new List<AddonEntry>()
+                {
+                    new AddonEntry()
+                    {
+                        Addon = new RichPresenceAddon(),
+                        IsEnabled = RichPresenceCheckBox.IsChecked == true
+                    }
+                };
+
+                if (ActCheckBox.IsChecked == true)
+                {
+                    var actPath = FindAct();
+
+                    addonList.Add(new AddonEntry()
+                    {
+                        IsEnabled = true,
+                        Addon = new GenericAddon()
+                        {
+                            Path = actPath
+                        }
+                    });
+                }
+
+                Settings.SetAddonList(addonList);
+
                 Settings.Save();
                 Close();
             }

@@ -1,5 +1,5 @@
 # XIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher)
-A faster launcher for Final Fantasy XIV. Supports auto-login.
+A faster launcher for Final Fantasy XIV. Features auto-login and launching addons like Discord Rich Presence and ACT.
 
 ![Screenshot](https://i.imgur.com/djzHDbu.png)
 

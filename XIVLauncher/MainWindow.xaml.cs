@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AdysTech.CredentialManager;
 using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
-using XIVLauncher;
 using Color = System.Windows.Media.Color;
 
 namespace XIVLauncher
@@ -49,6 +41,8 @@ namespace XIVLauncher
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
             }
+
+            Properties.Settings.Default.Reset();
 
             #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
@@ -135,6 +129,8 @@ namespace XIVLauncher
 
                     _bannerBitmaps[i] = bitmap;
                 }
+
+                BannerImage.Source = _bannerBitmaps[0];
 
                 _bannerChangeTimer = new System.Timers.Timer
                 {
@@ -285,6 +281,14 @@ namespace XIVLauncher
             }
         }
 
+        private void StartAddons()
+        {
+            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true))
+            {
+                addonEntry.Addon.Run();
+            }
+        }
+
         private void StartGame()
         {
             if (!XIVGame.GetGateStatus())
@@ -298,6 +302,8 @@ namespace XIVLauncher
             try
             {
                 XIVGame.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text);
+                StartAddons();
+
                 Environment.Exit(0);
             }
             catch(Exception exc)
@@ -387,6 +393,7 @@ namespace XIVLauncher
                     Console.Beep(529, 900);
 
                     this.Dispatcher.BeginInvoke(new Action(() => LoginButton_Click(null, null)));
+                    _maintenanceQueueTimer.Stop();
                     return;
                 }
 

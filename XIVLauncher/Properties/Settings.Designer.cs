@@ -106,5 +106,17 @@ namespace XIVLauncher.Properties {
                 this["UpgradeRequired"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[]")]
+        public string Addons {
+            get {
+                return ((string)(this["Addons"]));
+            }
+            set {
+                this["Addons"] = value;
+            }
+        }
     }
 }

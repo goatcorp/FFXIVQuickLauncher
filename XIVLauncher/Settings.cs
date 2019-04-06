@@ -1,6 +1,9 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Security.Principal;
 using AdysTech.CredentialManager;
+using Newtonsoft.Json;
+using XIVLauncher.Addon;
 
 namespace XIVLauncher
 {
@@ -84,6 +87,45 @@ namespace XIVLauncher
             Properties.Settings.Default.ExpansionLevel = level;
         }
 
+        public static List<AddonEntry> GetAddonList()
+        {
+            var addonList = Properties.Settings.Default.Addons;
+
+            if(string.IsNullOrEmpty(addonList))
+                return new List<AddonEntry>()
+                {
+                    new AddonEntry()
+                    {
+                        Addon = new RichPresenceAddon(),
+                        IsEnabled = false
+                    }
+                };
+
+            var list = JsonConvert.DeserializeObject<List<AddonEntry>>(addonList, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            });
+
+            if(list.Count == 0)
+                list.Add(new AddonEntry()
+                {
+                    Addon = new RichPresenceAddon(),
+                    IsEnabled = false
+                });
+
+            return list;
+        }
+
+        public static void SetAddonList(List<AddonEntry> list)
+        {
+            Properties.Settings.Default.Addons = JsonConvert.SerializeObject(list, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple
+            });
+
+        }
+
         public static void Save()
         {
             Properties.Settings.Default.Save();
@@ -94,7 +136,5 @@ namespace XIVLauncher
             return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
                     .IsInRole(WindowsBuiltInRole.Administrator);
         }
-
-
     }
 }
