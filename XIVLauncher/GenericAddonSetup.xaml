@@ -7,7 +7,11 @@
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         mc:Ignorable="d"
         Title="Add generic addon" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
-        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize">
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
     <Grid>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
             Please select the application that should be started, any additional parameters and

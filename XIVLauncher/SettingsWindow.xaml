@@ -9,39 +9,43 @@
         xmlns:Addon="clr-namespace:XIVLauncher.Addon"
         mc:Ignorable="d"
         Title="XIVLauncher Settings" Height="311.675" Width="533.495" WindowStartupLocation="CenterScreen"
-        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing">
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="6" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
             <TabItem Header="Game Path">
                 <Grid>
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}">
                         Please select the folder your game is installed in.
                         <LineBreak/>
                         It should contain the folders "game" and "boot".
                     </TextBlock>
-                    <local:FolderEntry x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <local:FolderEntry x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="DirectX">
                 <Grid>
                     <StackPanel Margin="10,10,0,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" >
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Please select, which DirectX version you want to use.
                         </TextBlock>
 
-                        <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton">DirectX 11</RadioButton>
-                        <RadioButton GroupName="dx">DirectX 9</RadioButton>
+                        <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
+                        <RadioButton GroupName="dx" Foreground="{DynamicResource MaterialDesignBody}">DirectX 9</RadioButton>
                     </StackPanel>
                 </Grid>
             </TabItem>
             <TabItem Header="Expansions">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" >
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Please select, which expansion you want to load the game with.
                         </TextBlock>
 
-                        <ComboBox SelectedIndex="2" Margin="0, 5, 0, 0" x:Name="ExpansionLevelComboBox">
+                        <ComboBox SelectedIndex="2" Margin="0, 5, 0, 0" x:Name="ExpansionLevelComboBox" Foreground="{DynamicResource MaterialDesignBody}">
                             <ComboBoxItem>A Realm Reborn</ComboBoxItem>
                             <ComboBoxItem>Heavensward</ComboBoxItem>
                             <ComboBoxItem>Stormblood</ComboBoxItem>
@@ -52,11 +56,11 @@
             <TabItem Header="Language">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" >
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Please select, which language you want to load the game with.
                         </TextBlock>
 
-                        <ComboBox SelectedIndex="1" Margin="0, 5, 0, 0" x:Name="LanguageComboBox">
+                        <ComboBox SelectedIndex="1" Margin="0, 5, 0, 0" x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
                             <ComboBoxItem>Japanese</ComboBoxItem>
                             <ComboBoxItem>English</ComboBoxItem>
                             <ComboBoxItem>German</ComboBoxItem>
@@ -68,7 +72,7 @@
             <TabItem Header="Addons">
                 <Grid>
                     <Grid Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" >
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Addons are applications that are loaded as soon as the game has started.
                         </TextBlock>
 
@@ -82,8 +86,8 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate DataType="{x:Type Addon:AddonEntry}">
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding IsEnabled}" Checked="ToggleButton_OnChecked"/>
-                                        <TextBlock Text="{Binding Addon.Name}" Margin="10,0,0,0"></TextBlock>
+                                        <CheckBox IsChecked="{Binding IsEnabled}" Checked="ToggleButton_OnChecked" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                        <TextBlock Text="{Binding Addon.Name}" Margin="10,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -96,10 +100,10 @@
             <TabItem Header="About">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="VersionLabel">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="VersionLabel" Foreground="{DynamicResource MaterialDesignBody}">
                             FFXIVQuickLauncher
                         </TextBlock>
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Made by goat.
                         </TextBlock>
 

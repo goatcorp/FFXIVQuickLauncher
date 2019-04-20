@@ -30,6 +30,14 @@ namespace XIVLauncher
         
         public MainWindow()
         {
+            // Check if dark mode is enabled on windows, if yes, load the dark theme
+            var themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml", UriKind.RelativeOrAbsolute);
+            if(Util.IsWindowsDarkModeEnabled())
+                themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml", UriKind.RelativeOrAbsolute);
+
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
+
+
             InitializeComponent();
 
             this.Visibility = Visibility.Hidden;
@@ -41,8 +49,6 @@ namespace XIVLauncher
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
             }
-
-            Properties.Settings.Default.Reset();
 
             #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>

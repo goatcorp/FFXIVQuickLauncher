@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace XIVLauncher
 {
@@ -53,6 +54,11 @@ namespace XIVLauncher
             }
 
             return null;
+        }
+
+        public static bool IsWindowsDarkModeEnabled()
+        {
+            return (int) Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 0x1) == 0x0;
         }
     }
 }

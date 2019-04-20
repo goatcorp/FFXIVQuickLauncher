@@ -8,7 +8,11 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="XIVLauncher" Height="375.923" Width="767.699" ResizeMode="CanMinimize"
-        Icon="pack://application:,,,/Resources/dalamud_icon.ico">
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
 
     <Grid>
 
