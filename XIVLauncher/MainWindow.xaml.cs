@@ -304,10 +304,20 @@ namespace XIVLauncher
 
         private void StartGame()
         {
-            if (!XIVGame.GetGateStatus())
+            var gateStatus = false;
+            try
+            {
+                gateStatus = XIVGame.GetGateStatus();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            if (!gateStatus)
             {
                 MessageBox.Show(
-                    "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.", "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    "Square Enix seems to be running maintenance work right now or the login server is unreachable. The game shouldn't be launched.", "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
                 return;
             }
@@ -387,7 +397,17 @@ namespace XIVLauncher
 
             _maintenanceQueueTimer.Elapsed += (o, args) =>
             {
-                if (XIVGame.GetGateStatus())
+                var gateStatus = false;
+                try
+                {
+                    gateStatus = XIVGame.GetGateStatus();
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                if (gateStatus)
                 {
                     Console.Beep(529, 130);
                     System.Threading.Thread.Sleep(200);
