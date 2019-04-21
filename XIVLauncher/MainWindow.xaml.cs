@@ -72,7 +72,15 @@ namespace XIVLauncher
 
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
 
-            var gateStatus = XIVGame.GetGateStatus();
+            var gateStatus = false;
+            try
+            {
+                gateStatus = XIVGame.GetGateStatus();
+            }
+            catch
+            {
+                // ignored
+            }
 
             if (!gateStatus)
             {
