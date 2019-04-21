@@ -193,7 +193,7 @@ namespace XIVLauncher
                 {
                     try
                     {
-                        MessageBox.Show("An update is available. It will now be downloaded, the application will restart.",
+                        MessageBox.Show("An update for XIVLauncher is available. It will now be downloaded, the application will restart.",
                             "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
                         if (AutoUpdater.DownloadUpdate())
