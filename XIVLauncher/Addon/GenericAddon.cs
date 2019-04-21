@@ -11,6 +11,10 @@ namespace XIVLauncher.Addon
     {
         public void Run()
         {
+            // If there already is a process like this running - we don't need to spawn another one.
+            if (Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(Path)).Any())
+                return;
+
             var process = new Process {StartInfo = {FileName = Path, Arguments = CommandLine}};
 
             if (RunAsAdmin)
