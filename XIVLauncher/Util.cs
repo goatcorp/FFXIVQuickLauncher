@@ -62,7 +62,16 @@ namespace XIVLauncher
 
         public static bool IsWindowsDarkModeEnabled()
         {
-            return (int) Registry.GetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", 0x1) == 0x0;
+            try
+            {
+                return (int) Registry.GetValue(
+                           "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                           "AppsUseLightTheme", 0x1) == 0x0;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
