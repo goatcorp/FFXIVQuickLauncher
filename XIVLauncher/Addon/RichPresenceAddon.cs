@@ -17,6 +17,10 @@ namespace XIVLauncher.Addon
 
         public void Run()
         {
+            // RichPresence doesn't work on DX9 and probably never will
+            if (!Settings.IsDX11())
+                return;
+
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "RichPresence");
             var addonExe = Path.Combine(addonDirectory, "FFXIVRichPresenceRunner.exe");
 
