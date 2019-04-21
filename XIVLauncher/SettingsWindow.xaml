@@ -78,8 +78,8 @@
 
                         <ListView x:Name="AddonListView" Margin="0,0,0,50" Height="140" MouseUp="AddonListView_OnMouseUp">
                             <ListView.ContextMenu>
-                                <ContextMenu StaysOpen="true" Background="WhiteSmoke">
-                                    <MenuItem Header="Remove" Click="RemoveAddonEntry_OnClick"/>
+                                <ContextMenu StaysOpen="true">
+                                    <MenuItem Header="Remove" Click="RemoveAddonEntry_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
                                 </ContextMenu>
                             </ListView.ContextMenu>
 
