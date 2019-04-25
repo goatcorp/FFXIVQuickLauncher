@@ -6,14 +6,18 @@ using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace XIVLauncher
 {
-    static class XIVGame
+    class XIVGame
     {
-        private static readonly string UserAgent = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; 45d19cc985)";
+        // The user agent for frontier pages. {0} has to be replaced by a unique computer id and it's checksum
+        private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
+        private string _userAgent = GetUserAgent();
+
         private static readonly string[] FilesToHash =
         {
             "ffxivboot.exe", 
@@ -24,7 +28,7 @@ namespace XIVLauncher
             "ffxivupdater64.exe",
         };
 
-        public static void Login(string username, string password, string otp)
+        public void Login(string username, string password, string otp)
         {
             var loginResult = OauthLogin(username, password, otp);
 
@@ -89,7 +93,7 @@ namespace XIVLauncher
             using (WebClient client = new WebClient())
             {
                 client.Headers.Add("X-Hash-Check", "enabled");
-                client.Headers.Add("user-agent", UserAgent);
+                client.Headers.Add("user-agent", "FFXIV PATCH CLIENT");
                 client.Headers.Add("Referer", $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
@@ -98,13 +102,37 @@ namespace XIVLauncher
                 var url = "https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() +
                           "/" + loginResult.SessionId;
 
-                var result = client.UploadString(url, GetBootVersionHash());
-
-                if (client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
+                try
                 {
-                    var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
+                    var result = client.UploadString(url, GetBootVersionHash());
 
-                    return (sid, result != string.Empty);
+                    if (client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
+                    {
+                        var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
+
+                        return (sid, result != string.Empty);
+                    }
+                }
+                catch (WebException exc)
+                {
+                    if (exc.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        var response = exc.Response as HttpWebResponse;
+                        if (response != null)
+                        {
+                            // This apparently can also indicate that we need to update
+                            if(response.StatusCode == HttpStatusCode.Conflict)
+                                return ("", true);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
                 
                 throw new Exception("Could not validate game version.");
@@ -112,10 +140,10 @@ namespace XIVLauncher
         }
 
 
-        private static string GetStored() //this is needed to be able to access the login site correctly
+        private string GetStored() //this is needed to be able to access the login site correctly
         {
             WebClient loginInfo = new WebClient();
-            loginInfo.Headers.Add("user-agent", UserAgent);
+            loginInfo.Headers.Add("user-agent", _userAgent);
             string reply = loginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
 
             Regex storedre = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
@@ -133,11 +161,11 @@ namespace XIVLauncher
             public int MaxExpansion { get; set; }
         }
 
-        private static OauthLoginResult OauthLogin(string username, string password, string otp)
+        private OauthLoginResult OauthLogin(string username, string password, string otp)
         {
             using (WebClient client = new WebClient())
             {
-                client.Headers.Add("user-agent", UserAgent);
+                client.Headers.Add("user-agent", _userAgent);
                 client.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
@@ -195,12 +223,14 @@ namespace XIVLauncher
             return length + "/" + hashstring;
         }
 
-        public static bool GetGateStatus()
+        public bool GetGateStatus()
         {
             try
             {
                 using (WebClient client = new WebClient())
                 {
+                    client.Headers.Add("user-agent", _userAgent);
+
                     string reply = client.DownloadString("http://frontier.ffxiv.com/worldStatus/gate_status.json");
 
                     return Convert.ToBoolean(int.Parse(reply[10].ToString()));
@@ -211,6 +241,29 @@ namespace XIVLauncher
                 throw new Exception("Could not get gate status.", exc);
             }
 
+        }
+
+        private static string MakeComputerId()
+        {
+            var hashString = Environment.MachineName + Environment.UserName + Environment.OSVersion + Environment.ProcessorCount;
+
+            using (var sha1 = HashAlgorithm.Create("SHA1"))
+            {
+                var bytes = new byte[5];
+
+                Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
+
+                var checkSum = (byte) -(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+                bytes[0] = checkSum;
+
+                return BitConverter.ToString(bytes).Replace("-","").ToLower();
+            }
+            
+        }
+
+        private static string GetUserAgent()
+        {
+            return String.Format(UserAgentTemplate, MakeComputerId());
         }
 
         private static void InitiateSslTrust()

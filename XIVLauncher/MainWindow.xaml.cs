@@ -27,6 +27,8 @@ namespace XIVLauncher
         private System.Timers.Timer _maintenanceQueueTimer;
 
         public const string AppName = "FINAL FANTASY XIV";
+
+        private XIVGame _game = new XIVGame();
         
         public MainWindow()
         {
@@ -75,7 +77,7 @@ namespace XIVLauncher
             var gateStatus = false;
             try
             {
-                gateStatus = XIVGame.GetGateStatus();
+                gateStatus = _game.GetGateStatus();
             }
             catch
             {
@@ -307,7 +309,7 @@ namespace XIVLauncher
             var gateStatus = false;
             try
             {
-                gateStatus = XIVGame.GetGateStatus();
+                gateStatus = _game.GetGateStatus();
             }
             catch
             {
@@ -324,7 +326,7 @@ namespace XIVLauncher
 
             try
             {
-                XIVGame.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text);
+                _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text);
                 StartAddons();
 
                 Environment.Exit(0);
@@ -400,7 +402,7 @@ namespace XIVLauncher
                 var gateStatus = false;
                 try
                 {
-                    gateStatus = XIVGame.GetGateStatus();
+                    gateStatus = _game.GetGateStatus();
                 }
                 catch
                 {
