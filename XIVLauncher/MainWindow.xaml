@@ -108,35 +108,35 @@
                     </Button>
 
                     <materialDesign:DialogHost Identifier="OtpDialogHost" x:Name="OtpDialogHost">
-                <materialDesign:DialogHost.DialogContent>
-                    <StackPanel Margin="16">
-                        <TextBlock>Please enter your OTP key.</TextBlock>
-                        <TextBox Margin="0 8 0 0" HorizontalAlignment="Stretch"
-                                 PreviewTextInput="OtpTextBox_OnPreviewTextInput" TextChanged="OtpTextBox_OnTextChanged"  MaxLength="6" x:Name="OtpTextBox" />
-                    </StackPanel>
-                </materialDesign:DialogHost.DialogContent>
-                <materialDesign:Card Margin="559,10,0,0" Height="213" HorizontalAlignment="Left" Width="192" KeyDown="Card_KeyDown">
-                    <Grid VerticalAlignment="Stretch" Margin="-122,-38,-114,-51">
-                        <TextBox x:Name="LoginUsername" HorizontalAlignment="Left" Height="23" Margin="155,65,0,0"
-                                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
-                                 materialDesign:HintAssist.Hint="Square Enix ID" />
-                        <PasswordBox x:Name="LoginPassword" HorizontalAlignment="Left" Height="23" Margin="155,93,0,0"
-                                     VerticalAlignment="Top" Width="120"
-                                     materialDesign:HintAssist.Hint="Password" />
-                        <Button Content="Log In" HorizontalAlignment="Left" Margin="146,202,0,0"
-                                VerticalAlignment="Top"
-                                Width="142" Click="LoginButton_Click" />
-                        <CheckBox Content="Save ID and password" HorizontalAlignment="Left" Margin="138,134,0,0"
-                                  VerticalAlignment="Top" Checked="SaveLoginCheckBox_OnChecked"
-                                  Unchecked="SaveLoginCheckBox_OnUnchecked" x:Name="SaveLoginCheckBox" />
-                        <CheckBox Content="Log in automatically" HorizontalAlignment="Left" Margin="138,152,0,0"
-                                  VerticalAlignment="Top" IsEnabled="false" x:Name="AutoLoginCheckBox" />
-                        <CheckBox Content="Use One-Time-Passwords" HorizontalAlignment="Left" Margin="138,170,0,0"
-                                  VerticalAlignment="Top" x:Name="OtpCheckBox" />
-                    </Grid>
-                </materialDesign:Card>
+                        <materialDesign:DialogHost.DialogContent>
+                            <StackPanel Margin="16">
+                                <TextBlock>Please enter your OTP key.</TextBlock>
+                                <TextBox Margin="0,8,0,0" HorizontalAlignment="Stretch"
+                                    PreviewTextInput="OtpTextBox_OnPreviewTextInput" TextChanged="OtpTextBox_OnTextChanged"  MaxLength="6" x:Name="OtpTextBox" />
+                            </StackPanel>
+                        </materialDesign:DialogHost.DialogContent>
 
-            </materialDesign:DialogHost>
+                        <materialDesign:Card Margin="559,10,0,0" Height="213" HorizontalAlignment="Left" Width="192" KeyDown="Card_KeyDown">
+                            <Grid VerticalAlignment="Stretch" Margin="0">
+                                <TextBox x:Name="LoginUsername" HorizontalAlignment="Left" Height="23" Margin="33,27,0,0"
+                                    TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
+                                    materialDesign:HintAssist.Hint="Square Enix ID" />
+                                <PasswordBox x:Name="LoginPassword" HorizontalAlignment="Left" Height="23" Margin="33,55,0,0"
+                                    VerticalAlignment="Top" Width="120"
+                                    materialDesign:HintAssist.Hint="Password" />
+                                <Button Content="Log In" HorizontalAlignment="Left" Margin="22,164,0,0"
+                                    VerticalAlignment="Top"
+                                    Width="142" Click="LoginButton_Click" />
+                                <CheckBox Content="Save ID and password" HorizontalAlignment="Left" Margin="16,96,0,0"
+                                    VerticalAlignment="Top" Checked="SaveLoginCheckBox_OnChecked"
+                                    Unchecked="SaveLoginCheckBox_OnUnchecked" x:Name="SaveLoginCheckBox" />
+                                <CheckBox Content="Log in automatically" HorizontalAlignment="Left" Margin="16,114,0,0"
+                                    VerticalAlignment="Top" IsEnabled="false" x:Name="AutoLoginCheckBox" />
+                                <CheckBox Content="Use One-Time-Passwords" HorizontalAlignment="Left" Margin="16,132,0,0"
+                                    VerticalAlignment="Top" x:Name="OtpCheckBox" />
+                            </Grid>
+                        </materialDesign:Card>
+                    </materialDesign:DialogHost>
 
                 </Grid>
 
