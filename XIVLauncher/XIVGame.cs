@@ -74,6 +74,7 @@ namespace XIVLauncher
                 {
                     for (var tries = 0; tries < 5; tries++)
                     {
+                        // Is the main window open? That means the mutants must be too
                         if(game.MainWindowHandle == IntPtr.Zero)
                         {
                             Thread.Sleep(5000);

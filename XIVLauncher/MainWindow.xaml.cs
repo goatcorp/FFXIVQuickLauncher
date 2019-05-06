@@ -327,7 +327,15 @@ namespace XIVLauncher
             try
             {
                 _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text);
-                StartAddons();
+
+                try
+                {
+                    StartAddons();
+                }
+                catch (Exception exc)
+                {
+                    Util.ShowError("Could not start one or more addons. This could be caused by your antivirus, please check its logs and add any needed exclusions.\n\n" + exc, "Addons failed");
+                }
 
                 Environment.Exit(0);
             }
