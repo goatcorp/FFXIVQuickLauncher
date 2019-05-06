@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nhaama.Memory;
+using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Net.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 
 namespace XIVLauncher
@@ -60,16 +62,47 @@ namespace XIVLauncher
             LaunchGame(sid, loginResult.Region, expansionLevel);
         }
 
-        private static void LaunchGame(string sessionId, int region, int expansionLevel)
+        private static void LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = true)
         {
             try {
                 var game = new Process();
                 if (Settings.IsDX11()) { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
                 game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGamever()}";
                 game.Start();
-            }catch(Exception exc)
+
+                if (closeMutants)
+                {
+                    for (var tries = 0; tries < 5; tries++)
+                    {
+                        if(game.MainWindowHandle == IntPtr.Zero)
+                        {
+                            Thread.Sleep(5000);
+                            continue;
+                        }
+
+                        CloseMutants(game);
+                        break;
+                    }
+                }
+                
+            }
+            catch (Exception exc)
             {
                 MessageBox.Show("Could not launch executable. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private static void CloseMutants(Process process)
+        {
+            var nhaamaProcess = process.GetNhaamaProcess();
+
+            var handles = nhaamaProcess.GetHandles();
+
+            // Check if handle is a ffxiv mutant and close it
+            foreach (var nhaamaHandle in handles)
+            {
+                if(nhaamaHandle.Name.Contains("ffxiv_game0"))
+                    nhaamaHandle.Close();
             }
         }
 
