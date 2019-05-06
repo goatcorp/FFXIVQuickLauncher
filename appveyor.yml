@@ -23,6 +23,8 @@ before_build:
     
     ($env:APPVEYOR_REPO_COMMIT_TIMESTAMP) >> VERSION
     
+    git submodule update --init
+    
 - appveyor-retry nuget restore
 
 build:
