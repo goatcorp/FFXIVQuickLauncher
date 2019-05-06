@@ -262,16 +262,13 @@ namespace XIVLauncher
                             AutoLoginCheckBox.IsChecked = false;
 
                         }
-                        else
-                        {
-                            Settings.SetAutologin(true);
-                        }
-
                     }
                     else
                     {
                         AutoLoginCheckBox.IsChecked = false;
                     }
+
+                    Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
                 }
 
                 Settings.Save();
