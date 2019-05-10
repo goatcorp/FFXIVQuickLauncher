@@ -8,6 +8,9 @@ platform: Any CPU
 
 cache:
   - packages -> **\packages.config
+  
+install:
+  - git submodule update --init --recursive
 
 before_build:
 - ps: >-
@@ -22,8 +25,6 @@ before_build:
     ($env:APPVEYOR_BUILD_VERSION) >> VERSION
     
     ($env:APPVEYOR_REPO_COMMIT_TIMESTAMP) >> VERSION
-    
-    git submodule update --init
     
 - appveyor-retry nuget restore
 
