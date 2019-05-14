@@ -8,6 +8,9 @@ platform: Any CPU
 
 cache:
   - packages -> **\packages.config
+  
+install:
+  - git submodule update --init --recursive
 
 before_build:
 - ps: >-
