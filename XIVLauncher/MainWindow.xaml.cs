@@ -234,6 +234,13 @@ namespace XIVLauncher
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            /*
+            LoadingMessageCancelButton.Visibility = Visibility.Hidden;
+            LoadingMessageTextBlock.Text = "Logging in...";
+
+            DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
+            Task.Run(() => { this.Dispatcher.BeginInvoke(new Action(() => {  })); });
+            */
             HandleLogin(false);
         }
 
@@ -279,55 +286,55 @@ namespace XIVLauncher
                 Settings.Save();
             }
             
-            try
+            if (OtpCheckBox.IsChecked == false)
             {
-                if (OtpCheckBox.IsChecked == false)
-                {
-                    StartGame();
-                }
-            }
-            catch(Exception exc)
-            {
-                Util.ShowError("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed");
-                return;
+                StartGame();
             }
         }
 
-        private void StartAddons()
+        private void StartAddons(Process gameProcess)
         {
             foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true))
             {
-                addonEntry.Addon.Run();
+                addonEntry.Addon.Run(gameProcess);
             }
         }
 
         private void StartGame()
         {
-            var gateStatus = false;
             try
             {
-                gateStatus = _game.GetGateStatus();
-            }
-            catch
-            {
-                // ignored
-            }
+                var gateStatus = false;
+                try
+                {
+                    gateStatus = _game.GetGateStatus();
+                }
+                catch
+                {
+                    // ignored
+                }
 
-            if (!gateStatus)
-            {
-                MessageBox.Show(
-                    "Square Enix seems to be running maintenance work right now or the login server is unreachable. The game shouldn't be launched.", "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                if (!gateStatus)
+                {
+                    MessageBox.Show(
+                        "Square Enix seems to be running maintenance work right now or the login server is unreachable. The game shouldn't be launched.", "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
-                return;
-            }
+                    return;
+                }
 
-            try
-            {
-                _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text);
+                //LoadingMessageCancelButton.Visibility = Visibility.Hidden;
+                //LoadingMessageTextBlock.Text = "Logging in...";
+
+                //DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
+
+                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text);
+
+                if (gameProcess == null)
+                    return;
 
                 try
                 {
-                    StartAddons();
+                    StartAddons(gameProcess);
                 }
                 catch (Exception exc)
                 {

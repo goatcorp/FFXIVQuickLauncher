@@ -30,20 +30,20 @@ namespace XIVLauncher
             "ffxivupdater64.exe",
         };
 
-        public void Login(string username, string password, string otp)
+        public Process Login(string username, string password, string otp)
         {
             var loginResult = OauthLogin(username, password, otp);
 
             if (!loginResult.Playable)
             {
                 MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                return null;
             }
 
             if (!loginResult.TermsAccepted)
             {
                 MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                return null;
             }
 
             // Clamp the expansion level to what the account is allowed to access
@@ -56,13 +56,13 @@ namespace XIVLauncher
                     "Your game is out of date. Please start the official launcher and update it, before trying to log in.",
                     "Out of date", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                return;
+                return null;
             }
 
-            LaunchGame(sid, loginResult.Region, expansionLevel);
+            return LaunchGame(sid, loginResult.Region, expansionLevel);
         }
 
-        private static void LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = true)
+        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = true)
         {
             try {
                 var game = new Process();
@@ -85,12 +85,16 @@ namespace XIVLauncher
                         break;
                     }
                 }
-                
+
+                return game;
+
             }
             catch (Exception exc)
             {
                 MessageBox.Show("Could not launch executable. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            return null;
         }
 
         private static void CloseMutants(Process process)

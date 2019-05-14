@@ -29,11 +29,11 @@
                 <materialDesign:DialogHost.DialogContent>
                     <StackPanel Margin="16">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock>Waiting for maintenance...</TextBlock>
+                            <TextBlock x:Name="LoadingMessageTextBlock">Waiting for maintenance...</TextBlock>
                             <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                                          Value="0"
                                          IsIndeterminate="True" Height="30" Width="30" Margin="0 8 0 0" />
-                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            <Button x:Name="LoadingMessageCancelButton" Style="{StaticResource MaterialDesignFlatButton}"
                                     IsCancel="True"
                                     Margin="0 8 0 0"
                                     Click="QuitMaintenanceQueueButton_OnClick">

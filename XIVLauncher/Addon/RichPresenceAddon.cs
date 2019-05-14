@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace XIVLauncher.Addon
 {
@@ -15,7 +16,7 @@ namespace XIVLauncher.Addon
         private const string Remote = "https://goaaats.github.io/ffxiv/tools/launcher/addons/RichPresence/";
 
 
-        public void Run()
+        public void Run(Process gameProcess)
         {
             // RichPresence doesn't work on DX9 and probably never will
             if (!Settings.IsDX11())
@@ -23,9 +24,6 @@ namespace XIVLauncher.Addon
 
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "RichPresence");
             var addonExe = Path.Combine(addonDirectory, "FFXIVRichPresenceRunner.exe");
-
-            // Ensure directory exists
-            Directory.CreateDirectory(addonDirectory);
 
             if (!File.Exists(addonExe))
             {
@@ -45,9 +43,13 @@ namespace XIVLauncher.Addon
                 }
             }
 
+            // If there's a manual installation of Rich Presence, we shouldn't launch it twice if deletion failed
+            if(!CheckManualInstall())
+                return;
+
             var process = new Process
             {
-                StartInfo = {FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true}
+                StartInfo = {FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString()}
             };
 
             process.Start();
@@ -55,20 +57,51 @@ namespace XIVLauncher.Addon
 
         private void Download(string path)
         {
+            // Ensure directory exists
+            Directory.CreateDirectory(path);
+
+            var directoryInfo = new DirectoryInfo(path);
+
+            foreach (var file in directoryInfo.GetFiles())
+            {
+                file.Delete(); 
+            }
+
+            foreach (var dir in directoryInfo.GetDirectories())
+            {
+                dir.Delete(true); 
+            }
+
             using (var client = new WebClient())
             {
                 var downloadPath = Path.Combine(path, "download.zip");
+
+                if (File.Exists(downloadPath))
+                    File.Delete(downloadPath);
 
                 client.DownloadFile(Remote + "latest.zip", downloadPath);
                 ZipFile.ExtractToDirectory(downloadPath, path);
 
                 File.Delete(downloadPath);
             }
+        }
 
-            // Delete a manually installed version of RichPresence, don't need to launch it twice
-            var dump64path = Path.Combine(Settings.GetGamePath(), "game", "dump64.dll");
-            if (File.Exists(dump64path))
-                File.Delete(dump64path);
+        private bool CheckManualInstall()
+        {
+            try
+            {
+                // Delete a manually installed version of RichPresence, don't need to launch it twice
+                var dump64path = Path.Combine(Settings.GetGamePath(), "game", "dump64.dll");
+                if (File.Exists(dump64path))
+                    File.Delete(dump64path);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("XIVLauncher found a manual installation of FFXIV Rich Presence, but could not remove it.\nTo fix this, please close any instances of FINAL FANTASY XIV, start XIVLauncher as administrator and log in.");
+                return false;
+            }
         }
 
         public string Name => "FFXIV Discord Rich Presence";

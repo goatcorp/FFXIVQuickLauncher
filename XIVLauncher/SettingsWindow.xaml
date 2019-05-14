@@ -105,6 +105,11 @@
                         </TextBlock>
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Made by goat.
+                            <LineBreak/>
+                            <LineBreak/>
+                            Any issues or requests?
+                            <LineBreak/>
+                            Feel free to contact me on discord at meeboo#3048!
                         </TextBlock>
 
                         <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
