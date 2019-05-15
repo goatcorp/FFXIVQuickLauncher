@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using XIVLauncher.Addon;
+using XIVLauncher.Cache;
 
 namespace XIVLauncher
 {
@@ -22,6 +24,7 @@ namespace XIVLauncher
             ExpansionLevelComboBox.SelectedIndex = Settings.GetExpansionLevel();
             LanguageComboBox.SelectedIndex = (int) Settings.GetLanguage();
             AddonListView.ItemsSource = Settings.GetAddonList();
+            UidCacheCheckBox.IsChecked = Settings.IsUniqueIdCacheEnabled();
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
         }
@@ -33,6 +36,7 @@ namespace XIVLauncher
             Settings.SetExpansionLevel(ExpansionLevelComboBox.SelectedIndex);
             Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
             Settings.SetAddonList((List<AddonEntry>) AddonListView.ItemsSource);
+            Settings.SetUniqueIdCacheEnabled(UidCacheCheckBox.IsChecked == true);
             Settings.Save();
         }
 
@@ -134,6 +138,15 @@ namespace XIVLauncher
                 AddonListView.ItemsSource = addonList;
                 Settings.SetAddonList(addonList);
             }
+        }
+
+        private void ResetCacheButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            Settings.SetUniqueIdCache(new List<UniqueIdCacheEntry>());
+            Settings.Save();
+            MessageBox.Show("Reset. Please restart the app.");
+
+            Environment.Exit(0);
         }
     }
 }

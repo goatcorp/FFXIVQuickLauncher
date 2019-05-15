@@ -100,7 +100,7 @@ namespace XIVLauncher
                 SaveLoginCheckBox.IsChecked = true;
             }
 
-            if(Settings.IsAutologin() && !Settings.IsAdministrator() && savedCredentials != null)
+            if(Settings.IsAutologin() && !Util.IsAdministrator() && savedCredentials != null)
             {
                 try
                 {
@@ -248,7 +248,9 @@ namespace XIVLauncher
         {
             OtpTextBox.Text = "";
 
-            if (OtpCheckBox.IsChecked == true)
+            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
+
+            if (OtpCheckBox.IsChecked == true && !hasValidCache)
             {
                 DialogHost.OpenDialogCommand.Execute(null, OtpDialogHost);
             }
@@ -286,7 +288,7 @@ namespace XIVLauncher
                 Settings.Save();
             }
             
-            if (OtpCheckBox.IsChecked == false)
+            if (OtpCheckBox.IsChecked == false || hasValidCache)
             {
                 StartGame();
             }
@@ -327,7 +329,7 @@ namespace XIVLauncher
 
                 //DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
 
-                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text);
+                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text, Settings.IsUniqueIdCacheEnabled());
 
                 if (gameProcess == null)
                     return;
@@ -338,14 +340,14 @@ namespace XIVLauncher
                 }
                 catch (Exception exc)
                 {
-                    Util.ShowError("Could not start one or more addons. This could be caused by your antivirus, please check its logs and add any needed exclusions.\n\n" + exc, "Addons failed");
+                    Util.ShowError("Could not start one or more addons. This could be caused by your antivirus, please check its logs and add any needed exclusions.\nIf this problem persists, please report this issue(check the about page in settings).\n\n" + exc, "Addons failed");
                 }
 
                 Environment.Exit(0);
             }
             catch(Exception exc)
             {
-                Util.ShowError("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed");
+                Util.ShowError("Logging in failed, please check your login information and internet connection, then try again.\nIf this problem persists, please report this issue(check the about page in settings).\n\n" + exc, "Login failed");
             }
         }
 

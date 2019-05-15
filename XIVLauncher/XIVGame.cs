@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
+using XIVLauncher.Cache;
 
 namespace XIVLauncher
 {
@@ -30,36 +31,62 @@ namespace XIVLauncher
             "ffxivupdater64.exe",
         };
 
-        public Process Login(string username, string password, string otp)
+        public UniqueIdCache Cache = new UniqueIdCache();
+
+        public Process Login(string username, string password, string otp, bool useCache = false)
         {
-            var loginResult = OauthLogin(username, password, otp);
+            string uid;
+            var needsUpdate = false;
+            var expansionLevel = Settings.GetExpansionLevel();
 
-            if (!loginResult.Playable)
+            OauthLoginResult loginResult;
+            
+            if (!useCache || !Cache.HasValidCache(username))
             {
-                MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+                loginResult = OauthLogin(username, password, otp);
 
-            if (!loginResult.TermsAccepted)
+                if (!loginResult.Playable)
+                {
+                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
+
+                if (!loginResult.TermsAccepted)
+                {
+                    MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
+
+                // Clamp the expansion level to what the account is allowed to access
+                expansionLevel = Math.Min(Math.Max(loginResult.MaxExpansion, 0), expansionLevel);
+                (uid, needsUpdate) = RegisterSession(loginResult);
+
+                if(useCache)
+                    Cache.AddCachedUid(username, uid, loginResult.Region);
+            }
+            else
             {
-                MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+                var cached = Cache.GetCachedUid(username);
+                uid = cached.Uid;
 
-            // Clamp the expansion level to what the account is allowed to access
-            var expansionLevel = Math.Min(Math.Max(loginResult.MaxExpansion, 0), Settings.GetExpansionLevel());
-            var (sid, needsUpdate) = RegisterSession(loginResult);
+                loginResult = new OauthLoginResult
+                {
+                    Playable = true,
+                    Region = cached.Region,
+                    TermsAccepted = true
+                };
+            }
 
             if (needsUpdate)
             {
                 MessageBox.Show(
-                    "Your game is out of date. Please start the official launcher and update it, before trying to log in.",
+                    "Your game is out of date. Please start the official launcher and update it before trying to log in.",
                     "Out of date", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 return null;
             }
 
-            return LaunchGame(sid, loginResult.Region, expansionLevel);
+            return LaunchGame(uid, loginResult.Region, expansionLevel);
         }
 
         private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = true)
@@ -126,7 +153,7 @@ namespace XIVLauncher
             return result;
         }
 
-        private static (string Sid, bool NeedsUpdate) RegisterSession(OauthLoginResult loginResult)
+        private static (string Uid, bool NeedsUpdate) RegisterSession(OauthLoginResult loginResult)
         {
             using (WebClient client = new WebClient())
             {

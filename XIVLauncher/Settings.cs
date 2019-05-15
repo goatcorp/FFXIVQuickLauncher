@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-using System.Security.Principal;
 using AdysTech.CredentialManager;
 using Newtonsoft.Json;
 using XIVLauncher.Addon;
+using XIVLauncher.Cache;
 
 namespace XIVLauncher
 {
@@ -126,15 +126,32 @@ namespace XIVLauncher
 
         }
 
+        public static List<UniqueIdCacheEntry> GetUniqueIdCache()
+        {
+            var cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(Properties.Settings.Default
+                .UniqueIdCache);
+
+            return cache ?? new List<UniqueIdCacheEntry>();
+        }
+
+        public static void SetUniqueIdCache(List<UniqueIdCacheEntry> cache)
+        {
+            Properties.Settings.Default.UniqueIdCache = JsonConvert.SerializeObject(cache);
+        }
+
+        public static bool IsUniqueIdCacheEnabled()
+        {
+            return Properties.Settings.Default.UniqueIdCacheEnabled;
+        }
+
+        public static void SetUniqueIdCacheEnabled(bool enabled)
+        {
+            Properties.Settings.Default.UniqueIdCacheEnabled = enabled;
+        }
+
         public static void Save()
         {
             Properties.Settings.Default.Save();
-        }
-
-        public static bool IsAdministrator()
-        {
-            return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
-                    .IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }

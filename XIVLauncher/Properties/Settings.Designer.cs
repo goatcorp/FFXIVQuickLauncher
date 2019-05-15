@@ -118,5 +118,29 @@ namespace XIVLauncher.Properties {
                 this["Addons"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[]")]
+        public string UniqueIdCache {
+            get {
+                return ((string)(this["UniqueIdCache"]));
+            }
+            set {
+                this["UniqueIdCache"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UniqueIdCacheEnabled {
+            get {
+                return ((bool)(this["UniqueIdCacheEnabled"]));
+            }
+            set {
+                this["UniqueIdCacheEnabled"] = value;
+            }
+        }
     }
 }

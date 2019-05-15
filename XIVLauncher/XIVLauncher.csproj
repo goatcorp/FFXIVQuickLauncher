@@ -139,6 +139,8 @@
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Cache\UniqueIdCache.cs" />
+    <Compile Include="Cache\UniqueIdCacheEntry.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="XIVGame.cs" />
     <Page Include="FileEntry.xaml">
