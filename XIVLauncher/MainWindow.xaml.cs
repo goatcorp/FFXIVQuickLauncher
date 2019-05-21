@@ -185,6 +185,14 @@ namespace XIVLauncher
             }
 
             this.Visibility = Visibility.Visible;
+
+            var version = Util.GetAssemblyVersion();
+            if (Properties.Settings.Default.LastVersion != version)
+            {
+                MessageBox.Show($"XIVLauncher was updated to version {version}. This release includes:\n\nRemoving multiboxing prevention(you can now launch more than 2 clients)\nFixing an issue wherein autologin was not disabled correctly when launching as admin\nFixing an issue wherein Rich Presence would fail to install in certain cases", "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                Properties.Settings.Default.LastVersion = version;
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)

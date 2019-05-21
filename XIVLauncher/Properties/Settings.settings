@@ -32,5 +32,8 @@
     <Setting Name="UniqueIdCacheEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="LastVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0.0.0.0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
