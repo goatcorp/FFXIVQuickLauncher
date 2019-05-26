@@ -113,6 +113,16 @@
                                 <TextBlock>Please enter your OTP key.</TextBlock>
                                 <TextBox Margin="0,8,0,0" HorizontalAlignment="Stretch"
                                     PreviewTextInput="OtpTextBox_OnPreviewTextInput" KeyDown="OtpTextBox_KeyDown"  MaxLength="6" x:Name="OtpTextBox" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="Ok" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Column="0"
+                                        Width="100" Click="OtpTextBox_Click" />
+                                    <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,5,0,0" Grid.Column="1"
+                                        Width="100" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                                </Grid>
                             </StackPanel>
                         </materialDesign:DialogHost.DialogContent>
 

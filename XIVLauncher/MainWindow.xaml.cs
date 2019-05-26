@@ -477,6 +477,12 @@ namespace XIVLauncher
             }
         }
 
+        private void OtpTextBox_Click(object sender, RoutedEventArgs e)
+        {
+            DialogHost.CloseDialogCommand.Execute(null, OtpDialogHost);
+            StartGame();
+        }
+
         private void Card_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter || e.Key == Key.Return)
