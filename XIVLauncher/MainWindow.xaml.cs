@@ -468,13 +468,19 @@ namespace XIVLauncher
             DialogHost.CloseDialogCommand.Execute(null, MaintenanceQueueDialogHost);
         }
 
-        private void OtpTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        private void OtpTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (OtpTextBox.Text.Length > 5)
+            if (e.Key == Key.Enter || e.Key == Key.Return)
             {
                 DialogHost.CloseDialogCommand.Execute(null, OtpDialogHost);
                 StartGame();
             }
+        }
+
+        private void OtpTextBox_Click(object sender, RoutedEventArgs e)
+        {
+            DialogHost.CloseDialogCommand.Execute(null, OtpDialogHost);
+            StartGame();
         }
 
         private void Card_KeyDown(object sender, KeyEventArgs e)

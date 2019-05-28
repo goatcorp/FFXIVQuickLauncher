@@ -112,16 +112,26 @@
                             <StackPanel Margin="16">
                                 <TextBlock>Please enter your OTP key.</TextBlock>
                                 <TextBox Margin="0,8,0,0" HorizontalAlignment="Stretch"
-                                    PreviewTextInput="OtpTextBox_OnPreviewTextInput" TextChanged="OtpTextBox_OnTextChanged"  MaxLength="6" x:Name="OtpTextBox" />
+                                    PreviewTextInput="OtpTextBox_OnPreviewTextInput" KeyDown="OtpTextBox_KeyDown"  MaxLength="6" x:Name="OtpTextBox" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="Ok" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Column="0"
+                                        Width="100" Click="OtpTextBox_Click" />
+                                    <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,5,0,0" Grid.Column="1"
+                                        Width="100" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                                </Grid>
                             </StackPanel>
                         </materialDesign:DialogHost.DialogContent>
 
                         <materialDesign:Card Margin="559,10,0,0" Height="213" HorizontalAlignment="Left" Width="192" KeyDown="Card_KeyDown">
                             <Grid VerticalAlignment="Stretch" Margin="0">
-                                <TextBox x:Name="LoginUsername" HorizontalAlignment="Left" Height="23" Margin="33,27,0,0"
+                                <TextBox x:Name="LoginUsername" HorizontalAlignment="Left" Height="24" Margin="33,27,0,0"
                                     TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
                                     materialDesign:HintAssist.Hint="Square Enix ID" />
-                                <PasswordBox x:Name="LoginPassword" HorizontalAlignment="Left" Height="23" Margin="33,55,0,0"
+                                <PasswordBox x:Name="LoginPassword" HorizontalAlignment="Left" Height="24" Margin="33,55,0,0"
                                     VerticalAlignment="Top" Width="120"
                                     materialDesign:HintAssist.Hint="Password" />
                                 <Button Content="Log In" HorizontalAlignment="Left" Margin="22,164,0,0"
