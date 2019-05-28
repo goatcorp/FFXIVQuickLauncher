@@ -99,12 +99,16 @@ namespace XIVLauncher
 
                 if (closeMutants)
                 {
-                    for (var tries = 0; tries < 5; tries++)
+                    for (var tries = 0; tries < 30; tries++)
                     {
+                        // Something went wrong here, why even bother
+                        if (game.HasExited)
+                            break;
+
                         // Is the main window open? That means the mutants must be too
-                        if(game.MainWindowHandle == IntPtr.Zero)
+                        if (game.MainWindowHandle == IntPtr.Zero)
                         {
-                            Thread.Sleep(5000);
+                            Thread.Sleep(10000);
                             continue;
                         }
 
@@ -133,7 +137,7 @@ namespace XIVLauncher
             // Check if handle is a ffxiv mutant and close it
             foreach (var nhaamaHandle in handles)
             {
-                if(nhaamaHandle.Name.Contains("ffxiv_game0"))
+                if (nhaamaHandle.Name.Contains("ffxiv_game0"))
                     nhaamaHandle.Close();
             }
         }
