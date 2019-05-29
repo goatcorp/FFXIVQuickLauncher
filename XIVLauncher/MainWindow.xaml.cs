@@ -10,6 +10,8 @@ using System.Windows.Media.Imaging;
 using AdysTech.CredentialManager;
 using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
+using Newtonsoft.Json;
+using XIVLauncher.Addon;
 using Color = System.Windows.Media.Color;
 
 namespace XIVLauncher

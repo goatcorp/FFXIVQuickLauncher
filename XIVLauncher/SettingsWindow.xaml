@@ -8,14 +8,14 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:Addon="clr-namespace:XIVLauncher.Addon"
         mc:Ignorable="d"
-        Title="XIVLauncher Settings" Height="311.675" Width="533.495" WindowStartupLocation="CenterScreen"
+        Title="XIVLauncher Settings" Height="311.675" Width="567" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
     <Grid>
-        <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="6" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
+        <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
             <TabItem Header="Game Path">
                 <Grid>
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}">
@@ -97,6 +97,35 @@
                     </Grid>
                 </Grid>
             </TabItem>
+            <TabItem Header="In-Game">
+                <Grid>
+                    <StackPanel Margin="10,10,10,0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10">
+                            These options affect XIVLauncher in-game features. These features will be automatically
+                            <LineBreak></LineBreak>
+                            enabled if you are running the DirectX 11 version of the game, the version of the game is
+                            <LineBreak></LineBreak>
+                            compatible and the addon "XIVLauncher in-game features" is ticked on the previous tab.
+                        </TextBlock>
+                        <CheckBox x:Name="RmtAdFilterCheckBox" Content="Enable RMT advertisement filter" HorizontalAlignment="Left" Margin="0,10,0,10" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+                        <Separator></Separator>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0">
+                                Discord Webhook URL
+                            </Label>
+                            <Label Foreground="DarkGray" Margin="0,10,0,0" Cursor="Hand" MouseUp="OpenWebhookGuideLabel_MouseUp">
+                                How do I get this?
+                            </Label>
+                        </StackPanel>
+                        
+                        <TextBox x:Name="DiscordWebHookUrlTextBox" Margin="10,0,0,0" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"></TextBox>
+                        <CheckBox x:Name="ContentFinderNotificationCheckBox" Content="Notify about content finder pops" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+                        <CheckBox x:Name="ChatMessageNotificationCheckBox" Content="Notify about chat messages" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
             <TabItem Header="About">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
@@ -104,7 +133,7 @@
                             FFXIVQuickLauncher
                         </TextBlock>
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Made by goat.
+                            Made by goat. Special thanks to Mino and LeonBlade!
                             <LineBreak/>
                             <LineBreak/>
                             Any issues or requests?

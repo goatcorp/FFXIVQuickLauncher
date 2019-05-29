@@ -36,20 +36,20 @@ namespace XIVLauncher.Addon
                     var remoteVersion = client.DownloadString(Remote + "version");
 
                     var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
-                    string version = versionInfo.ProductVersion;
+                    var version = versionInfo.ProductVersion;
 
-                    if(!remoteVersion.StartsWith(version))
+                    if (!remoteVersion.StartsWith(version))
                         Download(addonDirectory);
                 }
             }
 
             // If there's a manual installation of Rich Presence, we shouldn't launch it twice if deletion failed
-            if(!CheckManualInstall())
+            if (!CheckManualInstall())
                 return;
 
             var process = new Process
             {
-                StartInfo = {FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString()}
+                StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() }
             };
 
             process.Start();

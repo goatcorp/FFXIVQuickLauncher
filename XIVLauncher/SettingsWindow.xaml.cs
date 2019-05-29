@@ -26,6 +26,11 @@ namespace XIVLauncher
             AddonListView.ItemsSource = Settings.GetAddonList();
             UidCacheCheckBox.IsChecked = Settings.IsUniqueIdCacheEnabled();
 
+            RmtAdFilterCheckBox.IsChecked = Settings.IsRmtFilterEnabled();
+            DiscordWebHookUrlTextBox.Text = Settings.GetDiscordWebhookUrl();
+            ChatMessageNotificationCheckBox.IsChecked = Settings.IsChatNotificationsEnabled();
+            ContentFinderNotificationCheckBox.IsChecked = Settings.IsCfNotificationsEnabled();
+
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
         }
 
@@ -37,6 +42,12 @@ namespace XIVLauncher
             Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
             Settings.SetAddonList((List<AddonEntry>) AddonListView.ItemsSource);
             Settings.SetUniqueIdCacheEnabled(UidCacheCheckBox.IsChecked == true);
+
+            Settings.SetRmtFilterEnabled(RmtAdFilterCheckBox.IsChecked == true);
+            Settings.SetDiscordWebhookUrl(DiscordWebHookUrlTextBox.Text);
+            Settings.SetChatNotificationsEnabled(ChatMessageNotificationCheckBox.IsChecked == true);
+            Settings.SetCfNotificationsEnabled(ContentFinderNotificationCheckBox.IsChecked == true);
+
             Settings.Save();
         }
 
@@ -87,7 +98,26 @@ namespace XIVLauncher
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            if (AddonListView.SelectedItem is AddonEntry entry && entry.Addon is GenericAddon genericAddon)
+            if (!(AddonListView.SelectedItem is AddonEntry entry))
+                return;
+
+            if (entry.Addon is RichPresenceAddon)
+            {
+                MessageBox.Show("This addon shows your character information in your discord profile.",
+                    "Addon information", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                return;
+            }
+
+            if (entry.Addon is HooksAddon)
+            {
+                MessageBox.Show("This addon facilitates XIVLauncher in-game features like chat filtering.",
+                    "Addon information", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                return;
+            }
+
+            if (entry.Addon is GenericAddon genericAddon)
             {
                 var addonSetup = new GenericAddonSetup(genericAddon);
                 addonSetup.ShowDialog();
@@ -99,6 +129,9 @@ namespace XIVLauncher
                     addonList = addonList.Where(x =>
                     {
                         if (x.Addon is RichPresenceAddon)
+                            return true;
+
+                        if (x.Addon is HooksAddon)
                             return true;
 
                         return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
@@ -132,6 +165,9 @@ namespace XIVLauncher
                     if (x.Addon is RichPresenceAddon)
                         return true;
 
+                    if (x.Addon is HooksAddon)
+                        return true;
+
                     return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
                 }).ToList();
 
@@ -147,6 +183,14 @@ namespace XIVLauncher
             MessageBox.Show("Reset. Please restart the app.");
 
             Environment.Exit(0);
+        }
+
+        private void OpenWebhookGuideLabel_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left)
+                return;
+
+            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-webhook");
         }
     }
 }

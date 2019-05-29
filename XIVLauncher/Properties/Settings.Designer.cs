@@ -154,5 +154,53 @@ namespace XIVLauncher.Properties {
                 this["LastVersion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ChatNotificationsEnabled {
+            get {
+                return ((bool)(this["ChatNotificationsEnabled"]));
+            }
+            set {
+                this["ChatNotificationsEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CfNotificationsEnabled {
+            get {
+                return ((bool)(this["CfNotificationsEnabled"]));
+            }
+            set {
+                this["CfNotificationsEnabled"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DiscordWebHookUrl {
+            get {
+                return ((string)(this["DiscordWebHookUrl"]));
+            }
+            set {
+                this["DiscordWebHookUrl"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RmtFilterEnabled {
+            get {
+                return ((bool)(this["RmtFilterEnabled"]));
+            }
+            set {
+                this["RmtFilterEnabled"] = value;
+            }
+        }
     }
 }

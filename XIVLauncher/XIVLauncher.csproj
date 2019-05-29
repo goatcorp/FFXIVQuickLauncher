@@ -121,6 +121,7 @@
     <Compile Include="Addon\AddonEntry.cs" />
     <Compile Include="Addon\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
+    <Compile Include="Addon\HooksAddon.cs" />
     <Compile Include="Addon\RichPresenceAddon.cs" />
     <Compile Include="ClientLanguage.cs" />
     <Compile Include="FileEntry.xaml.cs">

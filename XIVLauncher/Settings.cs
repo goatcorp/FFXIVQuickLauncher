@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using AdysTech.CredentialManager;
 using Newtonsoft.Json;
@@ -91,27 +92,12 @@ namespace XIVLauncher
         {
             var addonList = Properties.Settings.Default.Addons;
 
-            if(string.IsNullOrEmpty(addonList))
-                return new List<AddonEntry>()
-                {
-                    new AddonEntry()
-                    {
-                        Addon = new RichPresenceAddon(),
-                        IsEnabled = false
-                    }
-                };
-
             var list = JsonConvert.DeserializeObject<List<AddonEntry>>(addonList, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
             });
 
-            if(list.Count == 0)
-                list.Add(new AddonEntry()
-                {
-                    Addon = new RichPresenceAddon(),
-                    IsEnabled = false
-                });
+            EnsureDefaultAddons(list);
 
             return list;
         }
@@ -149,9 +135,68 @@ namespace XIVLauncher
             Properties.Settings.Default.UniqueIdCacheEnabled = enabled;
         }
 
+        public static bool IsChatNotificationsEnabled()
+        {
+            return Properties.Settings.Default.ChatNotificationsEnabled;
+        }
+
+        public static void SetChatNotificationsEnabled(bool value)
+        {
+            Properties.Settings.Default.ChatNotificationsEnabled = value;
+        }
+        public static bool IsCfNotificationsEnabled()
+        {
+            return Properties.Settings.Default.CfNotificationsEnabled;
+        }
+
+        public static void SetCfNotificationsEnabled(bool value)
+        {
+            Properties.Settings.Default.CfNotificationsEnabled = value;
+        }
+        public static bool IsRmtFilterEnabled()
+        {
+            return Properties.Settings.Default.RmtFilterEnabled;
+        }
+
+        public static void SetRmtFilterEnabled(bool value)
+        {
+            Properties.Settings.Default.RmtFilterEnabled = value;
+        }
+
+        public static string GetDiscordWebhookUrl()
+        {
+            return Properties.Settings.Default.DiscordWebHookUrl;
+        }
+
+        public static void SetDiscordWebhookUrl(string url)
+        {
+            Properties.Settings.Default.DiscordWebHookUrl = url;
+        }
+
         public static void Save()
         {
             Properties.Settings.Default.Save();
+        }
+
+        private static void EnsureDefaultAddons(List<AddonEntry> addonList)
+        {
+            if (addonList.All(entry => entry.Addon.GetType() != typeof(RichPresenceAddon)))
+            {
+                addonList.Add(new AddonEntry
+                {
+                    Addon = new RichPresenceAddon(),
+                    IsEnabled = false
+                });
+            }
+
+            if (addonList.All(entry => entry.Addon.GetType() != typeof(HooksAddon)))
+            {
+                addonList.Add(new AddonEntry
+                {
+                    Addon = new HooksAddon(),
+                    IsEnabled = true
+                });
+            }
         }
     }
 }

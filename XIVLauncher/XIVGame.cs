@@ -268,7 +268,7 @@ namespace XIVLauncher
             }
         }
 
-        private static string GetLocalGamever()
+        public static string GetLocalGamever()
         {
             try
             {
