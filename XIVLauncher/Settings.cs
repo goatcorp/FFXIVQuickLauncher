@@ -194,7 +194,7 @@ namespace XIVLauncher
                 addonList.Add(new AddonEntry
                 {
                     Addon = new HooksAddon(),
-                    IsEnabled = true
+                    IsEnabled = false
                 });
             }
         }
