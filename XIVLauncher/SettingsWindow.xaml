@@ -172,6 +172,8 @@
                             </Button>
                         </StackPanel>
                     </StackPanel>
+
+                    <Image Source="pack://application:,,,/Resources/eye.png" Width="150" HorizontalAlignment="Left" Margin="370,0,0,0" Opacity="0.8" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Grid>
             </TabItem>
         </dragablz:TabablzControl>
