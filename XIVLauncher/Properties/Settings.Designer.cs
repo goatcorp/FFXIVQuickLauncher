@@ -202,5 +202,17 @@ namespace XIVLauncher.Properties {
                 this["RmtFilterEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool InGameAddonEnabled {
+            get {
+                return ((bool)(this["InGameAddonEnabled"]));
+            }
+            set {
+                this["InGameAddonEnabled"] = value;
+            }
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace XIVLauncher
             DiscordWebHookUrlTextBox.Text = Settings.GetDiscordWebhookUrl();
             ChatMessageNotificationCheckBox.IsChecked = Settings.IsChatNotificationsEnabled();
             ContentFinderNotificationCheckBox.IsChecked = Settings.IsCfNotificationsEnabled();
+            EnableHooksCheckBox.IsChecked = Settings.IsInGameAddonEnabled();
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
         }
@@ -47,6 +48,7 @@ namespace XIVLauncher
             Settings.SetDiscordWebhookUrl(DiscordWebHookUrlTextBox.Text);
             Settings.SetChatNotificationsEnabled(ChatMessageNotificationCheckBox.IsChecked == true);
             Settings.SetCfNotificationsEnabled(ContentFinderNotificationCheckBox.IsChecked == true);
+            Settings.SetInGameAddonEnabled(EnableHooksCheckBox.IsChecked == true);
 
             Settings.Save();
         }

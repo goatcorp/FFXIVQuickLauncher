@@ -97,7 +97,7 @@ namespace XIVLauncher
                 TypeNameHandling = TypeNameHandling.Objects
             });
 
-            EnsureDefaultAddons(list);
+            list = EnsureDefaultAddons(list);
 
             return list;
         }
@@ -153,6 +153,7 @@ namespace XIVLauncher
         {
             Properties.Settings.Default.CfNotificationsEnabled = value;
         }
+
         public static bool IsRmtFilterEnabled()
         {
             return Properties.Settings.Default.RmtFilterEnabled;
@@ -173,12 +174,22 @@ namespace XIVLauncher
             Properties.Settings.Default.DiscordWebHookUrl = url;
         }
 
+        public static bool IsInGameAddonEnabled()
+        {
+            return Properties.Settings.Default.InGameAddonEnabled;
+        }
+
+        public static void SetInGameAddonEnabled(bool value)
+        {
+            Properties.Settings.Default.InGameAddonEnabled = value;
+        }
+
         public static void Save()
         {
             Properties.Settings.Default.Save();
         }
 
-        private static void EnsureDefaultAddons(List<AddonEntry> addonList)
+        private static List<AddonEntry> EnsureDefaultAddons(List<AddonEntry> addonList)
         {
             if (addonList.All(entry => entry.Addon.GetType() != typeof(RichPresenceAddon)))
             {
@@ -189,14 +200,17 @@ namespace XIVLauncher
                 });
             }
 
-            if (addonList.All(entry => entry.Addon.GetType() != typeof(HooksAddon)))
+            // Mistakes were made
+            if (addonList.Any(entry => entry.Addon.GetType() == typeof(HooksAddon)))
             {
-                addonList.Add(new AddonEntry
-                {
-                    Addon = new HooksAddon(),
-                    IsEnabled = false
-                });
+                var addon = addonList.First(entry => entry.Addon.GetType() == typeof(HooksAddon));
+
+                SetInGameAddonEnabled(addon.IsEnabled);
+
+                addonList = addonList.Where(entry => entry.Addon.GetType() != typeof(HooksAddon)).ToList();
             }
+
+            return addonList;
         }
     }
 }
