@@ -353,6 +353,18 @@ namespace XIVLauncher
                     Util.ShowError("Could not start one or more addons. This could be caused by your antivirus, please check its logs and add any needed exclusions.\nIf this problem persists, please report this issue(check the about page in settings).\n\n" + exc, "Addons failed");
                 }
 
+                try
+                {
+                    if (Settings.IsInGameAddonEnabled())
+                    {
+                        new HooksAddon().Run(gameProcess);
+                    }
+                }
+                catch (Exception exc)
+                {
+                    Util.ShowError("Could not start XIVLauncher in-game addon. This could be caused by your antivirus, please check its logs and add any needed exclusions.\nIf this problem persists, please report this issue(check the about page in settings).\n\n" + exc, "Addons failed");
+                }
+
                 Environment.Exit(0);
             }
             catch(Exception exc)
