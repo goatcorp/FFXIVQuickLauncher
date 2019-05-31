@@ -102,7 +102,7 @@ namespace XIVLauncher
                 SaveLoginCheckBox.IsChecked = true;
             }
 
-            if(Settings.IsAutologin() && !Util.IsAdministrator() && savedCredentials != null)
+            if(Settings.IsAutologin() && savedCredentials != null && Keyboard.Modifiers != ModifierKeys.Shift)
             {
                 try
                 {
@@ -274,7 +274,7 @@ namespace XIVLauncher
                 {
                     if (AutoLoginCheckBox.IsChecked == true)
                     {
-                        var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application as administrator once.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
+                        var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
 
                         if (result == MessageBoxResult.No)
                         {
