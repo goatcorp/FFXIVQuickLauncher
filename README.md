@@ -7,6 +7,10 @@ A faster launcher for Final Fantasy XIV. Features auto-login and launching addon
 
 [Download the latest release from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page, unzip it into any folder you can easily access it and launch XIVLauncher.exe - then just follow the instructions!
 
+## Any questions?
+
+[Please check out the FAQ](https://github.com/goaaats/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.
+
 <br>
 
 ## Disclaimer
