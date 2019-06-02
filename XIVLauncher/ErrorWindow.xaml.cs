@@ -10,14 +10,15 @@ namespace XIVLauncher
     /// </summary>
     public partial class ErrorWindow : Window
     {
-        public ErrorWindow(Exception exc, string context)
+        public ErrorWindow(Exception exc, string message, string context)
         {
             InitializeComponent();
 
             ExceptionTextBox.AppendText(exc.ToString());
             ExceptionTextBox.AppendText("\n" + Util.GetAssemblyVersion());
             ExceptionTextBox.AppendText("\n" + Util.GetGitHash());
-            ContextTextBlock.Text = context;
+            ExceptionTextBox.AppendText("\nContext: " + context);
+            ContextTextBlock.Text = message;
 
             SystemSounds.Hand.Play();
             BringIntoView();

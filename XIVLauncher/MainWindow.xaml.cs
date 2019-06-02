@@ -41,7 +41,7 @@ namespace XIVLauncher
             #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                new ErrorWindow((Exception) args.ExceptionObject, "Unhandled Exception.").ShowDialog();
+                new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
             };
 
             // Check if dark mode is enabled on windows, if yes, load the dark theme
@@ -119,7 +119,7 @@ namespace XIVLauncher
                 }
                 catch(Exception exc)
                 {
-                    new ErrorWindow(exc, "Additionally, please check your login information or try again.").ShowDialog();
+                    new ErrorWindow(exc, "Additionally, please check your login information or try again.", "AutoLogin").ShowDialog();
                     Settings.SetAutologin(false);
                 }
 
@@ -352,7 +352,7 @@ namespace XIVLauncher
                 }
                 catch (Exception exc)
                 {
-                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.").ShowDialog();
+                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
                 }
 
                 try
@@ -364,14 +364,14 @@ namespace XIVLauncher
                 }
                 catch (Exception exc)
                 {
-                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.").ShowDialog();
+                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Hooks").ShowDialog();
                 }
 
                 Environment.Exit(0);
             }
             catch(Exception exc)
             {
-                new ErrorWindow(exc, "Additionally, please check your login information or try again.").ShowDialog();
+                new ErrorWindow(exc, "Additionally, please check your login information or try again.", "Login").ShowDialog();
             }
         }
 
