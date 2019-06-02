@@ -1,7 +1,18 @@
-# FFXIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher)
-A faster launcher for Final Fantasy XIV. Features auto-login and launching addons like Discord Rich Presence and ACT.
+# FFXIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/29NBmud)
 
-<img src="https://i.imgur.com/djzHDbu.png" alt="drawing" width="600"/>
+A faster launcher for Final Fantasy XIV.
+
+<img src="https://i.imgur.com/djzHDbu.png" alt="drawing" width="500"/>
+
+## Why?
+
+The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your password. This project aims to fix that and add some features to the game that were not there before, such as:
+
+* Auto-login
+* Launching tools like ACT when starting the game
+* Discord Rich Presence
+* Chat filtering
+* Discord notifications for Duty Finder and chat
 
 ## How to install
 
