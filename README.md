@@ -1,4 +1,4 @@
-# FFXIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher) ![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)
+# FFXIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/29NBmud)
 
 A faster launcher for Final Fantasy XIV.
 
