@@ -191,7 +191,7 @@ namespace XIVLauncher
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
             {
-                MessageBox.Show($"XIVLauncher was updated to version {version}. This release includes:\n\nNew Addon: XIVLauncher in-game tools\nAdded a new settings tab \"In-Game\" that allows you to filter RMT advertisements and can notify you on discord about Duty Finder pops and chat messages.\nMore to come!\n\nAdditionally, a bug on Windows 7 that prevented input in certain text boxes was fixed by Mortalitas. Thanks!", "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                MessageBox.Show($"XIVLauncher was updated to version {version}. This release includes:\n\nPolishing up UI for in-game features - they are not a normal addon anymore and can be enabled in the in-game tab itself\nAdditionally, in-game features now have a step in first-time setup.\n\nAuto-login changes - Auto-login can now only be disabled by holding SHIFT when starting the game. Thanks to Genesis!\n\nA Discord link was added to the about tab, and a new error window style that links to the FAQ was added.", "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 Properties.Settings.Default.LastVersion = version;
                 Properties.Settings.Default.Save();
             }
