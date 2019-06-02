@@ -75,7 +75,7 @@ namespace XIVLauncher
                 }
             }
 
-            if (SetupTabControl.SelectedIndex == 5)
+            if (SetupTabControl.SelectedIndex == 6)
             {
                 Settings.SetGamePath(GamePathEntry.Text);
                 Settings.SetDx11(Dx11RadioButton.IsChecked == true);

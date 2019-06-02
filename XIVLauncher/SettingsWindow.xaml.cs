@@ -194,5 +194,10 @@ namespace XIVLauncher
 
             Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-webhook");
         }
+
+        private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://discord.gg/29NBmud");
+        }
     }
 }

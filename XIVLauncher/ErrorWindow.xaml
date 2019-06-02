@@ -1,0 +1,63 @@
+﻿<Window x:Class="XIVLauncher.ErrorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XIVLauncher"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="XIVLauncher Error" Height="274.103" Width="597.571" WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+    <StackPanel>
+        <TextBlock Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}">An error in XIVLauncher occured. Please consult the FAQ. If this issue persists, please report
+        <LineBreak/>
+        it on GitHub by clicking the button below, describing the issue and copying the text in the box.
+        </TextBlock>
+
+        <TextBlock x:Name="ContextTextBlock" Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
+
+        <StackPanel Orientation="Horizontal">
+            <RichTextBox Margin="10,10,10,10" Width="510" AcceptsReturn="True" IsDocumentEnabled="True"
+                         IsReadOnly="True"
+                         VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="False"
+                         materialDesign:HintAssist.Hint="Multiline text"
+                         Height="110" Grid.Row="1" x:Name="ExceptionTextBox">
+                <RichTextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="4"/>
+                    </Style>
+                </RichTextBox.Resources>
+            </RichTextBox>
+            <materialDesign:PackIcon Kind="Error" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="30" Height="30" Foreground="Red" Margin="10,0,0,0" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                    x:Name="DiscordButton" Margin="0,10,5,0" Click="DiscordButton_OnClick">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Discord" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Join Discord</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                    x:Name="FaqButton" Margin="0,10,5,0" Click="FaqButton_OnClick">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Information" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Open FAQ</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                    x:Name="GitHubButton" Margin="0,10,5,0" Click="GitHubButton_OnClick">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="GithubCircle" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Report error</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Margin="0,10,10,0" HorizontalAlignment="Right" Click="CloseButton_Click">OK</Button>
+        </StackPanel>
+        
+    </StackPanel>
+</Window>

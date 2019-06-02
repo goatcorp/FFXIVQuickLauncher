@@ -41,8 +41,15 @@ namespace XIVLauncher
             #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                Util.ShowError("An unknown error occured. Please report this error on GitHub.\n\n" + args.ExceptionObject, "Unknown Error");
+                new ErrorWindow((Exception) args.ExceptionObject, "Unhandled Exception.").ShowDialog();
             };
+
+            // Check if dark mode is enabled on windows, if yes, load the dark theme
+            var themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml", UriKind.RelativeOrAbsolute);
+            if(Util.IsWindowsDarkModeEnabled())
+                themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml", UriKind.RelativeOrAbsolute);
+
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
 
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
@@ -68,13 +75,6 @@ namespace XIVLauncher
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
             }
-
-            // Check if dark mode is enabled on windows, if yes, load the dark theme
-            var themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml", UriKind.RelativeOrAbsolute);
-            if(Util.IsWindowsDarkModeEnabled())
-                themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml", UriKind.RelativeOrAbsolute);
-
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
 
             var gateStatus = false;
             try
@@ -119,7 +119,7 @@ namespace XIVLauncher
                 }
                 catch(Exception exc)
                 {
-                    Util.ShowError("Logging in failed, check your login information or try again.\n\n" + exc, "Login failed");
+                    new ErrorWindow(exc, "Additionally, please check your login information or try again.").ShowDialog();
                     Settings.SetAutologin(false);
                 }
 
@@ -195,6 +195,8 @@ namespace XIVLauncher
                 Properties.Settings.Default.LastVersion = version;
                 Properties.Settings.Default.Save();
             }
+
+            BringIntoView();
         }
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
@@ -350,7 +352,7 @@ namespace XIVLauncher
                 }
                 catch (Exception exc)
                 {
-                    Util.ShowError("Could not start one or more addons. This could be caused by your antivirus, please check its logs and add any needed exclusions.\nIf this problem persists, please report this issue(check the about page in settings).\n\n" + exc, "Addons failed");
+                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.").ShowDialog();
                 }
 
                 try
@@ -362,14 +364,14 @@ namespace XIVLauncher
                 }
                 catch (Exception exc)
                 {
-                    Util.ShowError("Could not start XIVLauncher in-game addon. This could be caused by your antivirus, please check its logs and add any needed exclusions.\nIf this problem persists, please report this issue(check the about page in settings).\n\n" + exc, "Addons failed");
+                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.").ShowDialog();
                 }
 
                 Environment.Exit(0);
             }
             catch(Exception exc)
             {
-                Util.ShowError("Logging in failed, please check your login information and internet connection, then try again.\nIf this problem persists, please report this issue(check the about page in settings).\n\n" + exc, "Login failed");
+                new ErrorWindow(exc, "Additionally, please check your login information or try again.").ShowDialog();
             }
         }
 

@@ -94,6 +94,32 @@
                     <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Hooks">
+                <Grid>
+                    <StackPanel Margin="10,10,10,0">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+                            Do you want to enable the XIVLauncher in-game features?
+                            <LineBreak/>
+                            This will add some extra functionality to your game, such as RMT chat filtering and
+                            <LineBreak/>
+                            Discord notifications for chat messages or Duty Finder pops.
+                            <LineBreak/>
+                            <LineBreak/>
+                            To configure these settings, please use the XIVLauncher settings menu and switch to the
+                            <LineBreak/>
+                            in-game tab.
+                            <LineBreak/>
+                            Enabling this however could cause a false positive on your antivirus software, please
+                            <LineBreak/>
+                            check its settings and add any needed exclusions if you run into problems.
+                        </TextBlock>
+                        
+                        <CheckBox x:Name="HooksCheckBox" Content="Enable In-Game features" HorizontalAlignment="Left" Margin="0,25,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+
+                    </StackPanel>
+                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+                </Grid>
+            </TabItem>
             <TabItem Header="ACT">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">

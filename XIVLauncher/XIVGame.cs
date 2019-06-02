@@ -101,6 +101,8 @@ namespace XIVLauncher
                 {
                     for (var tries = 0; tries < 30; tries++)
                     {
+                        game.Refresh();
+
                         // Something went wrong here, why even bother
                         if (game.HasExited)
                             break;

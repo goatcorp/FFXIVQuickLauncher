@@ -132,7 +132,7 @@
 
                                 <TextBox x:Name="DiscordWebHookUrlTextBox" Margin="10,0,0,0" Width="400"
                                          VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         Foreground="{DynamicResource MaterialDesignBody}">
+                                         Foreground="{DynamicResource MaterialDesignBody}" materialDesign:HintAssist.Hint="Webhook URL">
                                 </TextBox>
                                 <CheckBox x:Name="ContentFinderNotificationCheckBox"
                                           Content="Notify about content finder pops" HorizontalAlignment="Left"
@@ -156,13 +156,18 @@
                             Made by goat. Special thanks to Mino and LeonBlade!
                             <LineBreak/>
                             <LineBreak/>
-                            Any issues or requests?
-                            <LineBreak/>
-                            Feel free to contact me on discord at meeboo#3048!
+                            Any issues or requests? Join the discord or create an issue on GitHub!
                         </TextBlock>
 
                         <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                                x:Name="GitHubButton" Click="GitHubButton_OnClick" Margin="0 10 0 0">
+                                x:Name="DiscordButton" Click="DiscordButton_OnClick"  Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Discord" />
+                                <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">Join Discord</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                                x:Name="GitHubButton" Click="GitHubButton_OnClick" Margin="0 0 0 0">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="GithubCircle" />
                                 <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
@@ -183,9 +188,9 @@
                             </StackPanel>
                         </Button>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox x:Name="UidCacheCheckBox" Content="Enable experimental UID cache(might behave weirdly)" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="DarkGray"/>
+                            <CheckBox x:Name="UidCacheCheckBox" Content="Enable experimental UID cache(might behave weirdly)" HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray"/>
                             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                                    Click="ResetCacheButton_OnClick" Margin="0 10 0 0">
+                                    Click="ResetCacheButton_OnClick" Margin="0 0 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Margin="0 0 0 0" VerticalAlignment="Center" Foreground="DarkGray" FontSize="11">Reset</TextBlock>
                                 </StackPanel>
@@ -193,7 +198,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <Image Source="pack://application:,,,/Resources/eye.png" Width="150" HorizontalAlignment="Left" Margin="370,0,0,0" Opacity="0.8" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <Image Source="pack://application:,,,/Resources/eye.png" Width="150" HorizontalAlignment="Left" Margin="390,0,0,0" Opacity="0.8" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Grid>
             </TabItem>
         </dragablz:TabablzControl>
