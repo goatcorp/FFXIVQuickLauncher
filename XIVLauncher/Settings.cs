@@ -203,11 +203,11 @@ namespace XIVLauncher
             // Mistakes were made
             if (addonList.Any(entry => entry.Addon.GetType() == typeof(HooksAddon)))
             {
-                var addon = addonList.First(entry => entry.Addon.GetType() == typeof(HooksAddon));
+                var addon = addonList.First(entry => entry.Addon is HooksAddon);
 
                 SetInGameAddonEnabled(addon.IsEnabled);
 
-                addonList = addonList.Where(entry => entry.Addon.GetType() != typeof(HooksAddon)).ToList();
+                addonList = addonList.Where(entry => entry.Addon is HooksAddon).ToList();
 
                 addonList = addonList.Where(entry => !(entry.Addon is GenericAddon genericAddon) || !string.IsNullOrEmpty(genericAddon.Path)).ToList();
             }
