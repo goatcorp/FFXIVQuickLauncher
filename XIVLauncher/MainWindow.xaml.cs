@@ -43,12 +43,14 @@ namespace XIVLauncher
             {
                 new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
             };
+            #endif
 
             // Check if dark mode is enabled on windows, if yes, load the dark theme
             var themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml", UriKind.RelativeOrAbsolute);
             if(Util.IsWindowsDarkModeEnabled())
                 themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml", UriKind.RelativeOrAbsolute);
 
+            #if DEBUG
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
 
             AutoUpdater.ShowSkipButton = false;

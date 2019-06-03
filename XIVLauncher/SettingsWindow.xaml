@@ -110,8 +110,12 @@
                                 compatible and the addon "XIVLauncher in-game features" is ticked on the previous tab.
                             </TextBlock>
                             <CheckBox x:Name="EnableHooksCheckBox" Content="Enable in-game features"
-                                      HorizontalAlignment="Left" Margin="0,0,0,10"
+                                      HorizontalAlignment="Left" Margin="0,0,0,0"
                                       Foreground="{DynamicResource MaterialDesignBody}" />
+
+                            <Label Foreground="DarkGray" Margin="0,10,0,0">
+                                When enabled, type "/xlhelp" in-game to see other available commands like fate notifications.
+                            </Label>
 
                             <StackPanel IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
                                 <Separator></Separator>
@@ -140,7 +144,6 @@
                                 <CheckBox x:Name="ChatMessageNotificationCheckBox" Content="Notify about chat messages"
                                           HorizontalAlignment="Left" Margin="0,10,0,20"
                                           Foreground="{DynamicResource MaterialDesignBody}" />
-
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>

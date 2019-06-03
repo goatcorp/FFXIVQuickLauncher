@@ -208,6 +208,8 @@ namespace XIVLauncher
                 SetInGameAddonEnabled(addon.IsEnabled);
 
                 addonList = addonList.Where(entry => entry.Addon.GetType() != typeof(HooksAddon)).ToList();
+
+                addonList = addonList.Where(entry => !(entry.Addon is GenericAddon genericAddon) || !string.IsNullOrEmpty(genericAddon.Path)).ToList();
             }
 
             return addonList;

@@ -81,6 +81,7 @@ namespace XIVLauncher
                 Settings.SetDx11(Dx11RadioButton.IsChecked == true);
                 Settings.SetExpansionLevel(ExpansionLevelComboBox.SelectedIndex);
                 Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
+                Settings.SetInGameAddonEnabled(HooksCheckBox.IsChecked == true);
 
                 var addonList = new List<AddonEntry>()
                 {

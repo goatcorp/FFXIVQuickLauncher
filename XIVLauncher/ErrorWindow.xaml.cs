@@ -18,6 +18,18 @@ namespace XIVLauncher
             ExceptionTextBox.AppendText("\n" + Util.GetAssemblyVersion());
             ExceptionTextBox.AppendText("\n" + Util.GetGitHash());
             ExceptionTextBox.AppendText("\nContext: " + context);
+            ExceptionTextBox.AppendText("\n" + Environment.OSVersion);
+            ExceptionTextBox.AppendText("\n" + Environment.Is64BitProcess);
+            ExceptionTextBox.AppendText("\n" + Settings.IsDX11());
+            ExceptionTextBox.AppendText("\n" + Settings.IsInGameAddonEnabled());
+            ExceptionTextBox.AppendText("\n" + Settings.IsAutologin());
+
+            #if DEBUG
+            ExceptionTextBox.AppendText("\nDebugging");
+            #endif
+
+            ExceptionTextBox.AppendText("\n\n\n" + Properties.Settings.Default.Addons);
+
             ContextTextBlock.Text = message;
 
             SystemSounds.Hand.Play();
