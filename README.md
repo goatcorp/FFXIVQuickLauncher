@@ -6,13 +6,16 @@ A faster launcher for Final Fantasy XIV.
 
 ## Why?
 
-The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your password. This project aims to fix that and add some features to the game that were not there before, such as:
+The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your password. This project aims to fix that and add some QoL features to the game that were not there before, such as:
 
 * Auto-login
 * Launching tools like ACT when starting the game
 * Discord Rich Presence
+* Fast in-game market board price checks
 * Chat filtering
-* Discord notifications for Duty Finder and chat
+* Discord notifications for Duty Finder, chat and fates
+
+Check the settings page and use the /xlhelp command in-game to see available commands.
 
 ## How to install
 
@@ -22,6 +25,7 @@ The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your pa
 
 [Please check out the FAQ](https://github.com/goaaats/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.
 
+<br>
 <br>
 
 ## Disclaimer
