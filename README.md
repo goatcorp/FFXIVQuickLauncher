@@ -4,6 +4,10 @@ A faster launcher for Final Fantasy XIV.
 
 <img src="https://i.imgur.com/djzHDbu.png" alt="drawing" width="500"/>
 
+## 旧Fork版は？
+オリジナルのプロジェクトのほうがリニューアルしたため旧Forkプロジェクトは廃止しました。旧Forkプロジェクト版が必要な方は [こちら](https://bitbucket.org/anoyetta/ffxivquicklauncher/src/master/) から取得してください。  
+by anoyetta
+
 ## Why?
 
 The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your password. This project aims to fix that and add some QoL features to the game that were not there before, such as:
