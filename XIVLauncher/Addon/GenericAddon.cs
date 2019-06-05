@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,7 +15,15 @@ namespace XIVLauncher.Addon
             if (Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(Path)).Any())
                 return;
 
-            var process = new Process {StartInfo = {FileName = Path, Arguments = CommandLine}};
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = Path,
+                    Arguments = CommandLine,
+                    WorkingDirectory = System.IO.Path.GetDirectoryName(Path),
+                }
+            };
 
             if (RunAsAdmin)
             {
