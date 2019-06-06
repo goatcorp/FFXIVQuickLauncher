@@ -1,161 +1,151 @@
-﻿<Window x:Class="XIVLauncher.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:XIVLauncher"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:system="clr-namespace:System;assembly=mscorlib"
-        mc:Ignorable="d"
-        Title="XIVLauncher" Height="375.923" Width="767.699" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
-        Icon="pack://application:,,,/Resources/dalamud_icon.ico"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.FontWeight="Medium"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+<Window
+  x:Class="XIVLauncher.MainWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:local="clr-namespace:XIVLauncher"
+  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+  xmlns:system="clr-namespace:System;assembly=mscorlib"
+  mc:Ignorable="d"
+  Title="XIVLauncher" Height="375.923" Width="767.699" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
+  Icon="pack://application:,,,/Resources/dalamud_icon.ico"
+  TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+  Background="{DynamicResource MaterialDesignPaper}"
+  TextElement.FontWeight="Medium"
+  FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+
+  <Grid>
 
     <Grid>
-
-
-        <Grid>
-            <materialDesign:Card Margin="10,10,0,0" HorizontalAlignment="Left" Width="544" Height="213" Cursor="Hand"
+      <materialDesign:Card Margin="10,10,0,0" HorizontalAlignment="Left" Width="544" Height="213" Cursor="Hand"
                                  MouseUp="BannerCard_MouseUp">
-                <Image x:Name="BannerImage" Source="pack://application:,,,/Resources/placeholder-news.png" />
-            </materialDesign:Card>
+        <Image x:Name="BannerImage" Source="pack://application:,,,/Resources/placeholder-news.png" />
+      </materialDesign:Card>
 
-            
-
-            <materialDesign:DialogHost Identifier="MaintenanceQueueDialogHost" x:Name="MaintenanceQueueDialogHost">
-                <materialDesign:DialogHost.DialogContent>
-                    <StackPanel Margin="16">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock x:Name="LoadingMessageTextBlock">Waiting for maintenance...</TextBlock>
-                            <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+      <materialDesign:DialogHost Identifier="MaintenanceQueueDialogHost" x:Name="MaintenanceQueueDialogHost">
+        <materialDesign:DialogHost.DialogContent>
+          <StackPanel Margin="16">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <TextBlock x:Name="LoadingMessageTextBlock">Waiting for maintenance...</TextBlock>
+              <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
                                          Value="0"
                                          IsIndeterminate="True" Height="30" Width="30" Margin="0 8 0 0" />
-                            <Button x:Name="LoadingMessageCancelButton" Style="{StaticResource MaterialDesignFlatButton}"
+              <Button x:Name="LoadingMessageCancelButton" Style="{StaticResource MaterialDesignFlatButton}"
                                     IsCancel="True"
                                     Margin="0 8 0 0"
                                     Click="QuitMaintenanceQueueButton_OnClick">
-                                <Button.CommandParameter>
-                                    <system:Boolean>False</system:Boolean>
-                                </Button.CommandParameter>
-                                Cancel
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </materialDesign:DialogHost.DialogContent>
+                <Button.CommandParameter>
+                  <system:Boolean>False</system:Boolean>
+                </Button.CommandParameter>
+                Cancel
+              </Button>
+            </StackPanel>
+          </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
 
+        <Grid>
+          <materialDesign:Card Margin="11,246,0,0" HorizontalAlignment="Left" Width="487" Height="77">
+            <ListView x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
+              <ListView.ItemTemplate>
+                <DataTemplate x:Name="SingleLineDataTemplate" DataType="local:News">
+                  <StackPanel Orientation="Horizontal" Height="15">
+                    <materialDesign:PackIcon Height="Auto" Width="Auto">
+                      <materialDesign:PackIcon.Style>
+                        <Style TargetType="materialDesign:PackIcon">
+                          <Setter Property="Kind" Value="Newspaper" />
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding Tag}" Value="Important">
+                              <Setter Property="Kind" Value="AlertCircle" />
+                              <Setter Property="Foreground" Value="Red" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag}" Value="Follow-up">
+                              <Setter Property="Kind" Value="InformationOutline" />
+                              <Setter Property="Foreground" Value="#FFFFB900" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag}" Value="DlError">
+                              <Setter Property="Kind" Value="LanDisconnect" />
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style>
+                      </materialDesign:PackIcon.Style>
+                    </materialDesign:PackIcon>
+                    <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                  </StackPanel>
+                </DataTemplate>
+              </ListView.ItemTemplate>
+            </ListView>
+          </materialDesign:Card>
 
-                <Grid>
-                    <materialDesign:Card Margin="11,246,0,0" HorizontalAlignment="Left" Width="487" Height="77">
-                        <ListView x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:Name="SingleLineDataTemplate" DataType="local:News">
-                                    <StackPanel Orientation="Horizontal" Height="15">
-                                        <materialDesign:PackIcon Height="Auto" Width="Auto">
-                                            <materialDesign:PackIcon.Style>
-                                                <Style TargetType="materialDesign:PackIcon">
-                                                    <Setter Property="Kind" Value="Newspaper" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Tag}" Value="Important">
-                                                            <Setter Property="Kind" Value="AlertCircle" />
-                                                            <Setter Property="Foreground" Value="Red" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Tag}" Value="Follow-up">
-                                                            <Setter Property="Kind" Value="InformationOutline" />
-                                                            <Setter Property="Foreground" Value="#FFFFB900" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Tag}" Value="DlError">
-                                                            <Setter Property="Kind" Value="LanDisconnect" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </materialDesign:PackIcon.Style>
-                                        </materialDesign:PackIcon>
-                                        <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Margin="12,0,0,0" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </materialDesign:Card>
-
-                    <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+          <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                             ToolTip="Maintenance Queue"
                             x:Name="QueueButton" Margin="505,240,0,18" Height="77" Width="77"
                             Click="QueueButton_OnClick">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <materialDesign:PackIcon Kind="Update" Height="Auto" Width="Auto" />
-                        </StackPanel>
-                    </Button>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <materialDesign:PackIcon Kind="Update" Height="Auto" Width="Auto" />
+            </StackPanel>
+          </Button>
 
-                    <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+          <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                             ToolTip="World Status"
                             Margin="587,240,0,18" Height="77" Width="77" Click="WorldStatusButton_Click">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <materialDesign:PackIcon Kind="Earth" Height="Auto" Width="Auto"
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <materialDesign:PackIcon Kind="Earth" Height="Auto" Width="Auto"
                                                      x:Name="WorldStatusPackIcon" />
-                        </StackPanel>
-                    </Button>
+            </StackPanel>
+          </Button>
 
-                    <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+          <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                             ToolTip="Settings"
                             x:Name="SettingsButton" Margin="669,232,0,10" Height="77" Width="77"
                             Click="SettingsButton_OnClick">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <materialDesign:PackIcon Kind="Gear" Height="Auto" Width="Auto" />
-                        </StackPanel>
-                    </Button>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+              <materialDesign:PackIcon Kind="Gear" Height="Auto" Width="Auto" />
+            </StackPanel>
+          </Button>
 
-                    <materialDesign:DialogHost Identifier="OtpDialogHost" x:Name="OtpDialogHost">
-                        <materialDesign:DialogHost.DialogContent>
-                            <StackPanel Margin="16">
-                                <TextBlock>Please enter your OTP key.</TextBlock>
-                                <TextBox Margin="0,8,0,0" HorizontalAlignment="Stretch"
+          <materialDesign:DialogHost Identifier="OtpDialogHost" x:Name="OtpDialogHost">
+            <materialDesign:DialogHost.DialogContent>
+              <StackPanel Margin="16">
+                <TextBlock>Please enter your OTP key.</TextBlock>
+                <TextBox Margin="0,8,0,0" HorizontalAlignment="Stretch"
                                     PreviewTextInput="OtpTextBox_OnPreviewTextInput" KeyDown="OtpTextBox_KeyDown"  MaxLength="6" x:Name="OtpTextBox" />
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="110" />
-                                        <ColumnDefinition Width="100" />
-                                    </Grid.ColumnDefinitions>
-                                    <Button Content="Ok" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Column="0"
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="100" />
+                  </Grid.ColumnDefinitions>
+                  <Button Content="Ok" HorizontalAlignment="Left" Margin="0,5,0,0" Grid.Column="0"
                                         Width="100" Click="OtpTextBox_Click" />
-                                    <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,5,0,0" Grid.Column="1"
+                  <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,5,0,0" Grid.Column="1"
                                         Width="100" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
-                                </Grid>
-                            </StackPanel>
-                        </materialDesign:DialogHost.DialogContent>
+                </Grid>
+              </StackPanel>
+            </materialDesign:DialogHost.DialogContent>
 
-                        <materialDesign:Card Margin="559,10,0,0" Height="213" HorizontalAlignment="Left" Width="192" KeyDown="Card_KeyDown">
-                            <Grid VerticalAlignment="Stretch" Margin="0">
-                                <TextBox x:Name="LoginUsername" HorizontalAlignment="Left" Height="24" Margin="33,27,0,0"
+            <materialDesign:Card Margin="559,10,0,0" Height="213" HorizontalAlignment="Left" Width="192" KeyDown="Card_KeyDown">
+              <Grid VerticalAlignment="Stretch" Margin="0">
+                <TextBox x:Name="LoginUsername" HorizontalAlignment="Left" Height="24" Margin="33,27,0,0"
                                     TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
                                     materialDesign:HintAssist.Hint="Square Enix ID" />
-                                <PasswordBox x:Name="LoginPassword" HorizontalAlignment="Left" Height="24" Margin="33,55,0,0"
+                <PasswordBox x:Name="LoginPassword" HorizontalAlignment="Left" Height="24" Margin="33,55,0,0"
                                     VerticalAlignment="Top" Width="120"
                                     materialDesign:HintAssist.Hint="Password" />
-                                <Button Content="Log In" HorizontalAlignment="Left" Margin="22,164,0,0"
+                <Button Content="Log In" HorizontalAlignment="Left" Margin="22,164,0,0"
                                     VerticalAlignment="Top"
                                     Width="142" Click="LoginButton_Click" />
-                                <CheckBox Content="Save ID and password" HorizontalAlignment="Left" Margin="16,96,0,0"
+                <CheckBox Content="Save ID and password" HorizontalAlignment="Left" Margin="16,96,0,0"
                                     VerticalAlignment="Top" Checked="SaveLoginCheckBox_OnChecked"
                                     Unchecked="SaveLoginCheckBox_OnUnchecked" x:Name="SaveLoginCheckBox" />
-                                <CheckBox Content="Log in automatically" HorizontalAlignment="Left" Margin="16,114,0,0"
+                <CheckBox Content="Log in automatically" HorizontalAlignment="Left" Margin="16,114,0,0"
                                     VerticalAlignment="Top" IsEnabled="false" x:Name="AutoLoginCheckBox" />
-                                <CheckBox Content="Use One-Time-Passwords" HorizontalAlignment="Left" Margin="16,132,0,0"
+                <CheckBox Content="Use One-Time-Passwords" HorizontalAlignment="Left" Margin="16,132,0,0"
                                     VerticalAlignment="Top" x:Name="OtpCheckBox" />
-                            </Grid>
-                        </materialDesign:Card>
-                    </materialDesign:DialogHost>
-
-                </Grid>
-
-
-            </materialDesign:DialogHost>
-
-
+              </Grid>
+            </materialDesign:Card>
+          </materialDesign:DialogHost>
         </Grid>
+      </materialDesign:DialogHost>
     </Grid>
-
-
+  </Grid>
 </Window>
