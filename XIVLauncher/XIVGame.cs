@@ -21,7 +21,7 @@ namespace XIVLauncher
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and it's checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
 
-        private string _userAgent = GetUserAgent();
+        private readonly string _userAgent = GetUserAgent();
 
         private static readonly string[] FilesToHash =
         {
@@ -70,13 +70,13 @@ namespace XIVLauncher
             }
             else
             {
-                var cached = Task.Run(() => Cache.GetCachedUid(username)).Result;
-                uid = cached.Uid;
+                var (cachedUid, region) = Task.Run(() => Cache.GetCachedUid(username)).Result;
+                uid = cachedUid;
 
                 loginResult = new OauthLoginResult
                 {
                     Playable = true,
-                    Region = cached.Region,
+                    Region = region,
                     TermsAccepted = true
                 };
             }
@@ -196,8 +196,7 @@ namespace XIVLauncher
                 {
                     if (exc.Status == WebExceptionStatus.ProtocolError)
                     {
-                        var response = exc.Response as HttpWebResponse;
-                        if (response != null)
+                        if (exc.Response is HttpWebResponse response)
                         {
                             // This apparently can also indicate that we need to update
                             if (response.StatusCode == HttpStatusCode.Conflict)

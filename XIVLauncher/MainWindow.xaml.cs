@@ -31,6 +31,8 @@ namespace XIVLauncher
 
         private XIVGame _game = new XIVGame();
 
+        private bool isLoggingIn = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -48,6 +50,7 @@ namespace XIVLauncher
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
+                isLoggingIn = false;
             };
 
             AutoUpdater.ShowSkipButton = false;
@@ -252,7 +255,12 @@ namespace XIVLauncher
             DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
             Task.Run(() => { this.Dispatcher.BeginInvoke(new Action(() => {  })); });
             */
+
+            if (isLoggingIn) 
+                return;
+
             HandleLogin(false);
+            isLoggingIn = true;
         }
 
         private void HandleLogin(bool autoLogin)
@@ -351,6 +359,7 @@ namespace XIVLauncher
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
+                    isLoggingIn = false;
                 }
 
                 try
@@ -366,6 +375,7 @@ namespace XIVLauncher
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Hooks").ShowDialog();
+                    isLoggingIn = false;
                 }
 
                 Environment.Exit(0);
@@ -373,6 +383,7 @@ namespace XIVLauncher
             catch (Exception exc)
             {
                 new ErrorWindow(exc, "Additionally, please check your login information or try again.", "Login").ShowDialog();
+                isLoggingIn = false;
             }
         }
 
@@ -501,10 +512,11 @@ namespace XIVLauncher
 
         private void Card_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter || e.Key == Key.Return)
-            {
-                HandleLogin(false);
-            }
+            if (e.Key != Key.Enter && e.Key != Key.Return || isLoggingIn) 
+                return;
+
+            HandleLogin(false);
+            isLoggingIn = true;
         }
     }
 }

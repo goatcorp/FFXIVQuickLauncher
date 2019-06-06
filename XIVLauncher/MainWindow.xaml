@@ -131,6 +131,7 @@
         <materialDesign:Card
           Grid.Row="0"
           Grid.Column="1"
+          Width="255"
           Margin="0"
           HorizontalAlignment="Right"
           VerticalAlignment="Stretch"
