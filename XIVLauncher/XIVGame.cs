@@ -1,4 +1,3 @@
-﻿using Nhaama.Memory;
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -10,20 +9,23 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using Nhaama.Memory;
 using XIVLauncher.Cache;
 
 namespace XIVLauncher
 {
-    class XIVGame
+    internal class XIVGame
     {
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and it's checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
-        private string _userAgent = GetUserAgent();
+
+        private readonly string _userAgent = GetUserAgent();
 
         private static readonly string[] FilesToHash =
         {
-            "ffxivboot.exe", 
+            "ffxivboot.exe",
             "ffxivboot64.exe",
             "ffxivlauncher.exe",
             "ffxivlauncher64.exe",
@@ -40,10 +42,10 @@ namespace XIVLauncher
             var expansionLevel = Settings.GetExpansionLevel();
 
             OauthLoginResult loginResult;
-            
+
             if (!useCache || !Cache.HasValidCache(username))
             {
-                loginResult = OauthLogin(username, password, otp);
+                loginResult = Task.Run(() => OauthLogin(username, password, otp)).Result;
 
                 if (!loginResult.Playable)
                 {
@@ -59,20 +61,22 @@ namespace XIVLauncher
 
                 // Clamp the expansion level to what the account is allowed to access
                 expansionLevel = Math.Min(Math.Max(loginResult.MaxExpansion, 0), expansionLevel);
-                (uid, needsUpdate) = RegisterSession(loginResult);
+                (uid, needsUpdate) = Task.Run(() => RegisterSession(loginResult)).Result;
 
-                if(useCache)
-                    Cache.AddCachedUid(username, uid, loginResult.Region);
+                if (useCache)
+                {
+                    Task.Run(() => Cache.AddCachedUid(username, uid, loginResult.Region)).Wait();
+                }
             }
             else
             {
-                var cached = Cache.GetCachedUid(username);
-                uid = cached.Uid;
+                var (cachedUid, region) = Task.Run(() => Cache.GetCachedUid(username)).Result;
+                uid = cachedUid;
 
                 loginResult = new OauthLoginResult
                 {
                     Playable = true,
-                    Region = cached.Region,
+                    Region = region,
                     TermsAccepted = true
                 };
             }
@@ -91,36 +95,40 @@ namespace XIVLauncher
 
         private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = true)
         {
-            try {
+            try
+            {
                 var game = new Process();
                 if (Settings.IsDX11()) { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGamever()}";
-                game.Start();
+                game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int)Settings.GetLanguage()} ver={GetLocalGamever()}";
 
-                if (closeMutants)
+                Task.Run(() =>
                 {
-                    for (var tries = 0; tries < 30; tries++)
+                    game.Start();
+
+                    if (closeMutants)
                     {
-                        game.Refresh();
-
-                        // Something went wrong here, why even bother
-                        if (game.HasExited)
-                            break;
-
-                        // Is the main window open? That means the mutants must be too
-                        if (game.MainWindowHandle == IntPtr.Zero)
+                        for (var tries = 0; tries < 30; tries++)
                         {
-                            Thread.Sleep(10000);
-                            continue;
-                        }
+                            game.Refresh();
 
-                        CloseMutants(game);
-                        break;
+                            // Something went wrong here, why even bother
+                            if (game.HasExited)
+                                break;
+
+                            // Is the main window open? That means the mutants must be too
+                            if (game.MainWindowHandle == IntPtr.Zero)
+                            {
+                                Thread.Sleep(10000);
+                                continue;
+                            }
+
+                            CloseMutants(game);
+                            break;
+                        }
                     }
-                }
+                }).Wait();
 
                 return game;
-
             }
             catch (Exception exc)
             {
@@ -188,11 +196,10 @@ namespace XIVLauncher
                 {
                     if (exc.Status == WebExceptionStatus.ProtocolError)
                     {
-                        var response = exc.Response as HttpWebResponse;
-                        if (response != null)
+                        if (exc.Response is HttpWebResponse response)
                         {
                             // This apparently can also indicate that we need to update
-                            if(response.StatusCode == HttpStatusCode.Conflict)
+                            if (response.StatusCode == HttpStatusCode.Conflict)
                                 return ("", true);
                         }
                         else
@@ -205,11 +212,10 @@ namespace XIVLauncher
                         throw;
                     }
                 }
-                
+
                 throw new Exception("Could not validate game version.");
             }
         }
-
 
         private string GetStored() //this is needed to be able to access the login site correctly
         {
@@ -254,11 +260,11 @@ namespace XIVLauncher
                 var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
                 var matches = regex.Matches(reply);
 
-                if(matches.Count == 0)
+                if (matches.Count == 0)
                     throw new Exception("Could not log in to oauth.");
 
                 var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
-                
+
                 return new OauthLoginResult
                 {
                     SessionId = launchParams[1],
@@ -311,7 +317,6 @@ namespace XIVLauncher
             {
                 throw new Exception("Could not get gate status.", exc);
             }
-
         }
 
         private static string MakeComputerId()
@@ -324,12 +329,11 @@ namespace XIVLauncher
 
                 Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
 
-                var checkSum = (byte) -(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+                var checkSum = (byte)-(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
                 bytes[0] = checkSum;
 
-                return BitConverter.ToString(bytes).Replace("-","").ToLower();
+                return BitConverter.ToString(bytes).Replace("-", "").ToLower();
             }
-            
         }
 
         private static string GetUserAgent()

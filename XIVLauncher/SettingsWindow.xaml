@@ -107,7 +107,7 @@
                                 <LineBreak></LineBreak>
                                 enabled if you are running the DirectX 11 version of the game, the version of the game is
                                 <LineBreak></LineBreak>
-                                compatible and the addon "XIVLauncher in-game features" is ticked on the previous tab.
+                                compatible and the checkbox below is ticked.
                             </TextBlock>
                             <CheckBox x:Name="EnableHooksCheckBox" Content="Enable in-game features"
                                       HorizontalAlignment="Left" Margin="0,0,0,0"
@@ -145,6 +145,10 @@
                                           HorizontalAlignment="Left" Margin="0,10,0,20"
                                           Foreground="{DynamicResource MaterialDesignBody}" />
                             </StackPanel>
+                            <Separator/>
+                            <Label Foreground="DarkGray" Margin="0,5,0,20">
+                                Market board data provided by Mogboard.
+                            </Label>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

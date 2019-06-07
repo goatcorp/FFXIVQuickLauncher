@@ -1,16 +1,15 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using AdysTech.CredentialManager;
 using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
-using Newtonsoft.Json;
 using XIVLauncher.Addon;
 using Color = System.Windows.Media.Color;
 
@@ -31,7 +30,9 @@ namespace XIVLauncher
         public const string AppName = "FINAL FANTASY XIV";
 
         private XIVGame _game = new XIVGame();
-        
+
+        private bool isLoggingIn = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -40,15 +41,16 @@ namespace XIVLauncher
 
             // Check if dark mode is enabled on windows, if yes, load the dark theme
             var themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml", UriKind.RelativeOrAbsolute);
-            if(Util.IsWindowsDarkModeEnabled())
+            if (Util.IsWindowsDarkModeEnabled())
                 themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml", UriKind.RelativeOrAbsolute);
 
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
 
-            #if !DEBUG
+#if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
+                isLoggingIn = false;
             };
 
             AutoUpdater.ShowSkipButton = false;
@@ -59,9 +61,9 @@ namespace XIVLauncher
             AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
             AutoUpdater.Start("https://goaaats.github.io/ffxiv/tools/launcher/update.xml");
-            #else
+#else
             InitializeWindow();
-            #endif
+#endif
 
             this.Title += " v" + Util.GetAssemblyVersion();
         }
@@ -102,7 +104,7 @@ namespace XIVLauncher
                 SaveLoginCheckBox.IsChecked = true;
             }
 
-            if(Settings.IsAutologin() && savedCredentials != null && Keyboard.Modifiers != ModifierKeys.Shift)
+            if (Settings.IsAutologin() && savedCredentials != null && Keyboard.Modifiers != ModifierKeys.Shift)
             {
                 try
                 {
@@ -117,7 +119,7 @@ namespace XIVLauncher
                         HandleLogin(true);
                     }
                 }
-                catch(Exception exc)
+                catch (Exception exc)
                 {
                     new ErrorWindow(exc, "Additionally, please check your login information or try again.", "AutoLogin").ShowDialog();
                     Settings.SetAutologin(false);
@@ -126,7 +128,7 @@ namespace XIVLauncher
                 Settings.Save();
             }
 
-            if(Settings.GetGamePath() == string.Empty)
+            if (Settings.GetGamePath() == string.Empty)
             {
                 var setup = new FirstTimeSetup();
                 setup.ShowDialog();
@@ -253,7 +255,12 @@ namespace XIVLauncher
             DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
             Task.Run(() => { this.Dispatcher.BeginInvoke(new Action(() => {  })); });
             */
+
+            if (isLoggingIn) 
+                return;
+
             HandleLogin(false);
+            isLoggingIn = true;
         }
 
         private void HandleLogin(bool autoLogin)
@@ -281,7 +288,6 @@ namespace XIVLauncher
                         if (result == MessageBoxResult.No)
                         {
                             AutoLoginCheckBox.IsChecked = false;
-
                         }
                     }
                     else
@@ -299,7 +305,7 @@ namespace XIVLauncher
                 Settings.ResetCredentials(AppName);
                 Settings.Save();
             }
-            
+
             if (OtpCheckBox.IsChecked == false || hasValidCache)
             {
                 StartGame();
@@ -314,14 +320,14 @@ namespace XIVLauncher
             }
         }
 
-        private void StartGame()
+        private async void StartGame()
         {
             try
             {
                 var gateStatus = false;
                 try
                 {
-                    gateStatus = _game.GetGateStatus();
+                    gateStatus = await Task.Run(() => _game.GetGateStatus());
                 }
                 catch
                 {
@@ -348,30 +354,36 @@ namespace XIVLauncher
 
                 try
                 {
-                    StartAddons(gameProcess);
+                    await Task.Run(() => StartAddons(gameProcess));
                 }
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
+                    isLoggingIn = false;
                 }
 
                 try
                 {
                     if (Settings.IsInGameAddonEnabled())
                     {
-                        new HooksAddon().Run(gameProcess);
+                        await Task.Run(() =>
+                        {
+                            new HooksAddon().Run(gameProcess);
+                        });
                     }
                 }
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Hooks").ShowDialog();
+                    isLoggingIn = false;
                 }
 
                 Environment.Exit(0);
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 new ErrorWindow(exc, "Additionally, please check your login information or try again.", "Login").ShowDialog();
+                isLoggingIn = false;
             }
         }
 
@@ -475,7 +487,6 @@ namespace XIVLauncher
 
             DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
             _maintenanceQueueTimer.Start();
-
         }
 
         private void QuitMaintenanceQueueButton_OnClick(object sender, RoutedEventArgs e)
@@ -501,10 +512,11 @@ namespace XIVLauncher
 
         private void Card_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter || e.Key == Key.Return)
-            {
-                HandleLogin(false);
-            }
+            if (e.Key != Key.Enter && e.Key != Key.Return || isLoggingIn) 
+                return;
+
+            HandleLogin(false);
+            isLoggingIn = true;
         }
     }
 }
