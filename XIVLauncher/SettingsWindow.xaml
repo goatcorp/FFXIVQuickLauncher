@@ -107,7 +107,7 @@
                                 <LineBreak></LineBreak>
                                 enabled if you are running the DirectX 11 version of the game, the version of the game is
                                 <LineBreak></LineBreak>
-                                compatible and the addon "XIVLauncher in-game features" is ticked on the previous tab.
+                                compatible and the checkbox below is ticked.
                             </TextBlock>
                             <CheckBox x:Name="EnableHooksCheckBox" Content="Enable in-game features"
                                       HorizontalAlignment="Left" Margin="0,0,0,0"
