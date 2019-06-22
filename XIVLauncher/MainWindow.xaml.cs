@@ -196,6 +196,16 @@ namespace XIVLauncher
 
             this.Visibility = Visibility.Visible;
 
+            try
+            {
+                Task.Run(() => StartAddons(Process.GetCurrentProcess(), AddonStartAt.LauncherInitialised));
+            }
+            catch (Exception exc)
+            {
+                new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
+                isLoggingIn = false;
+            }
+
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
             {
@@ -318,9 +328,9 @@ namespace XIVLauncher
             }
         }
 
-        private void StartAddons(Process gameProcess)
+        private void StartAddons(Process gameProcess, AddonStartAt startAt = AddonStartAt.GameLaunched)
         {
-            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true))
+            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true && x.StartAt == startAt))
             {
                 addonEntry.Addon.Run(gameProcess);
             }
