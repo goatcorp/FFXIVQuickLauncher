@@ -58,8 +58,31 @@ namespace XIVLauncher
         {
             using (var client = new WebClient())
             {
+                string url;
+                switch (Settings.GetLanguage())
+                {
+                    case ClientLanguage.Japanese:
+                        url = "https://frontier.ffxiv.com/news/headline.json?lang=ja&media=pcapp&1552178812383";
+                        break;
+
+                    case ClientLanguage.English:
+                        url = "https://frontier.ffxiv.com/news/headline.json?lang=en-gb&media=pcapp&1552178812383";
+                        break;
+
+                    case ClientLanguage.German:
+                        url = "https://frontier.ffxiv.com/news/headline.json?lang=de&media=pcapp&1552178812383";
+                        break;
+
+                    case ClientLanguage.French:
+                        url = "https://frontier.ffxiv.com/news/headline.json?lang=fr&media=pcapp&1552178812383";
+                        break;
+
+                    default:
+                        url = "https://frontier.ffxiv.com/news/headline.json?lang=en-gb&media=pcapp&1552178812383";
+                        break;
+                }
                 var json = client.DownloadString(
-                    new Uri("https://frontier.ffxiv.com/news/headline.json?lang=en-gb&media=pcapp&1552178812383"));
+                    new Uri(url));
 
                 return JsonConvert.DeserializeObject<Headlines>(json, Converter.Settings);
             }

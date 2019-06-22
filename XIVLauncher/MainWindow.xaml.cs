@@ -134,59 +134,65 @@ namespace XIVLauncher
                 setup.ShowDialog();
             }
 
-            try
-            {
-                _headlines = Headlines.Get();
-
-                _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
-                for (int i = 0; i < _headlines.Banner.Length; i++)
+            Action setupHeadlines = (() => {
+                try
                 {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = _headlines.Banner[i].LsbBanner;
-                    bitmap.EndInit();
+                    _headlines = Headlines.Get();
 
-                    _bannerBitmaps[i] = bitmap;
-                }
-
-                BannerImage.Source = _bannerBitmaps[0];
-
-                _bannerChangeTimer = new System.Timers.Timer
-                {
-                    Interval = 5000
-                };
-
-                _bannerChangeTimer.Elapsed += (o, args) =>
-                {
-                    if (_currentBannerIndex + 1 > _headlines.Banner.Length - 1)
+                    _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
+                    for (int i = 0; i < _headlines.Banner.Length; i++)
                     {
-                        _currentBannerIndex = 0;
-                    }
-                    else
-                    {
-                        _currentBannerIndex++;
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = _headlines.Banner[i].LsbBanner;
+                        bitmap.EndInit();
+
+                        _bannerBitmaps[i] = bitmap;
                     }
 
-                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    BannerImage.Source = _bannerBitmaps[0];
+
+                    _bannerChangeTimer = new System.Timers.Timer
                     {
-                        BannerImage.Source = _bannerBitmaps[_currentBannerIndex];
-                    }));
+                        Interval = 5000
+                    };
+
+                    _bannerChangeTimer.Elapsed += (o, args) =>
+                    {
+                        if (_currentBannerIndex + 1 > _headlines.Banner.Length - 1)
+                        {
+                            _currentBannerIndex = 0;
+                        }
+                        else
+                        {
+                            _currentBannerIndex++;
+                        }
+
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            BannerImage.Source = _bannerBitmaps[_currentBannerIndex];
+                        }));
+
+                        _bannerChangeTimer.Start();
+                    };
 
                     _bannerChangeTimer.Start();
-                };
 
-                _bannerChangeTimer.Start();
-
-                NewsListView.ItemsSource = _headlines.News;
-            }
-            catch (Exception)
-            {
-                NewsListView.Items.Add(new News()
+                    NewsListView.ItemsSource = _headlines.News;
+                }
+                catch (Exception)
                 {
-                    Title = "Could not download news data.",
-                    Tag = "DlError"
-                });
-            }
+                    NewsListView.Items.Add(new News()
+                    {
+                        Title = "Could not download news data.",
+                        Tag = "DlError"
+                    });
+                }
+            });
+
+            setupHeadlines();
+
+            Settings.LanguageChanged += setupHeadlines;
 
             this.Visibility = Visibility.Visible;
 
@@ -256,7 +262,7 @@ namespace XIVLauncher
             Task.Run(() => { this.Dispatcher.BeginInvoke(new Action(() => {  })); });
             */
 
-            if (isLoggingIn) 
+            if (isLoggingIn)
                 return;
 
             HandleLogin(false);
@@ -425,7 +431,36 @@ namespace XIVLauncher
                 }
                 else
                 {
-                    Process.Start("https://eu.finalfantasyxiv.com/lodestone/news/detail/" + item.Id);
+                    string url;
+                    switch (Settings.GetLanguage())
+                    {
+                        case ClientLanguage.Japanese:
+
+                            url = "https://jp.finalfantasyxiv.com/lodestone/news/detail/";
+                            break;
+
+                        case ClientLanguage.English:
+
+                            url = "https://eu.finalfantasyxiv.com/lodestone/news/detail/";
+                            break;
+
+                        case ClientLanguage.German:
+
+                            url = "https://de.finalfantasyxiv.com/lodestone/news/detail/";
+                            break;
+
+                        case ClientLanguage.French:
+
+                            url = "https://fr.finalfantasyxiv.com/lodestone/news/detail/";
+                            break;
+
+                        default:
+
+                            url = "https://eu.finalfantasyxiv.com/lodestone/news/detail/";
+                            break;
+                    }
+
+                    Process.Start(url + item.Id);
                 }
             }
         }
@@ -512,7 +547,7 @@ namespace XIVLauncher
 
         private void Card_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Enter && e.Key != Key.Return || isLoggingIn) 
+            if (e.Key != Key.Enter && e.Key != Key.Return || isLoggingIn)
                 return;
 
             HandleLogin(false);
