@@ -51,6 +51,7 @@ namespace XIVLauncher
             {
                 new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
                 Serilog.Log.CloseAndFlush();
+                Environment.Exit(0);
             };
 
             AutoUpdater.ShowSkipButton = false;
