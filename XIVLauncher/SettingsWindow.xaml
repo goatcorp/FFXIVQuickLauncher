@@ -126,24 +126,22 @@
 
                                 <StackPanel Orientation="Horizontal">
                                     <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0">
-                                        Discord Webhook URL
+                                        Discord Bot Token
                                     </Label>
                                     <Label Foreground="DarkGray" Margin="0,10,0,0" Cursor="Hand"
                                            MouseUp="OpenWebhookGuideLabel_MouseUp">
-                                        How do I get this?
+                                        How do I set this up?
                                     </Label>
                                 </StackPanel>
 
-                                <TextBox x:Name="DiscordWebHookUrlTextBox" Margin="10,0,0,0" Width="400"
+                                <TextBox x:Name="DiscordBotTokenTextBox" Margin="10,0,0,0" Width="400"
                                          VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         Foreground="{DynamicResource MaterialDesignBody}" materialDesign:HintAssist.Hint="Webhook URL">
+                                         Foreground="{DynamicResource MaterialDesignBody}" materialDesign:HintAssist.Hint="Discord Bot Token">
                                 </TextBox>
-                                <CheckBox x:Name="ContentFinderNotificationCheckBox"
-                                          Content="Notify about content finder pops" HorizontalAlignment="Left"
-                                          Margin="0,20,0,0" Foreground="{DynamicResource MaterialDesignBody}" />
-                                <CheckBox x:Name="ChatMessageNotificationCheckBox" Content="Notify about chat messages"
-                                          HorizontalAlignment="Left" Margin="0,10,0,20"
-                                          Foreground="{DynamicResource MaterialDesignBody}" />
+
+                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0">
+                                    Chat setup
+                                </Label>
                             </StackPanel>
                             <Separator/>
                             <Label Foreground="DarkGray" Margin="0,5,0,20">

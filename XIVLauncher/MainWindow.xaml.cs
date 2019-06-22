@@ -50,7 +50,7 @@ namespace XIVLauncher
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
-                isLoggingIn = false;
+                Serilog.Log.CloseAndFlush();
             };
 
             AutoUpdater.ShowSkipButton = false;
@@ -60,12 +60,61 @@ namespace XIVLauncher
 
             AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
 
+            Serilog.Log.Information("Starting update check.");
             AutoUpdater.Start("https://goaaats.github.io/ffxiv/tools/launcher/update.xml");
 #else
             InitializeWindow();
 #endif
 
             this.Title += " v" + Util.GetAssemblyVersion();
+        }
+
+        void SetupHeadlines()
+        {
+            try
+            {
+                _bannerChangeTimer?.Stop();
+
+                _headlines = Headlines.Get();
+
+                _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
+                for (int i = 0; i < _headlines.Banner.Length; i++)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = _headlines.Banner[i].LsbBanner;
+                    bitmap.EndInit();
+
+                    _bannerBitmaps[i] = bitmap;
+                }
+
+                BannerImage.Source = _bannerBitmaps[0];
+
+                _bannerChangeTimer = new System.Timers.Timer {Interval = 5000};
+
+                _bannerChangeTimer.Elapsed += (o, args) =>
+                {
+                    if (_currentBannerIndex + 1 > _headlines.Banner.Length - 1)
+                    {
+                        _currentBannerIndex = 0;
+                    }
+                    else
+                    {
+                        _currentBannerIndex++;
+                    }
+
+                    this.Dispatcher.BeginInvoke(new Action(() => { BannerImage.Source = _bannerBitmaps[_currentBannerIndex]; }));
+                };
+
+                _bannerChangeTimer.AutoReset = true;
+                _bannerChangeTimer.Start();
+
+                NewsListView.ItemsSource = _headlines.News;
+            }
+            catch (Exception)
+            {
+                NewsListView.Items.Add(new News() {Title = "Could not download news data.", Tag = "DlError"});
+            }
         }
 
         private void InitializeWindow()
@@ -134,65 +183,9 @@ namespace XIVLauncher
                 setup.ShowDialog();
             }
 
-            Action setupHeadlines = (() => {
-                try
-                {
-                    _headlines = Headlines.Get();
+            SetupHeadlines();
 
-                    _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
-                    for (int i = 0; i < _headlines.Banner.Length; i++)
-                    {
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = _headlines.Banner[i].LsbBanner;
-                        bitmap.EndInit();
-
-                        _bannerBitmaps[i] = bitmap;
-                    }
-
-                    BannerImage.Source = _bannerBitmaps[0];
-
-                    _bannerChangeTimer = new System.Timers.Timer
-                    {
-                        Interval = 5000
-                    };
-
-                    _bannerChangeTimer.Elapsed += (o, args) =>
-                    {
-                        if (_currentBannerIndex + 1 > _headlines.Banner.Length - 1)
-                        {
-                            _currentBannerIndex = 0;
-                        }
-                        else
-                        {
-                            _currentBannerIndex++;
-                        }
-
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            BannerImage.Source = _bannerBitmaps[_currentBannerIndex];
-                        }));
-
-                        _bannerChangeTimer.Start();
-                    };
-
-                    _bannerChangeTimer.Start();
-
-                    NewsListView.ItemsSource = _headlines.News;
-                }
-                catch (Exception)
-                {
-                    NewsListView.Items.Add(new News()
-                    {
-                        Title = "Could not download news data.",
-                        Tag = "DlError"
-                    });
-                }
-            });
-
-            setupHeadlines();
-
-            Settings.LanguageChanged += setupHeadlines;
+            Settings.LanguageChanged += SetupHeadlines;
 
             this.Visibility = Visibility.Visible;
 
@@ -209,12 +202,14 @@ namespace XIVLauncher
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
         {
+            Serilog.Log.Information("AutoUpdaterOnCheckForUpdateEvent called.");
             if (args != null)
             {
                 if (args.IsUpdateAvailable)
                 {
                     try
                     {
+                        Serilog.Log.Information("Update available, trying to download.");
                         MessageBox.Show("An update for XIVLauncher is available. It will now be downloaded, the application will restart.",
                             "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
@@ -230,18 +225,20 @@ namespace XIVLauncher
                     }
                     catch (Exception exc)
                     {
-                        Util.ShowError($"Update failed. Please report this error and try again later. \n\n{exc}", "Update failed");
+                        new ErrorWindow(exc, $"Update failed. Please report this error and try again later. \n\n{exc}", "UpdateAvailableFail").ShowDialog();
                         Environment.Exit(0);
                     }
                 }
                 else
                 {
+                    Serilog.Log.Information("No update: {0}", args.CurrentVersion);
                     InitializeWindow();
                 }
             }
             else
             {
                 Util.ShowError($"Could not check for updates. Please try again later.", "Update failed");
+                Serilog.Log.Error("Update check failed.");
                 Environment.Exit(0);
             }
         }
@@ -322,6 +319,7 @@ namespace XIVLauncher
         {
             foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true))
             {
+                Serilog.Log.Information("Starting addon {0}", addonEntry.Addon.Name);
                 addonEntry.Addon.Run(gameProcess);
             }
         }

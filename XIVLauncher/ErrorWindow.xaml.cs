@@ -14,6 +14,8 @@ namespace XIVLauncher
         {
             InitializeComponent();
 
+            Serilog.Log.Error(exc, $"ErrorWindow called: [{message}] [{context}]");
+
             ExceptionTextBox.AppendText(exc.ToString());
             ExceptionTextBox.AppendText("\n" + Util.GetAssemblyVersion());
             ExceptionTextBox.AppendText("\n" + Util.GetGitHash());
