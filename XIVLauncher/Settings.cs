@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using AdysTech.CredentialManager;
@@ -10,6 +11,8 @@ namespace XIVLauncher
 {
     static class Settings
     {
+        public static Action LanguageChanged;
+
         public static NetworkCredential GetCredentials(string app)
         {
             return CredentialManager.GetCredentials(app);
@@ -45,7 +48,11 @@ namespace XIVLauncher
 
         public static void SetLanguage(ClientLanguage language)
         {
-            Properties.Settings.Default.Language = (int) language;
+            int previousLanguage = Properties.Settings.Default.Language;
+            Properties.Settings.Default.Language = (int)language;
+
+            if (previousLanguage != (int)language)
+                LanguageChanged();
         }
 
         public static bool IsDX11()
