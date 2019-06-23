@@ -51,7 +51,7 @@ namespace XIVLauncher
             int previousLanguage = Properties.Settings.Default.Language;
             Properties.Settings.Default.Language = (int)language;
 
-            if (previousLanguage != (int)language)
+            if (previousLanguage != (int)language && LanguageChanged != null)
                 LanguageChanged();
         }
 
