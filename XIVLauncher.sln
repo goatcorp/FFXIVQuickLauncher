@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher", "XIVLauncher\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nhaama.Memory", "lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj", "{933935A7-8D04-42E8-AEE5-122B3AEED820}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXIVOtpLinker", "lib\FFXIVOtpLinker\FFXIVOtpLinker\FFXIVOtpLinker.csproj", "{014717A3-3976-4CC5-9675-DF38E390CEDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{933935A7-8D04-42E8-AEE5-122B3AEED820}.Release|Any CPU.Build.0 = Release|Any CPU
 		{933935A7-8D04-42E8-AEE5-122B3AEED820}.Release|x64.ActiveCfg = Release|x64
 		{933935A7-8D04-42E8-AEE5-122B3AEED820}.Release|x64.Build.0 = Release|x64
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Debug|x64.Build.0 = Debug|Any CPU
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Release|x64.ActiveCfg = Release|Any CPU
+		{014717A3-3976-4CC5-9675-DF38E390CEDF}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

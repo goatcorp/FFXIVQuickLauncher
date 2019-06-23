@@ -207,6 +207,16 @@ namespace XIVLauncher
                 });
             }
 
+            if (addonList.All(entry => entry.Addon.GetType() != typeof(OTPLinkAddon)))
+            {
+                addonList.Add(new AddonEntry
+                {
+                    Addon = new OTPLinkAddon(),
+                    StartAt = AddonStartAt.LauncherInitialised,
+                    IsEnabled = false
+                });
+            }
+
             // Mistakes were made
             if (addonList.Any(entry => entry.Addon.GetType() == typeof(HooksAddon)))
             {
