@@ -198,7 +198,7 @@ namespace XIVLauncher
 
             try
             {
-                Task.Run(() => StartAddons(Process.GetCurrentProcess(), AddonStartAt.LauncherInitialised));
+                Task.Run(() => StartAddons(null, AddonStartAt.LauncherInitialised));
             }
             catch (Exception exc)
             {
