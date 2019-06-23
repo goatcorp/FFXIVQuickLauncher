@@ -97,6 +97,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -122,6 +123,8 @@
     <Compile Include="Addon\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
     <Compile Include="Addon\HooksAddon.cs" />
+    <Compile Include="Addon\IServiceAddon.cs" />
+    <Compile Include="Addon\OTPLinkAddon.cs" />
     <Compile Include="Addon\RichPresenceAddon.cs" />
     <Compile Include="ClientLanguage.cs" />
     <Compile Include="ErrorWindow.xaml.cs">
@@ -237,6 +240,10 @@
     <Resource Include="Resources\actlaunch.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\lib\FFXIVOtpLinker\FFXIVOtpLinker\FFXIVOtpLinker.csproj">
+      <Project>{014717a3-3976-4cc5-9675-df38e390cedf}</Project>
+      <Name>FFXIVOtpLinker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj">
       <Project>{933935a7-8d04-42e8-aee5-122b3aeed820}</Project>
       <Name>Nhaama.Memory</Name>

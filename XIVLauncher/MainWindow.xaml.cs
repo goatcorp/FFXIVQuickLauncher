@@ -279,9 +279,9 @@ namespace XIVLauncher
             isLoggingIn = true;
         }
 
-        private void HandleLogin(bool autoLogin)
+        internal void HandleLogin(bool autoLogin, string onetimePassword = null)
         {
-            OtpTextBox.Text = "";
+            OtpTextBox.Text = onetimePassword ?? "";
 
             var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
 
@@ -333,6 +333,15 @@ namespace XIVLauncher
             foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true && x.StartAt == startAt))
             {
                 addonEntry.Addon.Run(gameProcess);
+            }
+        }
+
+        private void StopAddons()
+        {
+            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true && x.StartAt == AddonStartAt.LauncherInitialised))
+            {
+                if(addonEntry.Addon is IServiceAddon)
+                    (addonEntry.Addon as IServiceAddon).Stop();
             }
         }
 
@@ -562,6 +571,11 @@ namespace XIVLauncher
 
             HandleLogin(false);
             isLoggingIn = true;
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            StopAddons();
         }
     }
 }

@@ -16,7 +16,7 @@
   TextElement.Foreground="{DynamicResource MaterialDesignBody}"
   Background="{DynamicResource MaterialDesignPaper}"
   TextElement.FontWeight="Medium"
-  FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+  FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" Closed="Window_Closed">
 
   <Window.Resources>
     <system:Double x:Key="BannerCardWidth">544</system:Double>
