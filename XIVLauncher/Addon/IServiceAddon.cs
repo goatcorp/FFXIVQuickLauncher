@@ -8,6 +8,8 @@ namespace XIVLauncher.Addon
 {
     interface IServiceAddon : IAddon
     {
+        void Run(MainWindow window);
+
         void Stop();
     }
 }

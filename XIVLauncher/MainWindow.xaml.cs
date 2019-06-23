@@ -198,7 +198,7 @@ namespace XIVLauncher
 
             try
             {
-                Task.Run(() => StartAddons(null, AddonStartAt.LauncherInitialised));
+                Task.Run(() => StartServiceAddon());
             }
             catch (Exception exc)
             {
@@ -279,68 +279,80 @@ namespace XIVLauncher
             isLoggingIn = true;
         }
 
-        internal void HandleLogin(bool autoLogin, string onetimePassword = null)
+        internal async void HandleLogin(bool autoLogin, string onetimePassword = null)
         {
-            OtpTextBox.Text = onetimePassword ?? "";
-
-            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
-
-            if (OtpCheckBox.IsChecked == true && !hasValidCache)
+            await Dispatcher.InvokeAsync(() =>
             {
-                DialogHost.OpenDialogCommand.Execute(null, OtpDialogHost);
-            }
+                OtpTextBox.Text = onetimePassword ?? "";
 
-            if (SaveLoginCheckBox.IsChecked == true)
-            {
-                Settings.SaveCredentials(AppName, LoginUsername.Text, LoginPassword.Password);
-                Settings.SetNeedsOtp(OtpCheckBox.IsChecked == true);
+                var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
 
-                if (!autoLogin)
+                if (OtpCheckBox.IsChecked == true && !hasValidCache)
                 {
-                    if (AutoLoginCheckBox.IsChecked == true)
-                    {
-                        var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
+                    DialogHost.OpenDialogCommand.Execute(null, OtpDialogHost);
+                }
 
-                        if (result == MessageBoxResult.No)
+                if (SaveLoginCheckBox.IsChecked == true)
+                {
+                    Settings.SaveCredentials(AppName, LoginUsername.Text, LoginPassword.Password);
+                    Settings.SetNeedsOtp(OtpCheckBox.IsChecked == true);
+
+                    if (!autoLogin)
+                    {
+                        if (AutoLoginCheckBox.IsChecked == true)
+                        {
+                            var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
+
+                            if (result == MessageBoxResult.No)
+                            {
+                                AutoLoginCheckBox.IsChecked = false;
+                            }
+                        }
+                        else
                         {
                             AutoLoginCheckBox.IsChecked = false;
                         }
-                    }
-                    else
-                    {
-                        AutoLoginCheckBox.IsChecked = false;
+
+                        Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
                     }
 
-                    Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
+                    Settings.Save();
+                }
+                else
+                {
+                    Settings.ResetCredentials(AppName);
+                    Settings.Save();
                 }
 
-                Settings.Save();
-            }
-            else
-            {
-                Settings.ResetCredentials(AppName);
-                Settings.Save();
-            }
-
-            if (OtpCheckBox.IsChecked == false || hasValidCache)
-            {
-                StartGame();
-            }
+                if (OtpCheckBox.IsChecked == false || hasValidCache)
+                {
+                    StartGame();
+                }
+            });
         }
 
-        private void StartAddons(Process gameProcess, AddonStartAt startAt = AddonStartAt.GameLaunched)
+        private void StartAddons(Process gameProcess)
         {
-            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true && x.StartAt == startAt))
+            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true && x.StartAt == AddonStartAt.GameLaunched))
             {
                 addonEntry.Addon.Run(gameProcess);
             }
         }
 
-        private void StopAddons()
+        private void StartServiceAddon()
         {
             foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true && x.StartAt == AddonStartAt.LauncherInitialised))
             {
-                if(addonEntry.Addon is IServiceAddon)
+                if (addonEntry.Addon is IServiceAddon)
+                    (addonEntry.Addon as IServiceAddon).Run(this);
+            }
+        }
+
+        private void StopServiceAddons()
+        {
+            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled == true && x.StartAt == AddonStartAt.LauncherInitialised))
+            {
+                if (addonEntry.Addon is IServiceAddon)
                     (addonEntry.Addon as IServiceAddon).Stop();
             }
         }
@@ -575,7 +587,7 @@ namespace XIVLauncher
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            StopAddons();
+            StopServiceAddons();
         }
     }
 }

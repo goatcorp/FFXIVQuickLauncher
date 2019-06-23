@@ -7,6 +7,7 @@ using System.Net;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Threading.Tasks;
 
 namespace XIVLauncher.Addon
 {
@@ -16,13 +17,11 @@ namespace XIVLauncher.Addon
 
         public string Name => "FFXIV Onetime Password Linkage Server";
         private const int httpPort = 1050;
-
-        public void Run(Process _)
+        public void Run(MainWindow window)
         {
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "OtpLink");
             var addonExe = Path.Combine(addonDirectory, "FFXIVOtpLinkServer.exe");
 
-            /*
             if (!File.Exists(addonExe))
             {
                 Download(addonDirectory);
@@ -39,16 +38,16 @@ namespace XIVLauncher.Addon
                     if (!remoteVersion.StartsWith(version))
                         Download(addonDirectory);
                 }
-            }*/
+            }
 
 
             OtpServer otpServer;
             ChannelServices.RegisterChannel(new IpcServerChannel("otpLink"), false);
             RemotingServices.Marshal(otpServer = new OtpServer
             {
-                LoginAction = (string otpText) => 
+                LoginAction = (string otpText) =>
                 {
-                    App.Current.MainWindow.Dispatcher.Invoke(() => (App.Current.MainWindow as MainWindow).HandleLogin(false, otpText));
+                    window.HandleLogin(false, otpText);
                 }
             }, "launcher", typeof(OtpServer));
 
@@ -59,6 +58,11 @@ namespace XIVLauncher.Addon
 
             otpServer.Process.Start();
 
+        }
+
+        public void Run(Process _)
+        {
+            throw new NotImplementedException();
         }
 
         public void Stop()
