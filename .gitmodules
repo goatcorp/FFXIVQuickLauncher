@@ -1,3 +1,6 @@
 [submodule "lib/Nhaama"]
 	path = lib/Nhaama
 	url = https://github.com/goaaats/Nhaama
+[submodule "lib/FFXIVOtpLinker"]
+	path = lib/FFXIVOtpLinker
+	url = https://github.com/roy-n-roy/FFXIVOtpLinker
