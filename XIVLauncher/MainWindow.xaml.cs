@@ -279,56 +279,53 @@ namespace XIVLauncher
             isLoggingIn = true;
         }
 
-        internal async void HandleLogin(bool autoLogin, string onetimePassword = null)
+        internal void HandleLogin(bool autoLogin, string onetimePassword = null)
         {
-            await Dispatcher.InvokeAsync(() =>
+            OtpTextBox.Text = onetimePassword ?? "";
+
+            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
+
+            if (OtpCheckBox.IsChecked == true && !hasValidCache)
             {
-                OtpTextBox.Text = onetimePassword ?? "";
+                DialogHost.OpenDialogCommand.Execute(null, OtpDialogHost);
+            }
 
-                var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
+            if (SaveLoginCheckBox.IsChecked == true)
+            {
+                Settings.SaveCredentials(AppName, LoginUsername.Text, LoginPassword.Password);
+                Settings.SetNeedsOtp(OtpCheckBox.IsChecked == true);
 
-                if (OtpCheckBox.IsChecked == true && !hasValidCache)
+                if (!autoLogin)
                 {
-                    DialogHost.OpenDialogCommand.Execute(null, OtpDialogHost);
-                }
-
-                if (SaveLoginCheckBox.IsChecked == true)
-                {
-                    Settings.SaveCredentials(AppName, LoginUsername.Text, LoginPassword.Password);
-                    Settings.SetNeedsOtp(OtpCheckBox.IsChecked == true);
-
-                    if (!autoLogin)
+                    if (AutoLoginCheckBox.IsChecked == true)
                     {
-                        if (AutoLoginCheckBox.IsChecked == true)
-                        {
-                            var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
+                        var result = MessageBox.Show("This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?", "Enabling Autologin", MessageBoxButton.YesNo);
 
-                            if (result == MessageBoxResult.No)
-                            {
-                                AutoLoginCheckBox.IsChecked = false;
-                            }
-                        }
-                        else
+                        if (result == MessageBoxResult.No)
                         {
                             AutoLoginCheckBox.IsChecked = false;
                         }
-
-                        Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
+                    }
+                    else
+                    {
+                        AutoLoginCheckBox.IsChecked = false;
                     }
 
-                    Settings.Save();
-                }
-                else
-                {
-                    Settings.ResetCredentials(AppName);
-                    Settings.Save();
+                    Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
                 }
 
-                if (OtpCheckBox.IsChecked == false || hasValidCache)
-                {
-                    StartGame();
-                }
-            });
+                Settings.Save();
+            }
+            else
+            {
+                Settings.ResetCredentials(AppName);
+                Settings.Save();
+            }
+
+            if (OtpCheckBox.IsChecked == false || hasValidCache)
+            {
+                StartGame();
+            }
         }
 
         private void StartAddons(Process gameProcess)

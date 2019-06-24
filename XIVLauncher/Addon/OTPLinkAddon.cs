@@ -14,9 +14,10 @@ namespace XIVLauncher.Addon
     class OTPLinkAddon : MarshalByRefObject, IServiceAddon
     {
         private const string Remote = "https://roy-n-roy.github.io/FFXIVOtpLinker/";
-
-        public string Name => "FFXIV Onetime Password Linkage Server";
         private const int httpPort = 1050;
+
+        public string Name => "FFXIV Onetime Password Linkage Server (restart required to enable.)";
+
         public void Run(MainWindow window)
         {
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "OtpLink");
@@ -45,10 +46,7 @@ namespace XIVLauncher.Addon
             ChannelServices.RegisterChannel(new IpcServerChannel("otpLink"), false);
             RemotingServices.Marshal(otpServer = new OtpServer
             {
-                LoginAction = (string otpText) =>
-                {
-                    window.HandleLogin(false, otpText);
-                }
+                LoginAction = (string otpText) => window.Dispatcher.Invoke(() => window.HandleLogin(false, otpText))
             }, "launcher", typeof(OtpServer));
 
             otpServer.Process = new Process
