@@ -1,15 +1,32 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XIVLauncher.Addon
 {
     public class GenericAddon : IAddon
     {
         public void Run(Process gameProcess)
+        {
+            var ext = System.IO.Path.GetExtension(this.Path).ToLower();
+
+            switch (ext)
+            {
+                case ".ps1":
+                    this.RunPwsh(gameProcess);
+                    break;
+
+                case ".bat":
+                    this.RunBatch(gameProcess);
+                    break;
+
+                default:
+                    this.RunApp(gameProcess);
+                    break;
+            }
+        }
+
+        private void RunApp(Process gameProcess)
         {
             // If there already is a process like this running - we don't need to spawn another one.
             if (Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(Path)).Any())
@@ -40,10 +57,86 @@ namespace XIVLauncher.Addon
             process.Start();
         }
 
-        public string Name => "Launch EXE: " + System.IO.Path.GetFileNameWithoutExtension(Path);
+        private void RunPwsh(Process gameProcess)
+        {
+            var ps = new ProcessStartInfo();
+
+            ps.FileName = Pwsh;
+            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(this.Path);
+            ps.Arguments = $@"-File ""{this.Path}"" {this.CommandLine}";
+            ps.UseShellExecute = false;
+
+            ps.WindowStyle = ProcessWindowStyle.Hidden;
+            ps.CreateNoWindow = true;
+
+            if (RunAsAdmin)
+            {
+                // Vista or higher check
+                // https://stackoverflow.com/a/2532775
+                if (Environment.OSVersion.Version.Major >= 6)
+                {
+                    ps.Verb = "runas";
+                }
+            }
+
+            Process.Start(ps);
+        }
+
+        private void RunBatch(Process gameProcess)
+        {
+            var ps = new ProcessStartInfo();
+
+            ps.FileName = Environment.GetEnvironmentVariable("ComSpec");
+            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(this.Path);
+            ps.Arguments = $@"-File ""{this.Path}"" {this.CommandLine}";
+            ps.UseShellExecute = false;
+
+            ps.WindowStyle = ProcessWindowStyle.Hidden;
+            ps.CreateNoWindow = true;
+
+            if (RunAsAdmin)
+            {
+                // Vista or higher check
+                // https://stackoverflow.com/a/2532775
+                if (Environment.OSVersion.Version.Major >= 6)
+                {
+                    ps.Verb = "runas";
+                }
+            }
+
+            Process.Start(ps);
+        }
+
+        public string Name => System.IO.Path.GetExtension(this.Path).ToLower() == ".exe" ?
+            "Launch EXE: " + System.IO.Path.GetFileNameWithoutExtension(Path) :
+            "Launch : " + System.IO.Path.GetFileNameWithoutExtension(Path);
 
         public string Path;
         public string CommandLine;
         public bool RunAsAdmin;
+
+        private static readonly Lazy<string> LazyPwsh = new Lazy<string>(() => GetPwsh());
+
+        private static string Pwsh => LazyPwsh.Value;
+
+        private static string GetPwsh()
+        {
+            var result = "powershell.exe";
+
+            var path = Environment.GetEnvironmentVariable("Path");
+            var values = path.Split(';');
+
+            foreach (var dir in values)
+            {
+                var pwsh = System.IO.Path.Combine(dir, "pwsh.exe");
+                if (System.IO.File.Exists(pwsh))
+                {
+                    result = pwsh;
+                    break;
+                }
+            }
+
+            return result;
+        }
     }
 }
