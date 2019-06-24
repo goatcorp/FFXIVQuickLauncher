@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -70,23 +72,31 @@ namespace XIVLauncher
             this.Title += " v" + Util.GetAssemblyVersion();
         }
 
-        void SetupHeadlines()
+        private void SetupHeadlines()
         {
             try
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = Headlines.Get();
+                _headlines = Headlines.Get(_game);
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
-                for (int i = 0; i < _headlines.Banner.Length; i++)
+                for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = _headlines.Banner[i].LsbBanner;
-                    bitmap.EndInit();
+                    var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString());
 
-                    _bannerBitmaps[i] = bitmap;
+                    
+                    using (var stream = new MemoryStream(imageBytes))
+                    {
+                        var bitmapImage = new BitmapImage();
+                        bitmapImage.BeginInit();
+                        bitmapImage.StreamSource = stream;
+                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmapImage.EndInit();
+                        bitmapImage.Freeze();
+
+                        _bannerBitmaps[i] = bitmapImage;
+                    }
                 }
 
                 BannerImage.Source = _bannerBitmaps[0];

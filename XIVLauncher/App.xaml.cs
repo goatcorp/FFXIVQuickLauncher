@@ -21,7 +21,7 @@ namespace XIVLauncher
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a => a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "output.log")))
 #if DEBUG
-                   .MinimumLevel.Verbose()
+                .MinimumLevel.Verbose()
 #else
                 .MinimumLevel.Information()
 #endif

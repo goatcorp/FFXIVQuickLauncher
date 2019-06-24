@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace XIVLauncher.Cache
 {
-    class UniqueIdCache
+    public class UniqueIdCache
     {
         private const int DaysToTimeout = 3;
 

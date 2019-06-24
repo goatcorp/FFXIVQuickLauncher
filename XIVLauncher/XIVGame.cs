@@ -16,7 +16,7 @@ using XIVLauncher.Cache;
 
 namespace XIVLauncher
 {
-    internal class XIVGame
+    public class XIVGame
     {
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and it's checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
@@ -154,7 +154,7 @@ namespace XIVLauncher
 
         private static string GetBootVersionHash()
         {
-            string result = "";
+            var result = "";
 
             for (int i = 0; i < FilesToHash.Length; i++)
             {
@@ -172,7 +172,7 @@ namespace XIVLauncher
             using (WebClient client = new WebClient())
             {
                 client.Headers.Add("X-Hash-Check", "enabled");
-                client.Headers.Add("user-agent", "FFXIV PATCH CLIENT");
+                client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
                 client.Headers.Add("Referer", $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
@@ -219,14 +219,16 @@ namespace XIVLauncher
 
         private string GetStored() //this is needed to be able to access the login site correctly
         {
-            WebClient loginInfo = new WebClient();
-            loginInfo.Headers.Add("user-agent", _userAgent);
-            string reply = loginInfo.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("User-Agent", _userAgent);
+                var reply = client.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
 
-            Regex storedre = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
+                var storedRegex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
 
-            var stored = storedre.Matches(reply)[0].Groups["stored"].Value;
-            return stored;
+                var stored = storedRegex.Matches(reply)[0].Groups["stored"].Value;
+                return stored;
+            }
         }
 
         internal class OauthLoginResult
@@ -242,7 +244,7 @@ namespace XIVLauncher
         {
             using (WebClient client = new WebClient())
             {
-                client.Headers.Add("user-agent", _userAgent);
+                client.Headers.Add("User-Agent", _userAgent);
                 client.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
@@ -255,7 +257,7 @@ namespace XIVLauncher
                     { "otppw", otp }
                 });
 
-                string reply = System.Text.Encoding.UTF8.GetString(response);
+                var reply = System.Text.Encoding.UTF8.GetString(response);
 
                 var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
                 var matches = regex.Matches(reply);
@@ -290,12 +292,12 @@ namespace XIVLauncher
 
         private static string GetFileHash(string file)
         {
-            byte[] bytes = File.ReadAllBytes(file);
+            var bytes = File.ReadAllBytes(file);
 
             var hash = new SHA1Managed().ComputeHash(bytes);
-            string hashstring = string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
+            var hashstring = string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
 
-            long length = new System.IO.FileInfo(file).Length;
+            var length = new System.IO.FileInfo(file).Length;
 
             return length + "/" + hashstring;
         }
@@ -304,14 +306,11 @@ namespace XIVLauncher
         {
             try
             {
-                using (WebClient client = new WebClient())
-                {
-                    client.Headers.Add("user-agent", _userAgent);
+                var reply = Encoding.UTF8.GetString(
+                    DownloadAsLauncher(
+                        $"https://frontier.ffxiv.com/worldStatus/login_status.json?{Util.GetUnixMillis()}"));
 
-                    string reply = client.DownloadString("http://frontier.ffxiv.com/worldStatus/gate_status.json");
-
-                    return Convert.ToBoolean(int.Parse(reply[10].ToString()));
-                }
+                return Convert.ToBoolean(int.Parse(reply[10].ToString()));
             }
             catch (Exception exc)
             {
@@ -336,9 +335,20 @@ namespace XIVLauncher
             }
         }
 
+        public byte[] DownloadAsLauncher(string url)
+        {
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("User-Agent", _userAgent);
+                client.Headers.Add(HttpRequestHeader.Referer, Util.GenerateFrontierReferer());
+
+                return client.DownloadData(url);
+            }
+        }
+
         private static string GetUserAgent()
         {
-            return String.Format(UserAgentTemplate, MakeComputerId());
+            return string.Format(UserAgentTemplate, MakeComputerId());
         }
 
         private static void InitiateSslTrust()

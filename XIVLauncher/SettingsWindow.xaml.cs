@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Dalamud.Discord;
+using Dalamud.Game.Chat;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 
@@ -26,10 +28,20 @@ namespace XIVLauncher
             AddonListView.ItemsSource = Settings.GetAddonList();
             UidCacheCheckBox.IsChecked = Settings.IsUniqueIdCacheEnabled();
 
+            ChannelListView.ItemsSource = new List<Dalamud.Discord.ChatTypeConfiguration>()
+            {
+                new ChatTypeConfiguration()
+                {
+                    ChatType = XivChatType.TellIncoming,
+                    Channel = new ChannelConfiguration(),
+                    Color = 0x25252525
+                }
+            };
+
             RmtAdFilterCheckBox.IsChecked = Settings.IsRmtFilterEnabled();
-            DiscordWebHookUrlTextBox.Text = Settings.GetDiscordWebhookUrl();
-            ChatMessageNotificationCheckBox.IsChecked = Settings.IsChatNotificationsEnabled();
-            ContentFinderNotificationCheckBox.IsChecked = Settings.IsCfNotificationsEnabled();
+            //DiscordWebHookUrlTextBox.Text = Settings.GetDiscordWebhookUrl();
+            //ChatMessageNotificationCheckBox.IsChecked = Settings.IsChatNotificationsEnabled();
+            //ContentFinderNotificationCheckBox.IsChecked = Settings.IsCfNotificationsEnabled();
             EnableHooksCheckBox.IsChecked = Settings.IsInGameAddonEnabled();
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
@@ -45,9 +57,9 @@ namespace XIVLauncher
             Settings.SetUniqueIdCacheEnabled(UidCacheCheckBox.IsChecked == true);
 
             Settings.SetRmtFilterEnabled(RmtAdFilterCheckBox.IsChecked == true);
-            Settings.SetDiscordWebhookUrl(DiscordWebHookUrlTextBox.Text);
-            Settings.SetChatNotificationsEnabled(ChatMessageNotificationCheckBox.IsChecked == true);
-            Settings.SetCfNotificationsEnabled(ContentFinderNotificationCheckBox.IsChecked == true);
+            //Settings.SetDiscordWebhookUrl(DiscordWebHookUrlTextBox.Text);
+            //Settings.SetChatNotificationsEnabled(ChatMessageNotificationCheckBox.IsChecked == true);
+            //Settings.SetCfNotificationsEnabled(ContentFinderNotificationCheckBox.IsChecked == true);
             Settings.SetInGameAddonEnabled(EnableHooksCheckBox.IsChecked == true);
 
             Settings.Save();
@@ -198,6 +210,11 @@ namespace XIVLauncher
         private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
         {
             Process.Start("https://discord.gg/29NBmud");
+        }
+
+        private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -7,6 +7,8 @@
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:Addon="clr-namespace:XIVLauncher.Addon"
+        xmlns:Dalamud="clr-namespace:Dalamud"
+        xmlns:featureConfig="clr-namespace:Dalamud.Discord"
         mc:Ignorable="d"
         Title="XIVLauncher Settings" Height="311.675" Width="567" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing"
@@ -142,6 +144,26 @@
                                 <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0">
                                     Chat setup
                                 </Label>
+
+                                <ListView x:Name="ChannelListView" Margin="0,0,0,50" Height="140" MouseUp="AddonListView_OnMouseUp">
+                                    <ListView.ContextMenu>
+                                        <ContextMenu StaysOpen="true">
+                                            <MenuItem Header="Remove" Click="RemoveChatConfigEntry_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                                        </ContextMenu>
+                                    </ListView.ContextMenu>
+
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type featureConfig:ChatTypeConfiguration}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon Kind="Chat" Foreground="{Binding Color}"/>
+                                                <!--<CheckBox IsChecked="{Binding IsEnabled}" Checked="ToggleButton_OnChecked" Foreground="{DynamicResource MaterialDesignBody}"/>-->
+                                                <TextBlock Text="{Binding ChatType}" Margin="10,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListView>
+
+                                <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddAddon_OnClick" ToolTip="Add a new generic addon that allows you to launch any program.">Add new</Button>
                             </StackPanel>
                             <Separator/>
                             <Label Foreground="DarkGray" Margin="0,5,0,20">

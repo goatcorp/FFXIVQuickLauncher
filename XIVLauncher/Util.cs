@@ -82,5 +82,36 @@ namespace XIVLauncher
             return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
                 .IsInRole(WindowsBuiltInRole.Administrator);
         }
+
+        public static string GetLangCode(this ClientLanguage language)
+        {
+            switch (language)
+            {
+                case ClientLanguage.Japanese:
+                    return "ja";
+
+                case ClientLanguage.English:
+                    return "en-gb";
+
+                case ClientLanguage.German:
+                    return "de";
+
+                case ClientLanguage.French:
+                    return "fr";
+
+                default:
+                    return "en-gb";
+            }
+        }
+
+        public static int GetUnixMillis() => (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
+
+        public static string GenerateFrontierReferer()
+        {
+            var langCode = Settings.GetLanguage().GetLangCode();  
+            var formattedTime = DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
+
+            return $"https://frontier.ffxiv.com/version_4_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
+        }
     }
 }
