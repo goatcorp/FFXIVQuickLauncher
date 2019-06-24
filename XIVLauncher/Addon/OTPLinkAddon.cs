@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher.Addon
 {
-    class OTPLinkAddon : MarshalByRefObject, IServiceAddon
+    class OTPLinkAddon : IServiceAddon
     {
         private const string Remote = "https://roy-n-roy.github.io/FFXIVOtpLinker/";
         private const int httpPort = 1050;
@@ -69,7 +69,7 @@ namespace XIVLauncher.Addon
             try
             {
                 ChannelServices.RegisterChannel(new IpcClientChannel(), false);
-                otpServer = Activator.GetObject(typeof(OtpServer), "ipc://otpLink/launcher") as OtpServer;
+                otpServer = Activator.GetObject(typeof(OtpServer), OtpServer.IpcChannelName) as OtpServer;
 
                 otpServer?.Process?.Kill();
             }
