@@ -22,6 +22,16 @@ namespace XIVLauncher.Addon
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "OtpLink");
             var addonExe = Path.Combine(addonDirectory, "FFXIVOtpLinkServer.exe");
 
+            var procs = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(addonExe));
+            if (procs.Length > 0)
+            {
+                foreach (var proc in procs)
+                {
+                    if (proc.MainModule.FileName == addonExe)
+                        proc.Kill();
+                }
+            }
+
             if (!File.Exists(addonExe))
             {
                 Download(addonDirectory);
@@ -72,7 +82,7 @@ namespace XIVLauncher.Addon
 
                 otpServer?.Process?.Kill();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
