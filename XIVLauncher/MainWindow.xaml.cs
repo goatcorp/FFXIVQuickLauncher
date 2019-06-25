@@ -29,33 +29,19 @@ namespace XIVLauncher
 
         private System.Timers.Timer _maintenanceQueueTimer;
 
-        public const string AppName = "FINAL FANTASY XIV";
+        private static string AppName = "FINAL FANTASY XIV";
 
         private XIVGame _game = new XIVGame();
 
-        private bool isLoggingIn = false;
+        private bool _isLoggingIn = false;
 
-        public MainWindow()
+        public MainWindow(string accountNum)
         {
             InitializeComponent();
 
             this.Visibility = Visibility.Hidden;
 
-            // Check if dark mode is enabled on windows, if yes, load the dark theme
-            var themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml", UriKind.RelativeOrAbsolute);
-            if (Util.IsWindowsDarkModeEnabled())
-                themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml", UriKind.RelativeOrAbsolute);
-
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
-
 #if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
-            {
-                new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
-                Serilog.Log.CloseAndFlush();
-                Environment.Exit(0);
-            };
-
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
             AutoUpdater.Mandatory = true;
@@ -85,6 +71,7 @@ namespace XIVLauncher
                 {
                     var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString());
 
+                    Serilog.Log.Information("Downloading headline banner: {0}", _headlines.Banner[i].LsbBanner);
                     
                     using (var stream = new MemoryStream(imageBytes))
                     {
@@ -133,6 +120,7 @@ namespace XIVLauncher
             // Upgrade the stored settings if needed
             if (Properties.Settings.Default.UpgradeRequired)
             {
+                Serilog.Log.Information("Settings upgrade required...");
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
@@ -166,6 +154,8 @@ namespace XIVLauncher
 
             if (Settings.IsAutologin() && savedCredentials != null && Keyboard.Modifiers != ModifierKeys.Shift)
             {
+                Serilog.Log.Information("Engaging Autologin");
+
                 try
                 {
                     if (!gateStatus)
@@ -198,8 +188,6 @@ namespace XIVLauncher
 
             Settings.LanguageChanged += SetupHeadlines;
 
-            this.Visibility = Visibility.Visible;
-
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
             {
@@ -208,7 +196,10 @@ namespace XIVLauncher
                 Properties.Settings.Default.Save();
             }
 
+            this.Visibility = Visibility.Visible;
             BringIntoView();
+
+            Serilog.Log.Information("MainWindow initialized.");
         }
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
@@ -270,18 +261,18 @@ namespace XIVLauncher
             Task.Run(() => { this.Dispatcher.BeginInvoke(new Action(() => {  })); });
             */
 
-            if (isLoggingIn)
+            if (_isLoggingIn)
                 return;
 
             HandleLogin(false);
-            isLoggingIn = true;
+            _isLoggingIn = true;
         }
 
         private void HandleLogin(bool autoLogin)
         {
             OtpTextBox.Text = "";
 
-            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
+            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.UniqueIdCacheEnabled;
 
             if (OtpCheckBox.IsChecked == true && !hasValidCache)
             {
@@ -362,7 +353,7 @@ namespace XIVLauncher
 
                 //DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
 
-                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text, Settings.IsUniqueIdCacheEnabled());
+                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text, Settings.UniqueIdCacheEnabled);
 
                 if (gameProcess == null)
                     return;
@@ -374,7 +365,7 @@ namespace XIVLauncher
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
-                    isLoggingIn = false;
+                    _isLoggingIn = false;
                 }
 
                 try
@@ -390,7 +381,7 @@ namespace XIVLauncher
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Hooks").ShowDialog();
-                    isLoggingIn = false;
+                    _isLoggingIn = false;
                 }
 
                 Environment.Exit(0);
@@ -398,7 +389,7 @@ namespace XIVLauncher
             catch (Exception exc)
             {
                 new ErrorWindow(exc, "Additionally, please check your login information or try again.", "Login").ShowDialog();
-                isLoggingIn = false;
+                _isLoggingIn = false;
             }
         }
 
@@ -556,11 +547,11 @@ namespace XIVLauncher
 
         private void Card_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Enter && e.Key != Key.Return || isLoggingIn)
+            if (e.Key != Key.Enter && e.Key != Key.Return || _isLoggingIn)
                 return;
 
             HandleLogin(false);
-            isLoggingIn = true;
+            _isLoggingIn = true;
         }
     }
 }

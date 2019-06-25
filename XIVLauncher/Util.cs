@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 using Microsoft.Win32;
 
 namespace XIVLauncher
@@ -113,5 +114,14 @@ namespace XIVLauncher
 
             return $"https://frontier.ffxiv.com/version_4_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
         }
+
+        public static Color ColorFromArgb(int argb)
+        {
+            return Color.FromArgb((byte) (argb >> 24), (byte) (argb >> 16), (byte) (argb >> 8), (byte) argb);
+        }
+
+        public static int ColorToArgb(Color color) => (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
+
+        public static SolidColorBrush SolidColorBrushFromArgb(int argb) => new SolidColorBrush(ColorFromArgb(argb));
     }
 }

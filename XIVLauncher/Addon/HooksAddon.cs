@@ -52,16 +52,7 @@ namespace XIVLauncher.Addon
                 if (XIVGame.GetLocalGamever() != remoteVersionInfo.SupportedGameVer)
                     return;
 
-                var parameters = $" langId={(int) Settings.GetLanguage()} dwhUrl={Settings.GetDiscordWebhookUrl()}";
-
-                if (Settings.IsRmtFilterEnabled())
-                    parameters += " rmtFilter";
-
-                if (Settings.IsChatNotificationsEnabled())
-                    parameters += " chatNotify";
-
-                if (Settings.IsCfNotificationsEnabled())
-                    parameters += " cfNotify";
+                var parameters = $" langId={(int) Settings.GetLanguage()}";
 
                 var process = new Process
                 {
