@@ -119,6 +119,15 @@ namespace XIVLauncher
                 return;
             }
 
+            if (entry.Addon is OTPLinkAddon)
+            {
+                if (MessageBox.Show("This addon enables you to link your one-time password to the launcher by accessing a PC on your local network from your smartphone.\nDo you read how to use it?",
+                    "Addon information", MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.No) == MessageBoxResult.Yes)
+                    Process.Start("https://github.com/roy-n-roy/FFXIVOtpLinker");
+
+                return;
+            }
+
             if (entry.Addon is GenericAddon genericAddon)
             {
                 var addonSetup = new GenericAddonSetup(genericAddon);
