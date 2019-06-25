@@ -170,6 +170,10 @@
                                 </materialDesign:Card>
 
                                 <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
+                                <Button Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Duty Finder notification channel.">Set Duty Finder notification channel</Button>
+                                <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetFateNotificationChannel_OnClick" ToolTip="Set the Fate notification channel.">Set Fate notification channel</Button>
+                                <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
+
                             </StackPanel>
                             <Separator/>
                             <Label Foreground="DarkGray" Margin="0,5,0,20">

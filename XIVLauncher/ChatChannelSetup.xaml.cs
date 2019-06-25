@@ -29,12 +29,25 @@ namespace XIVLauncher
 
         private int _color;
 
-        internal class ChatTypeComboBoxWrapper
+        private class ChatTypeComboBoxWrapper
         {
             public string Name { get; set; }
             public XivChatType ChatType { get; set; }
 
             public override string ToString() => Name;
+        }
+
+        public ChatChannelSetup(ChannelConfiguration channelConfig)
+        {
+            InitializeComponent();
+
+            ColorPicker.Visibility = Visibility.Collapsed;
+            ChannelColorIcon.Visibility = Visibility.Collapsed;
+            ChatTypeComboBox.Visibility = Visibility.Collapsed;
+
+            ChannelTypeComboBox.SelectedIndex = (int) channelConfig.Type;
+            ChannelIdTextBox.Text = channelConfig.ChannelId.ToString();
+            ServerIdTextBox.Text = channelConfig.GuildId.ToString();
         }
 
         public ChatChannelSetup(ChatTypeConfiguration chatTypeConfig = null)
@@ -77,19 +90,21 @@ namespace XIVLauncher
 
             var comboBoxEntry = ChatTypeComboBox.SelectedItem as ChatTypeComboBoxWrapper;
 
-            if (!string.IsNullOrEmpty(ChannelIdTextBox.Text) && ulong.TryParse(ChannelIdTextBox.Text, out var channelId))
+            if (!string.IsNullOrEmpty(ChannelIdTextBox.Text) && ulong.TryParse(ChannelIdTextBox.Text, out var channelId) && !string.IsNullOrEmpty(ServerIdTextBox.Text) && ulong.TryParse(ServerIdTextBox.Text, out var guildId))
             {
                 Result = new ChatTypeConfiguration
                 {
                     Channel = new ChannelConfiguration
                     {
                         ChannelId = channelId,
-                        GuildId = 0,
+                        GuildId = guildId,
                         Type = (ChannelType) ChannelTypeComboBox.SelectedIndex
                     },
-                    Color = _color,
-                    ChatType = comboBoxEntry.ChatType
+                    Color = _color
                 };
+
+                if (comboBoxEntry != null)
+                    Result.ChatType = comboBoxEntry.ChatType;
 
                 Close();
                 return;

@@ -249,5 +249,53 @@ namespace XIVLauncher
             ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
             Settings.DiscordFeatureConfig = featureConfig;
         }
+
+        private void SetDutyFinderNotificationChannel_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = Settings.DiscordFeatureConfig;
+
+            var channelConfig = featureConfig.CfNotificationChannel ?? new ChannelConfiguration();
+
+            var channelSetup = new ChatChannelSetup(channelConfig);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null) 
+                return;
+
+            featureConfig.CfNotificationChannel = channelSetup.Result.Channel;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void SetFateNotificationChannel_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = Settings.DiscordFeatureConfig;
+
+            var channelConfig = featureConfig.FateNotificationChannel ?? new ChannelConfiguration();
+
+            var channelSetup = new ChatChannelSetup(channelConfig);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null) 
+                return;
+
+            featureConfig.FateNotificationChannel = channelSetup.Result.Channel;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void SetRetainerNotificationChannel_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = Settings.DiscordFeatureConfig;
+
+            var channelConfig = featureConfig.RetainerNotificationChannel ?? new ChannelConfiguration();
+
+            var channelSetup = new ChatChannelSetup(channelConfig);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null) 
+                return;
+
+            featureConfig.RetainerNotificationChannel = channelSetup.Result.Channel;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
     }
 }
