@@ -133,5 +133,13 @@ namespace XIVLauncher
 
             _color = argb;
         }
+
+        private void ChannelTypeComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ServerIdTextBox == null)
+                return;
+
+            ServerIdTextBox.IsEnabled = ChannelTypeComboBox.SelectedIndex == 0;
+        }
     }
 }

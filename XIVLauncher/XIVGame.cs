@@ -328,7 +328,7 @@ namespace XIVLauncher
 
                 Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
 
-                var checkSum = (byte)-(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+                var checkSum = (byte) -(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
                 bytes[0] = checkSum;
 
                 return BitConverter.ToString(bytes).Replace("-", "").ToLower();

@@ -8,7 +8,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Configure chat channel" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
+        Title="Configure chat channel" Height="264.747" Width="533.495" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
@@ -24,15 +24,17 @@
                MouseUp="OpenGuideLabel_OnClick">
             How do I get these?
         </Label>
-        <ComboBox Margin="17,46,307,129" SelectedIndex="1" x:Name="ChatTypeComboBox" Foreground="{DynamicResource MaterialDesignBody}" SelectionChanged="ChatTypeComboBox_OnSelectionChanged"/>
-        <ComboBox Margin="290,52,34,135" SelectedIndex="0" x:Name="ChannelTypeComboBox" Foreground="{DynamicResource MaterialDesignBody}">
+        <ComboBox Margin="17,60,307,150" SelectedIndex="1" x:Name="ChatTypeComboBox" Foreground="{DynamicResource MaterialDesignBody}" SelectionChanged="ChatTypeComboBox_OnSelectionChanged"/>
+        <ComboBox Margin="290,60,34,150" SelectedIndex="0" x:Name="ChannelTypeComboBox" Foreground="{DynamicResource MaterialDesignBody}" SelectionChanged="ChannelTypeComboBox_OnSelectionChanged">
             <ComboBoxItem>Server channel</ComboBoxItem>
             <ComboBoxItem>User</ComboBoxItem>
         </ComboBox>
-        <xctk:ColorPicker Name="ColorPicker" SelectedColorChanged="ColorPicker_OnSelectedColorChanged" Margin="50,158,226,30" DisplayColorAndName="True"></xctk:ColorPicker>
-        <Label Margin="10,0,0,10" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left">ID</Label>
-        <TextBox x:Name="ChannelIdTextBox" Margin="10,0,0,-30" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBox>
-        <materialDesign:PackIcon Kind="Chat" Margin="17,160,0,0" Height="22" Width="28" x:Name="ChannelColorIcon"/>
+        <xctk:ColorPicker Name="ColorPicker" SelectedColorChanged="ColorPicker_OnSelectedColorChanged" Margin="50,184,226,23" DisplayColorAndName="True"></xctk:ColorPicker>
+        <Label Margin="10,101,0,111" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left">Channel ID</Label>
+        <TextBox x:Name="ChannelIdTextBox" Margin="17,130,0,82" Width="203" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBox>
+        <materialDesign:PackIcon Kind="Chat" Margin="17,184,0,0" Height="29" Width="28" x:Name="ChannelColorIcon"/>
         <Button Content="OK" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+        <Label Margin="239,101,0,111" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Server ID"/>
+        <TextBox x:Name="ServerIdTextBox" Margin="246,130,78,82" Width="203"/>
     </Grid>
 </Window>

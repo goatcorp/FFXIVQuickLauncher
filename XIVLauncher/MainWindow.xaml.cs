@@ -77,8 +77,6 @@ namespace XIVLauncher
                 {
                     var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString());
 
-                    Serilog.Log.Information("Downloading headline banner: {0}", _headlines.Banner[i].LsbBanner);
-                    
                     using (var stream = new MemoryStream(imageBytes))
                     {
                         var bitmapImage = new BitmapImage();
@@ -91,8 +89,8 @@ namespace XIVLauncher
                         _bannerBitmaps[i] = bitmapImage;
                     }
                 }
-
-                BannerImage.Source = _bannerBitmaps[0];
+                
+                this.Dispatcher.BeginInvoke(new Action(() => { BannerImage.Source = _bannerBitmaps[0]; }));
 
                 _bannerChangeTimer = new System.Timers.Timer {Interval = 5000};
 
@@ -113,11 +111,11 @@ namespace XIVLauncher
                 _bannerChangeTimer.AutoReset = true;
                 _bannerChangeTimer.Start();
 
-                NewsListView.ItemsSource = _headlines.News;
+                this.Dispatcher.BeginInvoke(new Action(() => { NewsListView.ItemsSource = _headlines.News; }));
             }
             catch (Exception)
             {
-                NewsListView.Items.Add(new News() {Title = "Could not download news data.", Tag = "DlError"});
+                this.Dispatcher.BeginInvoke(new Action(() => { NewsListView.Items.Add(new News() {Title = "Could not download news data.", Tag = "DlError"}); }));
             }
         }
 
@@ -190,8 +188,8 @@ namespace XIVLauncher
                 setup.ShowDialog();
             }
 
-            SetupHeadlines();
-
+            Task.Run(() => SetupHeadlines());
+                
             Settings.LanguageChanged += SetupHeadlines;
 
             var version = Util.GetAssemblyVersion();
@@ -203,7 +201,7 @@ namespace XIVLauncher
             }
 
             this.Visibility = Visibility.Visible;
-            BringIntoView();
+            Activate();
 
             Serilog.Log.Information("MainWindow initialized.");
         }

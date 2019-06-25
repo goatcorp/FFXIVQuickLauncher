@@ -205,7 +205,12 @@ namespace XIVLauncher
 
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var featureConfig = Settings.DiscordFeatureConfig;
+                    
+            featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
+
+            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
+            Settings.DiscordFeatureConfig = featureConfig;
         }
 
         private void ChannelListView_OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -223,7 +228,8 @@ namespace XIVLauncher
 
             var featureConfig = Settings.DiscordFeatureConfig;
                     
-            featureConfig.ChatTypeConfigurations = featureConfig.ChatTypeConfigurations.Where(x => x.ChatType != configEntry.ChatType && x.Channel.ChannelId != configEntry.Channel.ChannelId && x.Channel.GuildId != configEntry.Channel.GuildId && x.Channel.Type != configEntry.Channel.Type).ToList();
+            //featureConfig.ChatTypeConfigurations = featureConfig.ChatTypeConfigurations.Where(x => !x.CompareEx(configEntry)).ToList();
+            featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
             featureConfig.ChatTypeConfigurations.Add(channelSetup.Result);
 
             ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
