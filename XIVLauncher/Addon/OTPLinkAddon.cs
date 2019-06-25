@@ -15,7 +15,7 @@ namespace XIVLauncher.Addon
         private const string Remote = "https://roy-n-roy.github.io/FFXIVOtpLinker/";
         private const int httpPort = 1050;
 
-        public string Name => "FFXIV Onetime Password Linkage Server (restart required to enable.)";
+        public string Name => "FFXIV Onetime Password Linkage (restart required to enable.)";
 
         public void Run(MainWindow window)
         {
