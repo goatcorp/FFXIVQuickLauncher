@@ -78,6 +78,7 @@ namespace XIVLauncher
 
                 ChannelTypeComboBox.SelectedIndex = (int) chatTypeConfig.Channel.Type;
                 ChannelIdTextBox.Text = chatTypeConfig.Channel.ChannelId.ToString();
+                ServerIdTextBox.Text = chatTypeConfig.Channel.GuildId.ToString();
 
                 ApplyColor(chatTypeConfig.Color);
             }
@@ -90,8 +91,21 @@ namespace XIVLauncher
 
             var comboBoxEntry = ChatTypeComboBox.SelectedItem as ChatTypeComboBoxWrapper;
 
-            if (!string.IsNullOrEmpty(ChannelIdTextBox.Text) && ulong.TryParse(ChannelIdTextBox.Text, out var channelId) && !string.IsNullOrEmpty(ServerIdTextBox.Text) && ulong.TryParse(ServerIdTextBox.Text, out var guildId))
+            if (!string.IsNullOrEmpty(ChannelIdTextBox.Text) && ulong.TryParse(ChannelIdTextBox.Text, out var channelId))
             {
+                var guildId = 0UL;
+                if (ChannelTypeComboBox.SelectedIndex == 0)
+                {
+                    if (!string.IsNullOrEmpty(ServerIdTextBox.Text) && ulong.TryParse(ServerIdTextBox.Text, out var parsedGuildId))
+                    {
+                        guildId = parsedGuildId;
+                    }
+                    else
+                    {
+                        goto inputProblem;
+                    }
+                }
+
                 Result = new ChatTypeConfiguration
                 {
                     Channel = new ChannelConfiguration
@@ -110,6 +124,7 @@ namespace XIVLauncher
                 return;
             }
 
+            inputProblem:
             MessageBox.Show("Please enter valid IDs.", "XIVLauncher problem", MessageBoxButton.OK,
                 MessageBoxImage.Error);
             this.Close();

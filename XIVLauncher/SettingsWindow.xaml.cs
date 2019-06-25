@@ -218,7 +218,8 @@ namespace XIVLauncher
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            var configEntry = ChannelListView.SelectedItem as ChatTypeConfiguration;
+            if (!(ChannelListView.SelectedItem is ChatTypeConfiguration configEntry))
+                return;
 
             var channelSetup = new ChatChannelSetup(configEntry);
             channelSetup.ShowDialog();

@@ -65,6 +65,8 @@ namespace XIVLauncher.Addon
 
                 var parameters = JsonConvert.SerializeObject(dalamudConfig);
 
+                Serilog.Log.Information("Starting dalamud with parameters: {0}", parameters);
+                
                 var process = new Process
                 {
                     StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + parameters, WorkingDirectory = addonDirectory }
