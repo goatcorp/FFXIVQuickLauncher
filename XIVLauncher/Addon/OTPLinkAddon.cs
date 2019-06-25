@@ -7,7 +7,6 @@ using System.Net;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Threading.Tasks;
 
 namespace XIVLauncher.Addon
 {

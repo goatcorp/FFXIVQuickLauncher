@@ -241,7 +241,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\FFXIVOtpLinker\FFXIVOtpLinker\FFXIVOtpLinker.csproj">
-      <Project>{014717a3-3976-4cc5-9675-df38e390cedf}</Project>
+      <Project>{60e17698-b089-4531-b5ff-0dc8b95b979b}</Project>
       <Name>FFXIVOtpLinker</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj">
