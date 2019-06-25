@@ -35,11 +35,19 @@ namespace XIVLauncher
 
         private bool _isLoggingIn = false;
 
-        public MainWindow(string accountNum)
+        public MainWindow(string accountName)
         {
             InitializeComponent();
 
             this.Visibility = Visibility.Hidden;
+
+            this.Title += " v" + Util.GetAssemblyVersion();
+
+            if (!string.IsNullOrEmpty(accountName))
+            {
+                this.Title += " - Account: " + accountName;
+                AppName += "-" + accountName;
+            }
 
 #if !DEBUG
             AutoUpdater.ShowSkipButton = false;
@@ -54,8 +62,6 @@ namespace XIVLauncher
 #else
             InitializeWindow();
 #endif
-
-            this.Title += " v" + Util.GetAssemblyVersion();
         }
 
         private void SetupHeadlines()

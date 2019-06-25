@@ -53,7 +53,7 @@ namespace XIVLauncher
             var accountName = "";
 
             if (e.Args.Length > 0 && e.Args[0].StartsWith("--accountName="))
-                accountName = "-" + e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
+                accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
 
             Log.Information("Loading MainWindow for account '{0}'", accountName);
 
