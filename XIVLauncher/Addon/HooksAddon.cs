@@ -18,9 +18,12 @@ namespace XIVLauncher.Addon
             public string SupportedGameVer { get; set; }
         }
 
-        private class DalamudConfiguration
-        {
-            public int LanguageId { get; set; }
+        [Serializable]
+        public sealed class DalamudStartInfo {
+            public string WorkingDirectory;
+            public string PluginDirectory;
+            public int LanguageId;
+
             public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
         }
 
@@ -57,10 +60,11 @@ namespace XIVLauncher.Addon
                 if (XIVGame.GetLocalGamever() != remoteVersionInfo.SupportedGameVer)
                     return;
 
-                var dalamudConfig = new DalamudConfiguration
+                var dalamudConfig = new DalamudStartInfo
                 {
                     LanguageId = (int) Settings.GetLanguage(),
-                    DiscordFeatureConfig = Settings.DiscordFeatureConfig
+                    DiscordFeatureConfig = Settings.DiscordFeatureConfig,
+                    PluginDirectory = ingamePluginPath
                 };
 
                 var parameters = JsonConvert.SerializeObject(dalamudConfig);
@@ -96,6 +100,16 @@ namespace XIVLauncher.Addon
             Directory.CreateDirectory(ingamePluginPath);
 
             var ingamePluginDirectory = new DirectoryInfo(ingamePluginPath);
+
+            foreach (var file in ingamePluginDirectory.GetFiles())
+            {
+                file.Delete(); 
+            }
+
+            foreach (var dir in ingamePluginDirectory.GetDirectories())
+            {
+                dir.Delete(true); 
+            }
 
             using (var client = new WebClient())
             {
