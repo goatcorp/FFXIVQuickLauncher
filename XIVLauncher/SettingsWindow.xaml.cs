@@ -28,7 +28,9 @@ namespace XIVLauncher
             AddonListView.ItemsSource = Settings.GetAddonList();
             UidCacheCheckBox.IsChecked = Settings.UniqueIdCacheEnabled;
 
-            ChannelListView.ItemsSource = Settings.DiscordFeatureConfig.ChatTypeConfigurations;
+            var featureConfig = Settings.DiscordFeatureConfig;
+            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
+            DiscordBotTokenTextBox.Text = featureConfig.Token;
 
             RmtAdFilterCheckBox.IsChecked = Settings.RmtFilterEnabled;
             EnableHooksCheckBox.IsChecked = Settings.IsInGameAddonEnabled();

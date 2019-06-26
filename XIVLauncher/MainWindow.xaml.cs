@@ -557,5 +557,10 @@ namespace XIVLauncher
             HandleLogin(false);
             _isLoggingIn = true;
         }
+
+        private void OtpDialogHost_OnDialogClosing(object sender, DialogClosingEventArgs eventargs)
+        {
+            _isLoggingIn = false;
+        }
     }
 }

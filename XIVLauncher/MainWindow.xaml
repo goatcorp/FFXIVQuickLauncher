@@ -218,7 +218,8 @@
 
       <materialDesign:DialogHost
         Identifier="OtpDialogHost"
-        x:Name="OtpDialogHost">
+        x:Name="OtpDialogHost"
+        DialogClosing="OtpDialogHost_OnDialogClosing">
         <materialDesign:DialogHost.DialogContent>
           <StackPanel Margin="16">
             <TextBlock>Please enter your OTP key.</TextBlock>

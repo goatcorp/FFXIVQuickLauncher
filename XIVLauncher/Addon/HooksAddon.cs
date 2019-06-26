@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Text;
 using Dalamud.Discord;
 using Newtonsoft.Json;
 
@@ -67,14 +68,14 @@ namespace XIVLauncher.Addon
                     PluginDirectory = ingamePluginPath
                 };
 
-                var parameters = JsonConvert.SerializeObject(dalamudConfig);
+                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(dalamudConfig)));
 
-                Serilog.Log.Information("Starting dalamud with parameters: {0}", parameters);
-                
                 var process = new Process
                 {
-                    StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + parameters, WorkingDirectory = addonDirectory }
+                    StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory }
                 };
+
+                Serilog.Log.Information("Starting dalamud with parameters: {0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
                 process.Start();
             }
