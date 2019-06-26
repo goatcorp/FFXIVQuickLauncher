@@ -18,7 +18,7 @@
             <LineBreak />
             if it should be ran as admin.
     </TextBlock>
-    <local:FileEntry x:Name="PathEntry" Description="Select an Addon file" Filters="EXE File, *.exe, Script File, *.ps1;*.bat"  Margin="10,0,0,80" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" />
+    <local:FileEntry x:Name="PathEntry" Description="Select an Addon file" Filters="EXE File, *.exe;Powershell Script, *.ps1;Shell Script, *.bat"  Margin="10,0,0,80" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" />
     <Label Margin="10,0,0,10" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left">Command line parameters</Label>
     <TextBox x:Name="CommandLineTextBox" Margin="10,0,0,-30" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBox>
     <CheckBox x:Name="AdminCheckBox"  Content="Run as admin" Margin="10,0,0,-100" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"></CheckBox>

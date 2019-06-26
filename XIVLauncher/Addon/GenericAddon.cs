@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -9,7 +9,7 @@ namespace XIVLauncher.Addon
     {
         public void Run(Process gameProcess)
         {
-            if (Path == null)
+            if (string.IsNullOrEmpty(this.Path))
             {
                 Serilog.Log.Error("Generic addon path was null.");
                 return;
@@ -72,7 +72,7 @@ namespace XIVLauncher.Addon
             catch (Win32Exception exc)
             {
                 // If the user didn't cause this manually by dismissing the UAC prompt, we throw it
-                if (exc.HResult != 0x80004005)
+                if ((uint)exc.HResult != 0x80004005)
                     throw;
             }
         }
