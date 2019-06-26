@@ -8,8 +8,8 @@ using Dalamud.Game.Chat;
 namespace Dalamud.Discord
 {
     public enum ChannelType {
-        User,
-        Guild
+        Guild,
+        User
     }
 
     [Serializable]
