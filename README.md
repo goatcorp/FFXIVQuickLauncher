@@ -21,6 +21,9 @@ Check the settings page and use the /xlhelp command in-game to see available com
 
 [Download the latest release from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page, unzip it into any folder you can easily access it and launch XIVLauncher.exe - then just follow the instructions!
 
+## How to use one-time password linkage Addon
+[Please read this page.](https://github.com/roy-n-roy/FFXIVOtpLinker)
+
 ## Any questions?
 
 [Please check out the FAQ](https://github.com/goaaats/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.
