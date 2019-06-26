@@ -67,7 +67,7 @@ namespace XIVLauncher.Addon
             try
             {
                 process.Start();
-                Serilog.Log.Information("Launched addon {0}.", Name);
+                Serilog.Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
             }
             catch (Win32Exception exc)
             {
@@ -86,20 +86,7 @@ namespace XIVLauncher.Addon
             ps.Arguments = $@"-File ""{this.Path}"" {this.CommandLine}";
             ps.UseShellExecute = false;
 
-            ps.WindowStyle = ProcessWindowStyle.Hidden;
-            ps.CreateNoWindow = true;
-
-            if (RunAsAdmin)
-            {
-                // Vista or higher check
-                // https://stackoverflow.com/a/2532775
-                if (Environment.OSVersion.Version.Major >= 6)
-                {
-                    ps.Verb = "runas";
-                }
-            }
-
-            Process.Start(ps);
+            this.RunScript(ps);
         }
 
         private void RunBatch(Process gameProcess)
@@ -108,9 +95,14 @@ namespace XIVLauncher.Addon
 
             ps.FileName = Environment.GetEnvironmentVariable("ComSpec");
             ps.WorkingDirectory = System.IO.Path.GetDirectoryName(this.Path);
-            ps.Arguments = $@"-File ""{this.Path}"" {this.CommandLine}";
+            ps.Arguments = $@"/C ""{this.Path}"" {this.CommandLine}";
             ps.UseShellExecute = false;
 
+            this.RunScript(ps);
+        }
+
+        private void RunScript(ProcessStartInfo ps)
+        {
             ps.WindowStyle = ProcessWindowStyle.Hidden;
             ps.CreateNoWindow = true;
 
@@ -124,12 +116,27 @@ namespace XIVLauncher.Addon
                 }
             }
 
-            Process.Start(ps);
+            try
+            {
+                Process.Start(ps);
+                Serilog.Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
+            }
+            catch (Win32Exception exc)
+            {
+                // If the user didn't cause this manually by dismissing the UAC prompt, we throw it
+                if ((uint)exc.HResult != 0x80004005)
+                    throw;
+            }
         }
 
-        public string Name => System.IO.Path.GetExtension(this.Path).ToLower() == ".exe" ?
-            "Launch EXE: " + System.IO.Path.GetFileNameWithoutExtension(Path) :
-            "Launch : " + System.IO.Path.GetFileNameWithoutExtension(Path);
+        public string Name =>
+            string.IsNullOrEmpty(this.Path) ?
+            string.Empty :
+            ($"Launch{(this.IsApp ? " EXE" : string.Empty)} : {System.IO.Path.GetFileNameWithoutExtension(Path)}");
+
+        private bool IsApp =>
+            !string.IsNullOrEmpty(this.Path) &&
+            System.IO.Path.GetExtension(this.Path).ToLower() == ".exe";
 
         public string Path;
         public string CommandLine;
