@@ -7,6 +7,8 @@
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:Addon="clr-namespace:XIVLauncher.Addon"
+        xmlns:dalamudDiscord="clr-namespace:Dalamud.Discord"
+        xmlns:xaml="clr-namespace:XIVLauncher.Xaml"
         mc:Ignorable="d"
         Title="XIVLauncher Settings" Height="311.675" Width="567" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing"
@@ -14,6 +16,10 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+    <Window.Resources>
+        <xaml:StringToColorConverter x:Key="StringToColorConverter"/>
+        <xaml:ChatTypeToFancyNameConverter x:Key="ChatTypeToFancyNameConverter"/>
+    </Window.Resources>
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
             <TabItem Header="Game Path">
@@ -76,22 +82,24 @@
                             Addons are applications that are loaded as soon as the game has started.
                         </TextBlock>
 
-                        <ListView x:Name="AddonListView" Margin="0,0,0,50" Height="140" MouseUp="AddonListView_OnMouseUp">
-                            <ListView.ContextMenu>
-                                <ContextMenu StaysOpen="true">
-                                    <MenuItem Header="Remove" Click="RemoveAddonEntry_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
-                                </ContextMenu>
-                            </ListView.ContextMenu>
+                        <materialDesign:Card Margin="0,0,0,50" Height="170">
+                            <ListView x:Name="AddonListView" Margin="0,0,0,50" Height="140" MouseUp="AddonListView_OnMouseUp">
+                                <ListView.ContextMenu>
+                                    <ContextMenu StaysOpen="true">
+                                        <MenuItem Header="Remove" Click="RemoveAddonEntry_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
 
-                            <ListBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type Addon:AddonEntry}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding IsEnabled}" Checked="ToggleButton_OnChecked" Foreground="{DynamicResource MaterialDesignBody}"/>
-                                        <TextBlock Text="{Binding Addon.Name}" Margin="10,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListView>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type Addon:AddonEntry}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox IsChecked="{Binding IsEnabled}" Checked="ToggleButton_OnChecked" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                            <TextBlock Text="{Binding Addon.Name}" Margin="10,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListView>
+                        </materialDesign:Card>
 
                         <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddAddon_OnClick" ToolTip="Add a new generic addon that allows you to launch any program.">Add new</Button>
                     </Grid>
@@ -142,6 +150,30 @@
                                 <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0">
                                     Chat setup
                                 </Label>
+                                <materialDesign:Card Margin="0,0,0,10" Height="110">
+                                    <ListView x:Name="ChannelListView" MouseUp="ChannelListView_OnMouseUp" HorizontalAlignment="Stretch">
+                                        <ListView.ContextMenu>
+                                            <ContextMenu StaysOpen="true">
+                                                <MenuItem Header="Remove" Click="RemoveChatConfigEntry_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                                            </ContextMenu>
+                                        </ListView.ContextMenu>
+
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type dalamudDiscord:ChatTypeConfiguration}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <materialDesign:PackIcon Kind="Chat" Foreground="{Binding Color, Converter={StaticResource StringToColorConverter}}" />
+                                                    <TextBlock Text="{Binding ChatType, Converter={StaticResource ChatTypeToFancyNameConverter}}" Margin="10,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListView>
+                                </materialDesign:Card>
+
+                                <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
+                                <Button Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Duty Finder notification channel.">Set Duty Finder notification channel</Button>
+                                <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetFateNotificationChannel_OnClick" ToolTip="Set the Fate notification channel.">Set Fate notification channel</Button>
+                                <Button Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
+
                             </StackPanel>
                             <Separator/>
                             <Label Foreground="DarkGray" Margin="0,5,0,20">

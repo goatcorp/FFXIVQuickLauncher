@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:XIVLauncher"
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         mc:Ignorable="d"
-        Title="Add generic addon" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
+        Title="Configure generic addon" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"

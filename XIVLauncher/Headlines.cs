@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -54,38 +55,15 @@ namespace XIVLauncher
 
     public partial class Headlines
     {
-        public static Headlines Get()
+        public static Headlines Get(XIVGame game)
         {
-            using (var client = new WebClient())
-            {
-                string url;
-                switch (Settings.GetLanguage())
-                {
-                    case ClientLanguage.Japanese:
-                        url = "https://frontier.ffxiv.com/news/headline.json?lang=ja&media=pcapp&1552178812383";
-                        break;
+            var unixTimestamp = Util.GetUnixMillis();
+            var langCode = Settings.GetLanguage().GetLangCode();
+            var url = $"https://frontier.ffxiv.com/news/headline.json?lang={langCode}&media=pcapp&{unixTimestamp}";
 
-                    case ClientLanguage.English:
-                        url = "https://frontier.ffxiv.com/news/headline.json?lang=en-gb&media=pcapp&1552178812383";
-                        break;
+            var json = Encoding.UTF8.GetString(game.DownloadAsLauncher(url));
 
-                    case ClientLanguage.German:
-                        url = "https://frontier.ffxiv.com/news/headline.json?lang=de&media=pcapp&1552178812383";
-                        break;
-
-                    case ClientLanguage.French:
-                        url = "https://frontier.ffxiv.com/news/headline.json?lang=fr&media=pcapp&1552178812383";
-                        break;
-
-                    default:
-                        url = "https://frontier.ffxiv.com/news/headline.json?lang=en-gb&media=pcapp&1552178812383";
-                        break;
-                }
-                var json = client.DownloadString(
-                    new Uri(url));
-
-                return JsonConvert.DeserializeObject<Headlines>(json, Converter.Settings);
-            }
+            return JsonConvert.DeserializeObject<Headlines>(json, Converter.Settings);
         }
     }
 

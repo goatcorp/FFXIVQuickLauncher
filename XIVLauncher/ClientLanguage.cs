@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher
 {
-    enum ClientLanguage
+    public enum ClientLanguage
     {
         Japanese,
         English,

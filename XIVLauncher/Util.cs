@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 using Microsoft.Win32;
 
 namespace XIVLauncher
@@ -81,6 +82,88 @@ namespace XIVLauncher
         {
             return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
                 .IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        public static string GetLangCode(this ClientLanguage language)
+        {
+            switch (language)
+            {
+                case ClientLanguage.Japanese:
+                    return "ja";
+
+                case ClientLanguage.English:
+                    return "en-gb";
+
+                case ClientLanguage.German:
+                    return "de";
+
+                case ClientLanguage.French:
+                    return "fr";
+
+                default:
+                    return "en-gb";
+            }
+        }
+
+        public static int GetUnixMillis() => (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
+
+        public static string GenerateFrontierReferer()
+        {
+            var langCode = Settings.GetLanguage().GetLangCode();  
+            var formattedTime = DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
+
+            return $"https://frontier.ffxiv.com/version_4_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
+        }
+
+        public static Color ColorFromArgb(int argb)
+        {
+            return Color.FromArgb((byte) (argb >> 24), (byte) (argb >> 16), (byte) (argb >> 8), (byte) argb);
+        }
+
+        public static int ColorToArgb(Color color) => (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
+
+        public static SolidColorBrush SolidColorBrushFromArgb(int argb) => new SolidColorBrush(ColorFromArgb(argb));
+
+        // https://stackoverflow.com/questions/10454519/best-way-to-compare-two-complex-objects
+        public static bool DeepCompare(this object obj, object another)
+        {
+            if (ReferenceEquals(obj, another)) return true;
+            if ((obj == null) || (another == null)) return false;
+            //Compare two object's class, return false if they are difference
+            if (obj.GetType() != another.GetType()) return false;
+
+            var result = true;
+            //Get all properties of obj
+            //And compare each other
+            foreach (var property in obj.GetType().GetProperties())
+            {
+                var objValue = property.GetValue(obj);
+                var anotherValue = property.GetValue(another);
+                if (!objValue.Equals(anotherValue)) result = false;
+            }
+
+            return result;
+        }
+
+        public static bool CompareEx(this object obj, object another)
+        {
+            if (ReferenceEquals(obj, another)) return true;
+            if ((obj == null) || (another == null)) return false;
+            if (obj.GetType() != another.GetType()) return false;
+
+            //properties: int, double, DateTime, etc, not class
+            if (!obj.GetType().IsClass) return obj.Equals(another);
+
+            var result = true;
+            foreach (var property in obj.GetType().GetProperties())
+            {
+                var objValue = property.GetValue(obj);
+                var anotherValue = property.GetValue(another);
+                //Recursion
+                if (!objValue.DeepCompare(anotherValue)) result = false;
+            }
+
+            return result;
         }
     }
 }

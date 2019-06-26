@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -27,33 +29,27 @@ namespace XIVLauncher
 
         private System.Timers.Timer _maintenanceQueueTimer;
 
-        public const string AppName = "FINAL FANTASY XIV";
+        private static string AppName = "FINAL FANTASY XIV";
 
         private XIVGame _game = new XIVGame();
 
-        private bool isLoggingIn = false;
+        private bool _isLoggingIn = false;
 
-        public MainWindow()
+        public MainWindow(string accountName)
         {
             InitializeComponent();
 
             this.Visibility = Visibility.Hidden;
 
-            // Check if dark mode is enabled on windows, if yes, load the dark theme
-            var themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml", UriKind.RelativeOrAbsolute);
-            if (Util.IsWindowsDarkModeEnabled())
-                themeUri = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml", UriKind.RelativeOrAbsolute);
+            this.Title += " v" + Util.GetAssemblyVersion();
 
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = themeUri });
+            if (!string.IsNullOrEmpty(accountName))
+            {
+                this.Title += " - Account: " + accountName;
+                AppName += "-" + accountName;
+            }
 
 #if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
-            {
-                new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled").ShowDialog();
-                Serilog.Log.CloseAndFlush();
-                Environment.Exit(0);
-            };
-
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
             AutoUpdater.Mandatory = true;
@@ -66,30 +62,35 @@ namespace XIVLauncher
 #else
             InitializeWindow();
 #endif
-
-            this.Title += " v" + Util.GetAssemblyVersion();
         }
 
-        void SetupHeadlines()
+        private void SetupHeadlines()
         {
             try
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = Headlines.Get();
+                _headlines = Headlines.Get(_game);
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
-                for (int i = 0; i < _headlines.Banner.Length; i++)
+                for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = _headlines.Banner[i].LsbBanner;
-                    bitmap.EndInit();
+                    var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString());
 
-                    _bannerBitmaps[i] = bitmap;
+                    using (var stream = new MemoryStream(imageBytes))
+                    {
+                        var bitmapImage = new BitmapImage();
+                        bitmapImage.BeginInit();
+                        bitmapImage.StreamSource = stream;
+                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmapImage.EndInit();
+                        bitmapImage.Freeze();
+
+                        _bannerBitmaps[i] = bitmapImage;
+                    }
                 }
-
-                BannerImage.Source = _bannerBitmaps[0];
+                
+                this.Dispatcher.BeginInvoke(new Action(() => { BannerImage.Source = _bannerBitmaps[0]; }));
 
                 _bannerChangeTimer = new System.Timers.Timer {Interval = 5000};
 
@@ -110,11 +111,11 @@ namespace XIVLauncher
                 _bannerChangeTimer.AutoReset = true;
                 _bannerChangeTimer.Start();
 
-                NewsListView.ItemsSource = _headlines.News;
+                this.Dispatcher.BeginInvoke(new Action(() => { NewsListView.ItemsSource = _headlines.News; }));
             }
             catch (Exception)
             {
-                NewsListView.Items.Add(new News() {Title = "Could not download news data.", Tag = "DlError"});
+                this.Dispatcher.BeginInvoke(new Action(() => { NewsListView.Items.Add(new News() {Title = "Could not download news data.", Tag = "DlError"}); }));
             }
         }
 
@@ -123,6 +124,7 @@ namespace XIVLauncher
             // Upgrade the stored settings if needed
             if (Properties.Settings.Default.UpgradeRequired)
             {
+                Serilog.Log.Information("Settings upgrade required...");
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
@@ -156,6 +158,8 @@ namespace XIVLauncher
 
             if (Settings.IsAutologin() && savedCredentials != null && Keyboard.Modifiers != ModifierKeys.Shift)
             {
+                Serilog.Log.Information("Engaging Autologin");
+
                 try
                 {
                     if (!gateStatus)
@@ -184,11 +188,9 @@ namespace XIVLauncher
                 setup.ShowDialog();
             }
 
-            SetupHeadlines();
-
+            Task.Run(() => SetupHeadlines());
+                
             Settings.LanguageChanged += SetupHeadlines;
-
-            this.Visibility = Visibility.Visible;
 
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
@@ -198,7 +200,10 @@ namespace XIVLauncher
                 Properties.Settings.Default.Save();
             }
 
-            BringIntoView();
+            this.Visibility = Visibility.Visible;
+            Activate();
+
+            Serilog.Log.Information("MainWindow initialized.");
         }
 
         private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
@@ -260,18 +265,18 @@ namespace XIVLauncher
             Task.Run(() => { this.Dispatcher.BeginInvoke(new Action(() => {  })); });
             */
 
-            if (isLoggingIn)
+            if (_isLoggingIn)
                 return;
 
             HandleLogin(false);
-            isLoggingIn = true;
+            _isLoggingIn = true;
         }
 
         private void HandleLogin(bool autoLogin)
         {
             OtpTextBox.Text = "";
 
-            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.IsUniqueIdCacheEnabled();
+            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.UniqueIdCacheEnabled;
 
             if (OtpCheckBox.IsChecked == true && !hasValidCache)
             {
@@ -352,7 +357,7 @@ namespace XIVLauncher
 
                 //DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
 
-                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text, Settings.IsUniqueIdCacheEnabled());
+                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text, Settings.UniqueIdCacheEnabled);
 
                 if (gameProcess == null)
                     return;
@@ -364,7 +369,7 @@ namespace XIVLauncher
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
-                    isLoggingIn = false;
+                    _isLoggingIn = false;
                 }
 
                 try
@@ -380,7 +385,7 @@ namespace XIVLauncher
                 catch (Exception exc)
                 {
                     new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Hooks").ShowDialog();
-                    isLoggingIn = false;
+                    _isLoggingIn = false;
                 }
 
                 Environment.Exit(0);
@@ -388,7 +393,7 @@ namespace XIVLauncher
             catch (Exception exc)
             {
                 new ErrorWindow(exc, "Additionally, please check your login information or try again.", "Login").ShowDialog();
-                isLoggingIn = false;
+                _isLoggingIn = false;
             }
         }
 
@@ -546,11 +551,11 @@ namespace XIVLauncher
 
         private void Card_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Enter && e.Key != Key.Return || isLoggingIn)
+            if (e.Key != Key.Enter && e.Key != Key.Return || _isLoggingIn)
                 return;
 
             HandleLogin(false);
-            isLoggingIn = true;
+            _isLoggingIn = true;
         }
     }
 }
