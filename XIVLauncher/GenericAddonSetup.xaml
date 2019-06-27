@@ -6,22 +6,22 @@
         xmlns:local="clr-namespace:XIVLauncher"
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         mc:Ignorable="d"
-        Title="Add generic addon" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
+        Title="Configure generic addon" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
-    <Grid>
-        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
+  <Grid>
+    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
             Please select the application that should be started, any additional parameters and
-            <LineBreak/>
+            <LineBreak />
             if it should be ran as admin.
-        </TextBlock>
-        <local:FileEntry x:Name="PathEntry" Description="Select an EXE file" Filters="EXE File, *.exe"  Margin="10,0,0,80" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        <Label Margin="10,0,0,10" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left">Command line parameters</Label>
-        <TextBox x:Name="CommandLineTextBox" Margin="10,0,0,-30" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBox>
-        <CheckBox x:Name="AdminCheckBox"  Content="Run as admin" Margin="10,0,0,-100" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"></CheckBox>
-        <Button Content="OK" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
-    </Grid>
+    </TextBlock>
+    <local:FileEntry x:Name="PathEntry" Description="Select an Addon file" Filters="EXE File, *.exe;Powershell Script, *.ps1;Shell Script, *.bat"  Margin="10,0,0,80" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" />
+    <Label Margin="10,0,0,10" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left">Command line parameters</Label>
+    <TextBox x:Name="CommandLineTextBox" Margin="10,0,0,-30" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBox>
+    <CheckBox x:Name="AdminCheckBox"  Content="Run as admin" Margin="10,0,0,-100" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left"></CheckBox>
+    <Button Content="OK" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click" />
+  </Grid>
 </Window>

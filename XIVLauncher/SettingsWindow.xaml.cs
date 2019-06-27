@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Dalamud.Discord;
+using Dalamud.Game.Chat;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 
@@ -24,12 +26,13 @@ namespace XIVLauncher
             ExpansionLevelComboBox.SelectedIndex = Settings.GetExpansionLevel();
             LanguageComboBox.SelectedIndex = (int) Settings.GetLanguage();
             AddonListView.ItemsSource = Settings.GetAddonList();
-            UidCacheCheckBox.IsChecked = Settings.IsUniqueIdCacheEnabled();
+            UidCacheCheckBox.IsChecked = Settings.UniqueIdCacheEnabled;
 
-            RmtAdFilterCheckBox.IsChecked = Settings.IsRmtFilterEnabled();
-            DiscordWebHookUrlTextBox.Text = Settings.GetDiscordWebhookUrl();
-            ChatMessageNotificationCheckBox.IsChecked = Settings.IsChatNotificationsEnabled();
-            ContentFinderNotificationCheckBox.IsChecked = Settings.IsCfNotificationsEnabled();
+            var featureConfig = Settings.DiscordFeatureConfig;
+            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
+            DiscordBotTokenTextBox.Text = featureConfig.Token;
+
+            RmtAdFilterCheckBox.IsChecked = Settings.RmtFilterEnabled;
             EnableHooksCheckBox.IsChecked = Settings.IsInGameAddonEnabled();
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
@@ -42,13 +45,15 @@ namespace XIVLauncher
             Settings.SetExpansionLevel(ExpansionLevelComboBox.SelectedIndex);
             Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
             Settings.SetAddonList((List<AddonEntry>) AddonListView.ItemsSource);
-            Settings.SetUniqueIdCacheEnabled(UidCacheCheckBox.IsChecked == true);
+            Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
 
-            Settings.SetRmtFilterEnabled(RmtAdFilterCheckBox.IsChecked == true);
-            Settings.SetDiscordWebhookUrl(DiscordWebHookUrlTextBox.Text);
-            Settings.SetChatNotificationsEnabled(ChatMessageNotificationCheckBox.IsChecked == true);
-            Settings.SetCfNotificationsEnabled(ContentFinderNotificationCheckBox.IsChecked == true);
+            Settings.RmtFilterEnabled = RmtAdFilterCheckBox.IsChecked == true;
+
             Settings.SetInGameAddonEnabled(EnableHooksCheckBox.IsChecked == true);
+
+            var featureConfig = Settings.DiscordFeatureConfig;
+            featureConfig.Token = DiscordBotTokenTextBox.Text;
+            Settings.DiscordFeatureConfig = featureConfig;
 
             Settings.Save();
         }
@@ -189,7 +194,7 @@ namespace XIVLauncher
 
         private void ResetCacheButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Settings.SetUniqueIdCache(new List<UniqueIdCacheEntry>());
+            Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
             Settings.Save();
             MessageBox.Show("Reset. Please restart the app.");
 
@@ -201,12 +206,108 @@ namespace XIVLauncher
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-webhook");
+            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-bot");
         }
 
         private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
         {
             Process.Start("https://discord.gg/29NBmud");
+        }
+
+        private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = Settings.DiscordFeatureConfig;
+                    
+            featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
+
+            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void ChannelListView_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left)
+                return;
+
+            if (!(ChannelListView.SelectedItem is ChatTypeConfiguration configEntry))
+                return;
+
+            var channelSetup = new ChatChannelSetup(configEntry);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null)
+                return;
+
+            var featureConfig = Settings.DiscordFeatureConfig;
+                    
+            //featureConfig.ChatTypeConfigurations = featureConfig.ChatTypeConfigurations.Where(x => !x.CompareEx(configEntry)).ToList();
+            featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
+            featureConfig.ChatTypeConfigurations.Add(channelSetup.Result);
+
+            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void AddChannelConfig_OnClick(object sender, RoutedEventArgs e)
+        {
+            var channelSetup = new ChatChannelSetup();
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null) 
+                return;
+
+            var featureConfig = Settings.DiscordFeatureConfig;
+            featureConfig.ChatTypeConfigurations.Add(channelSetup.Result);
+            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void SetDutyFinderNotificationChannel_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = Settings.DiscordFeatureConfig;
+
+            var channelConfig = featureConfig.CfNotificationChannel ?? new ChannelConfiguration();
+
+            var channelSetup = new ChatChannelSetup(channelConfig);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null) 
+                return;
+
+            featureConfig.CfNotificationChannel = channelSetup.Result.Channel;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void SetFateNotificationChannel_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = Settings.DiscordFeatureConfig;
+
+            var channelConfig = featureConfig.FateNotificationChannel ?? new ChannelConfiguration();
+
+            var channelSetup = new ChatChannelSetup(channelConfig);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null) 
+                return;
+
+            featureConfig.FateNotificationChannel = channelSetup.Result.Channel;
+            Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void SetRetainerNotificationChannel_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = Settings.DiscordFeatureConfig;
+
+            var channelConfig = featureConfig.RetainerNotificationChannel ?? new ChannelConfiguration();
+
+            var channelSetup = new ChatChannelSetup(channelConfig);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null) 
+                return;
+
+            featureConfig.RetainerNotificationChannel = channelSetup.Result.Channel;
+            Settings.DiscordFeatureConfig = featureConfig;
         }
     }
 }

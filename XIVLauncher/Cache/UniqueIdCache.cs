@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace XIVLauncher.Cache
 {
-    class UniqueIdCache
+    public class UniqueIdCache
     {
         private const int DaysToTimeout = 3;
 
@@ -12,7 +12,7 @@ namespace XIVLauncher.Cache
 
         public UniqueIdCache()
         {
-            _cache = Settings.GetUniqueIdCache();
+            _cache = Settings.UniqueIdCache;
         }
 
         private void DeleteOldCaches()
@@ -47,7 +47,7 @@ namespace XIVLauncher.Cache
                  Region = region
              });
 
-             Settings.SetUniqueIdCache(_cache);
+             Settings.UniqueIdCache = _cache;
              Settings.Save();
         }
     }

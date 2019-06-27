@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace XIVLauncher
@@ -58,6 +46,8 @@ namespace XIVLauncher
         {
             using (var dlg = new CommonOpenFileDialog())
             {
+                var parent = Window.GetWindow(this);
+
                 dlg.Multiselect = false;
                 dlg.IsFolderPicker = false;
                 dlg.EnsurePathExists = true;
@@ -70,8 +60,8 @@ namespace XIVLauncher
                     var filterOptions = filterSet.Split(',');
                     dlg.Filters.Add(new CommonFileDialogFilter(filterOptions[0], filterOptions[1]));
                 }
-                
-                var result = dlg.ShowDialog();
+
+                var result = dlg.ShowDialog(parent);
 
                 if (result == CommonFileDialogResult.Ok)
                 {

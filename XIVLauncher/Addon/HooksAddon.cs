@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using Dalamud.Discord;
 using Newtonsoft.Json;
 
 namespace XIVLauncher.Addon
@@ -16,10 +13,19 @@ namespace XIVLauncher.Addon
     {
         private const string Remote = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
-        internal class HooksVersionInfo
+        private class HooksVersionInfo
         {
             public string AssemblyVersion { get; set;  }
             public string SupportedGameVer { get; set; }
+        }
+
+        [Serializable]
+        public sealed class DalamudStartInfo {
+            public string WorkingDirectory;
+            public string PluginDirectory;
+            public int LanguageId;
+
+            public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
         }
 
         public void Run(Process gameProcess)
@@ -31,6 +37,9 @@ namespace XIVLauncher.Addon
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "Hooks");
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
+            var ingamePluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "XIVLauncher", "ingameplugins");
+
             using (var client = new WebClient())
             {
                 var versionInfoJson = client.DownloadString(Remote + "version");
@@ -38,7 +47,7 @@ namespace XIVLauncher.Addon
 
                 if (!File.Exists(addonExe))
                 {
-                    Download(addonDirectory);
+                    Download(addonDirectory, ingamePluginPath);
                 }
                 else
                 {
@@ -46,58 +55,85 @@ namespace XIVLauncher.Addon
                     var version = versionInfo.ProductVersion;
 
                     if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
-                        Download(addonDirectory);
+                        Download(addonDirectory, ingamePluginPath);
                 }
 
                 if (XIVGame.GetLocalGamever() != remoteVersionInfo.SupportedGameVer)
                     return;
 
-                var parameters = $" langId={(int) Settings.GetLanguage()} dwhUrl={Settings.GetDiscordWebhookUrl()}";
+                var dalamudConfig = new DalamudStartInfo
+                {
+                    LanguageId = (int) Settings.GetLanguage(),
+                    DiscordFeatureConfig = Settings.DiscordFeatureConfig,
+                    PluginDirectory = ingamePluginPath
+                };
 
-                if (Settings.IsRmtFilterEnabled())
-                    parameters += " rmtFilter";
-
-                if (Settings.IsChatNotificationsEnabled())
-                    parameters += " chatNotify";
-
-                if (Settings.IsCfNotificationsEnabled())
-                    parameters += " cfNotify";
+                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(dalamudConfig)));
 
                 var process = new Process
                 {
-                    StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + parameters, WorkingDirectory = addonDirectory }
+                    StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory }
                 };
+
+                Serilog.Log.Information("Starting dalamud with parameters: {0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
                 process.Start();
             }
         }
 
-        private void Download(string path)
+        private void Download(string addonPath, string ingamePluginPath)
         {
             // Ensure directory exists
-            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(addonPath);
 
-            var directoryInfo = new DirectoryInfo(path);
+            var hooksDirectory = new DirectoryInfo(addonPath);
 
-            foreach (var file in directoryInfo.GetFiles())
+            foreach (var file in hooksDirectory.GetFiles())
             {
                 file.Delete(); 
             }
 
-            foreach (var dir in directoryInfo.GetDirectories())
+            foreach (var dir in hooksDirectory.GetDirectories())
+            {
+                dir.Delete(true); 
+            }
+
+            Directory.CreateDirectory(ingamePluginPath);
+
+            var ingamePluginDirectory = new DirectoryInfo(ingamePluginPath);
+
+            foreach (var file in ingamePluginDirectory.GetFiles())
+            {
+                file.Delete(); 
+            }
+
+            foreach (var dir in ingamePluginDirectory.GetDirectories())
             {
                 dir.Delete(true); 
             }
 
             using (var client = new WebClient())
             {
-                var downloadPath = Path.Combine(path, "download.zip");
+                var downloadPath = Path.Combine(addonPath, "download.zip");
 
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
                 client.DownloadFile(Remote + "latest.zip", downloadPath);
-                ZipFile.ExtractToDirectory(downloadPath, path);
+                ZipFile.ExtractToDirectory(downloadPath, addonPath);
+
+                File.Delete(downloadPath);
+            }
+
+            using (var client = new WebClient())
+            {
+                var downloadPath = Path.Combine(ingamePluginPath, "plugins.zip");
+
+                if (File.Exists(downloadPath))
+                    File.Delete(downloadPath);
+
+                client.DownloadFile(Remote + "plugins.zip", downloadPath);
+                ZipFile.ExtractToDirectory(downloadPath, ingamePluginPath);
 
                 File.Delete(downloadPath);
             }
