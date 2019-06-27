@@ -2,7 +2,7 @@
 
 A faster launcher for Final Fantasy XIV.
 
-<img src="https://i.imgur.com/djzHDbu.png" alt="drawing" width="500"/>
+<img src="https://github.com/goaaats/FFXIVQuickLauncher/blob/master/images/screenshot.png?raw=true" alt="drawing" width="500"/>
 
 ## Why?
 
@@ -13,13 +13,22 @@ The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your pa
 * Discord Rich Presence
 * Fast in-game market board price checks
 * Chat filtering
-* Discord notifications for Duty Finder, chat and fates
+* Chat bridge to Discord
+* Discord notifications for Duty Finder, fates, retainer sales, etc.
 
 Check the settings page and use the /xlhelp command in-game to see available commands.
 
 ## How to install
 
 [Download the latest release from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page, unzip it into any folder you can easily access it and launch XIVLauncher.exe - then just follow the instructions!
+
+## Plugin API
+
+To make your own in-game plugins for XIVLauncher, check out the [API documentation](https://goaaats.github.io/Dalamud/api/index.html).
+
+As an example, check out the [market board plugin](https://github.com/goaaats/Dalamud.MbPlugin).
+
+Compiled plugins go into the ``%AppData%\XIVLauncher\ingameplugins`` folder.
 
 ## Any questions?
 
