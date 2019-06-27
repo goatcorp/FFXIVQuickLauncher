@@ -199,7 +199,7 @@ namespace XIVLauncher
             catch (Exception exc)
             {
                 new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
-                isLoggingIn = false;
+                _isLoggingIn = false;
             }
 
             var version = Util.GetAssemblyVersion();
