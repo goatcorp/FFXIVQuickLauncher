@@ -348,6 +348,7 @@ namespace XIVLauncher
                 {
                     MessageBox.Show(
                         "Square Enix seems to be running maintenance work right now or the login server is unreachable. The game shouldn't be launched.", "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    _isLoggingIn = false;
 
                     return;
                 }
