@@ -2,7 +2,7 @@
 
 A faster launcher for Final Fantasy XIV.
 
-<img src="https://github.com/goaaats/FFXIVQuickLauncher/blob/master/images/screenshot.png?raw=true" alt="drawing" width="500"/>
+<img src="https://github.com/goaaats/FFXIVQuickLauncher/blob/master/images/screenshot.png?raw=true" alt="drawing" width="800"/>
 
 ## Why?
 
