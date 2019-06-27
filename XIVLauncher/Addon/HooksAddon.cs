@@ -23,6 +23,7 @@ namespace XIVLauncher.Addon
         public sealed class DalamudStartInfo {
             public string WorkingDirectory;
             public string PluginDirectory;
+            public string DefaultPluginDirectory;
             public int LanguageId;
 
             public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
@@ -38,7 +39,11 @@ namespace XIVLauncher.Addon
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
             var ingamePluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "XIVLauncher", "ingameplugins");
+                "XIVLauncher", "plugins");
+            var defaultPluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "XIVLauncher", "defaultplugins");
+
+            Directory.CreateDirectory(ingamePluginPath);
 
             using (var client = new WebClient())
             {
@@ -47,15 +52,17 @@ namespace XIVLauncher.Addon
 
                 if (!File.Exists(addonExe))
                 {
-                    Download(addonDirectory, ingamePluginPath);
+                    Download(addonDirectory, defaultPluginPath);
                 }
                 else
                 {
                     var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
                     var version = versionInfo.ProductVersion;
 
+                    Serilog.Log.Information("Hooks update check: local {0} remote {1}", version, remoteVersionInfo.AssemblyVersion);
+
                     if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
-                        Download(addonDirectory, ingamePluginPath);
+                        Download(addonDirectory, defaultPluginPath);
                 }
 
                 if (XIVGame.GetLocalGamever() != remoteVersionInfo.SupportedGameVer)
@@ -65,7 +72,8 @@ namespace XIVLauncher.Addon
                 {
                     LanguageId = (int) Settings.GetLanguage(),
                     DiscordFeatureConfig = Settings.DiscordFeatureConfig,
-                    PluginDirectory = ingamePluginPath
+                    PluginDirectory = ingamePluginPath,
+                    DefaultPluginDirectory = defaultPluginPath
                 };
 
                 var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(dalamudConfig)));
@@ -83,6 +91,8 @@ namespace XIVLauncher.Addon
 
         private void Download(string addonPath, string ingamePluginPath)
         {
+            Serilog.Log.Information("Downloading updates for Hooks and default plugins...");
+
             // Ensure directory exists
             Directory.CreateDirectory(addonPath);
 

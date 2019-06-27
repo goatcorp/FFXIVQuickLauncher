@@ -308,7 +308,7 @@ namespace XIVLauncher
             {
                 var reply = Encoding.UTF8.GetString(
                     DownloadAsLauncher(
-                        $"https://frontier.ffxiv.com/worldStatus/login_status.json?{Util.GetUnixMillis()}"));
+                        $"https://frontier.ffxiv.com/worldStatus/gate_status.json?{Util.GetUnixMillis()}"));
 
                 return Convert.ToBoolean(int.Parse(reply[10].ToString()));
             }
