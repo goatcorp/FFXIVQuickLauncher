@@ -39,8 +39,6 @@ namespace XIVLauncher
         {
             InitializeComponent();
 
-            this.Visibility = Visibility.Hidden;
-
             this.Title += " v" + Util.GetAssemblyVersion();
 
             if (!string.IsNullOrEmpty(accountName))
@@ -156,7 +154,7 @@ namespace XIVLauncher
                 SaveLoginCheckBox.IsChecked = true;
             }
 
-            if (Settings.IsAutologin() && savedCredentials != null && Keyboard.Modifiers != ModifierKeys.Shift)
+            if (Settings.IsAutologin() && savedCredentials != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Serilog.Log.Information("Engaging Autologin");
 
@@ -171,6 +169,8 @@ namespace XIVLauncher
                     else
                     {
                         HandleLogin(true);
+                        Settings.Save();
+                        return;
                     }
                 }
                 catch (Exception exc)
@@ -200,7 +200,7 @@ namespace XIVLauncher
                 Properties.Settings.Default.Save();
             }
 
-            this.Visibility = Visibility.Visible;
+            Show();
             Activate();
 
             Serilog.Log.Information("MainWindow initialized.");
