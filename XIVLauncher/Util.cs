@@ -107,14 +107,6 @@ namespace XIVLauncher
 
         public static int GetUnixMillis() => (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
 
-        public static string GenerateFrontierReferer()
-        {
-            var langCode = Settings.GetLanguage().GetLangCode();  
-            var formattedTime = DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
-
-            return $"https://frontier.ffxiv.com/version_4_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
-        }
-
         public static Color ColorFromArgb(int argb)
         {
             return Color.FromArgb((byte) (argb >> 24), (byte) (argb >> 16), (byte) (argb >> 8), (byte) argb);

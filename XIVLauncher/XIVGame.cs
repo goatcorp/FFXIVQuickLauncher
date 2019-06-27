@@ -21,7 +21,7 @@ namespace XIVLauncher
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and it's checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
 
-        private readonly string _userAgent = GetUserAgent();
+        private readonly string _userAgent = GenerateUserAgent();
 
         private static readonly string[] FilesToHash =
         {
@@ -130,9 +130,9 @@ namespace XIVLauncher
 
                 return game;
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                MessageBox.Show("Could not launch executable. Is your game path correct?\n\n" + exc, "Launch failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                new ErrorWindow(ex, "Your game path might not be correct. Please check in the settings.", "XG LaunchGame").Show();
             }
 
             return null;
@@ -156,7 +156,7 @@ namespace XIVLauncher
         {
             var result = "";
 
-            for (int i = 0; i < FilesToHash.Length; i++)
+            for (var i = 0; i < FilesToHash.Length; i++)
             {
                 result += $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GetGamePath(), "boot", FilesToHash[i]))}";
 
@@ -176,15 +176,13 @@ namespace XIVLauncher
                 client.Headers.Add("Referer", $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-                InitiateSslTrust();
-
-                var url = "https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/" + GetLocalGamever() +
-                          "/" + loginResult.SessionId;
+                var url = $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{GetLocalGamever()}/{loginResult.SessionId}";
 
                 try
                 {
                     var result = client.UploadString(url, GetBootVersionHash());
 
+                    // Get the unique ID needed to authenticate with the lobby server
                     if (client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
                     {
                         var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
@@ -198,7 +196,7 @@ namespace XIVLauncher
                     {
                         if (exc.Response is HttpWebResponse response)
                         {
-                            // This apparently can also indicate that we need to update
+                            // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
                             if (response.StatusCode == HttpStatusCode.Conflict)
                                 return ("", true);
                         }
@@ -217,17 +215,16 @@ namespace XIVLauncher
             }
         }
 
-        private string GetStored() //this is needed to be able to access the login site correctly
+        private string GetStored()
         {
+            // This is needed to be able to access the login site correctly
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
                 var reply = client.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
 
-                var storedRegex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
-
-                var stored = storedRegex.Matches(reply)[0].Groups["stored"].Value;
-                return stored;
+                var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
+                return regex.Matches(reply)[0].Groups["stored"].Value;
             }
         }
 
@@ -340,25 +337,23 @@ namespace XIVLauncher
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
-                client.Headers.Add(HttpRequestHeader.Referer, Util.GenerateFrontierReferer());
+                client.Headers.Add(HttpRequestHeader.Referer, GenerateFrontierReferer());
 
                 return client.DownloadData(url);
             }
         }
 
-        private static string GetUserAgent()
+        private static string GenerateFrontierReferer()
         {
-            return string.Format(UserAgentTemplate, MakeComputerId());
+            var langCode = Settings.GetLanguage().GetLangCode();  
+            var formattedTime = DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
+
+            return $"https://frontier.ffxiv.com/version_4_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
         }
 
-        private static void InitiateSslTrust()
+        private static string GenerateUserAgent()
         {
-            //Change SSL checks so that all checks pass, squares gamever server does strange things
-            ServicePointManager.ServerCertificateValidationCallback =
-                new RemoteCertificateValidationCallback(
-                    delegate
-                    { return true; }
-                );
+            return string.Format(UserAgentTemplate, MakeComputerId());
         }
     }
 }
