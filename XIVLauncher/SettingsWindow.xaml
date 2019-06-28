@@ -51,10 +51,11 @@
                             Please select which expansion you want to load the game with.
                         </TextBlock>
 
-                        <ComboBox SelectedIndex="2" Margin="0, 5, 0, 0" x:Name="ExpansionLevelComboBox" Foreground="{DynamicResource MaterialDesignBody}">
+                        <ComboBox SelectedIndex="3" Margin="0, 5, 0, 0" x:Name="ExpansionLevelComboBox" Foreground="{DynamicResource MaterialDesignBody}">
                             <ComboBoxItem>A Realm Reborn</ComboBoxItem>
                             <ComboBoxItem>Heavensward</ComboBoxItem>
                             <ComboBoxItem>Stormblood</ComboBoxItem>
+                            <ComboBoxItem>Shadowbringers</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
                 </Grid>
