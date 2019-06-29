@@ -268,20 +268,13 @@ namespace XIVLauncher
             if (_isLoggingIn)
                 return;
 
-            HandleLogin(false);
             _isLoggingIn = true;
+            HandleLogin(false);
         }
 
         private void HandleLogin(bool autoLogin)
         {
-            OtpTextBox.Text = "";
-
             var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.UniqueIdCacheEnabled;
-
-            if (OtpCheckBox.IsChecked == true && !hasValidCache)
-            {
-                DialogHost.OpenDialogCommand.Execute(null, OtpDialogHost);
-            }
 
             if (SaveLoginCheckBox.IsChecked == true)
             {
@@ -315,10 +308,26 @@ namespace XIVLauncher
                 Settings.Save();
             }
 
-            if (OtpCheckBox.IsChecked == false || hasValidCache)
+            var otp = "";
+            if (OtpCheckBox.IsChecked == true && !hasValidCache)
             {
-                StartGame();
+                var otpDialog = new OtpInputDialog();
+                otpDialog.ShowDialog();
+
+                if (otpDialog.Result == null)
+                {
+                    _isLoggingIn = false;
+
+                    if (autoLogin)
+                        Environment.Exit(0);
+
+                    return;
+                }
+
+                otp = otpDialog.Result;
             }
+
+            StartGame(otp);
         }
 
         private void StartAddons(Process gameProcess)
@@ -330,8 +339,9 @@ namespace XIVLauncher
             }
         }
 
-        private async void StartGame()
+        private async void StartGame(string otp)
         {
+            Serilog.Log.Information("StartGame() called");
             try
             {
                 var gateStatus = false;
@@ -346,6 +356,7 @@ namespace XIVLauncher
 
                 if (!gateStatus)
                 {
+                    Serilog.Log.Information("GateStatus is false.");
                     MessageBox.Show(
                         "Square Enix seems to be running maintenance work right now or the login server is unreachable. The game shouldn't be launched.", "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     _isLoggingIn = false;
@@ -353,15 +364,13 @@ namespace XIVLauncher
                     return;
                 }
 
-                //LoadingMessageCancelButton.Visibility = Visibility.Hidden;
-                //LoadingMessageTextBlock.Text = "Logging in...";
-
-                //DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
-
-                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, OtpTextBox.Text, Settings.UniqueIdCacheEnabled);
+                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, Settings.UniqueIdCacheEnabled);
 
                 if (gameProcess == null)
+                {
+                    Serilog.Log.Error("GameProcess was null...");
                     return;
+                }
 
                 try
                 {
@@ -393,7 +402,7 @@ namespace XIVLauncher
             }
             catch (Exception exc)
             {
-                new ErrorWindow(exc, "Additionally, please check your login information or try again.", "Login").ShowDialog();
+                new ErrorWindow(exc, "Please also check your login information or try again.", "Login").ShowDialog();
                 _isLoggingIn = false;
             }
         }
@@ -533,21 +542,6 @@ namespace XIVLauncher
         {
             _maintenanceQueueTimer.Stop();
             DialogHost.CloseDialogCommand.Execute(null, MaintenanceQueueDialogHost);
-        }
-
-        private void OtpTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter || e.Key == Key.Return)
-            {
-                DialogHost.CloseDialogCommand.Execute(null, OtpDialogHost);
-                StartGame();
-            }
-        }
-
-        private void OtpTextBox_Click(object sender, RoutedEventArgs e)
-        {
-            DialogHost.CloseDialogCommand.Execute(null, OtpDialogHost);
-            StartGame();
         }
 
         private void Card_KeyDown(object sender, KeyEventArgs e)

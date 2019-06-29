@@ -45,6 +45,8 @@ namespace XIVLauncher
 
             if (!useCache || !Cache.HasValidCache(username))
             {
+                Serilog.Log.Information("Cache is invalid or disabled, logging in normally.");
+
                 loginResult = Task.Run(() => OauthLogin(username, password, otp)).Result;
 
                 if (!loginResult.Playable)
@@ -70,6 +72,7 @@ namespace XIVLauncher
             }
             else
             {
+                Serilog.Log.Information("Cached UID found, using instead.");
                 var (cachedUid, region) = Task.Run(() => Cache.GetCachedUid(username)).Result;
                 uid = cachedUid;
 
@@ -100,11 +103,12 @@ namespace XIVLauncher
                 var game = new Process();
                 if (Settings.IsDX11()) { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
                 game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int)Settings.GetLanguage()} ver={GetLocalGamever()}";
+                game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath(), "boot");
 
+                Serilog.Log.Information("Starting game process: {0}", game.StartInfo.FileName);
+                game.Start();
                 Task.Run(() =>
                 {
-                    game.Start();
-
                     if (closeMutants)
                     {
                         for (var tries = 0; tries < 30; tries++)
@@ -348,7 +352,7 @@ namespace XIVLauncher
             var langCode = Settings.GetLanguage().GetLangCode();  
             var formattedTime = DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
 
-            return $"https://frontier.ffxiv.com/version_4_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
+            return $"https://frontier.ffxiv.com/version_5_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
         }
 
         private static string GenerateUserAgent()
