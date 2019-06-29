@@ -53,7 +53,7 @@
           Grid.Row="1"
           Grid.Column="0"
           Margin="0 10 0 0"
-          HorizontalAlignment="Stretch">
+          HorizontalAlignment="Left" Width="{DynamicResource BannerCardWidth}">
           <ListView x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
             <ListView.ItemTemplate>
               <DataTemplate x:Name="SingleLineDataTemplate" DataType="local:News">
