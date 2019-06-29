@@ -195,7 +195,7 @@ namespace XIVLauncher
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
             {
-                MessageBox.Show($"XIVLauncher was updated to version {version}. This version features some fixes:\n* Update Rich Presence and In-Game addon for Shadowbringers\r\n* Fixed app not starting correctly under certain circumstances\r\n* Fixed OTP dialog overriding the Auto-Login disclaimer\r\n* Updated MaterialDesignInXaml to 2.5.1", "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                MessageBox.Show($"XIVLauncher was updated to version {version}. This version features some fixes:\n* Update Rich Presence and In-Game addon for Shadowbringers\r\n* Fixed app not starting correctly under certain circumstances\r\n* Fixed OTP dialog overriding the Auto-Login disclaimer\r\n* Updated MaterialDesignInXaml to 2.5.1\r\n* Fixed layout in MainWindow", "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 Properties.Settings.Default.LastVersion = version;
                 Properties.Settings.Default.Save();
             }
