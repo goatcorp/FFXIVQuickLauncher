@@ -28,7 +28,8 @@ To make your own in-game plugins for XIVLauncher, check out the [API documentati
 
 As an example, check out the [market board plugin](https://github.com/goaaats/Dalamud.MbPlugin).
 
-Compiled plugins go into the ``%AppData%\XIVLauncher\ingameplugins`` folder.
+Compiled plugins go into the ``%AppData%\XIVLauncher\plugins`` folder.
+Special thanks to Mino for his hooking base!
 
 ## Any questions?
 
