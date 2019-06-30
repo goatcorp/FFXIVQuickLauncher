@@ -25,7 +25,7 @@ namespace XIVLauncher.Cache
             return _cache.Any(entry => entry.UserName == userName && (entry.TimeoutDate - DateTime.Now).TotalDays < DaysToTimeout);
         }
 
-        public (string Uid, int Region) GetCachedUid(string userName)
+        public (string Uid, int Region, int ExpansionLevel) GetCachedUid(string userName)
         {
             DeleteOldCaches();
 
@@ -34,7 +34,7 @@ namespace XIVLauncher.Cache
             if(cache == null)
                 throw new Exception("Could not find a valid cache.");
 
-            return (cache.UniqueId, cache.Region);
+            return (cache.UniqueId, cache.Region, cache.ExpansionLevel);
         }
 
         public void AddCachedUid(string userName, string uid, int region)

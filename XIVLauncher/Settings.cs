@@ -87,16 +87,6 @@ namespace XIVLauncher
             Properties.Settings.Default.NeedsOtp = value;
         }
 
-        public static int GetExpansionLevel()
-        {
-            return Properties.Settings.Default.ExpansionLevel;
-        }
-
-        public static void SetExpansionLevel(int level)
-        {
-            Properties.Settings.Default.ExpansionLevel = level;
-        }
-
         public static List<AddonEntry> GetAddonList()
         {
             var addonList = Properties.Settings.Default.Addons;

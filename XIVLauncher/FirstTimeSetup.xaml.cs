@@ -62,7 +62,7 @@ namespace XIVLauncher
                 }
             }
 
-            if (SetupTabControl.SelectedIndex == 4)
+            if (SetupTabControl.SelectedIndex == 3)
             {
                 // Check if ACT is installed, if it isn't, just skip this step
                 var actPath = FindAct();
@@ -75,11 +75,10 @@ namespace XIVLauncher
                 }
             }
 
-            if (SetupTabControl.SelectedIndex == 6)
+            if (SetupTabControl.SelectedIndex == 5)
             {
                 Settings.SetGamePath(GamePathEntry.Text);
                 Settings.SetDx11(Dx11RadioButton.IsChecked == true);
-                Settings.SetExpansionLevel(ExpansionLevelComboBox.SelectedIndex);
                 Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
                 Settings.SetInGameAddonEnabled(HooksCheckBox.IsChecked == true);
 

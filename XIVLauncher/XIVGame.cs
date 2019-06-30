@@ -39,7 +39,6 @@ namespace XIVLauncher
         {
             string uid;
             var needsUpdate = false;
-            var expansionLevel = Settings.GetExpansionLevel();
 
             OauthLoginResult loginResult;
 
@@ -61,8 +60,6 @@ namespace XIVLauncher
                     return null;
                 }
 
-                // Clamp the expansion level to what the account is allowed to access
-                expansionLevel = Math.Min(Math.Max(loginResult.MaxExpansion, 0), expansionLevel);
                 (uid, needsUpdate) = Task.Run(() => RegisterSession(loginResult)).Result;
 
                 if (useCache)
@@ -73,14 +70,15 @@ namespace XIVLauncher
             else
             {
                 Serilog.Log.Information("Cached UID found, using instead.");
-                var (cachedUid, region) = Task.Run(() => Cache.GetCachedUid(username)).Result;
+                var (cachedUid, region, expansionLevel) = Task.Run(() => Cache.GetCachedUid(username)).Result;
                 uid = cachedUid;
 
                 loginResult = new OauthLoginResult
                 {
                     Playable = true,
                     Region = region,
-                    TermsAccepted = true
+                    TermsAccepted = true,
+                    MaxExpansion = expansionLevel
                 };
             }
 
@@ -93,7 +91,7 @@ namespace XIVLauncher
                 return null;
             }
 
-            return LaunchGame(uid, loginResult.Region, expansionLevel);
+            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion);
         }
 
         private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = true)

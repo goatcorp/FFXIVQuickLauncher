@@ -23,7 +23,6 @@ namespace XIVLauncher
 
             GamePathEntry.Text = Settings.GetGamePath();
             Dx11RadioButton.IsChecked = Settings.IsDX11();
-            ExpansionLevelComboBox.SelectedIndex = Settings.GetExpansionLevel();
             LanguageComboBox.SelectedIndex = (int) Settings.GetLanguage();
             AddonListView.ItemsSource = Settings.GetAddonList();
             UidCacheCheckBox.IsChecked = Settings.UniqueIdCacheEnabled;
@@ -42,7 +41,6 @@ namespace XIVLauncher
         {
             Settings.SetGamePath(GamePathEntry.Text);
             Settings.SetDx11(Dx11RadioButton.IsChecked == true);
-            Settings.SetExpansionLevel(ExpansionLevelComboBox.SelectedIndex);
             Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
             Settings.SetAddonList((List<AddonEntry>) AddonListView.ItemsSource);
             Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;

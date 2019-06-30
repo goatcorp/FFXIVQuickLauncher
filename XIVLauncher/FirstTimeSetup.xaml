@@ -44,23 +44,6 @@
                     <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Ex">
-                <Grid>
-                    <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Please select, which expansion you want to load the game with.
-                        </TextBlock>
-
-                        <ComboBox SelectedIndex="3" Margin="0, 5, 0, 0" x:Name="ExpansionLevelComboBox" Foreground="{DynamicResource MaterialDesignBody}">
-                            <ComboBoxItem>A Realm Reborn</ComboBoxItem>
-                            <ComboBoxItem>Heavensward</ComboBoxItem>
-                            <ComboBoxItem>Stormblood</ComboBoxItem>
-                            <ComboBoxItem>Shadowbringers</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
-                </Grid>
-            </TabItem>
             <TabItem Header="Language">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">

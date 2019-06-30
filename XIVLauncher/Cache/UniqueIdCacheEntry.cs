@@ -11,6 +11,7 @@ namespace XIVLauncher.Cache
         public string UserName { get; set; }
         public string UniqueId { get; set; }
         public int Region { get; set; }
+        public int ExpansionLevel { get; set; }
 
         public DateTime TimeoutDate { get; set; }
     }
