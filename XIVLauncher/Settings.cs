@@ -54,7 +54,7 @@ namespace XIVLauncher
             Properties.Settings.Default.Language = (int)language;
 
             if (previousLanguage != (int)language)
-                LanguageChanged();
+                LanguageChanged?.Invoke();
         }
 
         public static bool IsDX11()
