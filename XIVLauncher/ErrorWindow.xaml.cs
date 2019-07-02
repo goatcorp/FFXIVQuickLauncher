@@ -62,7 +62,7 @@ namespace XIVLauncher
 
         private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://discord.gg/29NBmud");
+            Process.Start("https://discord.gg/3NMcUV5");
         }
     }
 }

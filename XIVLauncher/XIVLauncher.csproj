@@ -159,6 +159,10 @@
     <Compile Include="ChatChannelSetup.xaml.cs">
       <DependentUpon>ChatChannelSetup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IntegrityCheck.cs" />
+    <Compile Include="IntegrityCheckProgressWindow.xaml.cs">
+      <DependentUpon>IntegrityCheckProgressWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="OtpInputDialog.xaml.cs">
       <DependentUpon>OtpInputDialog.xaml</DependentUpon>
     </Compile>
@@ -190,6 +194,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ChatChannelSetup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="IntegrityCheckProgressWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

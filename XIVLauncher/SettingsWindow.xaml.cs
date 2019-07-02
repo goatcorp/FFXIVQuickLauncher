@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Dalamud.Discord;
 using Dalamud.Game.Chat;
+using Newtonsoft.Json;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 
@@ -200,7 +203,7 @@ namespace XIVLauncher
 
         private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://discord.gg/29NBmud");
+            Process.Start("https://discord.gg/3NMcUV5");
         }
 
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
@@ -297,6 +300,42 @@ namespace XIVLauncher
 
             featureConfig.RetainerNotificationChannel = channelSetup.Result.Channel;
             Settings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void RunIntegrityCheck_OnClick(object s, RoutedEventArgs e)
+        {
+            var window = new IntegrityCheckProgressWindow();
+            var progress = new Progress<IntegrityCheck.IntegrityCheckProgress>();
+            progress.ProgressChanged += (sender, checkProgress) => window.UpdateProgress(checkProgress);
+
+            Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress)).ContinueWith(task =>
+            {
+                window.Dispatcher.Invoke(() => window.Close());
+
+                if (!task.Result.gameValid){
+                    File.WriteAllText("integrityreport.txt", task.Result.report);
+                    var result = MessageBox.Show(
+                        $"Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nDo you want to reset the game to the last patch? This will allow you to patch it again, likely fixing the issues you are encountering.", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        var verFile = Path.Combine(Settings.GetGamePath(), "game", "ffxivgame.ver");
+
+                        File.Delete(verFile);
+                        File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
+
+                        Process.Start(System.IO.Path.Combine(GamePathEntry.Text, "boot", "ffxivboot.exe"));
+                        Environment.Exit(0);
+                    }
+                }   
+                else
+                {
+                    MessageBox.Show("Your game install seems to be valid.", "XIVLauncher", MessageBoxButton.OK,
+                        MessageBoxImage.Asterisk);
+                }
+            });
+
+            window.ShowDialog();
         }
     }
 }
