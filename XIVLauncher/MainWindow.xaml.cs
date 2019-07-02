@@ -196,7 +196,7 @@ namespace XIVLauncher
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
             {
-                MessageBox.Show($"XIVLauncher was updated to version {version}. This version features some fixes:\n* Update Rich Presence and In-Game addon for Shadowbringers\r\n* Fixed app not starting correctly under certain circumstances\r\n* Fixed OTP dialog overriding the Auto-Login disclaimer\r\n* Updated MaterialDesignInXaml to 2.5.1\r\n* Fixed layout in MainWindow", "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                MessageBox.Show($"XIVLauncher was updated to version {version}. This release features some new features and fixes:\r\n\r\n* Added an integrity check: This will check your game files for validity and offer you to patch your game again to restore them, in case they are modified or corrupted\r\n* Fixed an issue wherein choosing any language other than English during First Time Setup would cause a crash\r\n* Changed oauth login errors to not pop up the generic error message\r\n* Removed expansion from Settings and First Time Setup - the newest expansion will now always be chosen\r\n* Additional Shadowbringers compatibility fixes", "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 Properties.Settings.Default.LastVersion = version;
                 Properties.Settings.Default.Save();
             }
