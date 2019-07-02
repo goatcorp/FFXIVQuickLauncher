@@ -40,13 +40,23 @@ namespace XIVLauncher
             string uid;
             var needsUpdate = false;
 
-            OauthLoginResult loginResult;
+            OauthLoginResult loginResult = null;
 
             if (!useCache || !Cache.HasValidCache(username))
             {
                 Serilog.Log.Information("Cache is invalid or disabled, logging in normally.");
 
-                loginResult = Task.Run(() => OauthLogin(username, password, otp)).Result;
+                try
+                {
+                    loginResult = OauthLogin(username, password, otp);
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error("OAuth login failed.", ex);
+                    MessageBox.Show(
+                        "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.", "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
 
                 if (!loginResult.Playable)
                 {
@@ -262,7 +272,7 @@ namespace XIVLauncher
                 var matches = regex.Matches(reply);
 
                 if (matches.Count == 0)
-                    throw new Exception("Could not log in to oauth.");
+                    throw new Exception("Could not log in to oauth. Result: " + reply);
 
                 var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
 
