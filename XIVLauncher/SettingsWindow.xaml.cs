@@ -312,7 +312,12 @@ namespace XIVLauncher
             {
                 window.Dispatcher.Invoke(() => window.Close());
 
-                if (!task.Result.gameValid){
+                if (task.Result.compareResult == IntegrityCheck.CompareResult.NoServer)
+                {
+                    MessageBox.Show("There is no reference report yet for this game version. Please try again later.");
+                }
+
+                if (task.Result.compareResult == IntegrityCheck.CompareResult.Invalid){
                     File.WriteAllText("integrityreport.txt", task.Result.report);
                     var result = MessageBox.Show(
                         $"Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nDo you want to reset the game to the last patch? This will allow you to patch it again, likely fixing the issues you are encountering.", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);

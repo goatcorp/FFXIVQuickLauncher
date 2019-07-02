@@ -26,10 +26,27 @@ namespace XIVLauncher
             public string CurrentFile { get; set; }
         }
 
-        public static async Task<(bool gameValid, string report, IntegrityCheckResult remoteIntegrity)> CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress)
+        public enum CompareResult
         {
+            Valid,
+            Invalid,
+            NoServer
+        }
+
+        public static async Task<(CompareResult compareResult, string report, IntegrityCheckResult remoteIntegrity)> CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress)
+        {
+            IntegrityCheckResult remoteIntegrity;
+
+            try
+            {
+                remoteIntegrity = DownloadIntegrityCheckForVersion(XIVGame.GetLocalGamever());
+            }
+            catch (WebException)
+            {
+                return (CompareResult.NoServer, null, null);
+            }
+            
             var localIntegrity = await RunIntegrityCheckAsync(new DirectoryInfo(Settings.GetGamePath()), progress);
-            var remoteIntegrity = DownloadIntegrityCheckForVersion(localIntegrity.GameVersion);
 
             var report = "";
             foreach (var hashEntry in remoteIntegrity.Hashes)
@@ -47,7 +64,7 @@ namespace XIVLauncher
                 }
             }
 
-            return (string.IsNullOrEmpty(report), report, remoteIntegrity);
+            return (string.IsNullOrEmpty(report) ? CompareResult.Valid : CompareResult.Invalid, report, remoteIntegrity);
         }
 
         private static IntegrityCheckResult DownloadIntegrityCheckForVersion(string gameVersion)
