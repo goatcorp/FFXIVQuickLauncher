@@ -312,31 +312,36 @@ namespace XIVLauncher
             {
                 window.Dispatcher.Invoke(() => window.Close());
 
-                if (task.Result.compareResult == IntegrityCheck.CompareResult.NoServer)
+                switch (task.Result.compareResult)
                 {
-                    MessageBox.Show("There is no reference report yet for this game version. Please try again later.");
-                }
+                    case IntegrityCheck.CompareResult.NoServer:
+                        MessageBox.Show("There is no reference report yet for this game version. Please try again later.", "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        return;
 
-                if (task.Result.compareResult == IntegrityCheck.CompareResult.Invalid){
-                    File.WriteAllText("integrityreport.txt", task.Result.report);
-                    var result = MessageBox.Show(
-                        $"Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nDo you want to reset the game to the last patch? This will allow you to patch it again, likely fixing the issues you are encountering.", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-
-                    if (result == MessageBoxResult.Yes)
+                    case IntegrityCheck.CompareResult.Invalid:
                     {
-                        var verFile = Path.Combine(Settings.GetGamePath(), "game", "ffxivgame.ver");
+                        File.WriteAllText("integrityreport.txt", task.Result.report);
+                        var result = MessageBox.Show(
+                            $"Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nDo you want to reset the game to the last patch? This will allow you to patch it again, likely fixing the issues you are encountering.", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
 
-                        File.Delete(verFile);
-                        File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            var verFile = Path.Combine(Settings.GetGamePath(), "game", "ffxivgame.ver");
 
-                        Process.Start(System.IO.Path.Combine(GamePathEntry.Text, "boot", "ffxivboot.exe"));
-                        Environment.Exit(0);
+                            File.Delete(verFile);
+                            File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
+
+                            Process.Start(System.IO.Path.Combine(GamePathEntry.Text, "boot", "ffxivboot.exe"));
+                            Environment.Exit(0);
+                        }
+
+                        break;
                     }
-                }   
-                else
-                {
-                    MessageBox.Show("Your game install seems to be valid.", "XIVLauncher", MessageBoxButton.OK,
-                        MessageBoxImage.Asterisk);
+
+                    case IntegrityCheck.CompareResult.Valid:
+                        MessageBox.Show("Your game install seems to be valid.", "XIVLauncher", MessageBoxButton.OK,
+                            MessageBoxImage.Asterisk);
+                        break;
                 }
             });
 
