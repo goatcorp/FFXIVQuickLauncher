@@ -117,14 +117,6 @@ namespace XIVLauncher
                 return;
             }
 
-            if (entry.Addon is HooksAddon)
-            {
-                MessageBox.Show("This addon facilitates XIVLauncher in-game features like chat filtering.",
-                    "Addon information", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                return;
-            }
-
             if (entry.Addon is GenericAddon genericAddon)
             {
                 var addonSetup = new GenericAddonSetup(genericAddon);

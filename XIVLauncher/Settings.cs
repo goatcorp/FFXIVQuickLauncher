@@ -168,7 +168,7 @@ namespace XIVLauncher
 
         private static List<AddonEntry> EnsureDefaultAddons(List<AddonEntry> addonList)
         {
-            if (addonList.All(entry => entry.Addon.GetType() != typeof(RichPresenceAddon)))
+            if (!addonList.Any(entry => entry.Addon is RichPresenceAddon))
             {
                 addonList.Add(new AddonEntry
                 {
@@ -184,9 +184,7 @@ namespace XIVLauncher
 
                 SetInGameAddonEnabled(addon.IsEnabled);
 
-                addonList = addonList.Where(entry => entry.Addon is HooksAddon).ToList();
-
-                addonList = addonList.Where(entry => !(entry.Addon is GenericAddon genericAddon) || !string.IsNullOrEmpty(genericAddon.Path)).ToList();
+                addonList = addonList.Where(entry => !(entry.Addon is HooksAddon)).ToList();
             }
 
             return addonList;

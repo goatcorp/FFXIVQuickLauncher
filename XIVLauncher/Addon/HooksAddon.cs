@@ -65,7 +65,7 @@ namespace XIVLauncher.Addon
                         Download(addonDirectory, defaultPluginPath);
                 }
 
-                if (XIVGame.GetLocalGamever() != remoteVersionInfo.SupportedGameVer)
+                if (XIVGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
                     return;
 
                 var dalamudConfig = new DalamudStartInfo
@@ -83,9 +83,9 @@ namespace XIVLauncher.Addon
                     StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory }
                 };
 
-                Serilog.Log.Information("Starting dalamud with parameters: {0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
-
                 process.Start();
+
+                Serilog.Log.Information("Started dalamud!");
             }
         }
 

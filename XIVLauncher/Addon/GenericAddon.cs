@@ -15,21 +15,30 @@ namespace XIVLauncher.Addon
                 return;
             }
 
-            var ext = System.IO.Path.GetExtension(this.Path).ToLower();
-
-            switch (ext)
+            try
             {
-                case ".ps1":
-                    this.RunPwsh(gameProcess);
-                    break;
+                var ext = System.IO.Path.GetExtension(this.Path).ToLower();
 
-                case ".bat":
-                    this.RunBatch(gameProcess);
-                    break;
+                switch (ext)
+                {
+                    case ".ps1":
+                        this.RunPwsh(gameProcess);
+                        break;
 
-                default:
-                    this.RunApp(gameProcess);
-                    break;
+                    case ".bat":
+                        this.RunBatch(gameProcess);
+                        break;
+
+                    default:
+                        this.RunApp(gameProcess);
+                        break;
+                }
+
+                Serilog.Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
+            }
+            catch (Exception e)
+            {
+                Serilog.Log.Error(e, "Could not launch generic addon.");
             }
         }
 
@@ -64,17 +73,7 @@ namespace XIVLauncher.Addon
 
             process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
 
-            try
-            {
-                process.Start();
-                Serilog.Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
-            }
-            catch (Win32Exception exc)
-            {
-                // If the user didn't cause this manually by dismissing the UAC prompt, we throw it
-                if ((uint)exc.HResult != 0x80004005)
-                    throw;
-            }
+            process.Start();
         }
 
         private void RunPwsh(Process gameProcess)
@@ -131,7 +130,7 @@ namespace XIVLauncher.Addon
 
         public string Name =>
             string.IsNullOrEmpty(this.Path) ?
-            string.Empty :
+            "Invalid addon" :
             ($"Launch{(this.IsApp ? " EXE" : string.Empty)} : {System.IO.Path.GetFileNameWithoutExtension(Path)}");
 
         private bool IsApp =>
