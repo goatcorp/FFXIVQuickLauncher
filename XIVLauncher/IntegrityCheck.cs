@@ -39,7 +39,7 @@ namespace XIVLauncher
 
             try
             {
-                remoteIntegrity = DownloadIntegrityCheckForVersion(XIVGame.GetLocalGamever());
+                remoteIntegrity = DownloadIntegrityCheckForVersion(XIVGame.GetLocalGameVer());
             }
             catch (WebException)
             {
@@ -87,7 +87,7 @@ namespace XIVLauncher
 
             return new IntegrityCheckResult
             {
-                GameVersion = XIVGame.GetLocalGamever(),
+                GameVersion = XIVGame.GetLocalGameVer(),
                 Hashes = hashes
             };
         }
