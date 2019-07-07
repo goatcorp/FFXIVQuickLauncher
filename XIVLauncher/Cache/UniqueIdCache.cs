@@ -37,14 +37,15 @@ namespace XIVLauncher.Cache
             return (cache.UniqueId, cache.Region, cache.ExpansionLevel);
         }
 
-        public void AddCachedUid(string userName, string uid, int region)
+        public void AddCachedUid(string userName, string uid, int region, int expansionLevel)
         {
              _cache.Add(new UniqueIdCacheEntry
              {
                  TimeoutDate = DateTime.Now.AddDays(DaysToTimeout),
                  UserName = userName,
                  UniqueId = uid,
-                 Region = region
+                 Region = region,
+                 ExpansionLevel = expansionLevel
              });
 
              Settings.UniqueIdCache = _cache;

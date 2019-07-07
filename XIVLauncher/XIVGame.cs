@@ -74,7 +74,7 @@ namespace XIVLauncher
 
                 if (useCache)
                 {
-                    Task.Run(() => Cache.AddCachedUid(username, uid, loginResult.Region)).Wait();
+                    Task.Run(() => Cache.AddCachedUid(username, uid, loginResult.Region, loginResult.MaxExpansion)).Wait();
                 }
             }
             else
@@ -104,41 +104,38 @@ namespace XIVLauncher
             return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion);
         }
 
-        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = true)
+        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = false)
         {
             try
             {
                 var game = new Process();
                 if (Settings.IsDX11()) { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int)Settings.GetLanguage()} ver={GetLocalGamever()}";
+                game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int)Settings.GetLanguage()} ver={GetLocalGameVer()}";
+
                 game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath(), "boot");
 
                 Serilog.Log.Information("Starting game process: {0}", game.StartInfo.FileName);
                 game.Start();
-                Task.Run(() =>
+
+                for (var tries = 0; tries < 30; tries++)
                 {
-                    if (closeMutants)
+                    game.Refresh();
+
+                    // Something went wrong here, why even bother
+                    if (game.HasExited)
+                        throw new Exception("Game exited prematurely");
+
+                    // Is the main window open? Let's wait so any addons won't run into nothing
+                    if (game.MainWindowHandle == IntPtr.Zero)
                     {
-                        for (var tries = 0; tries < 30; tries++)
-                        {
-                            game.Refresh();
-
-                            // Something went wrong here, why even bother
-                            if (game.HasExited)
-                                break;
-
-                            // Is the main window open? That means the mutants must be too
-                            if (game.MainWindowHandle == IntPtr.Zero)
-                            {
-                                Thread.Sleep(10000);
-                                continue;
-                            }
-
-                            CloseMutants(game);
-                            break;
-                        }
+                        Thread.Sleep(1000);
+                        continue;
                     }
-                }).Wait();
+
+                    if (closeMutants)
+                        CloseMutants(game);
+                    break;
+                }
 
                 return game;
             }
@@ -188,7 +185,7 @@ namespace XIVLauncher
                 client.Headers.Add("Referer", $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-                var url = $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{GetLocalGamever()}/{loginResult.SessionId}";
+                var url = $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{GetLocalGameVer()}/{loginResult.SessionId}";
 
                 try
                 {
@@ -251,7 +248,7 @@ namespace XIVLauncher
 
         private OauthLoginResult OauthLogin(string username, string password, string otp)
         {
-            using (WebClient client = new WebClient())
+            using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
                 client.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
@@ -287,7 +284,7 @@ namespace XIVLauncher
             }
         }
 
-        public static string GetLocalGamever()
+        public static string GetLocalGameVer()
         {
             try
             {
@@ -296,6 +293,18 @@ namespace XIVLauncher
             catch (Exception exc)
             {
                 throw new Exception("Could not get local game version.", exc);
+            }
+        }
+
+        public static string GetLocalBootVer()
+        {
+            try
+            {
+                return File.ReadAllText(Path.Combine(Settings.GetGamePath(), "boot", "ffxivboot.ver"));
+            }
+            catch (Exception exc)
+            {
+                throw new Exception("Could not get local boot version.", exc);
             }
         }
 
