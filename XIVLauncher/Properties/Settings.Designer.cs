@@ -190,5 +190,17 @@ namespace XIVLauncher.Properties {
                 this["DiscordFeatureConfiguration"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SteamIntegrationEnabled {
+            get {
+                return ((bool)(this["SteamIntegrationEnabled"]));
+            }
+            set {
+                this["SteamIntegrationEnabled"] = value;
+            }
+        }
     }
 }

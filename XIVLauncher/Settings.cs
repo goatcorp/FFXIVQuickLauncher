@@ -161,6 +161,12 @@ namespace XIVLauncher
             Properties.Settings.Default.InGameAddonEnabled = value;
         }
 
+        public static bool SteamIntegrationEnabled
+        {
+            get => Properties.Settings.Default.SteamIntegrationEnabled;
+            set => Properties.Settings.Default.SteamIntegrationEnabled = value;
+        }
+
         public static void Save()
         {
             Properties.Settings.Default.Save();

@@ -13,6 +13,8 @@ using AdysTech.CredentialManager;
 using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
+using SteamworksSharp;
+using SteamworksSharp.Native;
 using XIVLauncher.Addon;
 using Color = System.Windows.Media.Color;
 
@@ -166,6 +168,7 @@ namespace XIVLauncher
                         MessageBox.Show(
                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.");
                         Settings.SetAutologin(false);
+                        _isLoggingIn = false;
                     }
                     else
                     {
@@ -178,6 +181,7 @@ namespace XIVLauncher
                 {
                     new ErrorWindow(exc, "Additionally, please check your login information or try again.", "AutoLogin").ShowDialog();
                     Settings.SetAutologin(false);
+                    _isLoggingIn = false;
                 }
 
                 Settings.Save();
@@ -365,11 +369,12 @@ namespace XIVLauncher
                     return;
                 }
 
-                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, Settings.UniqueIdCacheEnabled);
+                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, Settings.SteamIntegrationEnabled, Settings.UniqueIdCacheEnabled);
 
                 if (gameProcess == null)
                 {
                     Serilog.Log.Error("GameProcess was null...");
+                    _isLoggingIn = false;
                     return;
                 }
 
@@ -377,9 +382,9 @@ namespace XIVLauncher
                 {
                     await Task.Run(() => StartAddons(gameProcess));
                 }
-                catch (Exception exc)
+                catch (Exception ex)
                 {
-                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
+                    new ErrorWindow(ex, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Addons").ShowDialog();
                     _isLoggingIn = false;
                 }
 
@@ -393,17 +398,17 @@ namespace XIVLauncher
                         });
                     }
                 }
-                catch (Exception exc)
+                catch (Exception ex)
                 {
-                    new ErrorWindow(exc, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Hooks").ShowDialog();
+                    new ErrorWindow(ex, "This could be caused by your antivirus, please check its logs and add any needed exclusions.", "Hooks").ShowDialog();
                     _isLoggingIn = false;
                 }
 
                 Environment.Exit(0);
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                new ErrorWindow(exc, "Please also check your login information or try again.", "Login").ShowDialog();
+                new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
                 _isLoggingIn = false;
             }
         }

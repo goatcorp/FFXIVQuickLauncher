@@ -30,7 +30,8 @@
                         It should contain the folders "game" and "boot".
                     </TextBlock>
                     <local:FolderEntry x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"/>
-                    <Button Margin="10,0,0,-40" HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick" ToolTip="Run integrity check on game files.">Run integrity check</Button>
+                    <CheckBox Margin="10,0,0,-20" Foreground="{DynamicResource MaterialDesignBody}" x:Name="SteamIntegrationCheckBox">Enable Steam integration</CheckBox>
+                    <Button Margin="15,0,0,-130" HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick" ToolTip="Run integrity check on game files.">Run integrity check</Button>
                 </Grid>
             </TabItem>
             <TabItem Header="DirectX">

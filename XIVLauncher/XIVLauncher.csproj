@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>XIVLauncher</RootNamespace>
     <AssemblyName>XIVLauncher</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -107,7 +107,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -150,6 +150,8 @@
     <Compile Include="ClientLanguage.cs" />
     <Compile Include="Dalamud\DiscordFeatureConfiguration.cs" />
     <Compile Include="Dalamud\XivChatType.cs" />
+    <Compile Include="Encryption\ArgumentBuilder.cs" />
+    <Compile Include="Encryption\Blowfish.cs" />
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
@@ -175,12 +177,22 @@
     <Compile Include="FolderEntry.xaml.cs">
       <DependentUpon>FolderEntry.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PatchHandlerWindow.xaml.cs">
+      <DependentUpon>PatchHandlerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Cache\UniqueIdCache.cs" />
     <Compile Include="Cache\UniqueIdCacheEntry.cs" />
+    <Compile Include="SteamWorksSharp\Interop\steam_api_interop.cs" />
+    <Compile Include="SteamWorksSharp\Native\Libs\INativeLibrary.cs" />
+    <Compile Include="SteamWorksSharp\Native\Libs\LibUtils.cs" />
+    <Compile Include="SteamWorksSharp\Native\SteamNative.cs" />
+    <Compile Include="SteamWorksSharp\Native\Windows_x64\NativeLibrary.cs" />
+    <Compile Include="SteamWorksSharp\Native\Windows_x86\NativeLibrary.cs" />
+    <Compile Include="SteamWorksSharp\SteamApi.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Xaml\ChatTypeToFancyNameConverter.cs" />
     <Compile Include="Xaml\StringToColorConverter.cs" />
@@ -230,6 +242,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PatchHandlerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -295,7 +311,10 @@
   <ItemGroup>
     <Resource Include="Resources\eye.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
+    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x86\steam_api.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GetGitHash" BeforeTargets="WriteGitHash" Condition="'$(BuildHash)' == ''">
     <PropertyGroup>

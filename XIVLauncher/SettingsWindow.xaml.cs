@@ -37,6 +37,8 @@ namespace XIVLauncher
             RmtAdFilterCheckBox.IsChecked = Settings.RmtFilterEnabled;
             EnableHooksCheckBox.IsChecked = Settings.IsInGameAddonEnabled();
 
+            SteamIntegrationCheckBox.IsChecked = Settings.SteamIntegrationEnabled;
+
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
         }
 
@@ -55,6 +57,8 @@ namespace XIVLauncher
             var featureConfig = Settings.DiscordFeatureConfig;
             featureConfig.Token = DiscordBotTokenTextBox.Text;
             Settings.DiscordFeatureConfig = featureConfig;
+
+            Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
             Settings.Save();
         }

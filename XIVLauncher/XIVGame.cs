@@ -12,7 +12,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Nhaama.Memory;
+using SteamworksSharp;
+using SteamworksSharp.Native;
 using XIVLauncher.Cache;
+using XIVLauncher.Encryption;
 
 namespace XIVLauncher
 {
@@ -22,6 +25,8 @@ namespace XIVLauncher
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
 
         private readonly string _userAgent = GenerateUserAgent();
+
+        private static int SteamAppId = 39210;
 
         private static readonly string[] FilesToHash =
         {
@@ -35,7 +40,7 @@ namespace XIVLauncher
 
         public UniqueIdCache Cache = new UniqueIdCache();
 
-        public Process Login(string username, string password, string otp, bool useCache = false)
+        public Process Login(string username, string password, string otp, bool isSteam, bool useCache)
         {
             string uid;
             var needsUpdate = false;
@@ -101,21 +106,54 @@ namespace XIVLauncher
                 return null;
             }
 
-            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion);
+            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion, isSteam);
         }
 
-        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool closeMutants = false)
+        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteam, bool closeMutants = false)
         {
             try
             {
+                if (isSteam)
+                {
+                    SteamNative.Initialize();
+
+                    if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
+                    {
+                        Serilog.Log.Information("Steam initialized.");
+                    }
+                }
+
                 var game = new Process();
                 if (Settings.IsDX11()) { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
                 game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int)Settings.GetLanguage()} ver={GetLocalGameVer()}";
 
+                /*
+                var ticks = (uint) Environment.TickCount;
+                var key = ticks & 0xFFF0_0000;
+
+                var argumentBuilder = new ArgumentBuilder()
+                    .Append("T", ticks.ToString())
+                    .Append("DEV.DataPathType", "1")
+                    .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
+                    .Append("DEV.TestSID", sessionId)
+                    .Append("DEV.UseSqPack", "1")
+                    .Append("SYS.Region", region.ToString())
+                    .Append("language", ((int) Settings.GetLanguage()).ToString())
+                    .Append("ver", GetLocalGameVer());
+
+                game.StartInfo.Arguments = argumentBuilder.BuildEncrypted(key);
+                */
+
                 game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath(), "boot");
 
-                Serilog.Log.Information("Starting game process: {0}", game.StartInfo.FileName);
                 game.Start();
+                //Serilog.Log.Information("Starting game process with key ({1}): {0}", argumentBuilder.Build(), key);
+
+                if (isSteam)
+                {
+                    SteamApi.Uninitialize();
+                    SteamNative.Uninitialize();
+                }
 
                 for (var tries = 0; tries < 30; tries++)
                 {
