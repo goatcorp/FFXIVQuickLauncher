@@ -485,11 +485,6 @@ namespace XIVLauncher
             Process.Start("http://is.xivup.com/");
         }
 
-        private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            settingsControl.Visibility = Visibility.Visible;
-        }
-
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
         {
             _maintenanceQueueTimer = new System.Timers.Timer
