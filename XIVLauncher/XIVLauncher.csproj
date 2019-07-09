@@ -176,8 +176,8 @@
       <DependentUpon>FolderEntry.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="SettingsWindow.xaml.cs">
-      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    <Compile Include="SettingsControl.xaml.cs">
+      <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Cache\UniqueIdCache.cs" />
     <Compile Include="Cache\UniqueIdCacheEntry.cs" />
@@ -230,7 +230,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SettingsWindow.xaml">
+    <Page Include="SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -295,7 +295,39 @@
   <ItemGroup>
     <Resource Include="Resources\eye.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\chocobo_invert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Discord-Logo-invert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gear_invert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\github_invert2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\guide_invert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scroll_invert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\world_invert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\world_red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\340.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\about_invert.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cactuar_invert.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GetGitHash" BeforeTargets="WriteGitHash" Condition="'$(BuildHash)' == ''">
     <PropertyGroup>
@@ -332,12 +364,12 @@
     <!-- writes the attribute to the customAssemblyInfo file -->
     <WriteCodeFragment Language="C#" OutputFile="$(CustomAssemblyInfoFile)" AssemblyAttributes="@(AssemblyAttributes)" />
   </Target>
-  <Import Project="..\packages\Fody.3.3.5\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.5\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.3.3.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.5\build\Fody.targets'))" />
     <Error Condition="!Exists('..\packages\Costura.Fody.3.3.2\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.2\build\Costura.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\Fody.3.3.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.5\build\Fody.targets'))" />
   </Target>
+  <Import Project="..\packages\Fody.3.3.5\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.5\build\Fody.targets')" />
 </Project>

@@ -487,7 +487,7 @@ namespace XIVLauncher
 
         private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
         {
-            new SettingsWindow().ShowDialog();
+            settingsControl.Visibility = Visibility.Visible;
         }
 
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
