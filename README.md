@@ -1,4 +1,4 @@
-# FFXIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/29NBmud)
+# FFXIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5)
 
 A faster launcher for Final Fantasy XIV.
 
@@ -12,6 +12,7 @@ The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your pa
 * Launching tools like ACT when starting the game
 * Discord Rich Presence
 * Fast in-game market board price checks
+* Integrity check for game files
 * Chat filtering
 * Chat bridge to Discord
 * Discord notifications for Duty Finder, fates, retainer sales, etc.
