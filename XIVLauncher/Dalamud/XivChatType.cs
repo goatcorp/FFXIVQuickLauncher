@@ -29,10 +29,17 @@ namespace Dalamud.Game.Chat {
         [XivChatTypeInfo("Yell", 0xFFFFFF00)] Yell = 30,
         [XivChatTypeInfo("Party", 0xFF1E90FF)] CrossParty = 32,
         [XivChatTypeInfo("PvP Team", 0xFFF4A460)] PvPTeam = 36,
-        [XivChatTypeInfo("Crossworld Linkshell", 0xFF1E90FF)] CrossLinkShell = 37,
+        [XivChatTypeInfo("Crossworld Linkshell 1", 0xFF1E90FF)] CrossLinkShell1 = 37,
         [XivChatTypeInfo("Echo", 0xFF808080)] Echo = 56,
         SystemError = 58,
         GatheringSystemMessage = 60,
+        [XivChatTypeInfo("Crossworld Linkshell 2", 0xFF1E90FF)] CrossLinkShell2 = 101,
+        [XivChatTypeInfo("Crossworld Linkshell 3", 0xFF1E90FF)] CrossLinkShell3 = 102,
+        [XivChatTypeInfo("Crossworld Linkshell 4", 0xFF1E90FF)] CrossLinkShell4 = 103,
+        [XivChatTypeInfo("Crossworld Linkshell 5", 0xFF1E90FF)] CrossLinkShell5 = 104,
+        [XivChatTypeInfo("Crossworld Linkshell 6", 0xFF1E90FF)] CrossLinkShell6 = 105,
+        [XivChatTypeInfo("Crossworld Linkshell 7", 0xFF1E90FF)] CrossLinkShell7 = 106,
+        [XivChatTypeInfo("Crossworld Linkshell 8", 0xFF1E90FF)] CrossLinkShell8 = 107
     }
 
     public static class XivChatTypeExtensions

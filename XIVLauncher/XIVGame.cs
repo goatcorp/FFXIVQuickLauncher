@@ -144,7 +144,7 @@ namespace XIVLauncher
                 game.StartInfo.Arguments = argumentBuilder.BuildEncrypted(key);
                 */
 
-                game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath(), "boot");
+                game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath(), "game");
 
                 game.Start();
                 //Serilog.Log.Information("Starting game process with key ({1}): {0}", argumentBuilder.Build(), key);

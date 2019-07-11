@@ -24,7 +24,7 @@ namespace XIVLauncher.Addon
             public string WorkingDirectory;
             public string PluginDirectory;
             public string DefaultPluginDirectory;
-            public int LanguageId;
+            public ClientLanguage Language;
 
             public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
         }
@@ -70,7 +70,7 @@ namespace XIVLauncher.Addon
 
                 var dalamudConfig = new DalamudStartInfo
                 {
-                    LanguageId = (int) Settings.GetLanguage(),
+                    Language = Settings.GetLanguage(),
                     DiscordFeatureConfig = Settings.DiscordFeatureConfig,
                     PluginDirectory = ingamePluginPath,
                     DefaultPluginDirectory = defaultPluginPath
