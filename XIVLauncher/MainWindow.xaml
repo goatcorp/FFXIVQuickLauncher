@@ -9,7 +9,7 @@
   xmlns:system="clr-namespace:System;assembly=mscorlib"
   mc:Ignorable="d"
   Title="XIVLauncher"
-  Width="837"
+  Width="845"
   Height="376"
   ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
   Icon="pack://application:,,,/Resources/dalamud_icon.ico"
