@@ -254,12 +254,6 @@ namespace XIVLauncher
             }
         }
 
-        private void OtpTextBox_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            var regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             /*
@@ -557,11 +551,6 @@ namespace XIVLauncher
 
             HandleLogin(false);
             _isLoggingIn = true;
-        }
-
-        private void OtpDialogHost_OnDialogClosing(object sender, DialogClosingEventArgs eventargs)
-        {
-            _isLoggingIn = false;
         }
     }
 }

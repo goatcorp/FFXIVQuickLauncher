@@ -90,7 +90,7 @@ namespace XIVLauncher
             var addonSetup = new GenericAddonSetup();
             addonSetup.ShowDialog();
 
-            if (addonSetup.Result != null)
+            if (addonSetup.Result != null && !string.IsNullOrEmpty(addonSetup.Result.Path))
             {
                 var addonList = Settings.GetAddonList();
 
