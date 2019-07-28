@@ -143,41 +143,41 @@
     <Compile Include="Addon\IAddon.cs" />
     <Compile Include="Addon\HooksAddon.cs" />
     <Compile Include="Addon\RichPresenceAddon.cs" />
-    <Compile Include="ClientLanguage.cs" />
+    <Compile Include="Game\ClientLanguage.cs" />
     <Compile Include="Dalamud\DiscordFeatureConfiguration.cs" />
     <Compile Include="Dalamud\XivChatType.cs" />
     <Compile Include="Encryption\ArgumentBuilder.cs" />
     <Compile Include="Encryption\Blowfish.cs" />
-    <Compile Include="ErrorWindow.xaml.cs">
+    <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FileEntry.xaml.cs">
+    <Compile Include="Xaml\Components\FileEntry.xaml.cs">
       <DependentUpon>FileEntry.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ChatChannelSetup.xaml.cs">
-      <DependentUpon>ChatChannelSetup.xaml</DependentUpon>
+    <Compile Include="Windows\ChatChannelSetupWindow.xaml.cs">
+      <DependentUpon>ChatChannelSetupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IntegrityCheck.cs" />
-    <Compile Include="IntegrityCheckProgressWindow.xaml.cs">
+    <Compile Include="Game\IntegrityCheck.cs" />
+    <Compile Include="Windows\IntegrityCheckProgressWindow.xaml.cs">
       <DependentUpon>IntegrityCheckProgressWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="OtpInputDialog.xaml.cs">
+    <Compile Include="Windows\OtpInputDialog.xaml.cs">
       <DependentUpon>OtpInputDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenericAddonSetup.xaml.cs">
-      <DependentUpon>GenericAddonSetup.xaml</DependentUpon>
+    <Compile Include="Windows\GenericAddonSetupWindow.xaml.cs">
+      <DependentUpon>GenericAddonSetupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FirstTimeSetup.xaml.cs">
-      <DependentUpon>FirstTimeSetup.xaml</DependentUpon>
+    <Compile Include="Windows\FirstTimeSetupWindow.xaml.cs">
+      <DependentUpon>FirstTimeSetupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FolderEntry.xaml.cs">
+    <Compile Include="Xaml\Components\FolderEntry.xaml.cs">
       <DependentUpon>FolderEntry.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PatchHandlerWindow.xaml.cs">
+    <Compile Include="Windows\PatchHandlerWindow.xaml.cs">
       <DependentUpon>PatchHandlerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="SettingsWindow.xaml.cs">
+    <Compile Include="Windows\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Cache\UniqueIdCache.cs" />
@@ -192,40 +192,40 @@
     <Compile Include="Util.cs" />
     <Compile Include="Xaml\ChatTypeToFancyNameConverter.cs" />
     <Compile Include="Xaml\StringToColorConverter.cs" />
-    <Compile Include="XIVGame.cs" />
-    <Page Include="ErrorWindow.xaml">
+    <Compile Include="Game\XivGame.cs" />
+    <Page Include="Windows\ErrorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="FileEntry.xaml">
+    <Page Include="Xaml\Components\FileEntry.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ChatChannelSetup.xaml">
+    <Page Include="Windows\ChatChannelSetupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IntegrityCheckProgressWindow.xaml">
+    <Page Include="Windows\IntegrityCheckProgressWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="OtpInputDialog.xaml">
+    <Page Include="Windows\OtpInputDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GenericAddonSetup.xaml">
+    <Page Include="Windows\GenericAddonSetupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="FirstTimeSetup.xaml">
+    <Page Include="Windows\FirstTimeSetupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="FolderEntry.xaml">
+    <Page Include="Xaml\Components\FolderEntry.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -233,16 +233,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Headlines.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Game\Headlines.cs" />
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="PatchHandlerWindow.xaml">
+    <Page Include="Windows\PatchHandlerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SettingsWindow.xaml">
+    <Page Include="Windows\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

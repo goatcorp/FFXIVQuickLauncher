@@ -4,25 +4,27 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using Microsoft.Win32;
+using XIVLauncher.Game;
 
 namespace XIVLauncher
 {
     public static class Util
     {
-        public static void ShowError(string message, string caption, [CallerMemberName] string callerName = "", [CallerLineNumber] int callerLineNumber = 0)
+        public static void ShowError(string message, string caption, [CallerMemberName] string callerName = "",
+            [CallerLineNumber] int callerLineNumber = 0)
         {
             MessageBox.Show($"{message}\n\n{callerName} L{callerLineNumber}", caption, MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
-        
-        /// <summary> Gets the git hash value from the assembly
-        /// or null if it cannot be found. </summary>
+
+        /// <summary>
+        ///     Gets the git hash value from the assembly
+        ///     or null if it cannot be found.
+        /// </summary>
         public static string GetGitHash()
         {
             var asm = typeof(Util).Assembly;
@@ -37,15 +39,15 @@ namespace XIVLauncher
             return fvi.FileVersion;
         }
 
-        public static bool IsValidFFXIVPath(string path)
+        public static bool IsValidFfxivPath(string path)
         {
-            if (String.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
                 return false;
 
             return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
         }
 
-        private static readonly string[] PathsToTry = 
+        private static readonly string[] PathsToTry =
         {
             "C:\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn",
             "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FINAL FANTASY XIV Online",
@@ -56,10 +58,8 @@ namespace XIVLauncher
         public static string TryGamePaths()
         {
             foreach (var path in PathsToTry)
-            {
-                if (Directory.Exists(path) && IsValidFFXIVPath(path))
+                if (Directory.Exists(path) && IsValidFfxivPath(path))
                     return path;
-            }
 
             return null;
         }
@@ -80,47 +80,35 @@ namespace XIVLauncher
 
         public static bool IsAdministrator()
         {
-            return (new WindowsPrincipal(WindowsIdentity.GetCurrent()))
+            return new WindowsPrincipal(WindowsIdentity.GetCurrent())
                 .IsInRole(WindowsBuiltInRole.Administrator);
         }
 
-        public static string GetLangCode(this ClientLanguage language)
+        public static int GetUnixMillis()
         {
-            switch (language)
-            {
-                case ClientLanguage.Japanese:
-                    return "ja";
-
-                case ClientLanguage.English:
-                    return "en-gb";
-
-                case ClientLanguage.German:
-                    return "de";
-
-                case ClientLanguage.French:
-                    return "fr";
-
-                default:
-                    return "en-gb";
-            }
+            return (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
-
-        public static int GetUnixMillis() => (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
 
         public static Color ColorFromArgb(int argb)
         {
             return Color.FromArgb((byte) (argb >> 24), (byte) (argb >> 16), (byte) (argb >> 8), (byte) argb);
         }
 
-        public static int ColorToArgb(Color color) => (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
+        public static int ColorToArgb(Color color)
+        {
+            return (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
+        }
 
-        public static SolidColorBrush SolidColorBrushFromArgb(int argb) => new SolidColorBrush(ColorFromArgb(argb));
+        public static SolidColorBrush SolidColorBrushFromArgb(int argb)
+        {
+            return new SolidColorBrush(ColorFromArgb(argb));
+        }
 
         // https://stackoverflow.com/questions/10454519/best-way-to-compare-two-complex-objects
         public static bool DeepCompare(this object obj, object another)
         {
             if (ReferenceEquals(obj, another)) return true;
-            if ((obj == null) || (another == null)) return false;
+            if (obj == null || another == null) return false;
             //Compare two object's class, return false if they are difference
             if (obj.GetType() != another.GetType()) return false;
 
@@ -140,7 +128,7 @@ namespace XIVLauncher
         public static bool CompareEx(this object obj, object another)
         {
             if (ReferenceEquals(obj, another)) return true;
-            if ((obj == null) || (another == null)) return false;
+            if (obj == null || another == null) return false;
             if (obj.GetType() != another.GetType()) return false;
 
             //properties: int, double, DateTime, etc, not class

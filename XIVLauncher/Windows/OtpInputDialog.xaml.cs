@@ -2,14 +2,14 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace XIVLauncher
+namespace XIVLauncher.Windows
 {
     /// <summary>
     /// Interaction logic for FirstTimeSetup.xaml
     /// </summary>
     public partial class OtpInputDialog : Window
     {
-        public string Result { get; private set; } = null;
+        public string Result { get; private set; }
 
         public OtpInputDialog()
         {

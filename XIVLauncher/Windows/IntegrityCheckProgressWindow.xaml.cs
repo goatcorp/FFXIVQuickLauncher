@@ -1,12 +1,10 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows;
+using XIVLauncher.Game;
 
-namespace XIVLauncher
+namespace XIVLauncher.Windows
 {
     /// <summary>
-    /// Interaction logic for FirstTimeSetup.xaml
+    ///     Interaction logic for FirstTimeSetup.xaml
     /// </summary>
     public partial class IntegrityCheckProgressWindow : Window
     {

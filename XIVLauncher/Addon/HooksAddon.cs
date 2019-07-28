@@ -6,12 +6,13 @@ using System.Net;
 using System.Text;
 using Dalamud.Discord;
 using Newtonsoft.Json;
+using XIVLauncher.Game;
 
 namespace XIVLauncher.Addon
 {
     class HooksAddon : IAddon
     {
-        private const string Remote = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
+        private const string REMOTE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
         private class HooksVersionInfo
         {
@@ -47,7 +48,7 @@ namespace XIVLauncher.Addon
 
             using (var client = new WebClient())
             {
-                var versionInfoJson = client.DownloadString(Remote + "version");
+                var versionInfoJson = client.DownloadString(REMOTE + "version");
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
                 if (!File.Exists(addonExe))
@@ -65,7 +66,7 @@ namespace XIVLauncher.Addon
                         Download(addonDirectory, defaultPluginPath);
                 }
 
-                if (XIVGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
+                if (XivGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
                     return;
 
                 var dalamudConfig = new DalamudStartInfo
@@ -129,7 +130,7 @@ namespace XIVLauncher.Addon
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
-                client.DownloadFile(Remote + "latest.zip", downloadPath);
+                client.DownloadFile(REMOTE + "latest.zip", downloadPath);
                 ZipFile.ExtractToDirectory(downloadPath, addonPath);
 
                 File.Delete(downloadPath);
@@ -142,7 +143,7 @@ namespace XIVLauncher.Addon
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
-                client.DownloadFile(Remote + "plugins.zip", downloadPath);
+                client.DownloadFile(REMOTE + "plugins.zip", downloadPath);
                 ZipFile.ExtractToDirectory(downloadPath, ingamePluginPath);
 
                 File.Delete(downloadPath);

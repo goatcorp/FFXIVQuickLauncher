@@ -8,11 +8,11 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace XIVLauncher
+namespace XIVLauncher.Game
 {
     public static class IntegrityCheck
     {
-        private const string IntegrityCheckBaseUrl = "https://goaaats.github.io/ffxiv/tools/launcher/integrity/";
+        private const string INTEGRITY_CHECK_BASE_URL = "https://goaaats.github.io/ffxiv/tools/launcher/integrity/";
 
         public class IntegrityCheckResult
         {
@@ -33,38 +33,36 @@ namespace XIVLauncher
             NoServer
         }
 
-        public static async Task<(CompareResult compareResult, string report, IntegrityCheckResult remoteIntegrity)> CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress)
+        public static async Task<(CompareResult compareResult, string report, IntegrityCheckResult remoteIntegrity)>
+            CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress)
         {
             IntegrityCheckResult remoteIntegrity;
 
             try
             {
-                remoteIntegrity = DownloadIntegrityCheckForVersion(XIVGame.GetLocalGameVer());
+                remoteIntegrity = DownloadIntegrityCheckForVersion(XivGame.GetLocalGameVer());
             }
             catch (WebException)
             {
                 return (CompareResult.NoServer, null, null);
             }
-            
+
             var localIntegrity = await RunIntegrityCheckAsync(new DirectoryInfo(Settings.GetGamePath()), progress);
 
             var report = "";
             foreach (var hashEntry in remoteIntegrity.Hashes)
-            {
                 if (localIntegrity.Hashes.Any(h => h.Key == hashEntry.Key))
                 {
                     if (localIntegrity.Hashes.First(h => h.Key == hashEntry.Key).Value != hashEntry.Value)
-                    {
                         report += $"Mismatch: {hashEntry.Key}\n";
-                    }
                 }
                 else
                 {
                     Debug.WriteLine("File not found in local integrity: " + hashEntry.Key);
                 }
-            }
 
-            return (string.IsNullOrEmpty(report) ? CompareResult.Valid : CompareResult.Invalid, report, remoteIntegrity);
+            return (string.IsNullOrEmpty(report) ? CompareResult.Valid : CompareResult.Invalid, report,
+                remoteIntegrity);
         }
 
         private static IntegrityCheckResult DownloadIntegrityCheckForVersion(string gameVersion)
@@ -72,11 +70,12 @@ namespace XIVLauncher
             using (var client = new WebClient())
             {
                 return JsonConvert.DeserializeObject<IntegrityCheckResult>(
-                    client.DownloadString(IntegrityCheckBaseUrl + gameVersion + ".json"));
+                    client.DownloadString(INTEGRITY_CHECK_BASE_URL + gameVersion + ".json"));
             }
         }
 
-        private static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gameDirectory, IProgress<IntegrityCheckProgress> progress)
+        private static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gameDirectory,
+            IProgress<IntegrityCheckProgress> progress)
         {
             var hashes = new Dictionary<string, string>();
 
@@ -87,12 +86,13 @@ namespace XIVLauncher
 
             return new IntegrityCheckResult
             {
-                GameVersion = XIVGame.GetLocalGameVer(),
+                GameVersion = XivGame.GetLocalGameVer(),
                 Hashes = hashes
             };
         }
 
-        private static void CheckDirectory(DirectoryInfo directory, SHA1Managed sha1, string rootDirectory, ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress> progress)
+        private static void CheckDirectory(DirectoryInfo directory, SHA1Managed sha1, string rootDirectory,
+            ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress> progress)
         {
             foreach (var file in directory.GetFiles())
             {
@@ -103,7 +103,8 @@ namespace XIVLauncher
 
                 try
                 {
-                    using (var stream = new BufferedStream(file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite), 1200000))
+                    using (var stream =
+                        new BufferedStream(file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite), 1200000))
                     {
                         var hash = sha1.ComputeHash(stream);
 
@@ -124,9 +125,7 @@ namespace XIVLauncher
             }
 
             foreach (var dir in directory.GetDirectories())
-            {
                 CheckDirectory(dir, sha1, rootDirectory, ref results, progress);
-            }
         }
     }
 }

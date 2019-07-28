@@ -7,6 +7,7 @@ using Dalamud.Discord;
 using Newtonsoft.Json;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
+using XIVLauncher.Game;
 
 namespace XIVLauncher
 {

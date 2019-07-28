@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,21 +11,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Nhaama.Memory;
+using Serilog;
 using SteamworksSharp;
 using SteamworksSharp.Native;
 using XIVLauncher.Cache;
-using XIVLauncher.Encryption;
+using XIVLauncher.Windows;
 
-namespace XIVLauncher
+namespace XIVLauncher.Game
 {
-    public class XIVGame
+    public class XivGame
     {
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and it's checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
 
         private readonly string _userAgent = GenerateUserAgent();
 
-        private static int SteamAppId = 39210;
+        private static readonly int SteamAppId = 39210;
 
         private static readonly string[] FilesToHash =
         {
@@ -35,7 +35,7 @@ namespace XIVLauncher
             "ffxivlauncher.exe",
             "ffxivlauncher64.exe",
             "ffxivupdater.exe",
-            "ffxivupdater64.exe",
+            "ffxivupdater64.exe"
         };
 
         public UniqueIdCache Cache = new UniqueIdCache();
@@ -45,11 +45,11 @@ namespace XIVLauncher
             string uid;
             var needsUpdate = false;
 
-            OauthLoginResult loginResult = null;
+            OauthLoginResult loginResult;
 
             if (!useCache || !Cache.HasValidCache(username))
             {
-                Serilog.Log.Information("Cache is invalid or disabled, logging in normally.");
+                Log.Information("Cache is invalid or disabled, logging in normally.");
 
                 try
                 {
@@ -57,34 +57,36 @@ namespace XIVLauncher
                 }
                 catch (Exception ex)
                 {
-                    Serilog.Log.Error("OAuth login failed.", ex);
+                    Log.Error("OAuth login failed.", ex);
                     MessageBox.Show(
-                        "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.", "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
+                        "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.",
+                        "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
 
                 if (!loginResult.Playable)
                 {
-                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
 
                 if (!loginResult.TermsAccepted)
                 {
-                    MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
 
                 (uid, needsUpdate) = Task.Run(() => RegisterSession(loginResult)).Result;
 
                 if (useCache)
-                {
-                    Task.Run(() => Cache.AddCachedUid(username, uid, loginResult.Region, loginResult.MaxExpansion)).Wait();
-                }
+                    Task.Run(() => Cache.AddCachedUid(username, uid, loginResult.Region, loginResult.MaxExpansion))
+                        .Wait();
             }
             else
             {
-                Serilog.Log.Information("Cached UID found, using instead.");
+                Log.Information("Cached UID found, using instead.");
                 var (cachedUid, region, expansionLevel) = Task.Run(() => Cache.GetCachedUid(username)).Result;
                 uid = cachedUid;
 
@@ -109,7 +111,8 @@ namespace XIVLauncher
             return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion, isSteam);
         }
 
-        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteam, bool closeMutants = false)
+        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteam,
+            bool closeMutants = false)
         {
             try
             {
@@ -118,14 +121,16 @@ namespace XIVLauncher
                     SteamNative.Initialize();
 
                     if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
-                    {
-                        Serilog.Log.Information("Steam initialized.");
-                    }
+                        Log.Information("Steam initialized.");
                 }
 
                 var game = new Process();
-                if (Settings.IsDX11()) { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe"; } else { game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe"; }
-                game.StartInfo.Arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int)Settings.GetLanguage()} ver={GetLocalGameVer()}";
+                if (Settings.IsDX11())
+                    game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe";
+                else
+                    game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe";
+                game.StartInfo.Arguments =
+                    $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGameVer()}";
 
                 /*
                 var ticks = (uint) Environment.TickCount;
@@ -179,7 +184,8 @@ namespace XIVLauncher
             }
             catch (Exception ex)
             {
-                new ErrorWindow(ex, "Your game path might not be correct. Please check in the settings.", "XG LaunchGame").Show();
+                new ErrorWindow(ex, "Your game path might not be correct. Please check in the settings.",
+                    "XG LaunchGame").Show();
             }
 
             return null;
@@ -193,10 +199,8 @@ namespace XIVLauncher
 
             // Check if handle is a ffxiv mutant and close it
             foreach (var nhaamaHandle in handles)
-            {
                 if (nhaamaHandle.Name.Contains("ffxiv_game0"))
                     nhaamaHandle.Close();
-            }
         }
 
         private static string GetBootVersionHash()
@@ -205,7 +209,8 @@ namespace XIVLauncher
 
             for (var i = 0; i < FilesToHash.Length; i++)
             {
-                result += $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GetGamePath(), "boot", FilesToHash[i]))}";
+                result +=
+                    $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GetGamePath(), "boot", FilesToHash[i]))}";
 
                 if (i != FilesToHash.Length - 1)
                     result += ",";
@@ -216,14 +221,16 @@ namespace XIVLauncher
 
         private static (string Uid, bool NeedsUpdate) RegisterSession(OauthLoginResult loginResult)
         {
-            using (WebClient client = new WebClient())
+            using (var client = new WebClient())
             {
                 client.Headers.Add("X-Hash-Check", "enabled");
                 client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
-                client.Headers.Add("Referer", $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
+                client.Headers.Add("Referer",
+                    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-                var url = $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{GetLocalGameVer()}/{loginResult.SessionId}";
+                var url =
+                    $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{GetLocalGameVer()}/{loginResult.SessionId}";
 
                 try
                 {
@@ -268,7 +275,8 @@ namespace XIVLauncher
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
-                var reply = client.DownloadString("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
+                var reply = client.DownloadString(
+                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
 
                 var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
                 return regex.Matches(reply)[0].Groups["stored"].Value;
@@ -289,19 +297,21 @@ namespace XIVLauncher
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
-                client.Headers.Add("Referer", "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
+                client.Headers.Add("Referer",
+                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-                byte[] response =
-                client.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send", new NameValueCollection() //get the session id with user credentials
-                {
-                    { "_STORED_", GetStored() },
-                    { "sqexid", username },
-                    { "password", password },
-                    { "otppw", otp }
-                });
+                var response =
+                    client.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send",
+                        new NameValueCollection //get the session id with user credentials
+                        {
+                            {"_STORED_", GetStored()},
+                            {"sqexid", username},
+                            {"password", password},
+                            {"otppw", otp}
+                        });
 
-                var reply = System.Text.Encoding.UTF8.GetString(response);
+                var reply = Encoding.UTF8.GetString(response);
 
                 var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
                 var matches = regex.Matches(reply);
@@ -353,7 +363,7 @@ namespace XIVLauncher
             var hash = new SHA1Managed().ComputeHash(bytes);
             var hashstring = string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
 
-            var length = new System.IO.FileInfo(file).Length;
+            var length = new FileInfo(file).Length;
 
             return length + "/" + hashstring;
         }
@@ -376,7 +386,8 @@ namespace XIVLauncher
 
         private static string MakeComputerId()
         {
-            var hashString = Environment.MachineName + Environment.UserName + Environment.OSVersion + Environment.ProcessorCount;
+            var hashString = Environment.MachineName + Environment.UserName + Environment.OSVersion +
+                             Environment.ProcessorCount;
 
             using (var sha1 = HashAlgorithm.Create("SHA1"))
             {
@@ -404,7 +415,7 @@ namespace XIVLauncher
 
         private static string GenerateFrontierReferer()
         {
-            var langCode = Settings.GetLanguage().GetLangCode();  
+            var langCode = Settings.GetLanguage().GetLangCode();
             var formattedTime = DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
 
             return $"https://frontier.ffxiv.com/version_5_0_win/index.html?rc_lang={langCode}&time={formattedTime}";

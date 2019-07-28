@@ -4,7 +4,7 @@ using System.Media;
 using System.Windows;
 using System.Windows.Documents;
 
-namespace XIVLauncher
+namespace XIVLauncher.Windows
 {
     /// <summary>
     /// Interaction logic for ErrorWindow.xaml

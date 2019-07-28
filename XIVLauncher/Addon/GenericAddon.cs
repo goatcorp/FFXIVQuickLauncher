@@ -9,7 +9,7 @@ namespace XIVLauncher.Addon
     {
         public void Run(Process gameProcess)
         {
-            if (string.IsNullOrEmpty(this.Path))
+            if (string.IsNullOrEmpty(Path))
             {
                 Serilog.Log.Error("Generic addon path was null.");
                 return;
@@ -17,20 +17,20 @@ namespace XIVLauncher.Addon
 
             try
             {
-                var ext = System.IO.Path.GetExtension(this.Path).ToLower();
+                var ext = System.IO.Path.GetExtension(Path).ToLower();
 
                 switch (ext)
                 {
                     case ".ps1":
-                        this.RunPwsh(gameProcess);
+                        RunPwsh();
                         break;
 
                     case ".bat":
-                        this.RunBatch(gameProcess);
+                        RunBatch();
                         break;
 
                     default:
-                        this.RunApp(gameProcess);
+                        RunApp();
                         break;
                 }
 
@@ -42,7 +42,7 @@ namespace XIVLauncher.Addon
             }
         }
 
-        private void RunApp(Process gameProcess)
+        private void RunApp()
         {
             // If there already is a process like this running - we don't need to spawn another one.
             if (Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(Path)).Any())
@@ -62,42 +62,37 @@ namespace XIVLauncher.Addon
             };
 
             if (RunAsAdmin)
-            {
-                // Vista or higher check
-                // https://stackoverflow.com/a/2532775
-                if (Environment.OSVersion.Version.Major >= 6)
-                {
-                    process.StartInfo.Verb = "runas";
-                }
-            }
+            // Vista or higher check
+            // https://stackoverflow.com/a/2532775
+                if (Environment.OSVersion.Version.Major >= 6) process.StartInfo.Verb = "runas";
 
             process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
 
             process.Start();
         }
 
-        private void RunPwsh(Process gameProcess)
+        private void RunPwsh()
         {
             var ps = new ProcessStartInfo();
 
             ps.FileName = Pwsh;
-            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(this.Path);
-            ps.Arguments = $@"-File ""{this.Path}"" {this.CommandLine}";
+            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(Path);
+            ps.Arguments = $@"-File ""{Path}"" {CommandLine}";
             ps.UseShellExecute = false;
 
-            this.RunScript(ps);
+            RunScript(ps);
         }
 
-        private void RunBatch(Process gameProcess)
+        private void RunBatch()
         {
             var ps = new ProcessStartInfo();
 
             ps.FileName = Environment.GetEnvironmentVariable("ComSpec");
-            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(this.Path);
-            ps.Arguments = $@"/C ""{this.Path}"" {this.CommandLine}";
+            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(Path);
+            ps.Arguments = $@"/C ""{Path}"" {CommandLine}";
             ps.UseShellExecute = false;
 
-            this.RunScript(ps);
+            RunScript(ps);
         }
 
         private void RunScript(ProcessStartInfo ps)
@@ -106,14 +101,9 @@ namespace XIVLauncher.Addon
             ps.CreateNoWindow = true;
 
             if (RunAsAdmin)
-            {
-                // Vista or higher check
-                // https://stackoverflow.com/a/2532775
-                if (Environment.OSVersion.Version.Major >= 6)
-                {
-                    ps.Verb = "runas";
-                }
-            }
+            // Vista or higher check
+            // https://stackoverflow.com/a/2532775
+                if (Environment.OSVersion.Version.Major >= 6) ps.Verb = "runas";
 
             try
             {
@@ -123,19 +113,19 @@ namespace XIVLauncher.Addon
             catch (Win32Exception exc)
             {
                 // If the user didn't cause this manually by dismissing the UAC prompt, we throw it
-                if ((uint)exc.HResult != 0x80004005)
+                if ((uint) exc.HResult != 0x80004005)
                     throw;
             }
         }
 
         public string Name =>
-            string.IsNullOrEmpty(this.Path) ?
-            "Invalid addon" :
-            ($"Launch{(this.IsApp ? " EXE" : string.Empty)} : {System.IO.Path.GetFileNameWithoutExtension(Path)}");
+            string.IsNullOrEmpty(Path)
+                ? "Invalid addon"
+                : $"Launch{(IsApp ? " EXE" : string.Empty)} : {System.IO.Path.GetFileNameWithoutExtension(Path)}";
 
         private bool IsApp =>
-            !string.IsNullOrEmpty(this.Path) &&
-            System.IO.Path.GetExtension(this.Path).ToLower() == ".exe";
+            !string.IsNullOrEmpty(Path) &&
+            System.IO.Path.GetExtension(Path).ToLower() == ".exe";
 
         public string Path;
         public string CommandLine;

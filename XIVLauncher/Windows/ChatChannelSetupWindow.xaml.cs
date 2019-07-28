@@ -18,7 +18,7 @@ using Dalamud.Game.Chat;
 using XIVLauncher;
 using XIVLauncher.Addon;
 
-namespace XIVLauncher
+namespace XIVLauncher.Windows
 {
     /// <summary>
     /// Interaction logic for FirstTimeSetup.xaml
