@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:XIVLauncher"
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:addon="clr-namespace:XIVLauncher.Addon"
@@ -24,28 +23,26 @@
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="6" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
             <TabItem Header="Game">
-                <Grid>
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}">
+                <StackPanel Margin="10,10,0,0">
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                         Please select the folder your game is installed in.
                         <LineBreak/>
                         It should contain the folders "game" and "boot".
                     </TextBlock>
-                    <components:FolderEntry x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"/>
-                    <CheckBox Margin="10,0,0,-20" Foreground="{DynamicResource MaterialDesignBody}" x:Name="SteamIntegrationCheckBox">Enable Steam integration</CheckBox>
-                    <Button Margin="15,0,0,-130" HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick" ToolTip="Run integrity check on game files.">Run integrity check</Button>
-                </Grid>
+                    <components:FolderEntry x:Name="GamePathEntry" Description="Select a folder" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"/>
+                    <CheckBox Foreground="{DynamicResource MaterialDesignBody}" x:Name="SteamIntegrationCheckBox" Margin="0,15,0,0">Enable Steam integration</CheckBox>
+                    <Button HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick" ToolTip="Run integrity check on game files." Margin="10,50,0,0">Run integrity check</Button>
+                </StackPanel>
             </TabItem>
             <TabItem Header="DirectX">
-                <Grid>
-                    <StackPanel Margin="10,10,0,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Please select which DirectX version you want to use.
-                        </TextBlock>
+                <StackPanel Margin="10,10,0,0">
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+                        Please select which DirectX version you want to use.
+                    </TextBlock>
 
-                        <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
-                        <RadioButton GroupName="dx" Foreground="{DynamicResource MaterialDesignBody}">DirectX 9</RadioButton>
-                    </StackPanel>
-                </Grid>
+                    <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
+                    <RadioButton GroupName="dx" Foreground="{DynamicResource MaterialDesignBody}">DirectX 9</RadioButton>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Language">
                 <Grid>
