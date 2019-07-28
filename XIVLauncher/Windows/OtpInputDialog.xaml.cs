@@ -1,11 +1,16 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Serilog;
+using XIVLauncher.Http;
 
 namespace XIVLauncher.Windows
 {
     /// <summary>
-    /// Interaction logic for FirstTimeSetup.xaml
+    /// Interaction logic for OtpInputDialog.xaml
     /// </summary>
     public partial class OtpInputDialog : Window
     {
@@ -16,6 +21,24 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             OtpTextBox.Focus();
+
+            var otpListener = new OtpListener();
+            otpListener.OnOtpReceived += otp =>
+            {
+                Result = otp;
+                otpListener.Stop();
+                Dispatcher.Invoke(Close);
+            };
+
+            try
+            {
+                // Start Listen
+                Task.Run(() => otpListener.Start());
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "Could not start OTP HTTP listener.");
+            }
         }
 
         private void OtpTextBox_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -42,6 +65,11 @@ namespace XIVLauncher.Windows
         private void CancelButton_OnClick(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        public void OpenShortcutInfo_MouseUp(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-phone-shortcuts");
         }
     }
 }

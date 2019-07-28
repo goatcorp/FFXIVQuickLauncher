@@ -175,7 +175,7 @@
                             FFXIVQuickLauncher
                         </TextBlock>
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Made by goat. Special thanks to Mino and LeonBlade!
+                            Made by goat. Special thanks to Mino, LeonBlade and Roy!
                             <LineBreak/>
                             <LineBreak/>
                             Any issues or requests? Join the discord or create an issue on GitHub!

@@ -105,6 +105,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -148,6 +149,8 @@
     <Compile Include="Dalamud\XivChatType.cs" />
     <Compile Include="Encryption\ArgumentBuilder.cs" />
     <Compile Include="Encryption\Blowfish.cs" />
+    <Compile Include="Http\HttpServer.cs" />
+    <Compile Include="Http\OtpListener.cs" />
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
