@@ -199,7 +199,7 @@ namespace XIVLauncher.Windows
             if (Properties.Settings.Default.LastVersion != version)
             {
                 MessageBox.Show(
-                    $"XIVLauncher was updated to version {version}. This release features some new features and fixes:\r\n\r\n* Added Steam integration for play time, overlay, streaming (Settings -> Game -> Enable Steam integration)\r\n* Updated to .NET Framework 4.7.1\r\n* UID cache will now save expansion level\r\n* Some changes to addon handling, hopefully resolving some of the issues people are having with RP and in-game addon\r\n* Improve startup time by not embedding references\r\n* Various fixes\r\n\r\n* Outgoing Tell messages will now be posted under the Tell category\r\n* Added Cross World linkshells to the chat type selector\r\n* Fixed FATE and retainer notifications\r\n* Fixed a bug that was causing sporadic error messages in chat\r\n* Fixed a bug that was causing the game to crash when changing characters\r\n* The icon and name of the XIVLauncher discord bot will not be changed automatically anymore",
+                    $"XIVLauncher was updated to version {version}. This release features some new features and fixes:\r\n\r\n* Add OTP quick-launch shortcuts for phones that allow you to launch the game without entering your OTP. Check the link in the OTP dialog box for more information. Thanks to @roy-n-roy!\r\n* Fixed an issue wherein the game path could not be changed in the settings menu",
                     "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 Properties.Settings.Default.LastVersion = version;
                 Properties.Settings.Default.Save();
