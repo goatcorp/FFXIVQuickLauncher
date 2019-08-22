@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,7 @@ using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using XIVLauncher.Addon;
+using XIVLauncher.Cache;
 using XIVLauncher.Game;
 using Timer = System.Timers.Timer;
 
@@ -201,7 +203,9 @@ namespace XIVLauncher.Windows
                 MessageBox.Show(
                     $"XIVLauncher was updated to version {version}. This release features some new features and fixes:\r\n\r\n* Add OTP quick-launch shortcuts for phones that allow you to launch the game without entering your OTP. Check the link in the OTP dialog box for more information. Thanks to @roy-n-roy!\r\n* Fixed an issue wherein the game path could not be changed in the settings menu",
                     "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+
                 Properties.Settings.Default.LastVersion = version;
+                Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
                 Properties.Settings.Default.Save();
             }
 

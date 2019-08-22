@@ -9,6 +9,6 @@ namespace XIVLauncher.Cache
         public int Region { get; set; }
         public int ExpansionLevel { get; set; }
 
-        public DateTime TimeoutDate { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 }

@@ -17,19 +17,19 @@ namespace XIVLauncher.Cache
 
         private void DeleteOldCaches()
         {
-            _cache.RemoveAll(entry => (entry.TimeoutDate - DateTime.Now).TotalDays >= DAYS_TO_TIMEOUT);
+            _cache.RemoveAll(entry => (DateTime.Now - entry.CreationDate).TotalDays > DAYS_TO_TIMEOUT);
         }
 
         public bool HasValidCache(string userName)
         {
-            return _cache.Any(entry => entry.UserName == userName && (entry.TimeoutDate - DateTime.Now).TotalDays < DAYS_TO_TIMEOUT);
+            return _cache.Any(entry => entry.UserName == userName && (DateTime.Now - entry.CreationDate).TotalDays <= DAYS_TO_TIMEOUT);
         }
 
         public (string Uid, int Region, int ExpansionLevel) GetCachedUid(string userName)
         {
             DeleteOldCaches();
 
-            var cache = _cache.First(entry => entry.UserName == userName && (entry.TimeoutDate - DateTime.Now).TotalDays < DAYS_TO_TIMEOUT);
+            var cache = _cache.FirstOrDefault(entry => entry.UserName == userName && (DateTime.Now - entry.CreationDate).TotalDays <= DAYS_TO_TIMEOUT);
 
             if(cache == null)
                 throw new Exception("Could not find a valid cache.");
@@ -41,7 +41,7 @@ namespace XIVLauncher.Cache
         {
              _cache.Add(new UniqueIdCacheEntry
              {
-                 TimeoutDate = DateTime.Now.AddDays(DAYS_TO_TIMEOUT),
+                 CreationDate = DateTime.Now,
                  UserName = userName,
                  UniqueId = uid,
                  Region = region,
