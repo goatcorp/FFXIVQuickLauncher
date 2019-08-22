@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Game;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher
@@ -52,6 +54,16 @@ namespace XIVLauncher
                 Environment.Exit(0);
             };
 #endif
+
+            if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
+            {
+                var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GetGamePath(), null).GetAwaiter().GetResult();
+                File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
+
+                MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");
+                Environment.Exit(0);
+                return;
+            }
 
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow
             var accountName = "";

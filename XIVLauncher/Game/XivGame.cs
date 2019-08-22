@@ -149,7 +149,7 @@ namespace XIVLauncher.Game
                 game.StartInfo.Arguments = argumentBuilder.BuildEncrypted(key);
                 */
 
-                game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath(), "game");
+                game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath().FullName, "game");
 
                 game.Start();
                 //Serilog.Log.Information("Starting game process with key ({1}): {0}", argumentBuilder.Build(), key);
@@ -210,7 +210,7 @@ namespace XIVLauncher.Game
             for (var i = 0; i < FilesToHash.Length; i++)
             {
                 result +=
-                    $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GetGamePath(), "boot", FilesToHash[i]))}";
+                    $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GetGamePath().FullName, "boot", FilesToHash[i]))}";
 
                 if (i != FilesToHash.Length - 1)
                     result += ",";
@@ -336,7 +336,7 @@ namespace XIVLauncher.Game
         {
             try
             {
-                return File.ReadAllText(Path.Combine(Settings.GetGamePath(), "game", "ffxivgame.ver"));
+                return File.ReadAllText(Path.Combine(Settings.GetGamePath().FullName, "game", "ffxivgame.ver"));
             }
             catch (Exception exc)
             {
@@ -348,7 +348,7 @@ namespace XIVLauncher.Game
         {
             try
             {
-                return File.ReadAllText(Path.Combine(Settings.GetGamePath(), "boot", "ffxivboot.ver"));
+                return File.ReadAllText(Path.Combine(Settings.GetGamePath().FullName, "boot", "ffxivboot.ver"));
             }
             catch (Exception exc)
             {

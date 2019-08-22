@@ -23,7 +23,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            GamePathEntry.Text = Settings.GetGamePath();
+            GamePathEntry.Text = Settings.GetGamePath().FullName;
 
             if (Settings.IsDX11())
                 Dx11RadioButton.IsChecked = true;
@@ -329,7 +329,7 @@ namespace XIVLauncher.Windows
 
                         if (result == MessageBoxResult.Yes)
                         {
-                            var verFile = Path.Combine(Settings.GetGamePath(), "game", "ffxivgame.ver");
+                            var verFile = Path.Combine(Settings.GetGamePath().FullName, "game", "ffxivgame.ver");
 
                             File.Delete(verFile);
                             File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);

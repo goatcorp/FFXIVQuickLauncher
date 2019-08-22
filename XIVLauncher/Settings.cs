@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using AdysTech.CredentialManager;
@@ -34,9 +35,9 @@ namespace XIVLauncher
             }
         }
 
-        public static string GetGamePath()
+        public static DirectoryInfo GetGamePath()
         {
-            return Properties.Settings.Default.GamePath;
+            return new DirectoryInfo(Properties.Settings.Default.GamePath);
         }
 
         public static void SetGamePath(string path)

@@ -47,7 +47,7 @@ namespace XIVLauncher.Game
                 return (CompareResult.NoServer, null, null);
             }
 
-            var localIntegrity = await RunIntegrityCheckAsync(new DirectoryInfo(Settings.GetGamePath()), progress);
+            var localIntegrity = await RunIntegrityCheckAsync(Settings.GetGamePath(), progress);
 
             var report = "";
             foreach (var hashEntry in remoteIntegrity.Hashes)
@@ -74,7 +74,7 @@ namespace XIVLauncher.Game
             }
         }
 
-        private static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gameDirectory,
+        public static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gameDirectory,
             IProgress<IntegrityCheckProgress> progress)
         {
             var hashes = new Dictionary<string, string>();
@@ -114,8 +114,6 @@ namespace XIVLauncher.Game
                         {
                             CurrentFile = relativePath
                         });
-
-                        Debug.WriteLine(relativePath);
                     }
                 }
                 catch (IOException)

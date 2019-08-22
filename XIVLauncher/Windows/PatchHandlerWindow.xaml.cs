@@ -45,7 +45,7 @@ namespace XIVLauncher.Windows
 
         private void PrepareUpdater()
         {
-            File.Copy(Path.Combine(Settings.GetGamePath(), "boot", "ffxivupdater.exe"),
+            File.Copy(Path.Combine(Settings.GetGamePath().FullName, "boot", "ffxivupdater.exe"),
                 Path.Combine(_userPath, "downloads", "ffxivupdater.exe"), true);
         }
 
@@ -66,7 +66,7 @@ namespace XIVLauncher.Windows
                 .Append("CallerWindow", _windowHwnd.ToString())
                 .Append("GameVersion", XivGame.GetLocalGameVer())
                 .Append("IsSteam", "0")
-                .Append("NextExe", Path.Combine(Settings.GetGamePath(), "game", "ffxiv.exe"))
+                .Append("NextExe", Path.Combine(Settings.GetGamePath().FullName, "game", "ffxiv.exe"))
                 .Append("ShowMode", "2")
                 .Append("UserPath", _userPath);
 
