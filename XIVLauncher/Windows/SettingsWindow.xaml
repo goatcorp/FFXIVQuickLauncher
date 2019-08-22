@@ -41,7 +41,7 @@
                     </TextBlock>
 
                     <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
-                    <RadioButton GroupName="dx" Foreground="{DynamicResource MaterialDesignBody}">DirectX 9</RadioButton>
+                    <RadioButton GroupName="dx" x:Name="Dx9RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 9</RadioButton>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Language">
