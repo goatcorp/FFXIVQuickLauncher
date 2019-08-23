@@ -11,6 +11,7 @@ namespace XIVLauncher.Http
     public class HttpServer
     {
         private TcpListener _listener;
+        private readonly byte[] httpResponse = Encoding.Default.GetBytes("HTTP/1.0 200 OK\n\nContent-Type: text/plain; charset=UTF-8\r\n\r\n");
         public bool IsRunning { get; private set; }
 
         public EventHandler<HttpServerGetEvent> GetReceived;
@@ -43,6 +44,8 @@ namespace XIVLauncher.Http
 
                     var messageString = Encoding.Default.GetString(message);
                     Debug.WriteLine(Encoding.Default.GetString(message));
+
+                    networkStream.Write(httpResponse, 0, httpResponse.Length);
 
                     GetReceived?.Invoke(this, new HttpServerGetEvent
                     {
