@@ -329,15 +329,6 @@ namespace XIVLauncher.Windows
             StartGame(otp);
         }
 
-        private void StartAddons(Process gameProcess)
-        {
-            foreach (var addonEntry in Settings.GetAddonList().Where(x => x.IsEnabled))
-            {
-                Log.Information("Starting addon {0}", addonEntry.Addon.Name);
-                addonEntry.Addon.Run(gameProcess);
-            }
-        }
-
         private async void StartGame(string otp)
         {
             Log.Information("StartGame() called");
@@ -374,9 +365,11 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
+                var addonMgr = new AddonManager();
+
                 try
                 {
-                    await Task.Run(() => StartAddons(gameProcess));
+                    await Task.Run(() => addonMgr.RunAddons(gameProcess, Settings.GetAddonList().Where(x => x.IsEnabled).ToList()));
                 }
                 catch (Exception ex)
                 {
@@ -384,6 +377,8 @@ namespace XIVLauncher.Windows
                         "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
                         "Addons").ShowDialog();
                     _isLoggingIn = false;
+
+                    addonMgr.StopPersistentAddons();
                 }
 
                 try
@@ -397,9 +392,25 @@ namespace XIVLauncher.Windows
                         "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
                         "Hooks").ShowDialog();
                     _isLoggingIn = false;
+
+                    addonMgr.StopPersistentAddons();
                 }
 
-                Environment.Exit(0);
+                this.Close();
+                
+                var watchThread = new Thread(() =>
+                {
+                    while (!gameProcess.HasExited)
+                    {
+                        gameProcess.Refresh();
+                        Thread.Sleep(1);
+                    }
+
+                    Log.Information("Game has exited.");
+                    addonMgr.StopPersistentAddons();
+                    Environment.Exit(0);
+                });
+                watchThread.Start();
             }
             catch (Exception ex)
             {
@@ -409,7 +420,6 @@ namespace XIVLauncher.Windows
         }
 
         #endregion
-        
 
         private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
         {

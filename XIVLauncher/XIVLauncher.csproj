@@ -67,6 +67,9 @@
     <Reference Include="DeltaCompressionDotNet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
       <HintPath>..\packages\DeltaCompressionDotNet.2.0.0.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="DiscordRPC, Version=1.0.121.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscordRichPresence.1.0.121\lib\net35\DiscordRPC.dll</HintPath>
+    </Reference>
     <Reference Include="Dragablz, Version=0.0.3.203, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.203\lib\net45\Dragablz.dll</HintPath>
     </Reference>
@@ -86,7 +89,7 @@
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.2.8.0\lib\net46\Serilog.dll</HintPath>
@@ -140,10 +143,15 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Addon\AddonEntry.cs" />
-    <Compile Include="Addon\GenericAddon.cs" />
+    <Compile Include="Addon\AddonManager.cs" />
+    <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
-    <Compile Include="Addon\HooksAddon.cs" />
-    <Compile Include="Addon\RichPresenceAddon.cs" />
+    <Compile Include="Addon\Implementations\HooksAddon.cs" />
+    <Compile Include="Addon\Implementations\XivRichPresence\DiscordPresenceManager.cs" />
+    <Compile Include="Addon\Implementations\XivRichPresence\XivApi.cs" />
+    <Compile Include="Addon\IPersistentAddon.cs" />
+    <Compile Include="Addon\Implementations\XivRichPresence\RichPresenceAddon.cs" />
+    <Compile Include="Addon\IRunnableAddon.cs" />
     <Compile Include="Game\ClientLanguage.cs" />
     <Compile Include="Dalamud\DiscordFeatureConfiguration.cs" />
     <Compile Include="Dalamud\XivChatType.cs" />
@@ -304,6 +312,10 @@
     <Resource Include="Resources\actlaunch.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\lib\Nhaama\Nhaama.FFXIV\Nhaama.FFXIV.csproj">
+      <Project>{af6e37bd-4598-4194-945b-c8f6ee9309fe}</Project>
+      <Name>Nhaama.FFXIV</Name>
+    </ProjectReference>
     <ProjectReference Include="..\lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj">
       <Project>{933935a7-8d04-42e8-aee5-122b3aeed820}</Project>
       <Name>Nhaama.Memory</Name>
@@ -316,6 +328,7 @@
     <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
     <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x86\steam_api.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GetGitHash" BeforeTargets="WriteGitHash" Condition="'$(BuildHash)' == ''">
     <PropertyGroup>
