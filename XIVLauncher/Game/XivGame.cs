@@ -40,7 +40,7 @@ namespace XIVLauncher.Game
 
         public UniqueIdCache Cache = new UniqueIdCache();
 
-        public Process Login(string username, string password, string otp, bool isSteam, bool useCache)
+        public Process Login(string username, string password, string otp, bool isSteam, string additionalArguments, bool useCache)
         {
             string uid;
             var needsUpdate = false;
@@ -108,10 +108,10 @@ namespace XIVLauncher.Game
                 return null;
             }
 
-            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion, isSteam);
+            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion, isSteam, additionalArguments);
         }
 
-        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteam,
+        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteam, string additionalArguments,
             bool closeMutants = false)
         {
             try
@@ -125,12 +125,15 @@ namespace XIVLauncher.Game
                 }
 
                 var game = new Process();
+
                 if (Settings.IsDX11())
                     game.StartInfo.FileName = Settings.GamePath + "/game/ffxiv_dx11.exe";
                 else
                     game.StartInfo.FileName = Settings.GamePath + "/game/ffxiv.exe";
+
                 game.StartInfo.Arguments =
                     $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGameVer()}";
+                game.StartInfo.Arguments += " " + additionalArguments;
 
                 /*
                 var ticks = (uint) Environment.TickCount;

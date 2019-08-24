@@ -199,5 +199,11 @@ namespace XIVLauncher
 
             return addonList;
         }
+
+        public static string AdditionalLaunchArgs
+        {
+            get => Properties.Settings.Default.AdditionalLaunchArgs;
+            set => Properties.Settings.Default.AdditionalLaunchArgs = value;
+        }
     }
 }
