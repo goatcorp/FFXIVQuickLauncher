@@ -126,9 +126,9 @@ namespace XIVLauncher.Game
 
                 var game = new Process();
                 if (Settings.IsDX11())
-                    game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv_dx11.exe";
+                    game.StartInfo.FileName = Settings.GamePath + "/game/ffxiv_dx11.exe";
                 else
-                    game.StartInfo.FileName = Settings.GetGamePath() + "/game/ffxiv.exe";
+                    game.StartInfo.FileName = Settings.GamePath + "/game/ffxiv.exe";
                 game.StartInfo.Arguments =
                     $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGameVer()}";
 
@@ -149,7 +149,7 @@ namespace XIVLauncher.Game
                 game.StartInfo.Arguments = argumentBuilder.BuildEncrypted(key);
                 */
 
-                game.StartInfo.WorkingDirectory = Path.Combine(Settings.GetGamePath().FullName, "game");
+                game.StartInfo.WorkingDirectory = Path.Combine(Settings.GamePath.FullName, "game");
 
                 game.Start();
                 //Serilog.Log.Information("Starting game process with key ({1}): {0}", argumentBuilder.Build(), key);
@@ -210,7 +210,7 @@ namespace XIVLauncher.Game
             for (var i = 0; i < FilesToHash.Length; i++)
             {
                 result +=
-                    $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GetGamePath().FullName, "boot", FilesToHash[i]))}";
+                    $"{FilesToHash[i]}/{GetFileHash(Path.Combine(Settings.GamePath.FullName, "boot", FilesToHash[i]))}";
 
                 if (i != FilesToHash.Length - 1)
                     result += ",";
@@ -336,7 +336,7 @@ namespace XIVLauncher.Game
         {
             try
             {
-                return File.ReadAllText(Path.Combine(Settings.GetGamePath().FullName, "game", "ffxivgame.ver"));
+                return File.ReadAllText(Path.Combine(Settings.GamePath.FullName, "game", "ffxivgame.ver"));
             }
             catch (Exception exc)
             {
@@ -348,7 +348,7 @@ namespace XIVLauncher.Game
         {
             try
             {
-                return File.ReadAllText(Path.Combine(Settings.GetGamePath().FullName, "boot", "ffxivboot.ver"));
+                return File.ReadAllText(Path.Combine(Settings.GamePath.FullName, "boot", "ffxivboot.ver"));
             }
             catch (Exception exc)
             {

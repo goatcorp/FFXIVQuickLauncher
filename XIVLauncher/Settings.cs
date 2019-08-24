@@ -35,14 +35,16 @@ namespace XIVLauncher
             }
         }
 
-        public static DirectoryInfo GetGamePath()
+        public static DirectoryInfo GamePath
         {
-            return new DirectoryInfo(Properties.Settings.Default.GamePath);
-        }
+            get
+            {
+                if (string.IsNullOrEmpty(Properties.Settings.Default.GamePath))
+                    return null;
 
-        public static void SetGamePath(string path)
-        {
-            Properties.Settings.Default.GamePath = path;
+                return new DirectoryInfo(Properties.Settings.Default.GamePath);
+            }
+            set => Properties.Settings.Default.GamePath = value.FullName;
         }
 
         public static ClientLanguage GetLanguage()

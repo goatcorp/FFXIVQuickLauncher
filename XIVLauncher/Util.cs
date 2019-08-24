@@ -52,7 +52,8 @@ namespace XIVLauncher
             "C:\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn",
             "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FINAL FANTASY XIV Online",
             "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FINAL FANTASY XIV - A Realm Reborn",
-            "C:\\Program Files (x86)\\FINAL FANTASY XIV - A Realm Reborn"
+            "C:\\Program Files (x86)\\FINAL FANTASY XIV - A Realm Reborn",
+            "C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn"
         };
 
         public static string TryGamePaths()

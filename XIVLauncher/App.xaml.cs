@@ -57,7 +57,7 @@ namespace XIVLauncher
 
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {
-                var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GetGamePath(), null).GetAwaiter().GetResult();
+                var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
                 File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
 
                 MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");

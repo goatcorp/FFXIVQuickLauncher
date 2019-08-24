@@ -187,13 +187,13 @@ namespace XIVLauncher.Windows
                 Settings.Save();
             }
 
-            if (!Settings.GetGamePath().Exists || !Settings.GetGamePath().GetDirectories().Any(d => d.Name == "game"))
+            if (Settings.GamePath == null)
             {
                 var setup = new FirstTimeSetup();
                 setup.ShowDialog();
             }
 
-            Task.Run(() => SetupHeadlines());
+            Task.Run(SetupHeadlines);
 
             Settings.LanguageChanged += SetupHeadlines;
 

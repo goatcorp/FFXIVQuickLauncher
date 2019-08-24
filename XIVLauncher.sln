@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher", "XIVLauncher\XIVLauncher.csproj", "{BEB33308-6E15-41F7-ACC8-86BB786E2E56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nhaama.Memory", "lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj", "{933935A7-8D04-42E8-AEE5-122B3AEED820}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nhaama.FFXIV", "lib\Nhaama\Nhaama.FFXIV\Nhaama.FFXIV.csproj", "{AF6E37BD-4598-4194-945B-C8F6EE9309FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{933935A7-8D04-42E8-AEE5-122B3AEED820}.Release|Any CPU.Build.0 = Release|Any CPU
 		{933935A7-8D04-42E8-AEE5-122B3AEED820}.Release|x64.ActiveCfg = Release|x64
 		{933935A7-8D04-42E8-AEE5-122B3AEED820}.Release|x64.Build.0 = Release|x64
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Debug|x64.ActiveCfg = Debug|x64
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Debug|x64.Build.0 = Debug|x64
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Release|x64.ActiveCfg = Release|x64
+		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

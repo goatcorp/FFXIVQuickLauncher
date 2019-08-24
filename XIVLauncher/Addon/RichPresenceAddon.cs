@@ -91,9 +91,9 @@ namespace XIVLauncher.Addon
             try
             {
                 // Delete a manually installed version of RichPresence, don't need to launch it twice
-                var dump64path = Path.Combine(Settings.GetGamePath().FullName, "game", "dump64.dll");
-                if (File.Exists(dump64path))
-                    File.Delete(dump64path);
+                var dump64Path = Path.Combine(Settings.GamePath.FullName, "game", "dump64.dll");
+                if (File.Exists(dump64Path))
+                    File.Delete(dump64Path);
 
                 return true;
             }

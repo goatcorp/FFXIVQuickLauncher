@@ -47,7 +47,7 @@ namespace XIVLauncher.Game
                 return (CompareResult.NoServer, null, null);
             }
 
-            var localIntegrity = await RunIntegrityCheckAsync(Settings.GetGamePath(), progress);
+            var localIntegrity = await RunIntegrityCheckAsync(Settings.GamePath, progress);
 
             var report = "";
             foreach (var hashEntry in remoteIntegrity.Hashes)

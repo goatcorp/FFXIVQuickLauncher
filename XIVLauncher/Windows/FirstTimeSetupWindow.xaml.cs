@@ -72,7 +72,7 @@ namespace XIVLauncher.Windows
 
             if (SetupTabControl.SelectedIndex == 5)
             {
-                Settings.SetGamePath(GamePathEntry.Text);
+                Settings.GamePath = new DirectoryInfo(GamePathEntry.Text);
                 Settings.SetDx11(Dx11RadioButton.IsChecked == true);
                 Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
                 Settings.SetInGameAddonEnabled(HooksCheckBox.IsChecked == true);
