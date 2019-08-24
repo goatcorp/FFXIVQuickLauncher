@@ -193,7 +193,7 @@ namespace XIVLauncher.Windows
                 setup.ShowDialog();
             }
 
-            Task.Run(SetupHeadlines);
+            Task.Run(() => SetupHeadlines());
 
             Settings.LanguageChanged += SetupHeadlines;
 
