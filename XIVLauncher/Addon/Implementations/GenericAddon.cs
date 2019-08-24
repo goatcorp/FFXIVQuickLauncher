@@ -5,8 +5,10 @@ using System.Linq;
 
 namespace XIVLauncher.Addon
 {
-    public class GenericAddon : IAddon
+    public class GenericAddon : IRunnableAddon, INotifyAddonAfterClose
     {
+        private Process _addonProcess;
+
         public void Run(Process gameProcess)
         {
             if (string.IsNullOrEmpty(Path))
@@ -42,6 +44,18 @@ namespace XIVLauncher.Addon
             }
         }
 
+        public void GameClosed()
+        {
+            if (!RunAsAdmin)
+            {
+                if (_addonProcess == null)
+                    return;
+
+                if (!_addonProcess.HasExited && KillAfterClose)
+                    _addonProcess.Kill();
+            }
+        }
+
         private void RunApp()
         {
             // If there already is a process like this running - we don't need to spawn another one.
@@ -51,7 +65,7 @@ namespace XIVLauncher.Addon
                 return;
             }
 
-            var process = new Process
+            _addonProcess = new Process
             {
                 StartInfo =
                 {
@@ -64,11 +78,11 @@ namespace XIVLauncher.Addon
             if (RunAsAdmin)
             // Vista or higher check
             // https://stackoverflow.com/a/2532775
-                if (Environment.OSVersion.Version.Major >= 6) process.StartInfo.Verb = "runas";
+                if (Environment.OSVersion.Version.Major >= 6) _addonProcess.StartInfo.Verb = "runas";
 
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+            _addonProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
 
-            process.Start();
+            _addonProcess.Start();
         }
 
         private void RunPwsh()
@@ -107,7 +121,7 @@ namespace XIVLauncher.Addon
 
             try
             {
-                Process.Start(ps);
+                _addonProcess = Process.Start(ps);
                 Serilog.Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
             }
             catch (Win32Exception exc)
@@ -130,6 +144,7 @@ namespace XIVLauncher.Addon
         public string Path;
         public string CommandLine;
         public bool RunAsAdmin;
+        public bool KillAfterClose;
 
         private static readonly Lazy<string> LazyPwsh = new Lazy<string>(() => GetPwsh());
 

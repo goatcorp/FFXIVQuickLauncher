@@ -149,6 +149,7 @@
     <Compile Include="Addon\Implementations\HooksAddon.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\DiscordPresenceManager.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\XivApi.cs" />
+    <Compile Include="Addon\INotifyAddonAfterClose.cs" />
     <Compile Include="Addon\IPersistentAddon.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\RichPresenceAddon.cs" />
     <Compile Include="Addon\IRunnableAddon.cs" />

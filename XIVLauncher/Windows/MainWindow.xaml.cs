@@ -378,7 +378,7 @@ namespace XIVLauncher.Windows
                         "Addons").ShowDialog();
                     _isLoggingIn = false;
 
-                    addonMgr.StopPersistentAddons();
+                    addonMgr.StopAddons();
                 }
 
                 try
@@ -393,7 +393,7 @@ namespace XIVLauncher.Windows
                         "Hooks").ShowDialog();
                     _isLoggingIn = false;
 
-                    addonMgr.StopPersistentAddons();
+                    addonMgr.StopAddons();
                 }
 
                 this.Close();
@@ -407,7 +407,7 @@ namespace XIVLauncher.Windows
                     }
 
                     Log.Information("Game has exited.");
-                    addonMgr.StopPersistentAddons();
+                    addonMgr.StopAddons();
                     Environment.Exit(0);
                 });
                 watchThread.Start();

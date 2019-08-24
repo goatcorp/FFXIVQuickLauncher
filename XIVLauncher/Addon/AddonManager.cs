@@ -11,14 +11,14 @@ namespace XIVLauncher.Addon
 {
     class AddonManager
     {
-        private List<Tuple<IPersistentAddon, CancellationTokenSource>> _persistentAddons;
+        private List<Tuple<IAddon, CancellationTokenSource>> _runningAddons;
 
         public void RunAddons(Process gameProcess, List<AddonEntry> addonEntries)
         {
-            if (_persistentAddons != null)
+            if (_runningAddons != null)
                 throw new Exception("Addons still running?");
 
-            _persistentAddons = new List<Tuple<IPersistentAddon, CancellationTokenSource>>();
+            _runningAddons = new List<Tuple<IAddon, CancellationTokenSource>>();
 
             foreach (var addonEntry in addonEntries)
             {
@@ -28,27 +28,33 @@ namespace XIVLauncher.Addon
                     var cancellationTokenSource = new CancellationTokenSource();
 
                     Task.Run(() => persistentAddon.DoWork(gameProcess, cancellationTokenSource.Token));
-                    _persistentAddons.Add(new Tuple<IPersistentAddon, CancellationTokenSource>(persistentAddon, cancellationTokenSource));
+                    _runningAddons.Add(new Tuple<IAddon, CancellationTokenSource>(persistentAddon, cancellationTokenSource));
                 }
 
                 if (addonEntry.Addon is IRunnableAddon runnableAddon)
                 {
                     Log.Information("Starting RunnableAddon {0}", runnableAddon.Name);
                     runnableAddon.Run(gameProcess);
+
+                    if (runnableAddon is INotifyAddonAfterClose notifiedAddon)
+                        _runningAddons.Add(new Tuple<IAddon, CancellationTokenSource>(notifiedAddon, null));
                 }
             }
         }
 
-        public void StopPersistentAddons()
+        public void StopAddons()
         {
-            Log.Information("Stopping persistent addons...");
+            Log.Information("Stopping addons...");
 
-            foreach (var persistentAddon in _persistentAddons)
+            foreach (var addon in _runningAddons)
             {
-                persistentAddon.Item2.Cancel();
+                addon.Item2?.Cancel();
+
+                if (addon.Item1 is INotifyAddonAfterClose notifiedAddon)
+                    notifiedAddon.GameClosed();
             }
 
-            _persistentAddons = null;
+            _runningAddons = null;
         }
     }
 }
