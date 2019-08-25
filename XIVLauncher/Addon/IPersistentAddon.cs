@@ -10,6 +10,6 @@ namespace XIVLauncher.Addon
 {
     interface IPersistentAddon : IAddon
     { 
-        Task DoWork(Process gameProcess, CancellationToken cancellationToken);
+        void DoWork(object state);
     }
 }

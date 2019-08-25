@@ -14,6 +14,13 @@ namespace XIVLauncher.Addon
     {
         private const string REMOTE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
+        private Process _gameProcess;
+        
+        public void Setup(Process gameProcess)
+        {
+            _gameProcess = gameProcess;
+        }
+
         private class HooksVersionInfo
         {
             public string AssemblyVersion { get; set;  }
@@ -30,7 +37,7 @@ namespace XIVLauncher.Addon
             public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
         }
 
-        public void Run(Process gameProcess)
+        public void Run()
         {
             // Launcher Hooks don't work on DX9 and probably never will
             if (!Settings.IsDX11())
@@ -81,7 +88,7 @@ namespace XIVLauncher.Addon
 
                 var process = new Process
                 {
-                    StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory }
+                    StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = _gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory }
                 };
 
                 process.Start();

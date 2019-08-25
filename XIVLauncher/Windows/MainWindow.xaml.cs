@@ -384,7 +384,9 @@ namespace XIVLauncher.Windows
                 try
                 {
                     if (Settings.IsInGameAddonEnabled())
-                        await Task.Run(() => { new HooksAddon().Run(gameProcess); });
+                        await Task.Run(() =>
+                        {
+                            var hooks = new HooksAddon(); hooks.Setup(gameProcess); hooks.Run(); });
                 }
                 catch (Exception ex)
                 {

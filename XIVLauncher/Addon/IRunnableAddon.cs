@@ -9,6 +9,6 @@ namespace XIVLauncher.Addon
 {
     interface IRunnableAddon : IAddon
     {
-        void Run(Process gameProcess);
+        void Run();
     }
 }

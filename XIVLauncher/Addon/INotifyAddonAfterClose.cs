@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher.Addon
 {
-    interface INotifyAddonAfterClose : IRunnableAddon
+    interface INotifyAddonAfterClose : IAddon
     {
         void GameClosed();
     }

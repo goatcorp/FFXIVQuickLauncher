@@ -18,6 +18,7 @@ namespace XIVLauncher.Addon
     {
         private const string ClientID = "478143453536976896";
 
+        private Process _gameProcess;
         private string _lastFc = string.Empty;
 
         private static readonly RichPresence DefaultPresence = new RichPresence
@@ -33,10 +34,17 @@ namespace XIVLauncher.Addon
             }
         };
 
-        public async Task DoWork(Process gameProcess, CancellationToken cancellationToken)
+        public void Setup(Process gameProcess)
         {
+            _gameProcess = gameProcess;
+        }
+
+        public async void DoWork(object state)
+        {
+            var cancellationToken = (CancellationToken) state;
+
             CheckManualInstall();
-            var game = new Nhaama.FFXIV.Game(gameProcess);
+            var game = new Nhaama.FFXIV.Game(_gameProcess);
 
             var discordManager = new DiscordPresenceManager(DefaultPresence, ClientID);
             discordManager.SetPresence(DefaultPresence);
@@ -102,6 +110,8 @@ namespace XIVLauncher.Addon
 
                 Thread.Sleep(1000);
             }
+
+            Serilog.Log.Information("RichPresence exited!");
         }
 
         private bool CheckManualInstall()

@@ -8,8 +8,14 @@ namespace XIVLauncher.Addon
     public class GenericAddon : IRunnableAddon, INotifyAddonAfterClose
     {
         private Process _addonProcess;
+        private Process _gameProcess;
+        
+        public void Setup(Process gameProcess)
+        {
+            _gameProcess = gameProcess;
+        }
 
-        public void Run(Process gameProcess)
+        public void Run()
         {
             if (string.IsNullOrEmpty(Path))
             {
