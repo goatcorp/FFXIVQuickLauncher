@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,24 +17,25 @@ namespace XIVLauncher.Windows
     {
         public string Result { get; private set; }
 
+        private OtpListener _otpListener;
+
         public OtpInputDialog()
         {
             InitializeComponent();
 
             OtpTextBox.Focus();
 
-            var otpListener = new OtpListener();
-            otpListener.OnOtpReceived += otp =>
+            _otpListener = new OtpListener();
+            _otpListener.OnOtpReceived += otp =>
             {
                 Result = otp;
-                otpListener.Stop();
                 Dispatcher.Invoke(Close);
             };
 
             try
             {
                 // Start Listen
-                Task.Run(() => otpListener.Start());
+                Task.Run(() => _otpListener.Start());
             }
             catch(Exception ex)
             {
@@ -59,11 +61,13 @@ namespace XIVLauncher.Windows
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
             Result = OtpTextBox.Text;
+            _otpListener.Stop();
             Close();
         }
 
         private void CancelButton_OnClick(object sender, RoutedEventArgs e)
         {
+            _otpListener.Stop();
             Close();
         }
 

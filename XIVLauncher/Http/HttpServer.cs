@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace XIVLauncher.Http
 {
@@ -12,7 +14,6 @@ namespace XIVLauncher.Http
     {
         private TcpListener _listener;
         private readonly byte[] httpResponse = Encoding.Default.GetBytes("HTTP/1.0 200 OK\n\nContent-Type: text/plain; charset=UTF-8\r\n\r\n");
-        public bool IsRunning { get; private set; }
 
         public EventHandler<HttpServerGetEvent> GetReceived;
 
@@ -28,11 +29,10 @@ namespace XIVLauncher.Http
 
         public void Start()
         {
-            IsRunning = true;
-            _listener.Start();
-
-            while (IsRunning)
+            try
             {
+                _listener.Start();
+
                 var client = _listener.AcceptTcpClient();
 
                 var networkStream = client.GetStream();
@@ -55,11 +55,14 @@ namespace XIVLauncher.Http
 
                 client.Close();
             }
+            catch (Exception)
+            {
+                Serilog.Log.Error("HttpClient Start did not end cleanly.");
+            }
         }
 
         public void Stop()
         {
-            IsRunning = false;
             _listener.Stop();
         }
     }
