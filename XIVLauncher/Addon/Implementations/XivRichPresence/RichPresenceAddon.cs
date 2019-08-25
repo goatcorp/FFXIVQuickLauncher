@@ -43,6 +43,9 @@ namespace XIVLauncher.Addon
         {
             var cancellationToken = (CancellationToken) state;
 
+            if (!Settings.IsDX11())
+                return;
+
             CheckManualInstall();
             var game = new Nhaama.FFXIV.Game(_gameProcess);
 
