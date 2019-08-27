@@ -1,4 +1,4 @@
-﻿<Window x:Class="XIVLauncher.Windows.FirstTimeSetup"
+﻿<Window x:Uid="Window_1" x:Class="XIVLauncher.Windows.FirstTimeSetup"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,113 +12,113 @@
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
-    <Grid>
-        <TabControl IsEnabled="True" BorderThickness="0" x:Name="SetupTabControl" Background="{DynamicResource MaterialDesignPaper}">
+    <Grid x:Uid="Grid_1">
+        <TabControl x:Uid="SetupTabControl" IsEnabled="True" BorderThickness="0" x:Name="SetupTabControl" Background="{DynamicResource MaterialDesignPaper}">
             <TabControl.ItemContainerStyle>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Visibility" Value="Collapsed"/>
+                <Style x:Uid="Style_1" TargetType="{x:Type TabItem}">
+                    <Setter x:Uid="Setter_1" Property="Visibility" Value="Collapsed"/>
                 </Style>
             </TabControl.ItemContainerStyle>
 
-            <TabItem Header="Path">
-                <Grid>
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}">
+            <TabItem x:Uid="TabItem_1" Header="Path">
+                <Grid x:Uid="Grid_2">
+                    <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}">
                         Please select the folder your game is installed in.
-                        <LineBreak/>
+                        <LineBreak x:Uid="LineBreak_1"/>
                         It should contain the folders "game" and "boot".
                     </TextBlock>
-                    <components:FolderEntry x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"/>
-                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+                    <components:FolderEntry x:Uid="GamePathEntry" x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"/>
+                    <Button x:Uid="Button_1" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Dx">
-                <Grid>
-                    <StackPanel Margin="10,10,0,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+            <TabItem x:Uid="TabItem_2" Header="Dx">
+                <Grid x:Uid="Grid_3">
+                    <StackPanel x:Uid="StackPanel_1" Margin="10,10,0,0">
+                        <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Please select, which DirectX version you want to use.
                         </TextBlock>
 
-                        <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
-                        <RadioButton GroupName="dx" Foreground="{DynamicResource MaterialDesignBody}">DirectX 9</RadioButton>
+                        <RadioButton x:Uid="Dx11RadioButton" Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
+                        <RadioButton x:Uid="RadioButton_1" GroupName="dx" Foreground="{DynamicResource MaterialDesignBody}">DirectX 9</RadioButton>
                     </StackPanel>
-                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+                    <Button x:Uid="Button_2" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Language">
-                <Grid>
-                    <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+            <TabItem x:Uid="TabItem_3" Header="Language">
+                <Grid x:Uid="Grid_4">
+                    <StackPanel x:Uid="StackPanel_2" Margin="10,10,10,0">
+                        <TextBlock x:Uid="TextBlock_3" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Please select, which language you want to load the game with.
                         </TextBlock>
 
-                        <ComboBox SelectedIndex="1" Margin="0, 5, 0, 0" x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
-                            <ComboBoxItem>Japanese</ComboBoxItem>
-                            <ComboBoxItem>English</ComboBoxItem>
-                            <ComboBoxItem>German</ComboBoxItem>
-                            <ComboBoxItem>French</ComboBoxItem>
+                        <ComboBox x:Uid="LanguageComboBox" SelectedIndex="1" Margin="0, 5, 0, 0" x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
+                            <ComboBoxItem x:Uid="ComboBoxItem_1">Japanese</ComboBoxItem>
+                            <ComboBoxItem x:Uid="ComboBoxItem_2">English</ComboBoxItem>
+                            <ComboBoxItem x:Uid="ComboBoxItem_3">German</ComboBoxItem>
+                            <ComboBoxItem x:Uid="ComboBoxItem_4">French</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
-                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+                    <Button x:Uid="Button_3" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="RP">
-                <Grid>
-                    <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+            <TabItem x:Uid="TabItem_4" Header="RP">
+                <Grid x:Uid="Grid_5">
+                    <StackPanel x:Uid="StackPanel_3" Margin="10,10,10,0">
+                        <TextBlock x:Uid="TextBlock_4" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Do you want to enable Rich Presence?
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_2"/>
                             This will show some information about your character and it's location in your Discord status.
                         </TextBlock>
 
-                        <Image Source="pack://application:,,,/Resources/richpresence.png" Width="250" HorizontalAlignment="Left" Margin="0,10,0,0" />
+                        <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/richpresence.png" Width="250" HorizontalAlignment="Left" Margin="0,10,0,0" />
                         
-                        <CheckBox x:Name="RichPresenceCheckBox" Content="Enable Rich Presence" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+                        <CheckBox x:Uid="RichPresenceCheckBox" x:Name="RichPresenceCheckBox" Content="Enable Rich Presence" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
 
                     </StackPanel>
-                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+                    <Button x:Uid="Button_4" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="ACT">
-                <Grid>
-                    <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+            <TabItem x:Uid="TabItem_5" Header="ACT">
+                <Grid x:Uid="Grid_6">
+                    <StackPanel x:Uid="StackPanel_4" Margin="10,10,10,0">
+                        <TextBlock x:Uid="TextBlock_5" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Advanced Combat Tracker is installed on your computer.
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_3"/>
                             Do you want to launch it automatically when launching the game?
                         </TextBlock>
 
                         <!--<Image Source="pack://application:,,,/Resources/actlaunch.png" Width="100" HorizontalAlignment="Left" Margin="0,30,0,0" />-->
                         
-                        <CheckBox x:Name="ActCheckBox" Content="Enable ACT Auto-Launch" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+                        <CheckBox x:Uid="ActCheckBox" x:Name="ActCheckBox" Content="Enable ACT Auto-Launch" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
 
                     </StackPanel>
-                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+                    <Button x:Uid="Button_5" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Hooks">
-                <Grid>
-                    <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+            <TabItem x:Uid="TabItem_6" Header="Hooks">
+                <Grid x:Uid="Grid_7">
+                    <StackPanel x:Uid="StackPanel_5" Margin="10,10,10,0">
+                        <TextBlock x:Uid="TextBlock_6" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             Do you want to enable the XIVLauncher in-game features?
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_4"/>
                             This will add some extra functionality to your game, such as RMT chat filtering and
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_5"/>
                             Discord notifications for chat messages or Duty Finder pops.
-                            <LineBreak/>
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_6"/>
+                            <LineBreak x:Uid="LineBreak_7"/>
                             To configure these settings, please use the XIVLauncher settings menu and switch to the
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_8"/>
                             in-game tab.
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_9"/>
                             Enabling this however could cause a false positive on your antivirus software, please
-                            <LineBreak/>
+                            <LineBreak x:Uid="LineBreak_10"/>
                             check its settings and add any needed exclusions if you run into problems.
                         </TextBlock>
                         
-                        <CheckBox x:Name="HooksCheckBox" Content="Enable In-Game features" HorizontalAlignment="Left" Margin="0,25,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
+                        <CheckBox x:Uid="HooksCheckBox" x:Name="HooksCheckBox" Content="Enable In-Game features" HorizontalAlignment="Left" Margin="0,25,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
 
                     </StackPanel>
-                    <Button Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
+                    <Button x:Uid="Button_6" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>
