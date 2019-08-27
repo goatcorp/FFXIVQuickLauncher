@@ -116,15 +116,17 @@ namespace XIVLauncher.Game
         {
             try
             {
+                var game = new Process();
+
                 if (isSteam)
                 {
                     SteamNative.Initialize();
 
                     if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
                         Log.Information("Steam initialized.");
-                }
 
-                var game = new Process();
+                    game.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
+                }
 
                 if (Settings.IsDX11())
                     game.StartInfo.FileName = Settings.GamePath + "/game/ffxiv_dx11.exe";
