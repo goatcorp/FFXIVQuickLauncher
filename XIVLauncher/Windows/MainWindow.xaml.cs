@@ -566,5 +566,10 @@ namespace XIVLauncher.Windows
             HandleLogin(false);
             _isLoggingIn = true;
         }
+
+        private void MainWindow_OnClosed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

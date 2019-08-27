@@ -38,5 +38,16 @@ namespace XIVLauncher.Windows
 
             Close();
         }
+
+        private void AdminCheckBox_OnChecked(object sender, RoutedEventArgs e)
+        {
+            KillCheckBox.IsEnabled = false;
+            KillCheckBox.IsChecked = false;
+        }
+
+        private void AdminCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            KillCheckBox.IsEnabled = true;
+        }
     }
 }
