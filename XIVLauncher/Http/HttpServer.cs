@@ -35,10 +35,10 @@ namespace XIVLauncher.Http
 
                 var client = _listener.AcceptTcpClient();
 
-                var networkStream = client.GetStream();
-
                 while (client.Connected)
                 {
+                    var networkStream = client.GetStream();
+
                     var message = new byte[1024];
                     networkStream.Read(message, 0, message.Length);
 
@@ -46,6 +46,8 @@ namespace XIVLauncher.Http
                     Debug.WriteLine(Encoding.Default.GetString(message));
 
                     networkStream.Write(httpResponse, 0, httpResponse.Length);
+
+                    networkStream.Close(3);
 
                     GetReceived?.Invoke(this, new HttpServerGetEvent
                     {
