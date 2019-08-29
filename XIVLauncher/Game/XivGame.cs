@@ -66,7 +66,7 @@ namespace XIVLauncher.Game
 
                 if (!loginResult.Playable)
                 {
-                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to enable Steam integration in Settings->Game.", "Error",
+                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to enable Steam integration in Settings->Game.\nIf Auto-Login is enabled, hold shift while starting to access settings.", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
@@ -118,17 +118,6 @@ namespace XIVLauncher.Game
             {
                 var game = new Process {StartInfo = {UseShellExecute = false}};
 
-                if (isSteam)
-                {
-                    SteamNative.Initialize();
-
-                    if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
-                        Log.Information("Steam initialized.");
-
-                    // This environment variable seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
-                    game.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
-                }
-
                 if (Settings.IsDX11())
                     game.StartInfo.FileName = Settings.GamePath + "/game/ffxiv_dx11.exe";
                 else
@@ -137,6 +126,18 @@ namespace XIVLauncher.Game
                 game.StartInfo.Arguments =
                     $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGameVer()}";
                 game.StartInfo.Arguments += " " + additionalArguments;
+
+                if (isSteam)
+                {
+                    SteamNative.Initialize();
+
+                    if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
+                        Log.Information("Steam initialized.");
+
+                    // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
+                    game.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
+                    game.StartInfo.Arguments += " IsSteam=1";
+                }
 
                 /*
                 var ticks = (uint) Environment.TickCount;
