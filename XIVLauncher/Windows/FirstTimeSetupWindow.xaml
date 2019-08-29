@@ -28,7 +28,7 @@
                         It should contain the folders "game" and "boot".
                     </TextBlock>
                     <components:FolderEntry x:Uid="GamePathEntry" x:Name="GamePathEntry" Description="Select a folder" Margin="10,0,0,60" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"/>
-                    <TextBlock x:Uid="TextBlock_7" Margin="10,110,0,0">Please check this box if you are usually launching the game using Steam.</TextBlock>
+                    <TextBlock x:Uid="TextBlock_7" Margin="10,110,0,0" Foreground="{DynamicResource MaterialDesignBody}">Please check this box if you are usually launching the game using Steam.</TextBlock>
                     <CheckBox x:Uid="SteamCheckBox" x:Name="SteamCheckBox" Content="Enable Steam integration" HorizontalAlignment="Left" Margin="10,75,0,0" Foreground="{DynamicResource MaterialDesignBody}"/>
                     <Button x:Uid="Button_1" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
