@@ -76,6 +76,7 @@ namespace XIVLauncher.Windows
                 Settings.SetDx11(Dx11RadioButton.IsChecked == true);
                 Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
                 Settings.SetInGameAddonEnabled(HooksCheckBox.IsChecked == true);
+                Settings.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
 
                 var addonList = new List<AddonEntry>
                 {

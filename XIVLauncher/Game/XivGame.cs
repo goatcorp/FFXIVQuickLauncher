@@ -116,7 +116,7 @@ namespace XIVLauncher.Game
         {
             try
             {
-                var game = new Process();
+                var game = new Process {StartInfo = {UseShellExecute = false}};
 
                 if (isSteam)
                 {
