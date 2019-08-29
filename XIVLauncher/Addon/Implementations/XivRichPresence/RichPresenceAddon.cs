@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using DiscordRPC;
+using Serilog;
 using XIVLauncher.Addon.Implementations.XivRichPresence;
 
 namespace XIVLauncher.Addon
@@ -47,74 +48,81 @@ namespace XIVLauncher.Addon
                 return;
 
             CheckManualInstall();
-            var game = new Nhaama.FFXIV.Game(_gameProcess);
-
-            var discordManager = new DiscordPresenceManager(DefaultPresence, ClientID);
-            discordManager.SetPresence(DefaultPresence);
-
-            Serilog.Log.Information("RichPresence DoWork started.");
-
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                game.Update();
+                var game = new Nhaama.FFXIV.Game(_gameProcess);
 
-                if (game.ActorTable == null)
+                var discordManager = new DiscordPresenceManager(DefaultPresence, ClientID);
+                discordManager.SetPresence(DefaultPresence);
+
+                Log.Information("RichPresence DoWork started.");
+
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    discordManager.SetPresence(DefaultPresence);
-                    continue;
-                }
+                    game.Update();
 
-                if (game.ActorTable.Length > 0)
-                {
-                    var player = game.ActorTable[0];
-
-                    if(player.ActorID == 0)
+                    if (game.ActorTable == null)
                     {
                         discordManager.SetPresence(DefaultPresence);
                         continue;
                     }
 
-                    var territoryType = game.TerritoryType;
-
-                    var loadingImageKey = await XivApi.GetLoadingImageKeyForTerritoryType(territoryType);
-
-                    var largeImageKey = $"li_{loadingImageKey}";
-
-                    var fcName = player.CompanyTag;
-
-                    if (fcName != string.Empty)
+                    if (game.ActorTable.Length > 0)
                     {
-                        _lastFc = fcName;
-                        fcName = $" <{fcName}>";
-                    }
-                    else if (_lastFc != string.Empty)
-                    {
-                        fcName = $" <{_lastFc}>";
-                    }
+                        var player = game.ActorTable[0];
 
-                    var worldName = await XivApi.GetNameForWorld(player.World);
-
-                    if (player.World != player.HomeWorld)
-                        worldName = $"{worldName} (🏠{await XivApi.GetNameForWorld(player.HomeWorld)})";
-
-                    discordManager.SetPresence(new RichPresence
-                    {
-                        Details = $"{player.Name}{fcName}",
-                        State = worldName,
-                        Assets = new Assets
+                        if (player.ActorID == 0)
                         {
-                            LargeImageKey = largeImageKey,
-                            LargeImageText = await XivApi.GetPlaceNameForTerritoryType(territoryType),
-                            SmallImageKey = $"class_{player.Job}",
-                            SmallImageText = await XivApi.GetJobName(player.Job) + " Lv." + player.Level
+                            discordManager.SetPresence(DefaultPresence);
+                            continue;
                         }
-                    });
-                }
 
-                Thread.Sleep(1000);
+                        var territoryType = game.TerritoryType;
+
+                        var loadingImageKey = await XivApi.GetLoadingImageKeyForTerritoryType(territoryType);
+
+                        var largeImageKey = $"li_{loadingImageKey}";
+
+                        var fcName = player.CompanyTag;
+
+                        if (fcName != string.Empty)
+                        {
+                            _lastFc = fcName;
+                            fcName = $" <{fcName}>";
+                        }
+                        else if (_lastFc != string.Empty)
+                        {
+                            fcName = $" <{_lastFc}>";
+                        }
+
+                        var worldName = await XivApi.GetNameForWorld(player.World);
+
+                        if (player.World != player.HomeWorld)
+                            worldName = $"{worldName} (🏠{await XivApi.GetNameForWorld(player.HomeWorld)})";
+
+                        discordManager.SetPresence(new RichPresence
+                        {
+                            Details = $"{player.Name}{fcName}",
+                            State = worldName,
+                            Assets = new Assets
+                            {
+                                LargeImageKey = largeImageKey,
+                                LargeImageText = await XivApi.GetPlaceNameForTerritoryType(territoryType),
+                                SmallImageKey = $"class_{player.Job}",
+                                SmallImageText = await XivApi.GetJobName(player.Job) + " Lv." + player.Level
+                            }
+                        });
+                    }
+
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Critical error in RichPresence.");
             }
 
-            Serilog.Log.Information("RichPresence exited!");
+            Log.Information("RichPresence exited!");
         }
 
         private bool CheckManualInstall()
