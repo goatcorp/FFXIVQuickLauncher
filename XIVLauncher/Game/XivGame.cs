@@ -40,20 +40,20 @@ namespace XIVLauncher.Game
 
         public UniqueIdCache Cache = new UniqueIdCache();
 
-        public Process Login(string username, string password, string otp, bool isSteam, string additionalArguments, bool useCache)
+        public Process Login(string userName, string password, string otp, bool isSteam, string additionalArguments, bool useCache)
         {
             string uid;
             var needsUpdate = false;
 
             OauthLoginResult loginResult;
 
-            if (!useCache || !Cache.HasValidCache(username))
+            if (!useCache || !Cache.HasValidCache(userName))
             {
                 Log.Information("Cache is invalid or disabled, logging in normally.");
 
                 try
                 {
-                    loginResult = OauthLogin(username, password, otp);
+                    loginResult = OauthLogin(userName, password, otp, isSteam);
                 }
                 catch (Exception ex)
                 {
@@ -66,7 +66,7 @@ namespace XIVLauncher.Game
 
                 if (!loginResult.Playable)
                 {
-                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.", "Error",
+                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to enable Steam integration in Settings->Game.", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
@@ -81,13 +81,13 @@ namespace XIVLauncher.Game
                 (uid, needsUpdate) = Task.Run(() => RegisterSession(loginResult)).Result;
 
                 if (useCache)
-                    Task.Run(() => Cache.AddCachedUid(username, uid, loginResult.Region, loginResult.MaxExpansion))
+                    Task.Run(() => Cache.AddCachedUid(userName, uid, loginResult.Region, loginResult.MaxExpansion))
                         .Wait();
             }
             else
             {
                 Log.Information("Cached UID found, using instead.");
-                var (cachedUid, region, expansionLevel) = Task.Run(() => Cache.GetCachedUid(username)).Result;
+                var (cachedUid, region, expansionLevel) = Task.Run(() => Cache.GetCachedUid(userName)).Result;
                 uid = cachedUid;
 
                 loginResult = new OauthLoginResult
@@ -125,6 +125,7 @@ namespace XIVLauncher.Game
                     if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
                         Log.Information("Steam initialized.");
 
+                    // This environment variable seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
                     game.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
                 }
 
@@ -157,7 +158,6 @@ namespace XIVLauncher.Game
                 game.StartInfo.WorkingDirectory = Path.Combine(Settings.GamePath.FullName, "game");
 
                 game.Start();
-                //Serilog.Log.Information("Starting game process with key ({1}): {0}", argumentBuilder.Build(), key);
 
                 if (isSteam)
                 {
@@ -208,6 +208,11 @@ namespace XIVLauncher.Game
                     nhaamaHandle.Close();
         }
 
+        /// <summary>
+        /// Calculate the hash that is sent to patch-gamever for version verification/tamper protection.
+        /// This same hash is also sent in lobby, but for ffxiv.exe and ffxiv_dx11.exe.
+        /// </summary>
+        /// <returns>String of hashed EXE files.</returns>
         private static string GetBootVersionHash()
         {
             var result = "";
@@ -274,14 +279,14 @@ namespace XIVLauncher.Game
             }
         }
 
-        private string GetStored()
+        private string GetStored(bool isSteam)
         {
             // This is needed to be able to access the login site correctly
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
                 var reply = client.DownloadString(
-                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
+                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=" + (isSteam ? "1" : "0"));
 
                 var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
                 return regex.Matches(reply)[0].Groups["stored"].Value;
@@ -297,21 +302,21 @@ namespace XIVLauncher.Game
             public int MaxExpansion { get; set; }
         }
 
-        private OauthLoginResult OauthLogin(string username, string password, string otp)
+        private OauthLoginResult OauthLogin(string userName, string password, string otp, bool isSteam)
         {
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
                 client.Headers.Add("Referer",
-                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=0");
+                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=" + (isSteam ? "1" : "0"));
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
                 var response =
                     client.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send",
                         new NameValueCollection //get the session id with user credentials
                         {
-                            {"_STORED_", GetStored()},
-                            {"sqexid", username},
+                            {"_STORED_", GetStored(isSteam)},
+                            {"sqexid", userName},
                             {"password", password},
                             {"otppw", otp}
                         });

@@ -162,6 +162,11 @@ namespace XIVLauncher.Windows
 
                 try
                 {
+                    #if DEBUG
+                    HandleLogin(true);
+                    Settings.Save();
+                    return;
+                    #else
                     if (!gateStatus)
                     {
                         MessageBox.Show(
@@ -175,6 +180,7 @@ namespace XIVLauncher.Windows
                         Settings.Save();
                         return;
                     }
+                    #endif
                 }
                 catch (Exception exc)
                 {
@@ -344,6 +350,7 @@ namespace XIVLauncher.Windows
                     // ignored
                 }
 
+                #if !DEBUG
                 if (!gateStatus)
                 {
                     Log.Information("GateStatus is false.");
@@ -354,6 +361,7 @@ namespace XIVLauncher.Windows
 
                     return;
                 }
+                #endif
 
                 var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, otp,
                     Settings.SteamIntegrationEnabled, Settings.AdditionalLaunchArgs, Settings.UniqueIdCacheEnabled);
