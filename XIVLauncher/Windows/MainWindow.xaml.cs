@@ -364,7 +364,7 @@ namespace XIVLauncher.Windows
                 #endif
 
                 var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, otp,
-                    Settings.SteamIntegrationEnabled, Settings.AdditionalLaunchArgs, Settings.UniqueIdCacheEnabled);
+                    Settings.SteamIntegrationEnabled, false, Settings.AdditionalLaunchArgs, Settings.UniqueIdCacheEnabled);
 
                 if (gameProcess == null)
                 {
