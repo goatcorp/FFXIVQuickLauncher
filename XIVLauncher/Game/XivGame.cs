@@ -40,7 +40,7 @@ namespace XIVLauncher.Game
 
         public UniqueIdCache Cache = new UniqueIdCache();
 
-        public Process Login(string userName, string password, string otp, bool isSteam, string additionalArguments, bool useCache)
+        public Process Login(string userName, string password, string otp, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, bool useCache)
         {
             string uid;
             var needsUpdate = false;
@@ -53,7 +53,7 @@ namespace XIVLauncher.Game
 
                 try
                 {
-                    loginResult = OauthLogin(userName, password, otp, isSteam);
+                    loginResult = OauthLogin(userName, password, otp, isSteamIntegrationEnabled);
                 }
                 catch (Exception ex)
                 {
@@ -108,15 +108,36 @@ namespace XIVLauncher.Game
                 return null;
             }
 
-            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion, isSteam, additionalArguments);
+            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion, isSteamIntegrationEnabled, isSteamServiceAccount, additionalArguments);
         }
 
-        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteam, string additionalArguments,
+        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
             bool closeMutants = false)
         {
             try
             {
-                var game = new Process {StartInfo = {UseShellExecute = false}};
+                if (isSteamIntegrationEnabled)
+                {
+                    try
+                    {
+                        SteamNative.Initialize();
+
+                        if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
+                            Log.Information("Steam initialized.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not initialize Steam.");
+                    }
+                }
+
+                var game = new Process {StartInfo =
+                {
+                    UseShellExecute = false,
+                    RedirectStandardError = false,
+                    RedirectStandardInput = false,
+                    RedirectStandardOutput = false
+                }};
 
                 if (Settings.IsDX11())
                     game.StartInfo.FileName = Settings.GamePath + "/game/ffxiv_dx11.exe";
@@ -127,13 +148,8 @@ namespace XIVLauncher.Game
                     $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) Settings.GetLanguage()} ver={GetLocalGameVer()}";
                 game.StartInfo.Arguments += " " + additionalArguments;
 
-                if (isSteam)
+                if (isSteamServiceAccount)
                 {
-                    SteamNative.Initialize();
-
-                    if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
-                        Log.Information("Steam initialized.");
-
                     // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
                     game.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
                     game.StartInfo.Arguments += " IsSteam=1";
@@ -160,10 +176,17 @@ namespace XIVLauncher.Game
 
                 game.Start();
 
-                if (isSteam)
+                if (isSteamIntegrationEnabled)
                 {
-                    SteamApi.Uninitialize();
-                    SteamNative.Uninitialize();
+                    try
+                    {
+                        SteamApi.Uninitialize();
+                        SteamNative.Uninitialize();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not uninitialize Steam.");
+                    }
                 }
 
                 for (var tries = 0; tries < 30; tries++)
