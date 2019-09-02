@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using DiscordRPC;
 using Serilog;
@@ -59,7 +53,16 @@ namespace XIVLauncher.Addon
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    game.Update();
+                    try
+                    {
+                        game.Update();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Information(ex, "Nhaama game data update failed.");
+                        Thread.Sleep(2000);
+                        continue;
+                    }
 
                     if (game.ActorTable == null)
                     {
