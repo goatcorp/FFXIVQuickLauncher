@@ -24,7 +24,7 @@ namespace XIVLauncher.Addon
 
         private static readonly RichPresence DefaultPresence = new RichPresence
         {
-            Details = "Unknown",
+            Details = "In menus",
             State = "",
             Assets = new Assets
             {
