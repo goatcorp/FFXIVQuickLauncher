@@ -18,6 +18,8 @@ namespace XIVLauncher
     {
         public App()
         {
+            var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
+
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a =>
                     a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -34,12 +36,14 @@ namespace XIVLauncher
                         o.Dsn = new Dsn("https://53970fece4974473b84157b45a47e54f@sentry.io/1548116");
                         o.AttachStacktrace = true;
                         o.SendDefaultPii = false; // send PII like the username of the user logged in to the device
+
+                        o.Release = release;
                     })
 #endif
                 .CreateLogger();
 
             Log.Information(
-                $"XIVLauncher started with version {Util.GetAssemblyVersion()}, commit {Util.GetGitHash()}");
+                $"XIVLauncher started as {release}");
         }
 
         private void App_OnStartup(object sender, StartupEventArgs e)
@@ -80,7 +84,7 @@ namespace XIVLauncher
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow
             var accountName = "";
 
-            if (e.Args.Length > 0 && e.Args[0].StartsWith("--accountName="))
+            if (e.Args.Length > 0 && e.Args[0].StartsWith("--account="))
                 accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
             
             Log.Information("Loading MainWindow for account '{0}'", accountName);

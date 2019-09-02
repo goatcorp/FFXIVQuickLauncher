@@ -13,6 +13,7 @@ using AdysTech.CredentialManager;
 using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
 using Serilog;
+using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 using XIVLauncher.Game;
@@ -32,9 +33,8 @@ namespace XIVLauncher.Windows
 
         private Timer _maintenanceQueueTimer;
 
-        private static string AppName = "FINAL FANTASY XIV";
-
         private readonly XivGame _game = new XivGame();
+        private readonly AccountManager _accountManager = new AccountManager();
 
         private bool _isLoggingIn;
 
@@ -46,8 +46,8 @@ namespace XIVLauncher.Windows
 
             if (!string.IsNullOrEmpty(accountName))
             {
-                Title += " - Account: " + accountName;
-                AppName += "-" + accountName;
+                Properties.Settings.Default.CurrentAccount = accountName;
+                Title += " - Account: " + _accountManager.CurrentAccount.UserName;
             }
 
 #if !DEBUG
@@ -145,6 +145,7 @@ namespace XIVLauncher.Windows
 
             if (!gateStatus) WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(242, 24, 24));
 
+            /*
             var savedCredentials = CredentialManager.GetCredentials(AppName);
 
             if (savedCredentials != null)
@@ -155,8 +156,47 @@ namespace XIVLauncher.Windows
                 AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
                 SaveLoginCheckBox.IsChecked = true;
             }
+            */
 
-            if (Settings.IsAutologin() && savedCredentials != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            var version = Util.GetAssemblyVersion();
+            if (Properties.Settings.Default.LastVersion != version)
+            {
+                MessageBox.Show(
+                    $"XIVLauncher was updated to version {version}. This release features some fixes:\r\n\r\n* Added compatibility for SE's new Steam service account policy. If your FFXIV service account is tied to Steam, you must now check the Steam integration checkbox in Settings->Game.\r\n* Fixed some more bugs related to the rewritten addon system.",
+                    "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+
+                Properties.Settings.Default.LastVersion = version;
+                Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
+
+                if (version == "3.4.0.0")
+                {
+                    var savedCredentials = CredentialManager.GetCredentials("FINAL FANTASY XIV");
+
+                    if (savedCredentials != null)
+                    {
+                        _accountManager.AddAccount(new XivAccount(savedCredentials.UserName)
+                        {
+                            Password = savedCredentials.Password,
+                            SavePassword = true,
+                            UseOtp = Settings.NeedsOtp(),
+                            UseSteamServiceAccount = Settings.SteamIntegrationEnabled
+                        });
+
+                        Properties.Settings.Default.CurrentAccount = $"{savedCredentials.UserName}-{Settings.NeedsOtp()}-{Settings.SteamIntegrationEnabled}";;
+                    }
+                }
+
+                Properties.Settings.Default.Save();
+            }
+
+            var savedAccount = _accountManager.CurrentAccount;
+
+            if (savedAccount != null)
+                SwitchAccount(savedAccount, false);
+
+                AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
+
+            if (Settings.IsAutologin() && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Log.Information("Engaging Autologin");
 
@@ -202,18 +242,6 @@ namespace XIVLauncher.Windows
             Task.Run(() => SetupHeadlines());
 
             Settings.LanguageChanged += SetupHeadlines;
-
-            var version = Util.GetAssemblyVersion();
-            if (Properties.Settings.Default.LastVersion != version)
-            {
-                MessageBox.Show(
-                    $"XIVLauncher was updated to version {version}. This release features some fixes:\r\n\r\n* Added compatibility for SE's new Steam service account policy. If your FFXIV service account is tied to Steam, you must now check the Steam integration checkbox in Settings->Game.\r\n* Fixed some more bugs related to the rewritten addon system.",
-                    "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-
-                Properties.Settings.Default.LastVersion = version;
-                Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
-                Properties.Settings.Default.Save();
-            }
 
             Show();
             Activate();
@@ -282,36 +310,40 @@ namespace XIVLauncher.Windows
         {
             var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.UniqueIdCacheEnabled;
 
-            if (SaveLoginCheckBox.IsChecked == true)
+            if (_accountManager.CurrentAccount == null || _accountManager.CurrentAccount.Id != $"{LoginUsername.Text}-{OtpCheckBox.IsChecked == true}-{SteamCheckBox.IsChecked == true}" || _accountManager.CurrentAccount.Password != LoginPassword.Password)
             {
-                Settings.SaveCredentials(AppName, LoginUsername.Text, LoginPassword.Password);
-                Settings.SetNeedsOtp(OtpCheckBox.IsChecked == true);
-
-                if (!autoLogin)
+                var accountToSave = new XivAccount(LoginUsername.Text)
                 {
-                    if (AutoLoginCheckBox.IsChecked == true)
-                    {
-                        var result = MessageBox.Show(
-                            "This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?",
-                            "Enabling Autologin", MessageBoxButton.YesNo);
+                    Password = LoginPassword.Password,
+                    SavePassword = true,
+                    UseOtp = OtpCheckBox.IsChecked == true,
+                    UseSteamServiceAccount = SteamCheckBox.IsChecked == true
+                };
 
-                        if (result == MessageBoxResult.No) AutoLoginCheckBox.IsChecked = false;
-                    }
-                    else
-                    {
-                        AutoLoginCheckBox.IsChecked = false;
-                    }
+                _accountManager.AddAccount(accountToSave);
 
-                    Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
+                Properties.Settings.Default.CurrentAccount = accountToSave.Id;
+            }
+
+            if (!autoLogin)
+            {
+                if (AutoLoginCheckBox.IsChecked == true)
+                {
+                    var result = MessageBox.Show(
+                        "This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?",
+                        "Enabling Autologin", MessageBoxButton.YesNo);
+
+                    if (result == MessageBoxResult.No) AutoLoginCheckBox.IsChecked = false;
+                }
+                else
+                {
+                    AutoLoginCheckBox.IsChecked = false;
                 }
 
-                Settings.Save();
+                Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
             }
-            else
-            {
-                Settings.ResetCredentials(AppName);
-                Settings.Save();
-            }
+
+            Settings.Save();
 
             var otp = "";
             if (OtpCheckBox.IsChecked == true && !hasValidCache)
@@ -364,7 +396,7 @@ namespace XIVLauncher.Windows
                 #endif
 
                 var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, otp,
-                    Settings.SteamIntegrationEnabled, false, Settings.AdditionalLaunchArgs, Settings.UniqueIdCacheEnabled);
+                    Settings.SteamIntegrationEnabled, SteamCheckBox.IsChecked == true, Settings.AdditionalLaunchArgs, Settings.UniqueIdCacheEnabled);
 
                 if (gameProcess == null)
                 {
@@ -578,6 +610,40 @@ namespace XIVLauncher.Windows
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void AccountSwitcherButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var switcher = new AccountSwitcher(_accountManager);
+
+            switcher.WindowStartupLocation = WindowStartupLocation.Manual;
+            var location = AccountSwitcherButton.PointToScreen(new Point(0,0));
+            switcher.Left = location.X + 15;
+            switcher.Top = location.Y + 15;
+
+            switcher.OnAccountSwitchedEventHandler += OnAccountSwitchedEventHandler;
+
+            switcher.Show();
+        }
+
+        private void OnAccountSwitchedEventHandler(object sender, XivAccount e)
+        {
+            SwitchAccount(e, true);
+        }
+
+        private void SwitchAccount(XivAccount account, bool saveAsCurrent)
+        {
+            LoginUsername.Text = account.UserName;
+            LoginPassword.Password = account.Password;
+            OtpCheckBox.IsChecked = account.UseOtp;
+            SteamCheckBox.IsChecked = account.UseSteamServiceAccount;
+            AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
+
+            if (saveAsCurrent)
+            {
+                Properties.Settings.Default.CurrentAccount = account.Id;
+                Properties.Settings.Default.Save();
+            }
         }
     }
 }

@@ -11,9 +11,6 @@
     <Setting Name="Language" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="ExpansionLevel" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
     <Setting Name="NeedsOtp" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -48,6 +45,12 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="AdditionalLaunchArgs" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Accounts" Type="System.String" Scope="User">
+      <Value Profile="(Default)">[]</Value>
+    </Setting>
+    <Setting Name="CurrentAccount" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

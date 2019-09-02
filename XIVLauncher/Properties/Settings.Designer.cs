@@ -61,18 +61,6 @@ namespace XIVLauncher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int ExpansionLevel {
-            get {
-                return ((int)(this["ExpansionLevel"]));
-            }
-            set {
-                this["ExpansionLevel"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool NeedsOtp {
             get {
@@ -212,6 +200,30 @@ namespace XIVLauncher.Properties {
             }
             set {
                 this["AdditionalLaunchArgs"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("[]")]
+        public string Accounts {
+            get {
+                return ((string)(this["Accounts"]));
+            }
+            set {
+                this["Accounts"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CurrentAccount {
+            get {
+                return ((string)(this["CurrentAccount"]));
+            }
+            set {
+                this["CurrentAccount"] = value;
             }
         }
     }

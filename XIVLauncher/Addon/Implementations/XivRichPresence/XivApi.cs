@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CSharp.RuntimeBinder;
@@ -72,15 +74,19 @@ namespace XIVLauncher.Addon.Implementations.XivRichPresence
             return res.NameEnglish_en;
         }
 
+        public static async Task<JObject> GetCharacterSearch(string name, string world)
+        {
+            return await Get("character/search" + $"?name={name}&server={world}");
+        }
+
         public static async Task<dynamic> Get(string endpoint)
         {
             if (CachedRequests.ContainsKey(endpoint))
                 return CachedRequests[endpoint];
 
-            using (var client = new HttpClient())
+            using (var client = new WebClient())
             {
-                var response = await client.GetAsync(URL + endpoint);
-                var result = await response.Content.ReadAsStringAsync();
+                var result = client.DownloadString(URL + endpoint);
 
                 var parsedObject = JObject.Parse(result);
                 CachedRequests.Add(endpoint, parsedObject);

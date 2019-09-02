@@ -155,22 +155,13 @@
               Margin="0,4,0,0"
               VerticalAlignment="Top"
               materialDesign:HintAssist.Hint="Password" />
-            <CheckBox
-              x:Uid="SaveLoginCheckBox" DockPanel.Dock="Top"
-              Content="Save ID and password"
-              HorizontalAlignment="Left"
-              Margin="0,8,0,0"
-              VerticalAlignment="Top"
-              Checked="SaveLoginCheckBox_OnChecked"
-              Unchecked="SaveLoginCheckBox_OnUnchecked"
-              x:Name="SaveLoginCheckBox" />
+
             <CheckBox
               x:Uid="AutoLoginCheckBox" DockPanel.Dock="Top"
               Content="Log in automatically"
               HorizontalAlignment="Left"
-              Margin="0,4,0,0"
+              Margin="0,14,0,0"
               VerticalAlignment="Top"
-              IsEnabled="false"
               x:Name="AutoLoginCheckBox" />
             <CheckBox
               x:Uid="OtpCheckBox" DockPanel.Dock="Top"
@@ -179,13 +170,27 @@
               Margin="0,4,0,0"
               VerticalAlignment="Top"
               x:Name="OtpCheckBox" />
-            <Button
-              x:Uid="Button_2" DockPanel.Dock="Bottom"
-              Content="Log In"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Bottom"
-              Width="142"
-              Click="LoginButton_Click" />
+            <CheckBox
+                x:Uid="SteamCheckBox" DockPanel.Dock="Top"
+                Content="Use Steam service account"
+                HorizontalAlignment="Left"
+                Margin="0,4,0,0"
+                VerticalAlignment="Top"
+                x:Name="SteamCheckBox" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Width="142" Margin="0,0,0,0" DockPanel.Dock="Bottom">
+                <Button
+                    x:Uid="Button_2" 
+                    Content="Log In"
+                    Click="LoginButton_Click" Margin="0,0,7,0" Width="84" ToolTip="Log in with the provided credentials"/>
+                <Button x:Uid="AccountSwitcherButton" HorizontalAlignment="Left"
+                        x:Name="AccountSwitcherButton" Margin="0 0 0 0" Background="#FF0096DB" BorderBrush="#FF0096DB" ToolTip="Open Account Switcher" Click="AccountSwitcherButton_OnClick">
+                    <StackPanel x:Uid="StackPanel_11" Orientation="Horizontal" Margin="0">
+                        <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_3" Kind="AccountGroup"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
           </DockPanel>
         </materialDesign:Card>
       </Grid>
