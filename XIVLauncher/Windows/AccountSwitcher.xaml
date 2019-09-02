@@ -23,6 +23,7 @@
                             <MenuItem x:Uid="MenuItem_1" Header="Set profile picture" Click="SetProfilePicture_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem x:Uid="MenuItem_2" Header="Create desktop shortcut" Click="CreateDesktopShortcut_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem x:Uid="MenuItem_3" Header="Remove" Click="RemoveAccount_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <MenuItem x:Uid="MenuItem_4" IsCheckable="True" Header="Don't save password" Checked="DontSavePassword_OnChecked" Unchecked="DontSavePassword_OnUnchecked" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
 

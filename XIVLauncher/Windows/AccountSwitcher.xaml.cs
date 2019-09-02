@@ -195,5 +195,26 @@ namespace XIVLauncher.Windows
 
             RefreshEntries();
         }
+
+        private void DontSavePassword_OnChecked(object sender, RoutedEventArgs e)
+        {
+            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+                return;
+
+            var account = _accountManager.Accounts.First(a => a.Id == selectedEntry.Account.Id);
+            account.SavePassword = false;
+            account.Password = string.Empty;
+            _accountManager.Save();
+        }
+
+        private void DontSavePassword_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+                return;
+
+            var account = _accountManager.Accounts.First(a => a.Id == selectedEntry.Account.Id);
+            account.SavePassword = true;
+            _accountManager.Save();
+        }
     }
 }

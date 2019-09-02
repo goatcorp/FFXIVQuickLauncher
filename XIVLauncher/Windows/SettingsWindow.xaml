@@ -171,63 +171,82 @@
                 </Grid>
             </TabItem>
             <TabItem x:Uid="TabItem_6" Header="About">
-                <Grid x:Uid="Grid_6">
-                    <StackPanel x:Uid="StackPanel_9" Margin="10,10,10,0">
-                        <TextBlock x:Uid="VersionLabel" HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="VersionLabel" Foreground="{DynamicResource MaterialDesignBody}">
-                            FFXIVQuickLauncher
-                        </TextBlock>
-                        <TextBlock x:Uid="TextBlock_8" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Made by goat. Special thanks to Mino, LeonBlade and Roy!
-                            <LineBreak x:Uid="LineBreak_4"/>
-                            <LineBreak x:Uid="LineBreak_5"/>
-                            Any issues or requests? Join the discord or create an issue on GitHub!
-                        </TextBlock>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid x:Uid="Grid_6">
+                        <StackPanel x:Uid="StackPanel_9" Margin="10,10,10,0">
+                            <TextBlock x:Uid="VersionLabel" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                       x:Name="VersionLabel" Foreground="{DynamicResource MaterialDesignBody}">
+                                FFXIVQuickLauncher
+                            </TextBlock>
+                            <TextBlock x:Uid="TextBlock_8" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                       Foreground="{DynamicResource MaterialDesignBody}">
+                                Made by goat.
+                                <LineBreak/> 
+                                Special thanks to Mino, LeonBlade, Roy and the angry paissa artist!
+                                <LineBreak x:Uid="LineBreak_4" />
+                                <LineBreak x:Uid="LineBreak_5" />
+                                Any issues or requests? Join the discord or create an issue on GitHub!
+                            </TextBlock>
 
-                        <Button x:Uid="DiscordButton" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                                x:Name="DiscordButton" Click="DiscordButton_OnClick"  Margin="0,10,0,0">
-                            <StackPanel x:Uid="StackPanel_10" Orientation="Horizontal">
-                                <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Discord" />
-                                <TextBlock x:Uid="TextBlock_9" Margin="8 0 0 0" VerticalAlignment="Center">Join Discord</TextBlock>
-                            </StackPanel>
-                        </Button>
-                        <Button x:Uid="GitHubButton" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                                x:Name="GitHubButton" Click="GitHubButton_OnClick" Margin="0 0 0 0">
-                            <StackPanel x:Uid="StackPanel_11" Orientation="Horizontal">
-                                <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_3" Kind="GithubCircle" />
-                                <TextBlock x:Uid="TextBlock_10" Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
-                            </StackPanel>
-                        </Button>
-                        <Button x:Uid="BackupToolButton" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                                x:Name="BackupToolButton" Click="BackupToolButton_OnClick">
-                            <StackPanel x:Uid="StackPanel_12" Orientation="Horizontal">
-                                <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_4" Kind="Wrench" />
-                                <TextBlock x:Uid="TextBlock_11" Margin="8 0 0 0" VerticalAlignment="Center">Start Backup Tool</TextBlock>
-                            </StackPanel>
-                        </Button>
-                        <Button x:Uid="OriginalLauncherButton" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                                x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
-                            <StackPanel x:Uid="StackPanel_13" Orientation="Horizontal">
-                                <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_5" Kind="Launch" />
-                                <TextBlock x:Uid="TextBlock_12" Margin="8 0 0 0" VerticalAlignment="Center">Start Original Launcher</TextBlock>
-                            </StackPanel>
-                        </Button>
-                        <StackPanel x:Uid="StackPanel_14" Orientation="Horizontal">
-                            <CheckBox x:Uid="UidCacheCheckBox" x:Name="UidCacheCheckBox" Content="Enable experimental UID cache(might behave weirdly)" HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray"/>
-                            <Button x:Uid="Button_7" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                                    Click="ResetCacheButton_OnClick" Margin="0 0 0 0">
-                                <StackPanel x:Uid="StackPanel_15" Orientation="Horizontal">
-                                    <TextBlock x:Uid="TextBlock_13" Margin="0 0 0 0" VerticalAlignment="Center" Foreground="DarkGray" FontSize="11">Reset</TextBlock>
+                            <Button x:Uid="DiscordButton" Style="{DynamicResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Left"
+                                    x:Name="DiscordButton" Click="DiscordButton_OnClick" Margin="0,10,0,0">
+                                <StackPanel x:Uid="StackPanel_10" Orientation="Horizontal">
+                                    <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Discord" />
+                                    <TextBlock x:Uid="TextBlock_9" Margin="8 0 0 0" VerticalAlignment="Center">Join Discord</TextBlock>
                                 </StackPanel>
                             </Button>
+                            <Button x:Uid="GitHubButton" Style="{DynamicResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Left"
+                                    x:Name="GitHubButton" Click="GitHubButton_OnClick" Margin="0 0 0 0">
+                                <StackPanel x:Uid="StackPanel_11" Orientation="Horizontal">
+                                    <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_3" Kind="GithubCircle" />
+                                    <TextBlock x:Uid="TextBlock_10" Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Uid="BackupToolButton" Style="{DynamicResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Left"
+                                    x:Name="BackupToolButton" Click="BackupToolButton_OnClick">
+                                <StackPanel x:Uid="StackPanel_12" Orientation="Horizontal">
+                                    <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_4" Kind="Wrench" />
+                                    <TextBlock x:Uid="TextBlock_11" Margin="8 0 0 0" VerticalAlignment="Center">Start Backup Tool</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Uid="OriginalLauncherButton" Style="{DynamicResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Left"
+                                    x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
+                                <StackPanel x:Uid="StackPanel_13" Orientation="Horizontal">
+                                    <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_5" Kind="Launch" />
+                                    <TextBlock x:Uid="TextBlock_12" Margin="8 0 0 0" VerticalAlignment="Center">Start Original Launcher</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <StackPanel x:Uid="StackPanel_14" Orientation="Horizontal">
+                                <CheckBox x:Uid="UidCacheCheckBox" x:Name="UidCacheCheckBox"
+                                          Content="Enable experimental UID cache(might behave weirdly)"
+                                          HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
+                                <Button x:Uid="Button_7" Style="{DynamicResource MaterialDesignFlatButton}"
+                                        HorizontalAlignment="Left"
+                                        Click="ResetCacheButton_OnClick" Margin="0 0 0 0">
+                                    <StackPanel x:Uid="StackPanel_15" Orientation="Horizontal">
+                                        <TextBlock x:Uid="TextBlock_13" Margin="0 0 0 0" VerticalAlignment="Center"
+                                                   Foreground="DarkGray" FontSize="11">
+                                            Reset
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
 
-                    <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/eye.png" Width="150" HorizontalAlignment="Left" Margin="390,0,0,0" Opacity="0.8" RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Grid>
+                        <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/eye.png" Width="150"
+                               HorizontalAlignment="Left" Margin="390,0,0,0" Opacity="0.8"
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
         </dragablz:TabablzControl>
         <Button x:Uid="Button_8" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                ToolTip="Save Settings" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="AcceptButton_Click">
+                ToolTip="Save Settings" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
+                Click="AcceptButton_Click">
             <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_6" Kind="Check" Height="24" Width="24" />
         </Button>
     </Grid>

@@ -307,7 +307,12 @@ namespace XIVLauncher.Windows
         {
             var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.UniqueIdCacheEnabled;
 
-            if (_accountManager.CurrentAccount == null || _accountManager.CurrentAccount.Id != $"{LoginUsername.Text}-{OtpCheckBox.IsChecked == true}-{SteamCheckBox.IsChecked == true}" || _accountManager.CurrentAccount.Password != LoginPassword.Password)
+            if (_accountManager.CurrentAccount != null && _accountManager.CurrentAccount.Password != LoginPassword.Password && _accountManager.CurrentAccount.SavePassword)
+            {
+                _accountManager.UpdatePassword(_accountManager.CurrentAccount, LoginPassword.Password);
+            }
+
+            if (_accountManager.CurrentAccount == null || _accountManager.CurrentAccount.Id != $"{LoginUsername.Text}-{OtpCheckBox.IsChecked == true}-{SteamCheckBox.IsChecked == true}")
             {
                 var accountToSave = new XivAccount(LoginUsername.Text)
                 {

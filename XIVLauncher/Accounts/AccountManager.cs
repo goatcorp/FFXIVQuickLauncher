@@ -34,6 +34,12 @@ namespace XIVLauncher.Accounts
             Save();
         }
 
+        public void UpdatePassword(XivAccount account, string password)
+        {
+            var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);
+            existingAccount.Password = password;
+        }
+
         public void AddAccount(XivAccount account)
         {
             var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);
