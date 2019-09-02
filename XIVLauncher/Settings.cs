@@ -17,24 +17,6 @@ namespace XIVLauncher
     {
         public static Action LanguageChanged;
 
-        public static NetworkCredential GetCredentials(string app)
-        {
-            return CredentialManager.GetCredentials(app);
-        }
-
-        public static void SaveCredentials(string app, string username, string password)
-        {
-            CredentialManager.SaveCredentials(app, new NetworkCredential(username, password));
-        }
-
-        public static void ResetCredentials(string app)
-        {
-            if (CredentialManager.GetCredentials(app) != null)
-            {
-                CredentialManager.RemoveCredentials(app);
-            }
-        }
-
         public static DirectoryInfo GamePath
         {
             get
