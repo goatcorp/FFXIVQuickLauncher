@@ -79,7 +79,14 @@ namespace XIVLauncher.Addon
 
                         var territoryType = game.TerritoryType;
 
-                        var loadingImageKey = await XivApi.GetLoadingImageKeyForTerritoryType(territoryType);
+                        var placeName = "Hydaelyn";
+                        var loadingImageKey = 1;
+                        if (territoryType != 0)
+                        {
+                            placeName = await XivApi.GetPlaceNameForTerritoryType(territoryType);
+                            loadingImageKey = await XivApi.GetLoadingImageKeyForTerritoryType(territoryType);
+                        }
+                        
 
                         var largeImageKey = $"li_{loadingImageKey}";
 
@@ -107,7 +114,7 @@ namespace XIVLauncher.Addon
                             Assets = new Assets
                             {
                                 LargeImageKey = largeImageKey,
-                                LargeImageText = await XivApi.GetPlaceNameForTerritoryType(territoryType),
+                                LargeImageText = placeName,
                                 SmallImageKey = $"class_{player.Job}",
                                 SmallImageText = await XivApi.GetJobName(player.Job) + " Lv." + player.Level
                             }
