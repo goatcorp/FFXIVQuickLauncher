@@ -47,13 +47,17 @@ namespace XIVLauncher.Game
 
             OauthLoginResult loginResult;
 
+            Log.Information($"XivGame::Login(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments}, cache:{useCache})");
+
             if (!useCache || !Cache.HasValidCache(userName))
             {
                 Log.Information("Cache is invalid or disabled, logging in normally.");
 
                 try
                 {
-                    loginResult = OauthLogin(userName, password, otp, isSteamIntegrationEnabled);
+                    loginResult = OauthLogin(userName, password, otp, isSteamServiceAccount);
+
+                    Log.Information($"OAuth login successful - playable:{loginResult.Playable} terms:{loginResult.TermsAccepted} region:{loginResult.Region} expack:{loginResult.MaxExpansion}");
                 }
                 catch (Exception ex)
                 {
@@ -346,6 +350,8 @@ namespace XIVLauncher.Game
                         });
 
                 var reply = Encoding.UTF8.GetString(response);
+
+                Log.Information(reply);
 
                 var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
                 var matches = regex.Matches(reply);

@@ -402,7 +402,7 @@ namespace XIVLauncher.Windows
 
                 if (gameProcess == null)
                 {
-                    Log.Error("GameProcess was null...");
+                    Log.Information("GameProcess was null...");
                     _isLoggingIn = false;
                     return;
                 }
