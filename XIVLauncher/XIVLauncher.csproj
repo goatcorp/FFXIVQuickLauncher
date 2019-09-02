@@ -176,6 +176,7 @@
     <Compile Include="Dalamud\XivChatType.cs" />
     <Compile Include="Encryption\ArgumentBuilder.cs" />
     <Compile Include="Encryption\Blowfish.cs" />
+    <Compile Include="Game\OauthLoginException.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\OtpListener.cs" />
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
