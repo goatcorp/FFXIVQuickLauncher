@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher.Game
 {
-    class OauthLoginException
+    [Serializable]
+    class OauthLoginException : Exception
     {
+        public OauthLoginException(string message) : base(message)
+        {
+        }
     }
 }

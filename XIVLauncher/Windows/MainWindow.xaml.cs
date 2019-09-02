@@ -451,13 +451,6 @@ namespace XIVLauncher.Windows
                 });
                 watchThread.Start();
             }
-            catch (OauthLoginException oauthException)
-            {
-                MessageBox.Show(
-                    "Could not log into this Square Enix account. Please check your login information and OTP.",
-                    "XIVLauncher login error", MessageBoxButton.OK, MessageBoxImage.Hand);
-                Serilog.Log.Information(oauthException, "Oauth login failed.");
-            }
             catch (Exception ex)
             {
                 new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();

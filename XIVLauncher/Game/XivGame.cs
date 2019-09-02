@@ -57,7 +57,7 @@ namespace XIVLauncher.Game
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("OAuth login failed.", ex);
+                    Log.Information(ex, "OAuth login failed.");
                     MessageBox.Show(
                         "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.",
                         "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -351,7 +351,7 @@ namespace XIVLauncher.Game
                 var matches = regex.Matches(reply);
 
                 if (matches.Count == 0)
-                    throw new Exception("Could not log in to oauth. Result: " + reply);
+                    throw new OauthLoginException("Could not log in to oauth. Result: " + reply);
 
                 var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
 
