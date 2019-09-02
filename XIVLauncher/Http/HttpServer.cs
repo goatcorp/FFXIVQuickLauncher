@@ -59,7 +59,7 @@ namespace XIVLauncher.Http
             }
             catch (Exception)
             {
-                Serilog.Log.Error("HttpClient Start did not end cleanly.");
+                //Serilog.Log.Error("HttpClient Start did not end cleanly.");
             }
         }
 

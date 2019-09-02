@@ -47,9 +47,9 @@ namespace XIVLauncher.Windows
             if (!string.IsNullOrEmpty(accountName))
             {
                 Properties.Settings.Default.CurrentAccount = accountName;
-                Title += " - Account: " + _accountManager.CurrentAccount.UserName;
             }
 
+            new ChangelogWindow().ShowDialog();
 #if !DEBUG
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
@@ -194,11 +194,11 @@ namespace XIVLauncher.Windows
             if (savedAccount != null)
                 SwitchAccount(savedAccount, false);
 
-                AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
+            AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
 
             if (Settings.IsAutologin() && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
-                Log.Information("Engaging Autologin");
+                Log.Information("Engaging Autologin...");
 
                 try
                 {
