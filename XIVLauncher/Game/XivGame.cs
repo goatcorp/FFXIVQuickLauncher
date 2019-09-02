@@ -70,7 +70,7 @@ namespace XIVLauncher.Game
 
                 if (!loginResult.Playable)
                 {
-                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to enable Steam integration in Settings->Game.\nIf Auto-Login is enabled, hold shift while starting to access settings.", "Error",
+                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
