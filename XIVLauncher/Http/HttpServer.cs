@@ -17,6 +17,8 @@ namespace XIVLauncher.Http
 
         public EventHandler<HttpServerGetEvent> GetReceived;
 
+        private bool _isRunning = false;
+
         public class HttpServerGetEvent
         {
             public string Path { get; set; }
@@ -32,30 +34,40 @@ namespace XIVLauncher.Http
             try
             {
                 _listener.Start();
+                _isRunning = true;
 
-                var client = _listener.AcceptTcpClient();
-
-                while (client.Connected)
+                while (_isRunning)
                 {
-                    var networkStream = client.GetStream();
-
-                    var message = new byte[1024];
-                    networkStream.Read(message, 0, message.Length);
-
-                    var messageString = Encoding.Default.GetString(message);
-                    Debug.WriteLine(Encoding.Default.GetString(message));
-
-                    networkStream.Write(httpResponse, 0, httpResponse.Length);
-
-                    networkStream.Close(3);
-
-                    GetReceived?.Invoke(this, new HttpServerGetEvent
+                    if (!_listener.Pending())
                     {
-                        Path = Regex.Match(messageString, "GET (?<url>.+) HTTP").Groups["url"].Value
-                    });
-                }
+                        Thread.Sleep(200);
+                        continue;
+                    }
 
-                client.Close();
+                    var client = _listener.AcceptTcpClient();
+
+                    while (client.Connected)
+                    {
+                        var networkStream = client.GetStream();
+
+                        var message = new byte[1024];
+                        networkStream.Read(message, 0, message.Length);
+
+                        var messageString = Encoding.Default.GetString(message);
+                        Debug.WriteLine(Encoding.Default.GetString(message));
+
+                        networkStream.Write(httpResponse, 0, httpResponse.Length);
+
+                        networkStream.Close(3);
+
+                        GetReceived?.Invoke(this, new HttpServerGetEvent
+                        {
+                            Path = Regex.Match(messageString, "GET (?<url>.+) HTTP").Groups["url"].Value
+                        });
+                    }
+
+                    client.Close();
+                }
             }
             catch (Exception)
             {
@@ -65,6 +77,7 @@ namespace XIVLauncher.Http
 
         public void Stop()
         {
+            _isRunning = false;
             _listener.Stop();
         }
     }

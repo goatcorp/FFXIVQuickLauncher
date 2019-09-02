@@ -49,7 +49,6 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
 
-            new ChangelogWindow().ShowDialog();
 #if !DEBUG
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
@@ -161,9 +160,7 @@ namespace XIVLauncher.Windows
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
             {
-                MessageBox.Show(
-                    $"XIVLauncher was updated to version {version}. This release features some fixes:\r\n\r\n* Added compatibility for SE's new Steam service account policy. If your FFXIV service account is tied to Steam, you must now check the Steam integration checkbox in Settings->Game.\r\n* Fixed some more bugs related to the rewritten addon system.",
-                    "XIVLauncher updated!", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                new ChangelogWindow().ShowDialog();
 
                 Properties.Settings.Default.LastVersion = version;
                 Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
