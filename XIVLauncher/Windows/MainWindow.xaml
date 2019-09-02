@@ -177,7 +177,7 @@
                 Margin="0,4,0,0"
                 VerticalAlignment="Top"
                 x:Name="SteamCheckBox" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+            <StackPanel x:Uid="StackPanel_12" Orientation="Horizontal" HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         Width="142" Margin="0,0,0,0" DockPanel.Dock="Bottom">
                 <Button
@@ -187,7 +187,7 @@
                 <Button x:Uid="AccountSwitcherButton" HorizontalAlignment="Left"
                         x:Name="AccountSwitcherButton" Margin="0 0 0 0" Background="#FF0096DB" BorderBrush="#FF0096DB" ToolTip="Open Account Switcher" Click="AccountSwitcherButton_OnClick">
                     <StackPanel x:Uid="StackPanel_11" Orientation="Horizontal" Margin="0">
-                        <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_3" Kind="AccountGroup"/>
+                        <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_4" Kind="AccountGroup"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

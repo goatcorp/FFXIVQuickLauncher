@@ -45,7 +45,7 @@ namespace XIVLauncher.Windows
 
             LaunchArgsTextBox.Text = Settings.AdditionalLaunchArgs;
 
-            VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash();
+            VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
         }
 
         private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)

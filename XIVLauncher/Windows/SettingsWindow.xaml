@@ -171,7 +171,7 @@
                 </Grid>
             </TabItem>
             <TabItem x:Uid="TabItem_6" Header="About">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer x:Uid="ScrollViewer_2" VerticalScrollBarVisibility="Auto">
                     <Grid x:Uid="Grid_6">
                         <StackPanel x:Uid="StackPanel_9" Margin="10,10,10,0">
                             <TextBlock x:Uid="VersionLabel" HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -181,7 +181,7 @@
                             <TextBlock x:Uid="TextBlock_8" HorizontalAlignment="Left" VerticalAlignment="Top"
                                        Foreground="{DynamicResource MaterialDesignBody}">
                                 Made by goat.
-                                <LineBreak/> 
+                                <LineBreak x:Uid="LineBreak_6"/> 
                                 Special thanks to Mino, LeonBlade, Roy and the angry paissa artist!
                                 <LineBreak x:Uid="LineBreak_4" />
                                 <LineBreak x:Uid="LineBreak_5" />

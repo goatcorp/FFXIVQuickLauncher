@@ -28,24 +28,24 @@
                     </ListView.ContextMenu>
 
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Style x:Uid="Style_2" TargetType="ListBoxItem">
+                            <Setter x:Uid="Setter_3" Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
               <DataTemplate x:Uid="SingleLineDataTemplate" x:Name="SingleLineDataTemplate" DataType="accounts:AccountSwitcherEntry">
-                  <Grid>
+                  <Grid x:Uid="Grid_2">
                       <Grid.ColumnDefinitions>
-                          <ColumnDefinition Width="Auto" />
-                          <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="Auto" />
+                          <ColumnDefinition x:Uid="ColumnDefinition_1" Width="Auto" />
+                          <ColumnDefinition x:Uid="ColumnDefinition_2" Width="*" />
+                          <ColumnDefinition x:Uid="ColumnDefinition_3" Width="Auto" />
                       </Grid.ColumnDefinitions>
-                      <StackPanel x:Uid="StackPanel_1" Orientation="Horizontal" Height="42">
-                          <Image Source="{Binding ProfileImage}"></Image>
+                      <StackPanel x:Uid="StackPanel_2" Orientation="Horizontal" Height="42">
+                          <Image x:Uid="Image_1" Source="{Binding ProfileImage}"></Image>
                           <TextBlock x:Uid="TextBlock_1" Text="{Binding Account.UserName}" VerticalAlignment="Center" Margin="12,0,0,0" />
                       </StackPanel>
 
-                      <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                      <StackPanel x:Uid="StackPanel_3" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
                           <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_1" Height="20" Width="20"
                                                    Margin="0,0,0,0" HorizontalAlignment="Right"
                                                    VerticalAlignment="Center">
@@ -59,7 +59,7 @@
                                           </DataTrigger>
                                           <DataTrigger x:Uid="DataTrigger_2"
                                                        Binding="{Binding Account.UseSteamServiceAccount}" Value="False">
-                                              <Setter x:Uid="Setter_2" Property="Visibility" Value="Hidden" />
+                                              <Setter x:Uid="Setter_4" Property="Visibility" Value="Hidden" />
                                           </DataTrigger>
                                       </Style.Triggers>
                                   </Style>

@@ -18,6 +18,10 @@ namespace XIVLauncher
     {
         public App()
         {
+            var culture = new System.Globalization.CultureInfo("de-DE");
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
             Log.Logger = new LoggerConfiguration()
