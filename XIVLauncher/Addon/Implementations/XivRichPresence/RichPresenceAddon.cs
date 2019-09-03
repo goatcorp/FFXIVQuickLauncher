@@ -42,11 +42,13 @@ namespace XIVLauncher.Addon
                 return;
 
             CheckManualInstall();
+
+            var discordManager = new DiscordPresenceManager(DefaultPresence, ClientID);
+
             try
             {
                 var game = new Nhaama.FFXIV.Game(_gameProcess);
 
-                var discordManager = new DiscordPresenceManager(DefaultPresence, ClientID);
                 discordManager.SetPresence(DefaultPresence);
 
                 Log.Information("RichPresence DoWork started.");
@@ -89,7 +91,7 @@ namespace XIVLauncher.Addon
                             placeName = await XivApi.GetPlaceNameForTerritoryType(territoryType);
                             loadingImageKey = await XivApi.GetLoadingImageKeyForTerritoryType(territoryType);
                         }
-                        
+
 
                         var largeImageKey = $"li_{loadingImageKey}";
 
@@ -130,6 +132,10 @@ namespace XIVLauncher.Addon
             catch (Exception ex)
             {
                 Log.Error(ex, "Critical error in RichPresence.");
+            }
+            finally
+            {
+                discordManager.Deinitialize();
             }
 
             Log.Information("RichPresence exited!");
