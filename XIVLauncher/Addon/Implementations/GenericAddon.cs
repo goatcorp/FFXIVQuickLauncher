@@ -54,11 +54,21 @@ namespace XIVLauncher.Addon
         {
             if (!RunAsAdmin)
             {
-                if (_addonProcess == null)
-                    return;
+                try
+                {
+                    if (_addonProcess == null)
+                        return;
 
-                if (!_addonProcess.HasExited && KillAfterClose)
-                    _addonProcess.Kill();
+                    if (_addonProcess.Handle == IntPtr.Zero)
+                        return;
+
+                    if (!_addonProcess.HasExited && KillAfterClose)
+                        _addonProcess.Kill();
+                }
+                catch(Exception ex)
+                {
+                    Serilog.Log.Information(ex, "Could not kill addon process.");
+                }
             }
         }
 
