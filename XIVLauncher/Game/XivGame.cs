@@ -21,7 +21,7 @@ namespace XIVLauncher.Game
 {
     public class XivGame
     {
-        // The user agent for frontier pages. {0} has to be replaced by a unique computer id and it's checksum
+        // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
 
         private readonly string _userAgent = GenerateUserAgent();
@@ -218,7 +218,7 @@ namespace XIVLauncher.Game
             catch (Exception ex)
             {
                 new ErrorWindow(ex, "Your game path might not be correct. Please check in the settings.",
-                    "XG LaunchGame").Show();
+                    "XG LaunchGame").ShowDialog();
             }
 
             return null;

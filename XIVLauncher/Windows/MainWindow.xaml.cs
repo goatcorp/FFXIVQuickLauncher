@@ -636,10 +636,12 @@ namespace XIVLauncher.Windows
         private void SwitchAccount(XivAccount account, bool saveAsCurrent)
         {
             LoginUsername.Text = account.UserName;
-            LoginPassword.Password = account.Password;
             OtpCheckBox.IsChecked = account.UseOtp;
             SteamCheckBox.IsChecked = account.UseSteamServiceAccount;
             AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
+
+            if (account.SavePassword)
+                LoginPassword.Password = account.Password;
 
             if (saveAsCurrent)
             {

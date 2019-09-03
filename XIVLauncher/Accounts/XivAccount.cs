@@ -22,7 +22,12 @@ namespace XIVLauncher.Accounts
         [JsonIgnore]
         public string Password
         {
-            get => CredentialManager.GetCredentials($"FINAL FANTASY XIV-{UserName}").Password;
+            get
+            {
+                var credentials = CredentialManager.GetCredentials($"FINAL FANTASY XIV-{UserName}");
+
+                return credentials != null ? credentials.Password : string.Empty;
+            }
             set => CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName}", new NetworkCredential
                 {
                     UserName = UserName,
