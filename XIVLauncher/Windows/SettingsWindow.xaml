@@ -172,7 +172,7 @@
                             </StackPanel>
                             <Separator x:Uid="Separator_2"/>
                             <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,20">
-                                Market board data provided by Mogboard.
+                                Market board data provided in cooperation with Universalis.
                             </Label>
                         </StackPanel>
                     </ScrollViewer>
