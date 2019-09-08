@@ -28,7 +28,10 @@ namespace XIVLauncher.Windows
             if (Settings.IsDX11())
                 Dx11RadioButton.IsChecked = true;
             else
+            {
                 Dx9RadioButton.IsChecked = true;
+                Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
+            }
 
             LanguageComboBox.SelectedIndex = (int) Settings.GetLanguage();
             AddonListView.ItemsSource = Settings.GetAddonList();
@@ -353,6 +356,16 @@ namespace XIVLauncher.Windows
             });
 
             window.ShowDialog();
+        }
+
+        private void Dx9RadioButton_OnChecked(object sender, RoutedEventArgs e)
+        {
+            Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
         }
     }
 }

@@ -109,5 +109,15 @@ namespace XIVLauncher.Windows
 
             SetupTabControl.SelectedIndex++;
         }
+
+        private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
+        {
+            Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
+        }
     }
 }
