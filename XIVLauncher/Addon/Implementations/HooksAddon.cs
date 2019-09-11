@@ -82,7 +82,7 @@ namespace XIVLauncher.Addon
                 if (XivGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
                     return;
 
-                if (!File.Exists(Path.Combine(ingamePluginPath, "EasyHook.dll")))
+                if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")))
                 {
                     MessageBox.Show(
                         "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
