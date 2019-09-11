@@ -351,8 +351,6 @@ namespace XIVLauncher.Game
 
                 var reply = Encoding.UTF8.GetString(response);
 
-                Log.Information(reply);
-
                 var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
                 var matches = regex.Matches(reply);
 
