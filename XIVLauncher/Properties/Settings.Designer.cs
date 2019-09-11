@@ -226,5 +226,17 @@ namespace XIVLauncher.Properties {
                 this["CurrentAccount"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OptOutMbUpload {
+            get {
+                return ((bool)(this["OptOutMbUpload"]));
+            }
+            set {
+                this["OptOutMbUpload"] = value;
+            }
+        }
     }
 }

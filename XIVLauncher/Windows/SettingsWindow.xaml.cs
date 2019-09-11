@@ -46,6 +46,8 @@ namespace XIVLauncher.Windows
 
             SteamIntegrationCheckBox.IsChecked = Settings.SteamIntegrationEnabled;
 
+            MbUploadOptOutCheckBox.IsChecked = Settings.OptOutMbUpload;
+
             LaunchArgsTextBox.Text = Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
@@ -68,6 +70,8 @@ namespace XIVLauncher.Windows
             Settings.DiscordFeatureConfig = featureConfig;
 
             Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
+
+            Settings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
 
             Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 

@@ -4,7 +4,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Windows;
 using Dalamud.Discord;
+using Microsoft.WindowsAPICodePack.Shell.Interop;
 using Newtonsoft.Json;
 using XIVLauncher.Game;
 
@@ -23,18 +26,21 @@ namespace XIVLauncher.Addon
 
         private class HooksVersionInfo
         {
-            public string AssemblyVersion { get; set;  }
+            public string AssemblyVersion { get; set; }
             public string SupportedGameVer { get; set; }
         }
 
         [Serializable]
-        public sealed class DalamudStartInfo {
+        public sealed class DalamudStartInfo
+        {
             public string WorkingDirectory;
             public string PluginDirectory;
             public string DefaultPluginDirectory;
             public ClientLanguage Language;
 
             public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
+
+            public bool OptOutMbCollection { get; set; } = false;
         }
 
         public void Run()
@@ -76,12 +82,21 @@ namespace XIVLauncher.Addon
                 if (XivGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
                     return;
 
+                if (!File.Exists(Path.Combine(ingamePluginPath, "EasyHook.dll")))
+                {
+                    MessageBox.Show(
+                        "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 var dalamudConfig = new DalamudStartInfo
                 {
                     Language = Settings.GetLanguage(),
                     DiscordFeatureConfig = Settings.DiscordFeatureConfig,
                     PluginDirectory = ingamePluginPath,
-                    DefaultPluginDirectory = defaultPluginPath
+                    DefaultPluginDirectory = defaultPluginPath,
+                    OptOutMbCollection = Settings.OptOutMbUpload
                 };
 
                 var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(dalamudConfig)));
@@ -155,6 +170,8 @@ namespace XIVLauncher.Addon
 
                 File.Delete(downloadPath);
             }
+
+            Thread.Sleep(1000);
         }
 
         public string Name => "XIVLauncher in-game features";

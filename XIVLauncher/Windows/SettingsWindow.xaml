@@ -171,9 +171,12 @@
 
                             </StackPanel>
                             <Separator x:Uid="Separator_2"/>
-                            <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,20">
+                            <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5">
                                 Market board data provided in cooperation with Universalis.
                             </Label>
+                            <CheckBox x:Uid="MbUploadOptOutCheckBox" x:Name="MbUploadOptOutCheckBox"
+                                      Content="Opt-out of contributing anonymously to crowd-sourced market board information"
+                                      HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="DarkGray" />
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>

@@ -121,6 +121,12 @@ namespace XIVLauncher
             set => Properties.Settings.Default.RmtFilterEnabled = value;
         }
 
+        public static bool OptOutMbUpload
+        {
+            get => Properties.Settings.Default.OptOutMbUpload;
+            set => Properties.Settings.Default.OptOutMbUpload = value;
+        }
+
         public static DiscordFeatureConfiguration DiscordFeatureConfig
         {
             get
