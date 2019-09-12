@@ -33,6 +33,9 @@ namespace Dalamud.Discord
     {
         public string Token { get; set; }
 
+        public bool CheckForDuplicateMessages { get; set; }
+        public int ChatDelayMs { get; set; }
+
         public List<ChatTypeConfiguration> ChatTypeConfigurations { get; set; }
 
         public ChannelConfiguration CfNotificationChannel { get; set; }

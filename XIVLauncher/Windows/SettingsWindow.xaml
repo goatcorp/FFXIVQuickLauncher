@@ -167,8 +167,25 @@
                                 <Button x:Uid="Button_3" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
                                 <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Duty Finder notification channel.">Set Duty Finder notification channel</Button>
                                 <Button x:Uid="Button_5" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetFateNotificationChannel_OnClick" ToolTip="Set the Fate notification channel.">Set Fate notification channel</Button>
-                                <Button x:Uid="Button_6" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
+                                <Button x:Uid="Button_6" Margin="0,0,0,15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
 
+                                <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox" x:Name="CheckForDuplicateMessagesCheckBox"
+                                          HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}">
+                                    <TextBlock Foreground="{DynamicResource MaterialDesignBody}">
+                                        Check for recently sent messages to avoid duplicates.
+                                        <LineBreak/>
+                                        This allows for multiple users to use the same channel as a chat log.
+                                    </TextBlock>
+                                </CheckBox>
+
+                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0">
+                                    Chat Post Delay(in milliseconds)
+                                </Label>
+
+                                <TextBox x:Uid="ChatDelayTextBox" x:Name="ChatDelayTextBox" Margin="10,0,0,0" Width="400"
+                                         VerticalAlignment="Center" HorizontalAlignment="Left"
+                                         Foreground="{DynamicResource MaterialDesignBody}" materialDesign:HintAssist.Hint="Chat Delay">
+                                </TextBox>
                             </StackPanel>
                             <Separator x:Uid="Separator_2"/>
                             <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5">
