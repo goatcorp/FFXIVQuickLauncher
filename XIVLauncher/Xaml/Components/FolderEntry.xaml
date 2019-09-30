@@ -4,6 +4,6 @@
     <DockPanel x:Uid="DockPanel_1">
         <Button x:Uid="Button_1" Margin="5,0,0,0" Padding="0" DockPanel.Dock="Right" Width="35" Click="BrowseFolder">...</Button>
         <TextBox x:Uid="TextBox_1" Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Right" 
-                 Text="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+                 Text="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, UpdateSourceTrigger=PropertyChanged}" />
     </DockPanel>
 </UserControl>

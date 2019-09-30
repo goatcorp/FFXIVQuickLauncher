@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace XIVLauncher.Xaml.Components

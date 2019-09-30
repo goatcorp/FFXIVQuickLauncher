@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Dalamud.Discord;
 using XIVLauncher.Addon;
@@ -18,13 +19,35 @@ namespace XIVLauncher.Windows
     /// <summary>
     ///     Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class SettingsWindow : Window
+    public partial class SettingsWindow : INotifyPropertyChanged
     {
+        private string gamePath;
+
+        /// <summary>
+        /// Gets a value indicating whether the "Run Integrity Checks" button is enabled.
+        /// </summary>
+        public bool IsRunIntegrityCheckPossible =>
+            !string.IsNullOrEmpty(GamePath) && Directory.Exists(GamePath);
+
+        /// <summary>
+        /// Gets or sets the path to the game folder.
+        /// </summary>
+        public string GamePath
+        {
+            get => gamePath;
+            set
+            {
+                gamePath = value;
+                OnPropertyChanged(nameof(GamePath));
+                OnPropertyChanged(nameof(IsRunIntegrityCheckPossible));
+            }
+        }
+
         public SettingsWindow()
         {
             InitializeComponent();
-
-            GamePathEntry.Text = Settings.GamePath.FullName;
+            DataContext = this;
+            GamePath = Settings.GamePath?.FullName;
 
             if (Settings.IsDX11())
                 Dx11RadioButton.IsChecked = true;
@@ -59,7 +82,7 @@ namespace XIVLauncher.Windows
 
         private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            Settings.GamePath = new DirectoryInfo(GamePathEntry.Text);
+            Settings.GamePath = !string.IsNullOrEmpty(GamePath) ? new DirectoryInfo(GamePath) : null;
             Settings.SetDx11(Dx11RadioButton.IsChecked == true);
             Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
             Settings.SetAddonList((List<AddonEntry>) AddonListView.ItemsSource);
@@ -97,12 +120,12 @@ namespace XIVLauncher.Windows
 
         private void BackupToolButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start(Path.Combine(GamePathEntry.Text, "boot", "ffxivconfig.exe"));
+            Process.Start(Path.Combine(GamePath, "boot", "ffxivconfig.exe"));
         }
 
         private void OriginalLauncherButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start(Path.Combine(GamePathEntry.Text, "boot", "ffxivboot.exe"));
+            Process.Start(Path.Combine(GamePath, "boot", "ffxivboot.exe"));
         }
 
         // All of the list handling is very dirty - but i guess it works
@@ -352,7 +375,7 @@ namespace XIVLauncher.Windows
                             File.Delete(verFile);
                             File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
 
-                            Process.Start(Path.Combine(GamePathEntry.Text, "boot", "ffxivboot.exe"));
+                            Process.Start(Path.Combine(GamePath, "boot", "ffxivboot.exe"));
                             Environment.Exit(0);
                         }
 
@@ -377,6 +400,13 @@ namespace XIVLauncher.Windows
         private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
         {
             Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
