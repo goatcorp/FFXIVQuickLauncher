@@ -26,7 +26,7 @@ namespace XIVLauncher
 
                 return new DirectoryInfo(Properties.Settings.Default.GamePath);
             }
-            set => Properties.Settings.Default.GamePath = value.FullName;
+            set => Properties.Settings.Default.GamePath = value?.FullName;
         }
 
         public static ClientLanguage GetLanguage()
