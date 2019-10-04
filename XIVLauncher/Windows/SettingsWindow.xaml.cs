@@ -75,9 +75,14 @@ namespace XIVLauncher.Windows
 
             MbUploadOptOutCheckBox.IsChecked = Settings.OptOutMbUpload;
 
+            CharacterSyncCheckBox.IsChecked = Settings.CharacterSyncEnabled;
+
             LaunchArgsTextBox.Text = Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
+
+            // Gotta do this after setup so we don't fire events yet
+            CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
         }
 
         private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)
@@ -102,6 +107,8 @@ namespace XIVLauncher.Windows
             Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
             Settings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
+
+            Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
             Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
@@ -407,6 +414,11 @@ namespace XIVLauncher.Windows
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void CharacterSyncCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("ATTENTION!!!\n\nThis feature synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten.", "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 }

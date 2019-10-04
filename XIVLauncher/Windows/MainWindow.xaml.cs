@@ -15,6 +15,7 @@ using MaterialDesignThemes.Wpf;
 using Serilog;
 using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
+using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Cache;
 using XIVLauncher.Game;
 using Timer = System.Timers.Timer;
@@ -48,6 +49,9 @@ namespace XIVLauncher.Windows
             {
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
+
+            var asdf = new CharacterSyncAddon() as INotifyAddonAfterClose;
+            asdf.GameClosed();
 
 #if !DEBUG
             AutoUpdater.ShowSkipButton = false;
@@ -411,7 +415,14 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-                    await Task.Run(() => addonMgr.RunAddons(gameProcess, Settings.GetAddonList().Where(x => x.IsEnabled).ToList()));
+                    var addons = Settings.GetAddonList().Where(x => x.IsEnabled).ToList();
+
+                    if (Settings.CharacterSyncEnabled)
+                        addons.Add(new AddonEntry{
+                            Addon = new CharacterSyncAddon()
+                        });
+
+                    await Task.Run(() => addonMgr.RunAddons(gameProcess, addons));
                 }
                 catch (Exception ex)
                 {

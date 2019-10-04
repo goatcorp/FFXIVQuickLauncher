@@ -127,6 +127,12 @@ namespace XIVLauncher
             set => Properties.Settings.Default.OptOutMbUpload = value;
         }
 
+        public static bool CharacterSyncEnabled
+        {
+            get => Properties.Settings.Default.CharacterSyncEnabled;
+            set => Properties.Settings.Default.CharacterSyncEnabled = value;
+        }
+
         public static DiscordFeatureConfiguration DiscordFeatureConfig
         {
             get
