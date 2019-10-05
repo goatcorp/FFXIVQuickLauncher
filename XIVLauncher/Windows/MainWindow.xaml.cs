@@ -414,6 +414,10 @@ namespace XIVLauncher.Windows
                 {
                     var addons = Settings.GetAddonList().Where(x => x.IsEnabled).ToList();
 
+                    addons.Add(new AddonEntry{
+                            Addon = new CharacterBackupAddon()
+                        });
+
                     if (Settings.CharacterSyncEnabled)
                         addons.Add(new AddonEntry{
                             Addon = new CharacterSyncAddon()

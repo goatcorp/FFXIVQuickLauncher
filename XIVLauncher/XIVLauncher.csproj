@@ -162,6 +162,7 @@
     <Compile Include="Accounts\XivAccount.cs" />
     <Compile Include="Addon\AddonEntry.cs" />
     <Compile Include="Addon\AddonManager.cs" />
+    <Compile Include="Addon\Implementations\CharacterBackupAddon.cs" />
     <Compile Include="Addon\Implementations\CharacterSyncAddon.cs" />
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />

@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Sentry;
 using Serilog;
 using Serilog.Events;
+using XIVLauncher.Addon;
+using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Game;
 using XIVLauncher.Windows;
 
@@ -74,6 +76,14 @@ namespace XIVLauncher
                 Environment.Exit(0);
             };
 #endif
+
+            if (e.Args.Length > 0 && e.Args[0] == "--backupNow")
+            {
+                (new CharacterBackupAddon() as INotifyAddonAfterClose).GameClosed();
+
+                Environment.Exit(0);
+                return;
+            }
 
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {
