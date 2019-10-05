@@ -31,9 +31,10 @@ namespace XIVLauncher.Addon.Implementations
 
             Serilog.Log.Information("Found {0} character folders, most up to date one is {1}, syncing now...", orderedByChanges.Count(), lastChanged.Name);
 
-            string[] copyable = { "ADDON", "COMMON", "CONTROL","HOTBAR", "KEYBIND", "LOGFLTR", "MACRO" };
+            string[] copyable = { "ADDON.DAT", "COMMON.DAT", "CONTROL0.DAT", "CONTROL1.DAT", "HOTBAR.DAT", "KEYBIND.DAT", "LOGFLTR.DAT", "MACRO.DAT" };
             var files = lastChanged.GetFiles("*.DAT")
-                .Where(s => copyable.Any(s.StartsWith));
+                .Where(s => copyable.Any(c => c == s.Name));
+
             foreach (var folder in toCopyTo)
             {
                 if (!folder.Name.StartsWith("FFXIV_CHR"))

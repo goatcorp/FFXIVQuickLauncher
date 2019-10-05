@@ -50,9 +50,6 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
 
-            var asdf = new CharacterSyncAddon() as INotifyAddonAfterClose;
-            asdf.GameClosed();
-
 #if !DEBUG
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
