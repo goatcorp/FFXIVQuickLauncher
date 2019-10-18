@@ -26,6 +26,8 @@ namespace XIVLauncher.Windows
         public string Icon { get; set; }
 
         public bool IsEnabled { get; set; }
+
+        public bool IsCustomMessage { get; set; }
     }
 
     public class ClassJobComboBoxEntry
@@ -121,6 +123,16 @@ namespace XIVLauncher.Windows
             EnabledPresets = currentPresets;
 
             CustomCombos = GetPresetList(currentPresets);
+
+            CustomCombos.Add(new CustomComboEntry
+            {
+                ClassJob = 0,
+                Description = "Join our discord to talk about them!",
+                Name = "Any ideas for more custom combos or features?",
+                Icon = "\uE901",
+                IsCustomMessage = true
+            });
+
             ComboListView.ItemsSource = CustomCombos;
             
             var view = CollectionViewSource.GetDefaultView(ComboListView.ItemsSource);
@@ -156,7 +168,7 @@ namespace XIVLauncher.Windows
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var customComboEntry in CustomCombos.Where(customComboEntry => customComboEntry.IsEnabled))
+            foreach (var customComboEntry in CustomCombos.Where(customComboEntry => customComboEntry.IsEnabled && !customComboEntry.IsCustomMessage))
             {
                 EnabledPresets |= customComboEntry.Preset;
             }
@@ -167,11 +179,12 @@ namespace XIVLauncher.Windows
         private bool ClassJobFilter(object item)
         {
             var comboBoxItem = ClassJobComboBox.SelectedItem as ClassJobComboBoxEntry;
+            var comboItem = item as CustomComboEntry;
 
-            if (comboBoxItem.ClassJob == 0)
+            if (comboBoxItem.ClassJob == 0 || comboItem.IsCustomMessage)
                 return true;
             else
-                return (item as CustomComboEntry).ClassJob == comboBoxItem.ClassJob;
+                return comboItem.ClassJob == comboBoxItem.ClassJob;
         }
 
         private void ClassJobComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
