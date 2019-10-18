@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XIVLauncher.Addon.Implementations
 {
@@ -22,9 +19,10 @@ namespace XIVLauncher.Addon.Implementations
             var myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var charaFolderPath = new DirectoryInfo(Path.Combine(myDocumentsPath, "My Games", "FINAL FANTASY XIV - A Realm Reborn"));
 
-            var orderedByChanges = charaFolderPath.GetDirectories().OrderByDescending(folder => { 
-                    return File.GetLastWriteTime(Path.Combine(folder.FullName, "ADDON.DAT"));
-                });
+            var orderedByChanges = charaFolderPath.GetDirectories().OrderByDescending(folder =>
+            {
+                return File.GetLastWriteTime(Path.Combine(folder.FullName, "ADDON.DAT"));
+            });
 
             var lastChanged = orderedByChanges.First();
             var toCopyTo = orderedByChanges.Skip(1);

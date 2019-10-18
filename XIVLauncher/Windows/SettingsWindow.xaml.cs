@@ -12,6 +12,7 @@ using System.Windows.Input;
 using Dalamud.Discord;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
+using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 
 namespace XIVLauncher.Windows
@@ -419,6 +420,11 @@ namespace XIVLauncher.Windows
         private void CharacterSyncCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("ATTENTION!!!\n\nThis feature synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten.", "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        private void ManageCustomCombosButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            new CustomComboSetupWindow(CustomComboPreset.None).ShowDialog();
         }
     }
 }

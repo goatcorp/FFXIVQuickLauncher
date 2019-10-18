@@ -6,9 +6,11 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using Dalamud;
 using Dalamud.Discord;
 using Microsoft.WindowsAPICodePack.Shell.Interop;
 using Newtonsoft.Json;
+using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 
 namespace XIVLauncher.Addon
@@ -28,19 +30,6 @@ namespace XIVLauncher.Addon
         {
             public string AssemblyVersion { get; set; }
             public string SupportedGameVer { get; set; }
-        }
-
-        [Serializable]
-        public sealed class DalamudStartInfo
-        {
-            public string WorkingDirectory;
-            public string PluginDirectory;
-            public string DefaultPluginDirectory;
-            public ClientLanguage Language;
-
-            public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
-
-            public bool OptOutMbCollection { get; set; } = false;
         }
 
         public void Run()
@@ -90,16 +79,26 @@ namespace XIVLauncher.Addon
                     return;
                 }
 
-                var dalamudConfig = new DalamudStartInfo
+                var configPath = Path.Combine(addonDirectory, "config.json");
+
+                var config = new DalamudConfiguration
                 {
-                    Language = Settings.GetLanguage(),
                     DiscordFeatureConfig = Settings.DiscordFeatureConfig,
-                    PluginDirectory = ingamePluginPath,
-                    DefaultPluginDirectory = defaultPluginPath,
-                    OptOutMbCollection = Settings.OptOutMbUpload
+                    OptOutMbCollection = Settings.OptOutMbUpload,
+                    ComboPresets = CustomComboPreset.AstrologianCardsOnDrawFeature
                 };
 
-                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(dalamudConfig)));
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
+
+                var startInfo = new DalamudStartInfo
+                {
+                    Language = Settings.GetLanguage(),
+                    PluginDirectory = ingamePluginPath,
+                    DefaultPluginDirectory = defaultPluginPath,
+                    ConfigurationPath = configPath
+                };
+
+                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
 
                 var process = new Process
                 {

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XIVLauncher.Addon.Implementations
 {
@@ -32,7 +29,8 @@ namespace XIVLauncher.Addon.Implementations
 
             if (currentBackups.Length > 3)
             {
-                var oldestBackup = currentBackups.OrderBy(file => { 
+                var oldestBackup = currentBackups.OrderBy(file =>
+                {
                     return File.GetLastWriteTime(file.FullName);
                 }).First();
 
@@ -40,7 +38,7 @@ namespace XIVLauncher.Addon.Implementations
                 oldestBackup.Delete();
             }
 
-            
+
         }
     }
 }

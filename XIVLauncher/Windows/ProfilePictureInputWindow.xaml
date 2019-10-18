@@ -17,12 +17,12 @@
             Please enter a character's name and world.
         </TextBlock>
 
-        <StackPanel x:Uid="StackPanel_4" Orientation="Vertical" Width="180" HorizontalAlignment="Left" Margin="0,20,0,0">
+        <StackPanel x:Uid="StackPanel_4" Orientation="Vertical" Width="180" HorizontalAlignment="Left" Margin="10,20,0,0">
             <Label x:Uid="Label_2" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Character Name"/>
             <TextBox x:Uid="CharacterNameTextBox" x:Name="CharacterNameTextBox" Width="203"/>
         </StackPanel>
 
-        <StackPanel x:Uid="StackPanel_5" Orientation="Vertical" Width="180" HorizontalAlignment="Left" Margin="0,10,0,0">
+        <StackPanel x:Uid="StackPanel_5" Orientation="Vertical" Width="180" HorizontalAlignment="Left" Margin="10,10,0,0">
             <Label x:Uid="Label_3" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="World Name"/>
             <TextBox x:Uid="WorldNameTextBox" x:Name="WorldNameTextBox" Width="203"/>
         </StackPanel>

@@ -173,6 +173,9 @@
     <Compile Include="Addon\IPersistentAddon.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\RichPresenceAddon.cs" />
     <Compile Include="Addon\IRunnableAddon.cs" />
+    <Compile Include="Dalamud\CustomComboPreset.cs" />
+    <Compile Include="Dalamud\DalamudConfiguration.cs" />
+    <Compile Include="Dalamud\DalamudStartInfo.cs" />
     <Compile Include="Game\ClientLanguage.cs" />
     <Compile Include="Dalamud\DiscordFeatureConfiguration.cs" />
     <Compile Include="Dalamud\XivChatType.cs" />
@@ -183,6 +186,9 @@
     <Compile Include="Http\OtpListener.cs" />
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
       <DependentUpon>ChangelogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\CustomComboSetupWindow.xaml.cs">
+      <DependentUpon>CustomComboSetupWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ProfilePictureInputWindow.xaml.cs">
       <DependentUpon>ProfilePictureInputWindow.xaml</DependentUpon>
@@ -236,6 +242,10 @@
     <Compile Include="Xaml\StringToColorConverter.cs" />
     <Compile Include="Game\XivGame.cs" />
     <Page Include="Windows\ChangelogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\CustomComboSetupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -324,6 +334,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="Resources\FFXIVAppIcons.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
