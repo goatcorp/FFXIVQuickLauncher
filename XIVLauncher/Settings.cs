@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Dalamud;
+using Dalamud.Discord;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using AdysTech.CredentialManager;
-using Dalamud.Discord;
-using Newtonsoft.Json;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
+using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 
 namespace XIVLauncher
@@ -31,7 +31,7 @@ namespace XIVLauncher
 
         public static ClientLanguage GetLanguage()
         {
-            return (ClientLanguage) Properties.Settings.Default.Language;
+            return (ClientLanguage)Properties.Settings.Default.Language;
         }
 
         public static void SetLanguage(ClientLanguage language)
@@ -123,8 +123,13 @@ namespace XIVLauncher
 
         public static bool OptOutMbUpload
         {
-            get => Properties.Settings.Default.OptOutMbUpload;
-            set => Properties.Settings.Default.OptOutMbUpload = value;
+            get => DalamudConfig.OptOutMbCollection;
+            set
+            {
+                var currentConfig = DalamudConfig;
+                currentConfig.OptOutMbCollection = value;
+                DalamudConfig = currentConfig;
+            }
         }
 
         public static bool CharacterSyncEnabled
@@ -135,18 +140,13 @@ namespace XIVLauncher
 
         public static DiscordFeatureConfiguration DiscordFeatureConfig
         {
-            get
+            get => DalamudConfig.DiscordFeatureConfig;
+            set
             {
-                var config = JsonConvert.DeserializeObject<DiscordFeatureConfiguration>(Properties.Settings.Default
-                    .DiscordFeatureConfiguration);;
-
-                return config ?? new DiscordFeatureConfiguration
-                {
-                    ChatTypeConfigurations = new List<ChatTypeConfiguration>()
-                };
+                var currentConfig = DalamudConfig;
+                currentConfig.DiscordFeatureConfig = value;
+                DalamudConfig = currentConfig;
             }
-
-            set => Properties.Settings.Default.DiscordFeatureConfiguration = JsonConvert.SerializeObject(value);
         }
 
         public static bool IsInGameAddonEnabled()
@@ -198,6 +198,51 @@ namespace XIVLauncher
         {
             get => Properties.Settings.Default.AdditionalLaunchArgs;
             set => Properties.Settings.Default.AdditionalLaunchArgs = value;
+        }
+
+        public static CustomComboPreset ComboPresets
+        {
+            get => DalamudConfig.ComboPresets;
+            set
+            {
+                var currentConfig = DalamudConfig;
+                currentConfig.ComboPresets = value;
+                DalamudConfig = currentConfig;
+            }
+        }
+
+        public static DalamudConfiguration DalamudConfig
+        {
+            get
+            {
+                var configPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon",
+                    "Hooks",
+                    "config.json");
+
+                if (File.Exists(configPath))
+                    return JsonConvert.DeserializeObject<DalamudConfiguration>(File.ReadAllText(configPath));
+
+                var discordFeatureConfig = JsonConvert.DeserializeObject<DiscordFeatureConfiguration>(Properties.Settings.Default
+                                               .DiscordFeatureConfiguration) ?? new DiscordFeatureConfiguration
+                                               {
+                                                   ChatTypeConfigurations = new List<ChatTypeConfiguration>()
+                                               };
+
+                var newDalamudConfig = new DalamudConfiguration
+                {
+                    OptOutMbCollection = Properties.Settings.Default.OptOutMbUpload,
+                    ComboPresets = CustomComboPreset.None,
+                    DiscordFeatureConfig = discordFeatureConfig
+                };
+
+                DalamudConfig = newDalamudConfig;
+                return newDalamudConfig;
+
+            }
+            set => File.WriteAllText(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "Hooks",
+                "config.json"), JsonConvert.SerializeObject(value));
         }
     }
 }

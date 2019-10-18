@@ -424,7 +424,10 @@ namespace XIVLauncher.Windows
 
         private void ManageCustomCombosButton_OnClick(object sender, RoutedEventArgs e)
         {
-            new CustomComboSetupWindow(CustomComboPreset.None).ShowDialog();
+            var comboWindow = new CustomComboSetupWindow(Settings.ComboPresets);
+            comboWindow.ShowDialog();
+
+            Settings.ComboPresets = comboWindow.EnabledPresets;
         }
     }
 }

@@ -126,10 +126,16 @@
 
                             <StackPanel x:Uid="StackPanel_6" IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
                                 <Separator x:Uid="Separator_1"></Separator>
+                                <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic" HorizontalAlignment="Center" FontSize="13">
+                                    Combat settings
+                                </Label>
 
                                 <Button x:Name="ManageCustomCombosButton" Click="ManageCustomCombosButton_OnClick" Margin="0,6,0,5">Manage Custom Combos</Button>
 
                                 <Separator></Separator>
+                                <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic" HorizontalAlignment="Center" FontSize="13">
+                                    Chat settings
+                                </Label>
 
                                 <CheckBox x:Uid="RmtAdFilterCheckBox" x:Name="RmtAdFilterCheckBox" Content="Enable RMT advertisement filter"
                                           HorizontalAlignment="Left" Margin="0,10,0,20"

@@ -81,15 +81,6 @@ namespace XIVLauncher.Addon
 
                 var configPath = Path.Combine(addonDirectory, "config.json");
 
-                var config = new DalamudConfiguration
-                {
-                    DiscordFeatureConfig = Settings.DiscordFeatureConfig,
-                    OptOutMbCollection = Settings.OptOutMbUpload,
-                    ComboPresets = CustomComboPreset.AstrologianCardsOnDrawFeature
-                };
-
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
-
                 var startInfo = new DalamudStartInfo
                 {
                     Language = Settings.GetLanguage(),

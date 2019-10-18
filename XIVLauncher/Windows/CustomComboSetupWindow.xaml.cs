@@ -118,7 +118,9 @@ namespace XIVLauncher.Windows
                 }
             };
 
-            CustomCombos = GetPresetList(currentPresets | CustomComboPreset.AstrologianCardsOnDrawFeature);
+            EnabledPresets = currentPresets;
+
+            CustomCombos = GetPresetList(currentPresets);
             ComboListView.ItemsSource = CustomCombos;
             
             var view = CollectionViewSource.GetDefaultView(ComboListView.ItemsSource);
