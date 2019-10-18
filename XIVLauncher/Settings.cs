@@ -215,10 +215,7 @@ namespace XIVLauncher
         {
             get
             {
-                var configPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon",
-                    "Hooks",
-                    "config.json");
+                var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json");
 
                 if (File.Exists(configPath))
                     return JsonConvert.DeserializeObject<DalamudConfiguration>(File.ReadAllText(configPath));
@@ -238,11 +235,8 @@ namespace XIVLauncher
 
                 DalamudConfig = newDalamudConfig;
                 return newDalamudConfig;
-
             }
-            set => File.WriteAllText(Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "Hooks",
-                "config.json"), JsonConvert.SerializeObject(value));
+            set => File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json"), JsonConvert.SerializeObject(value));
         }
     }
 }

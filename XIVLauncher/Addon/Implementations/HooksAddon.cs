@@ -76,10 +76,12 @@ namespace XIVLauncher.Addon
                     MessageBox.Show(
                         "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
                         "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    Directory.Delete(addonDirectory, true);
                     return;
                 }
 
-                var configPath = Path.Combine(addonDirectory, "config.json");
+                var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json");
 
                 var startInfo = new DalamudStartInfo
                 {
