@@ -189,6 +189,8 @@
     <Compile Include="Game\Patch\PatchInstaller.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListEntry.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListParser.cs" />
+    <Compile Include="Game\Patch\ZiPatch\Structures\Commands\SqPack\SqPackCommandType.cs" />
+    <Compile Include="Game\Patch\ZiPatch\Structures\Commands\SqPack\SqPackZiPatchCommand.cs" />
     <Compile Include="Game\Patch\ZiPatch\Structures\Commands\IZiPatchCommand.cs" />
     <Compile Include="Game\Patch\ZiPatch\Structures\Commands\FileHeaderZiPatchCommand.cs" />
     <Compile Include="Game\Patch\ZiPatch\Structures\ZiPatchCommandPack.cs" />

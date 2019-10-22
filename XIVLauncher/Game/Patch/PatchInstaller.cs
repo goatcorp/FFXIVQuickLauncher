@@ -24,7 +24,7 @@ namespace XIVLauncher.Game.Patch
 
         private readonly XivGame _game;
 
-        public PatchInstaller(XivGame game)
+        public PatchInstaller(XivGame game, string repository)
         {
             _game = game;
         }

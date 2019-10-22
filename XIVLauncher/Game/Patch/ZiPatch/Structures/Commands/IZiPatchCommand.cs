@@ -9,7 +9,7 @@ namespace XIVLauncher.Game.Patch.ZiPatch.Structures.Commands
 {
     interface IZiPatchCommand
     {
-        void Prepare(BinaryReader reader, ZiPatchExecute execute); 
+        void Prepare(BinaryReader reader, long commandSize, ZiPatchExecute execute); 
         void Execute();
         bool CanExecute { get; }
     }

@@ -52,7 +52,7 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
 
-            new ZiPatchExecute().Execute("C:\\Users\\jonas\\AppData\\Roaming\\XIVLauncher\\patches\\2019.08.20.0000.0000.patch", Settings.GamePath.FullName);
+            new ZiPatchExecute(Settings.GamePath.FullName, "ffxiv").Execute("C:\\Users\\jonas\\AppData\\Roaming\\XIVLauncher\\patches\\2019.08.20.0000.0000.patch");
 
             return;
 
@@ -409,7 +409,7 @@ namespace XIVLauncher.Windows
 
                 if (loginResult.State == XivGame.LoginState.NeedsPatch)
                 {
-                    var patcher = new PatchInstaller(_game); 
+                    var patcher = new PatchInstaller(_game, "ffxiv"); 
                     //var window = new IntegrityCheckProgressWindow();
                     var progress = new Progress<PatchDownloadProgress>();
                     progress.ProgressChanged += (sender, checkProgress) => Log.Verbose("PROGRESS");

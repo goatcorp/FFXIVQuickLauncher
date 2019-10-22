@@ -8,6 +8,7 @@ namespace XIVLauncher.Game.Patch.ZiPatch
 {
     enum ZiPatchCommandType
     {
+        Unknown,
         FileHeader,
         APLY,
         SQPK,
