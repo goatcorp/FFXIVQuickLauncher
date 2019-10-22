@@ -28,6 +28,7 @@ namespace XIVLauncher.Windows
         public bool IsEnabled { get; set; }
 
         public bool IsCustomMessage { get; set; }
+        public bool IsCheckboxEnabled => !IsCustomMessage;
     }
 
     public class ClassJobComboBoxEntry

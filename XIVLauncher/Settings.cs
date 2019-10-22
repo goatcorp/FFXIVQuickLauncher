@@ -230,7 +230,9 @@ namespace XIVLauncher
                 {
                     OptOutMbCollection = Properties.Settings.Default.OptOutMbUpload,
                     ComboPresets = CustomComboPreset.None,
-                    DiscordFeatureConfig = discordFeatureConfig
+                    DiscordFeatureConfig = discordFeatureConfig,
+                    BadWords = new List<string>(),
+                    Fates = new List<DalamudConfiguration.FateInfo>()
                 };
 
                 DalamudConfig = newDalamudConfig;

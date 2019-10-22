@@ -115,7 +115,20 @@ namespace XIVLauncher.Dalamud
         ScholarSeraphConsolationFeature = 1 << 29,
 
         // DANCER
+        [CustomComboInfo("Standard Step Combo", "Standard Step on one button.", 38)]
+        DancerStandardStepCombo = 1 << 30,
 
+        [CustomComboInfo("Technical Step Combo", "Technical Step on one button.", 38)]
+        DancerTechnicalStepCombo = 1 << 31,
+
+        [CustomComboInfo("AoE GCD procs", "Replaces all AoE GCDs with their procced version when available.", 38)]
+        DancerAoeGcdFeature = 1 << 32,
+
+        [CustomComboInfo("Fan Dance Combos", "Change Fan Dance and Fan Dance 2 into Fan Dance 3 while flourishing.", 38)]
+        DancerFanDanceCombo = 1 << 33,
+
+        [CustomComboInfo("Fountain Combos", "Fountain changes into Fountain combo, prioritizing procs over combo, and Fountainfall over Reverse Cascade.", 38)]
+        DancerFountainCombo = 1 << 34
     }
 
     public class CustomComboInfoAttribute : Attribute

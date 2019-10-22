@@ -20,7 +20,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate x:Uid="DataTemplate_2" DataType="{x:Type windows:CustomComboEntry}">
                         <StackPanel x:Uid="StackPanel_8" Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsEnabled}"></CheckBox>
+                            <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="{Binding IsCheckboxEnabled}"></CheckBox>
                             <Label Foreground="{DynamicResource MaterialDesignBody}" FontFamily="/Resources/FFXIVAppIcons.ttf #FFXIVAppIcons" Content="{Binding Icon}" FontSize="30"/>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock x:Uid="TextBlock_7" Text="{Binding Name}" Margin="5,0,0,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="14"></TextBlock>

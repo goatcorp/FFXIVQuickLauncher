@@ -16,5 +16,14 @@ namespace Dalamud
         public bool OptOutMbCollection { get; set; } = false;
 
         public CustomComboPreset ComboPresets { get; set; }
+
+        public List<string> BadWords { get; set; }
+
+        public class FateInfo {
+            public string Name { get; set; }
+            public int Id { get; set; }
+        }
+
+        public List<FateInfo> Fates;
     }
 }

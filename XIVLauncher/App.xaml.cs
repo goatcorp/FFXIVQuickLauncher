@@ -31,6 +31,7 @@ namespace XIVLauncher
                     a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         "XIVLauncher", "output.log")))
 #if DEBUG
+                .WriteTo.Debug()
                 .MinimumLevel.Verbose()
 #else
                 .MinimumLevel.Information()

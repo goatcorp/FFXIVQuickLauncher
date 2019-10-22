@@ -18,6 +18,8 @@ using XIVLauncher.Addon;
 using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Cache;
 using XIVLauncher.Game;
+using XIVLauncher.Game.Patch;
+using XIVLauncher.Game.Patch.ZiPatch;
 using Timer = System.Timers.Timer;
 
 namespace XIVLauncher.Windows
@@ -49,6 +51,10 @@ namespace XIVLauncher.Windows
             {
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
+
+            new ZiPatchExecute().Execute("C:\\Users\\jonas\\AppData\\Roaming\\XIVLauncher\\patches\\2019.08.20.0000.0000.patch", Settings.GamePath.FullName);
+
+            return;
 
 #if !DEBUG
             AutoUpdater.ShowSkipButton = false;
@@ -398,10 +404,26 @@ namespace XIVLauncher.Windows
                 }
                 #endif
 
-                var gameProcess = _game.Login(LoginUsername.Text, LoginPassword.Password, otp,
+                var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp,
                     Settings.SteamIntegrationEnabled, SteamCheckBox.IsChecked == true, Settings.AdditionalLaunchArgs, Settings.UniqueIdCacheEnabled);
 
-                if (gameProcess == null)
+                if (loginResult.State == XivGame.LoginState.NeedsPatch)
+                {
+                    var patcher = new PatchInstaller(_game); 
+                    //var window = new IntegrityCheckProgressWindow();
+                    var progress = new Progress<PatchDownloadProgress>();
+                    progress.ProgressChanged += (sender, checkProgress) => Log.Verbose("PROGRESS");
+
+                    Task.Run(async () => await patcher.DownloadPatchesAsync(loginResult.PendingPatches, loginResult.OauthLogin.SessionId, progress)).ContinueWith(task =>
+                    {
+                        //window.Dispatcher.Invoke(() => window.Close());
+                        MessageBox.Show("Download OK");
+                    });
+                }
+
+                /*
+
+                if (loginResult == null)
                 {
                     Log.Information("GameProcess was null...");
                     _isLoggingIn = false;
@@ -423,7 +445,7 @@ namespace XIVLauncher.Windows
                             Addon = new CharacterSyncAddon()
                         });
 
-                    await Task.Run(() => addonMgr.RunAddons(gameProcess, addons));
+                    await Task.Run(() => addonMgr.RunAddons(loginResult, addons));
                 }
                 catch (Exception ex)
                 {
@@ -440,7 +462,7 @@ namespace XIVLauncher.Windows
                     if (Settings.IsInGameAddonEnabled())
                         await Task.Run(() =>
                         {
-                            var hooks = new HooksAddon(); hooks.Setup(gameProcess); hooks.Run(); });
+                            var hooks = new HooksAddon(); hooks.Setup(loginResult); hooks.Run(); });
                 }
                 catch (Exception ex)
                 {
@@ -456,9 +478,9 @@ namespace XIVLauncher.Windows
                 
                 var watchThread = new Thread(() =>
                 {
-                    while (!gameProcess.HasExited)
+                    while (!loginResult.HasExited)
                     {
-                        gameProcess.Refresh();
+                        loginResult.Refresh();
                         Thread.Sleep(1);
                     }
 
@@ -467,6 +489,7 @@ namespace XIVLauncher.Windows
                     Environment.Exit(0);
                 });
                 watchThread.Start();
+                */
             }
             catch (Exception ex)
             {
