@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Serilog;
-using XIVLauncher.Game.Patch.ZiPatch.Structures;
-using XIVLauncher.Game.Patch.ZiPatch.Structures.Commands;
 using XIVLauncher.Helpers;
+using XIVLauncher.PatchInstaller.ZiPatch.Structures;
+using XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands;
 
-namespace XIVLauncher.Game.Patch.ZiPatch
+namespace XIVLauncher.PatchInstaller.ZiPatch
 {
     /// <summary>
     /// ZiPatch command parser and executor
@@ -31,7 +31,7 @@ namespace XIVLauncher.Game.Patch.ZiPatch
             _repository = repository;
         }
 
-        private static string ResolveExId(byte exId)
+        public static string ResolveExId(byte exId)
         {
             if (exId == 0)
                 return "ffxiv";
@@ -47,11 +47,11 @@ namespace XIVLauncher.Game.Patch.ZiPatch
 
             var datNum = reader.ReadUInt32BE();
 
-            var path = $"sqpack/{ResolveExId(exId)}/{datCat:X2}{exId:X2}{datChunk:X2}.dat{datNum}";
+            var path = $"sqpack/{ResolveExId(exId)}/{datCat:x2}{exId:x2}{datChunk:x2}.win32.dat{datNum}";
 
             Log.Verbose("Resolved SqPack dat file path at {0} to {1}", reader.BaseStream.Position.ToString("X"), path);
 
-            return File.Open(Path.Combine(_gamePath, path), FileMode.Open, FileAccess.ReadWrite);
+            return File.Open(Path.Combine(_gamePath, "game", path), FileMode.Open, FileAccess.Read);
         }
 
         public void Execute(string patchPath)
@@ -86,7 +86,7 @@ namespace XIVLauncher.Game.Patch.ZiPatch
 
                             case ZiPatchCommandType.EndOfFile:
                             {
-                                MessageBox.Show("Patch EOF!");
+                                Log.Information("Patch at {0} successfully installed!", patchPath);
                                 return;
                             }
                         }

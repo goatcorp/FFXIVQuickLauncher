@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Serilog;
-using XIVLauncher.Game.Patch.ZiPatch.Structures.Commands;
-using XIVLauncher.Game.Patch.ZiPatch.Structures.Commands.SqPack;
 using XIVLauncher.Helpers;
+using XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands;
+using XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands.SqPack;
 
-namespace XIVLauncher.Game.Patch.ZiPatch.Structures
+namespace XIVLauncher.PatchInstaller.ZiPatch.Structures
 {
     class ZiPatchCommandPack
     {
@@ -59,10 +59,10 @@ namespace XIVLauncher.Game.Patch.ZiPatch.Structures
                     throw new Exception("Unknown ZiPatch command type: " + chunkIdentifier);
             }
 
-            Command?.Prepare(reader, CommandSize, _execute);
+            Command?.Handle(reader, CommandSize, _execute);
 
-            // Read chunk footer
-            reader.ReadUInt32();
+            // Read chunk CRC32
+            var crc = reader.ReadUInt32();
         }
     }
 }

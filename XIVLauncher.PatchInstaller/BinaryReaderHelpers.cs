@@ -37,6 +37,16 @@ namespace XIVLauncher.Helpers
             return BitConverter.ToInt32(binRdr.ReadBytesRequired(sizeof(Int32)).Reverse(), 0);
         }
 
+        public static UInt64 ReadUInt64BE(this BinaryReader binRdr)
+        {
+            return BitConverter.ToUInt64(binRdr.ReadBytesRequired(sizeof(UInt64)).Reverse(), 0);
+        }
+
+        public static Int64 ReadInt64BE(this BinaryReader binRdr)
+        {
+            return BitConverter.ToInt64(binRdr.ReadBytesRequired(sizeof(Int64)).Reverse(), 0);
+        }
+
         public static byte[] ReadBytesRequired(this BinaryReader binRdr, int byteCount)
         {
             var result = binRdr.ReadBytes(byteCount);

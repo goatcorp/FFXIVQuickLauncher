@@ -186,17 +186,10 @@
     <Compile Include="Encryption\Blowfish.cs" />
     <Compile Include="Game\OauthLoginException.cs" />
     <Compile Include="Game\Patch\GamePatchType.cs" />
+    <Compile Include="Game\Patch\PatcherCommunicator.cs" />
     <Compile Include="Game\Patch\PatchInstaller.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListEntry.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListParser.cs" />
-    <Compile Include="Game\Patch\ZiPatch\Structures\Commands\SqPack\SqPackCommandType.cs" />
-    <Compile Include="Game\Patch\ZiPatch\Structures\Commands\SqPack\SqPackZiPatchCommand.cs" />
-    <Compile Include="Game\Patch\ZiPatch\Structures\Commands\IZiPatchCommand.cs" />
-    <Compile Include="Game\Patch\ZiPatch\Structures\Commands\FileHeaderZiPatchCommand.cs" />
-    <Compile Include="Game\Patch\ZiPatch\Structures\ZiPatchCommandPack.cs" />
-    <Compile Include="Game\Patch\ZiPatch\ZiPatchCommandType.cs" />
-    <Compile Include="Game\Patch\ZiPatch\ZiPatchExecute.cs" />
-    <Compile Include="Helpers\BinaryReaderHelpers.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\OtpListener.cs" />
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
@@ -383,6 +376,10 @@
     <ProjectReference Include="..\lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj">
       <Project>{933935a7-8d04-42e8-aee5-122b3aeed820}</Project>
       <Name>Nhaama.Memory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj">
+      <Project>{395cdfab-48f8-4ec5-833d-05f5795a157d}</Project>
+      <Name>XIVLauncher.PatchInstaller</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

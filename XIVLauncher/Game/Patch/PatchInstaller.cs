@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -27,6 +29,57 @@ namespace XIVLauncher.Game.Patch
         public PatchInstaller(XivGame game, string repository)
         {
             _game = game;
+        }
+
+        public void StartPatcher()
+        {
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = Path.Combine(Directory.GetCurrentDirectory(), "XIVLauncher.PatchInstaller.exe"),
+                    WorkingDirectory = Directory.GetCurrentDirectory()
+                }
+            };
+
+            process.StartInfo.Verb = "runas";
+
+            using (var pipeServer =
+                new AnonymousPipeServerStream(PipeDirection.InOut,
+                    HandleInheritability.Inheritable))
+            {
+                Console.WriteLine("[SERVER] Current TransmissionMode: {0}.",
+                    pipeServer.TransmissionMode);
+
+                // Pass the client process a handle to the server.
+                process.StartInfo.Arguments =
+                    pipeServer.GetClientHandleAsString();
+                process.StartInfo.UseShellExecute = false;
+                process.Start();
+
+                pipeServer.DisposeLocalCopyOfClientHandle();
+
+                try
+                {
+                    // Read user input and send that to the client process.
+                    using (StreamWriter sw = new StreamWriter(pipeServer))
+                    {
+                        sw.AutoFlush = true;
+                        // Send a 'sync message' and wait for client to receive it.
+                        sw.WriteLine("SYNC");
+                        pipeServer.WaitForPipeDrain();
+                        // Send the console input to the client process.
+                        Console.Write("[SERVER] Enter text: ");
+                        sw.WriteLine(Console.ReadLine());
+                    }
+                }
+                // Catch the IOException that is raised if the pipe is broken
+                // or disconnected.
+                catch (IOException e)
+                {
+                    Console.WriteLine("[SERVER] Error: {0}", e.Message);
+                }
+            }
         }
 
         public async Task DownloadPatchesAsync(IEnumerable<PatchListEntry> patches, string uniqueId, IProgress<PatchDownloadProgress> progress)

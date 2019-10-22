@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XIVLauncher.Game.Patch.ZiPatch
+namespace XIVLauncher.PatchInstaller.ZiPatch
 {
     enum ZiPatchCommandType
     {

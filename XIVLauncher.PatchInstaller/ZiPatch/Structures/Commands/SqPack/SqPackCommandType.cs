@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XIVLauncher.Game.Patch.ZiPatch.Structures.Commands.SqPack
+namespace XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands.SqPack
 {
     enum SqPackCommandType
     {
