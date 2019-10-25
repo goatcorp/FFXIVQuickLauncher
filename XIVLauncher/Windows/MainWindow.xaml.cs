@@ -391,8 +391,16 @@ namespace XIVLauncher.Windows
 
                 var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, Settings.UniqueIdCacheEnabled);
 
+                if (loginResult == null)
+                {
+                    Log.Information("LoginResult was null...");
+                    _isLoggingIn = false;
+                    return;
+                }
+
                 if (loginResult.State == XivGame.LoginState.NeedsPatch)
                 {
+                    /*
                     var patcher = new Game.Patch.PatchInstaller(_game, "ffxiv"); 
                     //var window = new IntegrityCheckProgressWindow();
                     var progress = new Progress<PatchDownloadProgress>();
@@ -403,6 +411,8 @@ namespace XIVLauncher.Windows
                         //window.Dispatcher.Invoke(() => window.Close());
                         MessageBox.Show("Download OK");
                     });
+                    */
+                    return;
                 }
 
                 var gameProcess = XivGame.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
