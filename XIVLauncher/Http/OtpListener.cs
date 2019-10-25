@@ -19,7 +19,7 @@ namespace XIVLauncher.Http
             _server = new HttpServer(HTTP_PORT);
             _server.GetReceived += GetReceived;
 
-            _serverThread = new Thread(_server.Start) {Name = "OtpListenerServerThread"};
+            _serverThread = new Thread(_server.Start) {Name = "OtpListenerServerThread", IsBackground = true};
         }
 
         private void GetReceived(object sender, HttpServer.HttpServerGetEvent e)
@@ -39,9 +39,7 @@ namespace XIVLauncher.Http
 
         public void Stop()
         {
-            if (_server == null) return;
-            _server.Stop();
-            _serverThread.Join();
+            _server?.Stop();
         }
     }
 }

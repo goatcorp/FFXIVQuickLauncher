@@ -29,7 +29,11 @@ namespace XIVLauncher.Windows
             _otpListener.OnOtpReceived += otp =>
             {
                 Result = otp;
-                Dispatcher.Invoke(Close);
+                Dispatcher.Invoke(() =>
+                {
+                    Close();
+                    _otpListener.Stop();
+                });
             };
 
             try
@@ -54,6 +58,7 @@ namespace XIVLauncher.Windows
             if (e.Key == Key.Enter || e.Key == Key.Return)
             {
                 Result = OtpTextBox.Text;
+                _otpListener.Stop();
                 Close();
             }
         }
