@@ -15,6 +15,7 @@ using Serilog;
 using SteamworksSharp;
 using SteamworksSharp.Native;
 using XIVLauncher.Cache;
+using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game
@@ -40,14 +41,28 @@ namespace XIVLauncher.Game
 
         public UniqueIdCache Cache = new UniqueIdCache();
 
-        public Process Login(string userName, string password, string otp, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, bool useCache)
+        public enum LoginState
+        {
+            Ok,
+            NeedsPatch
+        }
+
+        public class LoginResult
+        {
+            public LoginState State { get; set; }
+            public PatchListEntry[] PendingPatches { get; set; }
+            public OauthLoginResult OauthLogin { get; set; }
+            public string UniqueId { get; set; }
+        }
+
+        public LoginResult Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache)
         {
             string uid;
-            var needsUpdate = false;
+            PatchListEntry[] pendingPatches = null;
 
-            OauthLoginResult loginResult;
+            OauthLoginResult oauthLoginResult;
 
-            Log.Information($"XivGame::Login(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments}, cache:{useCache})");
+            Log.Information($"XivGame::Login(steamServiceAccount:{isSteamServiceAccount}, cache:{useCache})");
 
             if (!useCache || !Cache.HasValidCache(userName))
             {
@@ -55,9 +70,9 @@ namespace XIVLauncher.Game
 
                 try
                 {
-                    loginResult = OauthLogin(userName, password, otp, isSteamServiceAccount);
+                    oauthLoginResult = OauthLogin(userName, password, otp, isSteamServiceAccount);
 
-                    Log.Information($"OAuth login successful - playable:{loginResult.Playable} terms:{loginResult.TermsAccepted} region:{loginResult.Region} expack:{loginResult.MaxExpansion}");
+                    Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
                 }
                 catch (Exception ex)
                 {
@@ -68,24 +83,24 @@ namespace XIVLauncher.Game
                     return null;
                 }
 
-                if (!loginResult.Playable)
+                if (!oauthLoginResult.Playable)
                 {
                     MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.", "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
 
-                if (!loginResult.TermsAccepted)
+                if (!oauthLoginResult.TermsAccepted)
                 {
                     MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
                         "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
 
-                (uid, needsUpdate) = Task.Run(() => RegisterSession(loginResult)).Result;
+                (uid, pendingPatches) = Task.Run(() => RegisterSession(oauthLoginResult)).Result;
 
                 if (useCache)
-                    Task.Run(() => Cache.AddCachedUid(userName, uid, loginResult.Region, loginResult.MaxExpansion))
+                    Task.Run(() => Cache.AddCachedUid(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion))
                         .Wait();
             }
             else
@@ -94,7 +109,7 @@ namespace XIVLauncher.Game
                 var (cachedUid, region, expansionLevel) = Task.Run(() => Cache.GetCachedUid(userName)).Result;
                 uid = cachedUid;
 
-                loginResult = new OauthLoginResult
+                oauthLoginResult = new OauthLoginResult
                 {
                     Playable = true,
                     Region = region,
@@ -103,21 +118,35 @@ namespace XIVLauncher.Game
                 };
             }
 
-            if (needsUpdate)
+            if (pendingPatches != null)
             {
                 MessageBox.Show(
                     "Your game is out of date. Please start the official launcher and update it before trying to log in.",
                     "Out of date", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                return null;
+                return new LoginResult
+                    {
+                        PendingPatches = pendingPatches,
+                        OauthLogin = oauthLoginResult,
+                        State = LoginState.NeedsPatch,
+                        UniqueId = uid
+                    };
             }
 
-            return LaunchGame(uid, loginResult.Region, loginResult.MaxExpansion, isSteamIntegrationEnabled, isSteamServiceAccount, additionalArguments);
+            return new LoginResult
+            {
+                PendingPatches = null,
+                OauthLogin = oauthLoginResult,
+                State = LoginState.Ok,
+                UniqueId = uid
+            };
         }
 
-        private static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
+        public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
             bool closeMutants = false)
         {
+            Log.Information($"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
+
             try
             {
                 if (isSteamIntegrationEnabled)
@@ -257,7 +286,7 @@ namespace XIVLauncher.Game
             return result;
         }
 
-        private static (string Uid, bool NeedsUpdate) RegisterSession(OauthLoginResult loginResult)
+        private static (string Uid, PatchListEntry[] PendingGamePatches) RegisterSession(OauthLoginResult loginResult)
         {
             using (var client = new WebClient())
             {
@@ -279,7 +308,14 @@ namespace XIVLauncher.Game
                     {
                         var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
 
-                        return (sid, result != string.Empty);
+                        if (result == string.Empty) 
+                            return (sid, null);
+
+                        Log.Verbose("Patching is needed... List:\n" + result);
+
+                        var pendingPatches = PatchListParser.Parse(result);
+
+                        return (sid, pendingPatches);
                     }
                 }
                 catch (WebException exc)
@@ -290,7 +326,7 @@ namespace XIVLauncher.Game
                         {
                             // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
                             if (response.StatusCode == HttpStatusCode.Conflict)
-                                return ("", true);
+                                throw new Exception("Cannot verify Game version, Boot is outdated.");
                         }
                         else
                         {
@@ -321,7 +357,7 @@ namespace XIVLauncher.Game
             }
         }
 
-        internal class OauthLoginResult
+        public class OauthLoginResult
         {
             public string SessionId { get; set; }
             public int Region { get; set; }

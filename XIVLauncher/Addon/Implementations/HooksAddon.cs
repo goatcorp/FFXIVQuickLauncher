@@ -17,9 +17,22 @@ namespace XIVLauncher.Addon
 {
     class HooksAddon : IAddon
     {
-        private const string REMOTE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
+        private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
+
+        private static string Remote
+        {
+            get
+            {
+                if (UseDalamudStaging)
+                    return REMOTE_BASE + "stg/";
+
+                return REMOTE_BASE;
+            }
+        }
 
         private Process _gameProcess;
+
+        public static bool UseDalamudStaging = false;
         
         public void Setup(Process gameProcess)
         {
@@ -50,11 +63,12 @@ namespace XIVLauncher.Addon
 
             using (var client = new WebClient())
             {
-                var versionInfoJson = client.DownloadString(REMOTE + "version");
+                var versionInfoJson = client.DownloadString(Remote + "version");
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
                 if (!File.Exists(addonExe))
                 {
+                    Serilog.Log.Information("[HOOKS] Not found, redownloading");
                     Download(addonDirectory, defaultPluginPath);
                 }
                 else
@@ -144,7 +158,7 @@ namespace XIVLauncher.Addon
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
-                client.DownloadFile(REMOTE + "latest.zip", downloadPath);
+                client.DownloadFile(Remote + "latest.zip", downloadPath);
                 ZipFile.ExtractToDirectory(downloadPath, addonPath);
 
                 File.Delete(downloadPath);
@@ -157,7 +171,7 @@ namespace XIVLauncher.Addon
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
-                client.DownloadFile(REMOTE + "plugins.zip", downloadPath);
+                client.DownloadFile(Remote + "plugins.zip", downloadPath);
                 ZipFile.ExtractToDirectory(downloadPath, ingamePluginPath);
 
                 File.Delete(downloadPath);

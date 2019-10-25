@@ -28,6 +28,7 @@ namespace XIVLauncher.Windows
         public bool IsEnabled { get; set; }
 
         public bool IsCustomMessage { get; set; }
+        public bool IsCheckboxEnabled => !IsCustomMessage;
     }
 
     public class ClassJobComboBoxEntry
@@ -75,8 +76,18 @@ namespace XIVLauncher.Windows
                 },
                 new ClassJobComboBoxEntry
                 {
+                    Name = "Bard",
+                    ClassJob = 23
+                },
+                new ClassJobComboBoxEntry
+                {
                     Name = "Black Mage",
                     ClassJob = 25
+                },
+                new ClassJobComboBoxEntry
+                {
+                    Name = "Red Mage",
+                    ClassJob = 35
                 },
                 new ClassJobComboBoxEntry
                 {
@@ -92,6 +103,11 @@ namespace XIVLauncher.Windows
                 {
                     Name = "Ninja",
                     ClassJob = 30
+                },
+                new ClassJobComboBoxEntry
+                {
+                    Name = "Monk",
+                    ClassJob = 20
                 },
                 new ClassJobComboBoxEntry
                 {
@@ -117,6 +133,11 @@ namespace XIVLauncher.Windows
                 {
                     Name = "Scholar",
                     ClassJob = 28
+                },
+                new ClassJobComboBoxEntry
+                {
+                    Name = "White Mage",
+                    ClassJob = 24
                 }
             };
 

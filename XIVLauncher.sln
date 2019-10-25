@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nhaama.FFXIV", "lib\Nhaama\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocBamlToLocalizable", "LocBamlToLocalizable\LocBamlToLocalizable.csproj", "{EB8161D8-688B-4132-A15B-2E0D7600CD1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.PatchInstaller", "XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj", "{395CDFAB-48F8-4EC5-833D-05F5795A157D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,14 @@ Global
 		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|x64.ActiveCfg = Release|Any CPU
 		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|x64.Build.0 = Release|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|x64.Build.0 = Debug|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|x64.ActiveCfg = Release|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
