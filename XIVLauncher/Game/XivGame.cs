@@ -52,16 +52,17 @@ namespace XIVLauncher.Game
             public LoginState State { get; set; }
             public PatchListEntry[] PendingPatches { get; set; }
             public OauthLoginResult OauthLogin { get; set; }
+            public string UniqueId { get; set; }
         }
 
-        public LoginResult Login(string userName, string password, string otp, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, bool useCache)
+        public LoginResult Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache)
         {
             string uid;
             PatchListEntry[] pendingPatches = null;
 
             OauthLoginResult oauthLoginResult;
 
-            Log.Information($"XivGame::Login(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments}, cache:{useCache})");
+            Log.Information($"XivGame::Login(steamServiceAccount:{isSteamServiceAccount}, cache:{useCache})");
 
             if (!useCache || !Cache.HasValidCache(userName))
             {
@@ -127,7 +128,8 @@ namespace XIVLauncher.Game
                     {
                         PendingPatches = pendingPatches,
                         OauthLogin = oauthLoginResult,
-                        State = LoginState.NeedsPatch
+                        State = LoginState.NeedsPatch,
+                        UniqueId = uid
                     };
             }
 
@@ -135,15 +137,16 @@ namespace XIVLauncher.Game
             {
                 PendingPatches = null,
                 OauthLogin = oauthLoginResult,
-                State = LoginState.Ok
+                State = LoginState.Ok,
+                UniqueId = uid
             };
-
-            //return LaunchGame(uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion, isSteamIntegrationEnabled, isSteamServiceAccount, additionalArguments);
         }
 
         public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
             bool closeMutants = false)
         {
+            Log.Information($"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
+
             try
             {
                 if (isSteamIntegrationEnabled)

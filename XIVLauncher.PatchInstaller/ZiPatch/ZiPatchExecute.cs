@@ -25,6 +25,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
         private readonly string _gamePath;
         private readonly string _repository;
 
+        public const bool IsDryRun = true;
+
         public ZiPatchExecute(string gamePath, string repository)
         {
             _gamePath = gamePath;

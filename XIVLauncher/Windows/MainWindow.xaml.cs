@@ -36,7 +36,8 @@ namespace XIVLauncher.Windows
         private Timer _maintenanceQueueTimer;
 
         private readonly XivGame _game = new XivGame();
-        private readonly AccountManager _accountManager = new AccountManager();
+
+        private AccountManager _accountManager;
 
         private bool _isLoggingIn;
 
@@ -146,19 +147,6 @@ namespace XIVLauncher.Windows
 
             if (!gateStatus) WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(242, 24, 24));
 
-            /*
-            var savedCredentials = CredentialManager.GetCredentials(AppName);
-
-            if (savedCredentials != null)
-            {
-                LoginUsername.Text = savedCredentials.UserName;
-                LoginPassword.Password = savedCredentials.Password;
-                OtpCheckBox.IsChecked = Settings.NeedsOtp();
-                AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
-                SaveLoginCheckBox.IsChecked = true;
-            }
-            */
-
             var version = Util.GetAssemblyVersion();
             if (Properties.Settings.Default.LastVersion != version)
             {
@@ -187,6 +175,8 @@ namespace XIVLauncher.Windows
 
                 Properties.Settings.Default.Save();
             }
+
+            _accountManager = new AccountManager();
 
             var savedAccount = _accountManager.CurrentAccount;
 
@@ -399,8 +389,7 @@ namespace XIVLauncher.Windows
                 }
                 #endif
 
-                var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp,
-                    Settings.SteamIntegrationEnabled, SteamCheckBox.IsChecked == true, Settings.AdditionalLaunchArgs, Settings.UniqueIdCacheEnabled);
+                var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, Settings.UniqueIdCacheEnabled);
 
                 if (loginResult.State == XivGame.LoginState.NeedsPatch)
                 {
@@ -416,9 +405,11 @@ namespace XIVLauncher.Windows
                     });
                 }
 
-                /*
+                var gameProcess = XivGame.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
+                    loginResult.OauthLogin.MaxExpansion, Settings.SteamIntegrationEnabled,
+                    SteamCheckBox.IsChecked == true, Settings.AdditionalLaunchArgs);
 
-                if (loginResult == null)
+                if (gameProcess == null)
                 {
                     Log.Information("GameProcess was null...");
                     _isLoggingIn = false;
@@ -440,7 +431,7 @@ namespace XIVLauncher.Windows
                             Addon = new CharacterSyncAddon()
                         });
 
-                    await Task.Run(() => addonMgr.RunAddons(loginResult, addons));
+                    await Task.Run(() => addonMgr.RunAddons(gameProcess, addons));
                 }
                 catch (Exception ex)
                 {
@@ -455,9 +446,11 @@ namespace XIVLauncher.Windows
                 try
                 {
                     if (Settings.IsInGameAddonEnabled())
-                        await Task.Run(() =>
-                        {
-                            var hooks = new HooksAddon(); hooks.Setup(loginResult); hooks.Run(); });
+                    {
+                        var hooks = new HooksAddon(); 
+                        hooks.Setup(gameProcess); 
+                        hooks.Run();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -473,9 +466,9 @@ namespace XIVLauncher.Windows
                 
                 var watchThread = new Thread(() =>
                 {
-                    while (!loginResult.HasExited)
+                    while (!gameProcess.HasExited)
                     {
-                        loginResult.Refresh();
+                        gameProcess.Refresh();
                         Thread.Sleep(1);
                     }
 
@@ -484,7 +477,6 @@ namespace XIVLauncher.Windows
                     Environment.Exit(0);
                 });
                 watchThread.Start();
-                */
             }
             catch (Exception ex)
             {
