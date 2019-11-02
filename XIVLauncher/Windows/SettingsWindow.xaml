@@ -244,7 +244,7 @@
                                        Foreground="{DynamicResource MaterialDesignBody}">
                                 Made by goat.
                                 <LineBreak x:Uid="LineBreak_6"/> 
-                                Special thanks to Mino, LeonBlade, Roy and the angry paissa artist!
+                                Special thanks to Mino, sky, LeonBlade, Roy and the angry paissa artist!
                                 <LineBreak x:Uid="LineBreak_4" />
                                 <LineBreak x:Uid="LineBreak_5" />
                                 Any issues or requests? Join the discord or create an issue on GitHub!
