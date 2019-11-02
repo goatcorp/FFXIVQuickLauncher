@@ -223,7 +223,8 @@ namespace XIVLauncher
                 var discordFeatureConfig = JsonConvert.DeserializeObject<DiscordFeatureConfiguration>(Properties.Settings.Default
                                                .DiscordFeatureConfiguration) ?? new DiscordFeatureConfiguration
                                                {
-                                                   ChatTypeConfigurations = new List<ChatTypeConfiguration>()
+                                                   ChatTypeConfigurations = new List<ChatTypeConfiguration>(),
+                                                   ChatDelayMs = 1000
                                                };
 
                 var newDalamudConfig = new DalamudConfiguration
