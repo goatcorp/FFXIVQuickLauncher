@@ -84,6 +84,9 @@ namespace XIVLauncher.Windows
 
             // Gotta do this after setup so we don't fire events yet
             CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
+
+            EnableAstCardStuff.IsChecked =
+                Settings.ComboPresets.HasFlag(CustomComboPreset.AstrologianCardsOnDrawFeature);
         }
 
         private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)
@@ -112,6 +115,11 @@ namespace XIVLauncher.Windows
             Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
             Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
+
+            if (EnableAstCardStuff.IsChecked == true)
+            {
+                Settings.ComboPresets |= CustomComboPreset.AstrologianCardsOnDrawFeature;
+            }
 
             Settings.Save();
         }
@@ -419,7 +427,7 @@ namespace XIVLauncher.Windows
 
         private void CharacterSyncCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("ATTENTION!!!\n\nThis feature synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten.", "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("ATTENTION!!!\n\n\"Synchronize Character Data\" synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten.", "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private void ManageCustomCombosButton_OnClick(object sender, RoutedEventArgs e)
