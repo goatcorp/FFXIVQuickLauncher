@@ -169,7 +169,7 @@
     <Compile Include="Addon\Implementations\CharacterSyncAddon.cs" />
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
-    <Compile Include="Addon\Implementations\HooksAddon.cs" />
+    <Compile Include="Dalamud\DalamudLauncher.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\DiscordPresenceManager.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\XivApi.cs" />
     <Compile Include="Addon\INotifyAddonAfterClose.cs" />

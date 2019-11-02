@@ -17,6 +17,7 @@ using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
 using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Cache;
+using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch;
 using Timer = System.Timers.Timer;
@@ -457,8 +458,7 @@ namespace XIVLauncher.Windows
                 {
                     if (Settings.IsInGameAddonEnabled())
                     {
-                        var hooks = new HooksAddon(); 
-                        hooks.Setup(gameProcess); 
+                        var hooks = new DalamudLauncher(gameProcess);
                         hooks.Run();
                     }
                 }

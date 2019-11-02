@@ -118,7 +118,7 @@
                             </TextBlock>
                             <CheckBox x:Uid="EnableHooksCheckBox" x:Name="EnableHooksCheckBox" Content="Enable in-game features"
                                       HorizontalAlignment="Left" Margin="0,0,0,0"
-                                      Foreground="{DynamicResource MaterialDesignBody}" />
+                                      Foreground="{DynamicResource MaterialDesignBody}"/>
 
                             <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,10,0,5">
                                 When enabled, type "/xlhelp" in-game to see other available commands like fate notifications.

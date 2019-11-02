@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Dalamud.Discord;
+using Serilog;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
@@ -87,6 +88,8 @@ namespace XIVLauncher.Windows
 
             EnableAstCardStuff.IsChecked =
                 Settings.ComboPresets.HasFlag(CustomComboPreset.AstrologianCardsOnDrawFeature);
+
+            EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
         }
 
         private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)
@@ -196,7 +199,7 @@ namespace XIVLauncher.Windows
                         if (x.Addon is RichPresenceAddon)
                             return true;
 
-                        if (x.Addon is HooksAddon)
+                        if (x.Addon is DalamudLauncher)
                             return true;
 
                         return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
@@ -230,7 +233,7 @@ namespace XIVLauncher.Windows
                     if (x.Addon is RichPresenceAddon)
                         return true;
 
-                    if (x.Addon is HooksAddon)
+                    if (x.Addon is DalamudLauncher)
                         return true;
 
                     return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
@@ -436,6 +439,24 @@ namespace XIVLauncher.Windows
             comboWindow.ShowDialog();
 
             Settings.ComboPresets = comboWindow.EnabledPresets;
+        }
+
+        private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!DalamudLauncher.CanRunDalamud())
+                    MessageBox.Show(
+                        $"The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!",
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            }
+            catch(Exception exc)
+            {
+                MessageBox.Show(
+                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the discord for more information");
+
+                Log.Error(exc, "Couldn't check dalamud compatibility.");
+            }
         }
     }
 }

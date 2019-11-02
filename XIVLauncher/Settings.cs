@@ -182,13 +182,13 @@ namespace XIVLauncher
             }
 
             // Mistakes were made
-            if (addonList.Any(entry => entry.Addon.GetType() == typeof(HooksAddon)))
+            if (addonList.Any(entry => entry.Addon.GetType() == typeof(DalamudLauncher)))
             {
-                var addon = addonList.First(entry => entry.Addon is HooksAddon);
+                var addon = addonList.First(entry => entry.Addon is DalamudLauncher);
 
                 SetInGameAddonEnabled(addon.IsEnabled);
 
-                addonList = addonList.Where(entry => !(entry.Addon is HooksAddon)).ToList();
+                addonList = addonList.Where(entry => !(entry.Addon is DalamudLauncher)).ToList();
             }
 
             return addonList;

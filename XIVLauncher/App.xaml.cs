@@ -8,6 +8,7 @@ using Serilog;
 using Serilog.Events;
 using XIVLauncher.Addon;
 using XIVLauncher.Addon.Implementations;
+using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Windows;
 
@@ -99,7 +100,7 @@ namespace XIVLauncher
             if (e.Args.Length > 0 && e.Args[0] == "--dalamudStg")
             {
                 Console.Beep();
-                HooksAddon.UseDalamudStaging = true;
+                DalamudLauncher.UseDalamudStaging = true;
             }
 
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow

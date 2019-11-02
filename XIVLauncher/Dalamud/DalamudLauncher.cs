@@ -13,9 +13,9 @@ using Newtonsoft.Json;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 
-namespace XIVLauncher.Addon
+namespace XIVLauncher.Dalamud
 {
-    class HooksAddon : IAddon
+    class DalamudLauncher
     {
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
@@ -34,7 +34,7 @@ namespace XIVLauncher.Addon
 
         public static bool UseDalamudStaging = false;
         
-        public void Setup(Process gameProcess)
+        public DalamudLauncher(Process gameProcess)
         {
             _gameProcess = gameProcess;
         }
@@ -116,6 +116,21 @@ namespace XIVLauncher.Addon
 
                 Serilog.Log.Information("Started dalamud!");
             }
+        }
+
+        public static bool CanRunDalamud()
+        {
+            using (var client = new WebClient())
+            {
+                var versionInfoJson = client.DownloadString(Remote + "version");
+                var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
+
+
+                if (XivGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
+                    return false;
+            }
+
+            return true;
         }
 
         private void Download(string addonPath, string ingamePluginPath)
