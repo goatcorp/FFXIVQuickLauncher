@@ -36,6 +36,8 @@ namespace Dalamud.Discord
         public bool CheckForDuplicateMessages { get; set; }
         public int ChatDelayMs { get; set; }
 
+        public bool DisableEmbeds { get; set; }
+
         public List<ChatTypeConfiguration> ChatTypeConfigurations { get; set; }
 
         public ChannelConfiguration CfNotificationChannel { get; set; }

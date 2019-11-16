@@ -128,30 +128,7 @@
 
                             <StackPanel x:Uid="StackPanel_6" IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
                                 <Separator x:Uid="Separator_1"></Separator>
-                                <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic" HorizontalAlignment="Center" FontSize="13">
-                                    Combat settings
-                                </Label>
-
-                                <!--
-                                <Button x:Name="ManageCustomCombosButton" Click="ManageCustomCombosButton_OnClick" Margin="0,6,0,5">Manage Custom Combos</Button>
-                                -->
-
-                                <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox" x:Name="EnableAstCardStuff"
-                                          HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Foreground="{DynamicResource MaterialDesignBody}" FontFamily="/Resources/FFXIVAppIcons.ttf #FFXIVAppIcons" Content="&#xF033;" FontSize="30"/>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock x:Uid="TextBlock_7" Text="Play on Draw (Astrologian)" Margin="5,0,0,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="14"></TextBlock>
-                                            <TextBlock x:Uid="TextBlock_8" Margin="5,5,0,0" Foreground="{DynamicResource MaterialDesignBody}">
-                                                Draw and play Astrologian cards on the same button.
-                                                <LineBreak/>
-                                                (Restores Heavensward behaviour)
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </CheckBox>
-
-                                <Separator></Separator>
+                                
                                 <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic" HorizontalAlignment="Center" FontSize="13">
                                     Chat settings
                                 </Label>
@@ -202,6 +179,10 @@
                                 <Button x:Uid="Button_5" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetFateNotificationChannel_OnClick" ToolTip="Set the Fate notification channel.">Set Fate notification channel</Button>
                                 <Button x:Uid="Button_6" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
 
+                                <CheckBox x:Uid="DisableEmbedsCheckBox" x:Name="DisableEmbedsCheckBox" Content="Disable rich embeds (send smaller messages to Discord)"
+                                          HorizontalAlignment="Left" Margin="0,0,0,20"
+                                          Foreground="{DynamicResource MaterialDesignBody}"/>
+
                                 <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox" x:Name="CheckForDuplicateMessagesCheckBox"
                                           HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}">
                                     <TextBlock Foreground="{DynamicResource MaterialDesignBody}">
@@ -221,6 +202,31 @@
                                          VerticalAlignment="Center" HorizontalAlignment="Left"
                                          Foreground="{DynamicResource MaterialDesignBody}" materialDesign:HintAssist.Hint="Chat Delay">
                                 </TextBox>
+
+                                <Separator></Separator>
+
+                                <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic" HorizontalAlignment="Center" FontSize="13">
+                                    Combat settings
+                                </Label>
+
+                                <!--
+                                <Button x:Name="ManageCustomCombosButton" Click="ManageCustomCombosButton_OnClick" Margin="0,6,0,5">Manage Custom Combos</Button>
+                                -->
+
+                                <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox" x:Name="EnableAstCardStuff"
+                                          HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Foreground="{DynamicResource MaterialDesignBody}" FontFamily="/Resources/FFXIVAppIcons.ttf #FFXIVAppIcons" Content="&#xF033;" FontSize="30"/>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock x:Uid="TextBlock_7" Text="Play on Draw (Astrologian)" Margin="5,0,0,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="14"></TextBlock>
+                                            <TextBlock x:Uid="TextBlock_8" Margin="5,5,0,0" Foreground="{DynamicResource MaterialDesignBody}">
+                                                Draw and play Astrologian cards on the same button.
+                                                <LineBreak/>
+                                                (Restores Heavensward behaviour)
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </CheckBox>
 
                                 <Separator x:Uid="Separator_2"/>
                                 <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5">

@@ -68,7 +68,7 @@ namespace XIVLauncher.Windows
             DiscordBotTokenTextBox.Text = featureConfig.Token;
             CheckForDuplicateMessagesCheckBox.IsChecked = featureConfig.CheckForDuplicateMessages;
             ChatDelayTextBox.Text = featureConfig.ChatDelayMs.ToString();
-
+            DisableEmbedsCheckBox.IsChecked = featureConfig.DisableEmbeds;
 
             RmtAdFilterCheckBox.IsChecked = Settings.RmtFilterEnabled;
             EnableHooksCheckBox.IsChecked = Settings.IsInGameAddonEnabled();
@@ -109,6 +109,7 @@ namespace XIVLauncher.Windows
             featureConfig.CheckForDuplicateMessages = CheckForDuplicateMessagesCheckBox.IsChecked == true;
             if (int.TryParse(ChatDelayTextBox.Text, out var parsedDelay))
                 featureConfig.ChatDelayMs = parsedDelay;
+            featureConfig.DisableEmbeds = DisableEmbedsCheckBox.IsChecked == true;
             Settings.DiscordFeatureConfig = featureConfig;
 
             Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
