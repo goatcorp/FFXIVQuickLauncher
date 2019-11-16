@@ -77,14 +77,14 @@ namespace XIVLauncher.Windows
 
             MbUploadOptOutCheckBox.IsChecked = Settings.OptOutMbUpload;
 
-            CharacterSyncCheckBox.IsChecked = Settings.CharacterSyncEnabled;
+            //CharacterSyncCheckBox.IsChecked = Settings.CharacterSyncEnabled;
 
             LaunchArgsTextBox.Text = Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
 
             // Gotta do this after setup so we don't fire events yet
-            CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
+            //CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
 
             EnableAstCardStuff.IsChecked =
                 Settings.ComboPresets.HasFlag(CustomComboPreset.AstrologianCardsOnDrawFeature);
@@ -115,7 +115,7 @@ namespace XIVLauncher.Windows
 
             Settings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
 
-            Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
+            //Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
             Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 

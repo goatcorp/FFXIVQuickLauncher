@@ -432,6 +432,7 @@ namespace XIVLauncher.Windows
                 try
                 {
                     var addons = Settings.GetAddonList().Where(x => x.IsEnabled).ToList();
+                    /*
 
                     addons.Add(new AddonEntry{
                             Addon = new CharacterBackupAddon()
@@ -441,6 +442,12 @@ namespace XIVLauncher.Windows
                         addons.Add(new AddonEntry{
                             Addon = new CharacterSyncAddon()
                         });
+                        */
+
+                    var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup"));
+
+                    if (backupDirectory.Exists)
+                        backupDirectory.Delete(true);
 
                     await Task.Run(() => addonMgr.RunAddons(gameProcess, addons));
                 }
