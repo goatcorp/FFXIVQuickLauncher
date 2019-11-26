@@ -396,6 +396,14 @@ namespace XIVLauncher.Windows
                 {
                     Log.Information("LoginResult was null...");
                     _isLoggingIn = false;
+
+                    // If this is an autologin, we don't want to stick around after a failed login
+                    if (AutoLoginCheckBox.IsChecked == true)
+                    {
+                        Close();
+                        Environment.Exit(0);
+                    }
+
                     return;
                 }
 
