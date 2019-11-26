@@ -120,9 +120,12 @@ namespace XIVLauncher.Game
 
             if (pendingPatches != null)
             {
-                MessageBox.Show(
-                    "Your game is out of date. Please start the official launcher and update it before trying to log in.",
-                    "Out of date", MessageBoxButton.OK, MessageBoxImage.Error);
+                var msgBoxResult = MessageBox.Show(
+                    "Your game is out of date. Please start the official launcher and update it before trying to log in. Do you want to start the official launcher?",
+                    "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
+
+                if (msgBoxResult == MessageBoxResult.Yes)
+                    Settings.StartOfficialLauncher();
 
                 return new LoginResult
                     {

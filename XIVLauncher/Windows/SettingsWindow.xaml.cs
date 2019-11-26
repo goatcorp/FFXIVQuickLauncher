@@ -145,7 +145,7 @@ namespace XIVLauncher.Windows
 
         private void OriginalLauncherButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start(Path.Combine(GamePath, "boot", "ffxivboot.exe"));
+            Settings.StartOfficialLauncher();
         }
 
         // All of the list handling is very dirty - but i guess it works

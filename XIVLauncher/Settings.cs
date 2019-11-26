@@ -3,6 +3,7 @@ using Dalamud.Discord;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using XIVLauncher.Addon;
@@ -240,6 +241,11 @@ namespace XIVLauncher
                 return newDalamudConfig;
             }
             set => File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json"), JsonConvert.SerializeObject(value));
+        }
+
+        public static void StartOfficialLauncher()
+        {
+            Process.Start(Path.Combine(GamePath.FullName, "boot", "ffxivboot.exe"));
         }
     }
 }
