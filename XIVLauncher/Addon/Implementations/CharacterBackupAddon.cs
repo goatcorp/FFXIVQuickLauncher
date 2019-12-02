@@ -20,10 +20,10 @@ namespace XIVLauncher.Addon.Implementations
             var myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var charaFolderPath = new DirectoryInfo(Path.Combine(myDocumentsPath, "My Games", "FINAL FANTASY XIV - A Realm Reborn"));
 
-            var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup"));
+            var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup", DateTimeOffset.Now.ToUnixTimeSeconds().ToString()));
             backupDirectory.Create();
 
-            ZipFile.CreateFromDirectory(charaFolderPath.FullName, Path.Combine(backupDirectory.FullName, $"{DateTimeOffset.Now.ToUnixTimeSeconds()}.zip"));
+            
 
             var currentBackups = backupDirectory.GetFiles("*.zip");
 
