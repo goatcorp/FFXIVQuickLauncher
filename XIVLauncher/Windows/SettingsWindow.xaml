@@ -83,8 +83,8 @@
                             Addons are applications that are loaded as soon as the game has started.
                         </TextBlock>
 
-                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,0,0,50" Height="170">
-                            <ListView x:Uid="AddonListView" x:Name="AddonListView" Margin="0,0,0,50" Height="140" MouseUp="AddonListView_OnMouseUp">
+                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,0,0,0" Height="160">
+                            <ListView x:Uid="AddonListView" x:Name="AddonListView" Margin="0,0,0,0" Height="160" MouseUp="AddonListView_OnMouseUp">
                                 <ListView.ContextMenu>
                                     <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
                                         <MenuItem x:Uid="MenuItem_1" Header="Remove" Click="RemoveAddonEntry_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
