@@ -459,5 +459,10 @@ namespace XIVLauncher.Windows
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }
         }
+
+        private void SetupTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
