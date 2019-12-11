@@ -329,7 +329,7 @@ namespace XIVLauncher.Game
                         {
                             // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
                             if (response.StatusCode == HttpStatusCode.Conflict)
-                                throw new Exception("Cannot verify Game version, Boot is outdated.");
+                                throw new Exception("Cannot verify Game version, Boot is outdated. Please run the offical launcher once to update Boot.");
                         }
                         else
                         {
