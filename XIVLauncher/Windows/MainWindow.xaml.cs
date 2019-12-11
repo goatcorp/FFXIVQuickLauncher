@@ -202,8 +202,12 @@ namespace XIVLauncher.Windows
                     #else
                     if (!gateStatus)
                     {
-                        MessageBox.Show(
-                            "Square Enix seems to be running maintenance work right now. The game shouldn't be launched.");
+                        var startLauncher = MessageBox.Show(
+                            "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+                        if (startLauncher)
+                            Settings.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+
                         Settings.SetAutologin(false);
                         _isLoggingIn = false;
                     }
@@ -384,9 +388,12 @@ namespace XIVLauncher.Windows
                 if (!gateStatus)
                 {
                     Log.Information("GateStatus is false.");
-                    MessageBox.Show(
-                        "Square Enix seems to be running maintenance work right now or the login server is unreachable. The game shouldn't be launched.",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    var startLauncher = MessageBox.Show(
+                                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+                    if (startLauncher)
+                        Settings.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+
                     _isLoggingIn = false;
 
                     return;
@@ -450,7 +457,6 @@ namespace XIVLauncher.Windows
                 try
                 {
                     var addons = Settings.GetAddonList().Where(x => x.IsEnabled).ToList();
-                    /*
 
                     addons.Add(new AddonEntry{
                             Addon = new CharacterBackupAddon()
@@ -460,7 +466,6 @@ namespace XIVLauncher.Windows
                         addons.Add(new AddonEntry{
                             Addon = new CharacterSyncAddon()
                         });
-                        */
 
                     var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup"));
 
