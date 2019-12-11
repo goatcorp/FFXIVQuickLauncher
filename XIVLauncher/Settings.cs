@@ -243,9 +243,9 @@ namespace XIVLauncher
             set => File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json"), JsonConvert.SerializeObject(value));
         }
 
-        public static void StartOfficialLauncher()
+        public static void StartOfficialLauncher(bool isSteam)
         {
-            Process.Start(Path.Combine(GamePath.FullName, "boot", "ffxivboot.exe"));
+            Process.Start(Path.Combine(GamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
         }
     }
 }

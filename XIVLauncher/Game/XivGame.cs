@@ -125,7 +125,7 @@ namespace XIVLauncher.Game
                     "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
 
                 if (msgBoxResult == MessageBoxResult.Yes)
-                    Settings.StartOfficialLauncher();
+                    Settings.StartOfficialLauncher(isSteamServiceAccount);
 
                 return new LoginResult
                     {
