@@ -410,8 +410,15 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-                if (loginResult.State == XivGame.LoginState.NeedsPatch)
+                if (loginResult.State != XivGame.LoginState.Ok)
                 {
+                    var msgBoxResult = MessageBox.Show(
+                        "Your game is out of date. Please start the official launcher and update it before trying to log in. Do you want to start the official launcher?",
+                        "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
+
+                    if (msgBoxResult == MessageBoxResult.Yes)
+                        Settings.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+
                     /*
                     var patcher = new Game.Patch.PatchInstaller(_game, "ffxiv"); 
                     //var window = new IntegrityCheckProgressWindow();

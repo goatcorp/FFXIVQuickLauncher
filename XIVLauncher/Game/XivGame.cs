@@ -43,8 +43,10 @@ namespace XIVLauncher.Game
 
         public enum LoginState
         {
+            Unknown,
             Ok,
-            NeedsPatch
+            NeedsPatchGame,
+            NeedsPatchBoot
         }
 
         public class LoginResult
@@ -61,6 +63,8 @@ namespace XIVLauncher.Game
             PatchListEntry[] pendingPatches = null;
 
             OauthLoginResult oauthLoginResult;
+
+            LoginState loginState = LoginState.Unknown;
 
             Log.Information($"XivGame::Login(steamServiceAccount:{isSteamServiceAccount}, cache:{useCache})");
 
@@ -97,7 +101,7 @@ namespace XIVLauncher.Game
                     return null;
                 }
 
-                (uid, pendingPatches) = Task.Run(() => RegisterSession(oauthLoginResult)).Result;
+                (uid, loginState, pendingPatches) = Task.Run(() => RegisterSession(oauthLoginResult)).Result;
 
                 if (useCache)
                     Task.Run(() => Cache.AddCachedUid(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion))
@@ -108,6 +112,7 @@ namespace XIVLauncher.Game
                 Log.Information("Cached UID found, using instead.");
                 var (cachedUid, region, expansionLevel) = Task.Run(() => Cache.GetCachedUid(userName)).Result;
                 uid = cachedUid;
+                loginState = LoginState.Ok;
 
                 oauthLoginResult = new OauthLoginResult
                 {
@@ -118,29 +123,11 @@ namespace XIVLauncher.Game
                 };
             }
 
-            if (pendingPatches != null)
-            {
-                var msgBoxResult = MessageBox.Show(
-                    "Your game is out of date. Please start the official launcher and update it before trying to log in. Do you want to start the official launcher?",
-                    "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
-
-                if (msgBoxResult == MessageBoxResult.Yes)
-                    Settings.StartOfficialLauncher(isSteamServiceAccount);
-
-                return new LoginResult
-                    {
-                        PendingPatches = pendingPatches,
-                        OauthLogin = oauthLoginResult,
-                        State = LoginState.NeedsPatch,
-                        UniqueId = uid
-                    };
-            }
-
             return new LoginResult
             {
-                PendingPatches = null,
+                PendingPatches = pendingPatches,
                 OauthLogin = oauthLoginResult,
-                State = LoginState.Ok,
+                State = loginState,
                 UniqueId = uid
             };
         }
@@ -289,7 +276,7 @@ namespace XIVLauncher.Game
             return result;
         }
 
-        private static (string Uid, PatchListEntry[] PendingGamePatches) RegisterSession(OauthLoginResult loginResult)
+        private static (string Uid, LoginState result, PatchListEntry[] PendingGamePatches) RegisterSession(OauthLoginResult loginResult)
         {
             using (var client = new WebClient())
             {
@@ -312,13 +299,13 @@ namespace XIVLauncher.Game
                         var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
 
                         if (result == string.Empty) 
-                            return (sid, null);
+                            return (sid, LoginState.Ok, null);
 
                         Log.Verbose("Patching is needed... List:\n" + result);
 
                         var pendingPatches = PatchListParser.Parse(result);
 
-                        return (sid, pendingPatches);
+                        return (sid, LoginState.NeedsPatchGame, pendingPatches);
                     }
                 }
                 catch (WebException exc)
@@ -329,7 +316,7 @@ namespace XIVLauncher.Game
                         {
                             // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
                             if (response.StatusCode == HttpStatusCode.Conflict)
-                                throw new Exception("Cannot verify Game version, Boot is outdated. Please run the offical launcher once to update Boot.");
+                                return (null, LoginState.NeedsPatchBoot, null);
                         }
                         else
                         {
