@@ -53,6 +53,9 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
 
+            var asdf = new CharacterBackupAddon() as INotifyAddonAfterClose;
+            asdf.GameClosed();
+
 #if !DEBUG
             AutoUpdater.ShowSkipButton = false;
             AutoUpdater.ShowRemindLaterButton = false;
