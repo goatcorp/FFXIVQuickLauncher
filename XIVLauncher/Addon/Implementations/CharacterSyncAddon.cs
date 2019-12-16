@@ -42,7 +42,9 @@ namespace XIVLauncher.Addon.Implementations
 
                 foreach (var file in files)
                 {
-                    File.Copy(file.FullName, Path.Combine(folder.FullName, file.Name), true);
+                    var destPath = Path.Combine(folder.FullName, file.Name);
+                    File.Copy(file.FullName, destPath, true);
+                    Serilog.Log.Information("   -> Copied {0} to {1}", file.FullName, destPath);
                 }
             }
         }

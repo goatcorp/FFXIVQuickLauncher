@@ -159,23 +159,8 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.LastVersion = version;
                 Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
 
-                if (version == "3.4.0.0")
-                {
-                    var savedCredentials = CredentialManager.GetCredentials("FINAL FANTASY XIV");
-
-                    if (savedCredentials != null)
-                    {
-                        _accountManager.AddAccount(new XivAccount(savedCredentials.UserName)
-                        {
-                            Password = savedCredentials.Password,
-                            SavePassword = true,
-                            UseOtp = Settings.NeedsOtp(),
-                            UseSteamServiceAccount = Settings.SteamIntegrationEnabled
-                        });
-
-                        Properties.Settings.Default.CurrentAccount = $"{savedCredentials.UserName}-{Settings.NeedsOtp()}-{Settings.SteamIntegrationEnabled}";;
-                    }
-                }
+                if (version == "4.3.0.0")
+                    Settings.CharacterSyncEnabled = false;
 
                 Properties.Settings.Default.Save();
             }
