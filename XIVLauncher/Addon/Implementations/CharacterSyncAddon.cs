@@ -19,7 +19,7 @@ namespace XIVLauncher.Addon.Implementations
             var myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var charaFolderPath = new DirectoryInfo(Path.Combine(myDocumentsPath, "My Games", "FINAL FANTASY XIV - A Realm Reborn"));
 
-            var orderedByChanges = charaFolderPath.GetDirectories().OrderByDescending(folder =>
+            var orderedByChanges = charaFolderPath.GetDirectories("FFXIV_CHR*").OrderByDescending(folder =>
             {
                 return File.GetLastWriteTime(Path.Combine(folder.FullName, "ADDON.DAT"));
             });
