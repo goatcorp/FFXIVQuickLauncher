@@ -53,7 +53,6 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
 
-            AdminCheck.RunCheck();
             return;
 
 #if !DEBUG
@@ -224,6 +223,8 @@ namespace XIVLauncher.Windows
             Task.Run(() => SetupHeadlines());
 
             Settings.LanguageChanged += SetupHeadlines;
+
+            AdminCheck.RunCheck();
 
             Show();
             Activate();
