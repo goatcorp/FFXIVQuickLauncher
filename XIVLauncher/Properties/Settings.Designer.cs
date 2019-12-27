@@ -250,5 +250,17 @@ namespace XIVLauncher.Properties {
                 this["CharacterSyncEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HasComplainedAboutAdmin {
+            get {
+                return ((bool)(this["HasComplainedAboutAdmin"]));
+            }
+            set {
+                this["HasComplainedAboutAdmin"] = value;
+            }
+        }
     }
 }

@@ -44,9 +44,11 @@ namespace XIVLauncher.Game
                 return;
             }
 
-            if (runningAsAdmin)
+            if (runningAsAdmin && !Properties.Settings.Default.HasComplainedAboutAdmin)
             {
                 MessageBox.Show("XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin.", "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Properties.Settings.Default.HasComplainedAboutAdmin = true;
+                Properties.Settings.Default.Save();
             }
         }
     }
