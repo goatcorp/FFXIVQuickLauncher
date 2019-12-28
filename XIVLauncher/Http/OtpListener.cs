@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Windows;
 
 namespace XIVLauncher.Http
 {
@@ -27,6 +28,12 @@ namespace XIVLauncher.Http
             if (e.Path.StartsWith("/ffxivlauncher/"))
             {
                 var otp = e.Path.Substring(15);
+                if (otp.Length < 6)
+                {
+                    MessageBox.Show("Received malformed OTP code, please check macro.",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
                 OnOtpReceived?.Invoke(otp);
             }
