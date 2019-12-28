@@ -246,11 +246,13 @@ namespace XIVLauncher.Windows
 
                         if (AutoUpdater.DownloadUpdate())
                         {
+                            Process.GetCurrentProcess().Kill();
                             Environment.Exit(0);
                         }
                         else
                         {
                             Util.ShowError("Could not download update. Please try again later.", "Update failed");
+                            Process.GetCurrentProcess().Kill();
                             Environment.Exit(0);
                         }
                     }
@@ -258,6 +260,7 @@ namespace XIVLauncher.Windows
                     {
                         new ErrorWindow(exc, $"Update failed. Please report this error and try again later. \n\n{exc}",
                             "UpdateAvailableFail").ShowDialog();
+                        Process.GetCurrentProcess().Kill();
                         Environment.Exit(0);
                     }
                 }
@@ -271,6 +274,7 @@ namespace XIVLauncher.Windows
             {
                 Util.ShowError("Could not check for updates. Please try again later.", "Update failed");
                 Log.Error("Update check failed.");
+                Process.GetCurrentProcess().Kill();
                 Environment.Exit(0);
             }
         }
