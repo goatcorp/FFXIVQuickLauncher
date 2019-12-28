@@ -9,7 +9,7 @@ using System.Windows;
 [assembly: AssemblyTitle("XIVLauncher")]
 [assembly: AssemblyDescription("Custom launcher for FFXIV.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("goatsoft")]
 [assembly: AssemblyProduct("XIVLauncher")]
 [assembly: AssemblyCopyright("Copyright © goaaats 2019")]
 [assembly: AssemblyTrademark("")]
@@ -50,7 +50,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.3.0.0")]
-[assembly: AssemblyFileVersion("4.3.0.0")]
+[assembly: AssemblyVersion("4.4.0.0")]
+[assembly: AssemblyFileVersion("4.4.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
 
