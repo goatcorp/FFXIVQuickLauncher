@@ -169,6 +169,7 @@
     <Compile Include="Addon\Implementations\CharacterSyncAddon.cs" />
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
+    <Compile Include="DalamudSettings.cs" />
     <Compile Include="Dalamud\DalamudLauncher.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\DiscordPresenceManager.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\XivApi.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Game\Patch\PatchList\PatchListParser.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\OtpListener.cs" />
+    <Compile Include="OldSettings.cs" />
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
       <DependentUpon>ChangelogWindow.xaml</DependentUpon>
     </Compile>
