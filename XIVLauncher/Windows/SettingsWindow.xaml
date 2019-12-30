@@ -74,11 +74,11 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem x:Uid="TabItem_4" Header="Addons">
+            <TabItem x:Uid="TabItem_4" Header="Auto-Launch">
                 <Grid x:Uid="Grid_3">
                     <Grid x:Uid="Grid_4" Margin="10,10,10,0">
                         <TextBlock x:Uid="TextBlock_4" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Addons are applications that are loaded as soon as the game has started.
+                            These are applications that are loaded as soon as the game has started.
                         </TextBlock>
 
                         <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,0,0,0" Height="160">
