@@ -34,5 +34,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: '$env:VERSION'
+          name: 'xivlauncher-$env:COMMIT'
           path: release.zip
