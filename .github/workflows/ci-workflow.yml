@@ -27,4 +27,12 @@ jobs:
       - name: Build DotNet4
         run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln
+           .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=Release
+      - name: Zip artifact
+        run: |
+          powershell.exe Compress-Archive -LiteralPath "$Env:GITHUB_WORKSPACE\XIVLauncher\bin\Release\" -DestinationPath "$Env:GITHUB_WORKSPACE\release.zip" -Force
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: xivlauncher-artifact
+          path: release.zip

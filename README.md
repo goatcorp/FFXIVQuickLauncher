@@ -1,4 +1,4 @@
-# FFXIVQuickLauncher [![Build status](https://ci.appveyor.com/api/projects/status/xc3hx4rhmrd310kc?svg=true)](https://ci.appveyor.com/project/goaaats/ffxivquicklauncher) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5)
+# FFXIVQuickLauncher [![Actions Status](https://github.com/goaaats/FFXIVQuickLauncher/workflows/Build%20XIVLauncher/badge.svg)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5)
 
 A faster launcher for Final Fantasy XIV.
 
@@ -21,7 +21,8 @@ Check the settings page and use the /xlhelp command in-game to see available com
 
 ## How to install
 
-[Download the latest release from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page, unzip it into any folder you can easily access it and launch XIVLauncher.exe - then just follow the instructions!
+[Download the latest "Setup.exe" from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page and run it. XIVLauncher will start and will be installed to your start menu.
+To uninstall, you can use the Windows Programs & Apps menu or right click XIVLauncher in your start menu.
 
 ## Plugin API
 
