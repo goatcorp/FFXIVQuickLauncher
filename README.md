@@ -21,7 +21,8 @@ Check the settings page and use the /xlhelp command in-game to see available com
 
 ## How to install
 
-[Download the latest release from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page, unzip it into any folder you can easily access it and launch XIVLauncher.exe - then just follow the instructions!
+[Download the latest "Setup.exe" from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page and run it. XIVLauncher will start and will be installed to your start menu.
+To uninstall, you can use the Windows Programs & Apps menu or right click XIVLauncher in your start menu.
 
 ## Plugin API
 
