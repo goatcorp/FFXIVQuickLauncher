@@ -28,3 +28,13 @@ jobs:
         run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
            .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=Release
+      - name: Zip artifact
+        uses: thedoctor0/zip-release@5c841d4b1c6cbc060aa77fb251142f0574a3ebb6
+        with:
+          filename: 'release.zip'
+          path: '$Env:GITHUB_WORKSPACE\XIVLauncher\bin\Release\XIVLauncher.exe'
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: '$env:VERSION'
+          path: release.zip
