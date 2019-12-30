@@ -22,9 +22,16 @@ namespace XIVLauncher
     {
         public App()
         {
-            var culture = new System.Globalization.CultureInfo("de-DE");
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = culture;
+#if !DEBUG
+            AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+            {
+                MessageBox.Show(
+                    "Error during early initialization. Please report this error.\n\n" + args.ExceptionObject,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.CloseAndFlush();
+                Environment.Exit(0);
+            };
+#endif
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
