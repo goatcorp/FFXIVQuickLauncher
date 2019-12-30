@@ -45,13 +45,18 @@ namespace XIVLauncher.Windows
             }
         }
 
-        public SettingsWindow()
+        private Settings _setting;
+
+        public SettingsWindow(Settings setting)
         {
             InitializeComponent();
-            DataContext = this;
-            GamePath = Settings.GamePath?.FullName;
 
-            if (Settings.IsDX11())
+            _setting = setting;
+
+            DataContext = this;
+            GamePath = _setting.GamePath?.FullName;
+
+            if (_setting.IsDx11)
                 Dx11RadioButton.IsChecked = true;
             else
             {
@@ -59,27 +64,26 @@ namespace XIVLauncher.Windows
                 Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
             }
 
-            LanguageComboBox.SelectedIndex = (int) Settings.GetLanguage();
-            AddonListView.ItemsSource = Settings.GetAddonList();
-            UidCacheCheckBox.IsChecked = Settings.UniqueIdCacheEnabled;
+            LanguageComboBox.SelectedIndex = (int) _setting.Language;
+            AddonListView.ItemsSource = _setting.AddonList;
+            UidCacheCheckBox.IsChecked = _setting.UniqueIdCacheEnabled;
 
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
             ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
             DiscordBotTokenTextBox.Text = featureConfig.Token;
             CheckForDuplicateMessagesCheckBox.IsChecked = featureConfig.CheckForDuplicateMessages;
             ChatDelayTextBox.Text = featureConfig.ChatDelayMs.ToString();
             DisableEmbedsCheckBox.IsChecked = featureConfig.DisableEmbeds;
 
-            RmtAdFilterCheckBox.IsChecked = Settings.RmtFilterEnabled;
-            EnableHooksCheckBox.IsChecked = Settings.IsInGameAddonEnabled();
+            EnableHooksCheckBox.IsChecked = _setting.InGameAddonEnabled;
 
-            SteamIntegrationCheckBox.IsChecked = Settings.SteamIntegrationEnabled;
+            SteamIntegrationCheckBox.IsChecked = _setting.SteamIntegrationEnabled;
 
-            MbUploadOptOutCheckBox.IsChecked = Settings.OptOutMbUpload;
+            MbUploadOptOutCheckBox.IsChecked = DalamudSettings.OptOutMbUpload;
 
-            CharacterSyncCheckBox.IsChecked = Settings.CharacterSyncEnabled;
+            CharacterSyncCheckBox.IsChecked = _setting.CharacterSyncEnabled;
 
-            LaunchArgsTextBox.Text = Settings.AdditionalLaunchArgs;
+            LaunchArgsTextBox.Text = _setting.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
 
@@ -87,45 +91,43 @@ namespace XIVLauncher.Windows
             CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
 
             EnableAstCardStuff.IsChecked =
-                Settings.ComboPresets.HasFlag(CustomComboPreset.AstrologianCardsOnDrawFeature);
+                DalamudSettings.ComboPresets.HasFlag(CustomComboPreset.AstrologianCardsOnDrawFeature);
 
             EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
         }
 
         private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            Settings.GamePath = !string.IsNullOrEmpty(GamePath) ? new DirectoryInfo(GamePath) : null;
-            Settings.SetDx11(Dx11RadioButton.IsChecked == true);
-            Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
-            Settings.SetAddonList((List<AddonEntry>) AddonListView.ItemsSource);
-            Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
+            _setting.GamePath = !string.IsNullOrEmpty(GamePath) ? new DirectoryInfo(GamePath) : null;
+            _setting.IsDx11 = Dx11RadioButton.IsChecked == true;
+            _setting.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
+            _setting.AddonList = (List<AddonEntry>) AddonListView.ItemsSource;
+            _setting.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
 
-            Settings.RmtFilterEnabled = RmtAdFilterCheckBox.IsChecked == true;
+            _setting.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 
-            Settings.SetInGameAddonEnabled(EnableHooksCheckBox.IsChecked == true);
-
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
             featureConfig.Token = DiscordBotTokenTextBox.Text;
             featureConfig.CheckForDuplicateMessages = CheckForDuplicateMessagesCheckBox.IsChecked == true;
             if (int.TryParse(ChatDelayTextBox.Text, out var parsedDelay))
                 featureConfig.ChatDelayMs = parsedDelay;
             featureConfig.DisableEmbeds = DisableEmbedsCheckBox.IsChecked == true;
-            Settings.DiscordFeatureConfig = featureConfig;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
 
-            Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
+            _setting.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
-            Settings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
+            DalamudSettings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
 
-            Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
+            _setting.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
-            Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
+            _setting.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
             if (EnableAstCardStuff.IsChecked == true)
             {
-                Settings.ComboPresets |= CustomComboPreset.AstrologianCardsOnDrawFeature;
+                DalamudSettings.ComboPresets |= CustomComboPreset.AstrologianCardsOnDrawFeature;
             }
 
-            Settings.Save();
+            _setting.Save();
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
@@ -148,7 +150,7 @@ namespace XIVLauncher.Windows
             var isSteam =
                 MessageBox.Show("Launch as a steam user?", "XIVLauncher", MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes;
-            Settings.StartOfficialLauncher(isSteam);
+            _setting.StartOfficialLauncher(isSteam);
         }
 
         // All of the list handling is very dirty - but i guess it works
@@ -160,16 +162,13 @@ namespace XIVLauncher.Windows
 
             if (addonSetup.Result != null && !string.IsNullOrEmpty(addonSetup.Result.Path))
             {
-                var addonList = Settings.GetAddonList();
-
-                addonList.Add(new AddonEntry
+                _setting.AddonList.Add(new AddonEntry
                 {
                     IsEnabled = true,
                     Addon = addonSetup.Result
                 });
 
-                AddonListView.ItemsSource = addonList;
-                Settings.SetAddonList(addonList);
+                AddonListView.ItemsSource = _setting.AddonList;
             }
         }
 
@@ -196,9 +195,7 @@ namespace XIVLauncher.Windows
 
                 if (addonSetup.Result != null)
                 {
-                    var addonList = Settings.GetAddonList();
-
-                    addonList = addonList.Where(x =>
+                    _setting.AddonList = _setting.AddonList.Where(x =>
                     {
                         if (x.Addon is RichPresenceAddon)
                             return true;
@@ -209,30 +206,27 @@ namespace XIVLauncher.Windows
                         return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
                     }).ToList();
 
-                    addonList.Add(new AddonEntry
+                    _setting.AddonList.Add(new AddonEntry
                     {
                         IsEnabled = entry.IsEnabled,
                         Addon = addonSetup.Result
                     });
 
-                    AddonListView.ItemsSource = addonList;
-                    Settings.SetAddonList(addonList);
+                    AddonListView.ItemsSource = _setting.AddonList;
                 }
             }
         }
 
         private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
         {
-            Settings.SetAddonList((List<AddonEntry>) AddonListView.ItemsSource);
+            _setting.AddonList = (List<AddonEntry>) AddonListView.ItemsSource;
         }
 
         private void RemoveAddonEntry_OnClick(object sender, RoutedEventArgs e)
         {
             if (AddonListView.SelectedItem is AddonEntry entry && entry.Addon is GenericAddon genericAddon)
             {
-                var addonList = Settings.GetAddonList();
-
-                addonList = addonList.Where(x =>
+                _setting.AddonList = _setting.AddonList.Where(x =>
                 {
                     if (x.Addon is RichPresenceAddon)
                         return true;
@@ -243,15 +237,14 @@ namespace XIVLauncher.Windows
                     return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
                 }).ToList();
 
-                AddonListView.ItemsSource = addonList;
-                Settings.SetAddonList(addonList);
+                AddonListView.ItemsSource = _setting.AddonList;
             }
         }
 
         private void ResetCacheButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
-            Settings.Save();
+            UniqueIdCache.Reset();
+            _setting.Save();
             MessageBox.Show("Reset. Please restart the app.");
 
             Environment.Exit(0);
@@ -272,12 +265,12 @@ namespace XIVLauncher.Windows
 
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
         {
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
 
             featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
 
             ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
-            Settings.DiscordFeatureConfig = featureConfig;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
         private void ChannelListView_OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -294,14 +287,14 @@ namespace XIVLauncher.Windows
             if (channelSetup.Result == null)
                 return;
 
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
 
             //featureConfig.ChatTypeConfigurations = featureConfig.ChatTypeConfigurations.Where(x => !x.CompareEx(configEntry)).ToList();
             featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
             featureConfig.ChatTypeConfigurations.Add(channelSetup.Result);
 
             ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
-            Settings.DiscordFeatureConfig = featureConfig;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
         private void AddChannelConfig_OnClick(object sender, RoutedEventArgs e)
@@ -312,15 +305,15 @@ namespace XIVLauncher.Windows
             if (channelSetup.Result == null)
                 return;
 
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
             featureConfig.ChatTypeConfigurations.Add(channelSetup.Result);
             ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
-            Settings.DiscordFeatureConfig = featureConfig;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
         private void SetDutyFinderNotificationChannel_OnClick(object sender, RoutedEventArgs e)
         {
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
 
             var channelConfig = featureConfig.CfNotificationChannel ?? new ChannelConfiguration();
 
@@ -331,12 +324,12 @@ namespace XIVLauncher.Windows
                 return;
 
             featureConfig.CfNotificationChannel = channelSetup.Result.Channel;
-            Settings.DiscordFeatureConfig = featureConfig;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
         private void SetFateNotificationChannel_OnClick(object sender, RoutedEventArgs e)
         {
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
 
             var channelConfig = featureConfig.FateNotificationChannel ?? new ChannelConfiguration();
 
@@ -347,12 +340,12 @@ namespace XIVLauncher.Windows
                 return;
 
             featureConfig.FateNotificationChannel = channelSetup.Result.Channel;
-            Settings.DiscordFeatureConfig = featureConfig;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
         private void SetRetainerNotificationChannel_OnClick(object sender, RoutedEventArgs e)
         {
-            var featureConfig = Settings.DiscordFeatureConfig;
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
 
             var channelConfig = featureConfig.RetainerNotificationChannel ?? new ChannelConfiguration();
 
@@ -363,7 +356,7 @@ namespace XIVLauncher.Windows
                 return;
 
             featureConfig.RetainerNotificationChannel = channelSetup.Result.Channel;
-            Settings.DiscordFeatureConfig = featureConfig;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
         private void RunIntegrityCheck_OnClick(object s, RoutedEventArgs e)
@@ -372,7 +365,7 @@ namespace XIVLauncher.Windows
             var progress = new Progress<IntegrityCheck.IntegrityCheckProgress>();
             progress.ProgressChanged += (sender, checkProgress) => window.UpdateProgress(checkProgress);
 
-            Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress)).ContinueWith(task =>
+            Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, _setting.GamePath)).ContinueWith(task =>
             {
                 window.Dispatcher.Invoke(() => window.Close());
 
@@ -393,7 +386,7 @@ namespace XIVLauncher.Windows
 
                         if (result == MessageBoxResult.Yes)
                         {
-                            var verFile = Path.Combine(Settings.GamePath.FullName, "game", "ffxivgame.ver");
+                            var verFile = Path.Combine(_setting.GamePath.FullName, "game", "ffxivgame.ver");
 
                             File.Delete(verFile);
                             File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
@@ -437,19 +430,11 @@ namespace XIVLauncher.Windows
             MessageBox.Show("ATTENTION!!!\n\n\"Synchronize Character Data\" synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten.", "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-        private void ManageCustomCombosButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            var comboWindow = new CustomComboSetupWindow(Settings.ComboPresets);
-            comboWindow.ShowDialog();
-
-            Settings.ComboPresets = comboWindow.EnabledPresets;
-        }
-
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (!DalamudLauncher.CanRunDalamud())
+                if (!DalamudLauncher.CanRunDalamud(_setting.GamePath))
                     MessageBox.Show(
                         $"The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!",
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);

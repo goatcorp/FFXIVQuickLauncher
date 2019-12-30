@@ -40,13 +40,13 @@ namespace XIVLauncher.Game
 
     public partial class Headlines
     {
-        public static Headlines Get(XivGame game)
+        public static Headlines Get(XivGame game, ClientLanguage language)
         {
             var unixTimestamp = Util.GetUnixMillis();
-            var langCode = Settings.GetLanguage().GetLangCode();
+            var langCode = language.GetLangCode();
             var url = $"https://frontier.ffxiv.com/news/headline.json?lang={langCode}&media=pcapp&{unixTimestamp}";
 
-            var json = Encoding.UTF8.GetString(game.DownloadAsLauncher(url));
+            var json = Encoding.UTF8.GetString(game.DownloadAsLauncher(url, language));
 
             return JsonConvert.DeserializeObject<Headlines>(json, Converter.Settings);
         }

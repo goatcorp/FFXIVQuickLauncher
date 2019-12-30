@@ -2,7 +2,7 @@
 
 namespace XIVLauncher.Cache
 {
-    internal class UniqueIdCacheEntry
+    public class UniqueIdCacheEntry
     {
         public string UserName { get; set; }
         public string UniqueId { get; set; }

@@ -13,46 +13,21 @@ using XIVLauncher.Game;
 
 namespace XIVLauncher
 {
-    class Settings
+    public class Settings
     {
-        public Action LanguageChanged;
-
         #region Launcher Setting
 
         public DirectoryInfo GamePath { get; set; }
         public bool IsDx11 { get; set; }
         public bool AutologinEnabled { get; set; }
         public bool NeedsOtp { get; set; }
-
-        private List<AddonEntry> _internalAddonList;
-        [JsonIgnore]
-        public List<AddonEntry> AddonList
-        {
-            get => EnsureDefaultAddon(_internalAddonList);
-            set => _internalAddonList = value;
-        } 
-
-        public List<UniqueIdCacheEntry> UniqueIdCache { get; set; }
+        public List<AddonEntry> AddonList { get; set; }
         public bool UniqueIdCacheEnabled { get; set; }
         public bool CharacterSyncEnabled { get; set; }
         public string AdditionalLaunchArgs { get; set; }
         public bool InGameAddonEnabled { get; set; }
         public bool SteamIntegrationEnabled { get; set; }
-
-        
-        private ClientLanguage _internalLang;
-        [JsonIgnore]
-        public ClientLanguage Language
-        {
-            get => _internalLang;
-            set
-            {
-                if (_internalLang != value)
-                    LanguageChanged?.Invoke();
-
-                _internalLang = value;
-            }
-        }
+        public ClientLanguage Language { get; set; }
 
         #endregion
 
@@ -71,10 +46,17 @@ namespace XIVLauncher
 
         public static Settings Load()
         {
-            return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
+            if (!File.Exists(ConfigPath))
+                return new Settings();
+
+            var setting = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
             });
+
+            setting.AddonList = EnsureDefaultAddon(setting.AddonList);
+
+            return setting;
         }
 
         private static List<AddonEntry> EnsureDefaultAddon(List<AddonEntry> addonList)

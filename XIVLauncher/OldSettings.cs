@@ -104,7 +104,7 @@ namespace XIVLauncher
 
         #endregion
 
-        public static void Migrate()
+        public static Settings Migrate()
         {
             var newSetting = Settings.Load();
 
@@ -117,11 +117,12 @@ namespace XIVLauncher
             newSetting.IsDx11 = IsDX11();
             newSetting.Language = GetLanguage();
             newSetting.NeedsOtp = NeedsOtp();
-            newSetting.UniqueIdCache = UniqueIdCache;
             newSetting.UniqueIdCacheEnabled = UniqueIdCacheEnabled;
             newSetting.SteamIntegrationEnabled = SteamIntegrationEnabled;
 
-            throw new NotImplementedException("doof");
+            newSetting.Save();
+
+            return newSetting;
         }
     }
 }

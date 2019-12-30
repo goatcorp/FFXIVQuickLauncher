@@ -45,12 +45,8 @@ namespace XIVLauncher.Dalamud
             public string SupportedGameVer { get; set; }
         }
 
-        public void Run()
+        public void Run(DirectoryInfo gamePath, ClientLanguage language)
         {
-            // Launcher Hooks don't work on DX9 and probably never will
-            if (!Settings.IsDX11())
-                return;
-
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "Hooks");
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
@@ -82,7 +78,7 @@ namespace XIVLauncher.Dalamud
                         Download(addonDirectory, defaultPluginPath);
                 }
 
-                if (XivGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
+                if (XivGame.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return;
 
                 if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")))
@@ -99,7 +95,7 @@ namespace XIVLauncher.Dalamud
 
                 var startInfo = new DalamudStartInfo
                 {
-                    Language = Settings.GetLanguage(),
+                    Language = language,
                     PluginDirectory = ingamePluginPath,
                     DefaultPluginDirectory = defaultPluginPath,
                     ConfigurationPath = configPath
@@ -118,7 +114,7 @@ namespace XIVLauncher.Dalamud
             }
         }
 
-        public static bool CanRunDalamud()
+        public static bool CanRunDalamud(DirectoryInfo gamePath)
         {
             using (var client = new WebClient())
             {
@@ -126,7 +122,7 @@ namespace XIVLauncher.Dalamud
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
-                if (XivGame.GetLocalGameVer() != remoteVersionInfo.SupportedGameVer)
+                if (XivGame.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return false;
             }
 

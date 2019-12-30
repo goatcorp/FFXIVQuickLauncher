@@ -12,9 +12,13 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class FirstTimeSetup : Window
     {
-        public FirstTimeSetup()
+        public Settings Result;
+
+        public FirstTimeSetup(Settings setting)
         {
             InitializeComponent();
+
+            Result = setting;
 
             var detectedPath = Util.TryGamePaths();
 
@@ -72,13 +76,13 @@ namespace XIVLauncher.Windows
 
             if (SetupTabControl.SelectedIndex == 5)
             {
-                Settings.GamePath = new DirectoryInfo(GamePathEntry.Text);
-                Settings.SetDx11(Dx11RadioButton.IsChecked == true);
-                Settings.SetLanguage((ClientLanguage) LanguageComboBox.SelectedIndex);
-                Settings.SetInGameAddonEnabled(HooksCheckBox.IsChecked == true);
-                Settings.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
+                Result.GamePath = new DirectoryInfo(GamePathEntry.Text);
+                Result.IsDx11 = Dx11RadioButton.IsChecked == true;
+                Result.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
+                Result.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
+                Result.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
 
-                var addonList = new List<AddonEntry>
+                Result.AddonList = new List<AddonEntry>
                 {
                     new AddonEntry
                     {
@@ -91,7 +95,7 @@ namespace XIVLauncher.Windows
                 {
                     var actPath = FindAct();
 
-                    addonList.Add(new AddonEntry
+                    Result.AddonList.Add(new AddonEntry
                     {
                         IsEnabled = true,
                         Addon = new GenericAddon
@@ -101,9 +105,7 @@ namespace XIVLauncher.Windows
                     });
                 }
 
-                Settings.SetAddonList(addonList);
-
-                Settings.Save();
+                Result.Save();
                 Close();
             }
 

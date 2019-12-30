@@ -13,7 +13,7 @@ namespace XIVLauncher.Addon
     {
         private List<Tuple<IAddon, Thread, CancellationTokenSource>> _runningAddons;
 
-        public void RunAddons(Process gameProcess, List<AddonEntry> addonEntries)
+        public void RunAddons(Process gameProcess, Settings setting, List<AddonEntry> addonEntries)
         {
             if (_runningAddons != null)
                 throw new Exception("Addons still running?");
@@ -22,7 +22,7 @@ namespace XIVLauncher.Addon
 
             foreach (var addonEntry in addonEntries)
             {
-                addonEntry.Addon.Setup(gameProcess);
+                addonEntry.Addon.Setup(gameProcess, setting);
 
                 if (addonEntry.Addon is IPersistentAddon persistentAddon)
                 {

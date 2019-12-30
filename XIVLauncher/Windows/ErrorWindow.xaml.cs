@@ -15,17 +15,19 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            var setting = Settings.Load();
+
             ExceptionTextBox.AppendText(exc.ToString());
             ExceptionTextBox.AppendText("\n" + Util.GetAssemblyVersion());
             ExceptionTextBox.AppendText("\n" + Util.GetGitHash());
             ExceptionTextBox.AppendText("\nContext: " + context);
             ExceptionTextBox.AppendText("\n" + Environment.OSVersion);
             ExceptionTextBox.AppendText("\n" + Environment.Is64BitProcess);
-            ExceptionTextBox.AppendText("\n" + Settings.IsDX11());
-            ExceptionTextBox.AppendText("\n" + Settings.IsInGameAddonEnabled());
-            ExceptionTextBox.AppendText("\n" + Settings.IsAutologin());
-            ExceptionTextBox.AppendText("\n" + Settings.UniqueIdCacheEnabled);
-            ExceptionTextBox.AppendText("\n" + Settings.GetLanguage());
+            ExceptionTextBox.AppendText("\n" + setting.IsDx11);
+            ExceptionTextBox.AppendText("\n" + setting.InGameAddonEnabled);
+            ExceptionTextBox.AppendText("\n" + setting.AutologinEnabled);
+            ExceptionTextBox.AppendText("\n" + setting.AutologinEnabled);
+            ExceptionTextBox.AppendText("\n" + setting.Language);
 
             #if DEBUG
             ExceptionTextBox.AppendText("\nDebugging");

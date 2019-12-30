@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using AdysTech.CredentialManager;
 using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
 using Serilog;
@@ -41,6 +40,8 @@ namespace XIVLauncher.Windows
         private AccountManager _accountManager;
 
         private bool _isLoggingIn;
+
+        private Settings _setting = Settings.Load();
 
         public MainWindow(string accountName)
         {
@@ -74,12 +75,12 @@ namespace XIVLauncher.Windows
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = Headlines.Get(_game);
+                _headlines = Headlines.Get(_game, _setting.Language);
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
                 for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
-                    var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString());
+                    var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), _setting.Language);
 
                     using (var stream = new MemoryStream(imageBytes))
                     {
@@ -154,10 +155,8 @@ namespace XIVLauncher.Windows
                 new ChangelogWindow().ShowDialog();
 
                 Properties.Settings.Default.LastVersion = version;
-                Settings.UniqueIdCache = new List<UniqueIdCacheEntry>();
 
-                if (version == "4.3.0.0")
-                    Settings.CharacterSyncEnabled = false;
+                _setting = OldSettings.Migrate();
 
                 Properties.Settings.Default.Save();
             }
@@ -169,9 +168,9 @@ namespace XIVLauncher.Windows
             if (savedAccount != null)
                 SwitchAccount(savedAccount, false);
 
-            AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
+            AutoLoginCheckBox.IsChecked = _setting.AutologinEnabled;
 
-            if (Settings.IsAutologin() && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            if (_setting.AutologinEnabled && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Log.Information("Engaging Autologin...");
 
@@ -179,7 +178,7 @@ namespace XIVLauncher.Windows
                 {
                     #if DEBUG
                     HandleLogin(true);
-                    Settings.Save();
+                    _setting.Save();
                     return;
                     #else
                     if (!gateStatus)
@@ -188,15 +187,15 @@ namespace XIVLauncher.Windows
                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                         if (startLauncher)
-                            Settings.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+                            _setting.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
 
-                        Settings.SetAutologin(false);
+                        _setting.AutologinEnabled = false;
                         _isLoggingIn = false;
                     }
                     else
                     {
                         HandleLogin(true);
-                        Settings.Save();
+                        _setting.Save();
                         return;
                     }
                     #endif
@@ -205,22 +204,21 @@ namespace XIVLauncher.Windows
                 {
                     new ErrorWindow(exc, "Additionally, please check your login information or try again.", "AutoLogin")
                         .ShowDialog();
-                    Settings.SetAutologin(false);
+                    _setting.AutologinEnabled = false;
                     _isLoggingIn = false;
                 }
 
-                Settings.Save();
+                _setting.Save();
             }
 
-            if (Settings.GamePath == null)
+            if (_setting.GamePath == null)
             {
-                var setup = new FirstTimeSetup();
+                var setup = new FirstTimeSetup(_setting);
                 setup.ShowDialog();
+                _setting = setup.Result;
             }
 
             Task.Run(() => SetupHeadlines());
-
-            Settings.LanguageChanged += SetupHeadlines;
 
             AdminCheck.RunCheck();
 
@@ -293,7 +291,7 @@ namespace XIVLauncher.Windows
 
         private void HandleLogin(bool autoLogin)
         {
-            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && Settings.UniqueIdCacheEnabled;
+            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && _setting.UniqueIdCacheEnabled;
 
             if (_accountManager.CurrentAccount != null && _accountManager.CurrentAccount.UserName.Equals(LoginUsername.Text) && _accountManager.CurrentAccount.Password != LoginPassword.Password && _accountManager.CurrentAccount.SavePassword)
             {
@@ -330,10 +328,10 @@ namespace XIVLauncher.Windows
                     AutoLoginCheckBox.IsChecked = false;
                 }
 
-                Settings.SetAutologin(AutoLoginCheckBox.IsChecked == true);
+                _setting.AutologinEnabled = AutoLoginCheckBox.IsChecked == true;
             }
 
-            Settings.Save();
+            _setting.Save();
 
             var otp = "";
             if (OtpCheckBox.IsChecked == true && !hasValidCache)
@@ -380,7 +378,7 @@ namespace XIVLauncher.Windows
                                              "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                     if (startLauncher)
-                        Settings.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+                        _setting.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
 
                     _isLoggingIn = false;
 
@@ -388,7 +386,7 @@ namespace XIVLauncher.Windows
                 }
                 #endif
 
-                var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, Settings.UniqueIdCacheEnabled);
+                var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, _setting.UniqueIdCacheEnabled, _setting.GamePath);
 
                 if (loginResult == null)
                 {
@@ -412,7 +410,7 @@ namespace XIVLauncher.Windows
                         "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
 
                     if (msgBoxResult == MessageBoxResult.Yes)
-                        Settings.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+                        _setting.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
 
                     /*
                     var patcher = new Game.Patch.PatchInstaller(_game, "ffxiv"); 
@@ -430,8 +428,8 @@ namespace XIVLauncher.Windows
                 }
 
                 var gameProcess = XivGame.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
-                    loginResult.OauthLogin.MaxExpansion, Settings.SteamIntegrationEnabled,
-                    SteamCheckBox.IsChecked == true, Settings.AdditionalLaunchArgs);
+                    loginResult.OauthLogin.MaxExpansion, _setting.SteamIntegrationEnabled,
+                    SteamCheckBox.IsChecked == true, _setting.AdditionalLaunchArgs, _setting.GamePath, _setting.IsDx11, _setting.Language);
 
                 if (gameProcess == null)
                 {
@@ -444,13 +442,13 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-                    var addons = Settings.GetAddonList().Where(x => x.IsEnabled).ToList();
+                    var addons = _setting.AddonList.Where(x => x.IsEnabled).ToList();
 
                     addons.Add(new AddonEntry{
                             Addon = new CharacterBackupAddon()
                         });
 
-                    if (Settings.CharacterSyncEnabled)
+                    if (_setting.CharacterSyncEnabled)
                         addons.Add(new AddonEntry{
                             Addon = new CharacterSyncAddon()
                         });
@@ -460,7 +458,7 @@ namespace XIVLauncher.Windows
                     if (backupDirectory.Exists)
                         backupDirectory.Delete(true);
 
-                    await Task.Run(() => addonMgr.RunAddons(gameProcess, addons));
+                    await Task.Run(() => addonMgr.RunAddons(gameProcess, _setting, addons));
                 }
                 catch (Exception ex)
                 {
@@ -474,10 +472,10 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-                    if (Settings.IsInGameAddonEnabled())
+                    if (_setting.InGameAddonEnabled && _setting.IsDx11)
                     {
                         var hooks = new DalamudLauncher(gameProcess);
-                        hooks.Run();
+                        hooks.Run(_setting.GamePath, _setting.Language);
                     }
                 }
                 catch (Exception ex)
@@ -551,7 +549,7 @@ namespace XIVLauncher.Windows
                 else
                 {
                     string url;
-                    switch (Settings.GetLanguage())
+                    switch (_setting.Language)
                     {
                         case ClientLanguage.Japanese:
 
@@ -591,7 +589,12 @@ namespace XIVLauncher.Windows
 
         private void SettingsButton_OnClick(object sender, RoutedEventArgs e)
         {
-            new SettingsWindow().ShowDialog();
+            var oldLanguage = _setting.Language;
+            new SettingsWindow(_setting).ShowDialog();
+
+            // Language changed? Let's redownload headlines and banners
+            if (oldLanguage != _setting.Language)
+                SetupHeadlines();
         }
 
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
@@ -688,7 +691,7 @@ namespace XIVLauncher.Windows
             LoginUsername.Text = account.UserName;
             OtpCheckBox.IsChecked = account.UseOtp;
             SteamCheckBox.IsChecked = account.UseSteamServiceAccount;
-            AutoLoginCheckBox.IsChecked = Settings.IsAutologin();
+            AutoLoginCheckBox.IsChecked = _setting.AutologinEnabled;
 
             if (account.SavePassword)
                 LoginPassword.Password = account.Password;

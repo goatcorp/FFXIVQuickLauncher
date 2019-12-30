@@ -29,16 +29,21 @@ namespace XIVLauncher.Addon
             }
         };
 
-        public void Setup(Process gameProcess)
+        private bool _isDx11;
+        private DirectoryInfo _gamePath;
+
+        public void Setup(Process gameProcess, Settings setting)
         {
             _gameProcess = gameProcess;
+            _isDx11 = setting.IsDx11;
+            _gamePath = setting.GamePath;
         }
 
         public async void DoWork(object state)
         {
             var cancellationToken = (CancellationToken) state;
 
-            if (!Settings.IsDX11())
+            if (!_isDx11)
                 return;
 
             CheckManualInstall();
@@ -146,7 +151,7 @@ namespace XIVLauncher.Addon
             try
             {
                 // Delete a manually installed version of RichPresence, don't need to launch it twice
-                var dump64Path = Path.Combine(Settings.GamePath.FullName, "game", "dump64.dll");
+                var dump64Path = Path.Combine(_gamePath.FullName, "game", "dump64.dll");
                 if (File.Exists(dump64Path))
                     File.Delete(dump64Path);
 

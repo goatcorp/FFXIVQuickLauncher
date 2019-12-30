@@ -34,20 +34,20 @@ namespace XIVLauncher.Game
         }
 
         public static async Task<(CompareResult compareResult, string report, IntegrityCheckResult remoteIntegrity)>
-            CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress)
+            CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress, DirectoryInfo gamePath)
         {
             IntegrityCheckResult remoteIntegrity;
 
             try
             {
-                remoteIntegrity = DownloadIntegrityCheckForVersion(XivGame.GetLocalGameVer());
+                remoteIntegrity = DownloadIntegrityCheckForVersion(XivGame.GetLocalGameVer(gamePath));
             }
             catch (WebException)
             {
                 return (CompareResult.NoServer, null, null);
             }
 
-            var localIntegrity = await RunIntegrityCheckAsync(Settings.GamePath, progress);
+            var localIntegrity = await RunIntegrityCheckAsync(gamePath, progress);
 
             var report = "";
             foreach (var hashEntry in remoteIntegrity.Hashes)
@@ -74,19 +74,19 @@ namespace XIVLauncher.Game
             }
         }
 
-        public static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gameDirectory,
+        public static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gamePath,
             IProgress<IntegrityCheckProgress> progress)
         {
             var hashes = new Dictionary<string, string>();
 
             using (var sha1 = new SHA1Managed())
             {
-                CheckDirectory(gameDirectory, sha1, gameDirectory.FullName, ref hashes, progress);
+                CheckDirectory(gamePath, sha1, gamePath.FullName, ref hashes, progress);
             }
 
             return new IntegrityCheckResult
             {
-                GameVersion = XivGame.GetLocalGameVer(),
+                GameVersion = XivGame.GetLocalGameVer(gamePath),
                 Hashes = hashes
             };
         }
