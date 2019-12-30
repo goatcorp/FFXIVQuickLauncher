@@ -73,6 +73,18 @@ namespace XIVLauncher.Accounts
             if (!File.Exists(ConfigPath))
             {
                 Accounts = new ObservableCollection<XivAccount>();
+
+                // Migration from old settings?
+                if (Properties.Settings.Default.Accounts == "[]") 
+                    return;
+
+                Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(Properties.Settings.Default.Accounts, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.Objects
+                });
+
+                Save();
+
                 return;
             }
 
