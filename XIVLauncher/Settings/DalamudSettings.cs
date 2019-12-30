@@ -9,7 +9,7 @@ using Dalamud.Discord;
 using Newtonsoft.Json;
 using XIVLauncher.Dalamud;
 
-namespace XIVLauncher
+namespace XIVLauncher.Settings
 {
     class DalamudSettings
     {

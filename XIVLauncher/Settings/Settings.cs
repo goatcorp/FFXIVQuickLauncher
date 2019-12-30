@@ -11,9 +11,9 @@ using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 
-namespace XIVLauncher
+namespace XIVLauncher.Settings
 {
-    public class Settings
+    public class LauncherSettings
     {
         #region Launcher Setting
 
@@ -44,12 +44,12 @@ namespace XIVLauncher
             }));
         }
 
-        public static Settings Load()
+        public static LauncherSettings Load()
         {
             if (!File.Exists(ConfigPath))
-                return new Settings();
+                return new LauncherSettings();
 
-            var setting = JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
+            var setting = JsonConvert.DeserializeObject<LauncherSettings>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
             });

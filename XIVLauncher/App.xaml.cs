@@ -10,6 +10,7 @@ using XIVLauncher.Addon;
 using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
+using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher
@@ -89,7 +90,7 @@ namespace XIVLauncher
 
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {
-                var setting = Settings.Load();
+                var setting = LauncherSettings.Load();
                 var result = IntegrityCheck.RunIntegrityCheckAsync(setting.GamePath, null).GetAwaiter().GetResult();
                 File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
 

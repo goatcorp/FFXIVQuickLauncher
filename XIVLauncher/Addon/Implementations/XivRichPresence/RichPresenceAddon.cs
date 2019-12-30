@@ -6,6 +6,7 @@ using System.Windows;
 using DiscordRPC;
 using Serilog;
 using XIVLauncher.Addon.Implementations.XivRichPresence;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Addon
 {
@@ -32,7 +33,7 @@ namespace XIVLauncher.Addon
         private bool _isDx11;
         private DirectoryInfo _gamePath;
 
-        public void Setup(Process gameProcess, Settings setting)
+        public void Setup(Process gameProcess, LauncherSettings setting)
         {
             _gameProcess = gameProcess;
             _isDx11 = setting.IsDx11;

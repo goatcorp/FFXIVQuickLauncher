@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Media;
 using System.Windows;
 using System.Windows.Documents;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Windows
 {
@@ -15,7 +16,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            var setting = Settings.Load();
+            var setting = LauncherSettings.Load();
 
             ExceptionTextBox.AppendText(exc.ToString());
             ExceptionTextBox.AppendText("\n" + Util.GetAssemblyVersion());

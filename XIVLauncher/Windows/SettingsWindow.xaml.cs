@@ -15,6 +15,7 @@ using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Windows
 {
@@ -45,9 +46,9 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private Settings _setting;
+        private LauncherSettings _setting;
 
-        public SettingsWindow(Settings setting)
+        public SettingsWindow(LauncherSettings setting)
         {
             InitializeComponent();
 

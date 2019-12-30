@@ -4,6 +4,7 @@ using System.Windows;
 using Microsoft.Win32;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Windows
 {
@@ -12,9 +13,9 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class FirstTimeSetup : Window
     {
-        public Settings Result;
+        public LauncherSettings Result;
 
-        public FirstTimeSetup(Settings setting)
+        public FirstTimeSetup(LauncherSettings setting)
         {
             InitializeComponent();
 

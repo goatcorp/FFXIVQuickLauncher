@@ -11,7 +11,7 @@ using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 
-namespace XIVLauncher
+namespace XIVLauncher.Settings
 {
     // TODO: All of this needs a rework
     static class OldSettings
@@ -104,9 +104,9 @@ namespace XIVLauncher
 
         #endregion
 
-        public static Settings Migrate()
+        public static LauncherSettings Migrate()
         {
-            var newSetting = Settings.Load();
+            var newSetting = LauncherSettings.Load();
 
             newSetting.AdditionalLaunchArgs = AdditionalLaunchArgs;
             newSetting.AddonList = GetAddonList();

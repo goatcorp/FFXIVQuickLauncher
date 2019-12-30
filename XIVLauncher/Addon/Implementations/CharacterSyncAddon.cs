@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Addon.Implementations
 {
@@ -9,7 +10,7 @@ namespace XIVLauncher.Addon.Implementations
     {
         string IAddon.Name => "Sync Character Settings";
 
-        void IAddon.Setup(Process gameProcess, Settings setting)
+        void IAddon.Setup(Process gameProcess, LauncherSettings setting)
         {
             // Ignored
         }
