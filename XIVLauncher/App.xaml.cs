@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
@@ -6,6 +7,7 @@ using Newtonsoft.Json;
 using Sentry;
 using Serilog;
 using Serilog.Events;
+using Squirrel;
 using XIVLauncher.Addon;
 using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Dalamud;
@@ -32,6 +34,8 @@ namespace XIVLauncher
                 Environment.Exit(0);
             };
 #endif
+
+            Updates.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True").GetAwaiter().GetResult();
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 

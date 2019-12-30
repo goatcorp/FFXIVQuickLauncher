@@ -54,3 +54,5 @@ using System.Windows;
 [assembly: AssemblyFileVersion("4.5.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
 
+// Squirrel-Awareness
+[assembly: AssemblyMetadata("SquirrelAwareVersion", "1")]

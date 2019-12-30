@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using AutoUpdaterDotNET;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using XIVLauncher.Accounts;
@@ -55,19 +54,7 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
 
-#if !DEBUG
-            AutoUpdater.ShowSkipButton = false;
-            AutoUpdater.ShowRemindLaterButton = false;
-            AutoUpdater.Mandatory = true;
-            AutoUpdater.UpdateMode = Mode.Forced;
-
-            AutoUpdater.CheckForUpdateEvent += AutoUpdaterOnCheckForUpdateEvent;
-
-            Log.Information("Starting update check.");
-            AutoUpdater.Start("https://goaaats.github.io/ffxiv/tools/launcher/update.xml");
-#else
             InitializeWindow();
-#endif
         }
 
         private void SetupHeadlines()
@@ -227,55 +214,6 @@ namespace XIVLauncher.Windows
             Activate();
 
             Log.Information("MainWindow initialized.");
-        }
-
-        private void AutoUpdaterOnCheckForUpdateEvent(UpdateInfoEventArgs args)
-        {
-            Log.Information("AutoUpdaterOnCheckForUpdateEvent called.");
-            if (args != null)
-            {
-                if (args.IsUpdateAvailable)
-                {
-                    try
-                    {
-                        Log.Information("Update available, trying to download.");
-                        MessageBox.Show(
-                            "An update for XIVLauncher is available. It will now be downloaded, the application will restart.",
-                            "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-
-                        if (AutoUpdater.DownloadUpdate())
-                        {
-                            Process.GetCurrentProcess().Kill();
-                            Environment.Exit(0);
-                        }
-                        else
-                        {
-                            Util.ShowError("Could not download update. Please try again later.", "Update failed");
-                            Process.GetCurrentProcess().Kill();
-                            Environment.Exit(0);
-                        }
-                    }
-                    catch (Exception exc)
-                    {
-                        new ErrorWindow(exc, $"Update failed. Please report this error and try again later. \n\n{exc}",
-                            "UpdateAvailableFail").ShowDialog();
-                        Process.GetCurrentProcess().Kill();
-                        Environment.Exit(0);
-                    }
-                }
-                else
-                {
-                    Log.Information("No update: {0}", args.CurrentVersion);
-                    InitializeWindow();
-                }
-            }
-            else
-            {
-                Util.ShowError("Could not check for updates. Please try again later.", "Update failed");
-                Log.Error("Update check failed.");
-                Process.GetCurrentProcess().Kill();
-                Environment.Exit(0);
-            }
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
