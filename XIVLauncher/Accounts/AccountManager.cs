@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,14 +18,7 @@ namespace XIVLauncher.Accounts
 
         public AccountManager()
         {
-            if (string.IsNullOrEmpty(Properties.Settings.Default.Accounts))
-            {
-                Accounts = new ObservableCollection<XivAccount>();
-                Save();
-            }
-
-            Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(Properties.Settings.Default
-                .Accounts);
+            Load();
 
             Accounts.CollectionChanged += Accounts_CollectionChanged;
         }
@@ -61,10 +55,33 @@ namespace XIVLauncher.Accounts
             Accounts.Remove(account);
         }
 
+        #region SaveLoad
+
+        private static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "accountsList.json");
+
         public void Save()
         {
-            Properties.Settings.Default.Accounts = JsonConvert.SerializeObject(Accounts);
-            Properties.Settings.Default.Save();
+            File.WriteAllText(ConfigPath,  JsonConvert.SerializeObject(Accounts, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
+            }));
         }
+
+        public void Load()
+        {
+            if (!File.Exists(ConfigPath))
+            {
+                Accounts = new ObservableCollection<XivAccount>();
+                return;
+            }
+
+            Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            });
+        }
+
+        #endregion
     }
 }

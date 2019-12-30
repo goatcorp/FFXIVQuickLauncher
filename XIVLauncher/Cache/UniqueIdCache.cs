@@ -8,9 +8,14 @@ namespace XIVLauncher.Cache
 {
     public class UniqueIdCache
     {
-        private const int DAYS_TO_TIMEOUT = 2;
+        private const int DAYS_TO_TIMEOUT = 1;
 
         private List<UniqueIdCacheEntry> _cache;
+
+        public UniqueIdCache()
+        {
+            Load();
+        }
 
         #region SaveLoad
 
@@ -18,26 +23,29 @@ namespace XIVLauncher.Cache
 
         public void Save()
         {
-            File.WriteAllText(ConfigPath,  JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings
+            File.WriteAllText(ConfigPath,  JsonConvert.SerializeObject(_cache, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
             }));
         }
 
-        public static UniqueIdCache Load()
+        public void Load()
         {
             if (!File.Exists(ConfigPath))
-                return new UniqueIdCache();
+            {
+                _cache = new List<UniqueIdCacheEntry>();
+                return;
+            }
 
-            return JsonConvert.DeserializeObject<UniqueIdCache>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
+            _cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
             });
         }
 
         public static void Reset() => File.Delete(ConfigPath);
-
+        
         #endregion
 
         private void DeleteOldCaches()

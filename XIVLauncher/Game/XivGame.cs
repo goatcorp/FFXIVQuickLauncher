@@ -47,7 +47,7 @@ namespace XIVLauncher.Game
             NeedsPatchBoot
         }
 
-        public UniqueIdCache Cache = UniqueIdCache.Load();
+        public UniqueIdCache Cache = new UniqueIdCache();
 
         public class LoginResult
         {
