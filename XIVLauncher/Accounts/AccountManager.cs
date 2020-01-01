@@ -14,7 +14,9 @@ namespace XIVLauncher.Accounts
         public ObservableCollection<XivAccount> Accounts;
 
         public XivAccount CurrentAccount =>
-            Accounts.FirstOrDefault(a => a.Id == Properties.Settings.Default.CurrentAccount);
+            Accounts.Count > 1 ? 
+                Accounts.FirstOrDefault(a => a.Id == Properties.Settings.Default.CurrentAccount) :
+                Accounts.FirstOrDefault();
 
         public AccountManager()
         {
