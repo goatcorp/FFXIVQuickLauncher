@@ -21,6 +21,9 @@ namespace XIVLauncher.Windows
 
             try
             {
+                // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                 using (var client = new WebClient())
                 {
                     client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36");
@@ -30,6 +33,8 @@ namespace XIVLauncher.Windows
 
                     ExceptionTextBox.AppendText((string) releaseInfo.body);
                 }
+
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
             }
             catch(Exception)
             {
