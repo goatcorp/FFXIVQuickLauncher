@@ -36,9 +36,6 @@ namespace XIVLauncher
             };
 #endif
 
-            // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             try
             {
                 Updates.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True").GetAwaiter().GetResult();
@@ -50,9 +47,6 @@ namespace XIVLauncher
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(0);
             }
-            
-            // Reset security protocol after updating
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 

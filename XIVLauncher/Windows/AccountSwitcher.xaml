@@ -13,7 +13,7 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="400" Width="269.186" Deactivated="AccountSwitcher_OnDeactivated">
+        WindowStyle="None" Height="400" Width="269.186" Deactivated="AccountSwitcher_OnDeactivated" Topmost="True">
     <Grid x:Uid="Grid_1" Margin="0,0,0,0">
         <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="390" Margin="0,0,10,0">
             <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,0">
