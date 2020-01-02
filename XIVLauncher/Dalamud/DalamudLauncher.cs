@@ -59,7 +59,14 @@ namespace XIVLauncher.Dalamud
 
             using (var client = new WebClient())
             {
+                // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                 var versionInfoJson = client.DownloadString(Remote + "version");
+
+                // Reset security protocol after updating
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
                 if (!File.Exists(addonExe))
