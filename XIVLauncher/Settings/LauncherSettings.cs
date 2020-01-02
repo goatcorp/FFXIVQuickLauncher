@@ -1,6 +1,7 @@
 ﻿using Dalamud;
 using Dalamud.Discord;
 using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +39,8 @@ namespace XIVLauncher.Settings
 
         public void Save()
         {
+            Log.Information("Saving LauncherSettings to {0}", ConfigPath);
+
             File.WriteAllText(ConfigPath,  JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects,
@@ -48,7 +51,10 @@ namespace XIVLauncher.Settings
         public static LauncherSettings Load()
         {
             if (!File.Exists(ConfigPath))
+            {
+                Log.Information("LauncherSettings at {0} does not exist, creating new...", ConfigPath);
                 return new LauncherSettings();
+            }
 
             var setting = JsonConvert.DeserializeObject<LauncherSettings>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
             {
@@ -56,6 +62,8 @@ namespace XIVLauncher.Settings
             });
 
             setting.AddonList = EnsureDefaultAddon(setting.AddonList);
+
+            Log.Information("Loaded LauncherSettings at {0}", ConfigPath);
 
             return setting;
         }
