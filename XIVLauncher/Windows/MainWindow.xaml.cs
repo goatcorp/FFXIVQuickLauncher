@@ -637,8 +637,7 @@ namespace XIVLauncher.Windows
 
             if (saveAsCurrent)
             {
-                Properties.Settings.Default.CurrentAccount = account.Id;
-                Properties.Settings.Default.Save();
+                _accountManager.CurrentAccount = account;
             }
         }
     }
