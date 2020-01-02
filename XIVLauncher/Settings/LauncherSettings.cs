@@ -28,6 +28,7 @@ namespace XIVLauncher.Settings
         public bool InGameAddonEnabled { get; set; }
         public bool SteamIntegrationEnabled { get; set; }
         public ClientLanguage Language { get; set; }
+        public string CurrentAccountId { get; set; }
 
         #endregion
 

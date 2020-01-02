@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Accounts
 {
@@ -13,14 +14,24 @@ namespace XIVLauncher.Accounts
     {
         public ObservableCollection<XivAccount> Accounts;
 
-        public XivAccount CurrentAccount =>
-            Accounts.Count > 1 ? 
-                Accounts.FirstOrDefault(a => a.Id == Properties.Settings.Default.CurrentAccount) :
-                Accounts.FirstOrDefault();
+        public XivAccount CurrentAccount
+        {
+            get
+            {
+                return Accounts.Count > 1 ?
+                    Accounts.FirstOrDefault(a => a.Id == _settings.CurrentAccountId) :
+                    Accounts.FirstOrDefault();
+            }
+            set => _settings.CurrentAccountId = value.Id;
+        }
 
-        public AccountManager()
+        private LauncherSettings _settings; 
+
+        public AccountManager(LauncherSettings settings)
         {
             Load();
+
+            _settings = settings;
 
             Accounts.CollectionChanged += Accounts_CollectionChanged;
         }
