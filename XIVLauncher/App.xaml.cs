@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
 using System.Windows;
 using Newtonsoft.Json;
@@ -35,7 +36,23 @@ namespace XIVLauncher
             };
 #endif
 
-            Updates.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True").GetAwaiter().GetResult();
+            // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            try
+            {
+                Updates.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True").GetAwaiter().GetResult();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(
+                    "XIVLauncher could not contact the update server. Please check your internet connection or try again.\n\n" + e,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(0);
+            }
+            
+            // Reset security protocol after updating
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
