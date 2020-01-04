@@ -36,6 +36,7 @@ namespace XIVLauncher
             };
 #endif
 
+#if !XL_NOAUTOUPDATE
             try
             {
                 Updates.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True").GetAwaiter().GetResult();
@@ -47,6 +48,7 @@ namespace XIVLauncher
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(0);
             }
+#endif
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
