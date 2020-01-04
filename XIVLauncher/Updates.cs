@@ -24,7 +24,10 @@ namespace XIVLauncher
                     onAppUpdate: v => updateManager.CreateShortcutForThisExe(),
                     onAppUninstall: v => updateManager.RemoveShortcutForThisExe());
 
-                await updateManager.UpdateApp();
+                var downloadedRelease = await updateManager.UpdateApp();
+
+                if (downloadedRelease != null)
+                    UpdateManager.RestartApp();
             }
 
             // Reset security protocol after updating
