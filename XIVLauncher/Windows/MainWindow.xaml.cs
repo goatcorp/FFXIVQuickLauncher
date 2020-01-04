@@ -54,6 +54,10 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.CurrentAccount = accountName;
             }
 
+#if XL_NOAUTOUPDATE
+            Title += " UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
+#endif
+
             InitializeWindow();
         }
 
@@ -164,11 +168,11 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-                    #if DEBUG
+#if DEBUG
                     HandleLogin(true);
                     _setting.Save();
                     return;
-                    #else
+#else
                     if (!gateStatus)
                     {
                         var startLauncher = MessageBox.Show(
@@ -186,7 +190,7 @@ namespace XIVLauncher.Windows
                         _setting.Save();
                         return;
                     }
-                    #endif
+#endif
                 }
                 catch (Exception exc)
                 {
@@ -226,7 +230,7 @@ namespace XIVLauncher.Windows
         }
 
 
-        #region Login
+#region Login
 
         private void HandleLogin(bool autoLogin)
         {
@@ -309,7 +313,7 @@ namespace XIVLauncher.Windows
                     // ignored
                 }
 
-                #if !DEBUG
+#if !DEBUG
                 if (!gateStatus)
                 {
                     Log.Information("GateStatus is false.");
@@ -323,7 +327,7 @@ namespace XIVLauncher.Windows
 
                     return;
                 }
-                #endif
+#endif
 
                 var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, _setting.UniqueIdCacheEnabled, _setting.GamePath);
 
@@ -450,7 +454,7 @@ namespace XIVLauncher.Windows
             }
         }
 
-        #endregion
+#endregion
 
         private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
         {
