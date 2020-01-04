@@ -24,6 +24,12 @@ namespace XIVLauncher.Windows
             var detectedPath = Util.TryGamePaths();
 
             if (detectedPath != null) GamePathEntry.Text = detectedPath;
+
+#if XL_NOAUTOUPDATE
+            MessageBox.Show(
+                "You're running an unsupported version of XIVLauncher.\n\nThis can be unsafe and a danger to your SE account. If you have not gotten this unsupported version on purpose, please reinstall a clean version from https://github.com/goaaats/FFXIVQuickLauncher/releases.",
+                "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+#endif
         }
 
         private string FindAct()
