@@ -207,7 +207,7 @@ namespace XIVLauncher.Windows
                 _setting.Save();
             }
 
-            if (_setting.GamePath == null)
+            if (_setting.GamePath?.Exists != true)
             {
                 var setup = new FirstTimeSetup(_setting);
                 setup.ShowDialog();
