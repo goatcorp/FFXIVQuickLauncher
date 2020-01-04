@@ -227,9 +227,6 @@
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
       <DependentUpon>ChangelogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\CustomComboSetupWindow.xaml.cs">
-      <DependentUpon>CustomComboSetupWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\ProfilePictureInputWindow.xaml.cs">
       <DependentUpon>ProfilePictureInputWindow.xaml</DependentUpon>
     </Compile>
@@ -279,10 +276,6 @@
     <Compile Include="Xaml\StringToColorConverter.cs" />
     <Compile Include="Game\XivGame.cs" />
     <Page Include="Windows\ChangelogWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\CustomComboSetupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

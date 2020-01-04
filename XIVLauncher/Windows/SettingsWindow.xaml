@@ -203,10 +203,6 @@
                                     Combat settings
                                 </Label>
 
-                                <!--
-                                <Button x:Name="ManageCustomCombosButton" Click="ManageCustomCombosButton_OnClick" Margin="0,6,0,5">Manage Custom Combos</Button>
-                                -->
-
                                 <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox" x:Name="EnableAstCardStuff"
                                           HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}">
                                     <StackPanel Orientation="Horizontal">
