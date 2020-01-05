@@ -152,8 +152,6 @@ namespace XIVLauncher.Windows
 
                 Properties.Settings.Default.LastVersion = version;
 
-                _setting = OldSettings.Migrate();
-
                 Properties.Settings.Default.Save();
             }
 
