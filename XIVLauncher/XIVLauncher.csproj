@@ -222,7 +222,6 @@
     <Compile Include="Game\Patch\PatchList\PatchListParser.cs" />
     <Compile Include="Http\HttpServer.cs" />
     <Compile Include="Http\OtpListener.cs" />
-    <Compile Include="Settings\OldSettings.cs" />
     <Compile Include="Updates.cs" />
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
       <DependentUpon>ChangelogWindow.xaml</DependentUpon>
