@@ -80,12 +80,6 @@ namespace XIVLauncher
             }
         }
 
-        public static bool IsAdministrator()
-        {
-            return new WindowsPrincipal(WindowsIdentity.GetCurrent())
-                .IsInRole(WindowsBuiltInRole.Administrator);
-        }
-
         public static int GetUnixMillis()
         {
             return (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
@@ -104,48 +98,6 @@ namespace XIVLauncher
         public static SolidColorBrush SolidColorBrushFromArgb(int argb)
         {
             return new SolidColorBrush(ColorFromArgb(argb));
-        }
-
-        // https://stackoverflow.com/questions/10454519/best-way-to-compare-two-complex-objects
-        public static bool DeepCompare(this object obj, object another)
-        {
-            if (ReferenceEquals(obj, another)) return true;
-            if (obj == null || another == null) return false;
-            //Compare two object's class, return false if they are difference
-            if (obj.GetType() != another.GetType()) return false;
-
-            var result = true;
-            //Get all properties of obj
-            //And compare each other
-            foreach (var property in obj.GetType().GetProperties())
-            {
-                var objValue = property.GetValue(obj);
-                var anotherValue = property.GetValue(another);
-                if (!objValue.Equals(anotherValue)) result = false;
-            }
-
-            return result;
-        }
-
-        public static bool CompareEx(this object obj, object another)
-        {
-            if (ReferenceEquals(obj, another)) return true;
-            if (obj == null || another == null) return false;
-            if (obj.GetType() != another.GetType()) return false;
-
-            //properties: int, double, DateTime, etc, not class
-            if (!obj.GetType().IsClass) return obj.Equals(another);
-
-            var result = true;
-            foreach (var property in obj.GetType().GetProperties())
-            {
-                var objValue = property.GetValue(obj);
-                var anotherValue = property.GetValue(another);
-                //Recursion
-                if (!objValue.DeepCompare(anotherValue)) result = false;
-            }
-
-            return result;
         }
 
         private static Dictionary<int, string> _classJobFontDict = new Dictionary<int, string>
