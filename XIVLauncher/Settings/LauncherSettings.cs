@@ -70,6 +70,9 @@ namespace XIVLauncher.Settings
 
         private static List<AddonEntry> EnsureDefaultAddon(List<AddonEntry> addonList)
         {
+            if (addonList == null)
+                addonList = new List<AddonEntry>();
+
             if (!addonList.Any(entry => entry.Addon is RichPresenceAddon))
             {
                 addonList.Add(new AddonEntry
