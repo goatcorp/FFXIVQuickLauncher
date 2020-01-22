@@ -26,14 +26,7 @@ namespace XIVLauncher
         public App()
         {
 #if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += (_, args) =>
-            {
-                MessageBox.Show(
-                    "Error during early initialization. Please report this error.\n\n" + args.ExceptionObject,
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Log.CloseAndFlush();
-                Environment.Exit(0);
-            };
+            AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
 #endif
 
 #if !XL_NOAUTOUPDATE
@@ -46,7 +39,6 @@ namespace XIVLauncher
                 MessageBox.Show(
                     "XIVLauncher could not contact the update server. Please check your internet connection or try again.\n\n" + e,
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Environment.Exit(0);
             }
 #endif
 
@@ -79,6 +71,15 @@ namespace XIVLauncher
                 $"XIVLauncher started as {release}");
         }
 
+        private void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(
+                "Error during early initialization. Please report this error.\n\n" + args.ExceptionObject,
+                "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Log.CloseAndFlush();
+            Environment.Exit(0);
+        }
+
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
             // Check if dark mode is enabled on windows, if yes, load the dark theme
@@ -95,6 +96,7 @@ namespace XIVLauncher
             Log.Information("Loaded UI theme resource.");
 
 #if !DEBUG
+            AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
             AppDomain.CurrentDomain.UnhandledException += (_, args) =>
             {
                 new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled")
