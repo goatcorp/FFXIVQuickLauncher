@@ -38,9 +38,12 @@ namespace Dalamud.Discord
 
         public bool DisableEmbeds { get; set; }
 
+        public ulong OwnerUserId { get; set; }
+
         public List<ChatTypeConfiguration> ChatTypeConfigurations { get; set; }
 
         public ChannelConfiguration CfNotificationChannel { get; set; }
+        public ChannelConfiguration CfPreferredRoleChannel { get; set; }
         public ChannelConfiguration FateNotificationChannel { get; set; }
         public ChannelConfiguration RetainerNotificationChannel { get; set; }
     }
