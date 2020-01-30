@@ -15,15 +15,23 @@ namespace Dalamud
 
         public bool OptOutMbCollection { get; set; } = false;
 
-        public CustomComboPreset ComboPresets { get; set; }
-
         public List<string> BadWords { get; set; }
 
-        public class FateInfo {
-            public string Name { get; set; }
-            public int Id { get; set; }
+        public enum PreferredRole
+        {
+            None,
+            All,
+            Tank,
+            Dps,
+            Healer
         }
 
-        public List<FateInfo> Fates;
+        public Dictionary<int, PreferredRole> PreferredRoleReminders { get; set; }
+
+        public string LastVersion { get; set; }
+
+        public Dictionary<string, object> PluginConfigurations { get; set; }
+
+        public bool WelcomeGuideDismissed;
     }
 }
