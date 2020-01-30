@@ -171,7 +171,6 @@
                                 <Button x:Uid="Button_3" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
                                 <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Duty Finder notification channel.">Set Duty Finder notification channel</Button>
                                 <Button x:Uid="Button_4" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Roulette Bonus notification channel.">Set Roulette Bonus notification channel</Button>
-                                <Button x:Uid="Button_5" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetFateNotificationChannel_OnClick" ToolTip="Set the Fate notification channel.">Set Fate notification channel</Button>
                                 <Button x:Uid="Button_6" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
 
                                 <CheckBox x:Uid="DisableEmbedsCheckBox" x:Name="DisableEmbedsCheckBox" Content="Disable rich embeds (send smaller messages to Discord)"

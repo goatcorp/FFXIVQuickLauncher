@@ -320,22 +320,6 @@ namespace XIVLauncher.Windows
             DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
-        private void SetFateNotificationChannel_OnClick(object sender, RoutedEventArgs e)
-        {
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-
-            var channelConfig = featureConfig.FateNotificationChannel ?? new ChannelConfiguration();
-
-            var channelSetup = new ChatChannelSetup(channelConfig);
-            channelSetup.ShowDialog();
-
-            if (channelSetup.Result == null)
-                return;
-
-            featureConfig.FateNotificationChannel = channelSetup.Result.Channel;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
-        }
-
         private void SetRetainerNotificationChannel_OnClick(object sender, RoutedEventArgs e)
         {
             var featureConfig = DalamudSettings.DiscordFeatureConfig;
