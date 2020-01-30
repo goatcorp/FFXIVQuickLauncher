@@ -71,10 +71,10 @@ namespace XIVLauncher
                 $"XIVLauncher started as {release}");
         }
 
-        private void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private static void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
             MessageBox.Show(
-                "Error during early initialization. Please report this error.\n\n" + args.ExceptionObject,
+                "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
                 "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
             Log.CloseAndFlush();
             Environment.Exit(0);
