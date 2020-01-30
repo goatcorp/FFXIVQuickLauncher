@@ -44,7 +44,6 @@ namespace Dalamud.Discord
 
         public ChannelConfiguration CfNotificationChannel { get; set; }
         public ChannelConfiguration CfPreferredRoleChannel { get; set; }
-        public ChannelConfiguration FateNotificationChannel { get; set; }
         public ChannelConfiguration RetainerNotificationChannel { get; set; }
     }
 }
