@@ -168,9 +168,10 @@
                                     </ListView>
                                 </materialDesign:Card>
 
-                                <Button x:Uid="Button_3" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
+                                <Button x:Uid="Button_3" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
                                 <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Duty Finder notification channel.">Set Duty Finder notification channel</Button>
-                                <Button x:Uid="Button_5" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetFateNotificationChannel_OnClick" ToolTip="Set the Fate notification channel.">Set Fate notification channel</Button>
+                                <Button x:Uid="Button_4" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Roulette Bonus notification channel.">Set Roulette Bonus notification channel</Button>
+                                <Button x:Uid="Button_5" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetFateNotificationChannel_OnClick" ToolTip="Set the Fate notification channel.">Set Fate notification channel</Button>
                                 <Button x:Uid="Button_6" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
 
                                 <CheckBox x:Uid="DisableEmbedsCheckBox" x:Name="DisableEmbedsCheckBox" Content="Disable rich embeds (send smaller messages to Discord)"
@@ -198,25 +199,6 @@
                                 </TextBox>
 
                                 <Separator></Separator>
-
-                                <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic" HorizontalAlignment="Center" FontSize="13">
-                                    Combat settings
-                                </Label>
-
-                                <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox" x:Name="EnableAstCardStuff"
-                                          HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Foreground="{DynamicResource MaterialDesignBody}" FontFamily="/Resources/FFXIVAppIcons.ttf #FFXIVAppIcons" Content="&#xF033;" FontSize="30"/>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock x:Uid="TextBlock_7" Text="Play on Draw (Astrologian)" Margin="5,0,0,0" Foreground="{DynamicResource MaterialDesignBody}" FontSize="14"></TextBlock>
-                                            <TextBlock x:Uid="TextBlock_8" Margin="5,5,0,0" Foreground="{DynamicResource MaterialDesignBody}">
-                                                Draw and play Astrologian cards on the same button.
-                                                <LineBreak/>
-                                                (Restores Heavensward behaviour)
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </CheckBox>
 
                                 <Separator x:Uid="Separator_2"/>
                                 <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5">

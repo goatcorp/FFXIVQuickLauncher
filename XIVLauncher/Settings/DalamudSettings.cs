@@ -35,17 +35,6 @@ namespace XIVLauncher.Settings
             }
         }
 
-        public static CustomComboPreset ComboPresets
-        {
-            get => DalamudConfig.ComboPresets;
-            set
-            {
-                var currentConfig = DalamudConfig;
-                currentConfig.ComboPresets = value;
-                DalamudConfig = currentConfig;
-            }
-        }
-
         public static DalamudConfiguration DalamudConfig
         {
             get
@@ -65,10 +54,9 @@ namespace XIVLauncher.Settings
                 var newDalamudConfig = new DalamudConfiguration
                 {
                     OptOutMbCollection = Properties.Settings.Default.OptOutMbUpload,
-                    ComboPresets = CustomComboPreset.None,
                     DiscordFeatureConfig = discordFeatureConfig,
                     BadWords = new List<string>(),
-                    Fates = new List<DalamudConfiguration.FateInfo>()
+                    PluginConfigurations = new Dictionary<string, object>()
                 };
 
                 DalamudConfig = newDalamudConfig;

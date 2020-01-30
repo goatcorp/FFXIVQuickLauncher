@@ -91,9 +91,6 @@ namespace XIVLauncher.Windows
             // Gotta do this after setup so we don't fire events yet
             CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
 
-            EnableAstCardStuff.IsChecked =
-                DalamudSettings.ComboPresets.HasFlag(CustomComboPreset.AstrologianCardsOnDrawFeature);
-
             EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
         }
 
@@ -122,11 +119,6 @@ namespace XIVLauncher.Windows
             _setting.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
             _setting.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
-
-            if (EnableAstCardStuff.IsChecked == true)
-            {
-                DalamudSettings.ComboPresets |= CustomComboPreset.AstrologianCardsOnDrawFeature;
-            }
 
             _setting.Save();
         }
@@ -357,6 +349,22 @@ namespace XIVLauncher.Windows
                 return;
 
             featureConfig.RetainerNotificationChannel = channelSetup.Result.Channel;
+            DalamudSettings.DiscordFeatureConfig = featureConfig;
+        }
+
+        private void SetCfPreferredRoleChannel_OnClick(object sender, RoutedEventArgs e)
+        {
+            var featureConfig = DalamudSettings.DiscordFeatureConfig;
+
+            var channelConfig = featureConfig.CfPreferredRoleChannel ?? new ChannelConfiguration();
+
+            var channelSetup = new ChatChannelSetup(channelConfig);
+            channelSetup.ShowDialog();
+
+            if (channelSetup.Result == null)
+                return;
+
+            featureConfig.CfPreferredRoleChannel = channelSetup.Result.Channel;
             DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
