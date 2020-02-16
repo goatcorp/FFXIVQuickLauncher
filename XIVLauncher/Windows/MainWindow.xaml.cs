@@ -182,7 +182,7 @@ namespace XIVLauncher.Windows
                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                         if (startLauncher)
-                            _setting.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+                            Util.StartOfficialLauncher(_setting.GamePath, SteamCheckBox.IsChecked == true);
 
                         _setting.AutologinEnabled = false;
                         _isLoggingIn = false;
@@ -190,7 +190,6 @@ namespace XIVLauncher.Windows
                     else
                     {
                         HandleLogin(true);
-                        _setting.Save();
                         return;
                     }
 #endif
@@ -319,7 +318,7 @@ namespace XIVLauncher.Windows
                                              "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                     if (startLauncher)
-                        _setting.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+                        Util.StartOfficialLauncher(_setting.GamePath, SteamCheckBox.IsChecked == true);
 
                     _isLoggingIn = false;
 
