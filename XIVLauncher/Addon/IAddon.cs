@@ -7,6 +7,6 @@ namespace XIVLauncher.Addon
     {
         string Name { get; }
 
-        void Setup(Process gameProcess, LauncherSettings setting);
+        void Setup(Process gameProcess, ILauncherSettingsV3 setting);
     }
 }

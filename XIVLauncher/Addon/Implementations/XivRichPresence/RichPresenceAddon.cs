@@ -33,7 +33,7 @@ namespace XIVLauncher.Addon
         private bool _isDx11;
         private DirectoryInfo _gamePath;
 
-        public void Setup(Process gameProcess, LauncherSettings setting)
+        public void Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
             _gameProcess = gameProcess;
             _isDx11 = setting.IsDx11;

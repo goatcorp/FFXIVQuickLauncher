@@ -19,19 +19,19 @@ namespace XIVLauncher.Accounts
             get
             {
                 return Accounts.Count > 1 ?
-                    Accounts.FirstOrDefault(a => a.Id == _settings.CurrentAccountId) :
+                    Accounts.FirstOrDefault(a => a.Id == _setting.CurrentAccountId) :
                     Accounts.FirstOrDefault();
             }
-            set => _settings.CurrentAccountId = value.Id;
+            set => _setting.CurrentAccountId = value.Id;
         }
 
-        private LauncherSettings _settings; 
+        private ILauncherSettingsV3 _setting; 
 
-        public AccountManager(LauncherSettings settings)
+        public AccountManager(ILauncherSettingsV3 setting)
         {
             Load();
 
-            _settings = settings;
+            _setting = setting;
 
             Accounts.CollectionChanged += Accounts_CollectionChanged;
         }

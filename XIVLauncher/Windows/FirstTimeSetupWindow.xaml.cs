@@ -13,13 +13,13 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class FirstTimeSetup : Window
     {
-        public LauncherSettings Result;
+        private ILauncherSettingsV3 _setting;
 
-        public FirstTimeSetup(LauncherSettings setting)
+        public FirstTimeSetup(ILauncherSettingsV3 setting)
         {
             InitializeComponent();
 
-            Result = setting;
+            _setting = setting;
 
             var detectedPath = Util.TryGamePaths();
 
@@ -83,13 +83,13 @@ namespace XIVLauncher.Windows
 
             if (SetupTabControl.SelectedIndex == 5)
             {
-                Result.GamePath = new DirectoryInfo(GamePathEntry.Text);
-                Result.IsDx11 = Dx11RadioButton.IsChecked == true;
-                Result.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
-                Result.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
-                Result.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
+                _setting.GamePath = new DirectoryInfo(GamePathEntry.Text);
+                _setting.IsDx11 = Dx11RadioButton.IsChecked == true;
+                _setting.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
+                _setting.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
+                _setting.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
 
-                Result.AddonList = new List<AddonEntry>
+                _setting.AddonList = new List<AddonEntry>
                 {
                     new AddonEntry
                     {
@@ -102,7 +102,7 @@ namespace XIVLauncher.Windows
                 {
                     var actPath = FindAct();
 
-                    Result.AddonList.Add(new AddonEntry
+                    _setting.AddonList.Add(new AddonEntry
                     {
                         IsEnabled = true,
                         Addon = new GenericAddon
@@ -112,7 +112,6 @@ namespace XIVLauncher.Windows
                     });
                 }
 
-                Result.Save();
                 Close();
             }
 

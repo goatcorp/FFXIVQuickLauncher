@@ -10,7 +10,7 @@ namespace XIVLauncher.Addon.Implementations
     {
         string IAddon.Name => "Sync Character Settings";
 
-        void IAddon.Setup(Process gameProcess, LauncherSettings setting)
+        void IAddon.Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
             // Ignored
         }

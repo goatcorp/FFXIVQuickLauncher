@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows;
+using Config.Net;
 using Newtonsoft.Json;
 using Sentry;
 using Serilog;
@@ -14,6 +15,7 @@ using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
+using XIVLauncher.Settings.Parsers;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher
@@ -23,8 +25,17 @@ namespace XIVLauncher
     /// </summary>
     public partial class App : Application
     {
+        private ILauncherSettingsV3 _globalSetting;
+
         public App()
         {
+            _globalSetting = new ConfigurationBuilder<ILauncherSettingsV3>()
+                .UseCommandLineArgs()
+                .UseJsonFile(GetConfigPath("launcher"))
+                .UseTypeParser(new DirectoryInfoParser())
+                .UseTypeParser(new AddonListParser())
+                .Build();
+
 #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
 #endif
@@ -80,6 +91,8 @@ namespace XIVLauncher
             Environment.Exit(0);
         }
 
+        private static string GetConfigPath(string prefix) => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", $"{prefix}ConfigV3.json");
+
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
             // Check if dark mode is enabled on windows, if yes, load the dark theme
@@ -99,7 +112,7 @@ namespace XIVLauncher
             AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
             AppDomain.CurrentDomain.UnhandledException += (_, args) =>
             {
-                new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled")
+                new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled", _globalSetting)
                     .ShowDialog();
                 Log.CloseAndFlush();
                 Environment.Exit(0);
@@ -116,8 +129,7 @@ namespace XIVLauncher
 
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {
-                var setting = LauncherSettings.Load();
-                var result = IntegrityCheck.RunIntegrityCheckAsync(setting.GamePath, null).GetAwaiter().GetResult();
+                var result = IntegrityCheck.RunIntegrityCheckAsync(_globalSetting.GamePath, null).GetAwaiter().GetResult();
                 File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
 
                 MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");
@@ -139,7 +151,7 @@ namespace XIVLauncher
             
             Log.Information("Loading MainWindow for account '{0}'", accountName);
 
-            var mainWindow = new MainWindow(accountName);
+            var mainWindow = new MainWindow(_globalSetting, accountName);
         }
     }
 }

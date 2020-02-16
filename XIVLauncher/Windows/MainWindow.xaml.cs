@@ -41,10 +41,12 @@ namespace XIVLauncher.Windows
 
         private bool _isLoggingIn;
 
-        private LauncherSettings _setting = LauncherSettings.Load();
+        private ILauncherSettingsV3 _setting;
 
-        public MainWindow(string accountName)
+        public MainWindow(ILauncherSettingsV3 setting, string accountName)
         {
+            _setting = setting;
+
             InitializeComponent();
 
 #if !XL_NOAUTOUPDATE
@@ -172,7 +174,6 @@ namespace XIVLauncher.Windows
                 {
 #if DEBUG
                     HandleLogin(true);
-                    _setting.Save();
                     return;
 #else
                     if (!gateStatus)
@@ -194,22 +195,19 @@ namespace XIVLauncher.Windows
                     }
 #endif
                 }
-                catch (Exception exc)
+                catch (Exception ex)
                 {
-                    new ErrorWindow(exc, "Additionally, please check your login information or try again.", "AutoLogin")
+                    new ErrorWindow(ex, "Additionally, please check your login information or try again.", "AutoLogin", _setting)
                         .ShowDialog();
                     _setting.AutologinEnabled = false;
                     _isLoggingIn = false;
                 }
-
-                _setting.Save();
             }
 
             if (_setting.GamePath?.Exists != true)
             {
                 var setup = new FirstTimeSetup(_setting);
                 setup.ShowDialog();
-                _setting = setup.Result;
             }
 
             Task.Run(() => SetupHeadlines());
@@ -275,8 +273,6 @@ namespace XIVLauncher.Windows
 
                 _setting.AutologinEnabled = AutoLoginCheckBox.IsChecked == true;
             }
-
-            _setting.Save();
 
             var otp = "";
             if (OtpCheckBox.IsChecked == true && !hasValidCache)
@@ -355,7 +351,7 @@ namespace XIVLauncher.Windows
                         "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
 
                     if (msgBoxResult == MessageBoxResult.Yes)
-                        _setting.StartOfficialLauncher(SteamCheckBox.IsChecked == true);
+                        Util.StartOfficialLauncher(_setting.GamePath, SteamCheckBox.IsChecked == true);
 
                     /*
                     var patcher = new Game.Patch.PatchInstaller(_game, "ffxiv"); 
@@ -409,7 +405,7 @@ namespace XIVLauncher.Windows
                 {
                     new ErrorWindow(ex,
                         "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-                        "Addons").ShowDialog();
+                        "Addons", _setting).ShowDialog();
                     _isLoggingIn = false;
 
                     addonMgr.StopAddons();
@@ -427,7 +423,7 @@ namespace XIVLauncher.Windows
                 {
                     new ErrorWindow(ex,
                         "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-                        "Hooks").ShowDialog();
+                        "Hooks", _setting).ShowDialog();
                     _isLoggingIn = false;
 
                     addonMgr.StopAddons();
@@ -451,7 +447,7 @@ namespace XIVLauncher.Windows
             }
             catch (Exception ex)
             {
-                new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
+                new ErrorWindow(ex, "Please also check your login information or try again.", "Login", _setting).ShowDialog();
                 _isLoggingIn = false;
             }
         }
@@ -609,7 +605,6 @@ namespace XIVLauncher.Windows
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
-            _setting.Save();
             Application.Current.Shutdown();
         }
 

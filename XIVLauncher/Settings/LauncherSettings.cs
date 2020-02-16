@@ -86,14 +86,5 @@ namespace XIVLauncher.Settings
         }
 
         #endregion
-
-        #region Misc
-
-        public void StartOfficialLauncher(bool isSteam)
-        {
-            Process.Start(Path.Combine(GamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
-        }
-
-        #endregion
     }
 }

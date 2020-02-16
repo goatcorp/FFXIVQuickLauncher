@@ -11,7 +11,7 @@ namespace XIVLauncher.Addon
         private Process _addonProcess;
         private Process _gameProcess;
         
-        void IAddon.Setup(Process gameProcess, LauncherSettings setting)
+        void IAddon.Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
             _gameProcess = gameProcess;
         }

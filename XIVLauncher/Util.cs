@@ -143,5 +143,10 @@ namespace XIVLauncher
         };
 
         public static string ClassJobToIcon(int classJob) => _classJobFontDict[classJob];
+
+        public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam)
+        {
+            Process.Start(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
+        }
     }
 }

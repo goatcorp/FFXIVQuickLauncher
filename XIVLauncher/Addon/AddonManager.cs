@@ -14,7 +14,7 @@ namespace XIVLauncher.Addon
     {
         private List<Tuple<IAddon, Thread, CancellationTokenSource>> _runningAddons;
 
-        public void RunAddons(Process gameProcess, LauncherSettings setting, List<AddonEntry> addonEntries)
+        public void RunAddons(Process gameProcess, ILauncherSettingsV3 setting, List<AddonEntry> addonEntries)
         {
             if (_runningAddons != null)
                 throw new Exception("Addons still running?");

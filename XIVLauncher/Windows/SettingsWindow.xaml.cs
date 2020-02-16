@@ -46,9 +46,9 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private LauncherSettings _setting;
+        private ILauncherSettingsV3 _setting;
 
-        public SettingsWindow(LauncherSettings setting)
+        public SettingsWindow(ILauncherSettingsV3 setting)
         {
             InitializeComponent();
 
@@ -119,8 +119,6 @@ namespace XIVLauncher.Windows
             _setting.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
             _setting.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
-
-            _setting.Save();
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
@@ -143,7 +141,7 @@ namespace XIVLauncher.Windows
             var isSteam =
                 MessageBox.Show("Launch as a steam user?", "XIVLauncher", MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes;
-            _setting.StartOfficialLauncher(isSteam);
+            Util.StartOfficialLauncher(_setting.GamePath, isSteam);
         }
 
         // All of the list handling is very dirty - but i guess it works
@@ -237,10 +235,6 @@ namespace XIVLauncher.Windows
         private void ResetCacheButton_OnClick(object sender, RoutedEventArgs e)
         {
             UniqueIdCache.Reset();
-            _setting.Save();
-            MessageBox.Show("Reset. Please restart the app.");
-
-            Environment.Exit(0);
         }
 
         private void OpenWebhookGuideLabel_MouseUp(object sender, MouseButtonEventArgs e)
