@@ -135,6 +135,8 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.Save();
             }
 
+            LauncherSettings.TryMigrate(_setting);
+
             var gateStatus = false;
             try
             {

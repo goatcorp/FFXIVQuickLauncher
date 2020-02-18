@@ -68,6 +68,28 @@ namespace XIVLauncher.Settings
             return setting;
         }
 
+        public static void TryMigrate(ILauncherSettingsV3 newSetting)
+        {
+            if (!File.Exists(ConfigPath))
+                return;
+
+            var oldSetting = Load();
+
+            newSetting.AdditionalLaunchArgs = oldSetting.AdditionalLaunchArgs;
+            newSetting.AutologinEnabled = oldSetting.AutologinEnabled;
+            newSetting.CharacterSyncEnabled = oldSetting.CharacterSyncEnabled;
+            newSetting.GamePath = oldSetting.GamePath;
+            newSetting.InGameAddonEnabled = oldSetting.InGameAddonEnabled;
+            newSetting.CurrentAccountId = oldSetting.CurrentAccountId;
+            newSetting.SteamIntegrationEnabled = oldSetting.SteamIntegrationEnabled;
+            newSetting.IsDx11 = oldSetting.IsDx11;
+            newSetting.Language = oldSetting.Language;
+            newSetting.UniqueIdCacheEnabled = oldSetting.UniqueIdCacheEnabled;
+            newSetting.AddonList = oldSetting.AddonList;
+
+            File.Delete(ConfigPath);
+        }
+
         private static List<AddonEntry> EnsureDefaultAddon(List<AddonEntry> addonList)
         {
             if (addonList == null)
