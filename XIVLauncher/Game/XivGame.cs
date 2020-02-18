@@ -212,6 +212,10 @@ namespace XIVLauncher.Game
                     }
                 }
 
+                Thread.Sleep(4000);
+
+                Environment.Exit(0);
+
                 for (var tries = 0; tries < 30; tries++)
                 {
                     game.Refresh();
