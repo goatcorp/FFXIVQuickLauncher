@@ -4,12 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Win32.SafeHandles;
 using Nhaama.Memory;
 using Serilog;
 using SteamworksSharp;
@@ -22,6 +24,9 @@ namespace XIVLauncher.Game
 {
     public class XivGame
     {
+        [DllImport("NativeLauncher.dll", EntryPoint = "launch_game", CallingConvention = CallingConvention.StdCall)]
+        public static extern uint LaunchGameNative(string app, string arg);
+
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
 
@@ -154,28 +159,30 @@ namespace XIVLauncher.Game
                     }
                 }
 
-                var game = new Process {StartInfo =
+                var nativeLauncher = new Process {StartInfo =
                 {
                     UseShellExecute = false,
                     RedirectStandardError = false,
                     RedirectStandardInput = false,
-                    RedirectStandardOutput = false
+                    RedirectStandardOutput = true
                 }};
 
-                if (isDx11)
-                    game.StartInfo.FileName = gamePath + "/game/ffxiv_dx11.exe";
-                else
-                    game.StartInfo.FileName = gamePath + "/game/ffxiv.exe";
+                var exePath = gamePath + "/game/ffxiv_dx11.exe";
+                if (!isDx11)
+                    exePath = gamePath + "/game/ffxiv.exe";
 
-                game.StartInfo.Arguments =
-                    $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) language} ver={GetLocalGameVer(gamePath)}";
-                game.StartInfo.Arguments += " " + additionalArguments;
+                nativeLauncher.StartInfo.FileName = "NativeLauncher.exe";
+
+                nativeLauncher.StartInfo.Arguments =
+                    $"\"{exePath}\" \"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) language} ver={GetLocalGameVer(gamePath)} {additionalArguments}\"";
+
+                //var procId = AclFix.StartGameNew(game.StartInfo.FileName, game.StartInfo.Arguments);
 
                 if (isSteamServiceAccount)
                 {
                     // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
-                    game.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
-                    game.StartInfo.Arguments += " IsSteam=1";
+                    nativeLauncher.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
+                    nativeLauncher.StartInfo.Arguments += " IsSteam=1";
                 }
 
                 /*
@@ -195,9 +202,16 @@ namespace XIVLauncher.Game
                 game.StartInfo.Arguments = argumentBuilder.BuildEncrypted(key);
                 */
 
-                game.StartInfo.WorkingDirectory = Path.Combine(gamePath.FullName, "game");
 
-                game.Start();
+
+                nativeLauncher.StartInfo.WorkingDirectory = Path.Combine(gamePath.FullName, "game");
+
+                nativeLauncher.Start();
+                nativeLauncher.WaitForExit();
+
+                var gamePid = int.Parse(nativeLauncher.StandardOutput.ReadToEnd());
+
+                var game = Process.GetProcessById(gamePid);
 
                 if (isSteamIntegrationEnabled)
                 {
@@ -211,10 +225,6 @@ namespace XIVLauncher.Game
                         Log.Error(ex, "Could not uninitialize Steam.");
                     }
                 }
-
-                Thread.Sleep(4000);
-
-                Environment.Exit(0);
 
                 for (var tries = 0; tries < 30; tries++)
                 {
