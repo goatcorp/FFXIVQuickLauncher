@@ -46,7 +46,7 @@ namespace XIVLauncher.Game
             var langCode = language.GetLangCode();
             var url = $"https://frontier.ffxiv.com/news/headline.json?lang={langCode}&media=pcapp&{unixTimestamp}";
 
-            var json = Encoding.UTF8.GetString(game.DownloadAsLauncher(url, language));
+            var json = Encoding.UTF8.GetString(game.DownloadAsLauncher(url, language, "application/json, text/plain, */*"));
 
             return JsonConvert.DeserializeObject<Headlines>(json, Converter.Settings);
         }

@@ -18,14 +18,37 @@ using SteamworksSharp;
 using SteamworksSharp.Native;
 using XIVLauncher.Cache;
 using XIVLauncher.Game.Patch.PatchList;
+using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game
 {
     public class XivGame
     {
-        [DllImport("NativeLauncher.dll", EntryPoint = "launch_game", CallingConvention = CallingConvention.StdCall)]
-        public static extern uint LaunchGameNative(string app, string arg);
+        public XivGame(ILauncherSettingsV3 setting)
+        {
+            Task.Run(() =>
+            {
+                using (var client = new WebClient())
+                {
+                    client.Headers.Add("User-Agent", _userAgent);
+
+                    client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+
+                    client.Headers.Add("Accept-Encoding", "gzip, deflate");
+                    client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+
+                    client.DownloadString(GenerateFrontierReferer(setting.Language));
+
+                    DownloadAsLauncher($"https://frontier.ffxiv.com/v2/world/status.json?_={Util.GetUnixMillis()}",
+                        setting.Language, "application/json, text/plain, */*");
+                    DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis()}",
+                        setting.Language, "application/json, text/plain, */*");
+                    DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis() + 50}",
+                        setting.Language, "application/json, text/plain, */*");
+                }
+            });
+        }
 
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
         private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
@@ -79,7 +102,7 @@ namespace XIVLauncher.Game
 
                 try
                 {
-                    oauthLoginResult = OauthLogin(userName, password, otp, isSteamServiceAccount);
+                    oauthLoginResult = OauthLogin(userName, password, otp, isSteamServiceAccount, 3);
 
                     Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
                 }
@@ -164,7 +187,8 @@ namespace XIVLauncher.Game
                     UseShellExecute = false,
                     RedirectStandardError = false,
                     RedirectStandardInput = false,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
                 }};
 
                 var exePath = gamePath + "/game/ffxiv_dx11.exe";
@@ -174,9 +198,7 @@ namespace XIVLauncher.Game
                 nativeLauncher.StartInfo.FileName = "NativeLauncher.exe";
 
                 nativeLauncher.StartInfo.Arguments =
-                    $"\"{exePath}\" \"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) language} ver={GetLocalGameVer(gamePath)} {additionalArguments}\"";
-
-                //var procId = AclFix.StartGameNew(game.StartInfo.FileName, game.StartInfo.Arguments);
+                    $"\"{exePath}\" \"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) language} ver={GetLocalGameVer(gamePath)} {additionalArguments}";
 
                 if (isSteamServiceAccount)
                 {
@@ -184,6 +206,8 @@ namespace XIVLauncher.Game
                     nativeLauncher.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
                     nativeLauncher.StartInfo.Arguments += " IsSteam=1";
                 }
+
+                nativeLauncher.StartInfo.Arguments += "\"";
 
                 /*
                 var ticks = (uint) Environment.TickCount;
@@ -296,8 +320,8 @@ namespace XIVLauncher.Game
             {
                 client.Headers.Add("X-Hash-Check", "enabled");
                 client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
-                client.Headers.Add("Referer",
-                    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
+                //client.Headers.Add("Referer",
+                //    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
                 var url =
@@ -347,14 +371,17 @@ namespace XIVLauncher.Game
             }
         }
 
-        private string GetStored(bool isSteam)
+        private string GetStored(bool isSteam, int region)
         {
             // This is needed to be able to access the login site correctly
             using (var client = new WebClient())
             {
+                client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+                client.Headers.Add("Accept-Encoding", "gzip, deflate");
+                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
                 client.Headers.Add("User-Agent", _userAgent);
                 var reply = client.DownloadString(
-                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=" + (isSteam ? "1" : "0"));
+                    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
 
                 var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
                 return regex.Matches(reply)[0].Groups["stored"].Value;
@@ -370,20 +397,24 @@ namespace XIVLauncher.Game
             public int MaxExpansion { get; set; }
         }
 
-        private OauthLoginResult OauthLogin(string userName, string password, string otp, bool isSteam)
+        private OauthLoginResult OauthLogin(string userName, string password, string otp, bool isSteam, int region)
         {
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
+                client.Headers.Add("Cache-Control", "no-cache");
+                client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+                client.Headers.Add("Accept-Encoding", "gzip, deflate");
+                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2"); 
                 client.Headers.Add("Referer",
-                    "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn=3&isft=0&issteam=" + (isSteam ? "1" : "0"));
+                    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
                 var response =
                     client.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send",
                         new NameValueCollection //get the session id with user credentials
                         {
-                            {"_STORED_", GetStored(isSteam)},
+                            {"_STORED_", GetStored(isSteam, region)},
                             {"sqexid", userName},
                             {"password", password},
                             {"otppw", otp}
@@ -480,11 +511,22 @@ namespace XIVLauncher.Game
             }
         }
 
-        public byte[] DownloadAsLauncher(string url, ClientLanguage language)
+        public byte[] DownloadAsLauncher(string url, ClientLanguage language, string contentType = "")
         {
             using (var client = new WebClient())
             {
                 client.Headers.Add("User-Agent", _userAgent);
+
+                if (!string.IsNullOrEmpty(contentType))
+                {
+                    client.Headers.Add("Accept", contentType);
+                }
+
+                client.Headers.Add("Accept-Encoding", "gzip, deflate");
+                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+
+                client.Headers.Add("Origin", "https://launcher.finalfantasyxiv.com");
+
                 client.Headers.Add(HttpRequestHeader.Referer, GenerateFrontierReferer(language));
 
                 return client.DownloadData(url);

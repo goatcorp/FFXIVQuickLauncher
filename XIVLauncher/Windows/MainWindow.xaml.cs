@@ -35,7 +35,7 @@ namespace XIVLauncher.Windows
 
         private Timer _maintenanceQueueTimer;
 
-        private readonly XivGame _game = new XivGame();
+        private readonly XivGame _game;
 
         private AccountManager _accountManager;
 
@@ -46,6 +46,7 @@ namespace XIVLauncher.Windows
         public MainWindow(ILauncherSettingsV3 setting, string accountName)
         {
             _setting = setting;
+            _game = new XivGame(setting);
 
             InitializeComponent();
 
