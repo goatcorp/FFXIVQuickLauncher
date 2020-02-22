@@ -251,6 +251,7 @@
     <Compile Include="Addon\IAddon.cs" />
     <Compile Include="Dalamud\PluginUpdate\PluginDefinition.cs" />
     <Compile Include="Dalamud\PluginUpdate\PluginUpdateMaster.cs" />
+    <Compile Include="Game\NativeGameStart.cs" />
     <Compile Include="Settings\DalamudSettings.cs" />
     <Compile Include="Dalamud\DalamudLauncher.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\DiscordPresenceManager.cs" />
