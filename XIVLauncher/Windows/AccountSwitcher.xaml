@@ -17,7 +17,7 @@
     <Grid x:Uid="Grid_1" Margin="0,0,0,0">
         <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="390" Margin="0,0,10,0">
             <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,0">
-                <ListView x:Uid="AccountListView" x:Name="AccountListView" MouseUp="AccountListView_OnMouseUp">
+                <ListView x:Uid="AccountListView" x:Name="AccountListView" MouseUp="AccountListView_OnMouseUp" MaxHeight="370">
                     <ListView.ContextMenu>
                         <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
                             <MenuItem x:Uid="MenuItem_1" Header="Set profile picture" Click="SetProfilePicture_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
