@@ -386,20 +386,26 @@ namespace XIVLauncher.Windows
                 try
                 {
                     var addons = _setting.AddonList.Where(x => x.IsEnabled).ToList();
+                    try
+                    {
+                        var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup"));
+                        if (backupDirectory.Exists)
+                            backupDirectory.Delete(true);
 
-                    addons.Add(new AddonEntry{
+                        addons.Add(new AddonEntry
+                        {
                             Addon = new CharacterBackupAddon()
                         });
+                    }
+                    catch (Exception ex)
+                    {
+                        new ErrorWindow(ex, "Could not delete backup directory to start character backup Addon. This addon will be skipped", "Addons").ShowDialog();
+                    }
 
                     if (_setting.CharacterSyncEnabled)
                         addons.Add(new AddonEntry{
                             Addon = new CharacterSyncAddon()
                         });
-
-                    var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup"));
-
-                    if (backupDirectory.Exists)
-                        backupDirectory.Delete(true);
 
                     await Task.Run(() => addonMgr.RunAddons(gameProcess, _setting, addons));
                 }
