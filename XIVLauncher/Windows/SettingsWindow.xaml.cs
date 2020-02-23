@@ -151,13 +151,16 @@ namespace XIVLauncher.Windows
             var addonSetup = new GenericAddonSetupWindow();
             addonSetup.ShowDialog();
 
-            if (addonSetup.Result != null && !string.IsNullOrEmpty(addonSetup.Result.Path))
-            {
-                _setting.AddonList.Add(new AddonEntry
+            if (addonSetup.Result != null && !string.IsNullOrEmpty(addonSetup.Result.Path)) {
+                var addonList = _setting.AddonList;
+
+                addonList.Add(new AddonEntry
                 {
                     IsEnabled = true,
                     Addon = addonSetup.Result
                 });
+
+                _setting.AddonList = addonList;
 
                 AddonListView.ItemsSource = _setting.AddonList;
             }
@@ -197,11 +200,15 @@ namespace XIVLauncher.Windows
                         return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
                     }).ToList();
 
-                    _setting.AddonList.Add(new AddonEntry
+                    var addonList = _setting.AddonList;
+
+                    addonList.Add(new AddonEntry
                     {
                         IsEnabled = entry.IsEnabled,
                         Addon = addonSetup.Result
                     });
+
+                    _setting.AddonList = addonList;
 
                     AddonListView.ItemsSource = _setting.AddonList;
                 }
