@@ -1,8 +1,8 @@
-# FFXIVQuickLauncher [![Actions Status](https://github.com/goaaats/FFXIVQuickLauncher/workflows/Build%20XIVLauncher/badge.svg)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5)
+# XIVLauncher [![Actions Status](https://github.com/goaaats/FFXIVQuickLauncher/workflows/Build%20XIVLauncher/badge.svg)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5)
 
-A faster launcher for Final Fantasy XIV.
+XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
 
-<img src="https://github.com/goaaats/FFXIVQuickLauncher/blob/master/images/screenshot.png?raw=true" alt="drawing" width="800"/>
+<img src="https://i.imgur.com/jxqlaAY.png" alt="drawing" width="800"/>
 
 ## Why?
 
@@ -15,7 +15,7 @@ The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your pa
 * Integrity check for game files
 * Chat filtering
 * Chat bridge to Discord
-* Discord notifications for Duty Finder, fates, retainer sales, etc.
+* Discord notifications for fates, retainer sales, etc.
 
 Check the settings page and use the /xlhelp command in-game to see available commands.
 
