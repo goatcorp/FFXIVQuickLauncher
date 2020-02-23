@@ -217,7 +217,7 @@
                         <StackPanel x:Uid="StackPanel_9" Margin="10,10,10,0">
                             <TextBlock x:Uid="VersionLabel" HorizontalAlignment="Left" VerticalAlignment="Top"
                                        x:Name="VersionLabel" Foreground="{DynamicResource MaterialDesignBody}">
-                                FFXIVQuickLauncher
+                                XIVLauncher
                             </TextBlock>
                             <TextBlock x:Uid="TextBlock_8" HorizontalAlignment="Left" VerticalAlignment="Top"
                                        Foreground="{DynamicResource MaterialDesignBody}">
