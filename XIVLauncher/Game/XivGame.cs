@@ -195,10 +195,10 @@ namespace XIVLauncher.Game
                 if (!isDx11)
                     exePath = gamePath + "/game/ffxiv.exe";
 
-                nativeLauncher.StartInfo.FileName = exePath;
+                nativeLauncher.StartInfo.FileName = "NativeLauncher.exe";
 
                 nativeLauncher.StartInfo.Arguments =
-                    $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) language} ver={GetLocalGameVer(gamePath)} {additionalArguments}";
+                    $"\"{exePath}\" \"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) language} ver={GetLocalGameVer(gamePath)} {additionalArguments}";
 
                 if (isSteamServiceAccount)
                 {
@@ -206,6 +206,8 @@ namespace XIVLauncher.Game
                     nativeLauncher.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
                     nativeLauncher.StartInfo.Arguments += " IsSteam=1";
                 }
+
+                nativeLauncher.StartInfo.Arguments += "\"";
 
                 /*
                 var ticks = (uint) Environment.TickCount;
@@ -226,7 +228,12 @@ namespace XIVLauncher.Game
 
                 nativeLauncher.StartInfo.WorkingDirectory = Path.Combine(gamePath.FullName, "game");
 
-                var game = NativeGameStart.StartGame(nativeLauncher);
+                nativeLauncher.Start();
+                nativeLauncher.WaitForExit();
+
+                var gamePid = int.Parse(nativeLauncher.StandardOutput.ReadToEnd());
+
+                var game = Process.GetProcessById(gamePid);
 
                 if (isSteamIntegrationEnabled)
                 {
