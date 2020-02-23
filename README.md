@@ -1,6 +1,6 @@
 # XIVLauncher [![Actions Status](https://github.com/goaaats/FFXIVQuickLauncher/workflows/Build%20XIVLauncher/badge.svg)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5)
 
-A faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
+XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
 
 <img src="https://i.imgur.com/jxqlaAY.png" alt="drawing" width="800"/>
 
