@@ -10,8 +10,6 @@ using Dalamud;
 using Dalamud.Discord;
 using Microsoft.WindowsAPICodePack.Shell.Interop;
 using Newtonsoft.Json;
-using XIVLauncher.Dalamud;
-using XIVLauncher.Dalamud.PluginUpdate;
 using XIVLauncher.Game;
 
 namespace XIVLauncher.Dalamud
@@ -52,11 +50,12 @@ namespace XIVLauncher.Dalamud
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
             var ingamePluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "XIVLauncher", "plugins");
+                "XIVLauncher", "installedPlugins");
             var defaultPluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "XIVLauncher", "defaultplugins");
+                "XIVLauncher", "devPlugins");
 
             Directory.CreateDirectory(ingamePluginPath);
+            Directory.CreateDirectory(defaultPluginPath);
 
             using (var client = new WebClient())
             {
@@ -70,7 +69,7 @@ namespace XIVLauncher.Dalamud
                 if (!File.Exists(addonExe))
                 {
                     Serilog.Log.Information("[HOOKS] Not found, redownloading");
-                    Download(addonDirectory, defaultPluginPath);
+                    Download(addonDirectory);
                 }
                 else
                 {
@@ -80,7 +79,7 @@ namespace XIVLauncher.Dalamud
                     Serilog.Log.Information("Hooks update check: local {0} remote {1}", version, remoteVersionInfo.AssemblyVersion);
 
                     if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
-                        Download(addonDirectory, defaultPluginPath);
+                        Download(addonDirectory);
                 }
 
                 if (XivGame.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
@@ -113,9 +112,6 @@ namespace XIVLauncher.Dalamud
                     StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = _gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory }
                 };
 
-                // Update plugins
-                PluginUpdateMaster.Run(startInfo.PluginDirectory);
-
                 process.Start();
 
                 Serilog.Log.Information("Started dalamud!");
@@ -140,7 +136,7 @@ namespace XIVLauncher.Dalamud
             return true;
         }
 
-        private void Download(string addonPath, string ingamePluginPath)
+        private void Download(string addonPath)
         {
             Serilog.Log.Information("Downloading updates for Hooks and default plugins...");
 
@@ -157,21 +153,6 @@ namespace XIVLauncher.Dalamud
             foreach (var dir in hooksDirectory.GetDirectories())
             {
                 dir.Delete(true); 
-            }
-
-            var ingamePluginDirectory = new DirectoryInfo(ingamePluginPath);
-
-            if (ingamePluginDirectory.Exists)
-            {
-                foreach (var file in ingamePluginDirectory.GetFiles())
-                {
-                    file.Delete();
-                }
-
-                foreach (var dir in ingamePluginDirectory.GetDirectories())
-                {
-                    dir.Delete(true);
-                }
             }
 
             using (var client = new WebClient())
