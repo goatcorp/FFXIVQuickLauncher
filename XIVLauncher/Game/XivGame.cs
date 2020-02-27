@@ -195,6 +195,13 @@ namespace XIVLauncher.Game
                 if (!isDx11)
                     exePath = gamePath + "/game/ffxiv.exe";
 
+                if (!File.Exists("NativeLauncher.exe"))
+                {
+                    MessageBox.Show(
+                        "Your Anti-Virus may have deleted a file necessary for XIVLauncher to function.\nPlease check its logs and reinstall XIVLauncher.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
+
                 nativeLauncher.StartInfo.FileName = "NativeLauncher.exe";
 
                 nativeLauncher.StartInfo.Arguments =
@@ -229,7 +236,12 @@ namespace XIVLauncher.Game
                 nativeLauncher.StartInfo.WorkingDirectory = Path.Combine(gamePath.FullName, "game");
 
                 nativeLauncher.Start();
-                nativeLauncher.WaitForExit();
+                if (!nativeLauncher.WaitForExit(10000))
+                {
+                    MessageBox.Show(
+                        "Could not start the game correctly. Please report this error.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
 
                 var gamePid = int.Parse(nativeLauncher.StandardOutput.ReadToEnd());
 
