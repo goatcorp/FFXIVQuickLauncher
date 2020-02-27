@@ -85,7 +85,7 @@ namespace XIVLauncher.Dalamud
                 if (XivGame.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return;
 
-                if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")))
+                if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) || !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")))
                 {
                     MessageBox.Show(
                         "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
@@ -102,7 +102,8 @@ namespace XIVLauncher.Dalamud
                     Language = language,
                     PluginDirectory = ingamePluginPath,
                     DefaultPluginDirectory = defaultPluginPath,
-                    ConfigurationPath = configPath
+                    ConfigurationPath = configPath,
+                    GameVersion = remoteVersionInfo.SupportedGameVer
                 };
 
                 var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
