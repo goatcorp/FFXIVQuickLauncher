@@ -249,7 +249,6 @@
     <Compile Include="Addon\Implementations\CharacterSyncAddon.cs" />
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
-    <Compile Include="Game\NativeGameStart.cs" />
     <Compile Include="Settings\DalamudSettings.cs" />
     <Compile Include="Dalamud\DalamudLauncher.cs" />
     <Compile Include="Addon\Implementations\XivRichPresence\DiscordPresenceManager.cs" />
