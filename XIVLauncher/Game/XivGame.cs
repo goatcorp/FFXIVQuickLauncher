@@ -243,7 +243,14 @@ namespace XIVLauncher.Game
                     return null;
                 }
 
-                var gamePid = int.Parse(nativeLauncher.StandardOutput.ReadToEnd());
+                var pidStr = nativeLauncher.StandardOutput.ReadToEnd();
+
+                if (!int.TryParse(pidStr, out var gamePid))
+                {
+                    MessageBox.Show(
+                        "Could not start the game correctly. Please report this error.\n\n" + pidStr, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
 
                 var game = Process.GetProcessById(gamePid);
 
