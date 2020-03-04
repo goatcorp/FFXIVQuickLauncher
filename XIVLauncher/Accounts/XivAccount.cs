@@ -54,26 +54,26 @@ namespace XIVLauncher.Accounts
                 dynamic searchResponse = XivApi.GetCharacterSearch(ChosenCharacterName, ChosenCharacterWorld)
                 .GetAwaiter().GetResult();
 
-            if (searchResponse.Results.Count > 1) //If we get more than one match from XIVAPI
-            {
-                foreach (var AccountInfo in searchResponse.Results)
+                if (searchResponse.Results.Count > 1) //If we get more than one match from XIVAPI
                 {
-                    //We have to check with it all lower in case they type their character name LiKe ThIsLoL. The server XIVAPI returns also contains the DC name, so let's just do a contains on the server to make it easy.
-                    if (AccountInfo.Name.Value.ToLower() == ChosenCharacterName.ToLower() && AccountInfo.Server.Value.ToLower().Contains(ChosenCharacterWorld.ToLower()))
+                    foreach (var AccountInfo in searchResponse.Results)
                     {
-                        return AccountInfo.Avatar.Value;
+                        //We have to check with it all lower in case they type their character name LiKe ThIsLoL. The server XIVAPI returns also contains the DC name, so let's just do a contains on the server to make it easy.
+                        if (AccountInfo.Name.Value.ToLower() == ChosenCharacterName.ToLower() && AccountInfo.Server.Value.ToLower().Contains(ChosenCharacterWorld.ToLower()))
+                        {
+                            return AccountInfo.Avatar.Value;
+                        }
                     }
                 }
-            }
 
-            return searchResponse.Results.Count > 0 ? (string)searchResponse.Results[0].Avatar : null;
-        }
+                return searchResponse.Results.Count > 0 ? (string)searchResponse.Results[0].Avatar : null;
+            }
             catch (Exception ex)
             {
                 Log.Information(ex, "Couldn't download character search.");
 
                 return null;
             }
-}
+        }
     }
 }
