@@ -17,27 +17,26 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             ExceptionTextBox.AppendText(exc.ToString());
-            ExceptionTextBox.AppendText("\n" + Util.GetAssemblyVersion());
-            ExceptionTextBox.AppendText("\n" + Util.GetGitHash());
+            ExceptionTextBox.AppendText("\nVersion: " + Util.GetAssemblyVersion());
+            ExceptionTextBox.AppendText("\nGit Hash: " + Util.GetGitHash());
             ExceptionTextBox.AppendText("\nContext: " + context);
-            ExceptionTextBox.AppendText("\n" + Environment.OSVersion);
-            ExceptionTextBox.AppendText("\n" + Environment.Is64BitProcess);
+            ExceptionTextBox.AppendText("\nOS: " + Environment.OSVersion);
+            ExceptionTextBox.AppendText("\n64bit? " + Environment.Is64BitProcess);
 
             if (setting != null)
             {
-                ExceptionTextBox.AppendText("\n" + setting.IsDx11);
-                ExceptionTextBox.AppendText("\n" + setting.InGameAddonEnabled);
-                ExceptionTextBox.AppendText("\n" + setting.AutologinEnabled);
-                ExceptionTextBox.AppendText("\n" + setting.AutologinEnabled);
-                ExceptionTextBox.AppendText("\n" + setting.Language);
-                ExceptionTextBox.AppendText("\n" + setting.GamePath);
+                ExceptionTextBox.AppendText("\nDX11? " + setting.IsDx11);
+                ExceptionTextBox.AppendText("\nAddons Enabled? " + setting.InGameAddonEnabled);
+                ExceptionTextBox.AppendText("\nAuto Login Enabled? " + setting.AutologinEnabled);
+                ExceptionTextBox.AppendText("\nLanguage: " + setting.Language);
+                ExceptionTextBox.AppendText("\nGame path: " + setting.GamePath);
             }
 
 #if DEBUG
             ExceptionTextBox.AppendText("\nDebugging");
             #endif
 
-            ExceptionTextBox.AppendText("\n\n\n" + Properties.Settings.Default.Addons);
+            ExceptionTextBox.AppendText("\n\n\nAddons: " + Properties.Settings.Default.Addons);
 
             ContextTextBlock.Text = message;
 
