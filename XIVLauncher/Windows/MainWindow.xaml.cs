@@ -399,7 +399,7 @@ namespace XIVLauncher.Windows
                     }
                     catch (Exception ex)
                     {
-                        new ErrorWindow(ex, "Could not delete backup directory to start character backup Addon. This addon will be skipped", "Addons").ShowDialog();
+                        Log.Error(ex, "Could not delete backup directory to start character backup Addon. This addon will be skipped", "Addons");
                     }
 
                     if (_setting.CharacterSyncEnabled)

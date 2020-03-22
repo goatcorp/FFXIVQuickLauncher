@@ -40,7 +40,7 @@
                     <Button x:Uid="Button_1" HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick" IsEnabled="{Binding IsRunIntegrityCheckPossible}" ToolTip="Run integrity check on game files." Margin="10,20,0,0">Run integrity check</Button>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Uid="TabItem_2" Header="DirectX">
+            <TabItem x:Uid="TabItem_2" Header="Game Settings">
                 <StackPanel x:Uid="StackPanel_2" Margin="10,10,0,0">
                     <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                         Please select which DirectX version you want to use.
@@ -48,40 +48,33 @@
 
                     <RadioButton x:Uid="Dx11RadioButton" Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
                     <RadioButton x:Uid="Dx9RadioButton" GroupName="dx" x:Name="Dx9RadioButton" Foreground="{DynamicResource MaterialDesignBody}" Checked="Dx9RadioButton_OnChecked" Unchecked="Dx9RadioButton_OnUnchecked">DirectX 9</RadioButton>
-
-                    <TextBlock x:Uid="Dx9DisclaimerTextBlock" x:Name="Dx9DisclaimerTextBlock" Visibility="Hidden" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed" Margin="0,10,0,0">
+                    
+                    <TextBlock x:Uid="Dx9DisclaimerTextBlock" x:Name="Dx9DisclaimerTextBlock" Visibility="Hidden" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed" Margin="0,0,0,0">
                         DirectX 9 mode is not supported anymore. It will still start, but you will not get support from
                         <LineBreak x:Uid="LineBreak_7"/>
-                        SE for any technical issues any additional XIVLauncher features such as Rich Presence and the
+                        SE for any technical issues and any additional XIVLauncher features (such as Rich Presence and the
                         <LineBreak x:Uid="LineBreak_8"/>
-                        In-Game addon will not work.
+                        In-Game addons) will not work.
                     </TextBlock>
+                    <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+                            Please select which language you want to load the game with.
+                    </TextBlock>
+                    <ComboBox x:Uid="LanguageComboBox" SelectedIndex="1" Margin="0, 3, 0, 0" x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
+                        <ComboBoxItem x:Uid="ComboBoxItem_1">Japanese</ComboBoxItem>
+                        <ComboBoxItem x:Uid="ComboBoxItem_2">English</ComboBoxItem>
+                        <ComboBoxItem x:Uid="ComboBoxItem_3">German</ComboBoxItem>
+                        <ComboBoxItem x:Uid="ComboBoxItem_4">French</ComboBoxItem>
+                    </ComboBox>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Uid="TabItem_3" Header="Language">
-                <Grid x:Uid="Grid_2">
-                    <StackPanel x:Uid="StackPanel_3" Margin="10,10,10,0">
-                        <TextBlock x:Uid="TextBlock_3" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Please select which language you want to load the game with.
-                        </TextBlock>
-
-                        <ComboBox x:Uid="LanguageComboBox" SelectedIndex="1" Margin="0, 5, 0, 0" x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
-                            <ComboBoxItem x:Uid="ComboBoxItem_1">Japanese</ComboBoxItem>
-                            <ComboBoxItem x:Uid="ComboBoxItem_2">English</ComboBoxItem>
-                            <ComboBoxItem x:Uid="ComboBoxItem_3">German</ComboBoxItem>
-                            <ComboBoxItem x:Uid="ComboBoxItem_4">French</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-            <TabItem x:Uid="TabItem_4" Header="Auto-Launch">
+            <TabItem x:Uid="TabItem_3" Header="Auto-Launch">
                 <Grid x:Uid="Grid_3">
-                    <Grid x:Uid="Grid_4" Margin="10,10,10,0">
-                        <TextBlock x:Uid="TextBlock_4" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+                    <Grid x:Uid="Grid_3" Margin="10,10,10,0">
+                        <TextBlock x:Uid="TextBlock_3" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
                             These are applications that are loaded as soon as the game has started.
                         </TextBlock>
 
-                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,0,0,0" Height="160">
+                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="160">
                             <ListView x:Uid="AddonListView" x:Name="AddonListView" Margin="0,0,0,0" Height="160" MouseUp="AddonListView_OnMouseUp">
                                 <ListView.ContextMenu>
                                     <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
@@ -100,21 +93,21 @@
                             </ListView>
                         </materialDesign:Card>
 
-                        <Button x:Uid="Button_2" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddAddon_OnClick" ToolTip="Add a new generic addon that allows you to launch any program.">Add new</Button>
+                        <Button x:Uid="Button_2" Margin="0,0,0,7" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddAddon_OnClick" ToolTip="Add a new generic addon that allows you to launch any program.">Add new</Button>
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem x:Uid="TabItem_5" Header="In-Game">
-                <Grid x:Uid="Grid_5">
+            <TabItem x:Uid="TabItem_4" Header="In-Game">
+                <Grid x:Uid="Grid_4">
                     <ScrollViewer x:Uid="ScrollViewer_1" VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Uid="StackPanel_5" Margin="10,10,10,0">
                             <TextBlock x:Uid="TextBlock_6" HorizontalAlignment="Left" VerticalAlignment="Top"
                                        Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10">
-                                These options affect XIVLauncher in-game features. These features will be automatically
+                                These options affect the XIVLauncher in-game features. These features will be automatically
                                 <LineBreak x:Uid="LineBreak_2"></LineBreak>
                                 enabled if you are running the DirectX 11 version of the game, the version of the game is
                                 <LineBreak x:Uid="LineBreak_3"></LineBreak>
-                                compatible and the checkbox below is ticked.
+                                compatible, and the checkbox below is ticked.
                             </TextBlock>
                             <CheckBox x:Uid="EnableHooksCheckBox" x:Name="EnableHooksCheckBox" Content="Enable in-game features"
                                       HorizontalAlignment="Left" Margin="0,0,0,0"
@@ -170,7 +163,7 @@
 
                                 <Button x:Uid="Button_3" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
                                 <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Duty Finder notification channel.">Set Duty Finder notification channel</Button>
-                                <Button x:Uid="Button_4" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Roulette Bonus notification channel.">Set Roulette Bonus notification channel</Button>
+                                <Button x:Uid="Button_5" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetCfPreferredRoleChannel_OnClick" ToolTip="Set the Roulette Bonus notification channel.">Set Roulette Bonus notification channel</Button>
                                 <Button x:Uid="Button_6" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
 
                                 <CheckBox x:Uid="DisableEmbedsCheckBox" x:Name="DisableEmbedsCheckBox" Content="Disable rich embeds (send smaller messages to Discord)"
@@ -211,6 +204,25 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
+            <TabItem x:Uid="TabItem_5" Header="Plugins">
+                <Grid x:Uid="Grid_5" Margin="10,10,10,0">
+                        <TextBlock x:Uid="TextBlock_5" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
+                            These are the plugins that are currently available on your machine. Right click to enable/disable.
+                        </TextBlock>
+
+                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="160">
+                            <ListView x:Uid="PluginListView" x:Name="PluginListView" Margin="0,0,0,0" Height="160" Foreground="{DynamicResource MaterialDesignBody}" MouseUp="PluginListView_OnMouseUp">
+                                <ListView.ContextMenu>
+                                    <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
+                                        <MenuItem x:Uid="MenuItem_1" Header="Toggle" Click="TogglePlugin_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                            </ListView>
+                        </materialDesign:Card>
+
+                    <Button x:Uid="Button_2" Margin="0,0,0,7" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="OpenPluginsFolder_OnClick" ToolTip="Opens the plugins folder so you can add/remove plugins.">Open plugins folder</Button>
+                </Grid>
+            </TabItem>
             <TabItem x:Uid="TabItem_6" Header="About">
                 <ScrollViewer x:Uid="ScrollViewer_2" VerticalScrollBarVisibility="Auto">
                     <Grid x:Uid="Grid_6">
@@ -225,7 +237,7 @@
                                 <LineBreak x:Uid="LineBreak_6"/> 
                                 Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,
                                 <LineBreak x:Uid="LineBreak_4" />
-                                 Roy, Meli, Aida-Enna and the angry paissa artist!
+                                 Roy, Meli, Aida Enna, and the angry paissa artist!
                                 <LineBreak x:Uid="LineBreak_5" />
                                 <LineBreak x:Uid="LineBreak_6" />
                                 Any issues or requests? Join the discord or create an issue on GitHub!

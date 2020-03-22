@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,6 +17,7 @@ using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
+using Newtonsoft.Json.Linq;
 
 namespace XIVLauncher.Windows
 {
@@ -68,6 +70,23 @@ namespace XIVLauncher.Windows
             LanguageComboBox.SelectedIndex = (int) _setting.Language;
             AddonListView.ItemsSource = _setting.AddonList;
             UidCacheCheckBox.IsChecked = _setting.UniqueIdCacheEnabled;
+
+            string[] JSONFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"),"*.json",SearchOption.AllDirectories);
+
+            foreach (string FileLocation in JSONFiles)
+            {
+                dynamic PluginConfig = JObject.Parse(File.ReadAllText(FileLocation));
+                bool IsDisabled = File.Exists(Path.Combine(Path.GetDirectoryName(FileLocation), ".disabled"));
+
+                if (IsDisabled)
+                {
+                    PluginListView.Items.Add(PluginConfig.Name + " " + PluginConfig.AssemblyVersion + " (Disabled)");
+                }
+                else
+                {
+                    PluginListView.Items.Add(PluginConfig.Name + " " + PluginConfig.AssemblyVersion);
+                }
+            }
 
             var featureConfig = DalamudSettings.DiscordFeatureConfig;
             ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
@@ -439,6 +458,105 @@ namespace XIVLauncher.Windows
                     "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the discord for more information");
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
+            }
+        }
+
+        private void OpenPluginsFolder_OnClick(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"));
+        }
+
+        private void PluginListView_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left)
+                return;
+
+            string[] JSONFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"), "*.json", SearchOption.AllDirectories);
+
+            foreach (string FileLocation in JSONFiles)
+            {
+                dynamic PluginConfig = JObject.Parse(File.ReadAllText(FileLocation));
+
+                if (PluginListView.SelectedValue.ToString().Contains(PluginConfig.Name.Value + " " + PluginConfig.AssemblyVersion.Value))
+                {
+                    MessageBox.Show(PluginConfig.Description.Value);
+                    break;
+                }
+            }
+        }
+
+        private void TogglePlugin_OnClick(object sender, RoutedEventArgs e)
+        {
+            
+            if (PluginListView.SelectedValue.ToString().Contains("(Disabled)")) //If it's disabled...
+            {
+                string[] JSONFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"), "*.json", SearchOption.AllDirectories);
+
+                foreach (string FileLocation in JSONFiles)
+                {
+                    dynamic PluginConfig = JObject.Parse(File.ReadAllText(FileLocation));
+
+                    if (PluginListView.SelectedValue.ToString().Contains(PluginConfig.Name.Value + " " + PluginConfig.AssemblyVersion.Value))
+                    {
+                        if (File.Exists(Path.Combine(Path.GetDirectoryName(FileLocation), ".disabled")))
+                        {
+                            File.Delete(Path.Combine(Path.GetDirectoryName(FileLocation), ".disabled")); //Enable it
+                            break;
+                        }
+                    }
+                }
+
+                PluginListView.Items.Clear();
+
+                foreach (string FileLocation in JSONFiles) //Reload plugin list
+                {
+                    dynamic PluginConfig = JObject.Parse(File.ReadAllText(FileLocation));
+                    bool IsDisabled = File.Exists(Path.Combine(Path.GetDirectoryName(FileLocation), ".disabled"));
+
+                    if (IsDisabled)
+                    {
+                        PluginListView.Items.Add(PluginConfig.Name + " " + PluginConfig.AssemblyVersion + " (Disabled)");
+                    }
+                    else
+                    {
+                        PluginListView.Items.Add(PluginConfig.Name + " " + PluginConfig.AssemblyVersion);
+                    }
+                }
+            }
+            else //If it's enabled
+            {
+                string[] JSONFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"), "*.json", SearchOption.AllDirectories);
+
+                foreach (string FileLocation in JSONFiles)
+                {
+                    dynamic PluginConfig = JObject.Parse(File.ReadAllText(FileLocation));
+
+                    if (PluginListView.SelectedValue.ToString().Contains(PluginConfig.Name.Value + " " + PluginConfig.AssemblyVersion.Value))
+                    {
+                        if (!File.Exists(Path.Combine(Path.GetDirectoryName(FileLocation), ".disabled")))
+                        {
+                            File.WriteAllText(Path.Combine(Path.GetDirectoryName(FileLocation), ".disabled"),""); //Disable it
+                            break;
+                        }
+                    }
+                }
+
+                PluginListView.Items.Clear();
+
+                foreach (string FileLocation in JSONFiles) //Reload plugin list
+                {
+                    dynamic PluginConfig = JObject.Parse(File.ReadAllText(FileLocation));
+                    bool IsDisabled = File.Exists(Path.Combine(Path.GetDirectoryName(FileLocation), ".disabled"));
+
+                    if (IsDisabled)
+                    {
+                        PluginListView.Items.Add(PluginConfig.Name + " " + PluginConfig.AssemblyVersion + " (Disabled)");
+                    }
+                    else
+                    {
+                        PluginListView.Items.Add(PluginConfig.Name + " " + PluginConfig.AssemblyVersion);
+                    }
+                }
             }
         }
     }

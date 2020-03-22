@@ -1,17 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.Win32.SafeHandles;
 using Nhaama.Memory;
 using Serilog;
 using SteamworksSharp;
@@ -182,39 +182,19 @@ namespace XIVLauncher.Game
                     }
                 }
 
-                var nativeLauncher = new Process {StartInfo =
-                {
-                    UseShellExecute = false,
-                    RedirectStandardError = false,
-                    RedirectStandardInput = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }};
-
                 var exePath = gamePath + "/game/ffxiv_dx11.exe";
                 if (!isDx11)
                     exePath = gamePath + "/game/ffxiv.exe";
 
-                if (!File.Exists("NativeLauncher.exe"))
-                {
-                    MessageBox.Show(
-                        "Your Anti-Virus may have deleted a file necessary for XIVLauncher to function.\nPlease check its logs and reinstall XIVLauncher.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return null;
-                }
-
-                nativeLauncher.StartInfo.FileName = "NativeLauncher.exe";
-
-                nativeLauncher.StartInfo.Arguments =
-                    $"\"{exePath}\" \"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int) language} ver={GetLocalGameVer(gamePath)} {additionalArguments}";
+                var environment = new Dictionary<string, string>();
+                var arguments = $"DEV.DataPathType=1 DEV.MaxEntitledExpansionID={expansionLevel} DEV.TestSID={sessionId} DEV.UseSqPack=1 SYS.Region={region} language={(int)language} ver={GetLocalGameVer(gamePath)} {additionalArguments}";
 
                 if (isSteamServiceAccount)
                 {
                     // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
-                    nativeLauncher.StartInfo.Environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
-                    nativeLauncher.StartInfo.Arguments += " IsSteam=1";
+                    environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
+                    arguments += " IsSteam=1";
                 }
-
-                nativeLauncher.StartInfo.Arguments += "\"";
 
                 /*
                 var ticks = (uint) Environment.TickCount;
@@ -233,26 +213,22 @@ namespace XIVLauncher.Game
                 game.StartInfo.Arguments = argumentBuilder.BuildEncrypted(key);
                 */
 
-                nativeLauncher.StartInfo.WorkingDirectory = Path.Combine(gamePath.FullName, "game");
+                var workingDir = Path.Combine(gamePath.FullName, "game");
 
-                nativeLauncher.Start();
-                if (!nativeLauncher.WaitForExit(10000))
+                Process game;
+                try
+                {
+                    game = NativeLauncher.LaunchGame(workingDir, exePath, arguments, environment);
+                }
+                catch (Win32Exception ex)
                 {
                     MessageBox.Show(
                         "Could not start the game correctly. Please report this error.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    Log.Error($"NativeLauncher error; {ex.NativeErrorCode}: {ex.Message}");
+
                     return null;
                 }
-
-                var pidStr = nativeLauncher.StandardOutput.ReadToEnd();
-
-                if (!int.TryParse(pidStr, out var gamePid))
-                {
-                    MessageBox.Show(
-                        "Could not start the game correctly. Please report this error.\n\n" + pidStr, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return null;
-                }
-
-                var game = Process.GetProcessById(gamePid);
 
                 if (isSteamIntegrationEnabled)
                 {
@@ -353,7 +329,7 @@ namespace XIVLauncher.Game
                     {
                         var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
 
-                        if (result == string.Empty) 
+                        if (result == string.Empty)
                             return (sid, LoginState.Ok, null);
 
                         Log.Verbose("Patching is needed... List:\n" + result);
@@ -422,7 +398,7 @@ namespace XIVLauncher.Game
                 client.Headers.Add("Cache-Control", "no-cache");
                 client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
                 client.Headers.Add("Accept-Encoding", "gzip, deflate");
-                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2"); 
+                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
                 client.Headers.Add("Referer",
                     $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
