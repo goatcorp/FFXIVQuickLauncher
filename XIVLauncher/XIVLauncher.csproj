@@ -329,6 +329,7 @@
     <Compile Include="Xaml\ChatTypeToFancyNameConverter.cs" />
     <Compile Include="Xaml\StringToColorConverter.cs" />
     <Compile Include="Game\XivGame.cs" />
+    <Compile Include="Game\NativeLauncher.cs" />
     <Page Include="Windows\ChangelogWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
