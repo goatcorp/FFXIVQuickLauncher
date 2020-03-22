@@ -405,6 +405,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="Resources\logo.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -460,9 +461,6 @@
       <Project>{395cdfab-48f8-4ec5-833d-05f5795a157d}</Project>
       <Name>XIVLauncher.PatchInstaller</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\eye.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
