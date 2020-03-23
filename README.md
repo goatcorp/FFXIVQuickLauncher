@@ -32,7 +32,7 @@ As an example, check out the [market board plugin](https://github.com/goaaats/Da
 
 If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goaaats/Dalamud).
 
-Compiled plugins go into the ``%AppData%\XIVLauncher\plugins`` folder.
+Compiled plugins for testing go into the ``%AppData%\XIVLauncher\devPlugins`` folder.
 Special thanks to Mino for his hooking base!
 
 ## Any questions?
