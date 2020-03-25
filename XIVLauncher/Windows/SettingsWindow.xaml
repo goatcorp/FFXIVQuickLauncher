@@ -292,7 +292,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/eye.png" Width="150"
+                        <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/logo.png" Width="150"
                                HorizontalAlignment="Left" Margin="390,0,0,0" Opacity="0.8"
                                RenderOptions.BitmapScalingMode="HighQuality" />
                     </Grid>
