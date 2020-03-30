@@ -206,7 +206,7 @@ namespace XIVLauncher.Game
                 }
 
                 // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
-                if (additionalArguments != null && additionalArguments != "")
+                if (!string.IsNullOrEmpty(additionalArguments))
                 {
                     var regex = new Regex(@"\s*(?<key>[^=]+)\s*=\s*(?<value>[^\s]+)\s*", RegexOptions.Compiled);
                     foreach (Match match in regex.Matches(additionalArguments))
