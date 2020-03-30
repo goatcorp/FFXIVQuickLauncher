@@ -223,7 +223,7 @@ namespace XIVLauncher.Game
                     MessageBox.Show(
                         "Could not start the game correctly. Please report this error.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    Log.Error($"NativeLauncher error; {ex.NativeErrorCode}: {ex.Message}");
+                    Log.Error(ex, $"NativeLauncher error; {ex.NativeErrorCode}: {ex.Message}");
 
                     return null;
                 }
