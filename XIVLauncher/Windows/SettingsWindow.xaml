@@ -207,11 +207,11 @@
             <TabItem x:Uid="TabItem_5" Header="Plugins">
                 <Grid x:Uid="Grid_5" Margin="10,10,10,0">
                         <TextBlock x:Uid="TextBlock_5" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            These are the plugins that are currently available on your machine. Right click to enable/disable.
+                            These are the plugins that are currently available installed on your machine.
                         </TextBlock>
 
                         <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="160">
-                            <ListView x:Uid="PluginListView" x:Name="PluginListView" Margin="0,0,0,0" Height="160" Foreground="{DynamicResource MaterialDesignBody}" MouseUp="PluginListView_OnMouseUp">
+                            <ListView x:Uid="PluginListView" x:Name="PluginListView" Margin="0,0,0,0" Height="160" Foreground="{DynamicResource MaterialDesignBody}">
                                 <ListView.ContextMenu>
                                     <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
                                         <MenuItem x:Uid="MenuItem_1" Header="Toggle" Click="TogglePlugin_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -220,7 +220,9 @@
                             </ListView>
                         </materialDesign:Card>
 
-                    <Button x:Uid="Button_2" Margin="0,0,0,7" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="OpenPluginsFolder_OnClick" ToolTip="Opens the plugins folder so you can add/remove plugins.">Open plugins folder</Button>
+                    <TextBlock x:Uid="TextBlock_6" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10">
+                        You can use the /xlplugins command in-game to install more plugins.
+                    </TextBlock>
                 </Grid>
             </TabItem>
             <TabItem x:Uid="TabItem_6" Header="About">
