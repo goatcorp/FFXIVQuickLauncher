@@ -193,14 +193,6 @@ namespace XIVLauncher.Windows
             if (!(AddonListView.SelectedItem is AddonEntry entry))
                 return;
 
-            if (entry.Addon is RichPresenceAddon)
-            {
-                MessageBox.Show("This addon shows your character information in your discord profile.",
-                    "Addon information", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                return;
-            }
-
             if (entry.Addon is GenericAddon genericAddon)
             {
                 var addonSetup = new GenericAddonSetupWindow(genericAddon);
@@ -210,9 +202,6 @@ namespace XIVLauncher.Windows
                 {
                     _setting.AddonList = _setting.AddonList.Where(x =>
                     {
-                        if (x.Addon is RichPresenceAddon)
-                            return true;
-
                         if (x.Addon is DalamudLauncher)
                             return true;
 
@@ -245,9 +234,6 @@ namespace XIVLauncher.Windows
             {
                 _setting.AddonList = _setting.AddonList.Where(x =>
                 {
-                    if (x.Addon is RichPresenceAddon)
-                        return true;
-
                     if (x.Addon is DalamudLauncher)
                         return true;
 

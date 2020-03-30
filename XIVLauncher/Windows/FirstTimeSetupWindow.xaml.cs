@@ -89,14 +89,7 @@ namespace XIVLauncher.Windows
                 _setting.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
                 _setting.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
 
-                _setting.AddonList = new List<AddonEntry>
-                {
-                    new AddonEntry
-                    {
-                        Addon = new RichPresenceAddon(),
-                        IsEnabled = RichPresenceCheckBox.IsChecked == true
-                    }
-                };
+                _setting.AddonList = new List<AddonEntry>();
 
                 if (ActCheckBox.IsChecked == true)
                 {

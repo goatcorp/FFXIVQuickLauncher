@@ -251,11 +251,8 @@
     <Compile Include="Addon\IAddon.cs" />
     <Compile Include="Settings\DalamudSettings.cs" />
     <Compile Include="Dalamud\DalamudLauncher.cs" />
-    <Compile Include="Addon\Implementations\XivRichPresence\DiscordPresenceManager.cs" />
-    <Compile Include="Addon\Implementations\XivRichPresence\XivApi.cs" />
     <Compile Include="Addon\INotifyAddonAfterClose.cs" />
     <Compile Include="Addon\IPersistentAddon.cs" />
-    <Compile Include="Addon\Implementations\XivRichPresence\RichPresenceAddon.cs" />
     <Compile Include="Addon\IRunnableAddon.cs" />
     <Compile Include="Dalamud\CustomComboPreset.cs" />
     <Compile Include="Dalamud\DalamudConfiguration.cs" />

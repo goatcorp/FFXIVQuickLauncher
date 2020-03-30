@@ -61,8 +61,6 @@ namespace XIVLauncher.Settings
                 TypeNameHandling = TypeNameHandling.Objects
             });
 
-            setting.AddonList = EnsureDefaultAddon(setting.AddonList);
-
             Log.Information("Loaded LauncherSettings at {0}", ConfigPath);
 
             return setting;
@@ -88,23 +86,6 @@ namespace XIVLauncher.Settings
             newSetting.AddonList = oldSetting.AddonList;
 
             File.Delete(ConfigPath);
-        }
-
-        private static List<AddonEntry> EnsureDefaultAddon(List<AddonEntry> addonList)
-        {
-            if (addonList == null)
-                addonList = new List<AddonEntry>();
-
-            if (!addonList.Any(entry => entry.Addon is RichPresenceAddon))
-            {
-                addonList.Add(new AddonEntry
-                {
-                    Addon = new RichPresenceAddon(),
-                    IsEnabled = false
-                });
-            }
-
-            return addonList;
         }
 
         #endregion

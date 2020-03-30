@@ -3,7 +3,8 @@ using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Net;
-using XIVLauncher.Addon.Implementations.XivRichPresence;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace XIVLauncher.Accounts
 {
@@ -51,7 +52,7 @@ namespace XIVLauncher.Accounts
 
             try
             {
-                dynamic searchResponse = XivApi.GetCharacterSearch(ChosenCharacterName, ChosenCharacterWorld)
+                dynamic searchResponse = GetCharacterSearch(ChosenCharacterName, ChosenCharacterWorld)
                 .GetAwaiter().GetResult();
 
                 if (searchResponse.Results.Count > 1) //If we get more than one match from XIVAPI
@@ -73,6 +74,26 @@ namespace XIVLauncher.Accounts
                 Log.Information(ex, "Couldn't download character search.");
 
                 return null;
+            }
+        }
+
+        private const string URL = "http://xivapi.com/";
+
+        public static async Task<JObject> GetCharacterSearch(string name, string world)
+        {
+            return await Get("character/search" + $"?name={name}&server={world}");
+        }
+
+        public static async Task<dynamic> Get(string endpoint)
+        {
+            
+            using (var client = new WebClient())
+            {
+                var result = client.DownloadString(URL + endpoint);
+
+                var parsedObject = JObject.Parse(result);
+
+                return parsedObject;
             }
         }
     }
