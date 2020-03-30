@@ -206,9 +206,12 @@ namespace XIVLauncher.Game
                 }
 
                 // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
-                var regex = new Regex(@"\s*(?<key>[^=]+)\s*=\s*(?<value>[^\s]+)\s*", RegexOptions.Compiled);
-                foreach (Match match in regex.Matches(additionalArguments))
-                    argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value);
+                if (additionalArguments != null && additionalArguments != "")
+                {
+                    var regex = new Regex(@"\s*(?<key>[^=]+)\s*=\s*(?<value>[^\s]+)\s*", RegexOptions.Compiled);
+                    foreach (Match match in regex.Matches(additionalArguments))
+                        argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value);
+                }
 
 
                 var workingDir = Path.Combine(gamePath.FullName, "game");
