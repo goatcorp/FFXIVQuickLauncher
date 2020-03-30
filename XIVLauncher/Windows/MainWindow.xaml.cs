@@ -381,11 +381,19 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
+                this.Close();
+
                 var addonMgr = new AddonManager();
 
                 try
                 {
                     var addons = _setting.AddonList.Where(x => x.IsEnabled).ToList();
+
+                    if (_setting.InGameAddonEnabled && _setting.IsDx11)
+                    {
+                        var hooks = new DalamudLauncher(gameProcess);
+                    }
+
                     try
                     {
                         var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup"));
@@ -419,26 +427,6 @@ namespace XIVLauncher.Windows
                     addonMgr.StopAddons();
                 }
 
-                try
-                {
-                    if (_setting.InGameAddonEnabled && _setting.IsDx11)
-                    {
-                        var hooks = new DalamudLauncher(gameProcess);
-                        hooks.Run(_setting.GamePath, _setting.Language);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    new ErrorWindow(ex,
-                        "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-                        "Hooks", _setting).ShowDialog();
-                    _isLoggingIn = false;
-
-                    addonMgr.StopAddons();
-                }
-
-                this.Close();
-                
                 var watchThread = new Thread(() =>
                 {
                     while (!gameProcess.HasExited)
