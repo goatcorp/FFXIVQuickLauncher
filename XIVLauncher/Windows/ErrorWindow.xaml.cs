@@ -30,6 +30,9 @@ namespace XIVLauncher.Windows
                 ExceptionTextBox.AppendText("\nAuto Login Enabled? " + setting.AutologinEnabled);
                 ExceptionTextBox.AppendText("\nLanguage: " + setting.Language);
                 ExceptionTextBox.AppendText("\nGame path: " + setting.GamePath);
+
+                // When this happens we probably don't want them to run into it again, in case it's an issue with a moved game for example
+                setting.AutologinEnabled = false;
             }
 
 #if DEBUG
