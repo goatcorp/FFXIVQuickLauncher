@@ -391,7 +391,7 @@ namespace XIVLauncher.Windows
 
                     if (_setting.InGameAddonEnabled && _setting.IsDx11)
                     {
-                        var hooks = new DalamudLauncher(gameProcess);
+                        var hooks = new DalamudLauncher();
                     }
 
                     try
