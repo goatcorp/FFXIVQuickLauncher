@@ -374,7 +374,7 @@ namespace XIVLauncher.Windows
 
                 var gameProcess = XivGame.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, _setting.SteamIntegrationEnabled,
-                    SteamCheckBox.IsChecked == true, _setting.AdditionalLaunchArgs, _setting.GamePath, _setting.IsDx11, _setting.Language);
+                    SteamCheckBox.IsChecked == true, _setting.AdditionalLaunchArgs, _setting.GamePath, _setting.IsDx11, _setting.Language, _setting.EncryptArguments);
 
                 if (gameProcess == null)
                 {

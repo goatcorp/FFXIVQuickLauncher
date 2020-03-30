@@ -70,6 +70,7 @@ namespace XIVLauncher.Windows
             LanguageComboBox.SelectedIndex = (int) _setting.Language;
             AddonListView.ItemsSource = _setting.AddonList;
             UidCacheCheckBox.IsChecked = _setting.UniqueIdCacheEnabled;
+            EncryptedArgumentsCheckbox.IsChecked = _setting.EncryptArguments;
 
             ReloadPluginList();
 
@@ -105,6 +106,7 @@ namespace XIVLauncher.Windows
             _setting.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
             _setting.AddonList = (List<AddonEntry>) AddonListView.ItemsSource;
             _setting.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
+            _setting.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
 
             _setting.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 

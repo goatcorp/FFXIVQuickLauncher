@@ -61,14 +61,16 @@ namespace XIVLauncher.Encryption
         public string Build()
         {
             return m_arguments.Aggregate(new StringBuilder(),
-                // Yes, they do have a space prepended even for the first argument.
-                (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
+                    (whole, part) => whole.Append($" {part.Key}={part.Value}"))
                 .ToString();
         }
 
         public string BuildEncrypted(uint key)
         {
-            var arguments = Build();
+            var arguments = m_arguments.Aggregate(new StringBuilder(),
+                    // Yes, they do have a space prepended even for the first argument.
+                    (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
+                .ToString();
 
             var blowfish = new Blowfish(GetKeyBytes(key));
             var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
