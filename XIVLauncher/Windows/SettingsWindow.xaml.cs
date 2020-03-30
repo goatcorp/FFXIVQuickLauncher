@@ -465,39 +465,53 @@ namespace XIVLauncher.Windows
         {
             PluginListView.Items.Clear();
 
-            var pluginsDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins"));
-            foreach (var installed in pluginsDirectory.GetDirectories())
+            try
             {
-                var versions = installed.GetDirectories();
+                var pluginsDirectory = new DirectoryInfo(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    @"XIVLauncher\installedPlugins"));
 
-                if (versions.Length == 0)
+                if (!pluginsDirectory.Exists)
+                    return;
+
+                foreach (var installed in pluginsDirectory.GetDirectories())
                 {
-                    Log.Information("Has no versions: {0}", installed.FullName);
-                    continue;
+                    var versions = installed.GetDirectories();
+
+                    if (versions.Length == 0)
+                    {
+                        Log.Information("Has no versions: {0}", installed.FullName);
+                        continue;
+                    }
+
+                    var sortedVersions = versions.OrderBy(x => int.Parse(x.Name.Replace(".", "")));
+                    var latest = sortedVersions.Last();
+
+                    var localInfoFile = new FileInfo(Path.Combine(latest.FullName, $"{installed.Name}.json"));
+
+                    if (!localInfoFile.Exists)
+                    {
+                        Log.Information("Has no definition: {0}", localInfoFile.FullName);
+                        continue;
+                    }
+
+                    dynamic pluginConfig = JObject.Parse(File.ReadAllText(localInfoFile.FullName));
+                    var isDisabled = File.Exists(Path.Combine(latest.FullName, ".disabled"));
+
+                    if (isDisabled)
+                    {
+                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion +
+                                                 " (Disabled)");
+                    }
+                    else
+                    {
+                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion);
+                    }
                 }
-
-                var sortedVersions = versions.OrderBy(x => int.Parse(x.Name.Replace(".", "")));
-                var latest = sortedVersions.Last();
-
-                var localInfoFile = new FileInfo(Path.Combine(latest.FullName, $"{installed.Name}.json"));
-
-                if (!localInfoFile.Exists)
-                {
-                    Log.Information("Has no definition: {0}", localInfoFile.FullName);
-                    continue;
-                }
-
-                dynamic pluginConfig = JObject.Parse(File.ReadAllText(localInfoFile.FullName));
-                var isDisabled = File.Exists(Path.Combine(latest.FullName, ".disabled"));
-
-                if (isDisabled)
-                {
-                    PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion + " (Disabled)");
-                }
-                else
-                {
-                    PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion);
-                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not parse installed in-game plugins.");
             }
         }
     }
