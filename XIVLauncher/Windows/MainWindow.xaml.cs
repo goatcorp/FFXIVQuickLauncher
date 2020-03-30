@@ -137,7 +137,8 @@ namespace XIVLauncher.Windows
             }
 
             // Clean up invalid addons
-            _setting.AddonList = _setting.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
+            if (_setting.AddonList != null)
+                _setting.AddonList = _setting.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
 
             var gateStatus = false;
             try

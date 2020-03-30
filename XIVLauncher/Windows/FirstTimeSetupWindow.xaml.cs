@@ -68,7 +68,7 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-            if (SetupTabControl.SelectedIndex == 3)
+            if (SetupTabControl.SelectedIndex == 2)
             {
                 // Check if ACT is installed, if it isn't, just skip this step
                 var actPath = FindAct();
@@ -81,7 +81,7 @@ namespace XIVLauncher.Windows
                 }
             }
 
-            if (SetupTabControl.SelectedIndex == 5)
+            if (SetupTabControl.SelectedIndex == 4)
             {
                 _setting.GamePath = new DirectoryInfo(GamePathEntry.Text);
                 _setting.IsDx11 = Dx11RadioButton.IsChecked == true;

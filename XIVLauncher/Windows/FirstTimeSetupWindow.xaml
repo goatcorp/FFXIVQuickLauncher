@@ -71,23 +71,6 @@
                     <Button x:Uid="Button_3" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Uid="TabItem_4" Header="RP">
-                <Grid x:Uid="Grid_5">
-                    <StackPanel x:Uid="StackPanel_3" Margin="10,10,10,0">
-                        <TextBlock x:Uid="TextBlock_4" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Do you want to enable Rich Presence?
-                            <LineBreak x:Uid="LineBreak_2"/>
-                            This will show some information about your character and it's location in your Discord status.
-                        </TextBlock>
-
-                        <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/richpresence.png" Width="250" HorizontalAlignment="Left" Margin="0,10,0,0" />
-                        
-                        <CheckBox x:Uid="RichPresenceCheckBox" x:Name="RichPresenceCheckBox" Content="Enable Rich Presence" HorizontalAlignment="Left" Margin="0,10,0,0" Foreground="{DynamicResource MaterialDesignBody}" IsChecked="True"/>
-
-                    </StackPanel>
-                    <Button x:Uid="Button_4" Content="Next" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click"/>
-                </Grid>
-            </TabItem>
             <TabItem x:Uid="TabItem_5" Header="ACT">
                 <Grid x:Uid="Grid_6">
                     <StackPanel x:Uid="StackPanel_4" Margin="10,10,10,0">
