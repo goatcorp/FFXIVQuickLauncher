@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Linq;
 using System.Diagnostics;
+using System.Reflection;
+using Microsoft.Win32.SafeHandles;
 
 namespace XIVLauncher.Game
 {
@@ -297,6 +299,25 @@ namespace XIVLauncher.Game
             #endregion
         }
 
+        private class ExistingProcess : Process
+        {
+            public ExistingProcess(IntPtr handle)
+            {
+                SetHandle(handle);
+            }
+
+            private void SetHandle(IntPtr handle)
+            {
+                var baseType = GetType().BaseType;
+                if (baseType == null)
+                    return;
+
+                var setProcessHandleMethod = baseType.GetMethod("SetProcessHandle",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+                setProcessHandleMethod?.Invoke(this, new object[] {new SafeProcessHandle(handle, true)});
+            }
+        }
+
         public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars)
         {
             Process process;
@@ -371,7 +392,7 @@ namespace XIVLauncher.Game
 
                 DisableSeDebug(lpProcessInformation.hProcess);
 
-                process = Process.GetProcessById(lpProcessInformation.dwProcessId);
+                process = new ExistingProcess(lpProcessInformation.hProcess);
                 PInvoke.ResumeThread(lpProcessInformation.hThread);
 
                 process.WaitForInputIdle();
@@ -400,12 +421,11 @@ namespace XIVLauncher.Game
             {
                 Marshal.FreeHGlobal(psecDesc);
 
-                if (!IntPtr.ReferenceEquals(lpEnvironment, IntPtr.Zero))
+                if (!IntPtr.Equals(lpEnvironment, IntPtr.Zero))
                 {
                     Marshal.FreeHGlobal(lpEnvironment);
                 }
 
-                PInvoke.CloseHandle(lpProcessInformation.hProcess);
                 PInvoke.CloseHandle(lpProcessInformation.hThread);
             }
 
