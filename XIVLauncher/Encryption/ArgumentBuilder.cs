@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace XIVLauncher.Encryption
 {
     public sealed class ArgumentBuilder
     {
-        private static char[] checksumTable =
+        private static readonly uint version = 3;
+
+        private static readonly char[] checksumTable =
         {
             'f', 'X', '1', 'p', 'G', 't', 'd', 'S',
             '5', 'C', 'A', 'P', '4', '_', 'V', 'L'
@@ -15,58 +18,15 @@ namespace XIVLauncher.Encryption
         private static char DeriveChecksum(uint key)
         {
             var index = (key & 0x000F_0000) >> 16;
-
-            return checksumTable[index];
+            try
+            {
+                return checksumTable[index];
+            } catch (IndexOutOfRangeException)
+            {
+                return '!'; // Conceivably, this shouldn't happen...
+            }
         }
 
-        private static byte[] Encrypt(string input, uint key)
-        {
-            var inputBytes = Encoding.UTF8.GetBytes(input);
-
-            return Encrypt(inputBytes, key);
-        }
-
-        private static byte[] Encrypt(byte[] input, uint key)
-        {
-            // pad if input length is not multiple of 8
-            var paddedLength = (input.Length + 8) & ~0b111;
-            var paddedInput = new byte[paddedLength];
-            
-            Buffer.BlockCopy(input, 0, paddedInput, 0, input.Length);
-
-            var blowfish = new Blowfish(GetKeyBytes(key));
-            blowfish.Encipher(paddedInput, 0, paddedInput.Length);
-
-            return paddedInput;
-        }
-        
-        private static string ToSeBase64String(byte[] input)
-        {
-            return Convert.ToBase64String(input)
-                .Replace('+', '-')
-                .Replace('/', '_');
-        }
-
-        private static void AppendArgumentString(StringBuilder buffer, KeyValuePair<string, string> item)
-        {
-            var escapedName = EscapeValue(item.Key);
-            var escapedValue = EscapeValue(item.Value);
-            
-            buffer.Append($"/{escapedName} ={escapedValue}");
-        }
-
-        private static string EscapeValue(string input)
-        {
-            return input.Replace(" ", "  ");
-        }
-
-        private static byte[] GetKeyBytes(uint key)
-        {
-            var format = $"{key:X08}";
-
-            return Encoding.UTF8.GetBytes(format);
-        }
-        
         private readonly List<KeyValuePair<string, string>> m_arguments;
 
         public ArgumentBuilder()
@@ -100,27 +60,63 @@ namespace XIVLauncher.Encryption
 
         public string Build()
         {
-            var buffer = new StringBuilder();
-            
-            foreach (var argument in m_arguments)
-            {
+            return m_arguments.Aggregate(new StringBuilder(),
                 // Yes, they do have a space prepended even for the first argument.
-                buffer.Append(' ');
-                AppendArgumentString(buffer, argument);
-            }
-
-            return buffer.ToString();
+                (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
+                .ToString();
         }
 
         public string BuildEncrypted(uint key)
         {
             var arguments = Build();
-            
-            var data = Encrypt(arguments, key);
-            var base64Str = ToSeBase64String(data);
+
+            var blowfish = new Blowfish(GetKeyBytes(key));
+            var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
+            var base64Str = ToSeBase64String(ciphertext);
             var checksum = DeriveChecksum(key);
             
-            return $"//**sqex0003{base64Str}{checksum}**//";
+            return $"//**sqex{version:D04}{base64Str}{checksum}**//";
+        }
+
+        public string BuildEncrypted()
+        {
+            uint key = DeriveKey();
+
+            return BuildEncrypted(key);
+        }
+
+        private uint DeriveKey()
+        {
+            uint ticks = (uint)(Environment.TickCount & 0xFFFF_FFFFu);
+            uint key = ticks & 0xFFFF_0000u;
+
+            var keyPair = new KeyValuePair<string, string>("T", Convert.ToString(ticks));
+            if (m_arguments.Count > 0 && m_arguments[0].Key == "T")
+                m_arguments[0] = keyPair;
+            else
+                m_arguments.Insert(0, keyPair);
+
+            return key;
+        }
+
+        private static byte[] GetKeyBytes(uint key)
+        {
+            var format = $"{key:x08}";
+
+            return Encoding.UTF8.GetBytes(format);
+        }
+
+        private static string EscapeValue(string input)
+        {
+            return input.Replace(" ", "  ");
+        }
+
+
+        private static string ToSeBase64String(byte[] input)
+        {
+            return Convert.ToBase64String(input)
+                .Replace('+', '-')
+                .Replace('/', '_');
         }
     }
 }
