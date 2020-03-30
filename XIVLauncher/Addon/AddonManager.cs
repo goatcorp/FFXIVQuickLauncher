@@ -14,7 +14,7 @@ namespace XIVLauncher.Addon
     {
         private List<Tuple<IAddon, Thread, CancellationTokenSource>> _runningAddons;
 
-        public void RunAddons(Process gameProcess, ILauncherSettingsV3 setting, List<AddonEntry> addonEntries)
+        public void RunAddons(Process gameProcess, ILauncherSettingsV3 setting, List<IAddon> addonEntries)
         {
             if (_runningAddons != null)
                 throw new Exception("Addons still running?");
@@ -23,9 +23,9 @@ namespace XIVLauncher.Addon
 
             foreach (var addonEntry in addonEntries)
             {
-                addonEntry.Addon.Setup(gameProcess, setting);
+                addonEntry.Setup(gameProcess, setting);
 
-                if (addonEntry.Addon is IPersistentAddon persistentAddon)
+                if (addonEntry is IPersistentAddon persistentAddon)
                 {
                     Log.Information("Starting PersistentAddon {0}", persistentAddon.Name);
                     var cancellationTokenSource = new CancellationTokenSource();
@@ -36,13 +36,13 @@ namespace XIVLauncher.Addon
                     _runningAddons.Add(new Tuple<IAddon, Thread, CancellationTokenSource>(persistentAddon, addonThread, cancellationTokenSource));
                 }
 
-                if (addonEntry.Addon is IRunnableAddon runnableAddon)
+                if (addonEntry is IRunnableAddon runnableAddon)
                 {
                     Log.Information("Starting RunnableAddon {0}", runnableAddon.Name);
                     runnableAddon.Run();
                 }
 
-                if (addonEntry.Addon is INotifyAddonAfterClose notifiedAddon)
+                if (addonEntry is INotifyAddonAfterClose notifiedAddon)
                     _runningAddons.Add(new Tuple<IAddon, Thread, CancellationTokenSource>(notifiedAddon, null, null));
             }
         }

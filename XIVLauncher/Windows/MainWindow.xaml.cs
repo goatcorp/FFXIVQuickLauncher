@@ -136,7 +136,8 @@ namespace XIVLauncher.Windows
                 Properties.Settings.Default.Save();
             }
 
-            LauncherSettings.TryMigrate(_setting);
+            // Clean up invalid addons
+            _setting.AddonList = _setting.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
 
             var gateStatus = false;
             try
@@ -381,17 +382,17 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-                this.Close();
+                this.Hide();
 
                 var addonMgr = new AddonManager();
 
                 try
                 {
-                    var addons = _setting.AddonList.Where(x => x.IsEnabled).ToList();
+                    var addons = _setting.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
                     if (_setting.InGameAddonEnabled && _setting.IsDx11)
                     {
-                        var hooks = new DalamudLauncher();
+                        addons.Add(new DalamudLauncher());
                     }
 
                     try
@@ -400,10 +401,7 @@ namespace XIVLauncher.Windows
                         if (backupDirectory.Exists)
                             backupDirectory.Delete(true);
 
-                        addons.Add(new AddonEntry
-                        {
-                            Addon = new CharacterBackupAddon()
-                        });
+                        addons.Add(new CharacterBackupAddon());
                     }
                     catch (Exception ex)
                     {
@@ -411,9 +409,7 @@ namespace XIVLauncher.Windows
                     }
 
                     if (_setting.CharacterSyncEnabled)
-                        addons.Add(new AddonEntry{
-                            Addon = new CharacterSyncAddon()
-                        });
+                        addons.Add(new CharacterSyncAddon());
 
                     await Task.Run(() => addonMgr.RunAddons(gameProcess, _setting, addons));
                 }
@@ -440,6 +436,8 @@ namespace XIVLauncher.Windows
                     Environment.Exit(0);
                 });
                 watchThread.Start();
+
+                this.Close();
             }
             catch (Exception ex)
             {

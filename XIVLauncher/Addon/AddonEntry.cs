@@ -3,6 +3,6 @@
     public class AddonEntry
     {
         public bool IsEnabled { get; set; }
-        public IAddon Addon { get; set; }
+        public GenericAddon Addon { get; set; }
     }
 }

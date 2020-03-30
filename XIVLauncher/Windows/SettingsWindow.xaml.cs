@@ -200,13 +200,7 @@ namespace XIVLauncher.Windows
 
                 if (addonSetup.Result != null)
                 {
-                    _setting.AddonList = _setting.AddonList.Where(x =>
-                    {
-                        if (x.Addon is DalamudLauncher)
-                            return true;
-
-                        return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
-                    }).ToList();
+                    _setting.AddonList = _setting.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
 
                     var addonList = _setting.AddonList;
 
@@ -232,13 +226,7 @@ namespace XIVLauncher.Windows
         {
             if (AddonListView.SelectedItem is AddonEntry entry && entry.Addon is GenericAddon genericAddon)
             {
-                _setting.AddonList = _setting.AddonList.Where(x =>
-                {
-                    if (x.Addon is DalamudLauncher)
-                        return true;
-
-                    return x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path;
-                }).ToList();
+                _setting.AddonList = _setting.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
 
                 AddonListView.ItemsSource = _setting.AddonList;
             }

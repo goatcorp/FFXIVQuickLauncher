@@ -2,25 +2,35 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using Dalamud;
 using Dalamud.Discord;
+using Dragablz;
 using Microsoft.WindowsAPICodePack.Shell.Interop;
 using Newtonsoft.Json;
+using Serilog;
+using Xceed.Wpf.Toolkit.Core.Converters;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 
 namespace XIVLauncher.Dalamud
 {
-    class DalamudLauncher : INotifyAddonAfterClose
+    class DalamudLauncher : IPersistentAddon
     {
+        private Process _gameProcess;
+        private DirectoryInfo _gamePath;
+        private ClientLanguage _language;
+
         public void Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
-            Run(setting.GamePath, setting.Language, gameProcess);
+            _gameProcess = gameProcess;
+            _gamePath = setting.GamePath;
+            _language = setting.Language;
         }
 
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
@@ -38,7 +48,24 @@ namespace XIVLauncher.Dalamud
 
         public static bool UseDalamudStaging = false;
 
+        private readonly string DALAMUD_MUTEX_NAME = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
         private Mutex _openMutex;
+
+        public void DoWork(object state)
+        {
+            var cancellationToken = (CancellationToken) state;
+
+            Run(_gamePath, _language, _gameProcess);
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                Thread.Sleep(1);
+            }
+
+            _openMutex?.ReleaseMutex();
+
+            Log.Information("Dalamud mutex closed.");
+        }
 
         private class HooksVersionInfo
         {
@@ -46,9 +73,10 @@ namespace XIVLauncher.Dalamud
             public string SupportedGameVer { get; set; }
         }
 
-        public void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
+        private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
-            var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "addon", "Hooks");
+            var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "XIVLauncher", "addon", "Hooks");
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
             var ingamePluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -69,8 +97,10 @@ namespace XIVLauncher.Dalamud
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
-                if (!Mutex.TryOpenExisting("xl_dalamud_running", out _))
+                if (!Mutex.TryOpenExisting(DALAMUD_MUTEX_NAME, out _))
                 {
+                    _openMutex = new Mutex(true, DALAMUD_MUTEX_NAME);
+
                     if (!File.Exists(addonExe))
                     {
                         Serilog.Log.Information("[HOOKS] Not found, redownloading");
@@ -81,7 +111,8 @@ namespace XIVLauncher.Dalamud
                         var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
                         var version = versionInfo.ProductVersion;
 
-                        Serilog.Log.Information("Hooks update check: local {0} remote {1}", version, remoteVersionInfo.AssemblyVersion);
+                        Serilog.Log.Information("Hooks update check: local {0} remote {1}", version,
+                            remoteVersionInfo.AssemblyVersion);
 
                         if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
                             Download(addonDirectory);
@@ -91,7 +122,8 @@ namespace XIVLauncher.Dalamud
                 if (XivGame.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return;
 
-                if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) || !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")))
+                if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
+                    !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")))
                 {
                     MessageBox.Show(
                         "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
@@ -101,7 +133,8 @@ namespace XIVLauncher.Dalamud
                     return;
                 }
 
-                var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json");
+                var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "XIVLauncher", "dalamudConfig.json");
 
                 var startInfo = new DalamudStartInfo
                 {
@@ -116,10 +149,12 @@ namespace XIVLauncher.Dalamud
 
                 var process = new Process
                 {
-                    StartInfo = { FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true, Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory }
+                    StartInfo =
+                    {
+                        FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
+                        Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory
+                    }
                 };
-
-                _openMutex = new Mutex(true, "xl_dalamud_running");
 
                 process.Start();
 
@@ -128,11 +163,6 @@ namespace XIVLauncher.Dalamud
                 // Reset security protocol after updating
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
             }
-        }
-
-        public void GameClosed()
-        {
-            _openMutex.ReleaseMutex();
         }
 
         public static bool CanRunDalamud(DirectoryInfo gamePath)

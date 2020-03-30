@@ -17,11 +17,7 @@ namespace XIVLauncher.Settings.Parsers
         public string ToRawString(object value)
         {
             if (value is List<AddonEntry> list)
-                return JsonConvert.SerializeObject(list, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Objects,
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
-                });
+                return JsonConvert.SerializeObject(list);
 
             return null;
         }
@@ -36,11 +32,7 @@ namespace XIVLauncher.Settings.Parsers
 
             if (t == typeof(List<AddonEntry>))
             {
-                result = JsonConvert.DeserializeObject<List<AddonEntry>>(value, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Objects,
-                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
-                });
+                result = JsonConvert.DeserializeObject<List<AddonEntry>>(value);
                 return true;
             }
 
