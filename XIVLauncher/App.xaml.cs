@@ -50,6 +50,7 @@ namespace XIVLauncher
                 MessageBox.Show(
                     "XIVLauncher could not contact the update server. Please check your internet connection or try again.\n\n" + e,
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(0);
             }
 #endif
 
