@@ -45,6 +45,15 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            NewsListView.ItemsSource = new List<News>
+            {
+                new News
+                {
+                    Title = "Loading...",
+                    Tag = "DlError"
+                }
+            };
+
 #if !XL_NOAUTOUPDATE
             Title += " v" + Util.GetAssemblyVersion();
 #else

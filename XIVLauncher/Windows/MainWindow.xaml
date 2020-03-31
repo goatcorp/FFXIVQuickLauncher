@@ -69,6 +69,7 @@
           x:Uid="materialDesign:Card_2" Grid.Row="1"
           Grid.Column="0"
           Margin="0 10 0 0"
+          Height="94"
           HorizontalAlignment="Left" Width="{DynamicResource BannerCardWidth}">
                                 <ListView x:Uid="NewsListView" x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
                                     <ListView.ItemTemplate>
