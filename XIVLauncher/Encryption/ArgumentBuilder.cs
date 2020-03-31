@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Runtime.InteropServices;
+using Serilog;
 
 namespace XIVLauncher.Encryption
 {
     public sealed class ArgumentBuilder
     {
+        [DllImport("kernel32.dll")]
+        static extern uint GetTickCount();
+
         private static readonly uint version = 3;
 
         private static readonly char[] checksumTable =
@@ -76,21 +81,27 @@ namespace XIVLauncher.Encryption
             var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
             var base64Str = ToSeBase64String(ciphertext);
             var checksum = DeriveChecksum(key);
-            
+
+            Log.Information("ArgumentBuilder::BuildEncrypted() checksum:{0}", checksum);
+
             return $"//**sqex{version:D04}{base64Str}{checksum}**//";
         }
 
         public string BuildEncrypted()
         {
-            uint key = DeriveKey();
+            var key = DeriveKey();
 
             return BuildEncrypted(key);
         }
 
         private uint DeriveKey()
         {
-            uint ticks = (uint)(Environment.TickCount & 0xFFFF_FFFFu);
-            uint key = ticks & 0xFFFF_0000u;
+            var rawTickCount = GetTickCount();
+
+            var ticks = rawTickCount & 0xFFFF_FFFFu;
+            var key = ticks & 0xFFFF_0000u;
+
+            Log.Information("ArgumentBuilder::DeriveKey() rawTickCount:{0} ticks:{1} key:{2}", rawTickCount, ticks, key);
 
             var keyPair = new KeyValuePair<string, string>("T", Convert.ToString(ticks));
             if (m_arguments.Count > 0 && m_arguments[0].Key == "T")
