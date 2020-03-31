@@ -66,20 +66,6 @@ namespace XIVLauncher
             return null;
         }
 
-        public static bool IsWindowsDarkModeEnabled()
-        {
-            try
-            {
-                return (int) Registry.GetValue(
-                           "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-                           "AppsUseLightTheme", 0x1) == 0x0;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public static int GetUnixMillis()
         {
             return (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;

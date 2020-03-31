@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Squirrel;
 
 namespace XIVLauncher
-{
-    static class Updates
+{ 
+    class Updates
     {
         private const string RepoUrl = "https://github.com/goaaats/FFXIVQuickLauncher";
 
-        public static async Task Run(bool downloadPrerelease = false)
+        public EventHandler OnUpdateCheckFinished;
+
+        public async Task Run(bool downloadPrerelease = false)
         {
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -28,6 +31,8 @@ namespace XIVLauncher
 
                 if (downloadedRelease != null)
                     UpdateManager.RestartApp();
+                else
+                    OnUpdateCheckFinished?.Invoke(this, null);
             }
 
             // Reset security protocol after updating

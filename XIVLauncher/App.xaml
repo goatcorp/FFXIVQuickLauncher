@@ -8,11 +8,13 @@
                 <ResourceDictionary x:Uid="ResourceDictionary_2" Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
                 <ResourceDictionary x:Uid="ResourceDictionary_3" Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.LightBlue.xaml" />
                 <ResourceDictionary x:Uid="ResourceDictionary_4" Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Blue.xaml" />
-
+                
                 <ResourceDictionary x:Uid="ResourceDictionary_5" Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml" />
 
+                <ResourceDictionary x:Uid="ResourceDictionary_6" Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
+
                 <!-- Include the Dragablz Material Design style -->
-                <ResourceDictionary x:Uid="ResourceDictionary_6" Source="pack://application:,,,/Dragablz;component/Themes/materialdesign.xaml"/>                
+                <ResourceDictionary x:Uid="ResourceDictionary_7" Source="pack://application:,,,/Dragablz;component/Themes/materialdesign.xaml"/>                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

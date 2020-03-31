@@ -1,0 +1,26 @@
+﻿<Window x:Uid="Window_1" x:Class="XIVLauncher.Windows.UpdateLoadingDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Enter OTP key" WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStyle="None" Height="170.088" Width="269.186">
+    <Grid x:Uid="Grid_1" Margin="0,0,0,0">
+        <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
+            <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,0">
+                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center">Checking for updates...</TextBlock>
+
+                <ProgressBar
+                    IsIndeterminate="True" Margin="0,50,0,0" />
+            </StackPanel>
+        </materialDesign:Card>
+    </Grid>
+</Window>

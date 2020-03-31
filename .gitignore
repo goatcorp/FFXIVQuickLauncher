@@ -253,3 +253,4 @@ paket-files/
 
 # XL Debug dirs
 XIVLauncher/XIVLauncher/app-*
+/XIVLauncher/XIVLauncher

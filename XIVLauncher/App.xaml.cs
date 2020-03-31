@@ -26,6 +26,9 @@ namespace XIVLauncher
     public partial class App : Application
     {
         private ILauncherSettingsV3 _globalSetting;
+        private string _accountName;
+
+        private UpdateLoadingDialog _updateWindow;
 
         public App()
         {
@@ -38,20 +41,6 @@ namespace XIVLauncher
 
 #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
-#endif
-
-#if !XL_NOAUTOUPDATE
-            try
-            {
-                Updates.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True").GetAwaiter().GetResult();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(
-                    "XIVLauncher could not contact the update server. Please check your internet connection or try again.\n\n" + e,
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Environment.Exit(0);
-            }
 #endif
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
@@ -81,6 +70,50 @@ namespace XIVLauncher
 
             Log.Information(
                 $"XIVLauncher started as {release}");
+
+#if !XL_NOAUTOUPDATE
+            try
+            {
+                Log.Information("Starting update check...");
+
+                _updateWindow = new UpdateLoadingDialog();
+                _updateWindow.Show();
+
+                var updateMgr = new Updates();
+                updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
+
+                updateMgr.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "XIVLauncher could not contact the update server. Please check your internet connection or try again.\n\n" + ex,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(0);
+            }
+#endif
+        }
+
+        private void OnUpdateCheckFinished(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+#if !DEBUG
+                AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
+                AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+                {
+                    new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled", _globalSetting)
+                        .ShowDialog();
+                    Log.CloseAndFlush();
+                    Environment.Exit(0);
+                };
+#endif
+
+                _updateWindow.Hide();
+
+                Log.Information("Loading MainWindow for account '{0}'", _accountName);
+                var mainWindow = new MainWindow(_globalSetting, _accountName);
+            });
         }
 
         private static void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
@@ -96,30 +129,6 @@ namespace XIVLauncher
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            // Check if dark mode is enabled on windows, if yes, load the dark theme
-            var themeUri =
-                new Uri(
-                    "pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml",
-                    UriKind.RelativeOrAbsolute);
-            if (Util.IsWindowsDarkModeEnabled())
-                themeUri = new Uri(
-                    "pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml",
-                    UriKind.RelativeOrAbsolute);
-
-            Current.Resources.MergedDictionaries.Add(new ResourceDictionary {Source = themeUri});
-            Log.Information("Loaded UI theme resource.");
-
-#if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
-            AppDomain.CurrentDomain.UnhandledException += (_, args) =>
-            {
-                new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled", _globalSetting)
-                    .ShowDialog();
-                Log.CloseAndFlush();
-                Environment.Exit(0);
-            };
-#endif
-
             if (e.Args.Length > 0 && e.Args[0] == "--backupNow")
             {
                 (new CharacterBackupAddon() as INotifyAddonAfterClose).GameClosed();
@@ -145,14 +154,14 @@ namespace XIVLauncher
             }
 
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow
-            var accountName = "";
+            _accountName = string.Empty;
 
             if (e.Args.Length > 0 && e.Args[0].StartsWith("--account="))
-                accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
-            
-            Log.Information("Loading MainWindow for account '{0}'", accountName);
+                _accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
 
-            var mainWindow = new MainWindow(_globalSetting, accountName);
+#if XL_NOAUTOUPDATE
+            OnUpdateCheckFinished(null, null);
+#endif
         }
     }
 }

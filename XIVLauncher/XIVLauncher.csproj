@@ -278,6 +278,9 @@
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
       <DependentUpon>ChangelogWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\UpdateLoadingDialog.xaml.cs">
+      <DependentUpon>UpdateLoadingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ProfilePictureInputWindow.xaml.cs">
       <DependentUpon>ProfilePictureInputWindow.xaml</DependentUpon>
     </Compile>
@@ -328,6 +331,10 @@
     <Compile Include="Game\XivGame.cs" />
     <Compile Include="Game\NativeLauncher.cs" />
     <Page Include="Windows\ChangelogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\UpdateLoadingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
