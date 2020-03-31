@@ -102,7 +102,7 @@ namespace XIVLauncher
                 AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
                 AppDomain.CurrentDomain.UnhandledException += (_, args) =>
                 {
-                    new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled", Settings)
+                    new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled")
                         .ShowDialog();
                     Log.CloseAndFlush();
                     Environment.Exit(0);
