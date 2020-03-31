@@ -292,6 +292,12 @@
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
+                            <StackPanel x:Uid="StackPanel_15" Orientation="Horizontal">
+                                <CheckBox x:Uid="EncryptedArgumentsCheckbox" x:Name="EncryptedArgumentsCheckbox"
+                                          Content="Enable encrypting arguments to the client"
+                                          HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray"
+                                          IsChecked="True" />
+                            </StackPanel>
                         </StackPanel>
 
                         <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/logo.png" Width="150"

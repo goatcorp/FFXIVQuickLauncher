@@ -24,6 +24,7 @@ namespace XIVLauncher.Settings
         bool SteamIntegrationEnabled { get; set; }
         ClientLanguage Language { get; set; }
         string CurrentAccountId { get; set; }
+        bool? EncryptArguments { get; set; }
 
         #endregion
     }
