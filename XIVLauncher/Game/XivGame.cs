@@ -26,7 +26,7 @@ namespace XIVLauncher.Game
 {
     public class XivGame
     {
-        public XivGame(ILauncherSettingsV3 setting)
+        public XivGame()
         {
             Task.Run(() =>
             {
@@ -39,14 +39,14 @@ namespace XIVLauncher.Game
                     client.Headers.Add("Accept-Encoding", "gzip, deflate");
                     client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
 
-                    client.DownloadString(GenerateFrontierReferer(setting.Language));
+                    client.DownloadString(GenerateFrontierReferer(App.Settings.Language));
 
                     DownloadAsLauncher($"https://frontier.ffxiv.com/v2/world/status.json?_={Util.GetUnixMillis()}",
-                        setting.Language, "application/json, text/plain, */*");
+                        App.Settings.Language, "application/json, text/plain, */*");
                     DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis()}",
-                        setting.Language, "application/json, text/plain, */*");
+                        App.Settings.Language, "application/json, text/plain, */*");
                     DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis() + 50}",
-                        setting.Language, "application/json, text/plain, */*");
+                        App.Settings.Language, "application/json, text/plain, */*");
                 }
             });
         }

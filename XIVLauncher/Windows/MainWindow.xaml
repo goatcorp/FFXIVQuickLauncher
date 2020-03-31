@@ -8,6 +8,7 @@
   xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
   xmlns:system="clr-namespace:System;assembly=mscorlib"
   xmlns:game="clr-namespace:XIVLauncher.Game"
+  xmlns:windows="clr-namespace:XIVLauncher.Windows"
   mc:Ignorable="d"
   Title="XIVLauncher"
   Width="845"
@@ -24,20 +25,34 @@
     <system:Double x:Uid="system:Double_2" x:Key="BannerCardHeight">213</system:Double>
   </Window.Resources>
 
-  <Grid x:Uid="Grid_1">
-    <Grid x:Uid="Grid_2" Margin="10">
-      <Grid x:Uid="Grid_3">
-        <Grid.RowDefinitions>
-          <RowDefinition x:Uid="RowDefinition_1" Height="Auto" />
-          <RowDefinition x:Uid="RowDefinition_2" />
-        </Grid.RowDefinitions>
+    <Grid>
+        <materialDesign:Transitioner SelectedIndex="1" >
 
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition x:Uid="ColumnDefinition_1" Width="Auto" />
-          <ColumnDefinition x:Uid="ColumnDefinition_2" />
-        </Grid.ColumnDefinitions>
+            <materialDesign:TransitionerSlide>
+                <materialDesign:TransitionerSlide.ForwardWipe>
+                    <materialDesign:FadeWipe/>
+                </materialDesign:TransitionerSlide.ForwardWipe>
+                <windows:SettingsControl x:Name="SettingsControl" SettingsDismissed="SettingsControl_OnSettingsDismissed"/>
+            </materialDesign:TransitionerSlide>
 
-        <materialDesign:Card
+            <materialDesign:TransitionerSlide>
+                <materialDesign:TransitionerSlide.BackwardWipe>
+                    <materialDesign:FadeWipe/>
+                </materialDesign:TransitionerSlide.BackwardWipe>
+                <Grid x:Uid="Grid_1">
+                    <Grid x:Uid="Grid_2" Margin="10">
+                        <Grid x:Uid="Grid_3">
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Uid="RowDefinition_1" Height="Auto" />
+                                <RowDefinition x:Uid="RowDefinition_2" />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Uid="ColumnDefinition_1" Width="Auto" />
+                                <ColumnDefinition x:Uid="ColumnDefinition_2" />
+                            </Grid.ColumnDefinitions>
+
+                            <materialDesign:Card
           x:Uid="materialDesign:Card_1" Grid.Row="0"
           Grid.Column="0"
           Margin="0"
@@ -45,91 +60,91 @@
           Width="{DynamicResource BannerCardWidth}" Height="{DynamicResource BannerCardHeight}"
           Cursor="Hand"
           MouseUp="BannerCard_MouseUp">
-          <Viewbox x:Uid="Viewbox_1">
-            <Image x:Uid="BannerImage" x:Name="BannerImage" Source="pack://application:,,,/Resources/placeholder-news.png" />
-          </Viewbox>
-        </materialDesign:Card>
+                                <Viewbox x:Uid="Viewbox_1">
+                                    <Image x:Uid="BannerImage" x:Name="BannerImage" Source="pack://application:,,,/Resources/placeholder-news.png" />
+                                </Viewbox>
+                            </materialDesign:Card>
 
-        <materialDesign:Card
+                            <materialDesign:Card
           x:Uid="materialDesign:Card_2" Grid.Row="1"
           Grid.Column="0"
           Margin="0 10 0 0"
           HorizontalAlignment="Left" Width="{DynamicResource BannerCardWidth}">
-          <ListView x:Uid="NewsListView" x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
-            <ListView.ItemTemplate>
-              <DataTemplate x:Uid="SingleLineDataTemplate" x:Name="SingleLineDataTemplate" DataType="game:News">
-                <StackPanel x:Uid="StackPanel_1" Orientation="Horizontal" Height="15">
-                  <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_1" Height="Auto" Width="Auto">
-                    <materialDesign:PackIcon.Style>
-                      <Style x:Uid="Style_1" TargetType="materialDesign:PackIcon">
-                        <Setter x:Uid="Setter_1" Property="Kind" Value="Newspaper" />
-                        <Style.Triggers>
-                          <DataTrigger x:Uid="DataTrigger_1" Binding="{Binding Tag}" Value="Important">
-                            <Setter x:Uid="Setter_2" Property="Kind" Value="AlertCircle" />
-                            <Setter x:Uid="Setter_3" Property="Foreground" Value="Red" />
-                          </DataTrigger>
-                          <DataTrigger x:Uid="DataTrigger_2" Binding="{Binding Tag}" Value="Follow-up">
-                            <Setter x:Uid="Setter_4" Property="Kind" Value="InformationOutline" />
-                            <Setter x:Uid="Setter_5" Property="Foreground" Value="#FFFFB900" />
-                          </DataTrigger>
-                          <DataTrigger x:Uid="DataTrigger_3" Binding="{Binding Tag}" Value="DlError">
-                            <Setter x:Uid="Setter_6" Property="Kind" Value="LanDisconnect" />
-                          </DataTrigger>
-                        </Style.Triggers>
-                      </Style>
-                    </materialDesign:PackIcon.Style>
-                  </materialDesign:PackIcon>
-                  <TextBlock x:Uid="TextBlock_1" Text="{Binding Title}" VerticalAlignment="Center" Margin="12,0,0,0" />
-                </StackPanel>
-              </DataTemplate>
-            </ListView.ItemTemplate>
-          </ListView>
-        </materialDesign:Card>
+                                <ListView x:Uid="NewsListView" x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:Uid="SingleLineDataTemplate" x:Name="SingleLineDataTemplate" DataType="game:News">
+                                            <StackPanel x:Uid="StackPanel_1" Orientation="Horizontal" Height="15">
+                                                <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_1" Height="Auto" Width="Auto">
+                                                    <materialDesign:PackIcon.Style>
+                                                        <Style x:Uid="Style_1" TargetType="materialDesign:PackIcon">
+                                                            <Setter x:Uid="Setter_1" Property="Kind" Value="Newspaper" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger x:Uid="DataTrigger_1" Binding="{Binding Tag}" Value="Important">
+                                                                    <Setter x:Uid="Setter_2" Property="Kind" Value="AlertCircle" />
+                                                                    <Setter x:Uid="Setter_3" Property="Foreground" Value="Red" />
+                                                                </DataTrigger>
+                                                                <DataTrigger x:Uid="DataTrigger_2" Binding="{Binding Tag}" Value="Follow-up">
+                                                                    <Setter x:Uid="Setter_4" Property="Kind" Value="InformationOutline" />
+                                                                    <Setter x:Uid="Setter_5" Property="Foreground" Value="#FFFFB900" />
+                                                                </DataTrigger>
+                                                                <DataTrigger x:Uid="DataTrigger_3" Binding="{Binding Tag}" Value="DlError">
+                                                                    <Setter x:Uid="Setter_6" Property="Kind" Value="LanDisconnect" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </materialDesign:PackIcon.Style>
+                                                </materialDesign:PackIcon>
+                                                <TextBlock x:Uid="TextBlock_1" Text="{Binding Title}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </materialDesign:Card>
 
-        <StackPanel
+                            <StackPanel
           x:Uid="StackPanel_2" Grid.Row="1"
           Grid.Column="1"
           Orientation="Horizontal"
           HorizontalAlignment="Center"
           VerticalAlignment="Center"
           Margin="0 0 -10 -10">
-          <Button
+                                <Button
             x:Uid="QueueButton" x:Name="QueueButton"
             Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
             Focusable="False"
             ToolTip="Maintenance Queue"
             Margin="0" Height="77" Width="77"
             Click="QueueButton_OnClick">
-            <StackPanel x:Uid="StackPanel_3" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-              <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Update" Height="Auto" Width="Auto" />
-            </StackPanel>
-          </Button>
+                                    <StackPanel x:Uid="StackPanel_3" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Update" Height="Auto" Width="Auto" />
+                                    </StackPanel>
+                                </Button>
 
-          <Button
+                                <Button
             x:Uid="Button_1" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
             Focusable="False"
             ToolTip="World Status"
             Margin="0" Height="77" Width="77"
             Click="WorldStatusButton_Click">
-            <StackPanel x:Uid="StackPanel_4" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-              <materialDesign:PackIcon x:Uid="WorldStatusPackIcon" Kind="Earth" Height="Auto" Width="Auto" x:Name="WorldStatusPackIcon" />
-            </StackPanel>
-          </Button>
+                                    <StackPanel x:Uid="StackPanel_4" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <materialDesign:PackIcon x:Uid="WorldStatusPackIcon" Kind="Earth" Height="Auto" Width="Auto" x:Name="WorldStatusPackIcon" />
+                                    </StackPanel>
+                                </Button>
 
-          <Button
+                                <Button
             x:Uid="SettingsButton" x:Name="SettingsButton"
             Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
             Focusable="False"
             ToolTip="Settings"
             Margin="0" Height="77" Width="77"
-            Click="SettingsButton_OnClick">
-            <StackPanel x:Uid="StackPanel_5" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-              <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_3" Kind="Gear" Height="Auto" Width="Auto" />
-            </StackPanel>
-          </Button>
-        </StackPanel>
+            Command="{x:Static materialDesign:Transitioner.MovePreviousCommand}">
+                                    <StackPanel x:Uid="StackPanel_5" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_3" Kind="Gear" Height="Auto" Width="Auto" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
 
-        <materialDesign:Card
+                            <materialDesign:Card
           x:Uid="materialDesign:Card_3" Grid.Row="0"
           Grid.Column="1"
           Width="255"
@@ -137,9 +152,9 @@
           HorizontalAlignment="Right"
           VerticalAlignment="Stretch"
           KeyDown="Card_KeyDown">
-          <DockPanel
+                                <DockPanel
             x:Uid="DockPanel_1" Margin="30,18,30,18">
-            <TextBox
+                                    <TextBox
               x:Uid="LoginUsername" DockPanel.Dock="Top"
               x:Name="LoginUsername"
               HorizontalAlignment="Stretch"
@@ -147,7 +162,7 @@
               TextWrapping="Wrap"
               VerticalAlignment="Top"
               materialDesign:HintAssist.Hint="Square Enix ID" />
-            <PasswordBox
+                                    <PasswordBox
               x:Uid="LoginPassword" DockPanel.Dock="Top"
               x:Name="LoginPassword"
               HorizontalAlignment="Stretch"
@@ -156,66 +171,71 @@
               VerticalAlignment="Top"
               materialDesign:HintAssist.Hint="Password" />
 
-            <CheckBox
+                                    <CheckBox
               x:Uid="AutoLoginCheckBox" DockPanel.Dock="Top"
               Content="Log in automatically"
               HorizontalAlignment="Left"
               Margin="0,14,0,0"
               VerticalAlignment="Top"
               x:Name="AutoLoginCheckBox" />
-            <CheckBox
+                                    <CheckBox
               x:Uid="OtpCheckBox" DockPanel.Dock="Top"
               Content="Use One-Time-Passwords"
               HorizontalAlignment="Left"
               Margin="0,4,0,0"
               VerticalAlignment="Top"
               x:Name="OtpCheckBox" />
-            <CheckBox
+                                    <CheckBox
                 x:Uid="SteamCheckBox" DockPanel.Dock="Top"
                 Content="Use Steam service account"
                 HorizontalAlignment="Left"
                 Margin="0,4,0,0"
                 VerticalAlignment="Top"
                 x:Name="SteamCheckBox" />
-            <StackPanel x:Uid="StackPanel_12" Orientation="Horizontal" HorizontalAlignment="Center"
+                                    <StackPanel x:Uid="StackPanel_12" Orientation="Horizontal" HorizontalAlignment="Center"
                         VerticalAlignment="Bottom"
                         Width="142" Margin="0,0,0,0" DockPanel.Dock="Bottom">
-                <Button
+                                        <Button
                     x:Uid="Button_2" 
                     Content="Log In"
                     Click="LoginButton_Click" Margin="0,0,7,0" Width="84" ToolTip="Log in with the provided credentials"/>
-                <Button x:Uid="AccountSwitcherButton" HorizontalAlignment="Left"
+                                        <Button x:Uid="AccountSwitcherButton" HorizontalAlignment="Left"
                         x:Name="AccountSwitcherButton" Margin="0 0 0 0" Background="#FF0096DB" BorderBrush="#FF0096DB" ToolTip="Open Account Switcher" Click="AccountSwitcherButton_OnClick">
-                    <StackPanel x:Uid="StackPanel_11" Orientation="Horizontal" Margin="0">
-                        <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_4" Kind="AccountGroup"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-          </DockPanel>
-        </materialDesign:Card>
-      </Grid>
+                                            <StackPanel x:Uid="StackPanel_11" Orientation="Horizontal" Margin="0">
+                                                <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_4" Kind="AccountGroup"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </DockPanel>
+                            </materialDesign:Card>
+                        </Grid>
 
-      <materialDesign:DialogHost
+                        <materialDesign:DialogHost
         x:Uid="MaintenanceQueueDialogHost" Identifier="MaintenanceQueueDialogHost"
         x:Name="MaintenanceQueueDialogHost">
-        <materialDesign:DialogHost.DialogContent>
-          <StackPanel x:Uid="StackPanel_6" Margin="16">
-            <StackPanel x:Uid="StackPanel_7" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-              <TextBlock x:Uid="LoadingMessageTextBlock" x:Name="LoadingMessageTextBlock">Waiting for maintenance...</TextBlock>
-              <ProgressBar
+                            <materialDesign:DialogHost.DialogContent>
+                                <StackPanel x:Uid="StackPanel_6" Margin="16">
+                                    <StackPanel x:Uid="StackPanel_7" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock x:Uid="LoadingMessageTextBlock" x:Name="LoadingMessageTextBlock">Waiting for maintenance...</TextBlock>
+                                        <ProgressBar
                 x:Uid="ProgressBar_1" Style="{StaticResource MaterialDesignCircularProgressBar}"
                 Value="0"
                 IsIndeterminate="True" Height="30" Width="30" Margin="0 8 0 0" />
-              <Button
+                                        <Button
                 x:Uid="LoadingMessageCancelButton" x:Name="LoadingMessageCancelButton"
                 Style="{StaticResource MaterialDesignFlatButton}"
                 IsCancel="True"
                 Margin="0 8 0 0"
                 Click="QuitMaintenanceQueueButton_OnClick" Content="Cancel"/>
-            </StackPanel>
-          </StackPanel>
-        </materialDesign:DialogHost.DialogContent>
-      </materialDesign:DialogHost>
+                                    </StackPanel>
+                                </StackPanel>
+                            </materialDesign:DialogHost.DialogContent>
+                        </materialDesign:DialogHost>
+                    </Grid>
+                </Grid>
+            </materialDesign:TransitionerSlide>
+        </materialDesign:Transitioner>
     </Grid>
-  </Grid>
+
+  
 </Window>

@@ -1,4 +1,4 @@
-﻿<Window x:Uid="Window_1" x:Class="XIVLauncher.Windows.SettingsWindow"
+﻿<UserControl x:Uid="Window_1" x:Class="XIVLauncher.Windows.SettingsControl"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,17 +12,15 @@
         xmlns:properties="clr-namespace:XIVLauncher.Properties"
         xmlns:windows="clr-namespace:XIVLauncher.Windows"
         mc:Ignorable="d"
-        Title="XIVLauncher Settings" Height="311.675" Width="567" WindowStartupLocation="CenterScreen"
-        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" Closing="SettingsWindow_OnClosing"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-        d:DataContext="{d:DesignInstance windows:SettingsWindow}">
-    <Window.Resources>
+        d:DataContext="{d:DesignInstance windows:SettingsControl}">
+    <UserControl.Resources>
         <xaml:StringToColorConverter x:Uid="xaml:StringToColorConverter_1" x:Key="StringToColorConverter"/>
         <xaml:ChatTypeToFancyNameConverter x:Uid="xaml:ChatTypeToFancyNameConverter_1" x:Key="ChatTypeToFancyNameConverter"/>
-    </Window.Resources>
+    </UserControl.Resources>
     <Grid x:Uid="Grid_1">
         <dragablz:TabablzControl x:Uid="SetupTabControl" IsEnabled="True" FixedHeaderCount="6" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
             <TabItem x:Uid="TabItem_1" Header="Game">
@@ -74,8 +72,8 @@
                             These are applications that are loaded as soon as the game has started.
                         </TextBlock>
 
-                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="160">
-                            <ListView x:Uid="AddonListView" x:Name="AddonListView" Margin="0,0,0,0" Height="160" MouseUp="AddonListView_OnMouseUp">
+                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="220">
+                            <ListView x:Uid="AddonListView" x:Name="AddonListView" Margin="0,0,0,0" Height="220" MouseUp="AddonListView_OnMouseUp">
                                 <ListView.ContextMenu>
                                     <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
                                         <MenuItem x:Uid="MenuItem_1" Header="Remove" Click="RemoveAddonEntry_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -210,8 +208,8 @@
                             These are the plugins that are currently available installed on your machine.
                         </TextBlock>
 
-                        <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="160">
-                            <ListView x:Uid="PluginListView" x:Name="PluginListView" Margin="0,0,0,0" Height="160" Foreground="{DynamicResource MaterialDesignBody}">
+                    <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="230">
+                            <ListView x:Uid="PluginListView" x:Name="PluginListView" Margin="0,0,0,0" Height="230" Foreground="{DynamicResource MaterialDesignBody}">
                                 <ListView.ContextMenu>
                                     <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
                                         <MenuItem x:Uid="MenuItem_1" Header="Toggle" Click="TogglePlugin_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
@@ -299,8 +297,8 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/logo.png" Width="150"
-                               HorizontalAlignment="Left" Margin="390,0,0,0" Opacity="0.8"
+                        <Image x:Uid="Image_1" Source="pack://application:,,,/Resources/logo.png" Width="200"
+                               HorizontalAlignment="Left" Margin="500,0,0,0" Opacity="0.8"
                                RenderOptions.BitmapScalingMode="HighQuality" />
                     </Grid>
                 </ScrollViewer>
@@ -308,8 +306,9 @@
         </dragablz:TabablzControl>
         <Button x:Uid="Button_8" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                 ToolTip="Save Settings" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
+                Command="{x:Static materialDesign:Transitioner.MoveNextCommand}"
                 Click="AcceptButton_Click">
             <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_6" Kind="Check" Height="24" Width="24" />
         </Button>
     </Grid>
-</Window>
+</UserControl>

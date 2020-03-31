@@ -313,8 +313,8 @@
       <DependentUpon>FolderEntry.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\LauncherSettings.cs" />
-    <Compile Include="Windows\SettingsWindow.xaml.cs">
-      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    <Compile Include="Windows\SettingsControl.xaml.cs">
+      <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Cache\UniqueIdCache.cs" />
     <Compile Include="Cache\UniqueIdCacheEntry.cs" />
@@ -391,7 +391,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Windows\SettingsWindow.xaml">
+    <Page Include="Windows\SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

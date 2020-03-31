@@ -12,7 +12,7 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class ErrorWindow : Window
     {
-        public ErrorWindow(Exception exc, string message, string context, ILauncherSettingsV3 setting = null)
+        public ErrorWindow(Exception exc, string message, string context)
         {
             InitializeComponent();
 
@@ -23,16 +23,16 @@ namespace XIVLauncher.Windows
             ExceptionTextBox.AppendText("\nOS: " + Environment.OSVersion);
             ExceptionTextBox.AppendText("\n64bit? " + Environment.Is64BitProcess);
 
-            if (setting != null)
+            if (App.Settings != null)
             {
-                ExceptionTextBox.AppendText("\nDX11? " + setting.IsDx11);
-                ExceptionTextBox.AppendText("\nAddons Enabled? " + setting.InGameAddonEnabled);
-                ExceptionTextBox.AppendText("\nAuto Login Enabled? " + setting.AutologinEnabled);
-                ExceptionTextBox.AppendText("\nLanguage: " + setting.Language);
-                ExceptionTextBox.AppendText("\nGame path: " + setting.GamePath);
+                ExceptionTextBox.AppendText("\nDX11? " + App.Settings.IsDx11);
+                ExceptionTextBox.AppendText("\nAddons Enabled? " + App.Settings.InGameAddonEnabled);
+                ExceptionTextBox.AppendText("\nAuto Login Enabled? " + App.Settings.AutologinEnabled);
+                ExceptionTextBox.AppendText("\nLanguage: " + App.Settings.Language);
+                ExceptionTextBox.AppendText("\nGame path: " + App.Settings.GamePath);
 
                 // When this happens we probably don't want them to run into it again, in case it's an issue with a moved game for example
-                setting.AutologinEnabled = false;
+                App.Settings.AutologinEnabled = false;
             }
 
 #if DEBUG

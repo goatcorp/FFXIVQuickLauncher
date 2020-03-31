@@ -22,9 +22,9 @@ using Newtonsoft.Json.Linq;
 namespace XIVLauncher.Windows
 {
     /// <summary>
-    ///     Interaction logic for SettingsWindow.xaml
+    ///     Interaction logic for SettingsControl.xaml
     /// </summary>
-    public partial class SettingsWindow : INotifyPropertyChanged
+    public partial class SettingsControl : INotifyPropertyChanged
     {
         private string gamePath;
 
@@ -48,18 +48,16 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private ILauncherSettingsV3 _setting;
+        public event EventHandler SettingsDismissed;
 
-        public SettingsWindow(ILauncherSettingsV3 setting)
+        public SettingsControl()
         {
             InitializeComponent();
 
-            _setting = setting;
-
             DataContext = this;
-            GamePath = _setting.GamePath?.FullName;
+            GamePath = App.Settings.GamePath?.FullName;
 
-            if (_setting.IsDx11)
+            if (App.Settings.IsDx11)
                 Dx11RadioButton.IsChecked = true;
             else
             {
@@ -67,10 +65,10 @@ namespace XIVLauncher.Windows
                 Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
             }
 
-            LanguageComboBox.SelectedIndex = (int) _setting.Language;
-            AddonListView.ItemsSource = _setting.AddonList;
-            UidCacheCheckBox.IsChecked = _setting.UniqueIdCacheEnabled;
-            EncryptedArgumentsCheckbox.IsChecked = _setting.EncryptArguments;
+            LanguageComboBox.SelectedIndex = (int) App.Settings.Language;
+            AddonListView.ItemsSource = App.Settings.AddonList;
+            UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
+            EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
 
             ReloadPluginList();
 
@@ -81,15 +79,15 @@ namespace XIVLauncher.Windows
             ChatDelayTextBox.Text = featureConfig.ChatDelayMs.ToString();
             DisableEmbedsCheckBox.IsChecked = featureConfig.DisableEmbeds;
 
-            EnableHooksCheckBox.IsChecked = _setting.InGameAddonEnabled;
+            EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
 
-            SteamIntegrationCheckBox.IsChecked = _setting.SteamIntegrationEnabled;
+            SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
 
             MbUploadOptOutCheckBox.IsChecked = DalamudSettings.OptOutMbUpload;
 
-            CharacterSyncCheckBox.IsChecked = _setting.CharacterSyncEnabled;
+            CharacterSyncCheckBox.IsChecked = App.Settings.CharacterSyncEnabled;
 
-            LaunchArgsTextBox.Text = _setting.AdditionalLaunchArgs;
+            LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
 
@@ -99,16 +97,16 @@ namespace XIVLauncher.Windows
             EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
         }
 
-        private void SettingsWindow_OnClosing(object sender, CancelEventArgs e)
+        private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
-            _setting.GamePath = !string.IsNullOrEmpty(GamePath) ? new DirectoryInfo(GamePath) : null;
-            _setting.IsDx11 = Dx11RadioButton.IsChecked == true;
-            _setting.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
-            _setting.AddonList = (List<AddonEntry>) AddonListView.ItemsSource;
-            _setting.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
-            _setting.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
+            App.Settings.GamePath = !string.IsNullOrEmpty(GamePath) ? new DirectoryInfo(GamePath) : null;
+            App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
+            App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
+            App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
+            App.Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
+            App.Settings.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
 
-            _setting.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
+            App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 
             var featureConfig = DalamudSettings.DiscordFeatureConfig;
             featureConfig.Token = DiscordBotTokenTextBox.Text;
@@ -118,18 +116,15 @@ namespace XIVLauncher.Windows
             featureConfig.DisableEmbeds = DisableEmbedsCheckBox.IsChecked == true;
             DalamudSettings.DiscordFeatureConfig = featureConfig;
 
-            _setting.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
+            App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
             DalamudSettings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
 
-            _setting.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
+            App.Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
-            _setting.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
-        }
+            App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
-        private void AcceptButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
+            SettingsDismissed?.Invoke(this, null);
         }
 
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
@@ -147,7 +142,7 @@ namespace XIVLauncher.Windows
             var isSteam =
                 MessageBox.Show("Launch as a steam user?", "XIVLauncher", MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes;
-            Util.StartOfficialLauncher(_setting.GamePath, isSteam);
+            Util.StartOfficialLauncher(App.Settings.GamePath, isSteam);
         }
 
         // All of the list handling is very dirty - but i guess it works
@@ -158,7 +153,7 @@ namespace XIVLauncher.Windows
             addonSetup.ShowDialog();
 
             if (addonSetup.Result != null && !string.IsNullOrEmpty(addonSetup.Result.Path)) {
-                var addonList = _setting.AddonList;
+                var addonList = App.Settings.AddonList;
 
                 addonList.Add(new AddonEntry
                 {
@@ -166,9 +161,9 @@ namespace XIVLauncher.Windows
                     Addon = addonSetup.Result
                 });
 
-                _setting.AddonList = addonList;
+                App.Settings.AddonList = addonList;
 
-                AddonListView.ItemsSource = _setting.AddonList;
+                AddonListView.ItemsSource = App.Settings.AddonList;
             }
         }
 
@@ -187,9 +182,9 @@ namespace XIVLauncher.Windows
 
                 if (addonSetup.Result != null)
                 {
-                    _setting.AddonList = _setting.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
+                    App.Settings.AddonList = App.Settings.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
 
-                    var addonList = _setting.AddonList;
+                    var addonList = App.Settings.AddonList;
 
                     addonList.Add(new AddonEntry
                     {
@@ -197,25 +192,25 @@ namespace XIVLauncher.Windows
                         Addon = addonSetup.Result
                     });
 
-                    _setting.AddonList = addonList;
+                    App.Settings.AddonList = addonList;
 
-                    AddonListView.ItemsSource = _setting.AddonList;
+                    AddonListView.ItemsSource = App.Settings.AddonList;
                 }
             }
         }
 
         private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
         {
-            _setting.AddonList = (List<AddonEntry>) AddonListView.ItemsSource;
+            App.Settings.AddonList = (List<AddonEntry>) AddonListView.ItemsSource;
         }
 
         private void RemoveAddonEntry_OnClick(object sender, RoutedEventArgs e)
         {
             if (AddonListView.SelectedItem is AddonEntry entry && entry.Addon is GenericAddon genericAddon)
             {
-                _setting.AddonList = _setting.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
+                App.Settings.AddonList = App.Settings.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
 
-                AddonListView.ItemsSource = _setting.AddonList;
+                AddonListView.ItemsSource = App.Settings.AddonList;
             }
         }
 
@@ -339,7 +334,7 @@ namespace XIVLauncher.Windows
             var progress = new Progress<IntegrityCheck.IntegrityCheckProgress>();
             progress.ProgressChanged += (sender, checkProgress) => window.UpdateProgress(checkProgress);
 
-            Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, _setting.GamePath)).ContinueWith(task =>
+            Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, App.Settings.GamePath)).ContinueWith(task =>
             {
                 window.Dispatcher.Invoke(() => window.Close());
 
@@ -360,7 +355,7 @@ namespace XIVLauncher.Windows
 
                         if (result == MessageBoxResult.Yes)
                         {
-                            var verFile = Path.Combine(_setting.GamePath.FullName, "game", "ffxivgame.ver");
+                            var verFile = Path.Combine(App.Settings.GamePath.FullName, "game", "ffxivgame.ver");
 
                             File.Delete(verFile);
                             File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
@@ -408,7 +403,7 @@ namespace XIVLauncher.Windows
         {
             try
             {
-                if (!DalamudLauncher.CanRunDalamud(_setting.GamePath))
+                if (!DalamudLauncher.CanRunDalamud(App.Settings.GamePath))
                     MessageBox.Show(
                         $"The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!",
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);

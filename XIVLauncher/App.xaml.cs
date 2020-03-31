@@ -25,14 +25,14 @@ namespace XIVLauncher
     /// </summary>
     public partial class App : Application
     {
-        private ILauncherSettingsV3 _globalSetting;
+        public static ILauncherSettingsV3 Settings;
         private string _accountName;
 
         private UpdateLoadingDialog _updateWindow;
 
         public App()
         {
-            _globalSetting = new ConfigurationBuilder<ILauncherSettingsV3>()
+            Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
                 .UseCommandLineArgs()
                 .UseJsonFile(GetConfigPath("launcher"))
                 .UseTypeParser(new DirectoryInfoParser())
@@ -102,7 +102,7 @@ namespace XIVLauncher
                 AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
                 AppDomain.CurrentDomain.UnhandledException += (_, args) =>
                 {
-                    new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled", _globalSetting)
+                    new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled", Settings)
                         .ShowDialog();
                     Log.CloseAndFlush();
                     Environment.Exit(0);
@@ -112,7 +112,7 @@ namespace XIVLauncher
                 _updateWindow.Hide();
 
                 Log.Information("Loading MainWindow for account '{0}'", _accountName);
-                var mainWindow = new MainWindow(_globalSetting, _accountName);
+                var mainWindow = new MainWindow(_accountName);
             });
         }
 
@@ -139,7 +139,7 @@ namespace XIVLauncher
 
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {
-                var result = IntegrityCheck.RunIntegrityCheckAsync(_globalSetting.GamePath, null).GetAwaiter().GetResult();
+                var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
                 File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
 
                 MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");
