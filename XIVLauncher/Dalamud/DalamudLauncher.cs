@@ -201,7 +201,7 @@ namespace XIVLauncher.Dalamud
 
             using (var client = new WebClient())
             {
-                var downloadPath = Path.Combine(addonPath, "download.zip");
+                var downloadPath = Path.GetTempFileName();
 
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
