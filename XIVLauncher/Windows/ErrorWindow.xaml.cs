@@ -37,7 +37,7 @@ namespace XIVLauncher.Windows
 
 #if DEBUG
             ExceptionTextBox.AppendText("\nDebugging");
-            #endif
+#endif
 
             ExceptionTextBox.AppendText("\n\n\nAddons: " + Properties.Settings.Default.Addons);
 

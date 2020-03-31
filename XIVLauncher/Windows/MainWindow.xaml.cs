@@ -214,6 +214,11 @@ namespace XIVLauncher.Windows
                     _isLoggingIn = false;
                 }
             }
+            else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            {
+                App.Settings.AutologinEnabled = false;
+                AutoLoginCheckBox.IsChecked = false;
+            }
 
             if (App.Settings.GamePath?.Exists != true)
             {
