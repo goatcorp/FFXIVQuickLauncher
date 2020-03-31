@@ -13,6 +13,8 @@ namespace XIVLauncher.Accounts
         [JsonIgnore]
         public string Id => $"{UserName}-{UseOtp}-{UseSteamServiceAccount}";
 
+        public override string ToString() => Id;
+
         public string UserName { get; private set; }
 
         [JsonIgnore]

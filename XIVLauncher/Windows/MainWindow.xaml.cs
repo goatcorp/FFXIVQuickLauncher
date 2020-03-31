@@ -254,6 +254,8 @@ namespace XIVLauncher.Windows
         {
             var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
 
+            Log.Information("CurrentAccount: {0}", _accountManager.CurrentAccount == null ? "null" : _accountManager.CurrentAccount.ToString());
+
             if (_accountManager.CurrentAccount != null && _accountManager.CurrentAccount.UserName.Equals(LoginUsername.Text) && _accountManager.CurrentAccount.Password != LoginPassword.Password && _accountManager.CurrentAccount.SavePassword)
             {
                 _accountManager.UpdatePassword(_accountManager.CurrentAccount, LoginPassword.Password);
