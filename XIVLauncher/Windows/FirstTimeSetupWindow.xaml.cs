@@ -13,13 +13,9 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class FirstTimeSetup : Window
     {
-        private ILauncherSettingsV3 _setting;
-
-        public FirstTimeSetup(ILauncherSettingsV3 setting)
+        public FirstTimeSetup()
         {
             InitializeComponent();
-
-            _setting = setting;
 
             var detectedPath = Util.TryGamePaths();
 
@@ -83,19 +79,19 @@ namespace XIVLauncher.Windows
 
             if (SetupTabControl.SelectedIndex == 4)
             {
-                _setting.GamePath = new DirectoryInfo(GamePathEntry.Text);
-                _setting.IsDx11 = Dx11RadioButton.IsChecked == true;
-                _setting.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
-                _setting.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
-                _setting.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
+                App.Settings.GamePath = new DirectoryInfo(GamePathEntry.Text);
+                App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
+                App.Settings.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
+                App.Settings.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
+                App.Settings.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
 
-                _setting.AddonList = new List<AddonEntry>();
+                App.Settings.AddonList = new List<AddonEntry>();
 
                 if (ActCheckBox.IsChecked == true)
                 {
                     var actPath = FindAct();
 
-                    _setting.AddonList.Add(new AddonEntry
+                    App.Settings.AddonList.Add(new AddonEntry
                     {
                         IsEnabled = true,
                         Addon = new GenericAddon

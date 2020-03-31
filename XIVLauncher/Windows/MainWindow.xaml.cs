@@ -208,8 +208,10 @@ namespace XIVLauncher.Windows
 
             if (App.Settings.GamePath?.Exists != true)
             {
-                var setup = new FirstTimeSetup(App.Settings);
+                var setup = new FirstTimeSetup();
                 setup.ShowDialog();
+                
+                SettingsControl.ReloadSettings();
             }
 
             Task.Run(() => SetupHeadlines());

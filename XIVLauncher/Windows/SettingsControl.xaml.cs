@@ -55,6 +55,11 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             DataContext = this;
+            ReloadSettings();
+        }
+
+        public void ReloadSettings()
+        {
             GamePath = App.Settings.GamePath?.FullName;
 
             if (App.Settings.IsDx11)
@@ -65,7 +70,7 @@ namespace XIVLauncher.Windows
                 Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
             }
 
-            LanguageComboBox.SelectedIndex = (int) App.Settings.Language;
+            LanguageComboBox.SelectedIndex = (int)App.Settings.Language;
             AddonListView.ItemsSource = App.Settings.AddonList;
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
