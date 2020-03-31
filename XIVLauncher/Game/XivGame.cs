@@ -52,11 +52,10 @@ namespace XIVLauncher.Game
         }
 
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
-        private static readonly string UserAgentTemplate = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
-
+        private const string USER_AGENT_TEMPLATE = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
         private readonly string _userAgent = GenerateUserAgent();
 
-        private static readonly int SteamAppId = 39210;
+        private const int STEAM_APP_ID = 39210;
 
         private static readonly string[] FilesToHash =
         {
@@ -162,7 +161,7 @@ namespace XIVLauncher.Game
         }
 
         public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-            bool? encryptArguments, bool closeMutants = false)
+            bool encryptArguments, bool closeMutants = false)
         {
             Log.Information($"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
 
@@ -174,7 +173,7 @@ namespace XIVLauncher.Game
                     {
                         SteamNative.Initialize();
 
-                        if (SteamApi.IsSteamRunning() && SteamApi.Initialize(SteamAppId))
+                        if (SteamApi.IsSteamRunning() && SteamApi.Initialize(STEAM_APP_ID))
                             Log.Information("Steam initialized.");
                     }
                     catch (Exception ex)
@@ -219,7 +218,7 @@ namespace XIVLauncher.Game
                 Process game;
                 try
                 {
-                    var arguments = encryptArguments ?? true
+                    var arguments = encryptArguments
                         ? argumentBuilder.BuildEncrypted()
                         : argumentBuilder.Build();
                     game = NativeLauncher.LaunchGame(workingDir, exePath, arguments, environment);
@@ -540,7 +539,7 @@ namespace XIVLauncher.Game
 
         private static string GenerateUserAgent()
         {
-            return string.Format(UserAgentTemplate, MakeComputerId());
+            return string.Format(USER_AGENT_TEMPLATE, MakeComputerId());
         }
     }
 }

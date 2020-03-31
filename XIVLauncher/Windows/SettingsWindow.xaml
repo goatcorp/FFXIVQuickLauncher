@@ -295,8 +295,7 @@
                             <StackPanel x:Uid="StackPanel_15" Orientation="Horizontal">
                                 <CheckBox x:Uid="EncryptedArgumentsCheckbox" x:Name="EncryptedArgumentsCheckbox"
                                           Content="Enable encrypting arguments to the client"
-                                          HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray"
-                                          IsChecked="True" />
+                                          HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
                             </StackPanel>
                         </StackPanel>
 

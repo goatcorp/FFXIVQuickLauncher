@@ -140,6 +140,9 @@ namespace XIVLauncher.Windows
             if (_setting.AddonList != null)
                 _setting.AddonList = _setting.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
 
+            if (!_setting.EncryptArguments.HasValue)
+                _setting.EncryptArguments = true;
+
             var gateStatus = false;
             try
             {
@@ -374,7 +377,7 @@ namespace XIVLauncher.Windows
 
                 var gameProcess = XivGame.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, _setting.SteamIntegrationEnabled,
-                    SteamCheckBox.IsChecked == true, _setting.AdditionalLaunchArgs, _setting.GamePath, _setting.IsDx11, _setting.Language, _setting.EncryptArguments);
+                    SteamCheckBox.IsChecked == true, _setting.AdditionalLaunchArgs, _setting.GamePath, _setting.IsDx11, _setting.Language, _setting.EncryptArguments.GetValueOrDefault(false));
 
                 if (gameProcess == null)
                 {
