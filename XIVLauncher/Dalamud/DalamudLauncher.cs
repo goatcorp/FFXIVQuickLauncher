@@ -49,22 +49,30 @@ namespace XIVLauncher.Dalamud
         public static bool UseDalamudStaging = false;
 
         private readonly string DALAMUD_MUTEX_NAME = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
-        private Mutex _openMutex;
 
         public void DoWork(object state)
         {
             var cancellationToken = (CancellationToken) state;
 
-            Run(_gamePath, _language, _gameProcess);
-
-            while (!cancellationToken.IsCancellationRequested)
+            var mutex = new Mutex(false, DALAMUD_MUTEX_NAME);
+            try
             {
-                Thread.Sleep(1);
+                var isMine = mutex.WaitOne(0, false);
+
+                Run(_gamePath, _language, _gameProcess, isMine);
+
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    Thread.Sleep(1);
+                }
             }
+            finally
+            {
+                mutex.Close();
+                mutex = null;
 
-            _openMutex?.ReleaseMutex();
-
-            Log.Information("Dalamud mutex closed.");
+                Log.Information("Dalamud mutex closed.");
+            }
         }
 
         private class HooksVersionInfo
@@ -73,7 +81,7 @@ namespace XIVLauncher.Dalamud
             public string SupportedGameVer { get; set; }
         }
 
-        private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
+        private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
         {
             var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "XIVLauncher", "addon", "Hooks");
@@ -97,10 +105,8 @@ namespace XIVLauncher.Dalamud
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
-                if (!Mutex.TryOpenExisting(DALAMUD_MUTEX_NAME, out _))
+                if (doDownloads)
                 {
-                    _openMutex = new Mutex(true, DALAMUD_MUTEX_NAME);
-
                     if (!File.Exists(addonExe))
                     {
                         Serilog.Log.Information("[HOOKS] Not found, redownloading");
