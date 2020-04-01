@@ -20,6 +20,10 @@
 
                 <ProgressBar
                     IsIndeterminate="True" Margin="0,50,0,0" />
+
+                <TextBlock x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,35,0,0" TextAlignment="Center" x:Name="AutoLoginDisclaimer">
+                    Hold the shift key to change settings!
+                </TextBlock>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

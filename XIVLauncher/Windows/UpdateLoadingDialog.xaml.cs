@@ -18,6 +18,8 @@ namespace XIVLauncher.Windows
         public UpdateLoadingDialog()
         {
             InitializeComponent();
+
+            AutoLoginDisclaimer.Visibility = App.Settings.AutologinEnabled ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }
