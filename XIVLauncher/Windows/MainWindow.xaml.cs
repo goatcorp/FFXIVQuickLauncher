@@ -278,19 +278,6 @@ namespace XIVLauncher.Windows
 
             if (!autoLogin)
             {
-                if (AutoLoginCheckBox.IsChecked == true)
-                {
-                    var result = MessageBox.Show(
-                        "This option will log you in automatically with the credentials you entered.\nTo reset it again, launch this application while holding the Shift key.\n\nDo you really want to enable it?",
-                        "Enabling Autologin", MessageBoxButton.YesNo);
-
-                    if (result == MessageBoxResult.No) AutoLoginCheckBox.IsChecked = false;
-                }
-                else
-                {
-                    AutoLoginCheckBox.IsChecked = false;
-                }
-
                 App.Settings.AutologinEnabled = AutoLoginCheckBox.IsChecked == true;
             }
 
