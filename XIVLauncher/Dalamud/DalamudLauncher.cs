@@ -30,7 +30,7 @@ namespace XIVLauncher.Dalamud
         {
             _gameProcess = gameProcess;
             _gamePath = setting.GamePath;
-            _language = setting.Language;
+            _language = setting.Language.GetValueOrDefault(ClientLanguage.English);
         }
 
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";

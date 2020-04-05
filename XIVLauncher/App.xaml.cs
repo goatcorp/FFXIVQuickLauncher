@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows;
+using CheapLoc;
 using Config.Net;
 using Newtonsoft.Json;
 using Sentry;
@@ -38,6 +39,12 @@ namespace XIVLauncher
                 .UseTypeParser(new DirectoryInfoParser())
                 .UseTypeParser(new AddonListParser())
                 .Build();
+
+#if !DEBUG
+            Loc.Setup(File.ReadAllText($"loc/{Settings.Language.GetValueOrDefault(ClientLanguage.English).GetLangCode()}.json"));
+#else
+            Loc.Setup("[]");
+#endif
 
 #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;

@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CheapLoc;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using XIVLauncher.Accounts;
@@ -19,6 +20,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch;
 using XIVLauncher.Settings;
+using XIVLauncher.Windows.ViewModel;
 using Timer = System.Timers.Timer;
 
 namespace XIVLauncher.Windows
@@ -45,11 +47,13 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            this.DataContext = new MainWindowViewModel();
+
             NewsListView.ItemsSource = new List<News>
             {
                 new News
                 {
-                    Title = "Loading...",
+                    Title = Loc.Localize("NewsLoading", "Loading..."),
                     Tag = "DlError"
                 }
             };
@@ -78,12 +82,12 @@ namespace XIVLauncher.Windows
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = Headlines.Get(_game, App.Settings.Language);
+                _headlines = Headlines.Get(_game, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
                 for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
-                    var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language);
+                    var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                     using (var stream = new MemoryStream(imageBytes))
                     {
@@ -124,7 +128,7 @@ namespace XIVLauncher.Windows
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    NewsListView.Items.Add(new News {Title = "Could not download news data.", Tag = "DlError"});
+                    NewsListView.Items.Add(new News {Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError"});
                 }));
             }
         }
@@ -190,8 +194,8 @@ namespace XIVLauncher.Windows
 #else
                     if (!gateStatus)
                     {
-                        var startLauncher = MessageBox.Show(
-                            "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+                        var startLauncher = MessageBox.Show(Loc.Localize("MaintenanceAskOfficial", "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?")
+                            , "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
 
                         if (startLauncher)
                             Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
@@ -208,7 +212,7 @@ namespace XIVLauncher.Windows
                 }
                 catch (Exception ex)
                 {
-                    new ErrorWindow(ex, "Additionally, please check your login information or try again.", "AutoLogin")
+                    new ErrorWindow(ex, Loc.Localize("CheckLoginInfo", "Additionally, please check your login information or try again."), "AutoLogin")
                         .ShowDialog();
                     App.Settings.AutologinEnabled = false;
                     _isLoggingIn = false;
@@ -377,7 +381,7 @@ namespace XIVLauncher.Windows
 
                 var gameProcess = XivGame.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
-                    SteamCheckBox.IsChecked == true, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language, App.Settings.EncryptArguments.GetValueOrDefault(false));
+                    SteamCheckBox.IsChecked == true, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false));
 
                 if (gameProcess == null)
                 {
