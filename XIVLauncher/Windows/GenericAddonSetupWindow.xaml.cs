@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using XIVLauncher.Addon;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -13,6 +14,8 @@ namespace XIVLauncher.Windows
         public GenericAddonSetupWindow(GenericAddon addon = null)
         {
             InitializeComponent();
+
+            DataContext = new GenericAddonSetupWindowViewModel();
 
             if (addon != null)
             {
