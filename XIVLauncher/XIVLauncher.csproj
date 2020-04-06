@@ -291,6 +291,7 @@
       <DependentUpon>AccountSwitcher.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ViewModel\ChangeLogWindowViewModel.cs" />
+    <Compile Include="Windows\ViewModel\ChatChannelSetupViewModel.cs" />
     <Compile Include="Windows\ViewModel\ErrorWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\FirstTimeSetupViewModel.cs" />
     <Compile Include="Windows\ViewModel\MainWindowViewModel.cs" />
