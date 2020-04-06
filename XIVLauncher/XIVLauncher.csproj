@@ -290,6 +290,7 @@
     <Compile Include="Windows\AccountSwitcher.xaml.cs">
       <DependentUpon>AccountSwitcher.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ViewModel\AccountSwitcherViewModel.cs" />
     <Compile Include="Windows\ViewModel\ChangeLogWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\ChatChannelSetupViewModel.cs" />
     <Compile Include="Windows\ViewModel\ErrorWindowViewModel.cs" />

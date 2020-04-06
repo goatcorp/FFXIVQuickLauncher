@@ -16,6 +16,7 @@ using IWshRuntimeLibrary;
 using Serilog;
 using XIVLauncher.Accounts;
 using XIVLauncher.Http;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -31,6 +32,8 @@ namespace XIVLauncher.Windows
         public AccountSwitcher(AccountManager accountManager)
         {
             InitializeComponent();
+
+            DataContext = new AccountSwitcherViewModel();
 
             _accountManager = accountManager;
 
