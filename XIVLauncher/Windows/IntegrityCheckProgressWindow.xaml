@@ -16,7 +16,7 @@
     <Grid x:Uid="Grid_1">
         <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="114" Margin="0,0,10,0">
             <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,10">
-                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Margin="0,0,0,10">Running integrity check...</TextBlock>
+                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Margin="0,0,0,10" Text="{Binding IntegrityCheckRunningLoc}"/>
                 <ProgressBar x:Uid="ProgressBar_1" Style="{StaticResource MaterialDesignCircularProgressBar}"
                              Value="0"
                              IsIndeterminate="True" Height="35" Width="35" Margin="0,0,0,10"/>

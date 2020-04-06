@@ -294,6 +294,7 @@
     <Compile Include="Windows\ViewModel\ChatChannelSetupViewModel.cs" />
     <Compile Include="Windows\ViewModel\ErrorWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\FirstTimeSetupViewModel.cs" />
+    <Compile Include="Windows\ViewModel\IntegrityCheckProgressWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\MainWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\OtpInputDialogViewModel.cs" />
     <Compile Include="Windows\ViewModel\SettingsControlViewModel.cs" />

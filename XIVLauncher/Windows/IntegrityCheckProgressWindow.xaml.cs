@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using XIVLauncher.Game;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -11,6 +12,8 @@ namespace XIVLauncher.Windows
         public IntegrityCheckProgressWindow()
         {
             InitializeComponent();
+
+            this.DataContext = new IntegrityCheckProgressWindowViewModel();
         }
 
         public void UpdateProgress(IntegrityCheck.IntegrityCheckProgress progress)
