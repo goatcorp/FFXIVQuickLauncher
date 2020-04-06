@@ -17,10 +17,7 @@
       <TextBlock
         x:Uid="TextBlock_1" Margin="10,10,10,0"
         TextWrapping="Wrap"
-        Foreground="{DynamicResource MaterialDesignBody}">
-        An error in XIVLauncher occured. Please consult the FAQ. If this issue persists, please report
-        it on GitHub by clicking the button below, describing the issue and copying the text in the box.
-      </TextBlock>
+        Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ErrorExplanationMsgLoc}"/>
 
       <TextBlock x:Uid="ContextTextBlock" x:Name="ContextTextBlock" Margin="10,10,10,0" Foreground="{DynamicResource MaterialDesignBody}" />
 
