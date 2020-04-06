@@ -5,6 +5,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Documents;
 using Newtonsoft.Json;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -17,7 +18,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            IntroTextBlock.Text += " " + Util.GetAssemblyVersion() + ".";
+            this.DataContext = new ChangeLogWindowViewModel();
 
             try
             {
