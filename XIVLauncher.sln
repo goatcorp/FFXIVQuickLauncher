@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nhaama.Memory", "lib\Nhaama
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nhaama.FFXIV", "lib\Nhaama\Nhaama.FFXIV\Nhaama.FFXIV.csproj", "{AF6E37BD-4598-4194-945B-C8F6EE9309FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocBamlToLocalizable", "LocBamlToLocalizable\LocBamlToLocalizable.csproj", "{EB8161D8-688B-4132-A15B-2E0D7600CD1B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.PatchInstaller", "XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj", "{395CDFAB-48F8-4EC5-833D-05F5795A157D}"
 EndProject
 Global
@@ -59,18 +57,6 @@ Global
 		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Release|x64.Build.0 = Release|x64
 		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Release|x86.ActiveCfg = Release|Any CPU
 		{AF6E37BD-4598-4194-945B-C8F6EE9309FE}.Release|x86.Build.0 = Release|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Debug|x64.Build.0 = Debug|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Debug|x86.Build.0 = Debug|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|x64.ActiveCfg = Release|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|x64.Build.0 = Release|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|x86.ActiveCfg = Release|Any CPU
-		{EB8161D8-688B-4132-A15B-2E0D7600CD1B}.Release|x86.Build.0 = Release|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|x64.ActiveCfg = Debug|Any CPU
