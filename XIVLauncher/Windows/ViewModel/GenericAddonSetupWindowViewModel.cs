@@ -16,7 +16,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void SetupLoc()
         {
-            GenericAddonSetupTitleLoc = Loc.Localize("GenericAddonSetupTitle", "Configure generic addon");
+            GenericAddonSetupTitleLoc = Loc.Localize("GenericAddonSetupTitle", "Configure Auto-Start");
             GenericAddonSetupDescriptionLoc = Loc.Localize("GenericAddonSetupDescription",
                 "Please select the application that should be started, any additional parameters and\r\nif it should be ran as admin.");
             CommandLineParametersLoc = Loc.Localize("CommandLineParameters", "Command line parameters");

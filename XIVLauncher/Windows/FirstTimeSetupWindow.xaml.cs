@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using CheapLoc;
 using Microsoft.Win32;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
@@ -59,7 +60,7 @@ namespace XIVLauncher.Windows
             if (SetupTabControl.SelectedIndex == 0)
                 if (!Util.IsValidFfxivPath(GamePathEntry.Text))
                 {
-                    MessageBox.Show("The path you selected is not a valid FFXIV installation", "Error",
+                    MessageBox.Show(Loc.Localize("GamePathInvalidError", "The path you selected is not a valid FFXIV installation"), "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }

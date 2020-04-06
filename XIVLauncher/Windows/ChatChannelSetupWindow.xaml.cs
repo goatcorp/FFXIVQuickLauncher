@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using CheapLoc;
 using Dalamud.Discord;
 using Dalamud.Game.Chat;
 using XIVLauncher;
@@ -130,7 +131,7 @@ namespace XIVLauncher.Windows
             }
 
             inputProblem:
-            MessageBox.Show("Please enter valid IDs.", "XIVLauncher problem", MessageBoxButton.OK,
+            MessageBox.Show(Loc.Localize("EnterValidIdsError", "Please enter valid IDs."), "XIVLauncher", MessageBoxButton.OK,
                 MessageBoxImage.Error);
             this.Close();
         }

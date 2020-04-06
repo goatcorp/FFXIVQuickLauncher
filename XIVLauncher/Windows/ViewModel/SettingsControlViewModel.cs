@@ -70,7 +70,7 @@ namespace XIVLauncher.Windows.ViewModel
             RemoveLoc = Loc.Localize("Remove", "Remove");
             AddNewLoc = Loc.Localize("AddNew", "Add new");
             AutoLaunchAddNewToolTipLoc =
-                Loc.Localize("AutoLaunchAddNewToolTip", "Add a new generic addon that allows you to launch any program.");
+                Loc.Localize("AutoLaunchAddNewToolTip", "Add a new Auto-Start entry that allows you to launch any program.");
 
             SettingsInGameLoc = Loc.Localize("SettingsInGame", "In-Game");
             InGameAddonDescriptionLoc = Loc.Localize("InGameAddonDescription",

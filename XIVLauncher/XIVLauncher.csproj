@@ -65,8 +65,8 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CheapLoc, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CheapLoc.1.0.2\lib\net472\CheapLoc.dll</HintPath>
+    <Reference Include="CheapLoc, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CheapLoc.1.0.3\lib\net472\CheapLoc.dll</HintPath>
     </Reference>
     <Reference Include="Config.Net, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Config.Net.4.14.23\lib\netstandard2.0\Config.Net.dll</HintPath>
@@ -254,7 +254,6 @@
     <Compile Include="Addon\INotifyAddonAfterClose.cs" />
     <Compile Include="Addon\IPersistentAddon.cs" />
     <Compile Include="Addon\IRunnableAddon.cs" />
-    <Compile Include="Dalamud\CustomComboPreset.cs" />
     <Compile Include="Dalamud\DalamudConfiguration.cs" />
     <Compile Include="Dalamud\DalamudStartInfo.cs" />
     <Compile Include="Game\AdminCheck.cs" />
@@ -421,6 +420,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Resources\Loc\xl_de-DE.json" />
     <Resource Include="Resources\logo.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

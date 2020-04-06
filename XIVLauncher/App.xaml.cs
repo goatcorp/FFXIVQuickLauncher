@@ -43,7 +43,7 @@ namespace XIVLauncher
 #if !DEBUG
             Loc.Setup(File.ReadAllText($"loc/{Settings.Language.GetValueOrDefault(ClientLanguage.English).GetLangCode()}.json"));
 #else
-            Loc.Setup("[]");
+            Loc.Setup(Util.ReadResource("Loc.xl_de-DE.json"));
 #endif
 
 #if !DEBUG
