@@ -6,27 +6,25 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Configure chat channel" Height="268.361" Width="535.302" WindowStartupLocation="CenterScreen"
+        Title="{Binding ProfilePictureInputTitleLoc}" Height="268.361" Width="535.302" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
     <StackPanel x:Uid="StackPanel_1">
-        <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
-            Please enter a character's name and world.
-        </TextBlock>
+        <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Text="{Binding ProfilePictureInputDescriptionLoc}"/>
 
         <StackPanel x:Uid="StackPanel_4" Orientation="Vertical" Width="180" HorizontalAlignment="Left" Margin="10,20,0,0">
-            <Label x:Uid="Label_2" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Character Name"/>
+            <Label x:Uid="Label_2" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="{Binding CharacterNameLoc}"/>
             <TextBox x:Uid="CharacterNameTextBox" x:Name="CharacterNameTextBox" Width="203"/>
         </StackPanel>
 
         <StackPanel x:Uid="StackPanel_5" Orientation="Vertical" Width="180" HorizontalAlignment="Left" Margin="10,10,0,0">
-            <Label x:Uid="Label_3" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="World Name"/>
+            <Label x:Uid="Label_3" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="{Binding WorldNameLoc}"/>
             <TextBox x:Uid="WorldNameTextBox" x:Name="WorldNameTextBox" Width="203"/>
         </StackPanel>
 
-        <Button x:Uid="Button_1" Content="OK" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="NextButton_Click" Margin="220,50,0,0"/>
+        <Button x:Uid="Button_1" Content="{Binding OkLoc}" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="NextButton_Click" Margin="220,50,0,0"/>
     </StackPanel>
 </Window>
