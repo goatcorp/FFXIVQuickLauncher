@@ -41,9 +41,10 @@ namespace XIVLauncher
                 .Build();
 
 #if !DEBUG
-            Loc.Setup(File.ReadAllText($"loc/{Settings.Language.GetValueOrDefault(ClientLanguage.English).GetLangCode()}.json"));
+            Loc.Setup(Util.ReadResource($"Loc.xl_{Settings.Language.GetValueOrDefault(ClientLanguage.English).GetLangCode()}.json"));
 #else
-            Loc.Setup(Util.ReadResource("Loc.xl_de-DE.json"));
+            // Force all fallbacks
+            Loc.Setup("{}");
 #endif
 
 #if !DEBUG
