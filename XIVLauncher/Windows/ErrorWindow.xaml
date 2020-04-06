@@ -46,24 +46,24 @@
                     x:Name="DiscordButton" Margin="0,0,5,0" Click="DiscordButton_OnClick">
         <StackPanel x:Uid="StackPanel_4" Orientation="Horizontal">
           <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Discord" />
-          <TextBlock x:Uid="TextBlock_2" Margin="8 0 0 0" VerticalAlignment="Center">Join Discord</TextBlock>
+                    <TextBlock x:Uid="TextBlock_2" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}"/>
         </StackPanel>
       </Button>
       <Button x:Uid="FaqButton" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                     x:Name="FaqButton" Margin="0,0,5,0" Click="FaqButton_OnClick">
         <StackPanel x:Uid="StackPanel_5" Orientation="Horizontal">
           <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_3" Kind="Information" />
-          <TextBlock x:Uid="TextBlock_3" Margin="8 0 0 0" VerticalAlignment="Center">Open FAQ</TextBlock>
+                    <TextBlock x:Uid="TextBlock_3" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OpenFaqLoc}"/>
         </StackPanel>
       </Button>
       <Button x:Uid="GitHubButton" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                     x:Name="GitHubButton" Margin="0,0,5,0" Click="GitHubButton_OnClick">
         <StackPanel x:Uid="StackPanel_6" Orientation="Horizontal">
           <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_4" Kind="GithubCircle" />
-          <TextBlock x:Uid="TextBlock_4" Margin="8 0 0 0" VerticalAlignment="Center">Report error</TextBlock>
+                    <TextBlock x:Uid="TextBlock_4" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding ReportErrorLoc}"/>
         </StackPanel>
       </Button>
-      <Button x:Uid="Button_1" Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click">OK</Button>
+            <Button x:Uid="Button_1" Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click" Content="{Binding OkLoc}"/>
     </StackPanel>
   </Grid>
 </Window>

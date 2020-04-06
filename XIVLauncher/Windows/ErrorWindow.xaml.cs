@@ -4,6 +4,7 @@ using System.Media;
 using System.Windows;
 using System.Windows.Documents;
 using XIVLauncher.Settings;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -15,6 +16,8 @@ namespace XIVLauncher.Windows
         public ErrorWindow(Exception exc, string message, string context)
         {
             InitializeComponent();
+
+            this.DataContext = new ErrorWindowViewModel();
 
             ExceptionTextBox.AppendText(exc.ToString());
             ExceptionTextBox.AppendText("\nVersion: " + Util.GetAssemblyVersion());
