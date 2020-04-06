@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Serilog;
 using XIVLauncher.Http;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -22,6 +23,8 @@ namespace XIVLauncher.Windows
         public OtpInputDialog()
         {
             InitializeComponent();
+
+            this.DataContext = new OtpInputDialogViewModel();
 
             OtpTextBox.Focus();
 
