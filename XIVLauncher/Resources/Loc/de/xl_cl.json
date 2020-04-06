@@ -1,4 +1,32 @@
 {
+  "ReleaseInfoUnavailable": {
+    "message": "Info nicht verfügbar.",
+    "description": "ChangelogWindow..ctor"
+  },
+  "EnterValidIdsError": {
+    "message": "Bitte gib korrekte IDs ein.",
+    "description": "ChatChannelSetup.NextButton_Click"
+  },
+  "GamePathInvalidError": {
+    "message": "Der Pfad, den du ausgewählt hast, beinhaltet keine FFXIV-Installation.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "LaunchAsSteam": {
+    "message": "Als Steam-Benutzer starten?",
+    "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "CharacterSyncWarning": {
+    "message": "ACHTUNG!!!\n\n\"Charakterdaten synchronisieren\" synchronisiert Hotbars, HUD und Charaktereinstellungen des Charakters, mit dem du dich zuletzt eingeloggt hast, auf alle deine anderen Charaktere.\nWenn du dieses Feature einschaltest, solltest du dich zuerst mit deinem Hauptcharakter anmelden und das Spiel direkt wieder schließen.\n\nFalls du einen anderen Charakter benutzt, werden die Daten deines Hauptcharakters überschrieben.",
+    "description": "SettingsControl.CharacterSyncCheckBox_Checked"
+  },
+  "DalamudIncompatible": {
+    "message": "Das In-Game-Plugin wurde noch nicht für die momentane Spielversion angepasst.\nDas ist normal nach einem Patch. Bitte habe etwas Geduld!",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "DalamudCompatCheckFailed": {
+    "message": "Deine Spielversion konnte nicht überprüft werden.\nDies könnte bedeuten, dass dein .NET Framework zu alt ist.\n\nBitte prüfe unseren Discord für mehr Informationen.",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
   "NewsLoading": {
     "message": "Wird geladen...",
     "description": "MainWindow..ctor"
@@ -64,7 +92,7 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ChooseGamePath": {
-    "message": "Bitte wähle, in welchem Ordner dein Spiel installiert ist. Er sollte die Unterordner game und boot beinhalten.",
+    "message": "Bitte wähle, in welchem Ordner dein Spiel installiert ist. Er sollte die Unterordner \"game\" und \"boot\" beinhalten.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
@@ -72,7 +100,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
-    "message": "Steam-Integration aktivieren.",
+    "message": "Steam-Integration aktivieren",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectX": {
@@ -152,11 +180,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLogin": {
-    "message": "Log in",
+    "message": "Login",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
-    "message": "Melde dich mit den angegebenen Daten an.",
+    "message": "Melde dich mit den angegebenen Daten an",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
@@ -188,7 +216,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "Oder nutze die Handy-Shortcuts.\nKlicke hier, um mehr zu erfahren!",
+    "message": "Oder nutze die Smartphone-Shortcuts.\nKlicke hier, um mehr zu erfahren!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "ProfilePictureInputTitle": {
@@ -244,7 +272,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchAddNewToolTip": {
-    "message": "Neues Rrogramm hinzufügen, dass automatisch gestartet werden soll.",
+    "message": "Neues Programm hinzufügen, dass automatisch gestartet werden soll.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
@@ -252,11 +280,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "Diese Einstellungen beinflussen die In-Game funktionen von XIVLauncher. Sie werden\naktiviert, wenn du die DirectX 11-Version des Spiels nutzt und du\nsie auf dieser Seite aktiviert hast.",
+    "message": "Diese Einstellungen beeinflussen die In-Game-Funktionen von XIVLauncher. Sie werden\naktiviert, wenn du die DirectX 11-Version des Spiels nutzt und du\nsie auf dieser Seite aktiviert hast.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
-    "message": "Nutze das /xlhelp-Kommando im Spiel um weitere Features und Kommandos zu sehen.",
+    "message": "Nutze das \"/xlhelp\"-Textkommando im Spiel um weitere Features und Kommandos zu sehen.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
@@ -312,7 +340,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsInstallHint": {
-    "message": "Du kannst das \"/xlplugins\"-Kommando im Spiel nutzen, um weitere\nPlugins zu installieren.",
+    "message": "Du kannst das \"/xlplugins\"-Textkommando im Spiel nutzen, um weitere Plugins zu installieren.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -344,7 +372,27 @@
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AutoLoginHint": {
-    "message": "Halte die Shift-Taste, um Einstellungen zu ändern!",
+    "message": "Halte die Shift-Taste gedrückt, um Einstellungen zu ändern!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "AdminCheck": {
+    "message": "XIVLauncher und/oder FFXIV sind konfiguriert, als Administrator zu starten.\nDas kann einige Probleme erzeugen, wie Plugins oder Hotkeys die nicht korrekt funktionieren.\n\nMöchtest du dieses Problem automatisch beheben?",
+    "description": "AdminCheck.RunCheck"
+  },
+  "AdminCheckNag": {
+    "message": "XIVLauncher wurde als Administrator gestartet.\nDas kann einige Probleme erzeugen, wie Plugins oder Hotkeys die nicht korrekt funktionieren.\n\nBitte starte XIVLauncher nicht als Administrator.",
+    "description": "AdminCheck.RunCheck"
+  },
+  "IntegrityCheckImpossible": {
+    "message": "Für diese Spielversion kann noch kein Integritätscheck ausgeführt werden.",
+    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckFailed": {
+    "message": "Einige Spieldateien sind nicht original.\n\nMöchtest du das Spiel auf den letzten Patch zurücksetzen? Dies wird es dir erlauben, es noch einmal zu patchen, was deine Probleme beheben könnte.",
+    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckValid": {
+    "message": "Dein Spiel scheint intakt zu sein.",
+    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }

@@ -420,7 +420,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Resources\Loc\xl_de-DE.json" />
+    <EmbeddedResource Include="Resources\Loc\de\xl_cl.json" />
+    <EmbeddedResource Include="Resources\Loc\fr\xl_cl.json" />
+    <EmbeddedResource Include="Resources\Loc\ja\xl_cl.json" />
     <Resource Include="Resources\logo.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
