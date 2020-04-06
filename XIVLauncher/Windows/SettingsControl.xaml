@@ -1,201 +1,233 @@
 ﻿<UserControl x:Uid="Window_1" x:Class="XIVLauncher.Windows.SettingsControl"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:addon="clr-namespace:XIVLauncher.Addon"
-        xmlns:dalamudDiscord="clr-namespace:Dalamud.Discord"
-        xmlns:xaml="clr-namespace:XIVLauncher.Xaml"
-        xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
-        xmlns:properties="clr-namespace:XIVLauncher.Properties"
-        xmlns:windows="clr-namespace:XIVLauncher.Windows"
-        mc:Ignorable="d"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.FontWeight="Medium"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-        d:DataContext="{d:DesignInstance windows:SettingsControl}">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:addon="clr-namespace:XIVLauncher.Addon"
+             xmlns:dalamudDiscord="clr-namespace:Dalamud.Discord"
+             xmlns:xaml="clr-namespace:XIVLauncher.Xaml"
+             xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
+             xmlns:properties="clr-namespace:XIVLauncher.Properties"
+             xmlns:windows="clr-namespace:XIVLauncher.Windows"
+             xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
+             mc:Ignorable="d"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}"
+             TextElement.FontWeight="Medium"
+             FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+             d:DataContext="{d:DesignInstance viewModel:SettingsControlViewModel}">
     <UserControl.Resources>
-        <xaml:StringToColorConverter x:Uid="xaml:StringToColorConverter_1" x:Key="StringToColorConverter"/>
-        <xaml:ChatTypeToFancyNameConverter x:Uid="xaml:ChatTypeToFancyNameConverter_1" x:Key="ChatTypeToFancyNameConverter"/>
+        <xaml:StringToColorConverter x:Uid="xaml:StringToColorConverter_1" x:Key="StringToColorConverter" />
+        <xaml:ChatTypeToFancyNameConverter x:Uid="xaml:ChatTypeToFancyNameConverter_1"
+                                           x:Key="ChatTypeToFancyNameConverter" />
     </UserControl.Resources>
     <Grid x:Uid="Grid_1">
-        <dragablz:TabablzControl x:Uid="SetupTabControl" IsEnabled="True" FixedHeaderCount="6" x:Name="SetupTabControl" Style="{StaticResource MaterialDesignTabablzControlStyle}">
-            <TabItem x:Uid="TabItem_1" Header="Game">
+        <dragablz:TabablzControl x:Uid="SetupTabControl" IsEnabled="True" FixedHeaderCount="6" x:Name="SetupTabControl"
+                                 Style="{StaticResource MaterialDesignTabablzControlStyle}">
+            <TabItem x:Uid="TabItem_1" Header="{Binding SettingsGameLoc}">
                 <StackPanel x:Uid="StackPanel_1" Margin="10,10,0,0">
-                    <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                        Please select the folder your game is installed in.
-                        <LineBreak x:Uid="LineBreak_1"/>
-                        It should contain the folders "game" and "boot".
-                    </TextBlock>
-                    <components:FolderEntry x:Uid="GamePathEntry" x:Name="GamePathEntry" Text="{Binding GamePath, UpdateSourceTrigger=PropertyChanged}" Description="Select a folder" Width="500" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"/>
-                    <CheckBox x:Uid="SteamIntegrationCheckBox" Foreground="{DynamicResource MaterialDesignBody}" x:Name="SteamIntegrationCheckBox" Margin="0,15,0,0">Enable Steam integration</CheckBox>
-                    <CheckBox x:Uid="CharacterSyncCheckBox" Foreground="{DynamicResource MaterialDesignBody}" x:Name="CharacterSyncCheckBox" Margin="200,-19,0,0">Synchronize Character Data</CheckBox>
-                    <Label x:Uid="Label_1" Margin="0,10,0,0">Additional launch arguments</Label>
-                    <TextBox x:Uid="LaunchArgsTextBox" Width="500" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" x:Name="LaunchArgsTextBox"/>
-                    <Button x:Uid="Button_1" HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick" IsEnabled="{Binding IsRunIntegrityCheckPossible}" ToolTip="Run integrity check on game files." Margin="10,20,0,0">Run integrity check</Button>
+                    <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding GamePathLoc}" />
+                    <components:FolderEntry x:Uid="GamePathEntry"
+                                            Text="{Binding GamePath, UpdateSourceTrigger=PropertyChanged}"
+                                            Description="Select a folder" Width="500" VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
+                    <CheckBox x:Uid="SteamIntegrationCheckBox" Foreground="{DynamicResource MaterialDesignBody}"
+                              x:Name="SteamIntegrationCheckBox" Margin="0,15,0,0" Content="{Binding SteamCheckBoxLoc}" />
+                    <CheckBox x:Uid="CharacterSyncCheckBox" Foreground="{DynamicResource MaterialDesignBody}"
+                              x:Name="CharacterSyncCheckBox" Margin="200,-19,0,0" Content="{Binding CharacterSyncLoc}" />
+                    <Label x:Uid="Label_1" Margin="0,10,0,0" Content="{Binding AdditionalArgumentsLoc}" />
+                    <TextBox x:Uid="LaunchArgsTextBox" Width="500" VerticalAlignment="Center"
+                             HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
+                             Margin="0,5,0,0" x:Name="LaunchArgsTextBox" />
+                    <Button x:Uid="Button_1" HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick"
+                            IsEnabled="{Binding IsRunIntegrityCheckPossible}"
+                            ToolTip="{Binding RunIntegrityCheckTooltipLoc}" Margin="10,20,0,0"
+                            Content="{Binding RunIntegrityCheckLoc}" />
                 </StackPanel>
             </TabItem>
-            <TabItem x:Uid="TabItem_2" Header="Game Settings">
+            <TabItem x:Uid="TabItem_2" Header="{Binding SettingsGameSettingsLoc}">
                 <StackPanel x:Uid="StackPanel_2" Margin="10,10,0,0">
-                    <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                        Please select which DirectX version you want to use.
-                    </TextBlock>
+                    <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding DirectXLoc}" />
 
-                    <RadioButton x:Uid="Dx11RadioButton" Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True" x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">DirectX 11</RadioButton>
-                    <RadioButton x:Uid="Dx9RadioButton" GroupName="dx" x:Name="Dx9RadioButton" Foreground="{DynamicResource MaterialDesignBody}" Checked="Dx9RadioButton_OnChecked" Unchecked="Dx9RadioButton_OnUnchecked">DirectX 9</RadioButton>
-                    
-                    <TextBlock x:Uid="Dx9DisclaimerTextBlock" x:Name="Dx9DisclaimerTextBlock" Visibility="Hidden" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed" Margin="0,0,0,0">
-                        DirectX 9 mode is not supported anymore. It will still start, but you will not get support from
-                        <LineBreak x:Uid="LineBreak_7"/>
-                        SE for any technical issues and any additional XIVLauncher features (such as Rich Presence and the
-                        <LineBreak x:Uid="LineBreak_8"/>
-                        In-Game addons) will not work.
-                    </TextBlock>
-                    <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            Please select which language you want to load the game with.
-                    </TextBlock>
-                    <ComboBox x:Uid="LanguageComboBox" SelectedIndex="1" Margin="0, 3, 0, 0" x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
-                        <ComboBoxItem x:Uid="ComboBoxItem_1">Japanese</ComboBoxItem>
+                    <RadioButton x:Uid="Dx11RadioButton" Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True"
+                                 x:Name="Dx11RadioButton" Foreground="{DynamicResource MaterialDesignBody}">
+                        DirectX 11
+                    </RadioButton>
+                    <RadioButton x:Uid="Dx9RadioButton" GroupName="dx" x:Name="Dx9RadioButton"
+                                 Foreground="{DynamicResource MaterialDesignBody}" Checked="Dx9RadioButton_OnChecked"
+                                 Unchecked="Dx9RadioButton_OnUnchecked">
+                        DirectX 9
+                    </RadioButton>
+
+                    <TextBlock x:Uid="Dx9DisclaimerTextBlock" x:Name="Dx9DisclaimerTextBlock" Visibility="Hidden"
+                               HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed"
+                               Margin="0,0,0,0" Text="{Binding DirectX9NoticeLoc}" />
+                    <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseLanguageLoc}" />
+                    <ComboBox x:Uid="LanguageComboBox" SelectedIndex="1" Margin="0, 3, 0, 0" x:Name="LanguageComboBox"
+                              Foreground="{DynamicResource MaterialDesignBody}">
+                        <ComboBoxItem x:Uid="ComboBoxItem_1">日本語</ComboBoxItem>
                         <ComboBoxItem x:Uid="ComboBoxItem_2">English</ComboBoxItem>
-                        <ComboBoxItem x:Uid="ComboBoxItem_3">German</ComboBoxItem>
-                        <ComboBoxItem x:Uid="ComboBoxItem_4">French</ComboBoxItem>
+                        <ComboBoxItem x:Uid="ComboBoxItem_3">Deutsch</ComboBoxItem>
+                        <ComboBoxItem x:Uid="ComboBoxItem_4">Français</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Uid="TabItem_3" Header="Auto-Launch">
+            <TabItem x:Uid="TabItem_3" Header="{Binding SettingsAutoLaunchLoc}">
                 <Grid x:Uid="Grid_3">
                     <Grid x:Uid="Grid_3" Margin="10,10,10,0">
-                        <TextBlock x:Uid="TextBlock_3" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            These are applications that are loaded as soon as the game has started.
-                        </TextBlock>
+                        <TextBlock x:Uid="TextBlock_3" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                   Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding AutoLaunchHintLoc}" />
 
                         <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="220">
-                            <ListView x:Uid="AddonListView" x:Name="AddonListView" Margin="0,0,0,0" Height="220" MouseUp="AddonListView_OnMouseUp">
+                            <ListView x:Uid="AddonListView" x:Name="AddonListView" Margin="0,0,0,0" Height="220"
+                                      MouseUp="AddonListView_OnMouseUp">
                                 <ListView.ContextMenu>
                                     <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
-                                        <MenuItem x:Uid="MenuItem_1" Header="Remove" Click="RemoveAddonEntry_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
+                                        <MenuItem x:Uid="MenuItem_1" Header="{Binding RemoveLoc}"
+                                                  Click="RemoveAddonEntry_OnClick"
+                                                  Foreground="{DynamicResource MaterialDesignBody}" />
                                     </ContextMenu>
                                 </ListView.ContextMenu>
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate x:Uid="DataTemplate_1" DataType="{x:Type addon:AddonEntry}">
                                         <StackPanel x:Uid="StackPanel_4" Orientation="Horizontal">
-                                            <CheckBox x:Uid="CheckBox_1" IsChecked="{Binding IsEnabled}" Checked="ToggleButton_OnChecked" Foreground="{DynamicResource MaterialDesignBody}"/>
-                                            <TextBlock x:Uid="TextBlock_5" Text="{Binding Addon.Name}" Margin="10,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
+                                            <CheckBox x:Uid="CheckBox_1" IsChecked="{Binding IsEnabled}"
+                                                      Checked="ToggleButton_OnChecked"
+                                                      Foreground="{DynamicResource MaterialDesignBody}" />
+                                            <TextBlock x:Uid="TextBlock_5" Text="{Binding Addon.Name}"
+                                                       Margin="10,0,0,0"
+                                                       Foreground="{DynamicResource MaterialDesignBody}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListView>
                         </materialDesign:Card>
 
-                        <Button x:Uid="Button_2" Margin="0,0,0,7" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddAddon_OnClick" ToolTip="Add a new generic addon that allows you to launch any program.">Add new</Button>
+                        <Button x:Uid="Button_2" Margin="0,0,0,7" HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom" Click="AddAddon_OnClick"
+                                ToolTip="{Binding AutoLaunchAddNewToolTipLoc}" Content="{Binding AddNewLoc}" />
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem x:Uid="TabItem_4" Header="In-Game">
+
+            <TabItem x:Uid="TabItem_4" Header="{Binding SettingsInGameLoc}">
                 <Grid x:Uid="Grid_4">
                     <ScrollViewer x:Uid="ScrollViewer_1" VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Uid="StackPanel_5" Margin="10,10,10,0">
                             <TextBlock x:Uid="TextBlock_6" HorizontalAlignment="Left" VerticalAlignment="Top"
-                                       Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10">
-                                These options affect the XIVLauncher in-game features. These features will be automatically
-                                <LineBreak x:Uid="LineBreak_2"></LineBreak>
-                                enabled if you are running the DirectX 11 version of the game, the version of the game is
-                                <LineBreak x:Uid="LineBreak_3"></LineBreak>
-                                compatible, and the checkbox below is ticked.
-                            </TextBlock>
-                            <CheckBox x:Uid="EnableHooksCheckBox" x:Name="EnableHooksCheckBox" Content="Enable in-game features"
+                                       Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10"
+                                       Text="{Binding InGameAddonDescriptionLoc}" />
+                            <CheckBox x:Uid="EnableHooksCheckBox" x:Name="EnableHooksCheckBox"
+                                      Content="{Binding InGameAddonEnabledCheckBoxLoc}"
                                       HorizontalAlignment="Left" Margin="0,0,0,0"
-                                      Foreground="{DynamicResource MaterialDesignBody}"/>
+                                      Foreground="{DynamicResource MaterialDesignBody}" />
 
-                            <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,10,0,5">
-                                When enabled, type "/xlhelp" in-game to see other available commands like fate notifications.
-                            </Label>
+                            <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,10,0,5"
+                                   Content="{Binding InGameAddonCommandHintLoc}" />
 
-                            <StackPanel x:Uid="StackPanel_6" IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
-                                <Separator x:Uid="Separator_1"></Separator>
-                                
-                                <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic" HorizontalAlignment="Center" FontSize="13">
-                                    Chat settings
-                                </Label>
+                            <StackPanel x:Uid="StackPanel_6"
+                                        IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
+                                <Separator x:Uid="Separator_1" />
+
+                                <Label x:Uid="Label_2" Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic"
+                                       HorizontalAlignment="Center" FontSize="13"
+                                       Content="{Binding InGameAddonChatSettingsLoc}" />
 
                                 <StackPanel x:Uid="StackPanel_7" Orientation="Horizontal">
-                                    <Label x:Uid="Label_3" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0">
-                                        Discord Bot Token
-                                    </Label>
+                                    <Label x:Uid="Label_3" Foreground="{DynamicResource MaterialDesignBody}"
+                                           Margin="0,10,0,0" Content="{Binding InGameAddonDiscordBotTokenLoc}" />
                                     <Label x:Uid="Label_4" Foreground="DarkGray" Margin="0,10,0,0" Cursor="Hand"
-                                           MouseUp="OpenWebhookGuideLabel_MouseUp">
-                                        How do I set this up?
-                                    </Label>
+                                           MouseUp="OpenWebhookGuideLabel_MouseUp"
+                                           Content="{Binding InGameAddonHowLoc}" />
                                 </StackPanel>
 
-                                <TextBox x:Uid="DiscordBotTokenTextBox" x:Name="DiscordBotTokenTextBox" Margin="10,0,0,0" Width="400"
+                                <TextBox x:Uid="DiscordBotTokenTextBox" x:Name="DiscordBotTokenTextBox"
+                                         Margin="10,0,0,0" Width="400"
                                          VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         Foreground="{DynamicResource MaterialDesignBody}" materialDesign:HintAssist.Hint="Discord Bot Token">
-                                </TextBox>
+                                         Foreground="{DynamicResource MaterialDesignBody}"
+                                         materialDesign:HintAssist.Hint="{Binding InGameAddonDiscordBotTokenLoc}" />
 
-                                <Label x:Uid="Label_5" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0">
-                                    Chat setup
-                                </Label>
-                                <materialDesign:Card x:Uid="materialDesign:Card_2" Margin="0,0,0,10" Height="110">
-                                    <ListView x:Uid="ChannelListView" x:Name="ChannelListView" MouseUp="ChannelListView_OnMouseUp" HorizontalAlignment="Stretch">
+                                <materialDesign:Card x:Uid="materialDesign:Card_2" Margin="0,10" Height="110">
+                                    <ListView x:Uid="ChannelListView" x:Name="ChannelListView"
+                                              MouseUp="ChannelListView_OnMouseUp" HorizontalAlignment="Stretch">
                                         <ListView.ContextMenu>
                                             <ContextMenu x:Uid="ContextMenu_2" StaysOpen="true">
-                                                <MenuItem x:Uid="MenuItem_2" Header="Remove" Click="RemoveChatConfigEntry_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                                                <MenuItem x:Uid="MenuItem_2" Header="Remove"
+                                                          Click="RemoveChatConfigEntry_OnClick"
+                                                          Foreground="{DynamicResource MaterialDesignBody}" />
                                             </ContextMenu>
                                         </ListView.ContextMenu>
 
                                         <ListBox.ItemTemplate>
-                                            <DataTemplate x:Uid="DataTemplate_2" DataType="{x:Type dalamudDiscord:ChatTypeConfiguration}">
+                                            <DataTemplate x:Uid="DataTemplate_2"
+                                                          DataType="{x:Type dalamudDiscord:ChatTypeConfiguration}">
                                                 <StackPanel x:Uid="StackPanel_8" Orientation="Horizontal">
-                                                    <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_1" Kind="Chat" Foreground="{Binding Color, Converter={StaticResource StringToColorConverter}}" />
-                                                    <TextBlock x:Uid="TextBlock_7" Text="{Binding ChatType, Converter={StaticResource ChatTypeToFancyNameConverter}}" Margin="10,0,0,0" Foreground="{DynamicResource MaterialDesignBody}"></TextBlock>
+                                                    <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_1"
+                                                                             Kind="Chat"
+                                                                             Foreground="{Binding Color, Converter={StaticResource StringToColorConverter}}" />
+                                                    <TextBlock x:Uid="TextBlock_7"
+                                                               Text="{Binding ChatType, Converter={StaticResource ChatTypeToFancyNameConverter}}"
+                                                               Margin="10,0,0,0"
+                                                               Foreground="{DynamicResource MaterialDesignBody}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ListBox.ItemTemplate>
                                     </ListView>
                                 </materialDesign:Card>
 
-                                <Button x:Uid="Button_3" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick" ToolTip="Add a new discord chat channel.">Add chat channel</Button>
-                                <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick" ToolTip="Set the Duty Finder notification channel.">Set Duty Finder notification channel</Button>
-                                <Button x:Uid="Button_5" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetCfPreferredRoleChannel_OnClick" ToolTip="Set the Roulette Bonus notification channel.">Set Roulette Bonus notification channel</Button>
-                                <Button x:Uid="Button_6" Margin="0,0,0,20" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick" ToolTip="Set the retainer sale channel.">Set retainer sale channel</Button>
+                                <Button x:Uid="Button_3" Margin="0,7,0,10" HorizontalAlignment="Center"
+                                        VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick"
+                                        ToolTip="Add a new discord chat channel."
+                                        Content="{Binding InGameAddonAddChatChannelLoc}" />
+                                <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center"
+                                        VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick"
+                                        ToolTip="Set the Duty Finder notification channel."
+                                        Content="{Binding InGameAddonSetCfChannelLoc}" />
+                                <Button x:Uid="Button_5" Margin="0,0,0,10" HorizontalAlignment="Center"
+                                        VerticalAlignment="Bottom" Click="SetCfPreferredRoleChannel_OnClick"
+                                        ToolTip="Set the Roulette Bonus notification channel."
+                                        Content="{Binding InGameAddonSetRouletteChannelLoc}" />
+                                <Button x:Uid="Button_6" Margin="0,0,0,20" HorizontalAlignment="Center"
+                                        VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick"
+                                        ToolTip="Set the retainer sale channel."
+                                        Content="{Binding InGameAddonSetRetainerChannelLoc}" />
 
-                                <CheckBox x:Uid="DisableEmbedsCheckBox" x:Name="DisableEmbedsCheckBox" Content="Disable rich embeds (send smaller messages to Discord)"
+                                <CheckBox x:Uid="DisableEmbedsCheckBox" x:Name="DisableEmbedsCheckBox"
+                                          Content="Disable rich embeds (send smaller messages to Discord)"
                                           HorizontalAlignment="Left" Margin="0,0,0,20"
-                                          Foreground="{DynamicResource MaterialDesignBody}"/>
+                                          Foreground="{DynamicResource MaterialDesignBody}" />
 
-                                <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox" x:Name="CheckForDuplicateMessagesCheckBox"
-                                          HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}">
-                                    <TextBlock Foreground="{DynamicResource MaterialDesignBody}">
-                                        Check for recently sent messages to avoid duplicates.
-                                        <LineBreak/>
-                                        This allows for multiple users to use the same channel as a chat log.
-                                        <LineBreak/>
-                                        Please set an appropriate delay below(e.g. 1000).
-                                    </TextBlock>
+                                <CheckBox x:Uid="CheckForDuplicateMessagesCheckBox"
+                                          x:Name="CheckForDuplicateMessagesCheckBox"
+                                          HorizontalAlignment="Left" Margin="0,0,0,5"
+                                          Foreground="{DynamicResource MaterialDesignBody}">
+                                    <TextBlock Foreground="{DynamicResource MaterialDesignBody}"
+                                               Text="{Binding InGameAddonChatDelayDescriptionLoc}" />
                                 </CheckBox>
 
-                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0">
-                                    Chat Post Delay(in milliseconds)
-                                </Label>
+                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"
+                                       Content="{Binding InGameAddonChatDelayLoc}" />
 
-                                <TextBox x:Uid="ChatDelayTextBox" x:Name="ChatDelayTextBox" Margin="10,0,0,5" Width="400"
+                                <TextBox x:Uid="ChatDelayTextBox" x:Name="ChatDelayTextBox" Margin="10,0,0,5"
+                                         Width="400"
                                          VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         Foreground="{DynamicResource MaterialDesignBody}" materialDesign:HintAssist.Hint="Chat Delay">
-                                </TextBox>
+                                         Foreground="{DynamicResource MaterialDesignBody}"
+                                         materialDesign:HintAssist.Hint="{Binding InGameAddonChatDelayLoc}" />
 
-                                <Separator></Separator>
+                                <Separator />
 
-                                <Separator x:Uid="Separator_2"/>
-                                <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5">
-                                    Market board data provided in cooperation with Universalis.
-                                </Label>
+                                <Separator x:Uid="Separator_2" />
+                                <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5"
+                                       Content="{Binding UniversalisHintLoc}" />
                                 <CheckBox x:Uid="MbUploadOptOutCheckBox" x:Name="MbUploadOptOutCheckBox"
-                                          Content="Opt-out of contributing anonymously to crowd-sourced market board information"
+                                          Content="{Binding UniversalisOptOutLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="DarkGray" />
                             </StackPanel>
                         </StackPanel>
@@ -204,26 +236,27 @@
             </TabItem>
             <TabItem x:Uid="TabItem_5" Header="Plugins">
                 <Grid x:Uid="Grid_5" Margin="10,10,10,0">
-                        <TextBlock x:Uid="TextBlock_5" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}">
-                            These are the plugins that are currently available installed on your machine.
-                        </TextBlock>
+                    <TextBlock x:Uid="TextBlock_5" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PluginsDescriptionLoc}" />
 
                     <materialDesign:Card x:Uid="materialDesign:Card_1" Margin="0,20,0,0" Height="230">
-                            <ListView x:Uid="PluginListView" x:Name="PluginListView" Margin="0,0,0,0" Height="230" Foreground="{DynamicResource MaterialDesignBody}">
-                                <ListView.ContextMenu>
-                                    <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
-                                        <MenuItem x:Uid="MenuItem_1" Header="Toggle" Click="TogglePlugin_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
-                                    </ContextMenu>
-                                </ListView.ContextMenu>
-                            </ListView>
-                        </materialDesign:Card>
+                        <ListView x:Uid="PluginListView" x:Name="PluginListView" Margin="0,0,0,0" Height="230"
+                                  Foreground="{DynamicResource MaterialDesignBody}">
+                            <ListView.ContextMenu>
+                                <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
+                                    <MenuItem x:Uid="MenuItem_1" Header="{Binding PluginsToggleLoc}"
+                                              Click="TogglePlugin_OnClick"
+                                              Foreground="{DynamicResource MaterialDesignBody}" />
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                    </materialDesign:Card>
 
-                    <TextBlock x:Uid="TextBlock_6" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10">
-                        You can use the /xlplugins command in-game to install more plugins.
-                    </TextBlock>
+                    <TextBlock x:Uid="TextBlock_6" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                               Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10" Text="{Binding PluginsInstallHintLoc}"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Uid="TabItem_6" Header="About">
+            <TabItem x:Uid="TabItem_6" Header="{Binding SettingsAboutLoc}">
                 <ScrollViewer x:Uid="ScrollViewer_2" VerticalScrollBarVisibility="Auto">
                     <Grid x:Uid="Grid_6">
                         <StackPanel x:Uid="StackPanel_9" Margin="10,10,10,0">
@@ -232,23 +265,14 @@
                                 XIVLauncher
                             </TextBlock>
                             <TextBlock x:Uid="TextBlock_8" HorizontalAlignment="Left" VerticalAlignment="Top"
-                                       Foreground="{DynamicResource MaterialDesignBody}">
-                                Made by goat.
-                                <LineBreak x:Uid="LineBreak_6"/> 
-                                Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,
-                                <LineBreak x:Uid="LineBreak_4" />
-                                 Roy, Meli, Aida Enna, and the angry paissa artist!
-                                <LineBreak x:Uid="LineBreak_5" />
-                                <LineBreak x:Uid="LineBreak_6" />
-                                Any issues or requests? Join the discord or create an issue on GitHub!
-                            </TextBlock>
+                                       Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding CreditsLoc}"/>
 
                             <Button x:Uid="DiscordButton" Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
                                     x:Name="DiscordButton" Click="DiscordButton_OnClick" Margin="0,10,0,0">
                                 <StackPanel x:Uid="StackPanel_10" Orientation="Horizontal">
                                     <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Discord" />
-                                    <TextBlock x:Uid="TextBlock_9" Margin="8 0 0 0" VerticalAlignment="Center">Join Discord</TextBlock>
+                                    <TextBlock x:Uid="TextBlock_9" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}"/>
                                 </StackPanel>
                             </Button>
                             <Button x:Uid="GitHubButton" Style="{DynamicResource MaterialDesignFlatButton}"
@@ -264,7 +288,7 @@
                                     x:Name="BackupToolButton" Click="BackupToolButton_OnClick">
                                 <StackPanel x:Uid="StackPanel_12" Orientation="Horizontal">
                                     <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_4" Kind="Wrench" />
-                                    <TextBlock x:Uid="TextBlock_11" Margin="8 0 0 0" VerticalAlignment="Center">Start Backup Tool</TextBlock>
+                                    <TextBlock x:Uid="TextBlock_11" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartBackupToolLoc}"/>
                                 </StackPanel>
                             </Button>
                             <Button x:Uid="OriginalLauncherButton" Style="{DynamicResource MaterialDesignFlatButton}"
@@ -272,12 +296,12 @@
                                     x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
                                 <StackPanel x:Uid="StackPanel_13" Orientation="Horizontal">
                                     <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_5" Kind="Launch" />
-                                    <TextBlock x:Uid="TextBlock_12" Margin="8 0 0 0" VerticalAlignment="Center">Start Original Launcher</TextBlock>
+                                    <TextBlock x:Uid="TextBlock_12" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartOriginalLauncherLoc}"/>
                                 </StackPanel>
                             </Button>
                             <StackPanel x:Uid="StackPanel_14" Orientation="Horizontal">
                                 <CheckBox x:Uid="UidCacheCheckBox" x:Name="UidCacheCheckBox"
-                                          Content="Enable experimental UID cache(might behave weirdly)"
+                                          Content="{Binding EnabledUidCacheLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
                                 <Button x:Uid="Button_7" Style="{DynamicResource MaterialDesignFlatButton}"
                                         HorizontalAlignment="Left"
@@ -292,7 +316,7 @@
                             </StackPanel>
                             <StackPanel x:Uid="StackPanel_15" Orientation="Horizontal">
                                 <CheckBox x:Uid="EncryptedArgumentsCheckbox" x:Name="EncryptedArgumentsCheckbox"
-                                          Content="Enable encrypting arguments to the client"
+                                          Content="{Binding EnableEncryptionLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
                             </StackPanel>
                         </StackPanel>

@@ -18,49 +18,31 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
     /// <summary>
     ///     Interaction logic for SettingsControl.xaml
     /// </summary>
-    public partial class SettingsControl : INotifyPropertyChanged
+    public partial class SettingsControl
     {
-        private string gamePath;
-
-        /// <summary>
-        /// Gets a value indicating whether the "Run Integrity Checks" button is enabled.
-        /// </summary>
-        public bool IsRunIntegrityCheckPossible =>
-            !string.IsNullOrEmpty(GamePath) && Directory.Exists(GamePath);
-
-        /// <summary>
-        /// Gets or sets the path to the game folder.
-        /// </summary>
-        public string GamePath
-        {
-            get => gamePath;
-            set
-            {
-                gamePath = value;
-                OnPropertyChanged(nameof(GamePath));
-                OnPropertyChanged(nameof(IsRunIntegrityCheckPossible));
-            }
-        }
-
         public event EventHandler SettingsDismissed;
+
+        private SettingsControlViewModel ViewModel => DataContext as SettingsControlViewModel;
 
         public SettingsControl()
         {
             InitializeComponent();
 
-            DataContext = this;
+            DataContext = new SettingsControlViewModel();
+            
             ReloadSettings();
         }
 
         public void ReloadSettings()
         {
-            GamePath = App.Settings.GamePath?.FullName;
+            ViewModel.GamePath = App.Settings.GamePath?.FullName;
 
             if (App.Settings.IsDx11)
                 Dx11RadioButton.IsChecked = true;
@@ -104,7 +86,7 @@ namespace XIVLauncher.Windows
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
-            App.Settings.GamePath = !string.IsNullOrEmpty(GamePath) ? new DirectoryInfo(GamePath) : null;
+            App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
@@ -139,7 +121,7 @@ namespace XIVLauncher.Windows
 
         private void BackupToolButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start(Path.Combine(GamePath, "boot", "ffxivconfig.exe"));
+            Process.Start(Path.Combine(ViewModel.GamePath, "boot", "ffxivconfig.exe"));
         }
 
         private void OriginalLauncherButton_OnClick(object sender, RoutedEventArgs e)
@@ -365,7 +347,7 @@ namespace XIVLauncher.Windows
                             File.Delete(verFile);
                             File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
 
-                            Process.Start(Path.Combine(GamePath, "boot", "ffxivboot.exe"));
+                            Process.Start(Path.Combine(ViewModel.GamePath, "boot", "ffxivboot.exe"));
                             Environment.Exit(0);
                         }
 
@@ -390,13 +372,6 @@ namespace XIVLauncher.Windows
         private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
         {
             Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void CharacterSyncCheckBox_Checked(object sender, RoutedEventArgs e)

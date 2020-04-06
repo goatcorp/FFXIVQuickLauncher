@@ -295,6 +295,7 @@
     <Compile Include="Windows\ViewModel\FirstTimeSetupViewModel.cs" />
     <Compile Include="Windows\ViewModel\MainWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\OtpInputDialogViewModel.cs" />
+    <Compile Include="Windows\ViewModel\SettingsControlViewModel.cs" />
     <Compile Include="Windows\ViewModel\UpdateLoadingDialogViewModel.cs" />
     <Compile Include="Xaml\Components\FileEntry.xaml.cs">
       <DependentUpon>FileEntry.xaml</DependentUpon>
