@@ -13,10 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using CheapLoc;
 using Dalamud.Discord;
 using Dalamud.Game.Chat;
 using XIVLauncher;
 using XIVLauncher.Addon;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -41,6 +43,8 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            this.DataContext = new ChatChannelSetupViewModel();
+
             ColorPicker.Visibility = Visibility.Collapsed;
             ChannelColorIcon.Visibility = Visibility.Collapsed;
             ChatTypeComboBox.Visibility = Visibility.Collapsed;
@@ -53,6 +57,8 @@ namespace XIVLauncher.Windows
         public ChatChannelSetup(ChatTypeConfiguration chatTypeConfig = null)
         {
             InitializeComponent();
+
+            this.DataContext = new ChatChannelSetupViewModel();
 
             foreach (var xivChatType in Enum.GetValues(typeof(XivChatType)).Cast<XivChatType>())
             {
@@ -125,7 +131,7 @@ namespace XIVLauncher.Windows
             }
 
             inputProblem:
-            MessageBox.Show("Please enter valid IDs.", "XIVLauncher problem", MessageBoxButton.OK,
+            MessageBox.Show(Loc.Localize("EnterValidIdsError", "Please enter valid IDs."), "XIVLauncher", MessageBoxButton.OK,
                 MessageBoxImage.Error);
             this.Close();
         }

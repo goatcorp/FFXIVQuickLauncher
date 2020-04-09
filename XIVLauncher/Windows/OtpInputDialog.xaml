@@ -16,7 +16,7 @@
     <Grid x:Uid="Grid_1" Margin="0,0,0,0">
         <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
             <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,0">
-                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}">Please enter your OTP key.</TextBlock>
+                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding OtpInputPromptLoc}"/>
                 
                 <TextBox
                   x:Uid="OtpTextBox" Margin="0,8,0,0"
@@ -29,21 +29,17 @@
 
                 <StackPanel x:Uid="StackPanel_2" Orientation="Horizontal" Margin="0,10,0,0">
                     <Button
-                        x:Uid="Button_1" Content="Cancel"
+                        x:Uid="Button_1" Content="{Binding CancelLoc}"
                         Margin="10,0,0,0"
                         Width="100"
                         Click="CancelButton_OnClick" />
                     <Button
-                        x:Uid="Button_2" Content="OK"
+                        x:Uid="Button_2" Content="{Binding OkLoc}"
                         Margin="7,0,0,0"
                         Width="100"
                         Click="OkButton_OnClick" />
                 </StackPanel>
-                <TextBlock x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" MouseUp="OpenShortcutInfo_MouseUp">
-                    Or use the one-click shortcuts.
-                    <LineBreak x:Uid="LineBreak_1"/>
-                    Click here to learn more!
-                </TextBlock>
+                <TextBlock x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" MouseUp="OpenShortcutInfo_MouseUp" Text="{Binding OtpOneClickHintLoc}"/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

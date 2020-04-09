@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows;
+using CheapLoc;
 using Config.Net;
 using Newtonsoft.Json;
 using Sentry;
@@ -30,6 +33,8 @@ namespace XIVLauncher
 
         private UpdateLoadingDialog _updateWindow;
 
+        private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "pt", "es"};
+
         public App()
         {
             Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
@@ -38,10 +43,6 @@ namespace XIVLauncher
                 .UseTypeParser(new DirectoryInfoParser())
                 .UseTypeParser(new AddonListParser())
                 .Build();
-
-#if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
-#endif
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
@@ -55,18 +56,42 @@ namespace XIVLauncher
 #else
                 .MinimumLevel.Information()
                 .WriteTo.Sentry(o =>
-                    {
-                        o.MinimumBreadcrumbLevel = LogEventLevel.Debug; // Debug and higher are stored as breadcrumbs (default is Information)
-                        o.MinimumEventLevel = LogEventLevel.Error; // Error and higher is sent as event (default is Error)
-                        // If DSN is not set, the SDK will look for an environment variable called SENTRY_DSN. If nothing is found, SDK is disabled.
-                        o.Dsn = new Dsn("https://53970fece4974473b84157b45a47e54f@sentry.io/1548116");
-                        o.AttachStacktrace = true;
-                        o.SendDefaultPii = false; // send PII like the username of the user logged in to the device
+                {
+                    o.MinimumBreadcrumbLevel = LogEventLevel.Debug; // Debug and higher are stored as breadcrumbs (default is Information)
+                    o.MinimumEventLevel = LogEventLevel.Error; // Error and higher is sent as event (default is Error)
+                    // If DSN is not set, the SDK will look for an environment variable called SENTRY_DSN. If nothing is found, SDK is disabled.
+                    o.Dsn = new Dsn("https://53970fece4974473b84157b45a47e54f@sentry.io/1548116");
+                    o.AttachStacktrace = true;
+                    o.SendDefaultPii = false; // send PII like the username of the user logged in to the device
 
-                        o.Release = release;
-                    })
+                    o.Release = release;
+                })
 #endif
                 .CreateLogger();
+
+
+#if !XL_LOC_FORCEFALLBACKS
+            try
+            {
+                var currentUiLang = CultureInfo.InstalledUICulture;
+                Log.Information("Trying to set up Loc for culture {0}", currentUiLang.TwoLetterISOLanguageName);
+
+                Loc.Setup(_allowedLang.Any(x => currentUiLang.TwoLetterISOLanguageName == x)
+                    ? $"Loc.xl.xl_{currentUiLang.TwoLetterISOLanguageName}.json"
+                    : "{}");
+            }
+            catch(Exception ex){
+                Log.Error(ex, "Could not get language information. Setting up fallbacks.");
+                Loc.Setup("{}");
+            }  
+#else
+            // Force all fallbacks
+            Loc.Setup("{}");
+#endif
+
+#if !DEBUG
+            AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+#endif
 
             Log.Information(
                 $"XIVLauncher started as {release}");

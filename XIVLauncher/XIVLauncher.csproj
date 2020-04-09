@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>XIVLauncher</RootNamespace>
     <AssemblyName>XIVLauncher</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -65,6 +65,9 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="CheapLoc, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CheapLoc.1.0.3\lib\net472\CheapLoc.dll</HintPath>
+    </Reference>
     <Reference Include="Config.Net, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Config.Net.4.14.23\lib\netstandard2.0\Config.Net.dll</HintPath>
     </Reference>
@@ -79,9 +82,6 @@
     </Reference>
     <Reference Include="DeltaCompressionDotNet.PatchApi, Version=1.1.0.0, Culture=neutral, PublicKeyToken=3e8888ee913ed789, processorArchitecture=MSIL">
       <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.PatchApi.dll</HintPath>
-    </Reference>
-    <Reference Include="DiscordRPC, Version=1.0.121.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DiscordRichPresence.1.0.121\lib\net35\DiscordRPC.dll</HintPath>
     </Reference>
     <Reference Include="Dragablz, Version=0.0.3.203, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.203\lib\net45\Dragablz.dll</HintPath>
@@ -254,7 +254,6 @@
     <Compile Include="Addon\INotifyAddonAfterClose.cs" />
     <Compile Include="Addon\IPersistentAddon.cs" />
     <Compile Include="Addon\IRunnableAddon.cs" />
-    <Compile Include="Dalamud\CustomComboPreset.cs" />
     <Compile Include="Dalamud\DalamudConfiguration.cs" />
     <Compile Include="Dalamud\DalamudStartInfo.cs" />
     <Compile Include="Game\AdminCheck.cs" />
@@ -290,6 +289,18 @@
     <Compile Include="Windows\AccountSwitcher.xaml.cs">
       <DependentUpon>AccountSwitcher.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ViewModel\AccountSwitcherViewModel.cs" />
+    <Compile Include="Windows\ViewModel\ChangeLogWindowViewModel.cs" />
+    <Compile Include="Windows\ViewModel\ChatChannelSetupViewModel.cs" />
+    <Compile Include="Windows\ViewModel\ErrorWindowViewModel.cs" />
+    <Compile Include="Windows\ViewModel\FirstTimeSetupViewModel.cs" />
+    <Compile Include="Windows\ViewModel\GenericAddonSetupWindowViewModel.cs" />
+    <Compile Include="Windows\ViewModel\IntegrityCheckProgressWindowViewModel.cs" />
+    <Compile Include="Windows\ViewModel\MainWindowViewModel.cs" />
+    <Compile Include="Windows\ViewModel\OtpInputDialogViewModel.cs" />
+    <Compile Include="Windows\ViewModel\ProfilePictureInputWindowViewModel.cs" />
+    <Compile Include="Windows\ViewModel\SettingsControlViewModel.cs" />
+    <Compile Include="Windows\ViewModel\UpdateLoadingDialogViewModel.cs" />
     <Compile Include="Xaml\Components\FileEntry.xaml.cs">
       <DependentUpon>FileEntry.xaml</DependentUpon>
     </Compile>
@@ -409,6 +420,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Resources\Loc\xl\xl_de.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_es.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_fr.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_it.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_ja.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_pt.json" />
     <Resource Include="Resources\logo.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

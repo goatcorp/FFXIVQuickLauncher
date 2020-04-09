@@ -39,14 +39,16 @@ namespace XIVLauncher.Game
                     client.Headers.Add("Accept-Encoding", "gzip, deflate");
                     client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
 
-                    client.DownloadString(GenerateFrontierReferer(App.Settings.Language));
+                    var lang = App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
+
+                    client.DownloadString(GenerateFrontierReferer(lang));
 
                     DownloadAsLauncher($"https://frontier.ffxiv.com/v2/world/status.json?_={Util.GetUnixMillis()}",
-                        App.Settings.Language, "application/json, text/plain, */*");
+                        lang, "application/json, text/plain, */*");
                     DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis()}",
-                        App.Settings.Language, "application/json, text/plain, */*");
+                        lang, "application/json, text/plain, */*");
                     DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis() + 50}",
-                        App.Settings.Language, "application/json, text/plain, */*");
+                        lang, "application/json, text/plain, */*");
                 }
             });
         }

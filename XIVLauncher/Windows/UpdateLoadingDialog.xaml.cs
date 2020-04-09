@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Serilog;
 using XIVLauncher.Http;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -20,6 +21,7 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             AutoLoginDisclaimer.Visibility = App.Settings.AutologinEnabled ? Visibility.Visible : Visibility.Hidden;
+            this.DataContext = new UpdateLoadingDialogViewModel();
         }
     }
 }

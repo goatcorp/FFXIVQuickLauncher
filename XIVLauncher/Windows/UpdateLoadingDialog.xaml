@@ -16,13 +16,13 @@
     <Grid x:Uid="Grid_1" Margin="0,0,0,0">
         <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
             <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,0">
-                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center">Checking for updates...</TextBlock>
+                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding UpdateCheckLoc}"></TextBlock>
 
                 <ProgressBar
                     IsIndeterminate="True" Margin="0,50,0,0" />
 
-                <TextBlock x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,35,0,0" TextAlignment="Center" x:Name="AutoLoginDisclaimer">
-                    Hold the shift key to change settings!
+                <TextBlock x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,35,0,0" TextAlignment="Center" x:Name="AutoLoginDisclaimer" Text="{Binding AutoLoginHintLoc}">
+                    
                 </TextBlock>
             </StackPanel>
         </materialDesign:Card>

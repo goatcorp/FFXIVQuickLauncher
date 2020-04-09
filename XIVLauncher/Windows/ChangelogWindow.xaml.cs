@@ -4,7 +4,9 @@ using System.Media;
 using System.Net;
 using System.Windows;
 using System.Windows.Documents;
+using CheapLoc;
 using Newtonsoft.Json;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -17,7 +19,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            IntroTextBlock.Text += " " + Util.GetAssemblyVersion() + ".";
+            this.DataContext = new ChangeLogWindowViewModel();
 
             try
             {
@@ -38,7 +40,7 @@ namespace XIVLauncher.Windows
             }
             catch(Exception)
             {
-                ExceptionTextBox.AppendText("Couldn't get release info.");
+                ExceptionTextBox.AppendText(Loc.Localize("ReleaseInfoUnavailable", "Couldn't get release info."));
             }
             
             SystemSounds.Asterisk.Play();

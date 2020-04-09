@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Principal;
 using System.Windows;
+using CheapLoc;
 using Microsoft.Win32;
 
 namespace XIVLauncher.Game
@@ -28,7 +29,7 @@ namespace XIVLauncher.Game
 
                 if (entriesToFix.Count > 0)
                 {
-                    var result = MessageBox.Show("XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?", "XIVLauncher Problem", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
+                    var result = MessageBox.Show(Loc.Localize("AdminCheck", "XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?"), "XIVLauncher", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
 
                     if (result != MessageBoxResult.OK) 
                         return;
@@ -44,7 +45,7 @@ namespace XIVLauncher.Game
 
             if (runningAsAdmin && !Properties.Settings.Default.HasComplainedAboutAdmin)
             {
-                MessageBox.Show("XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin.", "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 Properties.Settings.Default.HasComplainedAboutAdmin = true;
                 Properties.Settings.Default.Save();
             }

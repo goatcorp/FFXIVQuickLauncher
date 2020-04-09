@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CheapLoc;
 using Dalamud.Discord;
 using Serilog;
 using XIVLauncher.Addon;
@@ -18,49 +19,31 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
     /// <summary>
     ///     Interaction logic for SettingsControl.xaml
     /// </summary>
-    public partial class SettingsControl : INotifyPropertyChanged
+    public partial class SettingsControl
     {
-        private string gamePath;
-
-        /// <summary>
-        /// Gets a value indicating whether the "Run Integrity Checks" button is enabled.
-        /// </summary>
-        public bool IsRunIntegrityCheckPossible =>
-            !string.IsNullOrEmpty(GamePath) && Directory.Exists(GamePath);
-
-        /// <summary>
-        /// Gets or sets the path to the game folder.
-        /// </summary>
-        public string GamePath
-        {
-            get => gamePath;
-            set
-            {
-                gamePath = value;
-                OnPropertyChanged(nameof(GamePath));
-                OnPropertyChanged(nameof(IsRunIntegrityCheckPossible));
-            }
-        }
-
         public event EventHandler SettingsDismissed;
+
+        private SettingsControlViewModel ViewModel => DataContext as SettingsControlViewModel;
 
         public SettingsControl()
         {
             InitializeComponent();
 
-            DataContext = this;
+            DataContext = new SettingsControlViewModel();
+            
             ReloadSettings();
         }
 
         public void ReloadSettings()
         {
-            GamePath = App.Settings.GamePath?.FullName;
+            ViewModel.GamePath = App.Settings.GamePath?.FullName;
 
             if (App.Settings.IsDx11)
                 Dx11RadioButton.IsChecked = true;
@@ -104,7 +87,7 @@ namespace XIVLauncher.Windows
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
-            App.Settings.GamePath = !string.IsNullOrEmpty(GamePath) ? new DirectoryInfo(GamePath) : null;
+            App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
@@ -139,13 +122,13 @@ namespace XIVLauncher.Windows
 
         private void BackupToolButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start(Path.Combine(GamePath, "boot", "ffxivconfig.exe"));
+            Process.Start(Path.Combine(ViewModel.GamePath, "boot", "ffxivconfig.exe"));
         }
 
         private void OriginalLauncherButton_OnClick(object sender, RoutedEventArgs e)
         {
             var isSteam =
-                MessageBox.Show("Launch as a steam user?", "XIVLauncher", MessageBoxButton.YesNo,
+                MessageBox.Show(Loc.Localize("LaunchAsSteam", "Launch as a steam user?"), "XIVLauncher", MessageBoxButton.YesNo,
                     MessageBoxImage.Question) == MessageBoxResult.Yes;
             Util.StartOfficialLauncher(App.Settings.GamePath, isSteam);
         }
@@ -346,16 +329,16 @@ namespace XIVLauncher.Windows
                 switch (task.Result.compareResult)
                 {
                     case IntegrityCheck.CompareResult.NoServer:
-                        MessageBox.Show(
-                            "There is no reference report yet for this game version. Please try again later.",
+                        MessageBox.Show(Loc.Localize("IntegrityCheckImpossible",
+                            "There is no reference report yet for this game version. Please try again later."),
                             "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                         return;
 
                     case IntegrityCheck.CompareResult.Invalid:
                     {
                         File.WriteAllText("integrityreport.txt", task.Result.report);
-                        var result = MessageBox.Show(
-                            "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nDo you want to reset the game to the last patch? This will allow you to patch it again, likely fixing the issues you are encountering.",
+                        var result = MessageBox.Show(Loc.Localize("IntegrityCheckFailed",
+                            "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nDo you want to reset the game to the last patch? This will allow you to patch it again, likely fixing the issues you are encountering."),
                             "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
 
                         if (result == MessageBoxResult.Yes)
@@ -365,7 +348,7 @@ namespace XIVLauncher.Windows
                             File.Delete(verFile);
                             File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
 
-                            Process.Start(Path.Combine(GamePath, "boot", "ffxivboot.exe"));
+                            Process.Start(Path.Combine(ViewModel.GamePath, "boot", "ffxivboot.exe"));
                             Environment.Exit(0);
                         }
 
@@ -373,7 +356,7 @@ namespace XIVLauncher.Windows
                     }
 
                     case IntegrityCheck.CompareResult.Valid:
-                        MessageBox.Show("Your game install seems to be valid.", "XIVLauncher", MessageBoxButton.OK,
+                        MessageBox.Show(Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid."), "XIVLauncher", MessageBoxButton.OK,
                             MessageBoxImage.Asterisk);
                         break;
                 }
@@ -392,16 +375,9 @@ namespace XIVLauncher.Windows
             Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         private void CharacterSyncCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("ATTENTION!!!\n\n\"Synchronize Character Data\" synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten.", "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(Loc.Localize("CharacterSyncWarning", "ATTENTION!!!\n\n\"Synchronize Character Data\" synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten."), "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)
@@ -410,13 +386,13 @@ namespace XIVLauncher.Windows
             {
                 if (!DalamudLauncher.CanRunDalamud(App.Settings.GamePath))
                     MessageBox.Show(
-                        $"The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!",
+                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!"),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             catch(Exception exc)
             {
-                MessageBox.Show(
-                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the discord for more information");
+                MessageBox.Show(Loc.Localize("DalamudCompatCheckFailed",
+                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the discord for more information."));
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }
@@ -426,7 +402,7 @@ namespace XIVLauncher.Windows
         {
             var definitionFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"), "*.json", SearchOption.AllDirectories);
 
-            if (PluginListView.SelectedValue.ToString().Contains("(Disabled)")) //If it's disabled...
+            if (PluginListView.SelectedValue.ToString().Contains("(X)")) //If it's disabled...
             {
 
                 foreach (var path in definitionFiles)
@@ -503,7 +479,7 @@ namespace XIVLauncher.Windows
                     if (isDisabled)
                     {
                         PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion +
-                                                 " (Disabled)");
+                                                 " (X)");
                     }
                     else
                     {

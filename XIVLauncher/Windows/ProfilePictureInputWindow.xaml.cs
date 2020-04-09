@@ -5,6 +5,7 @@ using Dalamud.Game.Chat;
 using XIVLauncher;
 using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -18,6 +19,8 @@ namespace XIVLauncher.Windows
         public ProfilePictureInputWindow(XivAccount account)
         {
             InitializeComponent();
+
+            DataContext = new ProfilePictureInputWindowViewModel();
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
