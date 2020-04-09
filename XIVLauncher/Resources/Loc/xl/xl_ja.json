@@ -1,0 +1,398 @@
+{
+  "ReleaseInfoUnavailable": {
+    "message": "リリース情報を取得できませんでした。",
+    "description": "ChangelogWindow..ctor"
+  },
+  "EnterValidIdsError": {
+    "message": "有効なIDを入力して下さい。",
+    "description": "ChatChannelSetup.NextButton_Click"
+  },
+  "GamePathInvalidError": {
+    "message": "指定されたFFXIVインストール先のパスが正しくありません。",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "LaunchAsSteam": {
+    "message": "Steamのユーザーで起動しますか?",
+    "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "CharacterSyncWarning": {
+    "message": "注意事項!!!\n\n「キャラクター設定データを同期」は、ゲーム終了後に、最後にログインしたキャラクターの設定(ホットバー、HUD、キャラクターコンフィグ)で、他のキャラクターの設定を同期する機能です。\nこの機能を有効にする場合、XIVLauncher でのゲーム起動時に、メインキャラクターでログインしていることを確認して下さい。\n\nもし、先に他のキャラクターでログインすると、メインキャラクターの設定が上書きされてしまいます。",
+    "description": "SettingsControl.CharacterSyncCheckBox_Checked"
+  },
+  "DalamudIncompatible": {
+    "message": "現在の FFXIV バージョンに対応した XIVLauncher の In-Game アドオンへ更新されていません。\nパッチ後にはよくあることですので、忍耐強く待っていただくか、Discordでお問い合わせ下さい。",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "DalamudCompatCheckFailed": {
+    "message": "現在の FFXIV バージョンに対応した In-Game アドオンの互換性情報について、サーバから取得できませんでした。インストールされている .NET のバージョンが古いかもしれません。\n詳細な情報については、Discordを確認して下さい。",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "NewsLoading": {
+    "message": "ロード中……",
+    "description": "MainWindow..ctor"
+  },
+  "CheckLoginInfo": {
+    "message": "ログイン情報をご確認の上、再度お試し下さい。",
+    "description": "MainWindow.InitializeWindow"
+  },
+  "NewsDlFailed": {
+    "message": "最新ニュースを取得できませんでした。",
+    "description": "MainWindow.<SetupHeadlines>b__9_3"
+  },
+  "AccountSwitcherSetProfilePic": {
+    "message": "プロフィール画像を設定",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherCreateShortcut": {
+    "message": "デスクトップにショートカットを作成",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "Remove": {
+    "message": "削除",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherDontSavePassword": {
+    "message": "パスワードを保存しない",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "UpdateNotice": {
+    "message": "XIVLauncher がバージョン {0} に更新されました。",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "JoinDiscord": {
+    "message": "Discordサーバーに参加",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChatChannelSetupTitle": {
+    "message": "チャットチャンネル設定",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "ChatChannelSetupDescription": {
+    "message": "XIVLauncher が、サーバのチャンネルか、ユーザーへのDMのどちらへ通知するかを選択して、それぞれのIDを入力して下さい。",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "HowToHint": {
+    "message": "どうやって設定するの?",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "ErrorExplanation": {
+    "message": "XIVLauncher でエラーが発生しました。FAQ をご参照下さい。この問題が解決しない場合は、\n下のボタンをクリックし、ボックス内のテキストをコピーして GitHub で報告してください。",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "OpenFaq": {
+    "message": "FAQを開く",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "ReportError": {
+    "message": "エラーを報告します",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "ChooseGamePath": {
+    "message": "\nゲームがインストールされているフォルダを選択してください。\n対象のフォルダには \"game\" と \"boot\" フォルダが入っています。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamNotice": {
+    "message": "いつも Steam を使用してゲームを起動している場合はチェックして下さい。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamCheckBox": {
+    "message": "Steamとの統合を有効化",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseDirectX": {
+    "message": "使用する DirectX のバージョンを選択して下さい。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "DirectX9Notice": {
+    "message": "DirectX 9モードはサポートされていません。 ゲームの起動はできますが、SEからの技術的サポートがなく、Rich PresenceやIn-Gameアドオンのような追加のXIVLauncher機能は動作しません。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseLanguage": {
+    "message": "ゲームで使用する言語を選択して下さい。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunch": {
+    "message": "Advanced Combat Tracker (ACT) がインストールされています。\nゲームを起動時に、自動で Advanced Combat Tracker を起動しますか?",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunchCheckBox": {
+    "message": "ACTの自動起動を有効化",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "Next": {
+    "message": "次",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudNotice": {
+    "message": "XIVLauncher の In-Game 機能を有効にしますか?\n有効にすると、RMTチャットのフィルタや、チャットメッセージやコンテンツファインダーのポップアップを Discordへ通知するなどの機能を追加することができます。\n\nこれらの機能を設定するには、XIVLauncher の設定画面で In-Game タブを開いて下さい。\nこの機能を有効にした場合、ウイルス対策ソフトで誤検出される場合があります。問題が発生した場合は、設定を確認の上で必要な除外設定を行って下さい。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudCheckBox": {
+    "message": "In-Game 機能を有効化",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "GenericAddonSetupTitle": {
+    "message": "自動起動の設定",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "GenericAddonSetupDescription": {
+    "message": "起動したいアプリケーションと、追加のパラメータ、管理者権限で起動するかを選択して下さい。",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "CommandLineParameters": {
+    "message": "コマンドラインパラメータ",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "RunAsAdminLoc": {
+    "message": "管理者権限で実行",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "KillAfterCloseLoc": {
+    "message": "ゲーム終了時に、選択したアプリケーションを終了する",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "IntegrityCheckRunning": {
+    "message": "インテグリティチェックを実行中……",
+    "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
+  },
+  "LoginBoxUsername": {
+    "message": "スクウェア・エニックスID",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxPassword": {
+    "message": "パスワード",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxAutoLogin": {
+    "message": "自動的にログイン",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxOtp": {
+    "message": "ワンタイムパスワードを使用",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxSteam": {
+    "message": "Steamアカウントを使用",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLogin": {
+    "message": "ログイン",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLoginTooltip": {
+    "message": "指定された認証情報でログインします",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxWaitingForMaint": {
+    "message": "メンテナンス終了を待機中……",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "Cancel": {
+    "message": "キャンセル",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "OpenAccountSwitcher": {
+    "message": "アカウント切替画面を開きます",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "Settings": {
+    "message": "設定",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "WorldStatus": {
+    "message": "ワールド稼働状況",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "MaintenanceQueue": {
+    "message": "メンテナンス終了を待機",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "OtpInputPrompt": {
+    "message": "ワンタイムパスワードを入力して下さい。",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "OtpOneClickHint": {
+    "message": "もしくは、スマートフォンのショートカットを使用します。\n詳しくはこちらをクリックして下さい。",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "ProfilePictureInputTitle": {
+    "message": "プロフィール画像の設定",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "ProfilePictureInputDescription": {
+    "message": "キャラクター名とワールドを入力して下さい。",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "CharacterName": {
+    "message": "キャラクター名",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "WorldName": {
+    "message": "ワールド名",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "SettingsGame": {
+    "message": "ゲーム",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "CharacterSyncCheckBox": {
+    "message": "キャラクター設定データを同期",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AdditionalArguments": {
+    "message": "追加の起動パラメータ",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "RunIntegrityCheck": {
+    "message": "インテグリティチェックの実行",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "RunIntegrityCheckTooltip": {
+    "message": "ゲームファイルのインテグリティチェックを実行します。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsGameSettings": {
+    "message": "ゲーム設定",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsAutoLaunch": {
+    "message": "自動起動",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoLaunchHint": {
+    "message": "ゲーム起動時に開始するアプリケーションの設定です。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AddNew": {
+    "message": "追加",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoLaunchAddNewToolTip": {
+    "message": "プログラムを自動起動するためのエントリーを新たに追加します。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsInGame": {
+    "message": "In-Game",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonDescription": {
+    "message": "XIVLauncherの In-Game 機能に関するオプション設定です。In-Game 機能は、以下のチェックボックスにチェックが入っていて、互換性のあるバージョンのゲームをDirectX 11モードで起動している場合に有効化されます。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonCommandHint": {
+    "message": "有効化している場合、ゲーム内で \"/xlhelp\" コマンドを使用すると、利用可能なコマンドを確認できます。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonEnabledCheckBox": {
+    "message": "In-Game 機能を有効化",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChatSettings": {
+    "message": "チャット設定",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DiscordBotToken": {
+    "message": "Discord Botトークン",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AddChatChannel": {
+    "message": "チャットチャンネルを追加",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetCfChannel": {
+    "message": "コンテンツファインダーの通知チャンネルを設定",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetRouletteChannel": {
+    "message": "ルーレットボーナスの通知チャンネルを設定",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetRetainerChannel": {
+    "message": "リテイナー取引チャンネルを設定",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonChatDelay": {
+    "message": "チャット投稿の遅延時間",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonChatDelayDescription": {
+    "message": "直近のメッセージをチェックして重複投稿しないようにします。\nこれにより、複数のユーザが同じチャンネルをチャットログとして利用することができます。\n以下に遅延時間をミリ秒単位で設定してください。(例：1000)",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UniversalisHint": {
+    "message": "マーケットボードデータはUniversalisと協力して提供されています。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UniversalisOptOut": {
+    "message": "匿名でのマーケットボード情報の提供をオプトアウト",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PluginsDescriptionLoc": {
+    "message": "現在インストールされているプラグインの一覧です。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Toggle": {
+    "message": "トグルする",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PluginsInstallHint": {
+    "message": "ゲーム内で /xlplugins コマンドを使用すると、さらにプラグインをインストールできます。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsAbout": {
+    "message": "情報",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Credits": {
+    "message": "製作: goat\nスペシャルサンクス: Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, そしてパイッサのアーティストへ感謝を!\n\n何か問題や要望がありますか? Discordに参加するか、GitHubでIssueを作成してください!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "StartBackupTool": {
+    "message": "バックアップツールを起動",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "StartOriginalLauncher": {
+    "message": "公式ランチャーを起動",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "EnabledUidCache": {
+    "message": "UID キャッシュを有効化 ※実験的機能 (おかしな動作をするかもしれません)",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "EnableEncryption": {
+    "message": "クライエントへ引数を暗号化",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UpdateCheckMsg": {
+    "message": "更新をチェック中……",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "AutoLoginHint": {
+    "message": "設定を変更するには、Shiftキーを押したままにして下さい。",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "AdminCheck": {
+    "message": "XIVLauncher と FINAL FANTASY XIV のどちらか、もしくは両方について、管理者権限で起動するよう設定されています。\n管理者権限で実行した場合、アドオン起動の失敗やホットキーが反応しなくなるなど、様々な問題が発生する可能性があります。\n\n問題を自動修正しますか?",
+    "description": "AdminCheck.RunCheck"
+  },
+  "AdminCheckNag": {
+    "message": "XIVLauncher が管理者権限で実行されています。\n管理者権限で実行した場合、アドオン起動の失敗やホットキーが反応しなくなるなど、様々な問題が発生する可能性があります。\n\nXIVLauncher を管理者権限で起動しないようご注意下さい。",
+    "description": "AdminCheck.RunCheck"
+  },
+  "IntegrityCheckImpossible": {
+    "message": "このゲームバージョンはもう参照報告がありません。後でやり直してください。",
+    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckFailed": {
+    "message": "一部のゲームファイルが変更、または破損しているようです。詳しくはXIVLauncherフォルダ内の \"Integrityreport.txt \"ファイルをご確認ください。\n\nゲームを最新パッチのデータでリセットしますか？再度パッチを当てることで、問題が解決される可能性があります。",
+    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckValid": {
+    "message": "ゲームインストールは有効性がありそうです。",
+    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+  }
+}
