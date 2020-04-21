@@ -11,6 +11,7 @@ using Config.Net;
 using Newtonsoft.Json;
 using Sentry;
 using Serilog;
+using Serilog.Events;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
