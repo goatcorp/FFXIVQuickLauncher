@@ -71,8 +71,6 @@ namespace XIVLauncher.Windows
 #if XL_NOAUTOUPDATE
             Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
 #endif
-
-            InitializeWindow();
         }
 
         private void SetupHeadlines()
@@ -132,7 +130,7 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private void InitializeWindow()
+        public void Initialize()
         {
             // Upgrade the stored settings if needed
             if (Properties.Settings.Default.UpgradeRequired)

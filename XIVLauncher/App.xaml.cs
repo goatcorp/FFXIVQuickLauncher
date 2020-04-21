@@ -26,11 +26,12 @@ namespace XIVLauncher
     public partial class App : Application
     {
         public static ILauncherSettingsV3 Settings;
-        private string _accountName;
 
         private UpdateLoadingDialog _updateWindow;
 
         private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "es"};
+
+        private MainWindow _mainWindow;
 
         public App()
         {
@@ -132,9 +133,7 @@ namespace XIVLauncher
 #endif
 
                 _updateWindow.Hide();
-
-                Log.Information("Loading MainWindow for account '{0}'", _accountName);
-                var mainWindow = new MainWindow(_accountName);
+                _mainWindow.Initialize();
             });
         }
 
@@ -151,6 +150,7 @@ namespace XIVLauncher
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
+
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {
                 var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
@@ -162,16 +162,19 @@ namespace XIVLauncher
             }
 
             if (e.Args.Length > 0 && e.Args[0] == "--dalamudStg")
-            {
+            { 
                 Console.Beep();
                 DalamudLauncher.UseDalamudStaging = true;
             }
 
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow
-            _accountName = string.Empty;
+            var accountName = string.Empty;
 
             if (e.Args.Length > 0 && e.Args[0].StartsWith("--account="))
-                _accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
+                accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
+
+            Log.Information("Loading MainWindow for account '{0}'", accountName);
+            _mainWindow = new MainWindow(accountName);
 
 #if XL_NOAUTOUPDATE
             OnUpdateCheckFinished(null, null);
