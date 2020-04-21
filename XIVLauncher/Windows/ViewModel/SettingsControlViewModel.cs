@@ -52,7 +52,6 @@ namespace XIVLauncher.Windows.ViewModel
             GamePathLoc = Loc.Localize("ChooseGamePath",
                 "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".");
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
-            CharacterSyncLoc = Loc.Localize("CharacterSyncCheckBox", "Synchronize Character Data");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
             RunIntegrityCheckLoc = Loc.Localize("RunIntegrityCheck", "Run integrity check");
             RunIntegrityCheckTooltipLoc =
@@ -112,7 +111,6 @@ namespace XIVLauncher.Windows.ViewModel
         public string SettingsGameLoc { get; private set; }
         public string GamePathLoc { get; private set; }
         public string SteamCheckBoxLoc { get; private set; }
-        public string CharacterSyncLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
         public string RunIntegrityCheckLoc { get; private set; }
         public string RunIntegrityCheckTooltipLoc { get; private set; }

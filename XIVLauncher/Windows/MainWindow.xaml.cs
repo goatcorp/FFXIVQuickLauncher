@@ -14,7 +14,6 @@ using MaterialDesignThemes.Wpf;
 using Serilog;
 using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
-using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
@@ -402,22 +401,6 @@ namespace XIVLauncher.Windows
                     {
                         addons.Add(new DalamudLauncher());
                     }
-
-                    try
-                    {
-                        var backupDirectory = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "charDataBackup"));
-                        if (backupDirectory.Exists)
-                            backupDirectory.Delete(true);
-
-                        addons.Add(new CharacterBackupAddon());
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Could not delete backup directory to start character backup Addon. This addon will be skipped", "Addons");
-                    }
-
-                    if (App.Settings.CharacterSyncEnabled)
-                        addons.Add(new CharacterSyncAddon());
 
                     await Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons));
                 }

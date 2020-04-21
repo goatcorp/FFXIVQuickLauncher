@@ -73,14 +73,9 @@ namespace XIVLauncher.Windows
 
             MbUploadOptOutCheckBox.IsChecked = DalamudSettings.OptOutMbUpload;
 
-            CharacterSyncCheckBox.IsChecked = App.Settings.CharacterSyncEnabled;
-
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
-
-            // Gotta do this after setup so we don't fire events yet
-            CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
 
             EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
         }
@@ -107,8 +102,6 @@ namespace XIVLauncher.Windows
             App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
             DalamudSettings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
-
-            App.Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
@@ -373,11 +366,6 @@ namespace XIVLauncher.Windows
         private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
         {
             Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
-        }
-
-        private void CharacterSyncCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(Loc.Localize("CharacterSyncWarning", "ATTENTION!!!\n\n\"Synchronize Character Data\" synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten."), "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)

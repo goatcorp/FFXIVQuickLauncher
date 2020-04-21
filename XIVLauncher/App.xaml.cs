@@ -11,10 +11,6 @@ using Config.Net;
 using Newtonsoft.Json;
 using Sentry;
 using Serilog;
-using Serilog.Events;
-using Squirrel;
-using XIVLauncher.Addon;
-using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
@@ -33,7 +29,7 @@ namespace XIVLauncher
 
         private UpdateLoadingDialog _updateWindow;
 
-        private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "pt", "es"};
+        private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "es"};
 
         public App()
         {
@@ -73,7 +69,7 @@ namespace XIVLauncher
 #if !XL_LOC_FORCEFALLBACKS
             try
             {
-                var currentUiLang = CultureInfo.InstalledUICulture;
+                var currentUiLang = CultureInfo.CurrentUICulture;
                 Log.Information("Trying to set up Loc for culture {0}", currentUiLang.TwoLetterISOLanguageName);
 
                 Loc.Setup(_allowedLang.Any(x => currentUiLang.TwoLetterISOLanguageName == x)
@@ -154,14 +150,6 @@ namespace XIVLauncher
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            if (e.Args.Length > 0 && e.Args[0] == "--backupNow")
-            {
-                (new CharacterBackupAddon() as INotifyAddonAfterClose).GameClosed();
-
-                Environment.Exit(0);
-                return;
-            }
-
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {
                 var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
