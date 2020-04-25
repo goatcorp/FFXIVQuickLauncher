@@ -54,7 +54,7 @@ namespace XIVLauncher.Windows
                 Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
             }
 
-            LanguageComboBox.SelectedIndex = (int)App.Settings.Language;
+            LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
             AddonListView.ItemsSource = App.Settings.AddonList;
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
