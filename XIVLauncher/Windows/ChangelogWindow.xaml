@@ -17,9 +17,8 @@
             <TextBlock
                 x:Uid="TextBlock_1" Margin="10,10,10,0"
                 TextWrapping="Wrap"
-                x:Name="IntroTextBlock"
+                Text="{Binding UpdateNoticeLoc}"
                 Foreground="{DynamicResource MaterialDesignBody}">
-                XIVLauncher was updated to version
             </TextBlock>
 
             <StackPanel
