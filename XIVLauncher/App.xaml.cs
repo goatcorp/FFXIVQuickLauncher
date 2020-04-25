@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using CheapLoc;
 using Config.Net;
@@ -89,6 +90,7 @@ namespace XIVLauncher
 
 #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+            TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
 
             Log.Information(
@@ -121,27 +123,32 @@ namespace XIVLauncher
         {
             Dispatcher.Invoke(() =>
             {
-#if !DEBUG
-                AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
-                AppDomain.CurrentDomain.UnhandledException += (_, args) =>
-                {
-                    new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled")
-                        .ShowDialog();
-                    Log.CloseAndFlush();
-                    Environment.Exit(0);
-                };
-#endif
+                _useFullExceptionHandler = true;
 
                 _updateWindow.Hide();
                 _mainWindow.Initialize();
             });
         }
 
-        private static void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private bool _useFullExceptionHandler = false;
+
+        private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            MessageBox.Show(
-                "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
-                "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (!e.Observed)
+                EarlyInitExceptionHandler(sender, new UnhandledExceptionEventArgs(e.Exception, true));
+        }
+
+        private void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            
+            if (_useFullExceptionHandler)
+                new ErrorWindow((Exception)e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
+                    .ShowDialog();
+            else
+                MessageBox.Show(
+                    "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             Log.CloseAndFlush();
             Environment.Exit(0);
         }
