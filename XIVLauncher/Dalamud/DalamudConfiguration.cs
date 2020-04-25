@@ -28,6 +28,8 @@ namespace Dalamud
 
         public Dictionary<int, PreferredRole> PreferredRoleReminders { get; set; }
 
+        public string LanguageOverride { get; set; }
+
         public string LastVersion { get; set; }
 
         public Dictionary<string, object> PluginConfigurations { get; set; }
