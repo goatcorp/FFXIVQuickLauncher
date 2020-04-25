@@ -43,7 +43,8 @@ namespace XIVLauncher.Windows
 
         public void ReloadSettings()
         {
-            ViewModel.GamePath = App.Settings.GamePath?.FullName;
+            if (App.Settings.GamePath != null)
+             ViewModel.GamePath = App.Settings.GamePath.FullName;
 
             if (App.Settings.IsDx11)
                 Dx11RadioButton.IsChecked = true;
