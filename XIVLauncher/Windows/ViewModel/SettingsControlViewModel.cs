@@ -91,6 +91,8 @@ namespace XIVLauncher.Windows.ViewModel
                 "Market board data provided in cooperation with Universalis.");
             UniversalisOptOutLoc = Loc.Localize("UniversalisOptOut",
                 "Opt-out of contributing anonymously to crowd-sourced market board information");
+            DutyFinderTaskbarFlashLoc = Loc.Localize("DutyFinderTaskbarFlash",
+                "Flash the game's taskbar entry when Duty Finder queue pops");
             
             PluginsDescriptionLoc = Loc.Localize("PluginsDescriptionLoc",
                 "These are the plugins that are currently available installed on your machine.");
@@ -141,6 +143,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonChatDelayDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
+        public string DutyFinderTaskbarFlashLoc { get; private set; }
 
         public string PluginsDescriptionLoc { get; private set; }
         public string PluginsToggleLoc { get; private set; }

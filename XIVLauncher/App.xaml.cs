@@ -125,7 +125,9 @@ namespace XIVLauncher
             {
                 _useFullExceptionHandler = true;
 
-                _updateWindow.Hide();
+                if (_updateWindow != null) 
+                    _updateWindow.Hide();
+
                 _mainWindow.Initialize();
             });
         }

@@ -74,6 +74,8 @@ namespace XIVLauncher.Windows
 
             MbUploadOptOutCheckBox.IsChecked = DalamudSettings.OptOutMbUpload;
 
+            DutyFinderTaskbarFlashCheckBox.IsChecked = DalamudSettings.DutyFinderTaskbarFlash;
+
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
