@@ -24,7 +24,7 @@ namespace XIVLauncher.Settings
             }
         }
 		
-		public static bool DutyFinderTaskbarFlash
+        public static bool DutyFinderTaskbarFlash
         {
             get => DalamudConfig.DutyFinderTaskbarFlash;
             set
