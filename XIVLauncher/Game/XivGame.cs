@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Nhaama.Memory;
 using Serilog;
 using SteamworksSharp;
 using SteamworksSharp.Native;
@@ -163,7 +162,7 @@ namespace XIVLauncher.Game
         }
 
         public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-            bool encryptArguments, bool closeMutants = false)
+            bool encryptArguments)
         {
             Log.Information($"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
 
@@ -263,8 +262,6 @@ namespace XIVLauncher.Game
                         continue;
                     }
 
-                    if (closeMutants)
-                        CloseMutants(game);
                     break;
                 }
 
@@ -277,18 +274,6 @@ namespace XIVLauncher.Game
             }
 
             return null;
-        }
-
-        private static void CloseMutants(Process process)
-        {
-            var nhaamaProcess = process.GetNhaamaProcess();
-
-            var handles = nhaamaProcess.GetHandles();
-
-            // Check if handle is a ffxiv mutant and close it
-            foreach (var nhaamaHandle in handles)
-                if (nhaamaHandle.Name.Contains("ffxiv_game0"))
-                    nhaamaHandle.Close();
         }
 
         /// <summary>
