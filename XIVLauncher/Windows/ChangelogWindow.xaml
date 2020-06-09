@@ -43,7 +43,7 @@
         <StackPanel x:Uid="StackPanel_3" Orientation="Horizontal" HorizontalAlignment="Right"
                     VerticalAlignment="Bottom" Margin="0 0 10 10">
             <Button x:Uid="DiscordButton" Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    x:Name="DiscordButton" Margin="0,0,5,0" Click="DiscordButton_OnClick">
+                    x:Name="DiscordButton" Margin="0,0,5,0">
                 <StackPanel x:Uid="StackPanel_4" Orientation="Horizontal">
                     <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Discord" />
                     <TextBlock x:Uid="TextBlock_2" Margin="8 0 0 0" VerticalAlignment="Center"

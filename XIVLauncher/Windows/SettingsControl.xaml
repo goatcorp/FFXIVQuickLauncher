@@ -270,7 +270,7 @@
 
                             <Button x:Uid="DiscordButton" Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
-                                    x:Name="DiscordButton" Click="DiscordButton_OnClick" Margin="0,10,0,0">
+                                    x:Name="DiscordButton" Margin="0,10,0,0">
                                 <StackPanel x:Uid="StackPanel_10" Orientation="Horizontal">
                                     <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Discord" />
                                     <TextBlock x:Uid="TextBlock_9" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}"/>

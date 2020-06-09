@@ -36,6 +36,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            DiscordButton.Click += Util.OpenDiscord;
             DataContext = new SettingsControlViewModel();
             
             ReloadSettings();
@@ -209,11 +210,6 @@ namespace XIVLauncher.Windows
                 return;
 
             Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-bot");
-        }
-
-        private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://discord.gg/3NMcUV5");
         }
 
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
