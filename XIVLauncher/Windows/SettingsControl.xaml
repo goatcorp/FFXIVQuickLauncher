@@ -329,6 +329,11 @@
                 </ScrollViewer>
             </TabItem>
         </dragablz:TabablzControl>
+        <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="Open Plugins Folder" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,60,10"
+                Click="PluginsFolderButton_Click">
+            <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_6" Kind="FolderOpen" Height="24" Width="24" />
+        </Button>
         <Button x:Uid="Button_8" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                 ToolTip="Save Settings" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
                 Command="{x:Static materialDesign:Transitioner.MoveNextCommand}"

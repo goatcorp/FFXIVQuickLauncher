@@ -477,5 +477,23 @@ namespace XIVLauncher.Windows
                 Log.Error(ex, "Could not parse installed in-game plugins.");
             }
         }
+
+        private void PluginsFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var pluginsPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins");
+
+            try
+            {
+                Directory.CreateDirectory(pluginsPath);
+                Process.Start(pluginsPath);
+            }
+            catch (Exception ex)
+            {
+                var error = $"Could not open the plugins folder! {pluginsPath}";
+                MessageBox.Show(error,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.Error(ex, error);
+            }
+        }
     }
 }
