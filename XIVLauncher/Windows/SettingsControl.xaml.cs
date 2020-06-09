@@ -377,13 +377,13 @@ namespace XIVLauncher.Windows
             {
                 if (!DalamudLauncher.CanRunDalamud(App.Settings.GamePath))
                     MessageBox.Show(
-                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!"),
+                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             catch(Exception exc)
             {
                 MessageBox.Show(Loc.Localize("DalamudCompatCheckFailed",
-                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the discord for more information."));
+                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."));
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }

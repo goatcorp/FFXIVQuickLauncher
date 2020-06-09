@@ -20,11 +20,11 @@
     "description": "SettingsControl.CharacterSyncCheckBox_Checked"
   },
   "DalamudIncompatible": {
-    "message": "Il componente aggiuntivo di XIVLauncher non è ancora stato aggiornato per la tua versione di FFXIV.\nQuesto accade comunemente dopo le patch, quindi per favore sii paziente o chiedi aggiornamenti sul nostro discord!",
+    "message": "Il componente aggiuntivo di XIVLauncher non è ancora stato aggiornato per la tua versione di FFXIV.\nQuesto accade comunemente dopo le patch, quindi per favore sii paziente o chiedi aggiornamenti sul nostro Discord!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Impossibile contattare il server per ottenere la versione degli addon compatibile con FFXIV. Questo potrebbe significare che la versione di .NET installata è troppo vecchia.\nPer favore, controlla discord per ottenere ulteriori informazioni.",
+    "message": "Impossibile contattare il server per ottenere la versione degli addon compatibile con FFXIV. Questo potrebbe significare che la versione di .NET installata è troppo vecchia.\nPer favore, controlla Discord per ottenere ulteriori informazioni.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "NewsLoading": {
@@ -348,7 +348,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Sviluppato da capra.\nUn rigraziamento speciale a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, e l'arrabbiato artista della paissa!\n\nProblemi o richieste? Unisciti al server discord o segnala su GitHub!",
+    "message": "Sviluppato da capra.\nUn rigraziamento speciale a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, e l'arrabbiato artista della paissa!\n\nProblemi o richieste? Unisciti al server Discord o segnala su GitHub!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {

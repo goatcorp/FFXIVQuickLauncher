@@ -182,7 +182,7 @@
 
                                 <Button x:Uid="Button_3" Margin="0,7,0,10" HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick"
-                                        ToolTip="Add a new discord chat channel."
+                                        ToolTip="Add a new Discord chat channel."
                                         Content="{Binding InGameAddonAddChatChannelLoc}" />
                                 <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick"
