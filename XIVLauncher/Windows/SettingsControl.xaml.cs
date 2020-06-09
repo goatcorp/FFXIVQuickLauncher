@@ -391,7 +391,7 @@ namespace XIVLauncher.Windows
 
         private void TogglePlugin_OnClick(object sender, RoutedEventArgs e)
         {
-            var definitionFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"), "*.json", SearchOption.AllDirectories);
+            var definitionFiles = Directory.GetFiles(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
 
             if (PluginListView.SelectedValue.ToString().Contains("(X)")) //If it's disabled...
             {
@@ -436,9 +436,7 @@ namespace XIVLauncher.Windows
 
             try
             {
-                var pluginsDirectory = new DirectoryInfo(Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    @"XIVLauncher\installedPlugins"));
+                var pluginsDirectory = new DirectoryInfo(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins"));
 
                 if (!pluginsDirectory.Exists)
                     return;

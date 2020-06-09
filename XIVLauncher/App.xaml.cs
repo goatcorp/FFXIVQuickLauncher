@@ -47,8 +47,7 @@ namespace XIVLauncher
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a =>
-                    a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "XIVLauncher", "output.log")))
+                    a.File(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "output.log")))
 #if DEBUG
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
@@ -155,7 +154,7 @@ namespace XIVLauncher
             Environment.Exit(0);
         }
 
-        private static string GetConfigPath(string prefix) => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", $"{prefix}ConfigV3.json");
+        private static string GetConfigPath(string prefix) => Path.Combine(PatchInstaller.Paths.XIVLauncherPath, $"{prefix}ConfigV3.json");
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {

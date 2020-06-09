@@ -83,14 +83,11 @@ namespace XIVLauncher.Dalamud
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
         {
-            var addonDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "XIVLauncher", "addon", "Hooks");
+            var addonDirectory = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "addon", "Hooks");
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
-            var ingamePluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "XIVLauncher", "installedPlugins");
-            var defaultPluginPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "XIVLauncher", "devPlugins");
+            var ingamePluginPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins");
+            var defaultPluginPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "devPlugins");
 
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
@@ -139,8 +136,7 @@ namespace XIVLauncher.Dalamud
                     return;
                 }
 
-                var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "XIVLauncher", "dalamudConfig.json");
+                var configPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "dalamudConfig.json");
 
                 var startInfo = new DalamudStartInfo
                 {
