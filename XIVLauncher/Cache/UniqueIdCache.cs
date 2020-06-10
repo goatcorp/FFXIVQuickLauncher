@@ -19,7 +19,7 @@ namespace XIVLauncher.Cache
 
         #region SaveLoad
 
-        private static readonly string ConfigPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "uidCache.json");
+        private static readonly string ConfigPath = Path.Combine(Paths.XIVLauncherPath, "uidCache.json");
 
         public void Save()
         {
