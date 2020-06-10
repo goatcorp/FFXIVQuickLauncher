@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace XIVLauncher.PatchInstaller
+namespace XIVLauncher
 {
     public class Paths
     {

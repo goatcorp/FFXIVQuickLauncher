@@ -50,7 +50,7 @@ namespace XIVLauncher.Settings
         {
             get
             {
-                var configPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "dalamudConfig.json");
+                var configPath = Path.Combine(Paths.XIVLauncherPath, "dalamudConfig.json");
 
                 if (File.Exists(configPath))
                     return JsonConvert.DeserializeObject<DalamudConfiguration>(File.ReadAllText(configPath));
@@ -73,7 +73,7 @@ namespace XIVLauncher.Settings
                 DalamudConfig = newDalamudConfig;
                 return newDalamudConfig;
             }
-            set => File.WriteAllText(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "dalamudConfig.json"), JsonConvert.SerializeObject(value));
+            set => File.WriteAllText(Path.Combine(Paths.XIVLauncherPath, "dalamudConfig.json"), JsonConvert.SerializeObject(value));
         }
     }
 }

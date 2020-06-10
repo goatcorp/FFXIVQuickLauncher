@@ -247,6 +247,7 @@
     <Compile Include="Addon\AddonManager.cs" />
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="Settings\DalamudSettings.cs" />
     <Compile Include="Dalamud\DalamudLauncher.cs" />
     <Compile Include="Addon\INotifyAddonAfterClose.cs" />
@@ -466,12 +467,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\actlaunch.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj">
-      <Project>{395cdfab-48f8-4ec5-833d-05f5795a157d}</Project>
-      <Name>XIVLauncher.PatchInstaller</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
