@@ -152,7 +152,7 @@ namespace XIVLauncher.Windows
 
             if (!string.IsNullOrEmpty(selectedEntry.Account.ThumbnailUrl))
             {
-                var thumbnailDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "profileIcons");
+                var thumbnailDirectory = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "profileIcons");
                 Directory.CreateDirectory(thumbnailDirectory);
 
                 thumbnailPath = Path.Combine(thumbnailDirectory, $"{selectedEntry.Account.Id}.ico");

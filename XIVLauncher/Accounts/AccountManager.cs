@@ -70,7 +70,7 @@ namespace XIVLauncher.Accounts
 
         #region SaveLoad
 
-        private static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "accountsList.json");
+        private static readonly string ConfigPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "accountsList.json");
 
         public void Save()
         {

@@ -36,6 +36,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            DiscordButton.Click += Util.OpenDiscord;
             DataContext = new SettingsControlViewModel();
             
             ReloadSettings();
@@ -211,11 +212,6 @@ namespace XIVLauncher.Windows
             Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-bot");
         }
 
-        private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://discord.gg/3NMcUV5");
-        }
-
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
         {
             var featureConfig = DalamudSettings.DiscordFeatureConfig;
@@ -377,13 +373,13 @@ namespace XIVLauncher.Windows
             {
                 if (!DalamudLauncher.CanRunDalamud(App.Settings.GamePath))
                     MessageBox.Show(
-                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!"),
+                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             catch(Exception exc)
             {
                 MessageBox.Show(Loc.Localize("DalamudCompatCheckFailed",
-                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the discord for more information."));
+                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."));
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }
@@ -391,7 +387,7 @@ namespace XIVLauncher.Windows
 
         private void TogglePlugin_OnClick(object sender, RoutedEventArgs e)
         {
-            var definitionFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"), "*.json", SearchOption.AllDirectories);
+            var definitionFiles = Directory.GetFiles(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
 
             if (PluginListView.SelectedValue.ToString().Contains("(X)")) //If it's disabled...
             {
@@ -436,9 +432,7 @@ namespace XIVLauncher.Windows
 
             try
             {
-                var pluginsDirectory = new DirectoryInfo(Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    @"XIVLauncher\installedPlugins"));
+                var pluginsDirectory = new DirectoryInfo(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins"));
 
                 if (!pluginsDirectory.Exists)
                     return;
@@ -481,6 +475,24 @@ namespace XIVLauncher.Windows
             catch (Exception ex)
             {
                 Log.Error(ex, "Could not parse installed in-game plugins.");
+            }
+        }
+
+        private void PluginsFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var pluginsPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins");
+
+            try
+            {
+                Directory.CreateDirectory(pluginsPath);
+                Process.Start(pluginsPath);
+            }
+            catch (Exception ex)
+            {
+                var error = $"Could not open the plugins folder! {pluginsPath}";
+                MessageBox.Show(error,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.Error(ex, error);
             }
         }
     }

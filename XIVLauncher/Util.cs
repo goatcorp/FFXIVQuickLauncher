@@ -135,6 +135,11 @@ namespace XIVLauncher
             Process.Start(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
         }
 
+        public static void OpenDiscord(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://discord.gg/3NMcUV5");
+        }
+
         public static string ReadResource(string name)
         {
             // Determine path

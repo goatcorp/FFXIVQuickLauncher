@@ -17,7 +17,8 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            this.DataContext = new ErrorWindowViewModel();
+            DiscordButton.Click += Util.OpenDiscord;
+            DataContext = new ErrorWindowViewModel();
 
             ExceptionTextBox.AppendText(exc.ToString());
             ExceptionTextBox.AppendText("\nVersion: " + Util.GetAssemblyVersion());
@@ -69,11 +70,6 @@ namespace XIVLauncher.Windows
         private void FaqButton_OnClick(object sender, RoutedEventArgs e)
         {
             Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/FAQ");
-        }
-
-        private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://discord.gg/3NMcUV5");
         }
     }
 }

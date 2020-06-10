@@ -468,14 +468,6 @@
     <Resource Include="Resources\actlaunch.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\Nhaama\Nhaama.FFXIV\Nhaama.FFXIV.csproj">
-      <Project>{af6e37bd-4598-4194-945b-c8f6ee9309fe}</Project>
-      <Name>Nhaama.FFXIV</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj">
-      <Project>{933935a7-8d04-42e8-aee5-122b3aeed820}</Project>
-      <Name>Nhaama.Memory</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj">
       <Project>{395cdfab-48f8-4ec5-833d-05f5795a157d}</Project>
       <Name>XIVLauncher.PatchInstaller</Name>

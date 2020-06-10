@@ -102,7 +102,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
-                "Made by goat.\r\nSpecial thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the discord or create an issue on GitHub!");
+                "Made by goat.\r\nSpecial thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!");
             JoinDiscordLoc = Loc.Localize("JoinDiscord", "Join Discord");
             StartBackupToolLoc = Loc.Localize("StartBackupTool", "Start Backup Tool");
             StartOriginalLauncherLoc = Loc.Localize("StartOriginalLauncher", "Start Original Launcher");
