@@ -23,17 +23,6 @@ namespace XIVLauncher.Settings
                 DalamudConfig = currentConfig;
             }
         }
-		
-        public static bool DutyFinderTaskbarFlash
-        {
-            get => DalamudConfig.DutyFinderTaskbarFlash;
-            set
-            {
-                var currentConfig = DalamudConfig;
-                currentConfig.DutyFinderTaskbarFlash = value;
-                DalamudConfig = currentConfig;
-            }
-        }
 
         public static DiscordFeatureConfiguration DiscordFeatureConfig
         {
@@ -65,7 +54,7 @@ namespace XIVLauncher.Settings
                 var newDalamudConfig = new DalamudConfiguration
                 {
                     OptOutMbCollection = Properties.Settings.Default.OptOutMbUpload,
-                    DutyFinderTaskbarFlash = Properties.Settings.Default.DutyFinderTaskbarFlash,
+                    DutyFinderTaskbarFlash = true,
                     DiscordFeatureConfig = discordFeatureConfig,
                     BadWords = new List<string>()
                 };

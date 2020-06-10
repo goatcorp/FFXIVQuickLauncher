@@ -220,9 +220,6 @@
                                          materialDesign:HintAssist.Hint="{Binding InGameAddonChatDelayLoc}" />
 
                                 <Separator />
-                                <CheckBox x:Uid="DutyFinderTaskbarFlashCheckBox" x:Name="DutyFinderTaskbarFlashCheckBox"
-                                          Content="{Binding DutyFinderTaskbarFlashLoc}"
-                                          HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="{DynamicResource MaterialDesignBody}" />
                                 
                                 <Separator x:Uid="Separator_2" />
                                 <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5"

@@ -241,18 +241,6 @@ namespace XIVLauncher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool DutyFinderTaskbarFlash {
-            get {
-                return ((bool)(this["DutyFinderTaskbarFlash"]));
-            }
-            set {
-                this["DutyFinderTaskbarFlash"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool CharacterSyncEnabled {
             get {

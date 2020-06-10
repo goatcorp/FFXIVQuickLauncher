@@ -75,8 +75,6 @@ namespace XIVLauncher.Windows
 
             MbUploadOptOutCheckBox.IsChecked = DalamudSettings.OptOutMbUpload;
 
-            DutyFinderTaskbarFlashCheckBox.IsChecked = DalamudSettings.DutyFinderTaskbarFlash;
-
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
@@ -387,7 +385,7 @@ namespace XIVLauncher.Windows
 
         private void TogglePlugin_OnClick(object sender, RoutedEventArgs e)
         {
-            var definitionFiles = Directory.GetFiles(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
+            var definitionFiles = Directory.GetFiles(Path.Combine(Paths.XIVLauncherPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
 
             if (PluginListView.SelectedValue.ToString().Contains("(X)")) //If it's disabled...
             {
@@ -432,7 +430,7 @@ namespace XIVLauncher.Windows
 
             try
             {
-                var pluginsDirectory = new DirectoryInfo(Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins"));
+                var pluginsDirectory = new DirectoryInfo(Path.Combine(Paths.XIVLauncherPath, "installedPlugins"));
 
                 if (!pluginsDirectory.Exists)
                     return;
@@ -480,7 +478,7 @@ namespace XIVLauncher.Windows
 
         private void PluginsFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            var pluginsPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "installedPlugins");
+            var pluginsPath = Path.Combine(Paths.XIVLauncherPath, "installedPlugins");
 
             try
             {
