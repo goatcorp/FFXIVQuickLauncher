@@ -35,19 +35,6 @@ namespace XIVLauncher.Dalamud
 
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
-        private static string Remote
-        {
-            get
-            {
-                if (UseDalamudStaging)
-                    return REMOTE_BASE + "stg/";
-
-                return REMOTE_BASE;
-            }
-        }
-
-        public static bool UseDalamudStaging = false;
-
         private readonly string DALAMUD_MUTEX_NAME = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
 
         public void DoWork(object state)
@@ -92,12 +79,15 @@ namespace XIVLauncher.Dalamud
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
 
+            var configPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "dalamudConfig.json");
+            var config = DalamudSettings.DalamudConfig;
+
             using (var client = new WebClient())
             {
                 // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                var versionInfoJson = client.DownloadString(Remote + "version");
+                var versionInfoJson = client.DownloadString(REMOTE_BASE + (config.DoDalamudTest ? "stg/" : string.Empty) + "version");
 
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
@@ -107,18 +97,18 @@ namespace XIVLauncher.Dalamud
                     if (!File.Exists(addonExe))
                     {
                         Serilog.Log.Information("[HOOKS] Not found, redownloading");
-                        Download(addonDirectory);
+                        Download(addonDirectory, config.DoDalamudTest);
                     }
                     else
                     {
                         var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
                         var version = versionInfo.ProductVersion;
 
-                        Serilog.Log.Information("Hooks update check: local {0} remote {1}", version,
+                        Serilog.Log.Information("[HOOKS] Hooks update check: local {0} remote {1}", version,
                             remoteVersionInfo.AssemblyVersion);
 
                         if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
-                            Download(addonDirectory);
+                            Download(addonDirectory, config.DoDalamudTest);
                     }
                 }
 
@@ -126,7 +116,8 @@ namespace XIVLauncher.Dalamud
                     return;
 
                 if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
-                    !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")))
+                    !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")) ||
+                    !File.Exists(Path.Combine(addonDirectory, "Dalamud.Injector.exe")))
                 {
                     MessageBox.Show(
                         "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
@@ -135,8 +126,6 @@ namespace XIVLauncher.Dalamud
                     Directory.Delete(addonDirectory, true);
                     return;
                 }
-
-                var configPath = Path.Combine(PatchInstaller.Paths.XIVLauncherPath, "dalamudConfig.json");
 
                 var startInfo = new DalamudStartInfo
                 {
@@ -160,7 +149,7 @@ namespace XIVLauncher.Dalamud
 
                 process.Start();
 
-                Serilog.Log.Information("Started dalamud!");
+                Serilog.Log.Information("[HOOKS] Started dalamud! Staging: " + config.DoDalamudTest);
 
                 // Reset security protocol after updating
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
@@ -171,7 +160,7 @@ namespace XIVLauncher.Dalamud
         {
             using (var client = new WebClient())
             {
-                var versionInfoJson = client.DownloadString(Remote + "version");
+                var versionInfoJson = client.DownloadString(REMOTE_BASE + "version");
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
@@ -182,7 +171,7 @@ namespace XIVLauncher.Dalamud
             return true;
         }
 
-        private void Download(string addonPath)
+        private void Download(string addonPath, bool staging)
         {
             Serilog.Log.Information("Downloading updates for Hooks and default plugins...");
 
@@ -208,7 +197,7 @@ namespace XIVLauncher.Dalamud
                 if (File.Exists(downloadPath))
                     File.Delete(downloadPath);
 
-                client.DownloadFile(Remote + "latest.zip", downloadPath);
+                client.DownloadFile(REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
                 ZipFile.ExtractToDirectory(downloadPath, addonPath);
 
                 File.Delete(downloadPath);

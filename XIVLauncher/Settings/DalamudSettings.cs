@@ -67,8 +67,7 @@ namespace XIVLauncher.Settings
                     OptOutMbCollection = Properties.Settings.Default.OptOutMbUpload,
                     DutyFinderTaskbarFlash = Properties.Settings.Default.DutyFinderTaskbarFlash,
                     DiscordFeatureConfig = discordFeatureConfig,
-                    BadWords = new List<string>(),
-                    PluginConfigurations = new Dictionary<string, object>()
+                    BadWords = new List<string>()
                 };
 
                 DalamudConfig = newDalamudConfig;

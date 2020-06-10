@@ -169,12 +169,6 @@ namespace XIVLauncher
                 return;
             }
 
-            if (e.Args.Length > 0 && e.Args[0] == "--dalamudStg")
-            { 
-                Console.Beep();
-                DalamudLauncher.UseDalamudStaging = true;
-            }
-
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow
             var accountName = string.Empty;
 
