@@ -231,7 +231,7 @@ namespace XIVLauncher.Windows
 
             Task.Run(() => SetupHeadlines());
 
-            AdminCheck.RunCheck();
+            ProblemCheck.RunCheck();
 
             Show();
             Activate();

@@ -49,7 +49,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -255,7 +255,7 @@
     <Compile Include="Addon\IRunnableAddon.cs" />
     <Compile Include="Dalamud\DalamudConfiguration.cs" />
     <Compile Include="Dalamud\DalamudStartInfo.cs" />
-    <Compile Include="Game\AdminCheck.cs" />
+    <Compile Include="Game\ProblemCheck.cs" />
     <Compile Include="Game\ClientLanguage.cs" />
     <Compile Include="Dalamud\DiscordFeatureConfiguration.cs" />
     <Compile Include="Dalamud\XivChatType.cs" />
