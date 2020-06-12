@@ -40,7 +40,7 @@ namespace XIVLauncher.Game
 
     public partial class Headlines
     {
-        public static Headlines Get(XivGame game, ClientLanguage language)
+        public static Headlines Get(Launcher game, ClientLanguage language)
         {
             var unixTimestamp = Util.GetUnixMillis();
             var langCode = language.GetLangCode();

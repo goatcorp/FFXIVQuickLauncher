@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Media;
@@ -140,24 +141,19 @@ namespace XIVLauncher
             Process.Start("https://discord.gg/3NMcUV5");
         }
 
-        public static string ReadResource(string name)
-        {
-            // Determine path
-            var assembly = Assembly.GetExecutingAssembly();
-            string resourcePath = name;
-            // Format: "{Namespace}.{Folder}.{filename}.{Extension}"
-            if (!name.StartsWith(nameof(XIVLauncher)))
-            {
-                var resourceNames = assembly.GetManifestResourceNames();
-                resourcePath = resourceNames
-                    .Single(str => str.EndsWith(name));
-            }
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourcePath))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+        [DllImport("kernel32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+
+        public static bool CheckIsWine()
+        {
+            var ntdll = GetModuleHandle("ntdll.dll");
+            var pwine_get_version = GetProcAddress(ntdll, "wine_get_version");
+
+            return pwine_get_version != IntPtr.Zero;
         }
     }
 }

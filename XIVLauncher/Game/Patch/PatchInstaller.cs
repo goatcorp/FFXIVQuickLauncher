@@ -24,9 +24,9 @@ namespace XIVLauncher.Game.Patch
         private readonly string _patchFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "XIVLauncher", "patches");
 
-        private readonly XivGame _game;
+        private readonly Launcher _game;
 
-        public PatchInstaller(XivGame game, string repository)
+        public PatchInstaller(Launcher game, string repository)
         {
             _game = game;
         }

@@ -23,33 +23,30 @@ using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game
 {
-    public class XivGame
+    public class Launcher
     {
-        public XivGame()
+        private async void DoFakeHttpRequests()
         {
-            Task.Run(() =>
+            using (var client = new WebClient())
             {
-                using (var client = new WebClient())
-                {
-                    client.Headers.Add("User-Agent", _userAgent);
+                client.Headers.Add("User-Agent", _userAgent);
 
-                    client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+                client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
 
-                    client.Headers.Add("Accept-Encoding", "gzip, deflate");
-                    client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+                client.Headers.Add("Accept-Encoding", "gzip, deflate");
+                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
 
-                    var lang = App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
+                var lang = App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
 
-                    client.DownloadString(GenerateFrontierReferer(lang));
+                client.DownloadString(GenerateFrontierReferer(lang));
 
-                    DownloadAsLauncher($"https://frontier.ffxiv.com/v2/world/status.json?_={Util.GetUnixMillis()}",
-                        lang, "application/json, text/plain, */*");
-                    DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis()}",
-                        lang, "application/json, text/plain, */*");
-                    DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis() + 50}",
-                        lang, "application/json, text/plain, */*");
-                }
-            });
+                DownloadAsLauncher($"https://frontier.ffxiv.com/v2/world/status.json?_={Util.GetUnixMillis()}",
+                    lang, "application/json, text/plain, */*");
+                DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis()}",
+                    lang, "application/json, text/plain, */*");
+                DownloadAsLauncher($"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis() + 50}",
+                    lang, "application/json, text/plain, */*");
+            }
         }
 
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
@@ -88,6 +85,16 @@ namespace XIVLauncher.Game
 
         public LoginResult Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath)
         {
+            /*
+            var bootPatches = CheckBootVersion(gamePath);
+            if (bootPatches != null)
+                return new LoginResult
+                {
+                    State = LoginState.NeedsPatchBoot,
+                    PendingPatches = bootPatches
+                };
+                */
+
             string uid;
             PatchListEntry[] pendingPatches = null;
 
@@ -222,7 +229,7 @@ namespace XIVLauncher.Game
                     var arguments = encryptArguments
                         ? argumentBuilder.BuildEncrypted()
                         : argumentBuilder.Build();
-                    game = NativeLauncher.LaunchGame(workingDir, exePath, arguments, environment);
+                    game = NativeAclFix.LaunchGame(workingDir, exePath, arguments, environment);
                 }
                 catch (Win32Exception ex)
                 {
@@ -295,6 +302,28 @@ namespace XIVLauncher.Game
             }
 
             return result;
+        }
+
+        private static PatchListEntry[] CheckBootVersion(DirectoryInfo gamePath)
+        {
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
+                client.Headers.Add("Host", "patch-bootver.ffxiv.com");
+
+                // Why tf is this http??
+                var url =
+                    $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{GetLocalBootVer(gamePath)}/?time=" + GetLauncherFormattedTimeLong();
+
+                var result = client.DownloadString(url);
+
+                if (result == string.Empty)
+                    return null;
+
+                Log.Verbose("BOOT Patching is needed... List:\n" + result);
+
+                return PatchListParser.Parse(result);
+            }
         }
 
         private static (string Uid, LoginState result, PatchListEntry[] PendingGamePatches) RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath)
@@ -519,10 +548,14 @@ namespace XIVLauncher.Game
         private static string GenerateFrontierReferer(ClientLanguage language)
         {
             var langCode = language.GetLangCode();
-            var formattedTime = DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
+            var formattedTime = GetLauncherFormattedTime();
 
             return $"https://frontier.ffxiv.com/version_5_0_win/index.html?rc_lang={langCode}&time={formattedTime}";
         }
+
+        private static string GetLauncherFormattedTime() => DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
+
+        private static string GetLauncherFormattedTimeLong() => DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm");
 
         private static string GenerateUserAgent()
         {

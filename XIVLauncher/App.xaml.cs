@@ -158,6 +158,12 @@ namespace XIVLauncher
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
+            if (e.Args.Length > 0 && e.Args[0] == "--genLocalizable")
+            {
+                Loc.ExportLocalizable();
+                Environment.Exit(0);
+                return;
+            }
 
             if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
             {

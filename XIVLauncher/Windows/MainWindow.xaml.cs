@@ -36,7 +36,7 @@ namespace XIVLauncher.Windows
 
         private Timer _maintenanceQueueTimer;
 
-        private readonly XivGame _game = new XivGame();
+        private readonly Launcher _game = new Launcher();
 
         private AccountManager _accountManager;
 
@@ -352,7 +352,7 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-                if (loginResult.State != XivGame.LoginState.Ok)
+                if (loginResult.State != Launcher.LoginState.Ok)
                 {
                     var msgBoxResult = MessageBox.Show(
                         "Your game is out of date. Please start the official launcher and update it before trying to log in. Do you want to start the official launcher?",
@@ -376,7 +376,7 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-                var gameProcess = XivGame.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
+                var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
                     SteamCheckBox.IsChecked == true, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false));
 
