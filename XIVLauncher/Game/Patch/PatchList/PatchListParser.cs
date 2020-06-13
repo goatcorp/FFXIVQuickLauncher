@@ -23,7 +23,7 @@ namespace XIVLauncher.Game.Patch.PatchList
                 
                 output.Add(new PatchListEntry()
                 {
-                    Length = int.Parse(fields[0]),
+                    Length = long.Parse(fields[0]),
                     VersionId = fields[4],
 
                     // bootver patchlists don't have a hash field

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
@@ -7,8 +8,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Downloader;
 using Serilog;
 using XIVLauncher.Game.Patch.PatchList;
+using XIVLauncher.Windows;
+using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 
 namespace XIVLauncher.Game.Patch
 {
@@ -19,102 +23,120 @@ namespace XIVLauncher.Game.Patch
         public string Name {get;set;}
     }
 
+    public enum PatchState
+    {
+        Nothing,
+        IsDownloading,
+        IsInstalling,
+        Finished
+    }
+
+    public class PatchDownload
+    {
+        public PatchListEntry Patch { get; set; }
+        public PatchState State { get; set; }
+    }
+
     class PatchInstaller
     {
-        private readonly string _patchFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "XIVLauncher", "patches");
-
-        private readonly Launcher _game;
-
-        public PatchInstaller(Launcher game, string repository)
+        private DownloadConfiguration _downloadOpt = new DownloadConfiguration
         {
-            _game = game;
-        }
+            ParallelDownload = true, // download parts of file as parallel or not
+            BufferBlockSize = 8000, // usually, hosts support max to 8000 bytes
+            ChunkCount = 8, // file parts to download
+            MaxTryAgainOnFailover = int.MaxValue, // the maximum number of times to fail.
+            OnTheFlyDownload = false, // caching in-memory mode
+            Timeout = 1000 // timeout (millisecond) per stream block reader
+        };
 
-        public void StartPatcher()
+        private const int MAX_DOWNLOADS_AT_ONCE = 4;
+
+        private readonly string _uniqueId;
+        private readonly string _repository;
+        private readonly PatchDownloadDialog _progressDialog;
+
+        private DirectoryInfo _patchDir;
+
+        private volatile int _currentNumDownloads;
+        private List<PatchDownload> _downloads;
+
+        public PatchInstaller(string uniqueId, string repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog)
         {
-            var process = new Process
-            {
-                StartInfo =
-                {
-                    FileName = Path.Combine(Directory.GetCurrentDirectory(), "XIVLauncher.PatchInstaller.exe"),
-                    WorkingDirectory = Directory.GetCurrentDirectory()
-                }
-            };
+            _uniqueId = uniqueId;
+            _repository = repository;
+            _progressDialog = progressDialog;
 
-            process.StartInfo.Verb = "runas";
+            _patchDir = new DirectoryInfo(Path.Combine(Paths.XIVLauncherPath, "patches"));
+            _patchDir.Create();
 
-            using (var pipeServer =
-                new AnonymousPipeServerStream(PipeDirection.InOut,
-                    HandleInheritability.Inheritable))
-            {
-                Console.WriteLine("[SERVER] Current TransmissionMode: {0}.",
-                    pipeServer.TransmissionMode);
-
-                // Pass the client process a handle to the server.
-                process.StartInfo.Arguments =
-                    pipeServer.GetClientHandleAsString();
-                process.StartInfo.UseShellExecute = false;
-                process.Start();
-
-                pipeServer.DisposeLocalCopyOfClientHandle();
-
-                try
-                {
-                    // Read user input and send that to the client process.
-                    using (StreamWriter sw = new StreamWriter(pipeServer))
-                    {
-                        sw.AutoFlush = true;
-                        // Send a 'sync message' and wait for client to receive it.
-                        sw.WriteLine("SYNC");
-                        pipeServer.WaitForPipeDrain();
-                        // Send the console input to the client process.
-                        Console.Write("[SERVER] Enter text: ");
-                        sw.WriteLine(Console.ReadLine());
-                    }
-                }
-                // Catch the IOException that is raised if the pipe is broken
-                // or disconnected.
-                catch (IOException e)
-                {
-                    Console.WriteLine("[SERVER] Error: {0}", e.Message);
-                }
-            }
-        }
-
-        public async Task DownloadPatchesAsync(IEnumerable<PatchListEntry> patches, string uniqueId, IProgress<PatchDownloadProgress> progress)
-        {
+            _downloads = new List<PatchDownload>();
             foreach (var patchListEntry in patches)
             {
-                await DownloadPatchAsync(patchListEntry, uniqueId, progress);
+                _downloads.Add(new PatchDownload
+                {
+                    Patch = patchListEntry,
+                    State = PatchState.Nothing
+                });
             }
         }
 
-        private async Task DownloadPatchAsync(PatchListEntry patch, string uniqueId, IProgress<PatchDownloadProgress> progress)
+        public void Start()
         {
+            CheckDownloadQueue();
+        }
+
+        private async Task DownloadPatchAsync(PatchListEntry patch, int index)
+        {
+            var dlService = new DownloadService(_downloadOpt);
+            dlService.DownloadProgressChanged += (sender, args) =>
+            {
+                Log.Verbose($"Downloading patch: {(int)Math.Round((double)(100 * args.BytesReceived) / patch.Length)}% ({args.BytesReceived} / {patch.Length}) - {patch.Url}");
+
+                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    var pct = Math.Round((double) (100 * args.BytesReceived) / patch.Length);
+                    _progressDialog.SetPatchProgress(index, $"{patch.VersionId} ({pct}%)", pct);
+                }));
+            };
+
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", "FFXIV PATCH CLIENT");
-                client.Headers.Add("X-Patch-Unique-Id", uniqueId);
+                client.Headers.Add("X-Patch-Unique-Id", _uniqueId);
 
                 var res = client.UploadString(
                     "http://patch-gamever.ffxiv.com/gen_token", patch.Url);
-                
-                client.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
-                {
-                    Log.Verbose($"Downloading patch: {(int)Math.Round((double)(100 * args.BytesReceived) / patch.Length)}% ({args.BytesReceived} / {patch.Length}) - {patch.Url}");
 
-                    progress.Report(new PatchDownloadProgress{
-                        Name = patch.VersionId,
-                        CurrentBytes = args.BytesReceived,
-                        Length = patch.Length
-                        });
-                };
-                
-                await client.DownloadFileTaskAsync(res, Path.Combine(_patchFolder, patch.VersionId + ".patch"));
+                //await dlService.DownloadFileAsync()
 
                 Log.Verbose("Patch at {0} downloaded completely", patch.Url);
             }
+
+            _currentNumDownloads--;
+            CheckDownloadQueue();
+            CheckApplyQueue();
+        }
+
+        private void CheckDownloadQueue()
+        {
+            while (_currentNumDownloads < MAX_DOWNLOADS_AT_ONCE)
+            {
+                var toDl = _downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
+
+                if (toDl == null)
+                {
+                    Log.Information("All patches downloaded.");
+                    return;
+                }
+
+                _currentNumDownloads++;
+                DownloadPatchAsync(toDl.Patch, _currentNumDownloads);
+            }
+        }
+
+        private void CheckApplyQueue()
+        {
+
         }
     }
 }

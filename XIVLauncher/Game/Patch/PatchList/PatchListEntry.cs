@@ -11,6 +11,6 @@ namespace XIVLauncher.Game.Patch.PatchList
         public string VersionId { get; set; }
         public string Url { get; set; }
         public string Hash { get; set; }
-        public int Length { get; set; }
+        public long Length { get; set; }
     }
 }

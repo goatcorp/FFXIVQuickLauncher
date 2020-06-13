@@ -354,25 +354,23 @@ namespace XIVLauncher.Windows
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
+                    /*
                     var msgBoxResult = MessageBox.Show(
                         "Your game is out of date. Please start the official launcher and update it before trying to log in. Do you want to start the official launcher?",
                         "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
 
                     if (msgBoxResult == MessageBoxResult.Yes)
                         Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
+                        */
 
-                    /*
-                    var patcher = new Game.Patch.PatchInstaller(_game, "ffxiv"); 
-                    //var window = new IntegrityCheckProgressWindow();
-                    var progress = new Progress<PatchDownloadProgress>();
-                    progress.ProgressChanged += (sender, checkProgress) => Log.Verbose("PROGRESS");
+                    
+                    var progressDialog = new PatchDownloadDialog();
 
-                    Task.Run(async () => await patcher.DownloadPatchesAsync(loginResult.PendingPatches, loginResult.OauthLogin.SessionId, progress)).ContinueWith(task =>
-                    {
-                        //window.Dispatcher.Invoke(() => window.Close());
-                        MessageBox.Show("Download OK");
-                    });
-                    */
+                    var patcher = new PatchInstaller(loginResult.UniqueId, "ffxiv", loginResult.PendingPatches, progressDialog);
+                    patcher.Start();
+
+                    progressDialog.ShowDialog();
+                    
                     return;
                 }
 
