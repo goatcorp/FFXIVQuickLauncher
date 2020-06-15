@@ -6,10 +6,14 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Downloader;
 using Serilog;
+using Squirrel;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.Windows;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
@@ -27,6 +31,7 @@ namespace XIVLauncher.Game.Patch
     {
         Nothing,
         IsDownloading,
+        Downloaded,
         IsInstalling,
         Finished
     }
@@ -45,11 +50,11 @@ namespace XIVLauncher.Game.Patch
             BufferBlockSize = 8000, // usually, hosts support max to 8000 bytes
             ChunkCount = 8, // file parts to download
             MaxTryAgainOnFailover = int.MaxValue, // the maximum number of times to fail.
-            OnTheFlyDownload = false, // caching in-memory mode
+            OnTheFlyDownload = true, // caching in-memory mode
             Timeout = 1000 // timeout (millisecond) per stream block reader
         };
 
-        private const int MAX_DOWNLOADS_AT_ONCE = 4;
+        private const int MAX_DOWNLOADS_AT_ONCE = 1;
 
         private readonly string _uniqueId;
         private readonly string _repository;
@@ -57,8 +62,10 @@ namespace XIVLauncher.Game.Patch
 
         private DirectoryInfo _patchDir;
 
-        private volatile int _currentNumDownloads;
+        private int _currentNumDownloads;
         private List<PatchDownload> _downloads;
+
+        private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing).Sum(x => x.Patch.Length);
 
         public PatchInstaller(string uniqueId, string repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog)
         {
@@ -67,7 +74,8 @@ namespace XIVLauncher.Game.Patch
             _progressDialog = progressDialog;
 
             _patchDir = new DirectoryInfo(Path.Combine(Paths.XIVLauncherPath, "patches"));
-            _patchDir.Create();
+            if (!_patchDir.Exists)
+                _patchDir.Create();
 
             _downloads = new List<PatchDownload>();
             foreach (var patchListEntry in patches)
@@ -82,21 +90,44 @@ namespace XIVLauncher.Game.Patch
 
         public void Start()
         {
-            CheckDownloadQueue();
+            Task.Run(RunDownloadQueue);
+            Task.Run(RunApplyQueue);
         }
 
-        private async Task DownloadPatchAsync(PatchListEntry patch, int index)
+        private async Task DownloadPatchAsync(PatchDownload download, int index)
         {
+            var outFile = GetPatchFile(download.Patch);
+
+            if (outFile.Exists && IsHashCheckPass(download.Patch, outFile))
+            {
+                _currentNumDownloads--;
+                download.State = PatchState.Downloaded;
+                return;
+            }
+
             var dlService = new DownloadService(_downloadOpt);
             dlService.DownloadProgressChanged += (sender, args) =>
             {
-                Log.Verbose($"Downloading patch: {(int)Math.Round((double)(100 * args.BytesReceived) / patch.Length)}% ({args.BytesReceived} / {patch.Length}) - {patch.Url}");
-
                 _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    var pct = Math.Round((double) (100 * args.BytesReceived) / patch.Length);
-                    _progressDialog.SetPatchProgress(index, $"{patch.VersionId} ({pct}%)", pct);
+                    var pct = Math.Round((double) (100 * args.BytesReceived) / download.Patch.Length, 2);
+                    _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} ({pct}%)", pct);
                 }));
+            };
+
+            dlService.DownloadFileCompleted += (sender, args) =>
+            {
+                // Let's just bail for now, need better handling of this later
+                if (!IsHashCheckPass(download.Patch, outFile))
+                {
+                    MessageBox.Show($"IsHashCheckPass FAILED for {download.Patch.VersionId}.\nPlease try again.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    outFile.Delete();
+                    Environment.Exit(0);
+                    return;
+                }
+
+                _currentNumDownloads--;
+                download.State = PatchState.Downloaded;
             };
 
             using (var client = new WebClient())
@@ -105,38 +136,94 @@ namespace XIVLauncher.Game.Patch
                 client.Headers.Add("X-Patch-Unique-Id", _uniqueId);
 
                 var res = client.UploadString(
-                    "http://patch-gamever.ffxiv.com/gen_token", patch.Url);
+                    "http://patch-gamever.ffxiv.com/gen_token", download.Patch.Url);
 
-                //await dlService.DownloadFileAsync()
+                await dlService.DownloadFileAsync(res, outFile.FullName);
 
-                Log.Verbose("Patch at {0} downloaded completely", patch.Url);
+                Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
             }
-
-            _currentNumDownloads--;
-            CheckDownloadQueue();
-            CheckApplyQueue();
         }
 
-        private void CheckDownloadQueue()
+        private void RunDownloadQueue()
         {
-            while (_currentNumDownloads < MAX_DOWNLOADS_AT_ONCE)
+            while (_downloads.Any(x => x.State == PatchState.Nothing))
             {
-                var toDl = _downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
-
-                if (toDl == null)
+                Thread.Sleep(500);
+                while (_currentNumDownloads < MAX_DOWNLOADS_AT_ONCE)
                 {
-                    Log.Information("All patches downloaded.");
-                    return;
+                    var toDl = _downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
+
+                    if (toDl == null)
+                    {
+                        Log.Information("All patches downloaded.");
+                        return;
+                    }
+
+                    toDl.State = PatchState.IsDownloading;
+                    var a = _currentNumDownloads;
+                    Task.Run(() => DownloadPatchAsync(toDl, a));
+                    _currentNumDownloads++;
+                    Debug.WriteLine("Started DL" + _currentNumDownloads);
+                }
+            }
+        }
+
+        private void RunApplyQueue()
+        {
+            while (_downloads.Any(x => x.State != PatchState.Finished))
+            {
+                Thread.Sleep(500);
+
+                var toDl = _downloads.FirstOrDefault(x => x.State == PatchState.Downloaded);
+                if (toDl == null)
+                    continue;
+
+                toDl.State = PatchState.IsInstalling;
+                MessageBox.Show("INSTALLING " + toDl.Patch.VersionId);
+            }
+        }
+
+        private bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
+        {
+            var stream = path.OpenRead();
+
+            var parts = (int) Math.Round((double) patchListEntry.Length / patchListEntry.HashBlockSize);
+            var block = new byte[patchListEntry.HashBlockSize];
+
+            for (var i = 0; i < parts; i++)
+            {
+                var read = stream.Read(block, 0, (int) patchListEntry.HashBlockSize);
+
+                if (read < patchListEntry.HashBlockSize)
+                {
+                    var trimmedBlock = new byte[read];
+                    Array.Copy(block, 0, trimmedBlock, 0, read);
+                    block = trimmedBlock;
                 }
 
-                _currentNumDownloads++;
-                DownloadPatchAsync(toDl.Patch, _currentNumDownloads);
+                using (var sha1 = new SHA1Managed())
+                {
+                    var hash = sha1.ComputeHash(block);
+                    var sb = new StringBuilder(hash.Length * 2); 
+
+                    foreach (var b in hash)
+                    {
+                        sb.Append(b.ToString("x2"));
+                    }
+
+                    if (sb.ToString() == patchListEntry.Hashes[i])
+                        continue;
+
+                    stream.Close();
+                    return false;
+                }
             }
+
+            stream.Close();
+            return true;
         }
 
-        private void CheckApplyQueue()
-        {
-
-        }
+        private FileInfo GetPatchFile(PatchListEntry patch) =>
+            new FileInfo(Path.Combine(_patchDir.FullName, $"{patch.VersionId}.zipatch"));
     }
 }

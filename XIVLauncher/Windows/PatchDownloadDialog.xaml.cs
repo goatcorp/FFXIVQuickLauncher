@@ -32,16 +32,16 @@ namespace XIVLauncher.Windows
         {
             switch (index)
             {
-                case 1:
+                case 0:
                     SetProgressBar1Progress(patchName, pct);
                     break;
-                case 2:
+                case 1:
                     SetProgressBar2Progress(patchName, pct);
                     break;
-                case 3:
+                case 2:
                     SetProgressBar3Progress(patchName, pct);
                     break;
-                case 4:
+                case 3:
                     SetProgressBar4Progress(patchName, pct);
                     break;
             }

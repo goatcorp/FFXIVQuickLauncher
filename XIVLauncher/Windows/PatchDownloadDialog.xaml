@@ -18,13 +18,13 @@
             <StackPanel x:Uid="StackPanel_1" Margin="16,16,16,0">
                 <TextBlock x:Name="PatchProgressText" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="Patching through {0} updates..."></TextBlock>
 
-                <TextBlock x:Name="Progress1Text" x:Uid="TextBlock_1" Margin="0,15,0,0" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="2012.01.01.0000.0000"></TextBlock>
+                <TextBlock x:Name="Progress1Text" x:Uid="TextBlock_1" Margin="0,15,0,0" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="Done!"></TextBlock>
                 <ProgressBar x:Name="Progress1" Value="0" Margin="0,0,0,10" />
-                <TextBlock x:Name="Progress2Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="2012.01.01.0000.0000"></TextBlock>
+                <TextBlock x:Name="Progress2Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="Done!"></TextBlock>
                 <ProgressBar x:Name="Progress2" Value="0" Margin="0,0,0,10" />
-                <TextBlock x:Name="Progress3Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="2012.01.01.0000.0000"></TextBlock>
+                <TextBlock x:Name="Progress3Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="Done!"></TextBlock>
                 <ProgressBar x:Name="Progress3" Value="0" Margin="0,0,0,10" />
-                <TextBlock x:Name="Progress4Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="2012.01.01.0000.0000"></TextBlock>
+                <TextBlock x:Name="Progress4Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="Done!"></TextBlock>
                 <ProgressBar x:Name="Progress4" Value="0" Margin="0,0,0,15" />
 
                 <Button
