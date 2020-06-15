@@ -1,0 +1,3 @@
+[submodule "lib/Downloader"]
+	path = lib/Downloader
+	url = https://github.com/bezzad/Downloader.git
