@@ -354,23 +354,25 @@ namespace XIVLauncher.Windows
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
-                    /*
-                    var msgBoxResult = MessageBox.Show(
-                        "Your game is out of date. Please start the official launcher and update it before trying to log in. Do you want to start the official launcher?",
-                        "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                    if (Util.CheckIsGameOpen())
+                    {
+                        var msgBoxResult = MessageBox.Show(
+                            "Your game is out of date and XIVLauncher could not patch it, since it or the original launcher are open. Please close them and start the official launcher or XIVLauncher to update it before trying to log in. Do you want to start the official launcher?",
+                            "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
 
-                    if (msgBoxResult == MessageBoxResult.Yes)
-                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
-                        */
+                        if (msgBoxResult == MessageBoxResult.Yes)
+                            Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
+                    }
+                    else
+                    {
+                        var progressDialog = new PatchDownloadDialog();
 
-                    
-                    var progressDialog = new PatchDownloadDialog();
+                        var patcher = new PatchInstaller(loginResult.UniqueId, Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath);
+                        patcher.Start();
 
-                    var patcher = new PatchInstaller(loginResult.UniqueId, "ffxiv", loginResult.PendingPatches, progressDialog);
-                    patcher.Start();
+                        progressDialog.ShowDialog();
+                    }
 
-                    progressDialog.ShowDialog();
-                    
                     return;
                 }
 

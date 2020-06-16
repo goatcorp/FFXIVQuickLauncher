@@ -12,9 +12,9 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="230" Width="275">
+        WindowStyle="None" Height="200" Width="340">
     <Grid x:Uid="Grid_1" Margin="0,0,0,0">
-        <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="225" Margin="0,0,10,0">
+        <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="195" Margin="0,0,10,0">
             <StackPanel x:Uid="StackPanel_1" Margin="16,16,16,0">
                 <TextBlock x:Name="PatchProgressText" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="Patching through {0} updates..."></TextBlock>
 
@@ -27,11 +27,7 @@
                 <TextBlock x:Name="Progress4Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="Done!"></TextBlock>
                 <ProgressBar x:Name="Progress4" Value="0" Margin="0,0,0,15" />
 
-                <Button
-                     x:Uid="Button_1" Content="Cancel"
-                     Margin="10,0,0,0"
-                     Width="100"/>
-            <TextBlock x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" Text="You can cancel and resume at any time."/>
+                <TextBlock x:Name="BytesLeftText" x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" Text="Checking files..."/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

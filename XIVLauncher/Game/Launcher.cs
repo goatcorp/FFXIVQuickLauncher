@@ -457,7 +457,7 @@ namespace XIVLauncher.Game
         {
             try
             {
-                return File.ReadAllText(Path.Combine(gamePath.FullName, "game", "ffxivgame.bck"));
+                return File.ReadAllText(Repository.Ffxiv.GetVerFile(gamePath, true).FullName);
             }
             catch (Exception exc)
             {
@@ -469,7 +469,7 @@ namespace XIVLauncher.Game
         {
             try
             {
-                return File.ReadAllText(Path.Combine(gamePath.FullName, "boot", "ffxivboot.bck"));
+                return File.ReadAllText(Repository.Boot.GetVerFile(gamePath, true).FullName);
             }
             catch (Exception exc)
             {

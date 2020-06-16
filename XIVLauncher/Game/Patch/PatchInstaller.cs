@@ -13,20 +13,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using Downloader;
 using Serilog;
-using Squirrel;
 using XIVLauncher.Game.Patch.PatchList;
+using XIVLauncher.Settings;
 using XIVLauncher.Windows;
-using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 
 namespace XIVLauncher.Game.Patch
 {
-    public class PatchDownloadProgress
-    {
-        public long CurrentBytes { get; set; }
-        public long Length {get;set;}
-        public string Name {get;set;}
-    }
-
     public enum PatchState
     {
         Nothing,
@@ -54,24 +46,31 @@ namespace XIVLauncher.Game.Patch
             Timeout = 1000 // timeout (millisecond) per stream block reader
         };
 
-        private const int MAX_DOWNLOADS_AT_ONCE = 1;
+        private const int MAX_DOWNLOADS_AT_ONCE = 4;
 
         private readonly string _uniqueId;
-        private readonly string _repository;
+        private readonly Repository _repository;
         private readonly PatchDownloadDialog _progressDialog;
+        private readonly DirectoryInfo _gamePath;
 
         private DirectoryInfo _patchDir;
 
         private int _currentNumDownloads;
         private List<PatchDownload> _downloads;
 
-        private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing).Sum(x => x.Patch.Length);
+        private int _currentInstallIndex;
 
-        public PatchInstaller(string uniqueId, string repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog)
+        private long[] _progresses = new long[MAX_DOWNLOADS_AT_ONCE];
+        private long[] _speeeeeeds = new long[MAX_DOWNLOADS_AT_ONCE];
+
+        private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - _progresses.Sum();
+
+        public PatchInstaller(string uniqueId, Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath)
         {
             _uniqueId = uniqueId;
             _repository = repository;
             _progressDialog = progressDialog;
+            _gamePath = gamePath;
 
             _patchDir = new DirectoryInfo(Path.Combine(Paths.XIVLauncherPath, "patches"));
             if (!_patchDir.Exists)
@@ -110,8 +109,11 @@ namespace XIVLauncher.Game.Patch
             {
                 _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    _progresses[index] = args.BytesReceived;
+                    _speeeeeeds[index] = dlService.DownloadSpeed;
+
                     var pct = Math.Round((double) (100 * args.BytesReceived) / download.Patch.Length, 2);
-                    _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} ({pct}%)", pct);
+                    _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} ({pct:#0.00}%, {Util.BytesToString(dlService.DownloadSpeed)}/s)", pct);
                 }));
             };
 
@@ -165,22 +167,37 @@ namespace XIVLauncher.Game.Patch
                     _currentNumDownloads++;
                     Debug.WriteLine("Started DL" + _currentNumDownloads);
                 }
+
+                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    _progressDialog.SetLeft(AllDownloadsLength, _speeeeeeds.Sum());
+                }));
             }
         }
 
         private void RunApplyQueue()
         {
-            while (_downloads.Any(x => x.State != PatchState.Finished))
+            while (_currentInstallIndex < _downloads.Count)
             {
                 Thread.Sleep(500);
 
-                var toDl = _downloads.FirstOrDefault(x => x.State == PatchState.Downloaded);
-                if (toDl == null)
+                var toInstall = _downloads[_currentInstallIndex];
+
+                if (toInstall.State != PatchState.Downloaded)
                     continue;
 
-                toDl.State = PatchState.IsInstalling;
-                MessageBox.Show("INSTALLING " + toDl.Patch.VersionId);
+                toInstall.State = PatchState.IsInstalling;
+                MessageBox.Show("INSTALLING " + toInstall.Patch.VersionId);
+
+                Thread.Sleep(10000); // waitin for winter
+
+                _currentInstallIndex++;
             }
+
+            Log.Information("PATCHING finish");
+
+            // Overwrite the old BCK with the new game version
+            _repository.GetVerFile(_gamePath).CopyTo(_repository.GetVerFile(_gamePath, true).FullName, true);
         }
 
         private bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)

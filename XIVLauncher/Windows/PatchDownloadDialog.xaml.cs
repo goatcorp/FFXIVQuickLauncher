@@ -28,6 +28,11 @@ namespace XIVLauncher.Windows
                 $"{curr}/{final}");
         }
 
+        public void SetLeft(long left, long rate)
+        {
+            BytesLeftText.Text = $"{Util.BytesToString(left)} left to download at {Util.BytesToString(rate)}/s.";
+        }
+
         public void SetPatchProgress(int index, string patchName, double pct)
         {
             switch (index)
