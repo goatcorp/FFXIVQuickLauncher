@@ -112,7 +112,7 @@ namespace XIVLauncher.Dalamud
                     }
                 }
 
-                if (Launcher.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return;
 
                 if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
@@ -164,7 +164,7 @@ namespace XIVLauncher.Dalamud
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
-                if (Launcher.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return false;
             }
 

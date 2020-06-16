@@ -203,7 +203,7 @@ namespace XIVLauncher.Game
                     .Append("DEV.UseSqPack", "1")
                     .Append("SYS.Region", region.ToString())
                     .Append("language", ((int)language).ToString())
-                    .Append("ver", GetLocalGameVer(gamePath));
+                    .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
                 if (isSteamServiceAccount)
                 {
@@ -283,6 +283,14 @@ namespace XIVLauncher.Game
             return null;
         }
 
+        private static string GetVersionReport(DirectoryInfo gamePath)
+        {
+            return $"{GetBootVersionHash(gamePath)}\n" +
+                   $"ex1\t{Repository.Ex1.GetVer(gamePath)}\n" +
+                   $"ex2\t{Repository.Ex2.GetVer(gamePath)}\n" +
+                   $"ex3\t{Repository.Ex3.GetVer(gamePath)}";
+        }
+
         /// <summary>
         /// Calculate the hash that is sent to patch-gamever for version verification/tamper protection.
         /// This same hash is also sent in lobby, but for ffxiv.exe and ffxiv_dx11.exe.
@@ -290,7 +298,7 @@ namespace XIVLauncher.Game
         /// <returns>String of hashed EXE files.</returns>
         private static string GetBootVersionHash(DirectoryInfo gamePath)
         {
-            var result = "";
+            var result = Repository.Boot.GetVer(gamePath, true) + "=";
 
             for (var i = 0; i < FilesToHash.Length; i++)
             {
@@ -313,7 +321,7 @@ namespace XIVLauncher.Game
 
                 // Why tf is this http??
                 var url =
-                    $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{GetLocalBootVer(gamePath)}/?time=" + GetLauncherFormattedTimeLong();
+                    $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Ffxiv.GetVer(gamePath, true)}/?time=" + GetLauncherFormattedTimeLong();
 
                 var result = client.DownloadString(url);
 
@@ -337,11 +345,12 @@ namespace XIVLauncher.Game
                 client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
                 var url =
-                    $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{GetLocalGameVer(gamePath)}/{loginResult.SessionId}";
+                    $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{Repository.Ffxiv.GetVer(gamePath, true)}/{loginResult.SessionId}";
 
                 try
                 {
-                    var result = client.UploadString(url, GetBootVersionHash(gamePath));
+                    var report = GetVersionReport(gamePath);
+                    var result = client.UploadString(url, report);
 
                     // Get the unique ID needed to authenticate with the lobby server
                     if (client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
@@ -450,30 +459,6 @@ namespace XIVLauncher.Game
                     Playable = launchParams[9] != "0",
                     MaxExpansion = int.Parse(launchParams[13])
                 };
-            }
-        }
-
-        public static string GetLocalGameVer(DirectoryInfo gamePath)
-        {
-            try
-            {
-                return File.ReadAllText(Repository.Ffxiv.GetVerFile(gamePath, true).FullName);
-            }
-            catch (Exception exc)
-            {
-                throw new Exception("Could not get local game version.", exc);
-            }
-        }
-
-        public static string GetLocalBootVer(DirectoryInfo gamePath)
-        {
-            try
-            {
-                return File.ReadAllText(Repository.Boot.GetVerFile(gamePath, true).FullName);
-            }
-            catch (Exception exc)
-            {
-                throw new Exception("Could not get local boot version.", exc);
             }
         }
 

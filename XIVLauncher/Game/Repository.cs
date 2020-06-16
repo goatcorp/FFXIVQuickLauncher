@@ -54,6 +54,11 @@ namespace XIVLauncher.Game
             }
         }
 
+        public static string GetVer(this Repository repo, DirectoryInfo gamePath, bool isBck = false)
+        {
+            return File.ReadAllText(repo.GetVerFile(gamePath, isBck).FullName);
+        }
+
         // TODO
         public static string GetRepoHash(this Repository repo)
         {

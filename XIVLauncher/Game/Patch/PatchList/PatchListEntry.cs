@@ -13,5 +13,7 @@ namespace XIVLauncher.Game.Patch.PatchList
         public long HashBlockSize { get; set; }
         public string[] Hashes { get; set; }
         public long Length { get; set; }
+
+        public override string ToString() => VersionId;
     }
 }

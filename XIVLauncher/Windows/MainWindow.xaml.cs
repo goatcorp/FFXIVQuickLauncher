@@ -352,12 +352,17 @@ namespace XIVLauncher.Windows
                     else
                     {
                         var progressDialog = new PatchDownloadDialog();
+                        progressDialog.Show();
+                        this.Hide();
 
                         var patcher = new PatchInstaller(loginResult.UniqueId, Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
-                        patcher.OnFinish += (sender, args) => progressDialog.Close();
-                        patcher.Start();
+                        patcher.OnFinish += (sender, args) =>
+                        {
+                            progressDialog.Close();
+                            this.Show();
+                        };
 
-                        progressDialog.ShowDialog();
+                        patcher.Start();
                     }
 
                     return;
