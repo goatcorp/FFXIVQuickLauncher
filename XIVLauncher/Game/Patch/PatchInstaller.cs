@@ -58,13 +58,13 @@ namespace XIVLauncher.Game.Patch
         private readonly DirectoryInfo _gamePath;
         private readonly DirectoryInfo _patchStore;
 
-        private int _currentNumDownloads;
         private List<PatchDownload> _downloads;
 
         private int _currentInstallIndex;
 
         private long[] _progresses = new long[MAX_DOWNLOADS_AT_ONCE];
         private long[] _speeeeeeds = new long[MAX_DOWNLOADS_AT_ONCE];
+        private bool[] _slots = new bool[MAX_DOWNLOADS_AT_ONCE];
 
         private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - _progresses.Sum();
 
@@ -88,6 +88,12 @@ namespace XIVLauncher.Game.Patch
                     State = PatchState.Nothing
                 });
             }
+
+            // All dl slots are available at the start
+            for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
+            {
+                _slots[i] = true;
+            }
         }
 
         public void Start()
@@ -109,10 +115,21 @@ namespace XIVLauncher.Game.Patch
         {
             var outFile = GetPatchFile(download.Patch);
 
+            _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} (Checking...)", 0f);
+            }));
+
             if (outFile.Exists && IsHashCheckPass(download.Patch, outFile))
             {
-                _currentNumDownloads--;
                 download.State = PatchState.Downloaded;
+                _slots[index] = true;
+                _progresses[index] = download.Patch.Length;
+
+                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    _progressDialog.SetPatchProgress(index, "Done!", 100f);
+                }));
                 return;
             }
 
@@ -140,22 +157,18 @@ namespace XIVLauncher.Game.Patch
                     return;
                 }
 
-                _currentNumDownloads--;
+                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    _progressDialog.SetPatchProgress(index, "Done!", 100f);
+                }));
+
                 download.State = PatchState.Downloaded;
+                _slots[index] = true;
             };
 
-            using (var client = new WebClient())
-            {
-                client.Headers.Add("user-agent", "FFXIV PATCH CLIENT");
-                client.Headers.Add("X-Patch-Unique-Id", _uniqueId);
+            await dlService.DownloadFileAsync(download.Patch.Url, outFile.FullName);
 
-                var res = client.UploadString(
-                    "http://patch-gamever.ffxiv.com/gen_token", download.Patch.Url);
-
-                await dlService.DownloadFileAsync(res, outFile.FullName);
-
-                Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
-            }
+            Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
         }
 
         private void RunDownloadQueue()
@@ -163,8 +176,13 @@ namespace XIVLauncher.Game.Patch
             while (_downloads.Any(x => x.State == PatchState.Nothing))
             {
                 Thread.Sleep(500);
-                while (_currentNumDownloads < MAX_DOWNLOADS_AT_ONCE)
+                for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
                 {
+                    if (!_slots[i]) 
+                        continue;
+
+                    _slots[i] = false;
+
                     var toDl = _downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
 
                     if (toDl == null)
@@ -174,10 +192,9 @@ namespace XIVLauncher.Game.Patch
                     }
 
                     toDl.State = PatchState.IsDownloading;
-                    var a = _currentNumDownloads;
-                    Task.Run(() => DownloadPatchAsync(toDl, a));
-                    _currentNumDownloads++;
-                    Debug.WriteLine("Started DL" + _currentNumDownloads);
+                    var curIndex = i;
+                    Task.Run(() => DownloadPatchAsync(toDl, curIndex));
+                    Debug.WriteLine("Started DL" + i);
                 }
 
                 _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
