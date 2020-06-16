@@ -433,7 +433,24 @@ namespace XIVLauncher.Windows
             }
             catch (Exception ex)
             {
-                new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
+                Log.Error(ex, "StartGame failed...");
+
+                if (!gateStatus)
+                {
+                    Log.Information("GateStatus is false.");
+                    var startLauncher = MessageBox.Show(
+                        "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+                    if (startLauncher)
+                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
+
+                    return;
+                }
+                else
+                {
+                    new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
+                }
+
                 _isLoggingIn = false;
             }
         }
