@@ -186,27 +186,8 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-#if DEBUG
                     HandleLogin(true);
                     return;
-#else
-                    if (!gateStatus)
-                    {
-                        var startLauncher = MessageBox.Show(Loc.Localize("MaintenanceAskOfficial", "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?")
-                            , "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
-
-                        if (startLauncher)
-                            Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
-
-                        App.Settings.AutologinEnabled = false;
-                        _isLoggingIn = false;
-                    }
-                    else
-                    {
-                        HandleLogin(true);
-                        return;
-                    }
-#endif
                 }
                 catch (Exception ex)
                 {
@@ -302,10 +283,10 @@ namespace XIVLauncher.Windows
                 otp = otpDialog.Result;
             }
 
-            StartGame(otp);
+            StartLogin(otp);
         }
 
-        private async void StartGame(string otp)
+        private async void StartLogin(string otp)
         {
             Log.Information("StartGame() called");
 
@@ -356,10 +337,11 @@ namespace XIVLauncher.Windows
                         this.Hide();
 
                         var patcher = new PatchInstaller(loginResult.UniqueId, Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
-                        patcher.OnFinish += (sender, args) =>
+                        patcher.OnFinish += async (sender, args) =>
                         {
                             progressDialog.Close();
-                            this.Show();
+
+                            await StartGameAndAddon(loginResult);
                         };
 
                         patcher.Start();
@@ -384,55 +366,7 @@ namespace XIVLauncher.Windows
                 }
 #endif
 
-                var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
-                    loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
-                    SteamCheckBox.IsChecked == true, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false));
-
-                if (gameProcess == null)
-                {
-                    Log.Information("GameProcess was null...");
-                    _isLoggingIn = false;
-                    return;
-                }
-
-                this.Hide();
-
-                var addonMgr = new AddonManager();
-
-                try
-                {
-                    var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
-
-                    if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
-                    {
-                        addons.Add(new DalamudLauncher());
-                    }
-
-                    await Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons));
-                }
-                catch (Exception ex)
-                {
-                    new ErrorWindow(ex,
-                        "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-                        "Addons").ShowDialog();
-                    _isLoggingIn = false;
-
-                    addonMgr.StopAddons();
-                }
-
-                var watchThread = new Thread(() =>
-                {
-                    while (!gameProcess.HasExited)
-                    {
-                        gameProcess.Refresh();
-                        Thread.Sleep(1);
-                    }
-
-                    Log.Information("Game has exited.");
-                    addonMgr.StopAddons();
-                    Environment.Exit(0);
-                });
-                watchThread.Start();
+                await StartGameAndAddon(loginResult);
 
                 this.Close();
             }
@@ -460,9 +394,64 @@ namespace XIVLauncher.Windows
             }
         }
 
+        private async Task StartGameAndAddon(Launcher.LoginResult loginResult)
+        {
+            // We won't do any sanity checks here anymore, since that should be handled in StartLogin
+
+            var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
+                    loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
+                    SteamCheckBox.IsChecked == true, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false));
+
+            if (gameProcess == null)
+            {
+                Log.Information("GameProcess was null...");
+                _isLoggingIn = false;
+                return;
+            }
+
+            this.Hide();
+
+            var addonMgr = new AddonManager();
+
+            try
+            {
+                var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
+
+                if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
+                {
+                    addons.Add(new DalamudLauncher());
+                }
+
+                await Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons));
+            }
+            catch (Exception ex)
+            {
+                new ErrorWindow(ex,
+                    "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
+                    "Addons").ShowDialog();
+                _isLoggingIn = false;
+
+                addonMgr.StopAddons();
+            }
+
+            var watchThread = new Thread(() =>
+            {
+                while (!gameProcess.HasExited)
+                {
+                    gameProcess.Refresh();
+                    Thread.Sleep(1);
+                }
+
+                Log.Information("Game has exited.");
+                addonMgr.StopAddons();
+                Environment.Exit(0);
+            });
+            watchThread.Start();
+        }
+
 #endregion
 
-        private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
+private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
                 return;
