@@ -495,12 +495,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\lib\Downloader\src\Downloader\Downloader.csproj">
-      <Project>{eb22138a-7452-4f3a-b1b2-4466901b9d37}</Project>
-      <Name>Downloader</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GetGitHash" BeforeTargets="WriteGitHash" Condition="'$(BuildHash)' == ''">
     <PropertyGroup>
