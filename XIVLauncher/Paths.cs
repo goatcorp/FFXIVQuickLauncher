@@ -5,6 +5,6 @@ namespace XIVLauncher
 {
     public class Paths
     {
-        public static string XIVLauncherPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher");
+        public static string RoamingPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher");
     }
 }

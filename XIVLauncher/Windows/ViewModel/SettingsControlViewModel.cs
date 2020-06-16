@@ -13,6 +13,7 @@ namespace XIVLauncher.Windows.ViewModel
     class SettingsControlViewModel : INotifyPropertyChanged
     {
         private string _gamePath;
+        private string _patchPath;
 
         public SettingsControlViewModel()
         {
@@ -43,6 +44,19 @@ namespace XIVLauncher.Windows.ViewModel
                 _gamePath = value;
                 OnPropertyChanged(nameof(GamePath));
                 OnPropertyChanged(nameof(IsRunIntegrityCheckPossible));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the path to the game folder.
+        /// </summary>
+        public string PatchPath
+        {
+            get => _patchPath;
+            set
+            {
+                _patchPath = value;
+                OnPropertyChanged(nameof(PatchPath));
             }
         }
 
@@ -141,7 +155,6 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonChatDelayDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
-        public string DutyFinderTaskbarFlashLoc { get; private set; }
 
         public string PluginsDescriptionLoc { get; private set; }
         public string PluginsToggleLoc { get; private set; }

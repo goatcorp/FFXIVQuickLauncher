@@ -145,8 +145,9 @@ namespace XIVLauncher.Windows
             if (App.Settings.AddonList != null)
                 App.Settings.AddonList = App.Settings.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
 
-            if (!App.Settings.EncryptArguments.HasValue)
-                App.Settings.EncryptArguments = true;
+            App.Settings.EncryptArguments ??= true;
+
+            App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
             var gateStatus = false;
             try
@@ -307,34 +308,19 @@ namespace XIVLauncher.Windows
         private async void StartGame(string otp)
         {
             Log.Information("StartGame() called");
+
+            var gateStatus = false;
             try
             {
-                var gateStatus = false;
-                try
-                {
-                    gateStatus = await Task.Run(() => _game.GetGateStatus());
-                }
-                catch
-                {
-                    // ignored
-                }
+                gateStatus = await Task.Run(() => _game.GetGateStatus());
+            }
+            catch
+            {
+                // ignored
+            }
 
-#if !DEBUG
-                if (!gateStatus)
-                {
-                    Log.Information("GateStatus is false.");
-                    var startLauncher = MessageBox.Show(
-                                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
-
-                    if (startLauncher)
-                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
-
-                    _isLoggingIn = false;
-
-                    return;
-                }
-#endif
-
+            try
+            {
                 var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, App.Settings.UniqueIdCacheEnabled, App.Settings.GamePath);
 
                 if (loginResult == null)
@@ -367,7 +353,8 @@ namespace XIVLauncher.Windows
                     {
                         var progressDialog = new PatchDownloadDialog();
 
-                        var patcher = new PatchInstaller(loginResult.UniqueId, Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath);
+                        var patcher = new PatchInstaller(loginResult.UniqueId, Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
+                        patcher.OnFinish += (sender, args) => progressDialog.Close();
                         patcher.Start();
 
                         progressDialog.ShowDialog();
@@ -375,6 +362,22 @@ namespace XIVLauncher.Windows
 
                     return;
                 }
+
+#if !DEBUG
+                if (!gateStatus)
+                {
+                    Log.Information("GateStatus is false.");
+                    var startLauncher = MessageBox.Show(
+                                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+                    if (startLauncher)
+                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
+
+                    _isLoggingIn = false;
+
+                    return;
+                }
+#endif
 
                 var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,

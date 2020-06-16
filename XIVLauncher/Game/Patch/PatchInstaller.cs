@@ -46,14 +46,17 @@ namespace XIVLauncher.Game.Patch
             Timeout = 1000 // timeout (millisecond) per stream block reader
         };
 
+        public event EventHandler OnFinish;
+
         private const int MAX_DOWNLOADS_AT_ONCE = 4;
+
+        private CancellationTokenSource _cancelTokenSource = new CancellationTokenSource();
 
         private readonly string _uniqueId;
         private readonly Repository _repository;
         private readonly PatchDownloadDialog _progressDialog;
         private readonly DirectoryInfo _gamePath;
-
-        private DirectoryInfo _patchDir;
+        private readonly DirectoryInfo _patchStore;
 
         private int _currentNumDownloads;
         private List<PatchDownload> _downloads;
@@ -65,16 +68,16 @@ namespace XIVLauncher.Game.Patch
 
         private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - _progresses.Sum();
 
-        public PatchInstaller(string uniqueId, Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath)
+        public PatchInstaller(string uniqueId, Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore)
         {
             _uniqueId = uniqueId;
             _repository = repository;
             _progressDialog = progressDialog;
             _gamePath = gamePath;
+            _patchStore = patchStore;
 
-            _patchDir = new DirectoryInfo(Path.Combine(Paths.XIVLauncherPath, "patches"));
-            if (!_patchDir.Exists)
-                _patchDir.Create();
+            if (!_patchStore.Exists)
+                _patchStore.Create();
 
             _downloads = new List<PatchDownload>();
             foreach (var patchListEntry in patches)
@@ -89,8 +92,17 @@ namespace XIVLauncher.Game.Patch
 
         public void Start()
         {
-            Task.Run(RunDownloadQueue);
-            Task.Run(RunApplyQueue);
+            if ((long) Util.GetDiskFreeSpace(_patchStore.FullName) < AllDownloadsLength)
+            {
+                OnFinish?.Invoke(this, null);
+
+                MessageBox.Show(
+                    "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
+            Task.Run(RunApplyQueue, _cancelTokenSource.Token);
         }
 
         private async Task DownloadPatchAsync(PatchDownload download, int index)
@@ -198,9 +210,10 @@ namespace XIVLauncher.Game.Patch
 
             // Overwrite the old BCK with the new game version
             _repository.GetVerFile(_gamePath).CopyTo(_repository.GetVerFile(_gamePath, true).FullName, true);
+            OnFinish?.Invoke(this, null);
         }
 
-        private bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
+        private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
         {
             var stream = path.OpenRead();
 
@@ -241,6 +254,6 @@ namespace XIVLauncher.Game.Patch
         }
 
         private FileInfo GetPatchFile(PatchListEntry patch) =>
-            new FileInfo(Path.Combine(_patchDir.FullName, $"{patch.VersionId}.zipatch"));
+            new FileInfo(Path.Combine(_patchStore.FullName, $"{patch.VersionId}.zipatch"));
     }
 }

@@ -254,6 +254,17 @@
                                Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10" Text="{Binding PluginsInstallHintLoc}"/>
                 </Grid>
             </TabItem>
+            <TabItem x:Uid="TabItem_5" Header="{Binding SettingsPatchingLoc}">
+                <StackPanel>
+                    <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PatchPathLoc}" />
+                    <components:FolderEntry Text="{Binding PatchPath, UpdateSourceTrigger=PropertyChanged}"
+                                            Description="Select a folder" Width="500" VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
+                </StackPanel>
+
+            </TabItem>
             <TabItem x:Uid="TabItem_6" Header="{Binding SettingsAboutLoc}">
                 <ScrollViewer x:Uid="ScrollViewer_2" VerticalScrollBarVisibility="Auto">
                     <Grid x:Uid="Grid_6">

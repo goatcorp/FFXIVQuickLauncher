@@ -47,7 +47,7 @@ namespace XIVLauncher
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a =>
-                    a.File(Path.Combine(Paths.XIVLauncherPath, "output.log")))
+                    a.File(Path.Combine(Paths.RoamingPath, "output.log")))
 #if DEBUG
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
@@ -154,7 +154,7 @@ namespace XIVLauncher
             Environment.Exit(0);
         }
 
-        private static string GetConfigPath(string prefix) => Path.Combine(Paths.XIVLauncherPath, $"{prefix}ConfigV3.json");
+        private static string GetConfigPath(string prefix) => Path.Combine(Paths.RoamingPath, $"{prefix}ConfigV3.json");
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
