@@ -40,7 +40,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -305,6 +305,7 @@
     <Compile Include="Windows\ViewModel\IntegrityCheckProgressWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\MainWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\OtpInputDialogViewModel.cs" />
+    <Compile Include="Windows\ViewModel\PatchDownloadDialogViewModel.cs" />
     <Compile Include="Windows\ViewModel\ProfilePictureInputWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\SettingsControlViewModel.cs" />
     <Compile Include="Windows\ViewModel\UpdateLoadingDialogViewModel.cs" />

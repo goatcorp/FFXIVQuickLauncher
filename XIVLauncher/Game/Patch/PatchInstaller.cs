@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using CheapLoc;
 using Downloader;
 using Serilog;
 using XIVLauncher.Game.Patch.PatchList;
@@ -120,7 +121,7 @@ namespace XIVLauncher.Game.Patch
 
             _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
             {
-                _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} (Checking...)", 0f);
+                _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} ({_progressDialog.ViewModel.PatchCheckingLoc})", 0f);
             }));
 
             if (outFile.Exists && IsHashCheckPass(download.Patch, outFile))
@@ -131,7 +132,7 @@ namespace XIVLauncher.Game.Patch
 
                 _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    _progressDialog.SetPatchProgress(index, "Done!", 100f);
+                    _progressDialog.SetPatchProgress(index, _progressDialog.ViewModel.PatchDoneLoc, 100f);
                 }));
                 return;
             }
@@ -162,7 +163,7 @@ namespace XIVLauncher.Game.Patch
 
                 _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    _progressDialog.SetPatchProgress(index, "Done!", 100f);
+                    _progressDialog.SetPatchProgress(index, _progressDialog.ViewModel.PatchDoneLoc, 100f);
                 }));
 
                 download.State = PatchState.Downloaded;
@@ -209,6 +210,10 @@ namespace XIVLauncher.Game.Patch
 
         private void RunApplyQueue()
         {
+            _progressDialog.Dispatcher.Invoke(() =>
+                _progressDialog.SetGeneralProgress(0,
+                    _downloads.Count));
+
             while (_currentInstallIndex < _downloads.Count)
             {
                 Thread.Sleep(500);
@@ -223,7 +228,12 @@ namespace XIVLauncher.Game.Patch
 
                 Thread.Sleep(10000); // waitin for winter
 
+                toInstall.State = PatchState.Finished;
                 _currentInstallIndex++;
+
+                _progressDialog.Dispatcher.Invoke(() =>
+                    _progressDialog.SetGeneralProgress(_currentInstallIndex,
+                        _downloads.Count));
             }
 
             Log.Information("PATCHING finish");

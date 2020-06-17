@@ -16,21 +16,23 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class PatchDownloadDialog : Window
     {
+        public PatchDownloadDialogViewModel ViewModel => DataContext as PatchDownloadDialogViewModel;
+
         public PatchDownloadDialog(bool isBoot)
         {
             InitializeComponent();
-            this.DataContext = new UpdateLoadingDialogViewModel();
+            this.DataContext = new PatchDownloadDialogViewModel();
         }
 
         public void SetGeneralProgress(int curr, int final)
         {
-            PatchProgressText.Text = string.Format(((UpdateLoadingDialogViewModel) DataContext).AutoLoginHintLoc,
+            PatchProgressText.Text = string.Format(ViewModel.PatchGeneralStatusLoc,
                 $"{curr}/{final}");
         }
 
         public void SetLeft(long left, long rate)
         {
-            BytesLeftText.Text = $"{Util.BytesToString(left)} left to download at {Util.BytesToString(rate)}/s.";
+            BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, Util.BytesToString(left), Util.BytesToString(rate));
         }
 
         public void SetPatchProgress(int index, string patchName, double pct)
