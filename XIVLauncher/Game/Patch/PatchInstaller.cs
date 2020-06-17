@@ -42,8 +42,13 @@ namespace XIVLauncher.Game.Patch
             BufferBlockSize = 8000, // usually, hosts support max to 8000 bytes
             ChunkCount = 8, // file parts to download
             MaxTryAgainOnFailover = int.MaxValue, // the maximum number of times to fail.
-            OnTheFlyDownload = true, // caching in-memory mode
-            Timeout = 1000 // timeout (millisecond) per stream block reader
+            OnTheFlyDownload = false, // caching in-memory mode
+            Timeout = 1000, // timeout (millisecond) per stream block reader
+            RequestConfiguration = new RequestConfiguration
+            {
+                UserAgent = "FFXIV PATCH CLIENT",
+                Accept = "*/*"
+            }
         };
 
         public event EventHandler OnFinish;
@@ -232,6 +237,12 @@ namespace XIVLauncher.Game.Patch
 
         private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
         {
+            if (patchListEntry.HashType != "sha1")
+            {
+                Log.Error("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
+
+            }
+
             var stream = path.OpenRead();
 
             var parts = (int) Math.Round((double) patchListEntry.Length / patchListEntry.HashBlockSize);
