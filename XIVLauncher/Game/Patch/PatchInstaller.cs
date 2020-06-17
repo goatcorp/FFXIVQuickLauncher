@@ -98,10 +98,13 @@ namespace XIVLauncher.Game.Patch
             {
                 _slots[i] = true;
             }
+
+            ServicePointManager.DefaultConnectionLimit = 255;
         }
 
         public void Start()
         {
+#if !DEBUG
             if ((long) Util.GetDiskFreeSpace(_patchStore.FullName) < AllDownloadsLength)
             {
                 OnFinish?.Invoke(this, null);
@@ -110,6 +113,7 @@ namespace XIVLauncher.Game.Patch
                     "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+#endif
 
             Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
             Task.Run(RunApplyQueue, _cancelTokenSource.Token);

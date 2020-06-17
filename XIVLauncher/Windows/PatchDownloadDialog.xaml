@@ -29,7 +29,7 @@
                 <TextBlock x:Name="Progress4Text" x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding PatchDoneLoc}"></TextBlock>
                 <ProgressBar x:Name="Progress4" Value="0" Margin="0,0,0,11" />
 
-                <TextBlock x:Name="BytesLeftText" x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" Text="{Binding PatchPreparingLoc}"/>
+                <TextBlock x:Name="BytesLeftText" x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>
