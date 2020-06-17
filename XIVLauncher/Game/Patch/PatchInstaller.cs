@@ -278,7 +278,12 @@ namespace XIVLauncher.Game.Patch
             return true;
         }
 
-        private FileInfo GetPatchFile(PatchListEntry patch) =>
-            new FileInfo(Path.Combine(_patchStore.FullName, $"{patch.VersionId}.zipatch"));
+        private FileInfo GetPatchFile(PatchListEntry patch)
+        {
+            var file = new FileInfo(Path.Combine(_patchStore.FullName, patch.Url.Substring("http://patch-dl.ffxiv.com/".Length)));
+            file.Directory.Create();
+
+            return file;
+        }
     }
 }
