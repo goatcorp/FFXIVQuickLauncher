@@ -24,6 +24,7 @@ namespace XIVLauncher.Game.Patch.PatchList
                 {
                     Length = long.Parse(fields[0]),
                     VersionId = fields[4],
+                    HashType = fields[5],
 
                     HashBlockSize = long.Parse(fields[6]),
 
