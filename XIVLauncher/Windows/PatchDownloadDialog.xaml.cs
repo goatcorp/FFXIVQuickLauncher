@@ -16,7 +16,7 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class PatchDownloadDialog : Window
     {
-        public PatchDownloadDialog()
+        public PatchDownloadDialog(bool isBoot)
         {
             InitializeComponent();
             this.DataContext = new UpdateLoadingDialogViewModel();

@@ -215,10 +215,16 @@ namespace XIVLauncher.Windows
 
             ProblemCheck.RunCheck();
 
-            Show();
-            Activate();
-
             Log.Information("MainWindow initialized.");
+
+            HandleBootCheck(() =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    Show();
+                    Activate();
+                });
+            });
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -232,6 +238,30 @@ namespace XIVLauncher.Windows
 
 
 #region Login
+
+        private void HandleBootCheck(Action whenFinishAction)
+        {
+            var bootPatches = _game.CheckBootVersion(App.Settings.GamePath);
+            if (bootPatches != null)
+            {
+                var progressDialog = new PatchDownloadDialog(true);
+                progressDialog.Show();
+                this.Hide();
+
+                var patcher = new PatchInstaller(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
+                patcher.OnFinish += (sender, args) =>
+                {
+                    progressDialog.Dispatcher.Invoke(() =>progressDialog.Close());
+                    whenFinishAction?.Invoke();
+                };
+
+                patcher.Start();
+            }
+            else
+            {
+                whenFinishAction?.Invoke();
+            }
+        }
 
         private void HandleLogin(bool autoLogin)
         {
@@ -283,7 +313,7 @@ namespace XIVLauncher.Windows
                 otp = otpDialog.Result;
             }
 
-            StartLogin(otp);
+            HandleBootCheck(() => StartLogin(otp));
         }
 
         private async void StartLogin(string otp)
@@ -332,11 +362,13 @@ namespace XIVLauncher.Windows
                     }
                     else
                     {
-                        var progressDialog = new PatchDownloadDialog();
+                        Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame, "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+
+                        var progressDialog = new PatchDownloadDialog(false);
                         progressDialog.Show();
                         this.Hide();
 
-                        var patcher = new PatchInstaller(loginResult.UniqueId, Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
+                        var patcher = new PatchInstaller(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
                         patcher.OnFinish += async (sender, args) =>
                         {
                             progressDialog.Close();

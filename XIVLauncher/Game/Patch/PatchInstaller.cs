@@ -57,7 +57,6 @@ namespace XIVLauncher.Game.Patch
 
         private CancellationTokenSource _cancelTokenSource = new CancellationTokenSource();
 
-        private readonly string _uniqueId;
         private readonly Repository _repository;
         private readonly PatchDownloadDialog _progressDialog;
         private readonly DirectoryInfo _gamePath;
@@ -73,9 +72,8 @@ namespace XIVLauncher.Game.Patch
 
         private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - _progresses.Sum();
 
-        public PatchInstaller(string uniqueId, Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore)
+        public PatchInstaller(Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore)
         {
-            _uniqueId = uniqueId;
             _repository = repository;
             _progressDialog = progressDialog;
             _gamePath = gamePath;
@@ -240,7 +238,7 @@ namespace XIVLauncher.Game.Patch
             if (patchListEntry.HashType != "sha1")
             {
                 Log.Error("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
-
+                return true;
             }
 
             var stream = path.OpenRead();
@@ -259,22 +257,21 @@ namespace XIVLauncher.Game.Patch
                     block = trimmedBlock;
                 }
 
-                using (var sha1 = new SHA1Managed())
+                using var sha1 = new SHA1Managed();
+
+                var hash = sha1.ComputeHash(block);
+                var sb = new StringBuilder(hash.Length * 2); 
+
+                foreach (var b in hash)
                 {
-                    var hash = sha1.ComputeHash(block);
-                    var sb = new StringBuilder(hash.Length * 2); 
-
-                    foreach (var b in hash)
-                    {
-                        sb.Append(b.ToString("x2"));
-                    }
-
-                    if (sb.ToString() == patchListEntry.Hashes[i])
-                        continue;
-
-                    stream.Close();
-                    return false;
+                    sb.Append(b.ToString("x2"));
                 }
+
+                if (sb.ToString() == patchListEntry.Hashes[i])
+                    continue;
+
+                stream.Close();
+                return false;
             }
 
             stream.Close();
