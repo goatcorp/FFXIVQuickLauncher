@@ -6,12 +6,7 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch
 {
-    enum ZiPatchCommandType
+    public class ZiPatchException : Exception
     {
-        Unknown,
-        FileHeader,
-        APLY,
-        SQPK,
-        EndOfFile
     }
 }
