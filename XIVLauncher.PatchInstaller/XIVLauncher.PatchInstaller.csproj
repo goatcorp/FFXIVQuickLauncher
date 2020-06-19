@@ -68,16 +68,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryReaderHelpers.cs" />
+    <Compile Include="Util\BinaryReaderHelpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZiPatch\Structures\Commands\FileHeaderZiPatchCommand.cs" />
-    <Compile Include="ZiPatch\Structures\Commands\IZiPatchCommand.cs" />
-    <Compile Include="ZiPatch\Structures\Commands\SqPack\SqPackCommandType.cs" />
-    <Compile Include="ZiPatch\Structures\Commands\SqPack\SqPackZiPatchCommand.cs" />
-    <Compile Include="ZiPatch\Structures\ZiPatchCommandPack.cs" />
-    <Compile Include="ZiPatch\ZiPatchCommandType.cs" />
-    <Compile Include="ZiPatch\ZiPatchExecute.cs" />
+    <Compile Include="Util\ChecksumBinaryReader.cs" />
+    <Compile Include="ZiPatchOld\Structures\Commands\FileHeader\FileHeaderStruct.cs" />
+    <Compile Include="ZiPatchOld\Structures\Commands\FileHeader\FileHeaderZiPatchCommand.cs" />
+    <Compile Include="ZiPatchOld\Structures\Commands\IZiPatchCommand.cs" />
+    <Compile Include="ZiPatchOld\Structures\Commands\SqPack\SqPackCommandType.cs" />
+    <Compile Include="ZiPatchOld\Structures\Commands\SqPack\SqPackZiPatchCommand.cs" />
+    <Compile Include="ZiPatchOld\Structures\ZiPatchCommandPack.cs" />
+    <Compile Include="ZiPatchOld\ZiPatchCommandType.cs" />
+    <Compile Include="ZiPatchOld\ZiPatchExecute.cs" />
+    <Compile Include="ZiPatch\Chunk\AddDirectoryChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\DeleteDirectoryChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\EndOfFileChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkPatchInfo.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkFile.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkIndex.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkExpandData.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkTargetInfo.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkHeader.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkDeleteData.cs" />
+    <Compile Include="ZiPatch\Chunk\SqpkCommand\SqpkAddData.cs" />
+    <Compile Include="ZiPatch\Chunk\XXXXChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\ApplyFreeSpaceChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\ApplyOptionChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\FileHeaderChunk.cs" />
+    <Compile Include="ZiPatch\Chunk\ZiPatchChunk.cs" />
+    <Compile Include="Util\Crc32.cs" />
+    <Compile Include="ZiPatch\Util\SqexFileStream.cs" />
+    <Compile Include="ZiPatch\Util\SqpackIndexFile.cs" />
+    <Compile Include="ZiPatch\Util\SqpackDatFile.cs" />
+    <Compile Include="ZiPatch\Util\SqexFile.cs" />
+    <Compile Include="ZiPatch\Util\SqpackFile.cs" />
+    <Compile Include="ZiPatch\Util\SqpkCompressedBlock.cs" />
+    <Compile Include="ZiPatch\ZiPatchConfig.cs" />
+    <Compile Include="ZiPatch\ZiPatchException.cs" />
+    <Compile Include="ZiPatch\ZiPatchFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
