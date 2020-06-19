@@ -14,23 +14,23 @@ namespace XIVLauncher.PatchInstaller
     {
         static void Main(string[] args)
         {
-#if DEBUG
+//#if DEBUG
             args = new[]
             {
                 "D:\\ARRTest\\Patches\\full\\",
                 "D:\\ARRTest\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn\\game\\",
                 ""
             };
-#endif
+//#endif
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a =>
                     a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                         "XIVLauncher", "patcher.log")))
                 .WriteTo.Console()
-#if DEBUG
+//#if DEBUG
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
-#endif
+//#endif
                 .CreateLogger();
 
             if (args.Length == 3)
@@ -110,7 +110,7 @@ namespace XIVLauncher.PatchInstaller
                     "4e9a232b/D2020.03.25.0000.0000.patch",
                     "4e9a232b/D2020.03.26.0000.0000.patch",
                     "4e9a232b/D2020.03.27.0000.0000.patch",
-                    "ex1/6b936f08/H2017.06.01.0000.0001a.patch",
+                    /*"ex1/6b936f08/H2017.06.01.0000.0001a.patch",
                     "ex1/6b936f08/H2017.06.01.0000.0001b.patch",
                     "ex1/6b936f08/H2017.06.01.0000.0001c.patch",
                     "ex1/6b936f08/H2017.06.01.0000.0001d.patch",
@@ -148,7 +148,7 @@ namespace XIVLauncher.PatchInstaller
                     "ex3/859d0e24/D2020.01.31.0000.0001.patch",
                     "ex3/859d0e24/D2020.02.29.0000.0001.patch",
                     "ex3/859d0e24/D2020.03.24.0000.0000.patch",
-                    "ex3/859d0e24/D2020.03.26.0000.0000.patch"
+                    "ex3/859d0e24/D2020.03.26.0000.0000.patch"*/
                 };
                 foreach (var s in patchlist)
                     DebugPatch(args[0] + s, args[1]);
@@ -165,11 +165,8 @@ namespace XIVLauncher.PatchInstaller
 
         private static void DebugPatch(string patchPath, string gamePath)
         {
-            //var files = Directory
-            //    .EnumerateFiles(patchPath, "*.patch", SearchOption.AllDirectories);
             var files = new[] {patchPath};
 
-            //Dictionary<string, int> chunks = new Dictionary<string, int>();
             foreach (var file in files)
             {
                 var patchFile = ZiPatchFile.FromFileName(file);

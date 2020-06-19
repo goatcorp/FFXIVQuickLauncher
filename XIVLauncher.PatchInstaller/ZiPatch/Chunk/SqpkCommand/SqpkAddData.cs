@@ -47,12 +47,11 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         {
             File.ResolvePath(config.Platform);
 
-            using (var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate))
-            {
-                file.WriteFromOffset(BlockData, BlockOffset);
+            var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate);
+
+            file.WriteFromOffset(BlockData, BlockOffset);
                 
-                file.Wipe(BlockDeleteNumber);
-            }
+            file.Wipe(BlockDeleteNumber);
         }
 
         public override string ToString()

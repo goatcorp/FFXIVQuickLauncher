@@ -18,7 +18,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
             0x50495A91, 0x48435441, 0x0A1A0A0D
         };
 
-        private readonly ChecksumBinaryReader _reader;
+        private readonly Stream _stream;
 
 
         /// <summary>
@@ -27,9 +27,10 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
         /// <param name="stream">Stream to a ZiPatch</param>
         private ZiPatchFile(Stream stream)
         {
-            this._reader = new ChecksumBinaryReader(stream);
+            this._stream = stream;
 
-            if (ZIPATCH_MAGIC.Any(magic => magic != _reader.ReadUInt32()))
+            var reader = new BinaryReader(stream);
+            if (ZIPATCH_MAGIC.Any(magic => magic != reader.ReadUInt32()))
                 throw new ZiPatchException();
         }
 
@@ -39,7 +40,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
         /// <param name="filepath">Path to patch file</param>
         public static ZiPatchFile FromFileName(string filepath)
         {
-            var stream = SqexFileStream.WaitForStream(filepath, FileMode.Open);
+            var stream = SqexFileStream.WaitForStream(filepath, FileMode.Open, store:false);
            
             Log.Verbose($"Patch at {filepath} opened");
 
@@ -53,7 +54,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
             ZiPatchChunk chunk;
             do
             {
-                chunk = ZiPatchChunk.GetChunk(_reader);
+                chunk = ZiPatchChunk.GetChunk(_stream);
 
                 yield return chunk;
             } while (chunk.ChunkType != EndOfFileChunk.Type);
@@ -61,7 +62,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
 
         public void Dispose()
         {
-            _reader?.Dispose();
+            _stream?.Dispose();
         }
     }
 }

@@ -10,19 +10,42 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Util
 {
     public class SqexFileStream : FileStream
     {
-        private static byte[] WIPE_BUFFER = new byte[1 << 16];
-
-        public SqexFileStream(string path, FileMode mode) : base(path, mode)
+        private class StreamStore : IDisposable
         {
+            public string Path { get; set; }
+            public SqexFileStream Stream { get; set; }
+
+            public void Dispose() => Stream?.Dispose();
         }
 
-        public static SqexFileStream WaitForStream(string path, FileMode mode, int tries = 5, int sleeptime = 1)
+        private static byte[] WIPE_BUFFER = new byte[1 << 16];
+
+        private static AsyncLocal<StreamStore> streams =
+            new AsyncLocal<StreamStore> {Value = new StreamStore()};
+
+        public SqexFileStream(string path, FileMode mode) : base(path, mode, FileAccess.ReadWrite, FileShare.Read, 1 << 16)
+        {}
+
+        public static SqexFileStream WaitForStream(string path, FileMode mode, int tries = 5, int sleeptime = 1, bool store = true)
         {
+            if (streams.Value.Path == path)
+                return streams.Value.Stream;
+            
+            streams.Value.Stream?.Dispose();
+            streams.Value.Path = null;
+
             do
             {
                 try
                 {
-                    return new SqexFileStream(path, mode);
+                    var stream = new SqexFileStream(path, mode);
+
+                    if (!store) return stream;
+                    
+                    streams.Value.Path = path;
+                    streams.Value.Stream = stream;
+
+                    return stream;
                 }
                 catch (IOException)
                 {

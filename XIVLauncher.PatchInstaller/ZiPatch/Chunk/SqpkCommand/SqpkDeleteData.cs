@@ -42,8 +42,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         public override void ApplyChunk(ZiPatchConfig config)
         {
             File.ResolvePath(config.Platform);
-            using (var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate))
-                SqpackDatFile.WriteEmptyFileBlockAt(file, BlockOffset, BlockNumber);
+            var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate);
+            SqpackDatFile.WriteEmptyFileBlockAt(file, BlockOffset, BlockNumber);
         }
 
         public override string ToString()

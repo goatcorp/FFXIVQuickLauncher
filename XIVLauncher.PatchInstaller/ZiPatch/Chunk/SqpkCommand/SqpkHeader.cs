@@ -57,8 +57,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         {
             File.ResolvePath(config.Platform);
 
-            using (var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate))
-                file.WriteFromOffset(HeaderData, TargetHeader == TargetHeaderKind.Version ? 0 : HEADER_SIZE);
+            var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate);
+            file.WriteFromOffset(HeaderData, TargetHeader == TargetHeaderKind.Version ? 0 : HEADER_SIZE);
         }
 
         public override string ToString()

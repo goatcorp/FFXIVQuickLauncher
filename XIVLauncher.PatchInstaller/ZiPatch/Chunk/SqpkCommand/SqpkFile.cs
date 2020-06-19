@@ -75,13 +75,11 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
                     TargetFile.CreateDirectoryTree(config.GamePath);
 
                     var mode = FileOffset > 0 ? FileMode.Open : FileMode.Create;
-                    using (var file = TargetFile.OpenStream(config.GamePath, mode))
-                    {
-                        file.Seek(FileOffset, SeekOrigin.Begin);
+                    var fileStream = TargetFile.OpenStream(config.GamePath, mode);
+                    fileStream.Seek(FileOffset, SeekOrigin.Begin);
 
-                        foreach (var block in CompressedData)
-                            block.DecompressInto(file);
-                    }
+                    foreach (var block in CompressedData)
+                        block.DecompressInto(fileStream);
                     break;
                 case OperationKind.RemoveAll:
                     foreach (var file in SqexFile.GetAllExpansionFiles(config.GamePath, ExpansionId).Where(RemoveAllFilter))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
@@ -22,6 +23,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 
         protected readonly ChecksumBinaryReader reader;
 
+        private static AsyncLocal<MemoryStream> localMemoryStream = new AsyncLocal<MemoryStream> { Value = new MemoryStream() };
+
 
         // Only FileHeader, ApplyOption, Sqpk, and EOF have been observed in XIVARR+ patches
         // AddDirectory and DeleteDirectory can theoretically happen, so they're implemented
@@ -39,19 +42,35 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         };
 
 
-        public static ZiPatchChunk GetChunk(ChecksumBinaryReader reader)
+        public static ZiPatchChunk GetChunk(Stream stream)
         {
+            var memoryStream = localMemoryStream.Value;
             try
             {
+                var reader = new BinaryReader(stream);
+
                 var size = reader.ReadInt32BE();
 
-                reader.InitCrc32();
+                // size of chunk + header + checksum
+                var readSize = size + 4 + 4;
 
-                var type = reader.ReadFixedLengthString(4u);
+                // Enlarge MemoryStream if necessary, or set length at capacity
+                var maxLen = Math.Max(readSize, memoryStream.Capacity);
+                if (memoryStream.Length < maxLen)
+                    memoryStream.SetLength(maxLen);
+
+                // Read into MemoryStream's inner buffer
+                reader.BaseStream.Read(memoryStream.GetBuffer(), 0, readSize);
+
+                var binaryReader = new ChecksumBinaryReader(memoryStream);
+                binaryReader.InitCrc32();
+
+                var type = binaryReader.ReadFixedLengthString(4u);
                 if (!ChunkTypes.TryGetValue(type, out var constructor))
                     throw new ZiPatchException();
 
-                var chunk = constructor(reader, size);
+
+                var chunk = constructor(binaryReader, size);
 
                 chunk.ReadChunk();
                 chunk.ReadChecksum();
@@ -60,6 +79,10 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             catch (EndOfStreamException e)
             {
                 throw new ZiPatchException();
+            }
+            finally
+            {
+                memoryStream.Position = 0;
             }
         }
 
