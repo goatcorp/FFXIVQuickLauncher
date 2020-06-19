@@ -39,7 +39,7 @@ namespace XIVLauncher.Settings
         {
             get
             {
-                var configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json");
+                var configPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
 
                 if (File.Exists(configPath))
                     return JsonConvert.DeserializeObject<DalamudConfiguration>(File.ReadAllText(configPath));
@@ -54,15 +54,15 @@ namespace XIVLauncher.Settings
                 var newDalamudConfig = new DalamudConfiguration
                 {
                     OptOutMbCollection = Properties.Settings.Default.OptOutMbUpload,
+                    DutyFinderTaskbarFlash = true,
                     DiscordFeatureConfig = discordFeatureConfig,
-                    BadWords = new List<string>(),
-                    PluginConfigurations = new Dictionary<string, object>()
+                    BadWords = new List<string>()
                 };
 
                 DalamudConfig = newDalamudConfig;
                 return newDalamudConfig;
             }
-            set => File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "dalamudConfig.json"), JsonConvert.SerializeObject(value));
+            set => File.WriteAllText(Path.Combine(Paths.RoamingPath, "dalamudConfig.json"), JsonConvert.SerializeObject(value));
         }
     }
 }

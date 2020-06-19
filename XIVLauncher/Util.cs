@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Media;
@@ -135,24 +137,77 @@ namespace XIVLauncher
             Process.Start(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
         }
 
-        public static string ReadResource(string name)
+        public static void OpenDiscord(object sender, RoutedEventArgs e)
         {
-            // Determine path
-            var assembly = Assembly.GetExecutingAssembly();
-            string resourcePath = name;
-            // Format: "{Namespace}.{Folder}.{filename}.{Extension}"
-            if (!name.StartsWith(nameof(XIVLauncher)))
+            Process.Start("https://discord.gg/3NMcUV5");
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("kernel32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+        public static bool CheckIsWine()
+        {
+            var ntdll = GetModuleHandle("ntdll.dll");
+            var pwine_get_version = GetProcAddress(ntdll, "wine_get_version");
+
+            return pwine_get_version != IntPtr.Zero;
+        }
+
+        public static string BytesToString(long byteCount)
+        {
+            string[] suf = {"B", "KB", "MB", "GB", "TB", "PB", "EB"}; //Longs run out around EB
+            if (byteCount == 0)
+                return "0" + suf[0];
+            var bytes = Math.Abs(byteCount);
+            var place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            var num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return $"{(Math.Sign(byteCount) * num):#0.0}{suf[place]}";
+        }
+
+        public static bool CheckIsGameOpen()
+        {
+            var procs = Process.GetProcesses();
+
+            if (procs.Any(x => x.ProcessName == "ffxiv"))
+                return true;
+
+            if (procs.Any(x => x.ProcessName == "ffxiv_dx11"))
+                return true;
+
+            if (procs.Any(x => x.ProcessName == "ffxivboot"))
+                return true;
+
+            if (procs.Any(x => x.ProcessName == "ffxivlauncher"))
+                return true;
+
+            return false;
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
+            out ulong lpFreeBytesAvailable,
+            out ulong lpTotalNumberOfBytes,
+            out ulong lpTotalNumberOfFreeBytes);
+
+        public static ulong GetDiskFreeSpace(string path)
+        {
+            if (string.IsNullOrEmpty(path))
             {
-                var resourceNames = assembly.GetManifestResourceNames();
-                resourcePath = resourceNames
-                    .Single(str => str.EndsWith(name));
+                throw new ArgumentNullException("path");
             }
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourcePath))
-            using (StreamReader reader = new StreamReader(stream))
+            ulong dummy = 0;
+
+            if (!GetDiskFreeSpaceEx(path, out ulong freeSpace, out dummy, out dummy))
             {
-                return reader.ReadToEnd();
+                throw new Win32Exception(Marshal.GetLastWin32Error());
             }
+
+            return freeSpace;
         }
     }
 }

@@ -19,8 +19,8 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            this.DataContext = new ChangeLogWindowViewModel();
-
+            DiscordButton.Click += Util.OpenDiscord;
+            DataContext = new ChangeLogWindowViewModel();
             try
             {
                 // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
@@ -54,11 +54,6 @@ namespace XIVLauncher.Windows
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
-        }
-
-        private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://discord.gg/3NMcUV5");
         }
     }
 }

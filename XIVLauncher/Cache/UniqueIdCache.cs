@@ -19,7 +19,7 @@ namespace XIVLauncher.Cache
 
         #region SaveLoad
 
-        private static readonly string ConfigPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", "uidCache.json");
+        private static readonly string ConfigPath = Path.Combine(Paths.RoamingPath, "uidCache.json");
 
         public void Save()
         {

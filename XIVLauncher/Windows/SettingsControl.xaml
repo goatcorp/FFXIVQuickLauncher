@@ -37,8 +37,6 @@
                                             Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
                     <CheckBox x:Uid="SteamIntegrationCheckBox" Foreground="{DynamicResource MaterialDesignBody}"
                               x:Name="SteamIntegrationCheckBox" Margin="0,15,0,0" Content="{Binding SteamCheckBoxLoc}" />
-                    <CheckBox x:Uid="CharacterSyncCheckBox" Foreground="{DynamicResource MaterialDesignBody}"
-                              x:Name="CharacterSyncCheckBox" Margin="200,-19,0,0" Content="{Binding CharacterSyncLoc}" />
                     <Label x:Uid="Label_1" Margin="0,10,0,0" Content="{Binding AdditionalArgumentsLoc}" />
                     <TextBox x:Uid="LaunchArgsTextBox" Width="500" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
@@ -184,7 +182,7 @@
 
                                 <Button x:Uid="Button_3" Margin="0,7,0,10" HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick"
-                                        ToolTip="Add a new discord chat channel."
+                                        ToolTip="Add a new Discord chat channel."
                                         Content="{Binding InGameAddonAddChatChannelLoc}" />
                                 <Button x:Uid="Button_4" Margin="0,7,0,10" HorizontalAlignment="Center"
                                         VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick"
@@ -222,7 +220,7 @@
                                          materialDesign:HintAssist.Hint="{Binding InGameAddonChatDelayLoc}" />
 
                                 <Separator />
-
+                                
                                 <Separator x:Uid="Separator_2" />
                                 <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5"
                                        Content="{Binding UniversalisHintLoc}" />
@@ -256,6 +254,17 @@
                                Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10" Text="{Binding PluginsInstallHintLoc}"/>
                 </Grid>
             </TabItem>
+            <TabItem x:Uid="TabItem_5" Header="{Binding SettingsPatchingLoc}">
+                <StackPanel>
+                    <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PatchPathLoc}" />
+                    <components:FolderEntry Text="{Binding PatchPath, UpdateSourceTrigger=PropertyChanged}"
+                                            Description="Select a folder" Width="500" VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
+                </StackPanel>
+
+            </TabItem>
             <TabItem x:Uid="TabItem_6" Header="{Binding SettingsAboutLoc}">
                 <ScrollViewer x:Uid="ScrollViewer_2" VerticalScrollBarVisibility="Auto">
                     <Grid x:Uid="Grid_6">
@@ -269,7 +278,7 @@
 
                             <Button x:Uid="DiscordButton" Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
-                                    x:Name="DiscordButton" Click="DiscordButton_OnClick" Margin="0,10,0,0">
+                                    x:Name="DiscordButton" Margin="0,10,0,0">
                                 <StackPanel x:Uid="StackPanel_10" Orientation="Horizontal">
                                     <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_2" Kind="Discord" />
                                     <TextBlock x:Uid="TextBlock_9" Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}"/>
@@ -328,6 +337,11 @@
                 </ScrollViewer>
             </TabItem>
         </dragablz:TabablzControl>
+        <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                ToolTip="Open Plugins Folder" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,60,10"
+                Click="PluginsFolderButton_Click">
+            <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_6" Kind="FolderOpen" Height="24" Width="24" />
+        </Button>
         <Button x:Uid="Button_8" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                 ToolTip="Save Settings" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
                 Command="{x:Static materialDesign:Transitioner.MoveNextCommand}"

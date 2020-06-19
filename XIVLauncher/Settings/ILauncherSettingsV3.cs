@@ -18,13 +18,13 @@ namespace XIVLauncher.Settings
         bool AutologinEnabled { get; set; }
         List<AddonEntry> AddonList { get; set; }
         bool UniqueIdCacheEnabled { get; set; }
-        bool CharacterSyncEnabled { get; set; }
         string AdditionalLaunchArgs { get; set; }
         bool InGameAddonEnabled { get; set; }
         bool SteamIntegrationEnabled { get; set; }
         ClientLanguage? Language { get; set; }
         string CurrentAccountId { get; set; }
         bool? EncryptArguments { get; set; }
+        DirectoryInfo PatchPath { get; set; }
 
         #endregion
     }

@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
+using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
 {
@@ -17,6 +18,8 @@ namespace XIVLauncher.Windows
         public FirstTimeSetup()
         {
             InitializeComponent();
+
+            this.DataContext = new FirstTimeSetupViewModel();
 
             var detectedPath = Util.TryGamePaths();
 

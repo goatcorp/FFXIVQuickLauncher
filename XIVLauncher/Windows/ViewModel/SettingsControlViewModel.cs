@@ -13,6 +13,7 @@ namespace XIVLauncher.Windows.ViewModel
     class SettingsControlViewModel : INotifyPropertyChanged
     {
         private string _gamePath;
+        private string _patchPath;
 
         public SettingsControlViewModel()
         {
@@ -46,13 +47,25 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets or sets the path to the game folder.
+        /// </summary>
+        public string PatchPath
+        {
+            get => _patchPath;
+            set
+            {
+                _patchPath = value;
+                OnPropertyChanged(nameof(PatchPath));
+            }
+        }
+
         private void SetupLoc()
         {
             SettingsGameLoc = Loc.Localize("SettingsGame", "Game");
             GamePathLoc = Loc.Localize("ChooseGamePath",
                 "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".");
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
-            CharacterSyncLoc = Loc.Localize("CharacterSyncCheckBox", "Synchronize Character Data");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
             RunIntegrityCheckLoc = Loc.Localize("RunIntegrityCheck", "Run integrity check");
             RunIntegrityCheckTooltipLoc =
@@ -92,7 +105,7 @@ namespace XIVLauncher.Windows.ViewModel
                 "Market board data provided in cooperation with Universalis.");
             UniversalisOptOutLoc = Loc.Localize("UniversalisOptOut",
                 "Opt-out of contributing anonymously to crowd-sourced market board information");
-            
+
             PluginsDescriptionLoc = Loc.Localize("PluginsDescriptionLoc",
                 "These are the plugins that are currently available installed on your machine.");
             PluginsToggleLoc = Loc.Localize("Toggle", "Toggle");
@@ -101,7 +114,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
-                "Made by goat.\r\nSpecial thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the discord or create an issue on GitHub!");
+                "Made by goat.\r\nSpecial thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!");
             JoinDiscordLoc = Loc.Localize("JoinDiscord", "Join Discord");
             StartBackupToolLoc = Loc.Localize("StartBackupTool", "Start Backup Tool");
             StartOriginalLauncherLoc = Loc.Localize("StartOriginalLauncher", "Start Original Launcher");
@@ -112,7 +125,6 @@ namespace XIVLauncher.Windows.ViewModel
         public string SettingsGameLoc { get; private set; }
         public string GamePathLoc { get; private set; }
         public string SteamCheckBoxLoc { get; private set; }
-        public string CharacterSyncLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
         public string RunIntegrityCheckLoc { get; private set; }
         public string RunIntegrityCheckTooltipLoc { get; private set; }

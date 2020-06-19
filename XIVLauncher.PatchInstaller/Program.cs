@@ -24,8 +24,7 @@ namespace XIVLauncher.PatchInstaller
 //#endif
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a =>
-                    a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "XIVLauncher", "patcher.log")))
+                    a.File(Path.Combine(Paths.RoamingPath, "patcher.log")))
                 .WriteTo.Console()
 //#if DEBUG
                 .WriteTo.Debug()

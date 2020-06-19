@@ -11,7 +11,7 @@ namespace XIVLauncher
 { 
     class Updates
     {
-        private const string RepoUrl = "https://github.com/goaaats/FFXIVQuickLauncher";
+        private const string RepoUrl = "https://github.com/goatcorp/FFXIVQuickLauncher";
 
         public EventHandler OnUpdateCheckFinished;
 

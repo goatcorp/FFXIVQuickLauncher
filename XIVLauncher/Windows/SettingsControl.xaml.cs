@@ -36,6 +36,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            DiscordButton.Click += Util.OpenDiscord;
             DataContext = new SettingsControlViewModel();
             
             ReloadSettings();
@@ -43,7 +44,11 @@ namespace XIVLauncher.Windows
 
         public void ReloadSettings()
         {
-            ViewModel.GamePath = App.Settings.GamePath?.FullName;
+            if (App.Settings.GamePath != null)
+                ViewModel.GamePath = App.Settings.GamePath.FullName;
+
+            if (App.Settings.PatchPath != null)
+                ViewModel.PatchPath = App.Settings.PatchPath.FullName;
 
             if (App.Settings.IsDx11)
                 Dx11RadioButton.IsChecked = true;
@@ -53,7 +58,7 @@ namespace XIVLauncher.Windows
                 Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
             }
 
-            LanguageComboBox.SelectedIndex = (int)App.Settings.Language;
+            LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
             AddonListView.ItemsSource = App.Settings.AddonList;
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
@@ -73,14 +78,9 @@ namespace XIVLauncher.Windows
 
             MbUploadOptOutCheckBox.IsChecked = DalamudSettings.OptOutMbUpload;
 
-            CharacterSyncCheckBox.IsChecked = App.Settings.CharacterSyncEnabled;
-
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
-
-            // Gotta do this after setup so we don't fire events yet
-            CharacterSyncCheckBox.Checked += CharacterSyncCheckBox_Checked;
 
             EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
         }
@@ -88,6 +88,7 @@ namespace XIVLauncher.Windows
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
             App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
+            App.Settings.PatchPath = !string.IsNullOrEmpty(ViewModel.PatchPath) ? new DirectoryInfo(ViewModel.PatchPath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
@@ -107,8 +108,6 @@ namespace XIVLauncher.Windows
             App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
             DalamudSettings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
-
-            App.Settings.CharacterSyncEnabled = CharacterSyncCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
@@ -213,11 +212,6 @@ namespace XIVLauncher.Windows
                 return;
 
             Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-bot");
-        }
-
-        private void DiscordButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://discord.gg/3NMcUV5");
         }
 
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
@@ -375,24 +369,19 @@ namespace XIVLauncher.Windows
             Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
         }
 
-        private void CharacterSyncCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(Loc.Localize("CharacterSyncWarning", "ATTENTION!!!\n\n\"Synchronize Character Data\" synchronizes hotbars, HUD and settings of the character you last logged in with to your other characters after closing the game.\nWhen enabling this feature, make sure that you log in with your main character on the first launch of your game.\nClose it immediately after to start syncing files from this character to your other characters.\n\nIf you use another character first, your main character will be overwritten."), "Danger Zone", MessageBoxButton.OK, MessageBoxImage.Warning);
-        }
-
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (!DalamudLauncher.CanRunDalamud(App.Settings.GamePath))
                     MessageBox.Show(
-                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the discord for a status update!"),
+                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             catch(Exception exc)
             {
                 MessageBox.Show(Loc.Localize("DalamudCompatCheckFailed",
-                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the discord for more information."));
+                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."));
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }
@@ -400,7 +389,7 @@ namespace XIVLauncher.Windows
 
         private void TogglePlugin_OnClick(object sender, RoutedEventArgs e)
         {
-            var definitionFiles = System.IO.Directory.GetFiles(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"XIVLauncher\installedPlugins\"), "*.json", SearchOption.AllDirectories);
+            var definitionFiles = Directory.GetFiles(Path.Combine(Paths.RoamingPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
 
             if (PluginListView.SelectedValue.ToString().Contains("(X)")) //If it's disabled...
             {
@@ -445,9 +434,7 @@ namespace XIVLauncher.Windows
 
             try
             {
-                var pluginsDirectory = new DirectoryInfo(Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    @"XIVLauncher\installedPlugins"));
+                var pluginsDirectory = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "installedPlugins"));
 
                 if (!pluginsDirectory.Exists)
                     return;
@@ -490,6 +477,24 @@ namespace XIVLauncher.Windows
             catch (Exception ex)
             {
                 Log.Error(ex, "Could not parse installed in-game plugins.");
+            }
+        }
+
+        private void PluginsFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var pluginsPath = Path.Combine(Paths.RoamingPath, "installedPlugins");
+
+            try
+            {
+                Directory.CreateDirectory(pluginsPath);
+                Process.Start(pluginsPath);
+            }
+            catch (Exception ex)
+            {
+                var error = $"Could not open the plugins folder! {pluginsPath}";
+                MessageBox.Show(error,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.Error(ex, error);
             }
         }
     }
