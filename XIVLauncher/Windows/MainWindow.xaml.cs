@@ -36,13 +36,14 @@ namespace XIVLauncher.Windows
 
         private Timer _maintenanceQueueTimer;
 
-        private readonly Launcher _game = new Launcher();
+        private readonly Launcher _launcher = new Launcher();
+        private readonly Game.Patch.PatchInstaller _installer = new Game.Patch.PatchInstaller();
 
         private AccountManager _accountManager;
 
         private bool _isLoggingIn;
 
-        public MainWindow(string accountName)
+        public MainWindow()
         {
             InitializeComponent();
 
@@ -63,11 +64,6 @@ namespace XIVLauncher.Windows
             Title += " " + Util.GetGitHash();
 #endif
 
-            if (!string.IsNullOrEmpty(accountName))
-            {
-                Properties.Settings.Default.CurrentAccount = accountName;
-            }
-
 #if XL_NOAUTOUPDATE
             Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
 #endif
@@ -79,12 +75,12 @@ namespace XIVLauncher.Windows
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = Headlines.Get(_game, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                _headlines = Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
                 for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
-                    var imageBytes = _game.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                    var imageBytes = _launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                     using (var stream = new MemoryStream(imageBytes))
                     {
@@ -152,7 +148,7 @@ namespace XIVLauncher.Windows
             var gateStatus = false;
             try
             {
-                gateStatus = _game.GetGateStatus();
+                gateStatus = _launcher.GetGateStatus();
             }
             catch
             {
@@ -211,7 +207,7 @@ namespace XIVLauncher.Windows
                 SettingsControl.ReloadSettings();
             }
 
-            Task.Run(() => SetupHeadlines());
+            Task.Run(SetupHeadlines);
 
             ProblemCheck.RunCheck();
 
@@ -241,14 +237,14 @@ namespace XIVLauncher.Windows
 
         private void HandleBootCheck(Action whenFinishAction)
         {
-            var bootPatches = _game.CheckBootVersion(App.Settings.GamePath);
+            var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
             if (bootPatches != null)
             {
                 var progressDialog = new PatchDownloadDialog(true);
                 progressDialog.Show();
                 this.Hide();
 
-                var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
+                var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
                 patcher.OnFinish += (sender, args) =>
                 {
                     progressDialog.Dispatcher.Invoke(() =>progressDialog.Close());
@@ -265,7 +261,7 @@ namespace XIVLauncher.Windows
 
         private void HandleLogin(bool autoLogin)
         {
-            var hasValidCache = _game.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
+            var hasValidCache = _launcher.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
 
             Log.Information("CurrentAccount: {0}", _accountManager.CurrentAccount == null ? "null" : _accountManager.CurrentAccount.ToString());
 
@@ -305,7 +301,10 @@ namespace XIVLauncher.Windows
                     _isLoggingIn = false;
 
                     if (autoLogin)
+                    {
+                        _installer.Stop();
                         Environment.Exit(0);
+                    }
 
                     return;
                 }
@@ -323,7 +322,7 @@ namespace XIVLauncher.Windows
             var gateStatus = false;
             try
             {
-                gateStatus = await Task.Run(() => _game.GetGateStatus());
+                gateStatus = await Task.Run(() => _launcher.GetGateStatus());
             }
             catch
             {
@@ -332,7 +331,7 @@ namespace XIVLauncher.Windows
 
             try
             {
-                var loginResult = _game.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, App.Settings.UniqueIdCacheEnabled, App.Settings.GamePath);
+                var loginResult = _launcher.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, App.Settings.UniqueIdCacheEnabled, App.Settings.GamePath);
 
                 if (loginResult == null)
                 {
@@ -343,6 +342,7 @@ namespace XIVLauncher.Windows
                     if (AutoLoginCheckBox.IsChecked == true)
                     {
                         Close();
+                        _installer.Stop();
                         Environment.Exit(0);
                     }
 
@@ -368,7 +368,7 @@ namespace XIVLauncher.Windows
                         progressDialog.Show();
                         this.Hide();
 
-                        var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
+                        var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
                         patcher.OnFinish += async (sender, args) =>
                         {
                             progressDialog.Close();
@@ -476,6 +476,7 @@ namespace XIVLauncher.Windows
 
                 Log.Information("Game has exited.");
                 addonMgr.StopAddons();
+                _installer.Stop();
                 Environment.Exit(0);
             });
             watchThread.Start();
@@ -564,7 +565,7 @@ private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
                 bool gateStatus;
                 try
                 {
-                    gateStatus = _game.GetGateStatus();
+                    gateStatus = _launcher.GetGateStatus();
                 }
                 catch
                 {

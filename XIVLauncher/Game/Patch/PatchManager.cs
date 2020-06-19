@@ -62,6 +62,7 @@ namespace XIVLauncher.Game.Patch
         private readonly PatchDownloadDialog _progressDialog;
         private readonly DirectoryInfo _gamePath;
         private readonly DirectoryInfo _patchStore;
+        private readonly PatchInstaller _installer;
 
         private List<PatchDownload> _downloads;
 
@@ -73,12 +74,13 @@ namespace XIVLauncher.Game.Patch
 
         private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - _progresses.Sum();
 
-        public PatchManager(Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore)
+        public PatchManager(Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer)
         {
             _repository = repository;
             _progressDialog = progressDialog;
             _gamePath = gamePath;
             _patchStore = patchStore;
+            _installer = installer;
 
             if (!_patchStore.Exists)
                 _patchStore.Create();
@@ -114,6 +116,8 @@ namespace XIVLauncher.Game.Patch
                 return;
             }
 #endif
+
+            _installer.StartIfNeeded();
 
             Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
             Task.Run(RunApplyQueue, _cancelTokenSource.Token);
@@ -230,7 +234,12 @@ namespace XIVLauncher.Game.Patch
                 toInstall.State = PatchState.IsInstalling;
                 MessageBox.Show("INSTALLING " + toInstall.Patch.VersionId);
 
-                Thread.Sleep(10000); // waitin for winter
+                _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), _repository);
+
+                while (_installer.State != PatchInstaller.InstallerState.Ready)
+                {
+                    Thread.Sleep(100);
+                }
 
                 toInstall.State = PatchState.Finished;
                 _currentInstallIndex++;
