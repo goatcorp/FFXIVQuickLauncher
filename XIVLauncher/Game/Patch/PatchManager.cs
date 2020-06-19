@@ -35,7 +35,7 @@ namespace XIVLauncher.Game.Patch
         public PatchState State { get; set; }
     }
 
-    class PatchInstaller
+    class PatchManager
     {
         private DownloadConfiguration _downloadOpt = new DownloadConfiguration
         {
@@ -73,7 +73,7 @@ namespace XIVLauncher.Game.Patch
 
         private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - _progresses.Sum();
 
-        public PatchInstaller(Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore)
+        public PatchManager(Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore)
         {
             _repository = repository;
             _progressDialog = progressDialog;

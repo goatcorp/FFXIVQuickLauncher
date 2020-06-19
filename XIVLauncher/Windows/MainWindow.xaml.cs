@@ -248,7 +248,7 @@ namespace XIVLauncher.Windows
                 progressDialog.Show();
                 this.Hide();
 
-                var patcher = new PatchInstaller(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
+                var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
                 patcher.OnFinish += (sender, args) =>
                 {
                     progressDialog.Dispatcher.Invoke(() =>progressDialog.Close());
@@ -368,7 +368,7 @@ namespace XIVLauncher.Windows
                         progressDialog.Show();
                         this.Hide();
 
-                        var patcher = new PatchInstaller(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
+                        var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath);
                         patcher.OnFinish += async (sender, args) =>
                         {
                             progressDialog.Close();

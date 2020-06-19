@@ -153,6 +153,9 @@
     <Reference Include="SharpCompress, Version=0.17.1.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.17.1\lib\net45\SharpCompress.dll</HintPath>
     </Reference>
+    <Reference Include="SimpleIPCHttp, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleIPCHttp.1.0.1\lib\netstandard2.0\SimpleIPCHttp.dll</HintPath>
+    </Reference>
     <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
     </Reference>
@@ -269,7 +272,7 @@
     <Compile Include="Game\OauthLoginException.cs" />
     <Compile Include="Game\Patch\GamePatchType.cs" />
     <Compile Include="Game\Patch\PatcherCommunicator.cs" />
-    <Compile Include="Game\Patch\PatchInstaller.cs" />
+    <Compile Include="Game\Patch\PatchManager.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListEntry.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListParser.cs" />
     <Compile Include="Http\HttpServer.cs" />
