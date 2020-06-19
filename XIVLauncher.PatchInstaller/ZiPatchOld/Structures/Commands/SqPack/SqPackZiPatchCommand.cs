@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Serilog;
-using XIVLauncher.Helpers;
+using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands.SqPack
 {
