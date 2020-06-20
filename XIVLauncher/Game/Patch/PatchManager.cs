@@ -340,7 +340,7 @@ namespace XIVLauncher.Game.Patch
             }
         }
 
-        private const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
+        public const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
         public static void SetupGameBase(DirectoryInfo gameDirectory)
         {
             if (!gameDirectory.Exists)

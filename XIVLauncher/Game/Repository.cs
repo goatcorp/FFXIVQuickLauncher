@@ -56,7 +56,12 @@ namespace XIVLauncher.Game
 
         public static string GetVer(this Repository repo, DirectoryInfo gamePath, bool isBck = false)
         {
-            return File.ReadAllText(repo.GetVerFile(gamePath, isBck).FullName);
+            var ver = PatchManager.BASE_GAME_VERSION;
+            var verFile = repo.GetVerFile(gamePath, isBck);
+            if (verFile.Exists)
+                ver = File.ReadAllText(verFile.FullName);
+
+            return ver;
         }
 
         // TODO
