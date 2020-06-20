@@ -214,6 +214,11 @@ namespace XIVLauncher.Game.Patch
                     _progressDialog.SetLeft(AllDownloadsLength, _speeeeeeds.Sum());
                 }));
             }
+
+            _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                _progressDialog.SetLeft(0, 0);
+            }));
         }
 
         private void RunApplyQueue()
