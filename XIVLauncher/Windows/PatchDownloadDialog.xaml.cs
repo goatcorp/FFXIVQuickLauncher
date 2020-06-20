@@ -28,6 +28,8 @@ namespace XIVLauncher.Windows
         {
             PatchProgressText.Text = string.Format(ViewModel.PatchGeneralStatusLoc,
                 $"{curr}/{final}");
+
+            InstallingText.Text = string.Format(ViewModel.PatchInstallingFormattedLoc, curr);
         }
 
         public void SetLeft(long left, long rate)
@@ -76,6 +78,21 @@ namespace XIVLauncher.Windows
         {
             Progress4.Value = percentage;
             Progress4Text.Text = patchName;
+        }
+
+        public void SetDownloadDone()
+        {
+            Progress1.Visibility = Visibility.Collapsed;
+            Progress1Text.Visibility = Visibility.Collapsed;
+
+            Progress2.Visibility = Visibility.Collapsed;
+            Progress2Text.Visibility = Visibility.Collapsed;
+
+            Progress3.Visibility = Visibility.Collapsed;
+            Progress3Text.Visibility = Visibility.Collapsed;
+
+            Progress4.Visibility = Visibility.Collapsed;
+            Progress4Text.Visibility = Visibility.Collapsed;
         }
     }
 }

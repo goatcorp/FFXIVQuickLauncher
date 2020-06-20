@@ -207,17 +207,6 @@ namespace XIVLauncher.Windows
                 SettingsControl.ReloadSettings();
             }
 
-            try
-            {
-                if (App.Settings.GamePath.GetDirectories().All(x => x.Name != "game") ||
-                    App.Settings.GamePath.GetDirectories().All(x => x.Name != "boot"))
-                    PatchManager.SetupGameBase(App.Settings.GamePath);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Could not create base game install.");
-            }
-
             Task.Run(SetupHeadlines);
 
             ProblemCheck.RunCheck();
@@ -248,6 +237,17 @@ namespace XIVLauncher.Windows
 
         private void HandleBootCheck(Action whenFinishAction)
         {
+            try
+            {
+                if (App.Settings.GamePath.GetDirectories().All(x => x.Name != "game") ||
+                    App.Settings.GamePath.GetDirectories().All(x => x.Name != "boot"))
+                    PatchManager.SetupGameBase(App.Settings.GamePath);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not create base game install.");
+            }
+
             var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
             if (bootPatches != null)
             {
@@ -336,7 +336,7 @@ namespace XIVLauncher.Windows
                 otp = otpDialog.Result;
             }
 
-            HandleBootCheck(() => StartLogin(otp));
+            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp)));
         }
 
         private async void StartLogin(string otp)
@@ -644,6 +644,7 @@ private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
+            _installer.Stop();
             Application.Current.Shutdown();
         }
 
