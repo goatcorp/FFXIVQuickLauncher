@@ -127,6 +127,8 @@ namespace XIVLauncher.Game.Patch
         {
             var outFile = GetPatchFile(download.Patch);
 
+            Log.Information("Downloading patch {0} at {1} to {2}", download.Patch.VersionId, download.Patch.Url, outFile.FullName);
+
             _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
             {
                 _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} ({_progressDialog.ViewModel.PatchCheckingLoc})", 0f);
@@ -163,6 +165,7 @@ namespace XIVLauncher.Game.Patch
                 // Let's just bail for now, need better handling of this later
                 if (!IsHashCheckPass(download.Patch, outFile))
                 {
+                    Log.Error("HashCHeck failed for {0} after DL", download.Patch.VersionId);
                     MessageBox.Show($"IsHashCheckPass FAILED for {download.Patch.VersionId}.\nPlease try again.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     outFile.Delete();
                     Environment.Exit(0);
@@ -176,11 +179,11 @@ namespace XIVLauncher.Game.Patch
 
                 download.State = PatchState.Downloaded;
                 _slots[index] = true;
+
+                Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
             };
 
             await dlService.DownloadFileAsync(download.Patch.Url, outFile.FullName);
-
-            Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
         }
 
         private void RunDownloadQueue()
@@ -242,6 +245,8 @@ namespace XIVLauncher.Game.Patch
 #if DEBUG
                 MessageBox.Show("INSTALLING " + toInstall.Patch.VersionId);
 #endif
+
+                Log.Information("Starting patch install for {0} at {1}", toInstall.Patch.VersionId, toInstall.Patch.Url);
 
                 _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), _repository);
 
