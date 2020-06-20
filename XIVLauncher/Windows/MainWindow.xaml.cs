@@ -644,6 +644,7 @@ private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
+            _installer.Stop();
             Application.Current.Shutdown();
         }
 
