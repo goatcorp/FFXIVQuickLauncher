@@ -19,6 +19,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
+using XIVLauncher.Game.Patch;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -112,6 +113,17 @@ namespace XIVLauncher.Windows
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
             SettingsDismissed?.Invoke(this, null);
+
+            try
+            {
+                if (App.Settings.GamePath.GetDirectories().All(x => x.Name != "game") ||
+                    App.Settings.GamePath.GetDirectories().All(x => x.Name != "boot"))
+                    PatchManager.SetupGameBase(App.Settings.GamePath);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not create base game install.");
+            }
         }
 
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
