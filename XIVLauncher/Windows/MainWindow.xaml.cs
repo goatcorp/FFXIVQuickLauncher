@@ -474,6 +474,8 @@ namespace XIVLauncher.Windows
                 return;
             }
 
+            _installer.Stop();
+
             this.Hide();
 
             var addonMgr = new AddonManager();
@@ -509,7 +511,6 @@ namespace XIVLauncher.Windows
 
                 Log.Information("Game has exited.");
                 addonMgr.StopAddons();
-                _installer.Stop();
                 Environment.Exit(0);
             });
             watchThread.Start();
