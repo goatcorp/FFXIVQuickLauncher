@@ -23,11 +23,14 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Util
             SubId = reader.ReadUInt16BE();
             FileId = reader.ReadUInt32BE();
 
-            RelativePath = $@"/sqpack/{GetExpansionFolder(ExpansionId)}/";
+            RelativePath = GetExpansionPath();
         }
 
+        protected string GetExpansionPath() =>
+            $@"/sqpack/{GetExpansionFolder(ExpansionId)}/";
+
         protected virtual string GetFileName(ZiPatchConfig.PlatformId platform) =>
-            $"{RelativePath}{MainId:x2}{SubId:x4}.{platform.ToString().ToLower()}";
+            $"{GetExpansionPath()}{MainId:x2}{SubId:x4}.{platform.ToString().ToLower()}";
 
         public void ResolvePath(ZiPatchConfig.PlatformId platform) =>
             RelativePath = GetFileName(platform);

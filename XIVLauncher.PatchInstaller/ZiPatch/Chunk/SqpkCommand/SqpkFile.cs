@@ -74,12 +74,17 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
                     // TODO: Check this. I *think* boot usually creates all the folders like sqpack, movie, etc., so this might be kind of a hack
                     TargetFile.CreateDirectoryTree(config.GamePath);
 
-                    var mode = FileOffset > 0 ? FileMode.Open : FileMode.Create;
-                    var fileStream = TargetFile.OpenStream(config.GamePath, mode);
-                    fileStream.Seek(FileOffset, SeekOrigin.Begin);
+                    var fileStream = config.Store == null ?
+                        TargetFile.OpenStream(config.GamePath, FileMode.OpenOrCreate) :
+                        TargetFile.OpenStream(config.Store, config.GamePath, FileMode.OpenOrCreate);
 
+                    if (FileOffset == 0)
+                        fileStream.SetLength(0);
+
+                    fileStream.Seek(FileOffset, SeekOrigin.Begin);
                     foreach (var block in CompressedData)
                         block.DecompressInto(fileStream);
+
                     break;
                 case OperationKind.RemoveAll:
                     foreach (var file in SqexFile.GetAllExpansionFiles(config.GamePath, ExpansionId).Where(RemoveAllFilter))

@@ -21,7 +21,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
         public IndexCommandKind IndexCommand { get; protected set; }
         public bool IsSynonym { get; protected set; }
-        public SqexFile File { get; protected set; }
+        public SqpackIndexFile TargetFile { get; protected set; }
         public ulong FileHash { get; protected set; }
         public uint BlockOffset { get; protected set; }
 
@@ -40,7 +40,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
             IsSynonym = reader.ReadBoolean();
             reader.ReadByte(); // Alignment
 
-            File = new SqpackIndexFile(reader);
+            TargetFile = new SqpackIndexFile(reader);
 
             FileHash = reader.ReadUInt64BE();
 
@@ -52,7 +52,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
         public override string ToString()
         {
-            return $"{Type}:{Command}:{IndexCommand}:{IsSynonym}:{File}:{FileHash:X8}:{BlockOffset}:{BlockNumber}";
+            return $"{Type}:{Command}:{IndexCommand}:{IsSynonym}:{TargetFile}:{FileHash:X8}:{BlockOffset}:{BlockNumber}";
         }
     }
 }

@@ -27,9 +27,9 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
         private const int HEADER_SIZE = 1024;
 
-        public TargetFileKind TargetFile { get; protected set; }
-        public TargetHeaderKind TargetHeader { get; protected set; }
-        public SqpackFile File { get; protected set; }
+        public TargetFileKind FileKind { get; protected set; }
+        public TargetHeaderKind HeaderKind { get; protected set; }
+        public SqpackFile TargetFile { get; protected set; }
 
         public byte[] HeaderData { get; protected set; }
 
@@ -39,14 +39,14 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         {
             var start = reader.BaseStream.Position;
 
-            TargetFile = (TargetFileKind)reader.ReadByte();
-            TargetHeader = (TargetHeaderKind)reader.ReadByte();
+            FileKind = (TargetFileKind)reader.ReadByte();
+            HeaderKind = (TargetHeaderKind)reader.ReadByte();
             reader.ReadByte(); // Alignment
 
-            if (TargetFile == TargetFileKind.Dat)
-                File = new SqpackDatFile(reader);
+            if (FileKind == TargetFileKind.Dat)
+                TargetFile = new SqpackDatFile(reader);
             else
-                File = new SqpackIndexFile(reader);
+                TargetFile = new SqpackIndexFile(reader);
 
             HeaderData = reader.ReadBytes(HEADER_SIZE);
 
@@ -55,15 +55,18 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
         public override void ApplyChunk(ZiPatchConfig config)
         {
-            File.ResolvePath(config.Platform);
+            TargetFile.ResolvePath(config.Platform);
 
-            var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate);
-            file.WriteFromOffset(HeaderData, TargetHeader == TargetHeaderKind.Version ? 0 : HEADER_SIZE);
+            var file = config.Store == null ?
+                TargetFile.OpenStream(config.GamePath, FileMode.OpenOrCreate) :
+                TargetFile.OpenStream(config.Store, config.GamePath, FileMode.OpenOrCreate);
+
+            file.WriteFromOffset(HeaderData, HeaderKind == TargetHeaderKind.Version ? 0 : HEADER_SIZE);
         }
 
         public override string ToString()
         {
-            return $"{Type}:{Command}:{TargetFile}:{TargetHeader}:{File}";
+            return $"{Type}:{Command}:{FileKind}:{HeaderKind}:{TargetFile}";
         }
     }
 }

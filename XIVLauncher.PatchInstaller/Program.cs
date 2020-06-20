@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using XIVLauncher.PatchInstaller.ZiPatch;
+using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller
 {
@@ -17,8 +18,8 @@ namespace XIVLauncher.PatchInstaller
 //#if DEBUG
             args = new[]
             {
-                "D:\\ARRTest\\Patches\\full\\",
-                "D:\\ARRTest\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn\\game\\",
+                "D:\\ARRTest\\Patches\\boot\\",
+                "D:\\ARRTest\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn\\boot\\",
                 ""
             };
 //#endif
@@ -37,7 +38,10 @@ namespace XIVLauncher.PatchInstaller
             {
                 var patchlist = new[]
                 {
-                    "4e9a232b/H2017.06.06.0000.0001a.patch",
+                    "2b5cbc63/D2013.06.18.0000.0000.patch",
+                    "2b5cbc63/D2020.02.26.0000.0001.patch"
+
+                    /*"4e9a232b/H2017.06.06.0000.0001a.patch",
                     "4e9a232b/H2017.06.06.0000.0001b.patch",
                     "4e9a232b/H2017.06.06.0000.0001c.patch",
                     "4e9a232b/H2017.06.06.0000.0001d.patch",
@@ -110,7 +114,7 @@ namespace XIVLauncher.PatchInstaller
                     "4e9a232b/D2020.03.25.0000.0000.patch",
                     "4e9a232b/D2020.03.26.0000.0000.patch",
                     "4e9a232b/D2020.03.27.0000.0000.patch",
-                    /*"ex1/6b936f08/H2017.06.01.0000.0001a.patch",
+                    "ex1/6b936f08/H2017.06.01.0000.0001a.patch",
                     "ex1/6b936f08/H2017.06.01.0000.0001b.patch",
                     "ex1/6b936f08/H2017.06.01.0000.0001c.patch",
                     "ex1/6b936f08/H2017.06.01.0000.0001d.patch",
@@ -170,11 +174,13 @@ namespace XIVLauncher.PatchInstaller
             foreach (var file in files)
             {
                 var patchFile = ZiPatchFile.FromFileName(file);
-                var config = new ZiPatchConfig(gamePath);
 
-                foreach (var chunk in patchFile.GetChunks())
+                using (var store = new SqexFileStreamStore())
                 {
-                    chunk.ApplyChunk(config);
+                    var config = new ZiPatchConfig(gamePath) {Store = store};
+
+                    foreach (var chunk in patchFile.GetChunks())
+                        chunk.ApplyChunk(config);
                 }
 
                 return;

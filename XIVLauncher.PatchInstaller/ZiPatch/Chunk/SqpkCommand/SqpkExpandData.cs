@@ -14,9 +14,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         public new static string Command = "E";
 
 
-        private const int BLOCK_SIZE = 128;
-
-        public SqpackDatFile File { get; protected set; }
+        public SqpackDatFile TargetFile { get; protected set; }
         public int BlockOffset { get; protected set; }
         public int BlockNumber { get; protected set; }
         
@@ -29,7 +27,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
             reader.ReadBytes(3);
 
-            File = new SqpackDatFile(reader);
+            TargetFile = new SqpackDatFile(reader);
 
             BlockOffset = reader.ReadInt32BE() << 7;
             BlockNumber = reader.ReadInt32BE();
@@ -41,9 +39,12 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
         public override void ApplyChunk(ZiPatchConfig config)
         {
-            File.ResolvePath(config.Platform);
-            
-            var file = File.OpenStream(config.GamePath, FileMode.OpenOrCreate);
+            TargetFile.ResolvePath(config.Platform);
+
+            var file = config.Store == null ?
+                TargetFile.OpenStream(config.GamePath, FileMode.OpenOrCreate) :
+                TargetFile.OpenStream(config.Store, config.GamePath, FileMode.OpenOrCreate);
+
             SqpackDatFile.WriteEmptyFileBlockAt(file, BlockOffset, BlockNumber);
         }
 

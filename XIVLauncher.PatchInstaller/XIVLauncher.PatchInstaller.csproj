@@ -95,6 +95,7 @@
     <Compile Include="ZiPatch\Chunk\ZiPatchChunk.cs" />
     <Compile Include="Util\Crc32.cs" />
     <Compile Include="ZiPatch\Util\SqexFileStream.cs" />
+    <Compile Include="ZiPatch\Util\SqexFileStreamStore.cs" />
     <Compile Include="ZiPatch\Util\SqpackIndexFile.cs" />
     <Compile Include="ZiPatch\Util\SqpackDatFile.cs" />
     <Compile Include="ZiPatch\Util\SqexFile.cs" />

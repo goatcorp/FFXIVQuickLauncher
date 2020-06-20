@@ -14,9 +14,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Util
 
         public static void WriteEmptyFileBlockAt(SqexFileStream stream, int offset, int blockNumber)
         {
-            var startPos = stream.Position;
             stream.WipeFromOffset(blockNumber << 7, offset);
-            stream.Position = startPos;
+            stream.Position = offset;
 
             using (var file = new BinaryWriter(stream, Encoding.Default, true))
             {

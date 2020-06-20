@@ -10,42 +10,18 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Util
 {
     public class SqexFileStream : FileStream
     {
-        private class StreamStore : IDisposable
-        {
-            public string Path { get; set; }
-            public SqexFileStream Stream { get; set; }
-
-            public void Dispose() => Stream?.Dispose();
-        }
-
-        private static byte[] WIPE_BUFFER = new byte[1 << 16];
-
-        private static AsyncLocal<StreamStore> streams =
-            new AsyncLocal<StreamStore> {Value = new StreamStore()};
+        private static readonly byte[] WipeBuffer = new byte[1 << 16];
 
         public SqexFileStream(string path, FileMode mode) : base(path, mode, FileAccess.ReadWrite, FileShare.Read, 1 << 16)
         {}
 
-        public static SqexFileStream WaitForStream(string path, FileMode mode, int tries = 5, int sleeptime = 1, bool store = true)
+        public static SqexFileStream WaitForStream(string path, FileMode mode, int tries = 5, int sleeptime = 1)
         {
-            if (streams.Value.Path == path)
-                return streams.Value.Stream;
-            
-            streams.Value.Stream?.Dispose();
-            streams.Value.Path = null;
-
             do
             {
                 try
                 {
-                    var stream = new SqexFileStream(path, mode);
-
-                    if (!store) return stream;
-                    
-                    streams.Value.Path = path;
-                    streams.Value.Stream = stream;
-
-                    return stream;
+                    return new SqexFileStream(path, mode);
                 }
                 catch (IOException)
                 {
@@ -69,8 +45,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Util
         {
             for (int numBytes; length > 0; length -= numBytes)
             {
-                numBytes = Math.Min(WIPE_BUFFER.Length, length);
-                Write(WIPE_BUFFER, 0, numBytes);
+                numBytes = Math.Min(WipeBuffer.Length, length);
+                Write(WipeBuffer, 0, numBytes);
             }
         }
 
