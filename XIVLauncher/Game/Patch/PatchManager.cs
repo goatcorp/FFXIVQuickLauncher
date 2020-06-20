@@ -232,7 +232,10 @@ namespace XIVLauncher.Game.Patch
                     continue;
 
                 toInstall.State = PatchState.IsInstalling;
+
+#if DEBUG
                 MessageBox.Show("INSTALLING " + toInstall.Patch.VersionId);
+#endif
 
                 _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), _repository);
 

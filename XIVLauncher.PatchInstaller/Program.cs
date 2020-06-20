@@ -33,10 +33,9 @@ namespace XIVLauncher.PatchInstaller
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
-//#if DEBUG
+                .WriteTo.File(Path.Combine(Paths.RoamingPath, "patcher.log"))
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
-//#endif
                 .CreateLogger();
 
             _client.Initialize(IPC_SERVER_PORT);

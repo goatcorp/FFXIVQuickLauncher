@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{395CDFAB-48F8-4EC5-833D-05F5795A157D}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>XIVLauncher.PatchInstaller</RootNamespace>
     <AssemblyName>XIVLauncher.PatchInstaller</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -35,6 +35,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -72,6 +75,7 @@
     <Compile Include="PatcherIpcMessages\PatcherIpcEnvelope.cs" />
     <Compile Include="PatcherIpcMessages\PatcherIpcOpCode.cs" />
     <Compile Include="PatcherIpcMessages\PatcherIpcStartInstall.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="Util\BinaryReaderHelpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
