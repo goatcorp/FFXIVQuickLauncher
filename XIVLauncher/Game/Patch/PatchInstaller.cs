@@ -68,7 +68,7 @@ namespace XIVLauncher.Game.Patch
 
         private void ServerOnReceivedRequest(object sender, ReceivedRequestEventArgs e)
         {
-            Log.Information("[PATCHER] IPC: " + e.Request);
+            Log.Information("[PATCHERIPC] IPC: " + e.Request);
 
             var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(e.Request, XIVLauncher.PatchInstaller.Program.JsonSettings);
 
@@ -76,17 +76,17 @@ namespace XIVLauncher.Game.Patch
             {
                 case PatcherIpcOpCode.Hello:
                     _client.Initialize(XIVLauncher.PatchInstaller.Program.IPC_CLIENT_PORT);
-                    Log.Information("[PATCHER] GOT HELLO");
+                    Log.Information("[PATCHERIPC] GOT HELLO");
                     State = InstallerState.Ready;
                     break;
                 case PatcherIpcOpCode.InstallOk:
-                    Log.Information("[PATCHER] INSTALL OK");
+                    Log.Information("[PATCHERIPC] INSTALL OK");
                     State = InstallerState.Ready;
                     break;
                 case PatcherIpcOpCode.InstallFailed:
                     State = InstallerState.Failed;
                     MessageBox.Show(
-                        "INSTALLER FAILED!!!\nPlease report this error.\nPlease use the official launcher.");
+                        "The patch installer ran into an error.\nPlease report this error.\nPlease use the official launcher.");
                     Stop();
                     Environment.Exit(0);
                     break;
@@ -97,11 +97,8 @@ namespace XIVLauncher.Game.Patch
 
         public void Stop()
         {
-            if (State == InstallerState.NotReady || State == InstallerState.NotStarted)
+            if (State == InstallerState.NotReady || State == InstallerState.NotStarted || State == InstallerState.Busy)
                 return;
-            
-            if (State == InstallerState.Busy)
-                throw new InvalidOperationException("Installer is still waiting for completion of a patch.");
 
             SendIpcMessage(new PatcherIpcEnvelope
             {
@@ -124,8 +121,17 @@ namespace XIVLauncher.Game.Patch
             });
         }
 
-        private void SendIpcMessage(PatcherIpcEnvelope envelope) =>
-            _client.Send(JsonConvert.SerializeObject(envelope, Formatting.Indented, XIVLauncher.PatchInstaller.Program.JsonSettings));
+        private void SendIpcMessage(PatcherIpcEnvelope envelope)
+        {
+            try
+            {
+                _client.Send(JsonConvert.SerializeObject(envelope, Formatting.Indented, XIVLauncher.PatchInstaller.Program.JsonSettings));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "[PATCHERIPC] Failed to send message.");
+            }
+        }
 
         public void Dispose()
         {
