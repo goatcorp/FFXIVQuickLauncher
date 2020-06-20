@@ -63,9 +63,8 @@ namespace XIVLauncher.Windows
             if (SetupTabControl.SelectedIndex == 0)
                 if (!Util.IsValidFfxivPath(GamePathEntry.Text))
                 {
-                    MessageBox.Show(Loc.Localize("GamePathInvalidError", "The path you selected is not a valid FFXIV installation"), "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    MessageBox.Show(Loc.Localize("GamePathInvalidError", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in."), "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
             if (SetupTabControl.SelectedIndex == 2)

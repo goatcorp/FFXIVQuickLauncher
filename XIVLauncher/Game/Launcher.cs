@@ -17,6 +17,7 @@ using SteamworksSharp;
 using SteamworksSharp.Native;
 using XIVLauncher.Cache;
 using XIVLauncher.Encryption;
+using XIVLauncher.Game.Patch;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows;
@@ -85,16 +86,6 @@ namespace XIVLauncher.Game
 
         public LoginResult Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath)
         {
-            /*
-            var bootPatches = CheckBootVersion(gamePath);
-            if (bootPatches != null)
-                return new LoginResult
-                {
-                    State = LoginState.NeedsPatchBoot,
-                    PendingPatches = bootPatches
-                };
-                */
-
             string uid;
             PatchListEntry[] pendingPatches = null;
 
@@ -203,7 +194,7 @@ namespace XIVLauncher.Game
                     .Append("DEV.UseSqPack", "1")
                     .Append("SYS.Region", region.ToString())
                     .Append("language", ((int)language).ToString())
-                    .Append("ver", GetLocalGameVer(gamePath));
+                    .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
                 if (isSteamServiceAccount)
                 {
@@ -283,6 +274,22 @@ namespace XIVLauncher.Game
             return null;
         }
 
+        private static string GetVersionReport(DirectoryInfo gamePath, int exLevel)
+        {
+            var verReport = $"{GetBootVersionHash(gamePath)}";
+
+            if (exLevel >= 1)
+                verReport += $"\nex1\t{Repository.Ex1.GetVer(gamePath)}";
+
+            if (exLevel >= 2)
+                verReport += $"\nex2\t{Repository.Ex2.GetVer(gamePath)}";
+
+            if (exLevel >= 3)
+                verReport += $"\nex3\t{Repository.Ex3.GetVer(gamePath)}";
+
+            return verReport;
+        }
+
         /// <summary>
         /// Calculate the hash that is sent to patch-gamever for version verification/tamper protection.
         /// This same hash is also sent in lobby, but for ffxiv.exe and ffxiv_dx11.exe.
@@ -290,7 +297,7 @@ namespace XIVLauncher.Game
         /// <returns>String of hashed EXE files.</returns>
         private static string GetBootVersionHash(DirectoryInfo gamePath)
         {
-            var result = "";
+            var result = Repository.Boot.GetVer(gamePath, true) + "=";
 
             for (var i = 0; i < FilesToHash.Length; i++)
             {
@@ -304,100 +311,98 @@ namespace XIVLauncher.Game
             return result;
         }
 
-        private static PatchListEntry[] CheckBootVersion(DirectoryInfo gamePath)
+        public PatchListEntry[] CheckBootVersion(DirectoryInfo gamePath)
         {
-            using (var client = new WebClient())
-            {
-                client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
-                client.Headers.Add("Host", "patch-bootver.ffxiv.com");
+            using var client = new WebClient();
 
-                // Why tf is this http??
-                var url =
-                    $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{GetLocalBootVer(gamePath)}/?time=" + GetLauncherFormattedTimeLong();
+            client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
+            client.Headers.Add("Host", "patch-bootver.ffxiv.com");
 
-                var result = client.DownloadString(url);
+            // Why tf is this http??
+            var url =
+                $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath, true)}/?time=" + GetLauncherFormattedTimeLong();
 
-                if (result == string.Empty)
-                    return null;
+            var result = client.DownloadString(url);
 
-                Log.Verbose("BOOT Patching is needed... List:\n" + result);
+            if (result == string.Empty)
+                return null;
 
-                return PatchListParser.Parse(result);
-            }
+            Log.Verbose("BOOT Patching is needed... List:\n" + result);
+
+            return PatchListParser.Parse(result);
         }
 
         private static (string Uid, LoginState result, PatchListEntry[] PendingGamePatches) RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath)
         {
-            using (var client = new WebClient())
+            using var client = new WebClient();
+
+            client.Headers.Add("X-Hash-Check", "enabled");
+            client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
+            //client.Headers.Add("Referer",
+            //    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
+            client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+            var url =
+                $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{Repository.Ffxiv.GetVer(gamePath, true)}/{loginResult.SessionId}";
+
+            try
             {
-                client.Headers.Add("X-Hash-Check", "enabled");
-                client.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
-                //client.Headers.Add("Referer",
-                //    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
-                client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                var report = GetVersionReport(gamePath, loginResult.MaxExpansion);
+                var result = client.UploadString(url, report);
 
-                var url =
-                    $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{GetLocalGameVer(gamePath)}/{loginResult.SessionId}";
-
-                try
+                // Get the unique ID needed to authenticate with the lobby server
+                if (client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
                 {
-                    var result = client.UploadString(url, GetBootVersionHash(gamePath));
+                    var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
 
-                    // Get the unique ID needed to authenticate with the lobby server
-                    if (client.ResponseHeaders.AllKeys.Contains("X-Patch-Unique-Id"))
-                    {
-                        var sid = client.ResponseHeaders["X-Patch-Unique-Id"];
+                    if (result == string.Empty)
+                        return (sid, LoginState.Ok, null);
 
-                        if (result == string.Empty)
-                            return (sid, LoginState.Ok, null);
+                    Log.Verbose("Patching is needed... List:\n" + result);
 
-                        Log.Verbose("Patching is needed... List:\n" + result);
+                    var pendingPatches = PatchListParser.Parse(result);
 
-                        var pendingPatches = PatchListParser.Parse(result);
-
-                        return (sid, LoginState.NeedsPatchGame, pendingPatches);
-                    }
+                    return (sid, LoginState.NeedsPatchGame, pendingPatches);
                 }
-                catch (WebException exc)
+            }
+            catch (WebException exc)
+            {
+                if (exc.Status == WebExceptionStatus.ProtocolError)
                 {
-                    if (exc.Status == WebExceptionStatus.ProtocolError)
+                    if (exc.Response is HttpWebResponse response)
                     {
-                        if (exc.Response is HttpWebResponse response)
-                        {
-                            // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
-                            if (response.StatusCode == HttpStatusCode.Conflict)
-                                return (null, LoginState.NeedsPatchBoot, null);
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                        // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
+                        if (response.StatusCode == HttpStatusCode.Conflict)
+                            return (null, LoginState.NeedsPatchBoot, null);
                     }
                     else
                     {
                         throw;
                     }
                 }
-
-                throw new Exception("Could not validate game version.");
+                else
+                {
+                    throw;
+                }
             }
+
+            throw new Exception("Could not validate game version.");
         }
 
         private string GetStored(bool isSteam, int region)
         {
             // This is needed to be able to access the login site correctly
-            using (var client = new WebClient())
-            {
-                client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-                client.Headers.Add("Accept-Encoding", "gzip, deflate");
-                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
-                client.Headers.Add("User-Agent", _userAgent);
-                var reply = client.DownloadString(
-                    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
+            using var client = new WebClient();
 
-                var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
-                return regex.Matches(reply)[0].Groups["stored"].Value;
-            }
+            client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+            client.Headers.Add("Accept-Encoding", "gzip, deflate");
+            client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+            client.Headers.Add("User-Agent", _userAgent);
+            var reply = client.DownloadString(
+                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
+
+            var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
+            return regex.Matches(reply)[0].Groups["stored"].Value;
         }
 
         public class OauthLoginResult
@@ -411,70 +416,45 @@ namespace XIVLauncher.Game
 
         private OauthLoginResult OauthLogin(string userName, string password, string otp, bool isSteam, int region)
         {
-            using (var client = new WebClient())
+            using var client = new WebClient();
+
+            client.Headers.Add("User-Agent", _userAgent);
+            client.Headers.Add("Cache-Control", "no-cache");
+            client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+            client.Headers.Add("Accept-Encoding", "gzip, deflate");
+            client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+            client.Headers.Add("Referer",
+                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
+            client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+            var response =
+                client.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send",
+                    new NameValueCollection //get the session id with user credentials
+                    {
+                        {"_STORED_", GetStored(isSteam, region)},
+                        {"sqexid", userName},
+                        {"password", password},
+                        {"otppw", otp}
+                    });
+
+            var reply = Encoding.UTF8.GetString(response);
+
+            var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
+            var matches = regex.Matches(reply);
+
+            if (matches.Count == 0)
+                throw new OauthLoginException("Could not log in to oauth. Result: " + reply);
+
+            var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
+
+            return new OauthLoginResult
             {
-                client.Headers.Add("User-Agent", _userAgent);
-                client.Headers.Add("Cache-Control", "no-cache");
-                client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-                client.Headers.Add("Accept-Encoding", "gzip, deflate");
-                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
-                client.Headers.Add("Referer",
-                    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
-                client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-
-                var response =
-                    client.UploadValues("https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send",
-                        new NameValueCollection //get the session id with user credentials
-                        {
-                            {"_STORED_", GetStored(isSteam, region)},
-                            {"sqexid", userName},
-                            {"password", password},
-                            {"otppw", otp}
-                        });
-
-                var reply = Encoding.UTF8.GetString(response);
-
-                var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
-                var matches = regex.Matches(reply);
-
-                if (matches.Count == 0)
-                    throw new OauthLoginException("Could not log in to oauth. Result: " + reply);
-
-                var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
-
-                return new OauthLoginResult
-                {
-                    SessionId = launchParams[1],
-                    Region = int.Parse(launchParams[5]),
-                    TermsAccepted = launchParams[3] != "0",
-                    Playable = launchParams[9] != "0",
-                    MaxExpansion = int.Parse(launchParams[13])
-                };
-            }
-        }
-
-        public static string GetLocalGameVer(DirectoryInfo gamePath)
-        {
-            try
-            {
-                return File.ReadAllText(Path.Combine(gamePath.FullName, "game", "ffxivgame.ver"));
-            }
-            catch (Exception exc)
-            {
-                throw new Exception("Could not get local game version.", exc);
-            }
-        }
-
-        public static string GetLocalBootVer(DirectoryInfo gamePath)
-        {
-            try
-            {
-                return File.ReadAllText(Path.Combine(gamePath.FullName, "boot", "ffxivboot.ver"));
-            }
-            catch (Exception exc)
-            {
-                throw new Exception("Could not get local boot version.", exc);
-            }
+                SessionId = launchParams[1],
+                Region = int.Parse(launchParams[5]),
+                TermsAccepted = launchParams[3] != "0",
+                Playable = launchParams[9] != "0",
+                MaxExpansion = int.Parse(launchParams[13])
+            };
         }
 
         private static string GetFileHash(string file)
@@ -510,39 +490,37 @@ namespace XIVLauncher.Game
             var hashString = Environment.MachineName + Environment.UserName + Environment.OSVersion +
                              Environment.ProcessorCount;
 
-            using (var sha1 = HashAlgorithm.Create("SHA1"))
-            {
-                var bytes = new byte[5];
+            using var sha1 = HashAlgorithm.Create("SHA1");
 
-                Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
+            var bytes = new byte[5];
 
-                var checkSum = (byte) -(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
-                bytes[0] = checkSum;
+            Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
 
-                return BitConverter.ToString(bytes).Replace("-", "").ToLower();
-            }
+            var checkSum = (byte) -(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+            bytes[0] = checkSum;
+
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
         }
 
         public byte[] DownloadAsLauncher(string url, ClientLanguage language, string contentType = "")
         {
-            using (var client = new WebClient())
+            using var client = new WebClient();
+
+            client.Headers.Add("User-Agent", _userAgent);
+
+            if (!string.IsNullOrEmpty(contentType))
             {
-                client.Headers.Add("User-Agent", _userAgent);
-
-                if (!string.IsNullOrEmpty(contentType))
-                {
-                    client.Headers.Add("Accept", contentType);
-                }
-
-                client.Headers.Add("Accept-Encoding", "gzip, deflate");
-                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
-
-                client.Headers.Add("Origin", "https://launcher.finalfantasyxiv.com");
-
-                client.Headers.Add(HttpRequestHeader.Referer, GenerateFrontierReferer(language));
-
-                return client.DownloadData(url);
+                client.Headers.Add("Accept", contentType);
             }
+
+            client.Headers.Add("Accept-Encoding", "gzip, deflate");
+            client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+
+            client.Headers.Add("Origin", "https://launcher.finalfantasyxiv.com");
+
+            client.Headers.Add(HttpRequestHeader.Referer, GenerateFrontierReferer(language));
+
+            return client.DownloadData(url);
         }
 
         private static string GenerateFrontierReferer(ClientLanguage language)

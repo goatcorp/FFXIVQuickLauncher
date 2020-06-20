@@ -24,6 +24,7 @@ namespace XIVLauncher.Settings
         ClientLanguage? Language { get; set; }
         string CurrentAccountId { get; set; }
         bool? EncryptArguments { get; set; }
+        DirectoryInfo PatchPath { get; set; }
 
         #endregion
     }

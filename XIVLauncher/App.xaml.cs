@@ -7,6 +7,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 using CheapLoc;
 using Config.Net;
 using Newtonsoft.Json;
@@ -36,6 +38,8 @@ namespace XIVLauncher
 
         public App()
         {
+            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+
             Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
                 .UseCommandLineArgs()
                 .UseJsonFile(GetConfigPath("launcher"))
@@ -47,7 +51,7 @@ namespace XIVLauncher
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a =>
-                    a.File(Path.Combine(Paths.XIVLauncherPath, "output.log")))
+                    a.File(Path.Combine(Paths.RoamingPath, "output.log")))
 #if DEBUG
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
@@ -127,6 +131,7 @@ namespace XIVLauncher
                 if (_updateWindow != null) 
                     _updateWindow.Hide();
 
+                _mainWindow = new MainWindow();
                 _mainWindow.Initialize();
             });
         }
@@ -154,7 +159,7 @@ namespace XIVLauncher
             Environment.Exit(0);
         }
 
-        private static string GetConfigPath(string prefix) => Path.Combine(Paths.XIVLauncherPath, $"{prefix}ConfigV3.json");
+        private static string GetConfigPath(string prefix) => Path.Combine(Paths.RoamingPath, $"{prefix}ConfigV3.json");
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
@@ -179,10 +184,12 @@ namespace XIVLauncher
             var accountName = string.Empty;
 
             if (e.Args.Length > 0 && e.Args[0].StartsWith("--account="))
+            {
                 accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
-
+                App.Settings.CurrentAccountId = accountName;
+            }
+            
             Log.Information("Loading MainWindow for account '{0}'", accountName);
-            _mainWindow = new MainWindow(accountName);
 
 #if XL_NOAUTOUPDATE
             OnUpdateCheckFinished(null, null);

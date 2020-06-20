@@ -13,6 +13,7 @@ namespace XIVLauncher.Windows.ViewModel
     class SettingsControlViewModel : INotifyPropertyChanged
     {
         private string _gamePath;
+        private string _patchPath;
 
         public SettingsControlViewModel()
         {
@@ -43,6 +44,19 @@ namespace XIVLauncher.Windows.ViewModel
                 _gamePath = value;
                 OnPropertyChanged(nameof(GamePath));
                 OnPropertyChanged(nameof(IsRunIntegrityCheckPossible));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the path to the game folder.
+        /// </summary>
+        public string PatchPath
+        {
+            get => _patchPath;
+            set
+            {
+                _patchPath = value;
+                OnPropertyChanged(nameof(PatchPath));
             }
         }
 
@@ -98,6 +112,9 @@ namespace XIVLauncher.Windows.ViewModel
             PluginsInstallHintLoc =
                 Loc.Localize("PluginsInstallHint", "You can use the /xlplugins command in-game to install more plugins.");
 
+            SettingsPatchingLoc = Loc.Localize("SettingsPatching", "Patching");
+            PatchPathLoc = Loc.Localize("PatchPath", "Patch Download Directory");
+
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
                 "Made by goat.\r\nSpecial thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!");
@@ -141,11 +158,13 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonChatDelayDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
-        public string DutyFinderTaskbarFlashLoc { get; private set; }
 
         public string PluginsDescriptionLoc { get; private set; }
         public string PluginsToggleLoc { get; private set; }
         public string PluginsInstallHintLoc { get; private set; }
+
+        public string SettingsPatchingLoc { get; private set; }
+        public string PatchPathLoc { get; private set; }
 
         public string SettingsAboutLoc { get; private set; }
         public string CreditsLoc { get; private set; }

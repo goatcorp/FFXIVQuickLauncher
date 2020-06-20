@@ -1,16 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Serilog;
 
-namespace XIVLauncher.Helpers
+namespace XIVLauncher.PatchInstaller.Util
 {
     // https://stackoverflow.com/a/15274591
     static class BinaryReaderHelpers
     {
+
+        public static string ReadFixedLengthString(this BinaryReader reader, uint length)
+        {
+            return Encoding.ASCII.GetString(reader.ReadBytesRequired((int)length)).TrimEnd((char)0);
+        }
+
         // Note this MODIFIES THE GIVEN ARRAY then returns a reference to the modified array.
         public static byte[] Reverse(this byte[] b)
         {
@@ -53,7 +56,7 @@ namespace XIVLauncher.Helpers
             var result = binRdr.ReadBytes(byteCount);
 
             if (result.Length != byteCount)
-                throw new EndOfStreamException(string.Format("{0} bytes required from stream, but only {1} returned.", byteCount, result.Length));
+                throw new EndOfStreamException($"{byteCount} bytes required from stream, but only {result.Length} returned.");
 
             return result;
         }

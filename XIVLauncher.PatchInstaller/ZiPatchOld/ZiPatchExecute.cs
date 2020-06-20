@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Serilog;
-using XIVLauncher.Helpers;
+using XIVLauncher.PatchInstaller.Util;
 using XIVLauncher.PatchInstaller.ZiPatch.Structures;
 using XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands;
 

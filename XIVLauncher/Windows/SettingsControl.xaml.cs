@@ -19,6 +19,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
+using XIVLauncher.Game.Patch;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -45,7 +46,10 @@ namespace XIVLauncher.Windows
         public void ReloadSettings()
         {
             if (App.Settings.GamePath != null)
-             ViewModel.GamePath = App.Settings.GamePath.FullName;
+                ViewModel.GamePath = App.Settings.GamePath.FullName;
+
+            if (App.Settings.PatchPath != null)
+                ViewModel.PatchPath = App.Settings.PatchPath.FullName;
 
             if (App.Settings.IsDx11)
                 Dx11RadioButton.IsChecked = true;
@@ -85,6 +89,7 @@ namespace XIVLauncher.Windows
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
             App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
+            App.Settings.PatchPath = !string.IsNullOrEmpty(ViewModel.PatchPath) ? new DirectoryInfo(ViewModel.PatchPath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
@@ -108,6 +113,17 @@ namespace XIVLauncher.Windows
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
             SettingsDismissed?.Invoke(this, null);
+
+            try
+            {
+                if (App.Settings.GamePath.GetDirectories().All(x => x.Name != "game") ||
+                    App.Settings.GamePath.GetDirectories().All(x => x.Name != "boot"))
+                    PatchManager.SetupGameBase(App.Settings.GamePath);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not create base game install.");
+            }
         }
 
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
@@ -385,7 +401,7 @@ namespace XIVLauncher.Windows
 
         private void TogglePlugin_OnClick(object sender, RoutedEventArgs e)
         {
-            var definitionFiles = Directory.GetFiles(Path.Combine(Paths.XIVLauncherPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
+            var definitionFiles = Directory.GetFiles(Path.Combine(Paths.RoamingPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
 
             if (PluginListView.SelectedValue.ToString().Contains("(X)")) //If it's disabled...
             {
@@ -430,7 +446,7 @@ namespace XIVLauncher.Windows
 
             try
             {
-                var pluginsDirectory = new DirectoryInfo(Path.Combine(Paths.XIVLauncherPath, "installedPlugins"));
+                var pluginsDirectory = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "installedPlugins"));
 
                 if (!pluginsDirectory.Exists)
                     return;
@@ -478,7 +494,7 @@ namespace XIVLauncher.Windows
 
         private void PluginsFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            var pluginsPath = Path.Combine(Paths.XIVLauncherPath, "installedPlugins");
+            var pluginsPath = Path.Combine(Paths.RoamingPath, "installedPlugins");
 
             try
             {

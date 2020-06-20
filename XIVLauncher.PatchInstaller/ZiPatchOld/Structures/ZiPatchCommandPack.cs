@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Serilog;
-using XIVLauncher.Helpers;
+using XIVLauncher.PatchInstaller.Util;
 using XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands;
 using XIVLauncher.PatchInstaller.ZiPatch.Structures.Commands.SqPack;
 
@@ -28,14 +28,18 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Structures
             Read(reader);
         }
 
-        private void Read(BinaryReader reader)
+        private void Read(BinaryReader binReader)
         {
             // Read chunk header
-            CommandSize = reader.ReadUInt32BE();
-            var chunkIdentifier = Encoding.ASCII.GetString(reader.ReadBytes(4));
+            CommandSize = binReader.ReadUInt32BE();
+            //var reader = new Crc32BinaryReader(binReader.BaseStream);
 
-            Log.Verbose("CHUNK: {0} - {1} - {2}", chunkIdentifier, CommandSize.ToString("X"), reader.BaseStream.Position.ToString("X"));
+            //var chunkIdentifier = Encoding.ASCII.GetString(reader.ReadBytes(4));
 
+            //Log.Verbose("CHUNK: {0} - {1} - {2}", chunkIdentifier, CommandSize.ToString("X"), reader.BaseStream.Position.ToString("X"));
+
+            //"FHDR".get
+            /*
             switch (chunkIdentifier)
             {
                 case "FHDR":
@@ -43,8 +47,16 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Structures
                     Command = new FileHeaderZiPatchCommand();
                     break;
                 case "APLY":
-                    CommandType = ZiPatchCommandType.APLY;
+                    CommandType = ZiPatchCommandType.ApplyOption;
                     reader.BaseStream.Position += CommandSize;
+                    break;
+                case "APFS":
+                    break;
+                case "ETRY":
+                    break;
+                case "ADIR":
+                    break;
+                case "DELD":
                     break;
                 case "SQPK":
                     CommandType = ZiPatchCommandType.SQPK;
@@ -54,15 +66,21 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Structures
                     CommandType = ZiPatchCommandType.EndOfFile;
                     reader.BaseStream.Position += CommandSize;
                     break;
-
+                case "XXXX":
+                    break;
                 default:
                     throw new Exception("Unknown ZiPatch command type: " + chunkIdentifier);
-            }
+            }*/
 
-            Command?.Handle(reader, CommandSize, _execute);
+            //Command?.Handle(reader, CommandSize, _execute);
 
             // Read chunk CRC32
-            var crc = reader.ReadUInt32();
+            /*var calculatedCrc = reader.GetCrc32();
+            var fileCrc = reader.ReadUInt32BE();
+
+            Log.Verbose($"/CHUNK: CRC32 {calculatedCrc} == {fileCrc}");
+            if (calculatedCrc != fileCrc)
+                throw new Exception("Command CRC Mismatch!");*/
         }
     }
 }

@@ -20,14 +20,16 @@ namespace XIVLauncher.Game.Patch.PatchList
             for (var i = 5; i < lines.Length - 2; i++)
             {
                 var fields = lines[i].Split('\t');
-                
                 output.Add(new PatchListEntry()
                 {
-                    Length = int.Parse(fields[0]),
+                    Length = long.Parse(fields[0]),
                     VersionId = fields[4],
+                    HashType = fields[5],
+
+                    HashBlockSize = fields.Length == 9 ? long.Parse(fields[6]) : 0,
 
                     // bootver patchlists don't have a hash field
-                    Hash = fields.Length == 9 ? fields[7] : null,
+                    Hashes = fields.Length == 9 ? (fields[7].Split(',')) : null,
                     Url = fields[fields.Length == 9 ? 8 : 5]
                 });
             }

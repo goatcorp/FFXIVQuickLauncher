@@ -70,16 +70,16 @@ namespace XIVLauncher.Dalamud
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
         {
-            var addonDirectory = Path.Combine(Paths.XIVLauncherPath, "addon", "Hooks");
+            var addonDirectory = Path.Combine(Paths.RoamingPath, "addon", "Hooks");
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
-            var ingamePluginPath = Path.Combine(Paths.XIVLauncherPath, "installedPlugins");
-            var defaultPluginPath = Path.Combine(Paths.XIVLauncherPath, "devPlugins");
+            var ingamePluginPath = Path.Combine(Paths.RoamingPath, "installedPlugins");
+            var defaultPluginPath = Path.Combine(Paths.RoamingPath, "devPlugins");
 
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
 
-            var configPath = Path.Combine(Paths.XIVLauncherPath, "dalamudConfig.json");
+            var configPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
             var config = DalamudSettings.DalamudConfig;
 
             using (var client = new WebClient())
@@ -112,7 +112,7 @@ namespace XIVLauncher.Dalamud
                     }
                 }
 
-                if (Launcher.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return;
 
                 if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
@@ -164,7 +164,7 @@ namespace XIVLauncher.Dalamud
                 var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
-                if (Launcher.GetLocalGameVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                     return false;
             }
 
