@@ -58,16 +58,19 @@ namespace XIVLauncher.Windows
 
         private void OtpTextBox_OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter || e.Key == Key.Return)
-            {
-                Result = OtpTextBox.Text;
-                _otpListener.Stop();
-                Close();
-            }
+            if ((e.Key != Key.Enter && e.Key != Key.Return) || OtpTextBox.Text.Length != 6) 
+                return;
+
+            Result = OtpTextBox.Text;
+            _otpListener.Stop();
+            Close();
         }
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (OtpTextBox.Text.Length != 6)
+                return;
+
             Result = OtpTextBox.Text;
             _otpListener.Stop();
             Close();

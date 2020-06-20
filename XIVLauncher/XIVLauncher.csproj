@@ -33,13 +33,14 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -49,7 +50,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -65,8 +66,8 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="CheapLoc, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CheapLoc.1.0.3\lib\net472\CheapLoc.dll</HintPath>
+    <Reference Include="CheapLoc, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CheapLoc.1.1.3\lib\net472\CheapLoc.dll</HintPath>
     </Reference>
     <Reference Include="Config.Net, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Config.Net.4.14.23\lib\netstandard2.0\Config.Net.dll</HintPath>
@@ -82,6 +83,9 @@
     </Reference>
     <Reference Include="DeltaCompressionDotNet.PatchApi, Version=1.1.0.0, Culture=neutral, PublicKeyToken=3e8888ee913ed789, processorArchitecture=MSIL">
       <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.PatchApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Downloader, Version=1.2.0.0, Culture=neutral, PublicKeyToken=844973e732f6cdf4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Downloader.1.2.0\lib\netstandard2.0\Downloader.dll</HintPath>
     </Reference>
     <Reference Include="Dragablz, Version=0.0.3.203, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dragablz.0.0.3.203\lib\net45\Dragablz.dll</HintPath>
@@ -182,6 +186,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Security" />
     <Reference Include="System.Security.AccessControl, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.AccessControl.4.7.0\lib\net461\System.Security.AccessControl.dll</HintPath>
@@ -234,6 +239,9 @@
     <Reference Include="Xceed.Wpf.Toolkit, Version=3.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\Extended.Wpf.Toolkit.3.5.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
+    <Reference Include="ZetaIpc, Version=1.0.0.9, Culture=neutral, PublicKeyToken=6c27b71344e0b736, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZetaIpc.1.0.0.9\lib\netstandard2.0\ZetaIpc.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -245,10 +253,11 @@
     <Compile Include="Accounts\XivAccount.cs" />
     <Compile Include="Addon\AddonEntry.cs" />
     <Compile Include="Addon\AddonManager.cs" />
-    <Compile Include="Addon\Implementations\CharacterBackupAddon.cs" />
-    <Compile Include="Addon\Implementations\CharacterSyncAddon.cs" />
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
+    <Compile Include="Game\Patch\PatchInstaller.cs" />
+    <Compile Include="Game\Repository.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="Settings\DalamudSettings.cs" />
     <Compile Include="Dalamud\DalamudLauncher.cs" />
     <Compile Include="Addon\INotifyAddonAfterClose.cs" />
@@ -256,7 +265,7 @@
     <Compile Include="Addon\IRunnableAddon.cs" />
     <Compile Include="Dalamud\DalamudConfiguration.cs" />
     <Compile Include="Dalamud\DalamudStartInfo.cs" />
-    <Compile Include="Game\AdminCheck.cs" />
+    <Compile Include="Game\ProblemCheck.cs" />
     <Compile Include="Game\ClientLanguage.cs" />
     <Compile Include="Dalamud\DiscordFeatureConfiguration.cs" />
     <Compile Include="Dalamud\XivChatType.cs" />
@@ -265,7 +274,7 @@
     <Compile Include="Game\OauthLoginException.cs" />
     <Compile Include="Game\Patch\GamePatchType.cs" />
     <Compile Include="Game\Patch\PatcherCommunicator.cs" />
-    <Compile Include="Game\Patch\PatchInstaller.cs" />
+    <Compile Include="Game\Patch\PatchManager.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListEntry.cs" />
     <Compile Include="Game\Patch\PatchList\PatchListParser.cs" />
     <Compile Include="Http\HttpServer.cs" />
@@ -276,6 +285,9 @@
     <Compile Include="Updates.cs" />
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
       <DependentUpon>ChangelogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PatchDownloadDialog.xaml.cs">
+      <DependentUpon>PatchDownloadDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\UpdateLoadingDialog.xaml.cs">
       <DependentUpon>UpdateLoadingDialog.xaml</DependentUpon>
@@ -298,6 +310,7 @@
     <Compile Include="Windows\ViewModel\IntegrityCheckProgressWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\MainWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\OtpInputDialogViewModel.cs" />
+    <Compile Include="Windows\ViewModel\PatchDownloadDialogViewModel.cs" />
     <Compile Include="Windows\ViewModel\ProfilePictureInputWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\SettingsControlViewModel.cs" />
     <Compile Include="Windows\ViewModel\UpdateLoadingDialogViewModel.cs" />
@@ -338,9 +351,13 @@
     <Compile Include="Util.cs" />
     <Compile Include="Xaml\ChatTypeToFancyNameConverter.cs" />
     <Compile Include="Xaml\StringToColorConverter.cs" />
-    <Compile Include="Game\XivGame.cs" />
-    <Compile Include="Game\NativeLauncher.cs" />
+    <Compile Include="Game\Launcher.cs" />
+    <Compile Include="Game\NativeAclFix.cs" />
     <Page Include="Windows\ChangelogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\PatchDownloadDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -470,20 +487,6 @@
     <Resource Include="Resources\actlaunch.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\Nhaama\Nhaama.FFXIV\Nhaama.FFXIV.csproj">
-      <Project>{af6e37bd-4598-4194-945b-c8f6ee9309fe}</Project>
-      <Name>Nhaama.FFXIV</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\Nhaama\Nhaama.Memory\Nhaama.Memory.csproj">
-      <Project>{933935a7-8d04-42e8-aee5-122b3aeed820}</Project>
-      <Name>Nhaama.Memory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj">
-      <Project>{395cdfab-48f8-4ec5-833d-05f5795a157d}</Project>
-      <Name>XIVLauncher.PatchInstaller</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
     <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x86\steam_api.dll" />
   </ItemGroup>
@@ -501,7 +504,12 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj">
+      <Project>{395cdfab-48f8-4ec5-833d-05f5795a157d}</Project>
+      <Name>XIVLauncher.PatchInstaller</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GetGitHash" BeforeTargets="WriteGitHash" Condition="'$(BuildHash)' == ''">
     <PropertyGroup>

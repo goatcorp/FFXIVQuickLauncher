@@ -2,119 +2,133 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
-using System.Net;
+using System.Reflection;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using Newtonsoft.Json;
 using Serilog;
-using XIVLauncher.Game.Patch.PatchList;
+using XIVLauncher.PatchInstaller.PatcherIpcMessages;
+using ZetaIpc.Runtime.Client;
+using ZetaIpc.Runtime.Server;
 
 namespace XIVLauncher.Game.Patch
 {
-    public class PatchDownloadProgress
+    public class PatchInstaller : IDisposable
     {
-        public long CurrentBytes { get; set; }
-        public long Length {get;set;}
-        public string Name {get;set;}
-    }
+        private IpcServer _server = new IpcServer();
+        private IpcClient _client = new IpcClient();
 
-    class PatchInstaller
-    {
-        private readonly string _patchFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "XIVLauncher", "patches");
-
-        private readonly XivGame _game;
-
-        public PatchInstaller(XivGame game, string repository)
+        public class OnPatchCommandCompleteEventArgs : EventArgs
         {
-            _game = game;
+            public bool IsSuccess { get; set; }
+            public int CreatedFile { get; set; }
+            public int CreatedFolder { get; set; }
         }
 
-        public void StartPatcher()
+        public enum InstallerState
+        {   
+            NotStarted,
+            NotReady,
+            Ready,
+            Busy
+        }
+
+        public InstallerState State { get; private set; } = InstallerState.NotStarted;
+
+        public event EventHandler<OnPatchCommandCompleteEventArgs> OnPatchCommandComplete;
+
+        public void StartIfNeeded()
         {
-            var process = new Process
+            if (State != InstallerState.NotStarted)
+                return;
+
+            _server.ReceivedRequest += ServerOnReceivedRequest;
+            _server.Start(XIVLauncher.PatchInstaller.Program.IPC_SERVER_PORT);
+
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "XIVLauncher.PatchInstaller.exe");
+
+            var startInfo = new ProcessStartInfo(path);
+            startInfo.UseShellExecute = true;
+
+            //Start as admin
+            if (System.Environment.OSVersion.Version.Major >= 6)
             {
-                StartInfo =
-                {
-                    FileName = Path.Combine(Directory.GetCurrentDirectory(), "XIVLauncher.PatchInstaller.exe"),
-                    WorkingDirectory = Directory.GetCurrentDirectory()
-                }
-            };
+                startInfo.Verb = "runas";
+            }
 
-            process.StartInfo.Verb = "runas";
+            State = InstallerState.NotReady;
 
-            using (var pipeServer =
-                new AnonymousPipeServerStream(PipeDirection.InOut,
-                    HandleInheritability.Inheritable))
+            Process.Start(startInfo);
+        }
+
+        private void ServerOnReceivedRequest(object sender, ReceivedRequestEventArgs e)
+        {
+            Log.Information("[PATCHER] IPC: " + e.Request);
+
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(e.Request, XIVLauncher.PatchInstaller.Program.JsonSettings);
+
+            switch (msg.OpCode)
             {
-                Console.WriteLine("[SERVER] Current TransmissionMode: {0}.",
-                    pipeServer.TransmissionMode);
-
-                // Pass the client process a handle to the server.
-                process.StartInfo.Arguments =
-                    pipeServer.GetClientHandleAsString();
-                process.StartInfo.UseShellExecute = false;
-                process.Start();
-
-                pipeServer.DisposeLocalCopyOfClientHandle();
-
-                try
-                {
-                    // Read user input and send that to the client process.
-                    using (StreamWriter sw = new StreamWriter(pipeServer))
-                    {
-                        sw.AutoFlush = true;
-                        // Send a 'sync message' and wait for client to receive it.
-                        sw.WriteLine("SYNC");
-                        pipeServer.WaitForPipeDrain();
-                        // Send the console input to the client process.
-                        Console.Write("[SERVER] Enter text: ");
-                        sw.WriteLine(Console.ReadLine());
-                    }
-                }
-                // Catch the IOException that is raised if the pipe is broken
-                // or disconnected.
-                catch (IOException e)
-                {
-                    Console.WriteLine("[SERVER] Error: {0}", e.Message);
-                }
+                case PatcherIpcOpCode.Hello:
+                    _client.Initialize(XIVLauncher.PatchInstaller.Program.IPC_CLIENT_PORT);
+                    Log.Information("[PATCHER] GOT HELLO");
+                    State = InstallerState.Ready;
+                    break;
+                case PatcherIpcOpCode.InstallOk:
+                    Log.Information("[PATCHER] INSTALL OK");
+                    State = InstallerState.Ready;
+                    break;
+                case PatcherIpcOpCode.InstallFailed:
+                    State = InstallerState.Ready;
+                    Stop();
+                    MessageBox.Show(
+                        "INSTALLER FAILED!!!\nPlease report this error.\nPlease use the official launcher.");
+                    Environment.Exit(0);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        public async Task DownloadPatchesAsync(IEnumerable<PatchListEntry> patches, string uniqueId, IProgress<PatchDownloadProgress> progress)
+        public void Stop()
         {
-            foreach (var patchListEntry in patches)
+            if (State == InstallerState.NotReady || State == InstallerState.NotStarted)
+                return;
+            
+            if (State == InstallerState.Busy)
+                throw new InvalidOperationException("Installer is still waiting for completion of a patch.");
+
+            SendIpcMessage(new PatcherIpcEnvelope
             {
-                await DownloadPatchAsync(patchListEntry, uniqueId, progress);
-            }
+                OpCode = PatcherIpcOpCode.Bye
+            });
         }
 
-        private async Task DownloadPatchAsync(PatchListEntry patch, string uniqueId, IProgress<PatchDownloadProgress> progress)
+        public void StartInstall(DirectoryInfo gameDirectory, FileInfo file, Repository repo)
         {
-            using (var client = new WebClient())
+            State = InstallerState.Busy;
+            SendIpcMessage(new PatcherIpcEnvelope
             {
-                client.Headers.Add("user-agent", "FFXIV PATCH CLIENT");
-                client.Headers.Add("X-Patch-Unique-Id", uniqueId);
-
-                var res = client.UploadString(
-                    "http://patch-gamever.ffxiv.com/gen_token", patch.Url);
-                
-                client.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
+                OpCode = PatcherIpcOpCode.StartInstall,
+                Data = new PatcherIpcStartInstall
                 {
-                    Log.Verbose($"Downloading patch: {(int)Math.Round((double)(100 * args.BytesReceived) / patch.Length)}% ({args.BytesReceived} / {patch.Length}) - {patch.Url}");
+                    GameDirectory = gameDirectory,
+                    PatchFile = file,
+                    IsBootPatch = repo == Repository.Boot
+                }
+            });
+        }
 
-                    progress.Report(new PatchDownloadProgress{
-                        Name = patch.VersionId,
-                        CurrentBytes = args.BytesReceived,
-                        Length = patch.Length
-                        });
-                };
-                
-                await client.DownloadFileTaskAsync(res, Path.Combine(_patchFolder, patch.VersionId + ".patch"));
+        private void SendIpcMessage(PatcherIpcEnvelope envelope) =>
+            _client.Send(JsonConvert.SerializeObject(envelope, Formatting.Indented, XIVLauncher.PatchInstaller.Program.JsonSettings));
 
-                Log.Verbose("Patch at {0} downloaded completely", patch.Url);
-            }
+        public void Dispose()
+        {
+            Stop();
         }
     }
 }

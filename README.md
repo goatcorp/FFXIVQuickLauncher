@@ -21,23 +21,23 @@ Check the settings page and use the /xlhelp command in-game to see available com
 
 ## How to install
 
-[Download the latest "Setup.exe" from the releases](https://github.com/goaaats/FFXIVQuickLauncher/releases/latest) page and run it. XIVLauncher will start and will be installed to your start menu.
+[Download the latest "Setup.exe" from the releases](https://github.com/goatcorp/FFXIVQuickLauncher/releases/latest) page and run it. XIVLauncher will start and will be installed to your start menu.
 To uninstall, you can use the Windows Programs & Apps menu or right click XIVLauncher in your start menu.
 
 ## Plugin API
 
-To make your own in-game plugins for XIVLauncher, check out the [API documentation](https://goaaats.github.io/Dalamud/api/index.html).
+To make your own in-game plugins for XIVLauncher, check out the [API documentation](https://goatcorp.github.io/Dalamud/api/index.html).
 
 As an example, check out the [market board plugin](https://github.com/goaaats/Dalamud.MbPlugin).
 
-If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goaaats/Dalamud).
+If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goatcorp/Dalamud).
 
 Compiled plugins for testing go into the ``%AppData%\XIVLauncher\devPlugins`` folder.
 Special thanks to Mino for his hooking base!
 
 ## Any questions?
 
-[Please check out the FAQ](https://github.com/goaaats/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.
+[Please check out the FAQ](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.
 
 <br>
 <br>

@@ -9,7 +9,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace XIVLauncher.Game
 {
-    public static class NativeLauncher
+    public static class NativeAclFix
     {
         // Definitions taken from PInvoke.net (with some changes)
         private static class PInvoke

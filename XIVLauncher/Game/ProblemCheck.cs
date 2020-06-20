@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Security.Principal;
 using System.Windows;
 using CheapLoc;
@@ -6,7 +9,7 @@ using Microsoft.Win32;
 
 namespace XIVLauncher.Game
 {
-    static class AdminCheck
+    static class ProblemCheck
     {
         public static void RunCheck()
         {
@@ -48,6 +51,13 @@ namespace XIVLauncher.Game
                 MessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 Properties.Settings.Default.HasComplainedAboutAdmin = true;
                 Properties.Settings.Default.Save();
+            }
+
+            var procModules = Process.GetCurrentProcess().Modules.Cast<ProcessModule>();
+            if (procModules.Any(x => x.ModuleName == "MacType.dll" || x.ModuleName == "MacType64.dll"))
+            {
+                MessageBox.Show(Loc.Localize("MacTypeNag", "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlaucher, ffxivupdater and ffxiv_dx11 from MacType."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(-1);
             }
         }
     }

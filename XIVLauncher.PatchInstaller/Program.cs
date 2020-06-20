@@ -4,35 +4,61 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.PatchInstaller.ZiPatch;
 using XIVLauncher.PatchInstaller.ZiPatch.Util;
+using ZetaIpc.Runtime.Client;
+using ZetaIpc.Runtime.Server;
 
 namespace XIVLauncher.PatchInstaller
 {
-    class Program
+    public class Program
     {
+        private static IpcServer _server = new IpcServer();
+        private static IpcClient _client = new IpcClient();
+        public const int IPC_SERVER_PORT = 0xff16;
+        public const int IPC_CLIENT_PORT = 0xff30;
+
+        public static JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        {
+            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
+            TypeNameHandling = TypeNameHandling.All
+        };
+
         static void Main(string[] args)
         {
-//#if DEBUG
-            args = new[]
-            {
-                "D:\\ARRTest\\Patches\\boot\\",
-                "D:\\ARRTest\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn\\boot\\",
-                ""
-            };
-//#endif
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Async(a =>
-                    a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "XIVLauncher", "patcher.log")))
                 .WriteTo.Console()
 //#if DEBUG
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
 //#endif
                 .CreateLogger();
+
+            _client.Initialize(IPC_SERVER_PORT);
+            _server.Start(IPC_CLIENT_PORT);
+            _server.ReceivedRequest += ServerOnReceivedRequest;
+
+            Log.Information("[PATCHER] IPC connected");
+
+            SendIpcMessage(new PatcherIpcEnvelope
+            {
+                OpCode = PatcherIpcOpCode.Hello,
+                Data = DateTime.Now
+            });
+
+            Log.Information("[PATCHER] sent hello");
+
+            while (true)
+            {
+                Thread.Sleep(1);
+            }
+
+            return;
 
             if (args.Length == 3)
             {
@@ -167,8 +193,56 @@ namespace XIVLauncher.PatchInstaller
             Console.WriteLine("XIVLauncher.PatchInstaller\n\nUsage:\nXIVLauncher.PatchInstaller.exe <patch path> <game path> <repository>\nOR\nXIVLauncher.PatchInstaller.exe <pipe name>");
         }
 
+        private static void ServerOnReceivedRequest(object sender, ReceivedRequestEventArgs e)
+        {
+            Log.Information("[PATCHER] IPC: " + e.Request);
+
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(e.Request, JsonSettings);
+
+            switch (msg.OpCode)
+            {
+                case PatcherIpcOpCode.Bye:
+                    Task.Run(() =>
+                    {
+                        Thread.Sleep(3000);
+                        Environment.Exit(0);
+                    });
+                    break;
+
+                case PatcherIpcOpCode.StartInstall:
+                    var installData = (PatcherIpcStartInstall) msg.Data;
+                    Task.Run(() =>
+                        DebugPatch(installData.PatchFile.FullName,
+                            Path.Combine(installData.GameDirectory.FullName, installData.IsBootPatch ? "boot" : "game")))
+                        .ContinueWith(t =>
+                    {
+                        if (!t.IsCompleted)
+                        {
+                            Log.Error(t.Exception, "PATCH INSTALL FAILED");
+                            SendIpcMessage(new PatcherIpcEnvelope
+                            {
+                                OpCode = PatcherIpcOpCode.InstallFailed
+                            });
+                        }
+                        else
+                            SendIpcMessage(new PatcherIpcEnvelope
+                            {
+                                OpCode = PatcherIpcOpCode.InstallOk
+                            });
+                    });
+                    break;
+            }
+        }
+
+        private static void SendIpcMessage(PatcherIpcMessages.PatcherIpcEnvelope envelope)
+        {
+            _client.Send(JsonConvert.SerializeObject(envelope, Formatting.None, JsonSettings));
+        }
+
         private static void DebugPatch(string patchPath, string gamePath)
         {
+            Log.Debug("Installing {0} to {1}", patchPath, gamePath);
+
             var files = new[] {patchPath};
 
             foreach (var file in files)
@@ -185,6 +259,8 @@ namespace XIVLauncher.PatchInstaller
 
                 return;
             }
+
+            Log.Debug("Patch {0} installed", patchPath);
         }
 
 

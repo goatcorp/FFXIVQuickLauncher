@@ -5,16 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 using CheapLoc;
 using Config.Net;
 using Newtonsoft.Json;
 using Sentry;
 using Serilog;
 using Serilog.Events;
-using Squirrel;
-using XIVLauncher.Addon;
-using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
@@ -29,14 +29,17 @@ namespace XIVLauncher
     public partial class App : Application
     {
         public static ILauncherSettingsV3 Settings;
-        private string _accountName;
 
         private UpdateLoadingDialog _updateWindow;
 
-        private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "pt", "es"};
+        private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "es"};
+
+        private MainWindow _mainWindow;
 
         public App()
         {
+            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+
             Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
                 .UseCommandLineArgs()
                 .UseJsonFile(GetConfigPath("launcher"))
@@ -48,8 +51,7 @@ namespace XIVLauncher
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Async(a =>
-                    a.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "XIVLauncher", "output.log")))
+                    a.File(Path.Combine(Paths.RoamingPath, "output.log")))
 #if DEBUG
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
@@ -73,7 +75,7 @@ namespace XIVLauncher
 #if !XL_LOC_FORCEFALLBACKS
             try
             {
-                var currentUiLang = CultureInfo.InstalledUICulture;
+                var currentUiLang = CultureInfo.CurrentUICulture;
                 Log.Information("Trying to set up Loc for culture {0}", currentUiLang.TwoLetterISOLanguageName);
 
                 Loc.Setup(_allowedLang.Any(x => currentUiLang.TwoLetterISOLanguageName == x)
@@ -91,6 +93,7 @@ namespace XIVLauncher
 
 #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+            TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
 
             Log.Information(
@@ -123,41 +126,46 @@ namespace XIVLauncher
         {
             Dispatcher.Invoke(() =>
             {
-#if !DEBUG
-                AppDomain.CurrentDomain.UnhandledException -= EarlyInitExceptionHandler;
-                AppDomain.CurrentDomain.UnhandledException += (_, args) =>
-                {
-                    new ErrorWindow((Exception) args.ExceptionObject, "An unhandled exception occured.", "Unhandled")
-                        .ShowDialog();
-                    Log.CloseAndFlush();
-                    Environment.Exit(0);
-                };
-#endif
+                _useFullExceptionHandler = true;
 
-                _updateWindow.Hide();
+                if (_updateWindow != null) 
+                    _updateWindow.Hide();
 
-                Log.Information("Loading MainWindow for account '{0}'", _accountName);
-                var mainWindow = new MainWindow(_accountName);
+                _mainWindow = new MainWindow();
+                _mainWindow.Initialize();
             });
         }
 
-        private static void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        private bool _useFullExceptionHandler = false;
+
+        private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            MessageBox.Show(
-                "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
-                "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (!e.Observed)
+                EarlyInitExceptionHandler(sender, new UnhandledExceptionEventArgs(e.Exception, true));
+        }
+
+        private void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            
+            if (_useFullExceptionHandler)
+                new ErrorWindow((Exception)e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
+                    .ShowDialog();
+            else
+                MessageBox.Show(
+                    "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             Log.CloseAndFlush();
             Environment.Exit(0);
         }
 
-        private static string GetConfigPath(string prefix) => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher", $"{prefix}ConfigV3.json");
+        private static string GetConfigPath(string prefix) => Path.Combine(Paths.RoamingPath, $"{prefix}ConfigV3.json");
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            if (e.Args.Length > 0 && e.Args[0] == "--backupNow")
+            if (e.Args.Length > 0 && e.Args[0] == "--genLocalizable")
             {
-                (new CharacterBackupAddon() as INotifyAddonAfterClose).GameClosed();
-
+                Loc.ExportLocalizable();
                 Environment.Exit(0);
                 return;
             }
@@ -172,17 +180,16 @@ namespace XIVLauncher
                 return;
             }
 
-            if (e.Args.Length > 0 && e.Args[0] == "--dalamudStg")
-            {
-                Console.Beep();
-                DalamudLauncher.UseDalamudStaging = true;
-            }
-
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow
-            _accountName = string.Empty;
+            var accountName = string.Empty;
 
             if (e.Args.Length > 0 && e.Args[0].StartsWith("--account="))
-                _accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
+            {
+                accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
+                App.Settings.CurrentAccountId = accountName;
+            }
+            
+            Log.Information("Loading MainWindow for account '{0}'", accountName);
 
 #if XL_NOAUTOUPDATE
             OnUpdateCheckFinished(null, null);
