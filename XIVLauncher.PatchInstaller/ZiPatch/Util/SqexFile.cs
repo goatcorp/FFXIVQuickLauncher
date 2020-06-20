@@ -18,6 +18,11 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Util
         public SqexFileStream OpenStream(string basePath, FileMode mode, int tries = 5, int sleeptime = 1) =>
             SqexFileStream.WaitForStream($@"{basePath}/{RelativePath}", mode, tries, sleeptime);
 
+        public SqexFileStream OpenStream(SqexFileStreamStore store, string basePath, FileMode mode,
+            int tries = 5, int sleeptime = 1) =>
+            store.GetStream($@"{basePath}/{RelativePath}", mode, tries, sleeptime);
+        
+
         public void CreateDirectoryTree(string basePath)
         {
             var dirName = Path.GetDirectoryName($@"{basePath}/{RelativePath}");
