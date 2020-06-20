@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch
 {
@@ -20,6 +21,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
         public PlatformId Platform { get; set; }
         public bool IgnoreMissing { get; set; }
         public bool IgnoreOldMismatch { get; set; }
+        public SqexFileStreamStore Store { get; set; }
 
 
         public ZiPatchConfig(string gamePath)

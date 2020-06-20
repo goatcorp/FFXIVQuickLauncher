@@ -40,7 +40,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
         /// <param name="filepath">Path to patch file</param>
         public static ZiPatchFile FromFileName(string filepath)
         {
-            var stream = SqexFileStream.WaitForStream(filepath, FileMode.Open, store:false);
+            var stream = SqexFileStream.WaitForStream(filepath, FileMode.Open);
            
             Log.Verbose($"Patch at {filepath} opened");
 
