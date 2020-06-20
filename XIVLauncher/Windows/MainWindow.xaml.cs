@@ -143,8 +143,6 @@ namespace XIVLauncher.Windows
 
             App.Settings.EncryptArguments ??= true;
 
-            App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
-
             var gateStatus = false;
             try
             {
@@ -247,6 +245,8 @@ namespace XIVLauncher.Windows
             {
                 Log.Error(ex, "Could not create base game install.");
             }
+
+            App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
             var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
             if (bootPatches != null)
