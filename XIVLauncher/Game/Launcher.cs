@@ -274,12 +274,20 @@ namespace XIVLauncher.Game
             return null;
         }
 
-        private static string GetVersionReport(DirectoryInfo gamePath)
+        private static string GetVersionReport(DirectoryInfo gamePath, int exLevel)
         {
-            return $"{GetBootVersionHash(gamePath)}\n" +
-                   $"ex1\t{Repository.Ex1.GetVer(gamePath)}\n" +
-                   $"ex2\t{Repository.Ex2.GetVer(gamePath)}\n" +
-                   $"ex3\t{Repository.Ex3.GetVer(gamePath)}";
+            var verReport = $"{GetBootVersionHash(gamePath)}";
+
+            if (exLevel >= 1)
+                verReport += $"\nex1\t{Repository.Ex1.GetVer(gamePath)}";
+
+            if (exLevel >= 2)
+                verReport += $"\nex2\t{Repository.Ex2.GetVer(gamePath)}";
+
+            if (exLevel >= 3)
+                verReport += $"\nex3\t{Repository.Ex3.GetVer(gamePath)}";
+
+            return verReport;
         }
 
         /// <summary>
@@ -339,7 +347,7 @@ namespace XIVLauncher.Game
 
             try
             {
-                var report = GetVersionReport(gamePath);
+                var report = GetVersionReport(gamePath, loginResult.MaxExpansion);
                 var result = client.UploadString(url, report);
 
                 // Get the unique ID needed to authenticate with the lobby server
