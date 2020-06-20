@@ -207,8 +207,16 @@ namespace XIVLauncher.Windows
                 SettingsControl.ReloadSettings();
             }
 
-            if (App.Settings.GamePath.GetDirectories().All(x => x.Name != "game") || App.Settings.GamePath.GetDirectories().All(x => x.Name != "boot"))
-                PatchManager.SetupGameBase(App.Settings.GamePath);
+            try
+            {
+                if (App.Settings.GamePath.GetDirectories().All(x => x.Name != "game") ||
+                    App.Settings.GamePath.GetDirectories().All(x => x.Name != "boot"))
+                    PatchManager.SetupGameBase(App.Settings.GamePath);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not create base game install.");
+            }
 
             Task.Run(SetupHeadlines);
 
