@@ -257,11 +257,11 @@
             <TabItem x:Uid="TabItem_5" Header="{Binding SettingsPatchingLoc}">
                 <StackPanel>
                     <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top"
-                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PatchPathLoc}" />
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PatchPathLoc}" Margin="10,15,0,0"/>
                     <components:FolderEntry Text="{Binding PatchPath, UpdateSourceTrigger=PropertyChanged}"
                                             Description="Select a folder" Width="500" VerticalAlignment="Center"
                                             HorizontalAlignment="Left"
-                                            Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
+                                            Foreground="{DynamicResource MaterialDesignBody}" Margin="10,0,0,0" />
                 </StackPanel>
 
             </TabItem>

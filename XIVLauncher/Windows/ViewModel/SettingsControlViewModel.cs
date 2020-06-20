@@ -112,6 +112,9 @@ namespace XIVLauncher.Windows.ViewModel
             PluginsInstallHintLoc =
                 Loc.Localize("PluginsInstallHint", "You can use the /xlplugins command in-game to install more plugins.");
 
+            SettingsPatchingLoc = Loc.Localize("SettingsPatching", "Patching");
+            PatchPathLoc = Loc.Localize("PatchPath", "Patch Download Directory");
+
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
                 "Made by goat.\r\nSpecial thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!");
@@ -159,6 +162,9 @@ namespace XIVLauncher.Windows.ViewModel
         public string PluginsDescriptionLoc { get; private set; }
         public string PluginsToggleLoc { get; private set; }
         public string PluginsInstallHintLoc { get; private set; }
+
+        public string SettingsPatchingLoc { get; private set; }
+        public string PatchPathLoc { get; private set; }
 
         public string SettingsAboutLoc { get; private set; }
         public string CreditsLoc { get; private set; }
