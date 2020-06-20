@@ -200,6 +200,12 @@ namespace XIVLauncher.Game.Patch
                     if (toDl == null)
                     {
                         Log.Information("All patches downloaded.");
+
+                        _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            _progressDialog.SetLeft(0, 0);
+                            _progressDialog.SetDownloadDone();
+                        }));
                         return;
                     }
 
@@ -214,11 +220,6 @@ namespace XIVLauncher.Game.Patch
                     _progressDialog.SetLeft(AllDownloadsLength, _speeeeeeds.Sum());
                 }));
             }
-
-            _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                _progressDialog.SetLeft(0, 0);
-            }));
         }
 
         private void RunApplyQueue()
