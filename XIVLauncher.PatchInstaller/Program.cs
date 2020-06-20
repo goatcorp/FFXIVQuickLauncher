@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.PatchInstaller.ZiPatch;
+using XIVLauncher.PatchInstaller.ZiPatch.Util;
 using ZetaIpc.Runtime.Client;
 using ZetaIpc.Runtime.Server;
 
@@ -242,14 +243,13 @@ namespace XIVLauncher.PatchInstaller
                 Log.Debug("Installing {0} to {1}", patchPath, gamePath);
 
                 var patchFile = ZiPatchFile.FromFileName(patchPath);
-                var config = new ZiPatchConfig(gamePath);
-                var chunks = patchFile.GetChunks().ToArray();
-                Log.Debug("Now applying {0} chunks", chunks.Length);
 
-                foreach (var chunk in chunks)
+                using (var store = new SqexFileStreamStore())
                 {
-                    chunk.ApplyChunk(config);
-                    Log.Debug("Chunk {0} applied", chunk.ChunkType);
+                    var config = new ZiPatchConfig(gamePath) { Store = store };
+
+                    foreach (var chunk in patchFile.GetChunks())
+                        chunk.ApplyChunk(config);
                 }
 
                 Log.Debug("Patch {0} installed", patchPath);
