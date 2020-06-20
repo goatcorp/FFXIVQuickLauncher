@@ -251,6 +251,19 @@ namespace XIVLauncher.Windows
             var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
             if (bootPatches != null)
             {
+                if (Util.CheckIsGameOpen())
+                {
+                    var msgBoxResult = MessageBox.Show(
+                        "Your game is out of date and XIVLauncher could not patch it, the official launcher is open. Please close it and start the official launcher or XIVLauncher again to update it before trying to log in. Do you want to start the official launcher?",
+                        "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
+
+                    if (msgBoxResult == MessageBoxResult.Yes)
+                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
+
+                    Environment.Exit(0);
+                    return;
+                }
+
                 var progressDialog = new PatchDownloadDialog(true);
                 progressDialog.Show();
                 this.Hide();
