@@ -241,6 +241,10 @@ namespace XIVLauncher.Game.Patch
                     Thread.Sleep(100);
                 }
 
+                // TODO need to handle this better
+                if (_installer.State == PatchInstaller.InstallerState.Failed)
+                    return;
+
                 File.WriteAllText(GetRepoForPatch(toInstall.Patch).GetVerFile(_gamePath).FullName, toInstall.Patch.VersionId);
 
                 toInstall.State = PatchState.Finished;

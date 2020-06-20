@@ -33,7 +33,8 @@ namespace XIVLauncher.Game.Patch
             NotStarted,
             NotReady,
             Ready,
-            Busy
+            Busy,
+            Failed
         }
 
         public InstallerState State { get; private set; } = InstallerState.NotStarted;
@@ -83,10 +84,10 @@ namespace XIVLauncher.Game.Patch
                     State = InstallerState.Ready;
                     break;
                 case PatcherIpcOpCode.InstallFailed:
-                    State = InstallerState.Ready;
-                    Stop();
+                    State = InstallerState.Failed;
                     MessageBox.Show(
                         "INSTALLER FAILED!!!\nPlease report this error.\nPlease use the official launcher.");
+                    Stop();
                     Environment.Exit(0);
                     break;
                 default:
