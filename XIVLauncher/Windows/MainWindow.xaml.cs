@@ -397,7 +397,16 @@ namespace XIVLauncher.Windows
                         {
                             progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
 
-                            await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult));
+                            if (args)
+                                await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult));
+                            else
+                            {
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    this.Show();
+                                    _isLoggingIn = false;
+                                });
+                            }
                         };
 
                         patcher.Start();

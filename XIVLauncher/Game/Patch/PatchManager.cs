@@ -52,7 +52,7 @@ namespace XIVLauncher.Game.Patch
             }
         };
 
-        public event EventHandler OnFinish;
+        public event EventHandler<bool> OnFinish;
 
         private const int MAX_DOWNLOADS_AT_ONCE = 4;
 
@@ -109,7 +109,7 @@ namespace XIVLauncher.Game.Patch
 #if !DEBUG
             if ((long) Util.GetDiskFreeSpace(_patchStore.FullName) < AllDownloadsLength)
             {
-                OnFinish?.Invoke(this, null);
+                OnFinish?.Invoke(this, false);
 
                 MessageBox.Show(
                     "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -272,7 +272,7 @@ namespace XIVLauncher.Game.Patch
             Log.Information("PATCHING finish");
 
             VerToBck();
-            OnFinish?.Invoke(this, null);
+            OnFinish?.Invoke(this, true);
         }
 
         private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
