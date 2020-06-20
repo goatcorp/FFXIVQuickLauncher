@@ -395,9 +395,9 @@ namespace XIVLauncher.Windows
                         var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
                         patcher.OnFinish += async (sender, args) =>
                         {
-                            progressDialog.Close();
+                            progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
 
-                            await StartGameAndAddon(loginResult);
+                            await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult));
                         };
 
                         patcher.Start();
