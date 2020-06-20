@@ -26,7 +26,7 @@ namespace XIVLauncher.Game.Patch.PatchList
                     VersionId = fields[4],
                     HashType = fields[5],
 
-                    HashBlockSize = long.Parse(fields[6]),
+                    HashBlockSize = fields.Length == 9 ? long.Parse(fields[6]) : 0,
 
                     // bootver patchlists don't have a hash field
                     Hashes = fields.Length == 9 ? (fields[7].Split(',')) : null,

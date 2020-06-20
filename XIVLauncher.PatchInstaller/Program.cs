@@ -203,7 +203,7 @@ namespace XIVLauncher.PatchInstaller
                         Thread.Sleep(3000);
                         Environment.Exit(0);
                     });
-                    break;
+                    break;  
 
                 case PatcherIpcOpCode.StartInstall:
                     var installData = (PatcherIpcStartInstall) msg.Data;
@@ -212,7 +212,7 @@ namespace XIVLauncher.PatchInstaller
                             Path.Combine(installData.GameDirectory.FullName, installData.IsBootPatch ? "boot" : "game")))
                         .ContinueWith(t =>
                     {
-                        if (!t.IsCompleted)
+                        if (!t.Result)
                         {
                             Log.Error(t.Exception, "PATCH INSTALL FAILED");
                             SendIpcMessage(new PatcherIpcEnvelope
@@ -235,26 +235,32 @@ namespace XIVLauncher.PatchInstaller
             _client.Send(JsonConvert.SerializeObject(envelope, Formatting.None, JsonSettings));
         }
 
-        private static void DebugPatch(string patchPath, string gamePath)
+        private static bool DebugPatch(string patchPath, string gamePath)
         {
-            Log.Debug("Installing {0} to {1}", patchPath, gamePath);
-
-            var files = new[] {patchPath};
-
-            foreach (var file in files)
+            try
             {
-                var patchFile = ZiPatchFile.FromFileName(file);
-                var config = new ZiPatchConfig(gamePath);
+                Log.Debug("Installing {0} to {1}", patchPath, gamePath);
 
-                foreach (var chunk in patchFile.GetChunks())
+                var patchFile = ZiPatchFile.FromFileName(patchPath);
+                var config = new ZiPatchConfig(gamePath);
+                var chunks = patchFile.GetChunks().ToArray();
+                Log.Debug("Now applying {0} chunks", chunks.Length);
+
+                foreach (var chunk in chunks)
                 {
                     chunk.ApplyChunk(config);
+                    Log.Debug("Chunk {0} applied", chunk.ChunkType);
                 }
 
-                return;
-            }
+                Log.Debug("Patch {0} installed", patchPath);
 
-            Log.Debug("Patch {0} installed", patchPath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Patch install failed.");
+                return false;
+            }
         }
 
 

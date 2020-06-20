@@ -207,6 +207,9 @@ namespace XIVLauncher.Windows
                 SettingsControl.ReloadSettings();
             }
 
+            if (App.Settings.GamePath.GetDirectories().All(x => x.Name != "game") || App.Settings.GamePath.GetDirectories().All(x => x.Name != "boot"))
+                PatchManager.SetupGameBase(App.Settings.GamePath);
+
             Task.Run(SetupHeadlines);
 
             ProblemCheck.RunCheck();

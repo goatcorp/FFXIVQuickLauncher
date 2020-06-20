@@ -241,6 +241,8 @@ namespace XIVLauncher.Game.Patch
                     Thread.Sleep(100);
                 }
 
+                File.WriteAllText(GetRepoForPatch(toInstall.Patch).GetVerFile(_gamePath).FullName, toInstall.Patch.VersionId);
+
                 toInstall.State = PatchState.Finished;
                 _currentInstallIndex++;
 
@@ -251,8 +253,7 @@ namespace XIVLauncher.Game.Patch
 
             Log.Information("PATCHING finish");
 
-            // Overwrite the old BCK with the new game version
-            _repository.GetVerFile(_gamePath).CopyTo(_repository.GetVerFile(_gamePath, true).FullName, true);
+            VerToBck();
             OnFinish?.Invoke(this, null);
         }
 
@@ -307,6 +308,61 @@ namespace XIVLauncher.Game.Patch
             file.Directory.Create();
 
             return file;
+        }
+
+        private Repository GetRepoForPatch(PatchListEntry patch)
+        {
+            if (patch.Url.Contains("boot"))
+                return Repository.Boot;
+
+            if (patch.Url.Contains("ex1"))
+                return Repository.Ex1;
+
+            if (patch.Url.Contains("ex2"))
+                return Repository.Ex2;
+
+            if (patch.Url.Contains("ex3"))
+                return Repository.Ex3;
+
+            return Repository.Ffxiv;
+        }
+
+        private void VerToBck()
+        {
+            foreach (var repository in Enum.GetValues(typeof(Repository)).Cast<Repository>())
+            {
+                // Overwrite the old BCK with the new game version
+                _repository.GetVerFile(_gamePath).CopyTo(_repository.GetVerFile(_gamePath, true).FullName, true);
+            }
+        }
+
+        private const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
+        public static void SetupGameBase(DirectoryInfo gameDirectory)
+        {
+            if (!gameDirectory.Exists)
+                gameDirectory.Create();
+
+            var boot = gameDirectory.CreateSubdirectory("boot");
+            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.ver"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.bck"), BASE_GAME_VERSION);
+
+            var game = gameDirectory.CreateSubdirectory("game");
+            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.ver"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.bck"), BASE_GAME_VERSION);
+
+            var sqPack = game.CreateSubdirectory("sqpack");
+
+            var ex1 = sqPack.CreateSubdirectory("ex1");
+            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.ver"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.bck"), BASE_GAME_VERSION);
+
+            var ex2 = sqPack.CreateSubdirectory("ex2");
+            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.ver"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.bck"), BASE_GAME_VERSION);
+
+            var ex3 = sqPack.CreateSubdirectory("ex3");
+            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.ver"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.bck"), BASE_GAME_VERSION);
         }
     }
 }
