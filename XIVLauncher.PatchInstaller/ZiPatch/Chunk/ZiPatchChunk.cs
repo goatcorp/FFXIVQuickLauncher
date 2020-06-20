@@ -23,7 +23,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 
         protected readonly ChecksumBinaryReader reader;
 
-        private static AsyncLocal<MemoryStream> localMemoryStream = new AsyncLocal<MemoryStream> { Value = new MemoryStream() };
+        private static readonly AsyncLocal<MemoryStream> localMemoryStream = new AsyncLocal<MemoryStream>();
 
 
         // Only FileHeader, ApplyOption, Sqpk, and EOF have been observed in XIVARR+ patches
@@ -44,6 +44,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 
         public static ZiPatchChunk GetChunk(Stream stream)
         {
+            localMemoryStream.Value = localMemoryStream.Value ?? new MemoryStream();
+
             var memoryStream = localMemoryStream.Value;
             try
             {
