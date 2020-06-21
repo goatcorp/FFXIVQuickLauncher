@@ -18,6 +18,8 @@ namespace XIVLauncher.PatchInstaller
 {
     public class Program
     {
+        public const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
+
         private static IpcServer _server = new IpcServer();
         private static IpcClient _client = new IpcClient();
         public const int IPC_SERVER_PORT = 0xff16;
@@ -209,7 +211,7 @@ namespace XIVLauncher.PatchInstaller
                     var installData = (PatcherIpcStartInstall) msg.Data;
                     Task.Run(() =>
                         DebugPatch(installData.PatchFile.FullName,
-                            Path.Combine(installData.GameDirectory.FullName, installData.IsBootPatch ? "boot" : "game")))
+                            Path.Combine(installData.GameDirectory.FullName, installData.Repo == Repository.Boot ? "boot" : "game")))
                         .ContinueWith(t =>
                     {
                         if (!t.Result)
@@ -221,11 +223,31 @@ namespace XIVLauncher.PatchInstaller
                             });
                         }
                         else
-                            SendIpcMessage(new PatcherIpcEnvelope
+                        {
+                            try
                             {
-                                OpCode = PatcherIpcOpCode.InstallOk
-                            });
+                                installData.Repo.SetVer(installData.GameDirectory, installData.VersionId);
+                                SendIpcMessage(new PatcherIpcEnvelope
+                                {
+                                    OpCode = PatcherIpcOpCode.InstallOk
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, "Could not set ver file");
+                                SendIpcMessage(new PatcherIpcEnvelope
+                                {
+                                    OpCode = PatcherIpcOpCode.InstallFailed
+                                });
+                            }
+                        }
                     });
+                    break;
+
+                case PatcherIpcOpCode.Finish:
+                    var path = (DirectoryInfo) msg.Data;
+                    VerToBck(path);
+                    Log.Information("VerToBck done");
                     break;
             }
         }
@@ -262,19 +284,14 @@ namespace XIVLauncher.PatchInstaller
             }
         }
 
-
-        private static void InstallPatch(string path, string gamePath, string repository)
+        private static void VerToBck(DirectoryInfo gamePath)
         {
-            var execute = new ZiPatchExecute(gamePath, repository);
+            Thread.Sleep(200);
 
-            try
+            foreach (var repository in Enum.GetValues(typeof(Repository)).Cast<Repository>())
             {
-                execute.Execute(path);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Failed to execute ZiPatch.");
-                throw;
+                // Overwrite the old BCK with the new game version
+                repository.GetVerFile(gamePath).CopyTo(repository.GetVerFile(gamePath, true).FullName, true);
             }
         }
     }

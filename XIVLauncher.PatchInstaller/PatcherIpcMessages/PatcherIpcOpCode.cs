@@ -13,6 +13,7 @@ namespace XIVLauncher.PatchInstaller.PatcherIpcMessages
         StartInstall,
         InstallRunning,
         InstallOk,
-        InstallFailed
+        InstallFailed,
+        Finish
     }
 }

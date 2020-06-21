@@ -15,6 +15,7 @@ using CheapLoc;
 using Downloader;
 using Serilog;
 using XIVLauncher.Game.Patch.PatchList;
+using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 
@@ -249,7 +250,7 @@ namespace XIVLauncher.Game.Patch
 
                 Log.Information("Starting patch install for {0} at {1}", toInstall.Patch.VersionId, toInstall.Patch.Url);
 
-                _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), _repository);
+                _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch, GetRepoForPatch(toInstall.Patch));
 
                 while (_installer.State != PatchInstaller.InstallerState.Ready)
                 {
@@ -260,8 +261,6 @@ namespace XIVLauncher.Game.Patch
                 if (_installer.State == PatchInstaller.InstallerState.Failed)
                     return;
 
-                GetRepoForPatch(toInstall.Patch).SetVer(_gamePath, toInstall.Patch.VersionId);
-
                 toInstall.State = PatchState.Finished;
                 _currentInstallIndex++;
 
@@ -271,8 +270,8 @@ namespace XIVLauncher.Game.Patch
             }
 
             Log.Information("PATCHING finish");
+            _installer.FinishInstall(_gamePath);
 
-            VerToBck();
             OnFinish?.Invoke(this, true);
         }
 
@@ -346,45 +345,32 @@ namespace XIVLauncher.Game.Patch
             return Repository.Ffxiv;
         }
 
-        private void VerToBck()
-        {
-            RepoExtensions.CloseAllStreams();
-            Thread.Sleep(200);
-
-            foreach (var repository in Enum.GetValues(typeof(Repository)).Cast<Repository>())
-            {
-                // Overwrite the old BCK with the new game version
-                _repository.GetVerFile(_gamePath).CopyTo(_repository.GetVerFile(_gamePath, true).FullName, true);
-            }
-        }
-
-        public const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
         public static void SetupGameBase(DirectoryInfo gameDirectory)
         {
             if (!gameDirectory.Exists)
                 gameDirectory.Create();
 
             var boot = gameDirectory.CreateSubdirectory("boot");
-            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.ver"), BASE_GAME_VERSION);
-            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.bck"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.ver"), Program.BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.bck"), Program.BASE_GAME_VERSION);
 
             var game = gameDirectory.CreateSubdirectory("game");
-            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.ver"), BASE_GAME_VERSION);
-            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.bck"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.ver"), Program.BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.bck"), Program.BASE_GAME_VERSION);
 
             var sqPack = game.CreateSubdirectory("sqpack");
 
             var ex1 = sqPack.CreateSubdirectory("ex1");
-            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.ver"), BASE_GAME_VERSION);
-            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.bck"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.ver"), Program.BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.bck"), Program.BASE_GAME_VERSION);
 
             var ex2 = sqPack.CreateSubdirectory("ex2");
-            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.ver"), BASE_GAME_VERSION);
-            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.bck"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.ver"), Program.BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.bck"), Program.BASE_GAME_VERSION);
 
             var ex3 = sqPack.CreateSubdirectory("ex3");
-            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.ver"), BASE_GAME_VERSION);
-            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.bck"), BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.ver"), Program.BASE_GAME_VERSION);
+            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.bck"), Program.BASE_GAME_VERSION);
         }
     }
 }

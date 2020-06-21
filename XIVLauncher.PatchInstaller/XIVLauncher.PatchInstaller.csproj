@@ -13,6 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -76,6 +77,7 @@
     <Compile Include="PatcherIpcMessages\PatcherIpcOpCode.cs" />
     <Compile Include="PatcherIpcMessages\PatcherIpcStartInstall.cs" />
     <Compile Include="Paths.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="Util\BinaryReaderHelpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

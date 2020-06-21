@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Game.Patch.PatchList;
+using XIVLauncher.PatchInstaller;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using ZetaIpc.Runtime.Client;
 using ZetaIpc.Runtime.Server;
@@ -106,7 +108,7 @@ namespace XIVLauncher.Game.Patch
             });
         }
 
-        public void StartInstall(DirectoryInfo gameDirectory, FileInfo file, Repository repo)
+        public void StartInstall(DirectoryInfo gameDirectory, FileInfo file, PatchListEntry patch, Repository repo)
         {
             State = InstallerState.Busy;
             SendIpcMessage(new PatcherIpcEnvelope
@@ -116,8 +118,18 @@ namespace XIVLauncher.Game.Patch
                 {
                     GameDirectory = gameDirectory,
                     PatchFile = file,
-                    IsBootPatch = repo == Repository.Boot
+                    Repo = repo,
+                    VersionId = patch.VersionId
                 }
+            });
+        }
+
+        public void FinishInstall(DirectoryInfo gameDirectory)
+        {
+            SendIpcMessage(new PatcherIpcEnvelope
+            {
+                OpCode = PatcherIpcOpCode.Finish,
+                Data = gameDirectory
             });
         }
 

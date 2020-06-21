@@ -18,6 +18,7 @@ using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch;
+using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows.ViewModel;
 using Timer = System.Timers.Timer;
@@ -288,6 +289,14 @@ namespace XIVLauncher.Windows
             }
         }
 
+        private void DeleteOldPatches()
+        {
+            foreach (var directoryInfo in App.Settings.PatchPath.EnumerateDirectories())
+            {
+                directoryInfo.Delete(true);
+            }
+        }
+
         private void HandleLogin(bool autoLogin)
         {
             var hasValidCache = _launcher.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
@@ -372,7 +381,22 @@ namespace XIVLauncher.Windows
                     progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
 
                     if (args)
+                    {
                         await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
+                        _installer.Stop();
+
+                        // Need to wait for installer to exit and release lock on patch files TODO bother winter why is this happening
+                        Thread.Sleep(5000);
+
+                        try
+                        {
+                            DeleteOldPatches();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Could not delete old patches.");
+                        }
+                    }
                     else
                     {
                         this.Dispatcher.Invoke(() =>
@@ -548,7 +572,6 @@ namespace XIVLauncher.Windows
         private void CleanUp()
         {
             _installer.Stop();
-            RepoExtensions.CloseAllStreams();
         }
 
         private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)

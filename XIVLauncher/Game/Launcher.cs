@@ -19,6 +19,7 @@ using XIVLauncher.Cache;
 using XIVLauncher.Encryption;
 using XIVLauncher.Game.Patch;
 using XIVLauncher.Game.Patch.PatchList;
+using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 

@@ -7,6 +7,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using XIVLauncher.PatchInstaller;
 
 namespace XIVLauncher.Game
 {

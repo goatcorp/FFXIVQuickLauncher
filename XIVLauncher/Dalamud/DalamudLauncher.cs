@@ -16,6 +16,7 @@ using Serilog;
 using Xceed.Wpf.Toolkit.Core.Converters;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
+using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
 
 namespace XIVLauncher.Dalamud
