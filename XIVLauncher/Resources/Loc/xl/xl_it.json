@@ -8,23 +8,19 @@
     "description": "ChatChannelSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "Il percorso selezionato non contiene un'installazione valida di FFXIV",
+    "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
     "message": "Avviare come utente steam?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
-  "CharacterSyncWarning": {
-    "message": "ATTENZIONE!!!\n\n\"Sincronizza i dati del personaggio\" sincronizza le hotbars, HUD ed impostazioni dell'ultimo personaggio di cui è stato effettuato l'accesso su ogni altro personaggio.\nQuando la funzione è abilitata, assicurarsi di effettuare l'accesso con il personaggio principale al primo avvio del gioco.\nChiuderlo immediatamente per iniziare la sincronizzazione da questo personaggio a tutti gli altri presenti.\n\nSe si utilizza prima un altro personaggio, i dati del personaggio principale verranno sovrascritti.",
-    "description": "SettingsControl.CharacterSyncCheckBox_Checked"
-  },
   "DalamudIncompatible": {
-    "message": "Il componente aggiuntivo di XIVLauncher non è ancora stato aggiornato per la tua versione di FFXIV.\nQuesto accade comunemente dopo le patch, quindi per favore sii paziente o chiedi aggiornamenti sul nostro Discord!",
+    "message": "Il componente aggiuntivo di XIVLauncher non è ancora stato aggiornato per la tua versione di FFXIV.\nQuesto accade comunemente dopo le patch, quindi per favore sii paziente o chiedi aggiornamenti sul nostro discord!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Impossibile contattare il server per ottenere la versione degli addon compatibile con FFXIV. Questo potrebbe significare che la versione di .NET installata è troppo vecchia.\nPer favore, controlla Discord per ottenere ulteriori informazioni.",
+    "message": "Impossibile contattare il server per ottenere la versione degli addon compatibile con FFXIV. Questo potrebbe significare che la versione di .NET installata è troppo vecchia.\nPer favore, controlla discord per ottenere ulteriori informazioni.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "NewsLoading": {
@@ -33,11 +29,15 @@
   },
   "CheckLoginInfo": {
     "message": "Inoltre, controlla le credenziali o riprova.",
-    "description": "MainWindow.InitializeWindow"
+    "description": "MainWindow.Initialize"
+  },
+  "GameIsOpenError": {
+    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
+    "description": "MainWindow.HandleBootCheck"
   },
   "NewsDlFailed": {
     "message": "Impossibile scaricare i dati sulle news.",
-    "description": "MainWindow.<SetupHeadlines>b__9_3"
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "Imposta una foto profilo",
@@ -219,6 +219,34 @@
     "message": "Oppure utilizza il collegamento sullo smartphone.\nClicca qui per saperne di più!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
+  "PatchPreparing": {
+    "message": "Preparing...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchGeneralStatus": {
+    "message": "Patching through {0} updates...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchChecking": {
+    "message": "Checking...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchDone": {
+    "message": "Download done!",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstalling": {
+    "message": "Installing...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingFormatted": {
+    "message": "Installing #{0}...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchEta": {
+    "message": "{0} left to download at {1}/s.",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
   "ProfilePictureInputTitle": {
     "message": "Configura la tua foto profilo",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
@@ -237,10 +265,6 @@
   },
   "SettingsGame": {
     "message": "Gioco",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "CharacterSyncCheckBox": {
-    "message": "Sincronizza i dati del personaggio",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
@@ -343,12 +367,24 @@
     "message": "Puoi utilizzare il comando \"/xlplugins\" all'interno del gioco per installare altri plugins.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "SettingsPatching": {
+    "message": "Patching",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AskBeforePatch": {
+    "message": "Ask before installing a game patch",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchPath": {
+    "message": "Patch Download Directory",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAbout": {
     "message": "Info",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Sviluppato da capra.\nUn rigraziamento speciale a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, e l'arrabbiato artista della paissa!\n\nProblemi o richieste? Unisciti al server Discord o segnala su GitHub!",
+    "message": "Sviluppato da capra.\nUn rigraziamento speciale a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, e l'arrabbiato artista della paissa!\n\nProblemi o richieste? Unisciti al server discord o segnala su GitHub!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
@@ -377,22 +413,30 @@
   },
   "AdminCheck": {
     "message": "XIVLauncher e/o FINAL FANTASY XIV sono impostati per essere avviati come amministratore.\nQuesto può causare vari problemi, incluso il mancato avvio dei plugin e la mancata funzionalità delle scorciatoie da tastiera.\n\nVuoi risolvere il problema automaticamente?",
-    "description": "AdminCheck.RunCheck"
+    "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
     "message": "XIVLauncher è stato avviato come amministratore.\nQuesto potrebbe causare vari problemi, come l'impossibilità di lanciare i plugins e il mancato funzionamento delle scorciatoie da tastiera.\n\nCerca di evitare l'avvio di XIVLauncher come amministratore.",
-    "description": "AdminCheck.RunCheck"
+    "description": "ProblemCheck.RunCheck"
+  },
+  "MacTypeNag": {
+    "message": "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "FreeSpaceError": {
+    "message": "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "description": "PatchManager.Start"
   },
   "IntegrityCheckImpossible": {
     "message": "Impossibile effettuare un controllo d'integrità su questa versione di gioco. Riprova più tardi.",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
     "message": "Alcuni file di gioco risultano modificati o corrotti. Controlla il file \"integrityreport.txt\" nella cartella di XIVLauncher per avere più informazioni.\n\nVuoi ripristinare il gioco all'ultima patch? Questo ti permetterà di installare nuovamente la patch, risolvendo probabilmente i problemi riscontrati.",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "L'installazione del gioco risulta valida.",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }

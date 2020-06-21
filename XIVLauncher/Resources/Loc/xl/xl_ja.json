@@ -1,6 +1,6 @@
 {
   "ReleaseInfoUnavailable": {
-    "message": "リリース情報を取得できませんでした。",
+    "message": "バージョン情報を取得できませんでした。",
     "description": "ChangelogWindow..ctor"
   },
   "EnterValidIdsError": {
@@ -8,16 +8,12 @@
     "description": "ChatChannelSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "指定されたFFXIVインストール先のパスが正しくありません。",
+    "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
     "message": "Steamのユーザーで起動しますか?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
-  },
-  "CharacterSyncWarning": {
-    "message": "注意事項!!!\n\n「キャラクター設定データを同期」は、ゲーム終了後に、最後にログインしたキャラクターの設定(ホットバー、HUD、キャラクターコンフィグ)で、他のキャラクターの設定を同期する機能です。\nこの機能を有効にする場合、XIVLauncher でのゲーム起動時に、メインキャラクターでログインしていることを確認して下さい。\n\nもし、先に他のキャラクターでログインすると、メインキャラクターの設定が上書きされてしまいます。",
-    "description": "SettingsControl.CharacterSyncCheckBox_Checked"
   },
   "DalamudIncompatible": {
     "message": "現在の FFXIV バージョンに対応した XIVLauncher の In-Game アドオンへ更新されていません。\nパッチ後にはよくあることですので、忍耐強く待っていただくか、Discordでお問い合わせ下さい。",
@@ -33,11 +29,15 @@
   },
   "CheckLoginInfo": {
     "message": "ログイン情報をご確認の上、再度お試し下さい。",
-    "description": "MainWindow.InitializeWindow"
+    "description": "MainWindow.Initialize"
+  },
+  "GameIsOpenError": {
+    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
+    "description": "MainWindow.HandleBootCheck"
   },
   "NewsDlFailed": {
     "message": "最新ニュースを取得できませんでした。",
-    "description": "MainWindow.<SetupHeadlines>b__9_3"
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "プロフィール画像を設定",
@@ -152,11 +152,11 @@
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "KillAfterCloseLoc": {
-    "message": "ゲーム終了時に、選択したアプリケーションを終了する",
+    "message": "ゲーム終了時に、終了する",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "IntegrityCheckRunning": {
-    "message": "インテグリティチェックを実行中……",
+    "message": "整合性チェックを実行中……",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginBoxUsername": {
@@ -219,6 +219,34 @@
     "message": "もしくは、スマートフォンのショートカットを使用します。\n詳しくはこちらをクリックして下さい。",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
+  "PatchPreparing": {
+    "message": "Preparing...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchGeneralStatus": {
+    "message": "Patching through {0} updates...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchChecking": {
+    "message": "Checking...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchDone": {
+    "message": "Download done!",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstalling": {
+    "message": "Installing...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingFormatted": {
+    "message": "Installing #{0}...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchEta": {
+    "message": "{0} left to download at {1}/s.",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
   "ProfilePictureInputTitle": {
     "message": "プロフィール画像の設定",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
@@ -239,20 +267,16 @@
     "message": "ゲーム",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "CharacterSyncCheckBox": {
-    "message": "キャラクター設定データを同期",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
   "AdditionalArguments": {
     "message": "追加の起動パラメータ",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
-    "message": "インテグリティチェックの実行",
+    "message": "整合性チェックの実行",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheckTooltip": {
-    "message": "ゲームファイルのインテグリティチェックを実行します。",
+    "message": "ゲームファイルの整合性チェックを実行します。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
@@ -343,6 +367,18 @@
     "message": "ゲーム内で /xlplugins コマンドを使用すると、さらにプラグインをインストールできます。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "SettingsPatching": {
+    "message": "Patching",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AskBeforePatch": {
+    "message": "Ask before installing a game patch",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchPath": {
+    "message": "Patch Download Directory",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAbout": {
     "message": "情報",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -376,23 +412,31 @@
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
-    "message": "XIVLauncher と FINAL FANTASY XIV のどちらか、もしくは両方について、管理者権限で起動するよう設定されています。\n管理者権限で実行した場合、アドオン起動の失敗やホットキーが反応しなくなるなど、様々な問題が発生する可能性があります。\n\n問題を自動修正しますか?",
-    "description": "AdminCheck.RunCheck"
+    "message": "XIVLauncher と FINAL FANTASY XIV のどちらか、もしくは両方について、管理者権限で起動するよう設定されています。\n管理者権限で実行した場合、アドオン起動の失敗やホットキーが反応しなくなるなど、様々な問題が発生する可能性があります。\n\nこの問題を自動修正しますか?",
+    "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
     "message": "XIVLauncher が管理者権限で実行されています。\n管理者権限で実行した場合、アドオン起動の失敗やホットキーが反応しなくなるなど、様々な問題が発生する可能性があります。\n\nXIVLauncher を管理者権限で起動しないようご注意下さい。",
-    "description": "AdminCheck.RunCheck"
+    "description": "ProblemCheck.RunCheck"
+  },
+  "MacTypeNag": {
+    "message": "PCでMacTypeを見つけました。\n公式ランチャーとXIVLauncherに問題を引き起こします。\n\nXIVLauncherとffxivboot、ffxivlauncher、ffxivupdater、ffxiv_dx11は、MacTypeから除いてください。",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "FreeSpaceError": {
+    "message": "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "description": "PatchManager.Start"
   },
   "IntegrityCheckImpossible": {
-    "message": "このゲームバージョンはもう参照報告がありません。後でやり直してください。",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "message": "このゲームバージョンはまだ参照レポートがありません。後ほど再度お試し下さい。",
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
     "message": "一部のゲームファイルが変更、または破損しているようです。詳しくはXIVLauncherフォルダ内の \"Integrityreport.txt \"ファイルをご確認ください。\n\nゲームを最新パッチのデータでリセットしますか？再度パッチを当てることで、問題が解決される可能性があります。",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "ゲームインストールは有効性がありそうです。",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }

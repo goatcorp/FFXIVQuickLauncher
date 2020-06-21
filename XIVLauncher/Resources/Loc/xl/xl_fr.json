@@ -8,16 +8,12 @@
     "description": "ChatChannelSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "Le chemin sélectionné n'est pas une installation de FFXIV valide",
+    "message": "Le dossier que vous avez sélectionné ne contient pas d’installation de FFXIV.\nXIVLauncher va réinstaller FFXIV quand tu te connecteras.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
     "message": "Démarrer en tant qu'utilisateur Steam ?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
-  },
-  "CharacterSyncWarning": {
-    "message": "ATTENTION !!!\n\n\"Synchroniser les données de personnage\" synchronise les barres, le HUD et les réglages du dernier personnage utilisé avec vos autres personnages à la fermeture.\nLors de l'activation, assurez-vous de vous connecter avec votre personnage principal au premier démarrage du jeu.\nFermez-le immédiatement après pour synchroniser les fichiers de ce personnage avec les autres.\n\nSi vous utilisez un autre personnage, le personnage principal sera écrasé.",
-    "description": "SettingsControl.CharacterSyncCheckBox_Checked"
   },
   "DalamudIncompatible": {
     "message": "L'addon en jeu XIVLauncher n’a pas encore été mis à jour pour la version actuelle de FFXIV.\nC’est normal après un patch, soyez patients ou vérifiez le Discord pour les dernières nouvelles !",
@@ -33,11 +29,15 @@
   },
   "CheckLoginInfo": {
     "message": "De plus, veuillez vérifier vos identifiants ou réessayer.",
-    "description": "MainWindow.InitializeWindow"
+    "description": "MainWindow.Initialize"
+  },
+  "GameIsOpenError": {
+    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
+    "description": "MainWindow.HandleBootCheck"
   },
   "NewsDlFailed": {
     "message": "Le téléchargement des dernières nouvelles à échoué.",
-    "description": "MainWindow.<SetupHeadlines>b__9_3"
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "Définir un avatar",
@@ -219,6 +219,34 @@
     "message": "Ou utiliser le raccourci sur smartphone.\nCliquez ici pour en savoir plus !",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
+  "PatchPreparing": {
+    "message": "Préparation...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchGeneralStatus": {
+    "message": "Installation de {0} mise(s) à jour...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchChecking": {
+    "message": "Vérification...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchDone": {
+    "message": "Téléchargement terminé !",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstalling": {
+    "message": "Installation...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingFormatted": {
+    "message": "Installation de #{0}...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchEta": {
+    "message": "{0} restant à {1}/s.",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
   "ProfilePictureInputTitle": {
     "message": "Configurer l'avatar",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
@@ -237,10 +265,6 @@
   },
   "SettingsGame": {
     "message": "Jeu",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "CharacterSyncCheckBox": {
-    "message": "Synchroniser les données de personnage",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
@@ -343,6 +367,18 @@
     "message": "Vous pouvez utiliser la commande /xlplugins en jeu pour installer d'autres plugins.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "SettingsPatching": {
+    "message": "Mise à jour",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AskBeforePatch": {
+    "message": "Ask before installing a game patch",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchPath": {
+    "message": "Dossier de téléchargement du patch",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAbout": {
     "message": "À propos",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -377,22 +413,30 @@
   },
   "AdminCheck": {
     "message": "XIVLauncher et/ou FFXIV sont configurés pour se lancer en tant qu'administrateur.\nCela peut créer des problèmes, notamment des plugins ou des raccourcis clavier ne fonctionnant pas.\n\nVoulez-vous régler ce problème automatiquement ?",
-    "description": "AdminCheck.RunCheck"
+    "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
     "message": "XIVLauncher est lancé en tant qu'administrateur.\nCela peut créer des problèmes, notamment des plugins ou des raccourcis clavier ne fonctionnant pas.\n\nÉvitez de lancer XIVLauncher en tant qu'administrateur.",
-    "description": "AdminCheck.RunCheck"
+    "description": "ProblemCheck.RunCheck"
+  },
+  "MacTypeNag": {
+    "message": "MacType est installé sur cet ordinateur.\nCela causera des problèmes avec FFXIV, peu importe le lanceur.\n\nVous devez exclure XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater et ffxiv_dx11 de MacType.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "FreeSpaceError": {
+    "message": "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "description": "PatchManager.Start"
   },
   "IntegrityCheckImpossible": {
     "message": "Impossible d’effectuer un contrôle d’intégrité pour cette version du jeu. Veuillez essayer plus tard.",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
     "message": "Certains fichiers du jeu semblent avoir été modifiés ou corrompus. Référez-vous au fichier \"integrityreport.txt\" dans le dossier de XIVLauncher pour plus d'informations.\n\nVoulez-vous réinitialiser le jeu a la version précédente ? Cela vous permettra de le mettre à jour à nouveau, ce qui pourrait résoudre vos problèmes.",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "Votre installation semble valide.",
-    "description": "<>c__DisplayClass24_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }
