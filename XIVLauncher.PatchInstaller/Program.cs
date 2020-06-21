@@ -263,7 +263,7 @@ namespace XIVLauncher.PatchInstaller
             {
                 Log.Debug("Installing {0} to {1}", patchPath, gamePath);
 
-                var patchFile = ZiPatchFile.FromFileName(patchPath);
+                using var patchFile = ZiPatchFile.FromFileName(patchPath);
 
                 using (var store = new SqexFileStreamStore())
                 {
