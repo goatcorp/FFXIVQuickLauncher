@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CheapLoc;
+using Serilog;
 
 namespace XIVLauncher.Windows.ViewModel
 {
@@ -113,6 +114,7 @@ namespace XIVLauncher.Windows.ViewModel
                 Loc.Localize("PluginsInstallHint", "You can use the /xlplugins command in-game to install more plugins.");
 
             SettingsPatchingLoc = Loc.Localize("SettingsPatching", "Patching");
+            AskBeforePatchLoc = Loc.Localize("AskBeforePatch", "Ask before installing a game patch");
             PatchPathLoc = Loc.Localize("PatchPath", "Patch Download Directory");
 
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
@@ -164,6 +166,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string PluginsInstallHintLoc { get; private set; }
 
         public string SettingsPatchingLoc { get; private set; }
+        public string AskBeforePatchLoc { get; private set; }
         public string PatchPathLoc { get; private set; }
 
         public string SettingsAboutLoc { get; private set; }

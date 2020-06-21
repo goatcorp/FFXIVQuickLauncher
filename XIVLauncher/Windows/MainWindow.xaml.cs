@@ -142,6 +142,7 @@ namespace XIVLauncher.Windows
                 App.Settings.AddonList = App.Settings.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
 
             App.Settings.EncryptArguments ??= true;
+            App.Settings.AskBeforePatchInstall ??= true;
 
             var gateStatus = false;
             try
@@ -253,12 +254,9 @@ namespace XIVLauncher.Windows
             {
                 if (Util.CheckIsGameOpen())
                 {
-                    var msgBoxResult = MessageBox.Show(
-                        "Your game is out of date and XIVLauncher could not patch it, the official launcher is open. Please close it and start the official launcher or XIVLauncher again to update it before trying to log in. Do you want to start the official launcher?",
-                        "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
-
-                    if (msgBoxResult == MessageBoxResult.Yes)
-                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
+                    MessageBox.Show(
+                        Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
                     Environment.Exit(0);
                     return;
@@ -339,6 +337,49 @@ namespace XIVLauncher.Windows
             HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp)));
         }
 
+        private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus)
+        {
+            if (Util.CheckIsGameOpen())
+            {
+                MessageBox.Show(
+                    Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.Show();
+                    _isLoggingIn = false;
+                });
+            }
+            else
+            {
+                Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame, "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+
+                var progressDialog = new PatchDownloadDialog(false);
+                progressDialog.Show();
+                this.Hide();
+
+                var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
+                patcher.OnFinish += async (sender, args) =>
+                {
+                    progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
+
+                    if (args)
+                        await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
+                    else
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            this.Show();
+                            _isLoggingIn = false;
+                        });
+                    }
+                };
+
+                patcher.Start();
+            }
+        }
+
         private async void StartLogin(string otp)
         {
             Log.Information("StartGame() called");
@@ -375,65 +416,31 @@ namespace XIVLauncher.Windows
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
-                    if (Util.CheckIsGameOpen())
+                    if (App.Settings.AskBeforePatchInstall.HasValue && App.Settings.AskBeforePatchInstall.Value)
                     {
-                        var msgBoxResult = MessageBox.Show(
-                            "Your game is out of date and XIVLauncher could not patch it, since it or the original launcher are open. Please close them and start the official launcher or XIVLauncher to update it before trying to log in. Do you want to start the official launcher?",
+                        var selfPatchAsk = MessageBox.Show(
+                            Loc.Localize("PatchInstallDisclaimer", "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?\nThis is an experimental feature, but has been tested considerably and should work fine."),
                             "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Error);
 
-                        if (msgBoxResult == MessageBoxResult.Yes)
-                            Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
+                        if (selfPatchAsk == MessageBoxResult.Yes)
+                        {
+                            InstallGamePatch(loginResult, gateStatus);
+                        }
+                        else
+                        {
+                            _isLoggingIn = false;
+                            return;
+                        }
                     }
                     else
                     {
-                        Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame, "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
-
-                        var progressDialog = new PatchDownloadDialog(false);
-                        progressDialog.Show();
-                        this.Hide();
-
-                        var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
-                        patcher.OnFinish += async (sender, args) =>
-                        {
-                            progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
-
-                            if (args)
-                                await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult));
-                            else
-                            {
-                                this.Dispatcher.Invoke(() =>
-                                {
-                                    this.Show();
-                                    _isLoggingIn = false;
-                                });
-                            }
-                        };
-
-                        patcher.Start();
+                        InstallGamePatch(loginResult, gateStatus);
                     }
 
                     return;
                 }
 
-#if !DEBUG
-                if (!gateStatus)
-                {
-                    Log.Information("GateStatus is false.");
-                    var startLauncher = MessageBox.Show(
-                                             "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
-
-                    if (startLauncher)
-                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
-
-                    _isLoggingIn = false;
-
-                    return;
-                }
-#endif
-
-                await StartGameAndAddon(loginResult);
-
-                this.Close();
+                await StartGameAndAddon(loginResult, gateStatus);
             }
             catch (Exception ex)
             {
@@ -442,12 +449,9 @@ namespace XIVLauncher.Windows
                 if (!gateStatus)
                 {
                     Log.Information("GateStatus is false.");
-                    var startLauncher = MessageBox.Show(
-                        "Square Enix seems to be running maintenance work right now. The game shouldn't be launched. Do you want to start the official launcher to check for patches?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
-
-                    if (startLauncher)
-                        Util.StartOfficialLauncher(App.Settings.GamePath, SteamCheckBox.IsChecked == true);
-
+                    MessageBox.Show(
+                        Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     return;
                 }
                 else
@@ -459,8 +463,21 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private async Task StartGameAndAddon(Launcher.LoginResult loginResult)
+        private async Task StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus)
         {
+#if !DEBUG
+                if (!gateStatus)
+                {
+                    Log.Information("GateStatus is false.");
+                    MessageBox.Show(
+                        Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    _isLoggingIn = false;
+
+                    return;
+                }
+#endif
+
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
 
             var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
@@ -477,6 +494,7 @@ namespace XIVLauncher.Windows
             _installer.Stop();
 
             this.Hide();
+            this.Close();
 
             var addonMgr = new AddonManager();
 

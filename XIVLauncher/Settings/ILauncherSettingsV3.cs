@@ -25,6 +25,7 @@ namespace XIVLauncher.Settings
         string CurrentAccountId { get; set; }
         bool? EncryptArguments { get; set; }
         DirectoryInfo PatchPath { get; set; }
+        bool? AskBeforePatchInstall { get; set; }
 
         #endregion
     }
