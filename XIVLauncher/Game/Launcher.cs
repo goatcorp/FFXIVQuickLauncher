@@ -297,7 +297,7 @@ namespace XIVLauncher.Game
         /// <returns>String of hashed EXE files.</returns>
         private static string GetBootVersionHash(DirectoryInfo gamePath)
         {
-            var result = Repository.Boot.GetVer(gamePath, true) + "=";
+            var result = Repository.Boot.GetVer(gamePath) + "=";
 
             for (var i = 0; i < FilesToHash.Length; i++)
             {
@@ -320,7 +320,7 @@ namespace XIVLauncher.Game
 
             // Why tf is this http??
             var url =
-                $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath, true)}/?time=" + GetLauncherFormattedTimeLong();
+                $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath)}/?time=" + GetLauncherFormattedTimeLong();
 
             var result = client.DownloadString(url);
 
@@ -343,7 +343,7 @@ namespace XIVLauncher.Game
             client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
             var url =
-                $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{Repository.Ffxiv.GetVer(gamePath, true)}/{loginResult.SessionId}";
+                $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{Repository.Ffxiv.GetVer(gamePath)}/{loginResult.SessionId}";
 
             try
             {
