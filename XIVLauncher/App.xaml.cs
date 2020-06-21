@@ -140,23 +140,27 @@ namespace XIVLauncher
 
         private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
+            Log.Error(e.Exception, "UnobservedTaskException occured.");
+
             if (!e.Observed)
                 EarlyInitExceptionHandler(sender, new UnhandledExceptionEventArgs(e.Exception, true));
         }
 
         private void EarlyInitExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
-            
-            if (_useFullExceptionHandler)
-                new ErrorWindow((Exception)e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
-                    .ShowDialog();
-            else
-                MessageBox.Show(
-                    "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            this.Dispatcher.Invoke(() =>
+            {
+                if (_useFullExceptionHandler)
+                    new ErrorWindow((Exception) e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
+                        .ShowDialog();
+                else
+                    MessageBox.Show(
+                        "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
+                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-            Log.CloseAndFlush();
-            Environment.Exit(0);
+                Log.CloseAndFlush();
+                Environment.Exit(0);
+            });
         }
 
         private static string GetConfigPath(string prefix) => Path.Combine(Paths.RoamingPath, $"{prefix}ConfigV3.json");
