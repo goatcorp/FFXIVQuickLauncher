@@ -260,7 +260,7 @@ namespace XIVLauncher.Game.Patch
                 if (_installer.State == PatchInstaller.InstallerState.Failed)
                     return;
 
-                File.WriteAllText(GetRepoForPatch(toInstall.Patch).GetVerFile(_gamePath).FullName, toInstall.Patch.VersionId);
+                GetRepoForPatch(toInstall.Patch).SetVer(_gamePath, toInstall.Patch.VersionId);
 
                 toInstall.State = PatchState.Finished;
                 _currentInstallIndex++;
@@ -348,6 +348,9 @@ namespace XIVLauncher.Game.Patch
 
         private void VerToBck()
         {
+            RepoExtensions.CloseAllStreams();
+            Thread.Sleep(200);
+
             foreach (var repository in Enum.GetValues(typeof(Repository)).Cast<Repository>())
             {
                 // Overwrite the old BCK with the new game version

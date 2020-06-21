@@ -231,9 +231,6 @@ namespace XIVLauncher.Windows
             HandleLogin(false);
         }
 
-
-#region Login
-
         private void HandleBootCheck(Action whenFinishAction)
         {
             try
@@ -247,37 +244,47 @@ namespace XIVLauncher.Windows
                 Log.Error(ex, "Could not create base game install.");
             }
 
-            App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
-
-            var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
-            if (bootPatches != null)
+            try
             {
-                if (Util.CheckIsGameOpen())
-                {
-                    MessageBox.Show(
-                        Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
-                    Environment.Exit(0);
-                    return;
+                var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+                if (bootPatches != null)
+                {
+                    if (Util.CheckIsGameOpen())
+                    {
+                        MessageBox.Show(
+                            Loc.Localize("GameIsOpenError",
+                                "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
+                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                        Environment.Exit(0);
+                        return;
+                    }
+
+                    var progressDialog = new PatchDownloadDialog(true);
+                    progressDialog.Show();
+                    this.Hide();
+
+                    var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath,
+                        App.Settings.PatchPath, _installer);
+                    patcher.OnFinish += (sender, args) =>
+                    {
+                        progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
+                        whenFinishAction?.Invoke();
+                    };
+
+                    patcher.Start();
                 }
-
-                var progressDialog = new PatchDownloadDialog(true);
-                progressDialog.Show();
-                this.Hide();
-
-                var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
-                patcher.OnFinish += (sender, args) =>
+                else
                 {
-                    progressDialog.Dispatcher.Invoke(() =>progressDialog.Close());
                     whenFinishAction?.Invoke();
-                };
-
-                patcher.Start();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                whenFinishAction?.Invoke();
+                new ErrorWindow(ex, "Could not patch boot.", nameof(HandleBootCheck)).ShowDialog();
+                Environment.Exit(0);
             }
         }
 
@@ -324,7 +331,7 @@ namespace XIVLauncher.Windows
 
                     if (autoLogin)
                     {
-                        _installer.Stop();
+                        CleanUp();
                         Environment.Exit(0);
                     }
 
@@ -407,7 +414,7 @@ namespace XIVLauncher.Windows
                     if (AutoLoginCheckBox.IsChecked == true)
                     {
                         Close();
-                        _installer.Stop();
+                        CleanUp();
                         Environment.Exit(0);
                     }
 
@@ -491,10 +498,9 @@ namespace XIVLauncher.Windows
                 return;
             }
 
-            _installer.Stop();
+            CleanUp();
 
             this.Hide();
-            this.Close();
 
             var addonMgr = new AddonManager();
 
@@ -529,14 +535,23 @@ namespace XIVLauncher.Windows
 
                 Log.Information("Game has exited.");
                 addonMgr.StopAddons();
+                
+                CleanUp();
+
                 Environment.Exit(0);
             });
             watchThread.Start();
+
+            Log.Debug("Started WatchThread");
         }
 
-#endregion
+        private void CleanUp()
+        {
+            _installer.Stop();
+            RepoExtensions.CloseAllStreams();
+        }
 
-private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
+        private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
                 return;
@@ -672,7 +687,7 @@ private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
-            _installer.Stop();
+            CleanUp();
             Application.Current.Shutdown();
         }
 

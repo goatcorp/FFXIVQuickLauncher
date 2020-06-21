@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Threading;
+using Serilog;
 using XIVLauncher.Game.Patch;
 
 namespace XIVLauncher.Game
@@ -15,6 +20,8 @@ namespace XIVLauncher.Game
 
     public static class RepoExtensions
     {
+        private static readonly ConcurrentDictionary<FileInfo, FileStream> OpenVerFileStreams = new ConcurrentDictionary<FileInfo, FileStream>();
+
         private static DirectoryInfo GetRepoPath(this Repository repo, DirectoryInfo gamePath)
         {
             switch (repo)
@@ -58,10 +65,61 @@ namespace XIVLauncher.Game
         {
             var ver = PatchManager.BASE_GAME_VERSION;
             var verFile = repo.GetVerFile(gamePath, isBck);
-            if (verFile.Exists)
-                ver = File.ReadAllText(verFile.FullName);
+
+            if (!verFile.Exists) 
+                return ver;
+
+            using var reader = new StreamReader(AcquireStream(verFile), Encoding.UTF8);
+            reader.BaseStream.Position = 0;
+            ver = reader.ReadToEnd();
 
             return ver;
+        }
+
+        public static void CloseAllStreams()
+        {
+            foreach (var openVerFileStream in OpenVerFileStreams)
+            {
+                openVerFileStream.Value.Close();
+            }
+
+            OpenVerFileStreams.Clear();
+        }
+
+        public static void SetVer(this Repository repo, DirectoryInfo gamePath, string newVer, bool isBck = false)
+        {
+            var verFile = repo.GetVerFile(gamePath, isBck);
+            using var writer = new StreamWriter(AcquireStream(verFile), Encoding.UTF8);
+            writer.BaseStream.Position = 0;
+            writer.Write(newVer);
+        }
+
+        private static FileStream AcquireStream(FileInfo file)
+        {
+            if (OpenVerFileStreams.TryGetValue(file, out var val))
+                return val;
+
+            var tries = 0;
+            while (tries <= 5)
+            {
+                tries++;
+
+                try
+                {
+                    var stream = file.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                    OpenVerFileStreams.GetOrAdd(file, stream);
+
+                    return stream;
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Could not open ver stream");
+                }
+
+                Thread.Sleep(200);
+            }
+
+            throw new Exception("Could not acquire lock for ver file.");
         }
 
         // TODO
