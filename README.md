@@ -9,13 +9,14 @@ XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with
 The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your password. This project aims to fix that and add some QoL features to the game that were not there before, such as:
 
 * Auto-login
+* Fast patching
 * Launching tools like ACT when starting the game
 * Discord Rich Presence
 * Fast in-game market board price checks
 * Integrity check for game files
 * Chat filtering
 * Chat bridge to Discord
-* Discord notifications for fates, retainer sales, etc.
+* Discord notifications for duties, retainer sales, etc.
 
 Check the settings page and use the /xlhelp command in-game to see available commands.
 
