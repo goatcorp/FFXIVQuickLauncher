@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Newtonsoft.Json;
@@ -66,6 +67,14 @@ namespace XIVLauncher.Game.Patch
             State = InstallerState.NotReady;
 
             Process.Start(startInfo);
+        }
+
+        public void WaitOnHello()
+        {
+            while (State != InstallerState.Ready)
+            {
+                Thread.Sleep(1);
+            }
         }
 
         private void ServerOnReceivedRequest(object sender, ReceivedRequestEventArgs e)

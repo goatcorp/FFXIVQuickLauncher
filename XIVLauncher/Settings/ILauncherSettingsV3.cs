@@ -26,6 +26,7 @@ namespace XIVLauncher.Settings
         bool? EncryptArguments { get; set; }
         DirectoryInfo PatchPath { get; set; }
         bool? AskBeforePatchInstall { get; set; }
+        public long SpeedLimitBytes { get; set; }
 
         #endregion
     }

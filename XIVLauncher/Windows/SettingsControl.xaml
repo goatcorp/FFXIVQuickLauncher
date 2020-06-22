@@ -12,6 +12,7 @@
              xmlns:properties="clr-namespace:XIVLauncher.Properties"
              xmlns:windows="clr-namespace:XIVLauncher.Windows"
              xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
@@ -267,6 +268,16 @@
                                             Description="Select a folder" Width="500" VerticalAlignment="Center"
                                             HorizontalAlignment="Left"
                                             Foreground="{DynamicResource MaterialDesignBody}" Margin="10,0,0,0" />
+
+                    <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,10,0,0"
+                           Content="{Binding PatchSpeedLimitLoc}" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <xctk:DecimalUpDown x:Name="SpeedLimiterUpDown" Margin="10,0,0,0" Width="60" HorizontalAlignment="Left" Value="0"/>
+                        <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
+                               Content="MB/s" />
+                    </StackPanel>
+                    
                 </StackPanel>
 
             </TabItem>

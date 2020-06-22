@@ -116,6 +116,7 @@ namespace XIVLauncher.Windows.ViewModel
             SettingsPatchingLoc = Loc.Localize("SettingsPatching", "Patching");
             AskBeforePatchLoc = Loc.Localize("AskBeforePatch", "Ask before installing a game patch");
             PatchPathLoc = Loc.Localize("PatchPath", "Patch Download Directory");
+            PatchSpeedLimitLoc = Loc.Localize("PatchSpeedLimit", "Download Speed Limit");
 
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
@@ -168,6 +169,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string SettingsPatchingLoc { get; private set; }
         public string AskBeforePatchLoc { get; private set; }
         public string PatchPathLoc { get; private set; }
+        public string PatchSpeedLimitLoc { get; private set; }
 
         public string SettingsAboutLoc { get; private set; }
         public string CreditsLoc { get; private set; }

@@ -33,6 +33,8 @@ namespace XIVLauncher.Windows
 
         private SettingsControlViewModel ViewModel => DataContext as SettingsControlViewModel;
 
+        private const int BYTES_TO_MB = 1048576;
+
         public SettingsControl()
         {
             InitializeComponent();
@@ -85,6 +87,10 @@ namespace XIVLauncher.Windows
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
 
             EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
+
+            var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
+
+            SpeedLimiterUpDown.Value = val;
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
@@ -115,6 +121,8 @@ namespace XIVLauncher.Windows
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
             SettingsDismissed?.Invoke(this, null);
+
+            App.Settings.SpeedLimitBytes = (long) (SpeedLimiterUpDown.Value * BYTES_TO_MB);
         }
 
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
