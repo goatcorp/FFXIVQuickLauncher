@@ -256,7 +256,7 @@ namespace XIVLauncher.Game.Patch
 
                 while (_installer.State != PatchInstaller.InstallerState.Ready)
                 {
-                    Thread.Sleep(100);
+                    Thread.Yield();
                 }
 
                 // TODO need to handle this better
@@ -353,26 +353,26 @@ namespace XIVLauncher.Game.Patch
                 gameDirectory.Create();
 
             var boot = gameDirectory.CreateSubdirectory("boot");
-            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.ver"), Program.BASE_GAME_VERSION, Encoding.UTF8);
-            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.bck"), Program.BASE_GAME_VERSION, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.ver"), Program.BASE_GAME_VERSION, Encoding.ASCII);
+            File.WriteAllText(Path.Combine(boot.FullName, "ffxivboot.bck"), Program.BASE_GAME_VERSION, Encoding.ASCII);
 
             var game = gameDirectory.CreateSubdirectory("game");
-            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.ver"), Program.BASE_GAME_VERSION, Encoding.UTF8);
-            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.bck"), Program.BASE_GAME_VERSION, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.ver"), Program.BASE_GAME_VERSION, Encoding.ASCII);
+            File.WriteAllText(Path.Combine(game.FullName, "ffxivgame.bck"), Program.BASE_GAME_VERSION, Encoding.ASCII);
 
             var sqPack = game.CreateSubdirectory("sqpack");
 
             var ex1 = sqPack.CreateSubdirectory("ex1");
-            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.ver"), Program.BASE_GAME_VERSION, Encoding.UTF8);
-            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.bck"), Program.BASE_GAME_VERSION, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.ver"), Program.BASE_GAME_VERSION, Encoding.ASCII);
+            File.WriteAllText(Path.Combine(ex1.FullName, "ex1.bck"), Program.BASE_GAME_VERSION, Encoding.ASCII);
 
             var ex2 = sqPack.CreateSubdirectory("ex2");
-            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.ver"), Program.BASE_GAME_VERSION, Encoding.UTF8);
-            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.bck"), Program.BASE_GAME_VERSION, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.ver"), Program.BASE_GAME_VERSION, Encoding.ASCII);
+            File.WriteAllText(Path.Combine(ex2.FullName, "ex2.bck"), Program.BASE_GAME_VERSION, Encoding.ASCII);
 
             var ex3 = sqPack.CreateSubdirectory("ex3");
-            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.ver"), Program.BASE_GAME_VERSION, Encoding.UTF8);
-            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.bck"), Program.BASE_GAME_VERSION, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.ver"), Program.BASE_GAME_VERSION, Encoding.ASCII);
+            File.WriteAllText(Path.Combine(ex3.FullName, "ex3.bck"), Program.BASE_GAME_VERSION, Encoding.ASCII);
         }
     }
 }

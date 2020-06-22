@@ -71,7 +71,7 @@ namespace XIVLauncher.PatchInstaller
         public static void SetVer(this Repository repo, DirectoryInfo gamePath, string newVer, bool isBck = false)
         {
             var verFile = GetVerFile(repo, gamePath, isBck);
-            File.WriteAllText(verFile.FullName, newVer, Encoding.UTF8);
+            File.WriteAllText(verFile.FullName, newVer, Encoding.ASCII);
         }
 
         // TODO

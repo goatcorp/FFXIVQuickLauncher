@@ -73,7 +73,7 @@ namespace XIVLauncher.Game.Patch
         {
             while (State != InstallerState.Ready)
             {
-                Thread.Sleep(1);
+                Thread.Yield();
             }
         }
 
