@@ -61,11 +61,20 @@ namespace XIVLauncher.Windows
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             if (SetupTabControl.SelectedIndex == 0)
+            {
+                if (string.IsNullOrEmpty(GamePathEntry.Text))
+                {
+                    MessageBox.Show(Loc.Localize("GamePathEmptyError", "Please select a game path."), "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 if (!Util.IsValidFfxivPath(GamePathEntry.Text))
                 {
-                    MessageBox.Show(Loc.Localize("GamePathInvalidError", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in."), "Error",
+                    MessageBox.Show(Loc.Localize("GamePathInvalidError", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in."), "XIVLauncher",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+            }
 
             if (SetupTabControl.SelectedIndex == 2)
             {
