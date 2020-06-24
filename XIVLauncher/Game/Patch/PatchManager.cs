@@ -166,6 +166,21 @@ namespace XIVLauncher.Game.Patch
 
             dlService.DownloadFileCompleted += (sender, args) =>
             {
+                if (args.Error != null)
+                {
+                    Log.Error(args.Error, "Download failed for {0}", download.Patch.VersionId);
+                    MessageBox.Show($"Download FAILED for {download.Patch.VersionId}.\nPlease try again.\n\n" + args.Error, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Environment.Exit(0);
+                    return;
+                }
+
+                if (args.Cancelled)
+                {
+                    Log.Error("Download cancelled for {0}", download.Patch.VersionId);
+                    MessageBox.Show($"Download CANCELLED for {download.Patch.VersionId}.\nPlease try again.\n\n" + args.Error, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Environment.Exit(0);
+                }
+
                 // Let's just bail for now, need better handling of this later
                 if (!IsHashCheckPass(download.Patch, outFile))
                 {
