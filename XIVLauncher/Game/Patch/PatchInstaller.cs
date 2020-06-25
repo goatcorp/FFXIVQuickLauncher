@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using CheapLoc;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Game.Patch.PatchList;
@@ -71,10 +72,19 @@ namespace XIVLauncher.Game.Patch
 
         public void WaitOnHello()
         {
-            while (State != InstallerState.Ready)
+            for (var i = 0; i < 20; i++)
             {
-                Thread.Yield();
+                if (State == InstallerState.Ready)
+                    return;
+
+                Thread.Sleep(1000);
             }
+
+            MessageBox.Show(
+                Loc.Localize("PatchInstallerNotOpen",
+                    "Could not connect to the patch installer.\nPlease report this error."), "XIVLauncher",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            Environment.Exit(0);
         }
 
         private void ServerOnReceivedRequest(object sender, ReceivedRequestEventArgs e)
