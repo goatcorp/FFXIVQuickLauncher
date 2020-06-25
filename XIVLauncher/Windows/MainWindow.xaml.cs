@@ -252,30 +252,39 @@ namespace XIVLauncher.Windows
                 var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
                 if (bootPatches != null)
                 {
-                    if (Util.CheckIsGameOpen())
+                    var mutex = new Mutex(false, "XivLauncherIsPatching");
+                    if (mutex.WaitOne(0, false))
                     {
-                        MessageBox.Show(
-                            Loc.Localize("GameIsOpenError",
-                                "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
-                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        if (Util.CheckIsGameOpen())
+                        {
+                            MessageBox.Show(
+                                Loc.Localize("GameIsOpenError",
+                                    "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
+                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
-                        Environment.Exit(0);
-                        return;
+                            Environment.Exit(0);
+                            return;
+                        }
+
+                        var progressDialog = new PatchDownloadDialog(true);
+                        progressDialog.Show();
+                        this.Hide();
+
+                        var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath,
+                            App.Settings.PatchPath, _installer);
+                        patcher.OnFinish += (sender, args) =>
+                        {
+                            progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
+                            whenFinishAction?.Invoke();
+                        };
+
+                        patcher.Start();
                     }
-
-                    var progressDialog = new PatchDownloadDialog(true);
-                    progressDialog.Show();
-                    this.Hide();
-
-                    var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath,
-                        App.Settings.PatchPath, _installer);
-                    patcher.OnFinish += (sender, args) =>
+                    else
                     {
-                        progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
-                        whenFinishAction?.Invoke();
-                    };
-
-                    patcher.Start();
+                        MessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Environment.Exit(0);
+                    }
                 }
                 else
                 {
@@ -355,59 +364,71 @@ namespace XIVLauncher.Windows
 
         private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus)
         {
-            if (Util.CheckIsGameOpen())
+            var mutex = new Mutex(false, "XivLauncherIsPatching");
+            if (mutex.WaitOne(0, false))
             {
-                MessageBox.Show(
-                    Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-                this.Dispatcher.Invoke(() =>
+                if (Util.CheckIsGameOpen())
                 {
-                    this.Show();
-                    _isLoggingIn = false;
-                });
+                    MessageBox.Show(
+                        Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.Show();
+                        _isLoggingIn = false;
+                    });
+                }
+                else
+                {
+                    Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame, "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+
+                    var progressDialog = new PatchDownloadDialog(false);
+                    progressDialog.Show();
+                    this.Hide();
+
+                    var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
+                    patcher.OnFinish += async (sender, args) =>
+                    {
+                        progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
+
+                        if (args)
+                        {
+                            await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
+                            _installer.Stop();
+
+                            // Need to wait for installer to exit and release lock on patch files TODO bother winter why is this happening
+                            Thread.Sleep(5000);
+
+                            try
+                            {
+                                DeleteOldPatches();
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, "Could not delete old patches.");
+                            }
+                        }
+                        else
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                this.Show();
+                                _isLoggingIn = false;
+                            });
+                        }
+
+                        mutex.Close();
+                        mutex = null;
+                    };
+
+                    patcher.Start();
+                }
             }
             else
             {
-                Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame, "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
-
-                var progressDialog = new PatchDownloadDialog(false);
-                progressDialog.Show();
-                this.Hide();
-
-                var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
-                patcher.OnFinish += async (sender, args) =>
-                {
-                    progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
-
-                    if (args)
-                    {
-                        await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
-                        _installer.Stop();
-
-                        // Need to wait for installer to exit and release lock on patch files TODO bother winter why is this happening
-                        Thread.Sleep(5000);
-
-                        try
-                        {
-                            DeleteOldPatches();
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, "Could not delete old patches.");
-                        }
-                    }
-                    else
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            this.Show();
-                            _isLoggingIn = false;
-                        });
-                    }
-                };
-
-                patcher.Start();
+                MessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(0);
             }
         }
 
