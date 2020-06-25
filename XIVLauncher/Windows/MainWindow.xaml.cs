@@ -274,8 +274,22 @@ namespace XIVLauncher.Windows
                             App.Settings.PatchPath, _installer);
                         patcher.OnFinish += (sender, args) =>
                         {
-                            progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
-                            whenFinishAction?.Invoke();
+                            if (args)
+                            {
+                                progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
+                                whenFinishAction?.Invoke();
+                            }
+                            else
+                            {
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    this.Show();
+                                    _isLoggingIn = false;
+                                });
+                            }
+                            
+                            mutex.Close();
+                            mutex = null;
                         };
 
                         patcher.Start();
