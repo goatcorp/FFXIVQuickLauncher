@@ -142,19 +142,7 @@ namespace XIVLauncher
             Process.Start("https://discord.gg/3NMcUV5");
         }
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr GetModuleHandle(string lpModuleName);
-
-        [DllImport("kernel32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
-        static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
-
-        public static bool CheckIsWine()
-        {
-            var ntdll = GetModuleHandle("ntdll.dll");
-            var pwine_get_version = GetProcAddress(ntdll, "wine_get_version");
-
-            return pwine_get_version != IntPtr.Zero;
-        }
+        public static bool IsWine => Environment.GetEnvironmentVariable("XL_WINEONLINUX") == "True";
 
         public static string BytesToString(long byteCount)
         {

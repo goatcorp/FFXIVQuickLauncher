@@ -100,24 +100,28 @@ namespace XIVLauncher
                 $"XIVLauncher started as {release}");
 
 #if !XL_NOAUTOUPDATE
-            try
+
+            if (!Util.IsWine)
             {
-                Log.Information("Starting update check...");
+                try
+                {
+                    Log.Information("Starting update check...");
 
-                _updateWindow = new UpdateLoadingDialog();
-                _updateWindow.Show();
+                    _updateWindow = new UpdateLoadingDialog();
+                    _updateWindow.Show();
 
-                var updateMgr = new Updates();
-                updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
+                    var updateMgr = new Updates();
+                    updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
 
-                updateMgr.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "XIVLauncher could not contact the update server. Please check your internet connection or try again.\n\n" + ex,
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Environment.Exit(0);
+                    updateMgr.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        "XIVLauncher could not contact the update server. Please check your internet connection or try again.\n\n" + ex,
+                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Environment.Exit(0);
+                }
             }
 #endif
         }
@@ -194,6 +198,11 @@ namespace XIVLauncher
             }
             
             Log.Information("Loading MainWindow for account '{0}'", accountName);
+
+            if (Util.IsWine)
+            {
+                OnUpdateCheckFinished(null, null);
+            }
 
 #if XL_NOAUTOUPDATE
             OnUpdateCheckFinished(null, null);

@@ -68,6 +68,9 @@ namespace XIVLauncher.Windows
 #if XL_NOAUTOUPDATE
             Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
 #endif
+
+            if (Util.IsWine)
+                Title += " - Wine on Linux";
         }
 
         private void SetupHeadlines()
