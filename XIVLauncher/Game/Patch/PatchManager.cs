@@ -36,7 +36,7 @@ namespace XIVLauncher.Game.Patch
         public PatchState State { get; set; }
     }
 
-    class PatchManager
+    public class PatchManager
     {
         private DownloadConfiguration _downloadOpt = new DownloadConfiguration
         {
@@ -56,30 +56,31 @@ namespace XIVLauncher.Game.Patch
 
         public event EventHandler<bool> OnFinish;
 
-        private const int MAX_DOWNLOADS_AT_ONCE = 4;
+        public const int MAX_DOWNLOADS_AT_ONCE = 4;
 
         private CancellationTokenSource _cancelTokenSource = new CancellationTokenSource();
 
         private readonly Repository _repository;
-        private readonly PatchDownloadDialog _progressDialog;
         private readonly DirectoryInfo _gamePath;
         private readonly DirectoryInfo _patchStore;
         private readonly PatchInstaller _installer;
 
-        private List<PatchDownload> _downloads;
+        public readonly IReadOnlyList<PatchDownload> Downloads;
 
-        private int _currentInstallIndex;
+        public int CurrentInstallIndex { get; private set; }
 
-        private long[] _progresses = new long[MAX_DOWNLOADS_AT_ONCE];
-        private long[] _speeeeeeds = new long[MAX_DOWNLOADS_AT_ONCE];
-        private bool[] _slots = new bool[MAX_DOWNLOADS_AT_ONCE];
+        public readonly long[] Progresses = new long[MAX_DOWNLOADS_AT_ONCE];
+        public readonly long[] Speeds = new long[MAX_DOWNLOADS_AT_ONCE];
+        public readonly PatchDownload[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
+        public readonly bool[] Slots = new bool[MAX_DOWNLOADS_AT_ONCE];
 
-        private long AllDownloadsLength => _downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - _progresses.Sum();
+        public bool DownloadsDone { get; private set; }
 
-        public PatchManager(Repository repository, IEnumerable<PatchListEntry> patches, PatchDownloadDialog progressDialog, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer)
+        public long AllDownloadsLength => Downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();
+
+        public PatchManager(Repository repository, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer)
         {
             _repository = repository;
-            _progressDialog = progressDialog;
             _gamePath = gamePath;
             _patchStore = patchStore;
             _installer = installer;
@@ -87,20 +88,12 @@ namespace XIVLauncher.Game.Patch
             if (!_patchStore.Exists)
                 _patchStore.Create();
 
-            _downloads = new List<PatchDownload>();
-            foreach (var patchListEntry in patches)
-            {
-                _downloads.Add(new PatchDownload
-                {
-                    Patch = patchListEntry,
-                    State = PatchState.Nothing
-                });
-            }
+            Downloads = patches.Select(patchListEntry => new PatchDownload {Patch = patchListEntry, State = PatchState.Nothing}).ToList().AsReadOnly();
 
             // All dl slots are available at the start
             for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
             {
-                _slots[i] = true;
+                Slots[i] = true;
             }
 
             ServicePointManager.DefaultConnectionLimit = 255;
@@ -133,35 +126,21 @@ namespace XIVLauncher.Game.Patch
 
             Log.Information("Downloading patch {0} at {1} to {2}", download.Patch.VersionId, download.Patch.Url, outFile.FullName);
 
-            _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} ({_progressDialog.ViewModel.PatchCheckingLoc})", 0f);
-            }));
+            Actives[index] = download;
 
             if (outFile.Exists && IsHashCheckPass(download.Patch, outFile))
             {
                 download.State = PatchState.Downloaded;
-                _slots[index] = true;
-                _progresses[index] = download.Patch.Length;
-
-                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    _progressDialog.SetPatchProgress(index, _progressDialog.ViewModel.PatchDoneLoc, 100f);
-                }));
+                Slots[index] = true;
+                Progresses[index] = download.Patch.Length;
                 return;
             }
 
             var dlService = new DownloadService(_downloadOpt);
             dlService.DownloadProgressChanged += (sender, args) =>
             {
-                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    _progresses[index] = args.BytesReceived;
-                    _speeeeeeds[index] = dlService.DownloadSpeed;
-
-                    var pct = Math.Round((double) (100 * args.BytesReceived) / download.Patch.Length, 2);
-                    _progressDialog.SetPatchProgress(index, $"{download.Patch.VersionId} ({pct:#0.00}%, {Util.BytesToString(dlService.DownloadSpeed)}/s)", pct);
-                }));
+                Progresses[index] = args.BytesReceived;
+                Speeds[index] = dlService.DownloadSpeed;
             };
 
             dlService.DownloadFileCompleted += (sender, args) =>
@@ -191,13 +170,8 @@ namespace XIVLauncher.Game.Patch
                     return;
                 }
 
-                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    _progressDialog.SetPatchProgress(index, _progressDialog.ViewModel.PatchDoneLoc, 100f);
-                }));
-
                 download.State = PatchState.Downloaded;
-                _slots[index] = true;
+                Slots[index] = true;
 
                 Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
             };
@@ -207,54 +181,40 @@ namespace XIVLauncher.Game.Patch
 
         private void RunDownloadQueue()
         {
-            while (_downloads.Any(x => x.State == PatchState.Nothing))
+            while (Downloads.Any(x => x.State == PatchState.Nothing))
             {
                 Thread.Sleep(500);
                 for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
                 {
-                    if (!_slots[i]) 
+                    if (!Slots[i]) 
                         continue;
 
-                    _slots[i] = false;
+                    Slots[i] = false;
 
-                    var toDl = _downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
+                    var toDl = Downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
 
                     if (toDl == null)
                     {
                         Log.Information("All patches downloaded.");
 
-                        _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            _progressDialog.SetLeft(0, 0);
-                            _progressDialog.SetDownloadDone();
-                        }));
+                        DownloadsDone = true;
                         return;
                     }
 
                     toDl.State = PatchState.IsDownloading;
                     var curIndex = i;
                     Task.Run(() => DownloadPatchAsync(toDl, curIndex));
-                    Debug.WriteLine("Started DL" + i);
                 }
-
-                _progressDialog.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    _progressDialog.SetLeft(AllDownloadsLength, _speeeeeeds.Sum());
-                }));
             }
         }
 
         private void RunApplyQueue()
         {
-            _progressDialog.Dispatcher.Invoke(() =>
-                _progressDialog.SetGeneralProgress(0,
-                    _downloads.Count));
-
-            while (_currentInstallIndex < _downloads.Count)
+            while (CurrentInstallIndex < Downloads.Count)
             {
                 Thread.Sleep(500);
 
-                var toInstall = _downloads[_currentInstallIndex];
+                var toInstall = Downloads[CurrentInstallIndex];
 
                 if (toInstall.State != PatchState.Downloaded)
                     continue;
@@ -279,11 +239,7 @@ namespace XIVLauncher.Game.Patch
                     return;
 
                 toInstall.State = PatchState.Finished;
-                _currentInstallIndex++;
-
-                _progressDialog.Dispatcher.Invoke(() =>
-                    _progressDialog.SetGeneralProgress(_currentInstallIndex,
-                        _downloads.Count));
+                CurrentInstallIndex++;
             }
 
             Log.Information("PATCHING finish");

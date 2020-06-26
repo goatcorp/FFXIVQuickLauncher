@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using Serilog;
+using XIVLauncher.Game.Patch;
 using XIVLauncher.Http;
 using XIVLauncher.Windows.ViewModel;
 
@@ -16,12 +19,56 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class PatchDownloadDialog : Window
     {
+        private readonly PatchManager _manager;
+
         public PatchDownloadDialogViewModel ViewModel => DataContext as PatchDownloadDialogViewModel;
 
-        public PatchDownloadDialog(bool isBoot)
+        public PatchDownloadDialog(PatchManager manager)
         {
+            _manager = manager;
             InitializeComponent();
             this.DataContext = new PatchDownloadDialogViewModel();
+
+            var viewUpdateTimer = new Timer();
+            viewUpdateTimer.Elapsed += ViewUpdateTimerOnElapsed;
+            viewUpdateTimer.AutoReset = true;
+            viewUpdateTimer.Interval = 200;
+            viewUpdateTimer.Enabled = true;
+            viewUpdateTimer.Start();
+        }
+
+        private void ViewUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                SetGeneralProgress(_manager.CurrentInstallIndex, _manager.Downloads.Count);
+
+                for (var i = 0; i < PatchManager.MAX_DOWNLOADS_AT_ONCE; i++)
+                {
+                    var activePatch = _manager.Actives[i];
+
+                    if (_manager.Slots[i] || activePatch == null)
+                    {
+                        SetPatchProgress(i, ViewModel.PatchDoneLoc, 100f);
+                        continue;
+                    }
+
+                    var pct = Math.Round((double) (100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
+                    SetPatchProgress(i,
+                        $"{activePatch.Patch.VersionId} ({pct:#0.00}%, {Util.BytesToString(_manager.Speeds[i])}/s)",
+                        pct);
+                }
+
+                if (_manager.DownloadsDone)
+                {
+                    SetLeft(0, 0);
+                    SetDownloadDone();
+                }
+                else
+                {
+                    SetLeft(_manager.AllDownloadsLength, _manager.Speeds.Sum());
+                }
+            });
         }
 
         public void SetGeneralProgress(int curr, int final)

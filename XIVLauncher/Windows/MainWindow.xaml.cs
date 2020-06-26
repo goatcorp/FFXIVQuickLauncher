@@ -269,12 +269,13 @@ namespace XIVLauncher.Windows
                             return;
                         }
 
-                        var progressDialog = new PatchDownloadDialog(true);
+                        var patcher = new PatchManager(Repository.Boot, bootPatches, App.Settings.GamePath,
+                            App.Settings.PatchPath, _installer);
+
+                        var progressDialog = new PatchDownloadDialog(patcher);
                         progressDialog.Show();
                         this.Hide();
 
-                        var patcher = new PatchManager(Repository.Boot, bootPatches, progressDialog, App.Settings.GamePath,
-                            App.Settings.PatchPath, _installer);
                         patcher.OnFinish += (sender, args) =>
                         {
                             if (args)
@@ -398,13 +399,15 @@ namespace XIVLauncher.Windows
                 }
                 else
                 {
-                    Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame, "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+                    Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
+                        "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
 
-                    var progressDialog = new PatchDownloadDialog(false);
+                    var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer);
+
+                    var progressDialog = new PatchDownloadDialog(patcher);
                     progressDialog.Show();
                     this.Hide();
 
-                    var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, progressDialog, App.Settings.GamePath, App.Settings.PatchPath, _installer);
                     patcher.OnFinish += async (sender, args) =>
                     {
                         progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
