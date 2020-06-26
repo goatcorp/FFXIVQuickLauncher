@@ -40,6 +40,23 @@ namespace XIVLauncher.PatchInstaller
                 .MinimumLevel.Verbose()
                 .CreateLogger();
 
+            if (args.Length > 1)
+            {
+                try
+                {
+                    InstallPatch(args[0], args[1]);
+                    Log.Information("OK");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Patch installation failed.");
+                    Environment.Exit(-1);
+                }
+
+                Environment.Exit(0);
+                return;
+            }
+
             _client.Initialize(IPC_SERVER_PORT);
             _server.Start(IPC_CLIENT_PORT);
             _server.ReceivedRequest += ServerOnReceivedRequest;
@@ -56,7 +73,13 @@ namespace XIVLauncher.PatchInstaller
 
             while (true)
             {
-                Thread.Sleep(1);
+                if (Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher"))
+                {
+                    Environment.Exit(0);
+                    return;
+                }
+
+                Thread.Sleep(1000);
             }
 
             return;
@@ -179,7 +202,7 @@ namespace XIVLauncher.PatchInstaller
                     "ex3/859d0e24/D2020.03.26.0000.0000.patch"*/
                 };
                 foreach (var s in patchlist)
-                    DebugPatch(args[0] + s, args[1]);
+                    InstallPatch(args[0] + s, args[1]);
                 return;
             }
 
@@ -215,7 +238,7 @@ namespace XIVLauncher.PatchInstaller
                     installData.GameDirectory.CreateSubdirectory("boot");
 
                     Task.Run(() =>
-                        DebugPatch(installData.PatchFile.FullName,
+                        InstallPatch(installData.PatchFile.FullName,
                             Path.Combine(installData.GameDirectory.FullName, installData.Repo == Repository.Boot ? "boot" : "game")))
                         .ContinueWith(t =>
                     {
@@ -262,7 +285,7 @@ namespace XIVLauncher.PatchInstaller
             _client.Send(JsonConvert.SerializeObject(envelope, Formatting.None, JsonSettings));
         }
 
-        private static bool DebugPatch(string patchPath, string gamePath)
+        private static bool InstallPatch(string patchPath, string gamePath)
         {
             try
             {
