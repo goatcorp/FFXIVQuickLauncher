@@ -209,6 +209,11 @@ namespace XIVLauncher.PatchInstaller
 
                 case PatcherIpcOpCode.StartInstall:
                     var installData = (PatcherIpcStartInstall) msg.Data;
+
+                    // Ensure that subdirs exit
+                    installData.GameDirectory.CreateSubdirectory("game");
+                    installData.GameDirectory.CreateSubdirectory("boot");
+
                     Task.Run(() =>
                         DebugPatch(installData.PatchFile.FullName,
                             Path.Combine(installData.GameDirectory.FullName, installData.Repo == Repository.Boot ? "boot" : "game")))
