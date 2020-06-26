@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Windows;
+using Serilog;
 
 namespace XIVLauncher.Http
 {
@@ -30,7 +31,8 @@ namespace XIVLauncher.Http
                 var otp = e.Path.Substring(15);
                 if (otp.Length < 6)
                 {
-                    MessageBox.Show("Received malformed OTP code, please check macro.",
+                    Log.Error("Malformed otp: {0}", otp);
+                    MessageBox.Show("Received malformed OTP code, please check macro.\n\nInput:" + (string.IsNullOrEmpty(otp) ? "<empty string>" : otp),
                         "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
