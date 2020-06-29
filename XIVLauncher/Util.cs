@@ -65,7 +65,7 @@ namespace XIVLauncher
                 if (Directory.Exists(path) && IsValidFfxivPath(path))
                     return path;
 
-            return null;
+            return "C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn";
         }
 
         public static int GetUnixMillis()

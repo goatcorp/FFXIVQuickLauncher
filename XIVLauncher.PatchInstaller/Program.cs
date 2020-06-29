@@ -233,7 +233,10 @@ namespace XIVLauncher.PatchInstaller
                 case PatcherIpcOpCode.StartInstall:
                     var installData = (PatcherIpcStartInstall) msg.Data;
 
-                    // Ensure that subdirs exit
+                    // Ensure that subdirs exist
+                    if (!installData.GameDirectory.Exists)
+                        installData.GameDirectory.Create();
+
                     installData.GameDirectory.CreateSubdirectory("game");
                     installData.GameDirectory.CreateSubdirectory("boot");
 
