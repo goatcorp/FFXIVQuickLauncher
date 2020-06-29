@@ -102,13 +102,23 @@ namespace XIVLauncher.Game.Patch
         public void Start()
         {
 #if !DEBUG
-            var freeSpace = (long) Util.GetDiskFreeSpace(_patchStore.FullName);
+            var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.FullName);
 
-            if (freeSpace < AllDownloadsLength)
+            if (freeSpaceDownload < AllDownloadsLength)
             {
                 OnFinish?.Invoke(this, false);
 
-                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpace)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpaceDownload)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var freeSpaceGame = (long)Util.GetDiskFreeSpace(_gamePath.FullName);
+
+            if (freeSpaceGame < AllDownloadsLength)
+            {
+                OnFinish?.Invoke(this, false);
+
+                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceGameError", "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpaceGame)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 #endif
