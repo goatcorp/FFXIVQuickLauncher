@@ -40,13 +40,6 @@ namespace XIVLauncher
         {
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
-            Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
-                .UseCommandLineArgs()
-                .UseJsonFile(GetConfigPath("launcher"))
-                .UseTypeParser(new DirectoryInfoParser())
-                .UseTypeParser(new AddonListParser())
-                .Build();
-
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
             Log.Logger = new LoggerConfiguration()
@@ -71,6 +64,21 @@ namespace XIVLauncher
 #endif
                 .CreateLogger();
 
+#if !DEBUG
+            AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+            TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+#endif
+
+            try
+            {
+                SetupSettings();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Settings were corrupted, resetting");
+                File.Delete(GetConfigPath("launcher"));
+                SetupSettings();
+            }
 
 #if !XL_LOC_FORCEFALLBACKS
             try
@@ -89,11 +97,6 @@ namespace XIVLauncher
 #else
             // Force all fallbacks
             Loc.Setup("{}");
-#endif
-
-#if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
-            TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
 
             Log.Information(
@@ -124,6 +127,16 @@ namespace XIVLauncher
                 }
             }
 #endif
+        }
+
+        private void SetupSettings()
+        {
+            Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
+                .UseCommandLineArgs()
+                .UseJsonFile(GetConfigPath("launcher"))
+                .UseTypeParser(new DirectoryInfoParser())
+                .UseTypeParser(new AddonListParser())
+                .Build();
         }
 
         private void OnUpdateCheckFinished(object sender, EventArgs e)
