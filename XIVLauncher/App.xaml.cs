@@ -87,11 +87,8 @@ namespace XIVLauncher
                 var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
                 Log.Information("Trying to set up Loc for culture {0}", currentUiLang);
 
-                currentUiLang = "de";
-                var json = Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{currentUiLang}.json");
-
                 Loc.Setup(_allowedLang.Any(x => currentUiLang == x)
-                    ? json
+                    ? Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{currentUiLang}.json")
                     : "{}");
             }
             catch(Exception ex){
