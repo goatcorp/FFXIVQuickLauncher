@@ -197,5 +197,15 @@ namespace XIVLauncher
 
             return freeSpace;
         }
+
+        public static string GetFromResources(string resourceName)
+        {
+            var asm = typeof(Util).Assembly;
+            using var stream = asm.GetManifestResourceStream(resourceName);
+            using var reader = new StreamReader(stream);
+
+            return reader.ReadToEnd();
+        }
+
     }
 }

@@ -84,11 +84,14 @@ namespace XIVLauncher
 #if !XL_LOC_FORCEFALLBACKS
             try
             {
-                var currentUiLang = CultureInfo.CurrentUICulture;
-                Log.Information("Trying to set up Loc for culture {0}", currentUiLang.TwoLetterISOLanguageName);
+                var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                Log.Information("Trying to set up Loc for culture {0}", currentUiLang);
 
-                Loc.Setup(_allowedLang.Any(x => currentUiLang.TwoLetterISOLanguageName == x)
-                    ? $"Loc.xl.xl_{currentUiLang.TwoLetterISOLanguageName}.json"
+                currentUiLang = "de";
+                var json = Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{currentUiLang}.json");
+
+                Loc.Setup(_allowedLang.Any(x => currentUiLang == x)
+                    ? json
                     : "{}");
             }
             catch(Exception ex){
