@@ -47,8 +47,6 @@ namespace XIVLauncher.Windows
 
             ContextTextBlock.Text = message;
 
-            Serilog.Log.Error("ErrorWindow called: [{0}] [{1}]\n" + new TextRange(ExceptionTextBox.Document.ContentStart, ExceptionTextBox.Document.ContentEnd).Text, message, context);
-
             SystemSounds.Hand.Play();
 
             Activate();

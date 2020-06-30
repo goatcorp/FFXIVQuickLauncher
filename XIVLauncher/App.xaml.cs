@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -157,8 +158,6 @@ namespace XIVLauncher
 
         private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            Log.Error(e.Exception, "UnobservedTaskException occured.");
-
             if (!e.Observed)
                 EarlyInitExceptionHandler(sender, new UnhandledExceptionEventArgs(e.Exception, true));
         }
@@ -167,6 +166,8 @@ namespace XIVLauncher
         {
             this.Dispatcher.Invoke(() =>
             {
+                Log.Error((Exception) e.ExceptionObject, "Unhandled exception.");
+
                 if (_useFullExceptionHandler)
                     new ErrorWindow((Exception) e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
                         .ShowDialog();
