@@ -88,50 +88,6 @@ namespace XIVLauncher
             return new SolidColorBrush(ColorFromArgb(argb));
         }
 
-        private static Dictionary<int, string> _classJobFontDict = new Dictionary<int, string>
-        {
-            { 1, "\uF001" },
-            { 2, "\uF002" },
-            { 3, "\uF003" },
-            { 4, "\uF004" },
-            { 5, "\uF005" },
-            { 6, "\uF006" },
-            { 7, "\uF007" },
-            { 8, "\uF008" },
-            { 9, "\uF009" },
-            { 10, "\uF010" },
-            { 11, "\uF011" },
-            { 12, "\uF012" },
-            { 13, "\uF013" },
-            { 14, "\uF014" },
-            { 15, "\uF015" },
-            { 16, "\uF016" },
-            { 17, "\uF017" },
-            { 18, "\uF018" },
-            { 19, "\uF019" },
-            { 20, "\uF020" },
-            { 21, "\uF021" },
-            { 22, "\uF022" },
-            { 23, "\uF023" },
-            { 24, "\uF024" },
-            { 25, "\uF025" },
-            { 26, "\uF026" },
-            { 27, "\uF027" },
-            { 28, "\uF028" },
-            { 29, "\uF029" },
-            { 30, "\uF030" },
-            { 31, "\uF031" },
-            { 32, "\uF032" },
-            { 33, "\uF033" },
-            { 34, "\uF034" },
-            { 35, "\uF035" },
-            { 36, "\uF036" },
-            { 37, "\uF037" },
-            { 38, "\uF038" }
-        };
-
-        public static string ClassJobToIcon(int classJob) => _classJobFontDict[classJob];
-
         public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam)
         {
             Process.Start(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
