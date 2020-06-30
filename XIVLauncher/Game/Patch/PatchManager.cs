@@ -262,7 +262,7 @@ namespace XIVLauncher.Game.Patch
         {
             if (patchListEntry.HashType != "sha1")
             {
-                Log.Error("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
+                Log.Verbose("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
                 return true;
             }
 
