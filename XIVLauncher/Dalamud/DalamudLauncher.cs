@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using CheapLoc;
 using Dalamud;
 using Dalamud.Discord;
 using Dragablz;
@@ -71,6 +72,9 @@ namespace XIVLauncher.Dalamud
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
         {
+            if (!CheckVcRedist())
+                return;
+
             var addonDirectory = Path.Combine(Paths.RoamingPath, "addon", "Hooks");
             var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
@@ -206,6 +210,23 @@ namespace XIVLauncher.Dalamud
 
             Thread.Sleep(1000);
         }
+
+        private static bool CheckVcRedist()
+        {
+            if (File.Exists("C:\\Windows\\System32\\vcruntime140d.dll"))
+                return true;
+
+            var res = MessageBox.Show(
+                Loc.Localize("DalamudVcRedistError",
+                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable to be installed to continue.\n\nDo you want to install it now?"),
+                "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+
+            if (res == MessageBoxResult.Yes)
+                Process.Start("https://aka.ms/vs/16/release/vc_redist.x64.exe");
+
+            return false;
+        }
+
 
         public string Name => "XIVLauncher in-game features";
     }

@@ -87,9 +87,14 @@ namespace XIVLauncher
                 var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
                 Log.Information("Trying to set up Loc for culture {0}", currentUiLang);
 
-                Loc.Setup(_allowedLang.Any(x => currentUiLang == x)
-                    ? Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{currentUiLang}.json")
-                    : "{}");
+                if (_allowedLang.Any(x => currentUiLang == x))
+                {
+                    Loc.Setup(Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{currentUiLang}.json"));
+                }
+                else
+                {
+                    Loc.SetupWithFallbacks();
+                }
             }
             catch(Exception ex){
                 Log.Error(ex, "Could not get language information. Setting up fallbacks.");
