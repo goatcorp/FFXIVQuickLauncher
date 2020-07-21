@@ -102,7 +102,7 @@ namespace XIVLauncher.Game.Patch
         public void Start()
         {
 #if !DEBUG
-            var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.FullName);
+            var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.Root.FullName);
 
             if (freeSpaceDownload < AllDownloadsLength)
             {
@@ -112,7 +112,7 @@ namespace XIVLauncher.Game.Patch
                 return;
             }
 
-            var freeSpaceGame = (long)Util.GetDiskFreeSpace(_gamePath.FullName);
+            var freeSpaceGame = (long)Util.GetDiskFreeSpace(_gamePath.Root.FullName);
 
             if (freeSpaceGame < AllDownloadsLength)
             {
