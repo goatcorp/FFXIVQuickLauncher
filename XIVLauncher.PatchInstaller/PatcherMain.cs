@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
@@ -16,7 +17,7 @@ using ZetaIpc.Runtime.Server;
 
 namespace XIVLauncher.PatchInstaller
 {
-    public class Program
+    public class PatcherMain
     {
         public const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
 
@@ -33,53 +34,60 @@ namespace XIVLauncher.PatchInstaller
 
         static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File(Path.Combine(Paths.RoamingPath, "patcher.log"))
-                .WriteTo.Debug()
-                .MinimumLevel.Verbose()
-                .CreateLogger();
-
-            if (args.Length > 1)
+            try
             {
-                try
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.Console()
+                    .WriteTo.File(Path.Combine(Paths.RoamingPath, "patcher.log"))
+                    .WriteTo.Debug()
+                    .MinimumLevel.Verbose()
+                    .CreateLogger();
+
+                if (args.Length > 1)
                 {
-                    InstallPatch(args[0], args[1]);
-                    Log.Information("OK");
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Patch installation failed.");
-                    Environment.Exit(-1);
-                }
+                    try
+                    {
+                        InstallPatch(args[0], args[1]);
+                        Log.Information("OK");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Patch installation failed.");
+                        Environment.Exit(-1);
+                    }
 
-                Environment.Exit(0);
-                return;
-            }
-
-            _client.Initialize(IPC_SERVER_PORT);
-            _server.Start(IPC_CLIENT_PORT);
-            _server.ReceivedRequest += ServerOnReceivedRequest;
-
-            Log.Information("[PATCHER] IPC connected");
-
-            SendIpcMessage(new PatcherIpcEnvelope
-            {
-                OpCode = PatcherIpcOpCode.Hello,
-                Data = DateTime.Now
-            });
-
-            Log.Information("[PATCHER] sent hello");
-
-            while (true)
-            {
-                if (Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher"))
-                {
                     Environment.Exit(0);
                     return;
                 }
 
-                Thread.Sleep(1000);
+                _client.Initialize(IPC_SERVER_PORT);
+                _server.Start(IPC_CLIENT_PORT);
+                _server.ReceivedRequest += ServerOnReceivedRequest;
+
+                Log.Information("[PATCHER] IPC connected");
+
+                SendIpcMessage(new PatcherIpcEnvelope
+                {
+                    OpCode = PatcherIpcOpCode.Hello,
+                    Data = DateTime.Now
+                });
+
+                Log.Information("[PATCHER] sent hello");
+
+                while (true)
+                {
+                    if (Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher"))
+                    {
+                        Environment.Exit(0);
+                        return;
+                    }
+
+                    Thread.Sleep(1000);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Patcher init failed.\n\n" + ex, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return;
@@ -218,7 +226,7 @@ namespace XIVLauncher.PatchInstaller
         {
             Log.Information("[PATCHER] IPC: " + e.Request);
 
-            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(e.Request, JsonSettings);
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(Base64Decode(e.Request), JsonSettings);
 
             switch (msg.OpCode)
             {
@@ -285,7 +293,19 @@ namespace XIVLauncher.PatchInstaller
 
         private static void SendIpcMessage(PatcherIpcMessages.PatcherIpcEnvelope envelope)
         {
-            _client.Send(JsonConvert.SerializeObject(envelope, Formatting.None, JsonSettings));
+            _client.Send(Base64Encode(JsonConvert.SerializeObject(envelope, Formatting.None, JsonSettings)));
+        }
+
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        public static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
         private static bool InstallPatch(string patchPath, string gamePath)
@@ -322,7 +342,14 @@ namespace XIVLauncher.PatchInstaller
             foreach (var repository in Enum.GetValues(typeof(Repository)).Cast<Repository>())
             {
                 // Overwrite the old BCK with the new game version
-                repository.GetVerFile(gamePath).CopyTo(repository.GetVerFile(gamePath, true).FullName, true);
+                try
+                {
+                    repository.GetVerFile(gamePath).CopyTo(repository.GetVerFile(gamePath, true).FullName, true);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not copy to BCK");
+                }
             }
         }
     }

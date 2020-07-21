@@ -44,6 +44,7 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.2.9.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
@@ -76,10 +77,10 @@
     <Compile Include="PatcherIpcMessages\PatcherIpcEnvelope.cs" />
     <Compile Include="PatcherIpcMessages\PatcherIpcOpCode.cs" />
     <Compile Include="PatcherIpcMessages\PatcherIpcStartInstall.cs" />
+    <Compile Include="PatcherMain.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="Util\BinaryReaderHelpers.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\ChecksumBinaryReader.cs" />
     <Compile Include="ZiPatchOld\Structures\Commands\FileHeader\FileHeaderStruct.cs" />

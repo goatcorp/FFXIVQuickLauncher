@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace XIVLauncher.Game.Patch
                 return;
 
             _server.ReceivedRequest += ServerOnReceivedRequest;
-            _server.Start(XIVLauncher.PatchInstaller.Program.IPC_SERVER_PORT);
+            _server.Start(XIVLauncher.PatchInstaller.PatcherMain.IPC_SERVER_PORT);
 
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 "XIVLauncher.PatchInstaller.exe");
@@ -91,12 +92,12 @@ namespace XIVLauncher.Game.Patch
         {
             Log.Information("[PATCHERIPC] IPC: " + e.Request);
 
-            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(e.Request, XIVLauncher.PatchInstaller.Program.JsonSettings);
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(PatcherMain.Base64Decode(e.Request), XIVLauncher.PatchInstaller.PatcherMain.JsonSettings);
 
             switch (msg.OpCode)
             {
                 case PatcherIpcOpCode.Hello:
-                    _client.Initialize(XIVLauncher.PatchInstaller.Program.IPC_CLIENT_PORT);
+                    _client.Initialize(XIVLauncher.PatchInstaller.PatcherMain.IPC_CLIENT_PORT);
                     Log.Information("[PATCHERIPC] GOT HELLO");
                     State = InstallerState.Ready;
                     break;
@@ -156,7 +157,7 @@ namespace XIVLauncher.Game.Patch
         {
             try
             {
-                _client.Send(JsonConvert.SerializeObject(envelope, Formatting.Indented, XIVLauncher.PatchInstaller.Program.JsonSettings));
+                _client.Send(PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, Formatting.Indented, XIVLauncher.PatchInstaller.PatcherMain.JsonSettings)));
             }
             catch (Exception e)
             {

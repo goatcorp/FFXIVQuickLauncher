@@ -63,7 +63,7 @@ namespace XIVLauncher.PatchInstaller
             var verFile = repo.GetVerFile(gamePath, isBck);
 
             if (!verFile.Exists) 
-                return Program.BASE_GAME_VERSION;
+                return PatcherMain.BASE_GAME_VERSION;
 
             return File.ReadAllText(verFile.FullName);
         }
