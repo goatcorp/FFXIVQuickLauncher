@@ -196,7 +196,7 @@ namespace XIVLauncher.Windows
                     _isLoggingIn = false;
                 }
             }
-            else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) || bool.Parse(Environment.GetEnvironmentVariable("XL_NOAUTOLOGIN") ?? "false"))
             {
                 App.Settings.AutologinEnabled = false;
                 AutoLoginCheckBox.IsChecked = false;

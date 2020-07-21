@@ -98,7 +98,7 @@ namespace XIVLauncher
             Process.Start("https://discord.gg/3NMcUV5");
         }
 
-        public static bool IsWine => Environment.GetEnvironmentVariable("XL_WINEONLINUX") == "True";
+        public static bool IsWine => bool.Parse(Environment.GetEnvironmentVariable("XL_WINEONLINUX") ?? "false");
 
         public static string BytesToString(long byteCount)
         {
