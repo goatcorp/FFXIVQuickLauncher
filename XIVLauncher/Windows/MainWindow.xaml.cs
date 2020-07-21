@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -86,17 +87,16 @@ namespace XIVLauncher.Windows
                 {
                     var imageBytes = _launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
-                    using (var stream = new MemoryStream(imageBytes))
-                    {
-                        var bitmapImage = new BitmapImage();
-                        bitmapImage.BeginInit();
-                        bitmapImage.StreamSource = stream;
-                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmapImage.EndInit();
-                        bitmapImage.Freeze();
+                    using var stream = new MemoryStream(imageBytes);
 
-                        _bannerBitmaps[i] = bitmapImage;
-                    }
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.StreamSource = stream;
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.EndInit();
+                    bitmapImage.Freeze();
+
+                    _bannerBitmaps[i] = bitmapImage;
                 }
 
                 Dispatcher.BeginInvoke(new Action(() => { BannerImage.Source = _bannerBitmaps[0]; }));
@@ -125,7 +125,7 @@ namespace XIVLauncher.Windows
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    NewsListView.Items.Add(new News {Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError"});
+                    NewsListView.ItemsSource = new List<News> {new News {Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError"}};
                 }));
             }
         }
