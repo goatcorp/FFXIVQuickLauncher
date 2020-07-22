@@ -11,7 +11,9 @@ namespace XIVLauncher
 { 
     class Updates
     {
+#if !XL_NOAUTOUPDATE
         public EventHandler OnUpdateCheckFinished;
+#endif
 
         public async Task Run(bool downloadPrerelease = false)
         {
@@ -29,8 +31,11 @@ namespace XIVLauncher
 
                 if (downloadedRelease != null)
                     UpdateManager.RestartApp();
+#if !XL_NOAUTOUPDATE
                 else
                     OnUpdateCheckFinished?.Invoke(this, null);
+#endif
+
             }
 
             // Reset security protocol after updating
