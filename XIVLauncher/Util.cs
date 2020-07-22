@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Media;
-using IWshRuntimeLibrary;
 using Microsoft.Win32;
 using XIVLauncher.Game;
 
