@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Windows;
 using System.Windows.Media;
+using IWshRuntimeLibrary;
 using Microsoft.Win32;
 using XIVLauncher.Game;
 
@@ -50,14 +51,15 @@ namespace XIVLauncher
             return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
         }
 
-        private static readonly string[] PathsToTry =
+        private static string DefaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn");
+
+        private static readonly string[] PathsToTry = DriveInfo.GetDrives().Select(drive => $"{drive.Name}SquareEnix\\FINAL FANTASY XIV - A Realm Reborn").Concat(new List<string>
         {
-            "C:\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn",
-            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FINAL FANTASY XIV Online",
-            "C:\\Program Files (x86)\\Steam\\steamapps\\common\\FINAL FANTASY XIV - A Realm Reborn",
-            "C:\\Program Files (x86)\\FINAL FANTASY XIV - A Realm Reborn",
-            "C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn"
-        };
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam\\steamapps\\common\\FINAL FANTASY XIV Online"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam\\steamapps\\common\\FINAL FANTASY XIV - A Realm Reborn"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "FINAL FANTASY XIV - A Realm Reborn"),
+            DefaultPath
+        }).ToArray();
 
         public static string TryGamePaths()
         {
@@ -65,7 +67,7 @@ namespace XIVLauncher
                 if (Directory.Exists(path) && IsValidFfxivPath(path))
                     return path;
 
-            return "C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn";
+            return DefaultPath;
         }
 
         public static int GetUnixMillis()
