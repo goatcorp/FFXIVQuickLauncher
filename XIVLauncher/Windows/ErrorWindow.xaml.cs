@@ -62,12 +62,12 @@ namespace XIVLauncher.Windows
 
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/issues/new");
+            Process.Start($"{App.RepoUrl}/issues/new");
         }
 
         private void FaqButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/FAQ");
+            Process.Start($"{App.RepoUrl}/wiki/FAQ");
         }
     }
 }

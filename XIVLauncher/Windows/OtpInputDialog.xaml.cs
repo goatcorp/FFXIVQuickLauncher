@@ -84,7 +84,7 @@ namespace XIVLauncher.Windows
 
         public void OpenShortcutInfo_MouseUp(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/Setting-up-OTP-Phone-Shortcuts");
+            Process.Start($"{App.RepoUrl}/wiki/Setting-up-OTP-Phone-Shortcuts");
         }
     }
 }

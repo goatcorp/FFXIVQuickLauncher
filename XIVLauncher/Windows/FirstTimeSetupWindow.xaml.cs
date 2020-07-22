@@ -27,7 +27,7 @@ namespace XIVLauncher.Windows
 
 #if XL_NOAUTOUPDATE
             MessageBox.Show(
-                "You're running an unsupported version of XIVLauncher.\n\nThis can be unsafe and a danger to your SE account. If you have not gotten this unsupported version on purpose, please reinstall a clean version from https://github.com/goaaats/FFXIVQuickLauncher/releases.",
+                $"You're running an unsupported version of XIVLauncher.\n\nThis can be unsafe and a danger to your SE account. If you have not gotten this unsupported version on purpose, please reinstall a clean version from {App.RepoUrl}/releases.",
                 "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 #endif
         }

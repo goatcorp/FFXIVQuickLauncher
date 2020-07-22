@@ -222,7 +222,7 @@ namespace XIVLauncher.Windows
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-set-up-a-discord-bot");
+            Process.Start($"{App.RepoUrl}/wiki/How-to-set-up-a-discord-bot");
         }
 
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)

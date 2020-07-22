@@ -11,8 +11,6 @@ namespace XIVLauncher
 { 
     class Updates
     {
-        private const string RepoUrl = "https://github.com/goatcorp/FFXIVQuickLauncher";
-
         public EventHandler OnUpdateCheckFinished;
 
         public async Task Run(bool downloadPrerelease = false)
@@ -20,7 +18,7 @@ namespace XIVLauncher
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            using (var updateManager = await UpdateManager.GitHubUpdateManager(repoUrl:RepoUrl, applicationName: "XIVLauncher", prerelease: downloadPrerelease))
+            using (var updateManager = await UpdateManager.GitHubUpdateManager(repoUrl: App.RepoUrl, applicationName: "XIVLauncher", prerelease: downloadPrerelease))
             {
                 SquirrelAwareApp.HandleEvents(
                     onInitialInstall: v => updateManager.CreateShortcutForThisExe(),

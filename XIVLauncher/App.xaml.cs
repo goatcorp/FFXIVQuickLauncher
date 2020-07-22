@@ -29,6 +29,8 @@ namespace XIVLauncher
     /// </summary>
     public partial class App : Application
     {
+        public const string RepoUrl = "https://github.com/goatcorp/FFXIVQuickLauncher";
+
         public static ILauncherSettingsV3 Settings;
 
         private UpdateLoadingDialog _updateWindow;
