@@ -670,7 +670,7 @@ namespace XIVLauncher.Windows
 
         private void WorldStatusButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("http://is.xivup.com/");
+            Process.Start("https://is.xivup.com/");
         }
 
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
