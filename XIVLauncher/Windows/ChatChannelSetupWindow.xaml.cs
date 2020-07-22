@@ -141,7 +141,7 @@ namespace XIVLauncher.Windows
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            Process.Start("https://github.com/goaaats/FFXIVQuickLauncher/wiki/How-to-get-discord-ids");
+            Process.Start($"{App.RepoUrl}/wiki/How-to-get-discord-ids");
         }
 
         private void ChatTypeComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

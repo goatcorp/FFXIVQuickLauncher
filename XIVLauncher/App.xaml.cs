@@ -29,9 +29,13 @@ namespace XIVLauncher
     /// </summary>
     public partial class App : Application
     {
+        public const string RepoUrl = "https://github.com/goatcorp/FFXIVQuickLauncher";
+
         public static ILauncherSettingsV3 Settings;
 
+#if !XL_NOAUTOUPDATE
         private UpdateLoadingDialog _updateWindow;
+#endif
 
         private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "es"};
 
@@ -151,8 +155,10 @@ namespace XIVLauncher
             {
                 _useFullExceptionHandler = true;
 
+#if !XL_NOAUTOUPDATE
                 if (_updateWindow != null) 
                     _updateWindow.Hide();
+#endif
 
                 _mainWindow = new MainWindow();
                 _mainWindow.Initialize();
