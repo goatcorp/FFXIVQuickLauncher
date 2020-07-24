@@ -17,6 +17,7 @@ namespace Dalamud.Discord
 
         public ulong GuildId { get; set; }
         public ulong ChannelId { get; set; }
+        public string ChannelPrefix { get; set; }
     }
 
     [Serializable]
@@ -35,6 +36,9 @@ namespace Dalamud.Discord
 
         public bool CheckForDuplicateMessages { get; set; }
         public int ChatDelayMs { get; set; }
+        public string AtlEmoji { get; set; }
+        public string AtrEmoji { get; set; }
+        public string HqEmoji { get; set; }
 
         public bool DisableEmbeds { get; set; }
 

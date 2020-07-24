@@ -52,6 +52,7 @@ namespace XIVLauncher.Windows
             ChannelTypeComboBox.SelectedIndex = (int) channelConfig.Type;
             ChannelIdTextBox.Text = channelConfig.ChannelId.ToString();
             ServerIdTextBox.Text = channelConfig.GuildId.ToString();
+            ChannelPrefixTextBox.Text = channelConfig.ChannelPrefix.ToString();
         }
 
         public ChatChannelSetup(ChatTypeConfiguration chatTypeConfig = null)
@@ -85,6 +86,7 @@ namespace XIVLauncher.Windows
                 ChannelTypeComboBox.SelectedIndex = (int) chatTypeConfig.Channel.Type;
                 ChannelIdTextBox.Text = chatTypeConfig.Channel.ChannelId.ToString();
                 ServerIdTextBox.Text = chatTypeConfig.Channel.GuildId.ToString();
+                ChannelPrefixTextBox.Text = chatTypeConfig.Channel.ChannelPrefix?.ToString() ?? "";
 
                 ApplyColor(chatTypeConfig.Color);
             }
@@ -112,12 +114,15 @@ namespace XIVLauncher.Windows
                     }
                 }
 
+                var channelPrefix = ChannelPrefixTextBox.Text;
+
                 Result = new ChatTypeConfiguration
                 {
                     Channel = new ChannelConfiguration
                     {
                         ChannelId = channelId,
                         GuildId = guildId,
+                        ChannelPrefix = channelPrefix,
                         Type = (ChannelType) ChannelTypeComboBox.SelectedIndex
                     },
                     Color = _color

@@ -220,6 +220,33 @@
                                          Foreground="{DynamicResource MaterialDesignBody}"
                                          materialDesign:HintAssist.Hint="{Binding InGameAddonChatDelayLoc}" />
 
+                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"
+                                       Content="{Binding InGameAddonDiscordEmojiNoteLoc}" />
+
+                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"
+                                       Content="{Binding InGameAddonAtransLeftLoc}" />
+                                <TextBox x:Uid="AtransLeftTextBox" x:Name="AtransLeftTextBox" Margin="10,0,0,5"
+                                         Width="400"
+                                         VerticalAlignment="Center" HorizontalAlignment="Left"
+                                         Foreground="{DynamicResource MaterialDesignBody}"
+                                         materialDesign:HintAssist.Hint="{Binding InGameAddonAtransLeftHintLoc}" />
+
+                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"
+                                       Content="{Binding InGameAddonAtransRightLoc}" />
+                                <TextBox x:Uid="AtransRightTextBox" x:Name="AtransRightTextBox" Margin="10,0,0,5"
+                                         Width="400"
+                                         VerticalAlignment="Center" HorizontalAlignment="Left"
+                                         Foreground="{DynamicResource MaterialDesignBody}"
+                                         materialDesign:HintAssist.Hint="{Binding InGameAddonAtransRightHintLoc}" />
+
+                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"
+                                       Content="{Binding InGameAddonHqLoc}" />
+                                <TextBox x:Uid="HqTextBox" x:Name="HqTextBox" Margin="10,0,0,5"
+                                         Width="400"
+                                         VerticalAlignment="Center" HorizontalAlignment="Left"
+                                         Foreground="{DynamicResource MaterialDesignBody}"
+                                         materialDesign:HintAssist.Hint="{Binding InGameAddonHqHintLoc}" />
+
                                 <Separator />
                                 
                                 <Separator x:Uid="Separator_2" />

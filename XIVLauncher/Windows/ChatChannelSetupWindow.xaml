@@ -6,7 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="{Binding ChatChannelSetupTitleLoc}" Height="268.361" Width="535.302" WindowStartupLocation="CenterScreen"
+        Title="{Binding ChatChannelSetupTitleLoc}" Height="350" Width="535.302" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
@@ -28,11 +28,15 @@
             <StackPanel x:Uid="StackPanel_4" Orientation="Vertical" Width="180" HorizontalAlignment="Left">
                 <Label x:Uid="Label_2" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Server ID"/>
                 <TextBox x:Uid="ServerIdTextBox" x:Name="ServerIdTextBox" Width="203"/>
+                <Label x:Uid="Label_3" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left" Content="(Optional) Channel Prefix"/>
+                <TextBox x:Uid="ChannelPrefixTextBox" x:Name="ChannelPrefixTextBox" Width="203"/>
             </StackPanel>
 
             <StackPanel x:Uid="StackPanel_5" Orientation="Vertical" Width="180" HorizontalAlignment="Right" Margin="60,0,0,0">
                 <Label x:Uid="Label_3" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left">Channel ID</Label>
                 <TextBox x:Uid="ChannelIdTextBox" x:Name="ChannelIdTextBox" Width="203" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label x:Uid="Label_4" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left">Type \:emoji: and paste code</Label>
+                <Label x:Uid="Label_5" Width="210" VerticalAlignment="Center" HorizontalAlignment="Left">to use an emoji</Label>
             </StackPanel>
         </StackPanel>
 

@@ -102,6 +102,13 @@ namespace XIVLauncher.Windows.ViewModel
             InGameAddonChatDelayLoc = Loc.Localize("InGameAddonChatDelay", "Chat Post Delay");
             InGameAddonChatDelayDescriptionLoc = Loc.Localize("InGameAddonChatDelayDescription",
                 "Check for recently sent messages to avoid duplicates.\r\nThis allows for multiple users to use the same channel as a chat log.\r\nPlease set an appropriate delay in milliseconds below(e.g. 1000).");
+            InGameAddonDiscordEmojiNoteLoc = Loc.Localize("InGameAddonDiscordEmojiNote", "Note on Discord emojis: you may use any emote from any server the bot is in. Use \\:emote: in Discord to get the code to paste here.");
+            InGameAddonAtransLeftLoc = Loc.Localize("InGameAddonAtransLeft", "Use a Discord emoji for autotranslate left bracket");
+            InGameAddonAtransRightLoc = Loc.Localize("InGameAddonAtransRight", "Use a Discord emoji for autotranslate right bracket");
+            InGameAddonHqLoc = Loc.Localize("InGameAddonHq", "Use a Discord emoji for high quality symbol");
+            InGameAddonAtransLeftHintLoc = Loc.Localize("InGameAddonAtransLeftHint", "<:atL:12345>");
+            InGameAddonAtransRightHintLoc = Loc.Localize("InGameAddonAtransRightHint", "<:atR:12345>");
+            InGameAddonHqHintLoc = Loc.Localize("InGameAddonHqHint", "<:hq:12345>");
             UniversalisHintLoc = Loc.Localize("UniversalisHint",
                 "Market board data provided in cooperation with Universalis.");
             UniversalisOptOutLoc = Loc.Localize("UniversalisOptOut",
@@ -159,6 +166,13 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonSetRetainerChannelLoc { get; private set; }
         public string InGameAddonChatDelayLoc { get; private set; }
         public string InGameAddonChatDelayDescriptionLoc { get; private set; }
+        public string InGameAddonDiscordEmojiNoteLoc { get; private set; }
+        public string InGameAddonAtransLeftLoc { get; private set; }
+        public string InGameAddonAtransRightLoc { get; private set; }
+        public string InGameAddonHqLoc { get; private set; }
+        public string InGameAddonAtransLeftHintLoc { get; private set; }
+        public string InGameAddonAtransRightHintLoc { get; private set; }
+        public string InGameAddonHqHintLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
 
