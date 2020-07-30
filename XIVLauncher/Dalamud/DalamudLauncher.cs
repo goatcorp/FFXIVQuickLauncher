@@ -218,11 +218,8 @@ namespace XIVLauncher.Dalamud
 
             var res = MessageBox.Show(
                 Loc.Localize("DalamudVcRedistError",
-                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable to be installed to continue.\n\nDo you want to install it now?"),
-                "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-
-            if (res == MessageBoxResult.Yes)
-                Process.Start("https://aka.ms/vs/16/release/vc_redist.x64.exe");
+                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
+                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
             return false;
         }
