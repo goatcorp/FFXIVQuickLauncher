@@ -213,7 +213,7 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckVcRedist()
         {
-            if (File.Exists("C:\\Windows\\System32\\vcruntime140_clr0400.dll"))
+            if (File.Exists(Environment.ExpandEnvironmentVariables("%SystemRoot%\\System32\\vcruntime140_clr0400.dll")))
                 return true;
 
             var res = MessageBox.Show(
