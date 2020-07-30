@@ -224,14 +224,13 @@
                                        Content="{Binding InGameAddonInjectionDelayLoc}" />
 
                                 <StackPanel Orientation="Horizontal">
-                                    <xctk:DecimalUpDown x:Name="InjectionDelayUpDown" Margin="10,0,0,0" Width="60" HorizontalAlignment="Left" Value="0"/>
+                                    <xctk:DecimalUpDown x:Name="InjectionDelayUpDown" Margin="10,0,0,10" Width="60" HorizontalAlignment="Left" Value="0"/>
                                     <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
                                            Content="ms" ToolTip="{Binding InGameAddonInjectionDelayDescriptionLoc}"/>
                                 </StackPanel>
 
                                 <Separator />
                                 
-                                <Separator x:Uid="Separator_2" />
                                 <Label x:Uid="Label_6" Foreground="DarkGray" Margin="0,5,0,5"
                                        Content="{Binding UniversalisHintLoc}" />
                                 <CheckBox x:Uid="MbUploadOptOutCheckBox" x:Name="MbUploadOptOutCheckBox"
