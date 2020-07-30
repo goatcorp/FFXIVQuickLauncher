@@ -74,6 +74,7 @@ namespace XIVLauncher.Windows
             DiscordBotTokenTextBox.Text = featureConfig.Token;
             CheckForDuplicateMessagesCheckBox.IsChecked = featureConfig.CheckForDuplicateMessages;
             ChatDelayTextBox.Text = featureConfig.ChatDelayMs.ToString();
+            InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
             DisableEmbedsCheckBox.IsChecked = featureConfig.DisableEmbeds;
 
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
@@ -111,6 +112,10 @@ namespace XIVLauncher.Windows
             featureConfig.CheckForDuplicateMessages = CheckForDuplicateMessagesCheckBox.IsChecked == true;
             if (int.TryParse(ChatDelayTextBox.Text, out var parsedDelay))
                 featureConfig.ChatDelayMs = parsedDelay;
+
+            if (InjectionDelayUpDown.Value.HasValue)
+                App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
+
             featureConfig.DisableEmbeds = DisableEmbedsCheckBox.IsChecked == true;
             DalamudSettings.DiscordFeatureConfig = featureConfig;
 

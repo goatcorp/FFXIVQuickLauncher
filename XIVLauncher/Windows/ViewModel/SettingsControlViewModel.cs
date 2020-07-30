@@ -102,6 +102,9 @@ namespace XIVLauncher.Windows.ViewModel
             InGameAddonChatDelayLoc = Loc.Localize("InGameAddonChatDelay", "Chat Post Delay");
             InGameAddonChatDelayDescriptionLoc = Loc.Localize("InGameAddonChatDelayDescription",
                 "Check for recently sent messages to avoid duplicates.\r\nThis allows for multiple users to use the same channel as a chat log.\r\nPlease set an appropriate delay in milliseconds below(e.g. 1000).");
+            InGameAddonInjectionDelayLoc = Loc.Localize("InGameAddonInjectionDelayLoc", "Addon Injection Delay");
+            InGameAddonInjectionDelayDescriptionLoc = Loc.Localize("InGameAddonInjectionDelayDescriptionLoc",
+                "Delay the injection of the in-game addon. This allows you to hide it from e.g. OBS and Discord, since they will inject before it does.");
             UniversalisHintLoc = Loc.Localize("UniversalisHint",
                 "Market board data provided in cooperation with Universalis.");
             UniversalisOptOutLoc = Loc.Localize("UniversalisOptOut",
@@ -159,6 +162,8 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonSetRetainerChannelLoc { get; private set; }
         public string InGameAddonChatDelayLoc { get; private set; }
         public string InGameAddonChatDelayDescriptionLoc { get; private set; }
+        public string InGameAddonInjectionDelayLoc { get; private set; }
+        public string InGameAddonInjectionDelayDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
 

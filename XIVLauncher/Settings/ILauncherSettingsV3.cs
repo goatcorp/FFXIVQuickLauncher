@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
 
@@ -27,6 +28,7 @@ namespace XIVLauncher.Settings
         DirectoryInfo PatchPath { get; set; }
         bool? AskBeforePatchInstall { get; set; }
         public long SpeedLimitBytes { get; set; }
+        public decimal DalamudInjectionDelayMs { get; set; }
 
         #endregion
     }
