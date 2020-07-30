@@ -255,7 +255,24 @@ namespace XIVLauncher.Game.Patch
             Log.Information("PATCHING finish");
             _installer.FinishInstall(_gamePath);
 
+            try
+            {
+                DeletePatches();
+            }
+            catch (Exception e)
+            {
+                Log.Error("Could not delete installed patches.");
+            }
+
             OnFinish?.Invoke(this, true);
+        }
+
+        private void DeletePatches()
+        {
+            foreach (var dir in _patchStore.EnumerateDirectories())
+            {
+                dir.Delete(true);
+            }
         }
 
         private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
