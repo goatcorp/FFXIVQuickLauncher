@@ -109,6 +109,9 @@ namespace XIVLauncher.Windows.ViewModel
             InGameAddonAtransLeftHintLoc = Loc.Localize("InGameAddonAtransLeftHint", "<:atL:12345>");
             InGameAddonAtransRightHintLoc = Loc.Localize("InGameAddonAtransRightHint", "<:atR:12345>");
             InGameAddonHqHintLoc = Loc.Localize("InGameAddonHqHint", "<:hq:12345>");
+            InGameAddonInjectionDelayLoc = Loc.Localize("InGameAddonInjectionDelayLoc", "Addon Injection Delay");
+            InGameAddonInjectionDelayDescriptionLoc = Loc.Localize("InGameAddonInjectionDelayDescriptionLoc",
+                "Delay the injection of the in-game addon. This allows you to hide it from e.g. OBS and Discord, since they will inject before it does.");
             UniversalisHintLoc = Loc.Localize("UniversalisHint",
                 "Market board data provided in cooperation with Universalis.");
             UniversalisOptOutLoc = Loc.Localize("UniversalisOptOut",
@@ -173,6 +176,8 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonAtransLeftHintLoc { get; private set; }
         public string InGameAddonAtransRightHintLoc { get; private set; }
         public string InGameAddonHqHintLoc { get; private set; }
+        public string InGameAddonInjectionDelayLoc { get; private set; }
+        public string InGameAddonInjectionDelayDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
 

@@ -77,6 +77,7 @@ namespace XIVLauncher.Windows
             AtransLeftTextBox.Text = featureConfig.AtlEmoji?.ToString() ?? "";
             AtransRightTextBox.Text = featureConfig.AtrEmoji?.ToString() ?? "";
             HqTextBox.Text = featureConfig.HqEmoji?.ToString() ?? "";
+            InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
             DisableEmbedsCheckBox.IsChecked = featureConfig.DisableEmbeds;
 
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
@@ -117,6 +118,10 @@ namespace XIVLauncher.Windows
             featureConfig.AtlEmoji = AtransLeftTextBox.Text ?? "";
             featureConfig.AtrEmoji = AtransRightTextBox.Text ?? "";
             featureConfig.HqEmoji = HqTextBox.Text ?? "";
+
+            if (InjectionDelayUpDown.Value.HasValue)
+                App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
+
             featureConfig.DisableEmbeds = DisableEmbedsCheckBox.IsChecked == true;
             DalamudSettings.DiscordFeatureConfig = featureConfig;
 

@@ -87,91 +87,91 @@ namespace XIVLauncher.Dalamud
             var configPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
             var config = DalamudSettings.DalamudConfig;
 
-            using (var client = new WebClient())
+            Thread.Sleep((int) App.Settings.DalamudInjectionDelayMs);
+
+            using var client = new WebClient();
+
+            // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            var versionInfoJson = client.DownloadString(REMOTE_BASE + (config.DoDalamudTest ? "stg/" : string.Empty) + "version");
+
+            var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
+
+
+            if (doDownloads)
             {
-                // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-                var versionInfoJson = client.DownloadString(REMOTE_BASE + (config.DoDalamudTest ? "stg/" : string.Empty) + "version");
-
-                var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
-
-
-                if (doDownloads)
+                if (!File.Exists(addonExe))
                 {
-                    if (!File.Exists(addonExe))
-                    {
-                        Serilog.Log.Information("[HOOKS] Not found, redownloading");
+                    Serilog.Log.Information("[HOOKS] Not found, redownloading");
+                    Download(addonDirectory, config.DoDalamudTest);
+                }
+                else
+                {
+                    var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
+                    var version = versionInfo.ProductVersion;
+
+                    Serilog.Log.Information("[HOOKS] Hooks update check: local {0} remote {1}", version,
+                        remoteVersionInfo.AssemblyVersion);
+
+                    if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
                         Download(addonDirectory, config.DoDalamudTest);
-                    }
-                    else
-                    {
-                        var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
-                        var version = versionInfo.ProductVersion;
-
-                        Serilog.Log.Information("[HOOKS] Hooks update check: local {0} remote {1}", version,
-                            remoteVersionInfo.AssemblyVersion);
-
-                        if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
-                            Download(addonDirectory, config.DoDalamudTest);
-                    }
                 }
-
-                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
-                    return;
-
-                if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
-                    !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")) ||
-                    !File.Exists(Path.Combine(addonDirectory, "Dalamud.Injector.exe")))
-                {
-                    MessageBox.Show(
-                        "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
-                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    Directory.Delete(addonDirectory, true);
-                    return;
-                }
-
-                var startInfo = new DalamudStartInfo
-                {
-                    Language = language,
-                    PluginDirectory = ingamePluginPath,
-                    DefaultPluginDirectory = defaultPluginPath,
-                    ConfigurationPath = configPath,
-                    GameVersion = remoteVersionInfo.SupportedGameVer
-                };
-
-                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
-
-                var process = new Process
-                {
-                    StartInfo =
-                    {
-                        FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
-                        Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory
-                    }
-                };
-
-                process.Start();
-
-                Serilog.Log.Information("[HOOKS] Started dalamud! Staging: " + config.DoDalamudTest);
-
-                // Reset security protocol after updating
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
             }
+
+            if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+                return;
+
+            if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
+                !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")) ||
+                !File.Exists(Path.Combine(addonDirectory, "Dalamud.Injector.exe")))
+            {
+                MessageBox.Show(
+                    "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Directory.Delete(addonDirectory, true);
+                return;
+            }
+
+            var startInfo = new DalamudStartInfo
+            {
+                Language = language,
+                PluginDirectory = ingamePluginPath,
+                DefaultPluginDirectory = defaultPluginPath,
+                ConfigurationPath = configPath,
+                GameVersion = remoteVersionInfo.SupportedGameVer
+            };
+
+            var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
+
+            var process = new Process
+            {
+                StartInfo =
+                {
+                    FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
+                    Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory
+                }
+            };
+
+            process.Start();
+
+            Serilog.Log.Information("[HOOKS] Started dalamud! Staging: " + config.DoDalamudTest);
+
+            // Reset security protocol after updating
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
         }
 
         public static bool CanRunDalamud(DirectoryInfo gamePath)
         {
-            using (var client = new WebClient())
-            {
-                var versionInfoJson = client.DownloadString(REMOTE_BASE + "version");
-                var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
+            using var client = new WebClient();
+
+            var versionInfoJson = client.DownloadString(REMOTE_BASE + "version");
+            var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
 
-                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
-                    return false;
-            }
+            if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+                return false;
 
             return true;
         }
@@ -213,16 +213,13 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckVcRedist()
         {
-            if (File.Exists("C:\\Windows\\System32\\vcruntime140_clr0400.dll"))
+            if (File.Exists(Environment.ExpandEnvironmentVariables("%SystemRoot%\\System32\\vcruntime140_clr0400.dll")))
                 return true;
 
             var res = MessageBox.Show(
                 Loc.Localize("DalamudVcRedistError",
-                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable to be installed to continue.\n\nDo you want to install it now?"),
-                "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-
-            if (res == MessageBoxResult.Yes)
-                Process.Start("https://aka.ms/vs/16/release/vc_redist.x64.exe");
+                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
+                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
             return false;
         }
