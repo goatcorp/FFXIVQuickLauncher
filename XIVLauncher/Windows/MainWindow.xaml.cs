@@ -677,23 +677,24 @@ namespace XIVLauncher.Windows
         {
             _maintenanceQueueTimer = new Timer
             {
-                Interval = 5000
+                Interval = 15000
             };
 
             _maintenanceQueueTimer.Elapsed += (o, args) =>
             {
-                bool gateStatus;
+                var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+
+                var gateStatus = false;
                 try
                 {
                     gateStatus = _launcher.GetGateStatus();
                 }
                 catch
                 {
-                    // If getting our gate status fails, we shouldn't even bother
-                    return;
+                    // ignored
                 }
 
-                if (gateStatus)
+                if (gateStatus || bootPatches != null)
                 {
                     Console.Beep(529, 130);
                     Thread.Sleep(200);
@@ -710,6 +711,10 @@ namespace XIVLauncher.Windows
                     Console.Beep(466, 100);
                     Thread.Sleep(30);
                     Console.Beep(529, 900);
+
+                    if (bootPatches != null)
+                        MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
+                            "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
 
                     Dispatcher.BeginInvoke(new Action(() => LoginButton_Click(null, null)));
                     _maintenanceQueueTimer.Stop();
