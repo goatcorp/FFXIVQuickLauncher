@@ -66,6 +66,7 @@ namespace XIVLauncher.Windows
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
+            KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
 
             ReloadPluginList();
 
@@ -104,6 +105,7 @@ namespace XIVLauncher.Windows
             App.Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
             App.Settings.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
+            App.Settings.KeepPatches = KeepPatchesCheckBox.IsChecked == true;
 
             App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 

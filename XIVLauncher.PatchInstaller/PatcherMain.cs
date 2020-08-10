@@ -273,7 +273,8 @@ namespace XIVLauncher.PatchInstaller
 
                                 try
                                 {
-                                    installData.PatchFile.Delete();
+                                    if (!installData.KeepPatch)
+                                        installData.PatchFile.Delete();
                                 }
                                 catch (Exception exception)
                                 {
@@ -332,8 +333,6 @@ namespace XIVLauncher.PatchInstaller
                     foreach (var chunk in patchFile.GetChunks())
                         chunk.ApplyChunk(config);
                 }
-
-                patchFile.Dispose();
 
                 Log.Debug("Patch {0} installed", patchPath);
 
