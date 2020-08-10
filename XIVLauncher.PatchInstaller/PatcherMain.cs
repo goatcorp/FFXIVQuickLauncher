@@ -270,6 +270,15 @@ namespace XIVLauncher.PatchInstaller
                                 {
                                     OpCode = PatcherIpcOpCode.InstallOk
                                 });
+
+                                try
+                                {
+                                    installData.PatchFile.Delete();
+                                }
+                                catch (Exception exception)
+                                {
+                                    Log.Error(exception, "Could not delete patch file.");
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -323,6 +332,8 @@ namespace XIVLauncher.PatchInstaller
                     foreach (var chunk in patchFile.GetChunks())
                         chunk.ApplyChunk(config);
                 }
+
+                patchFile.Dispose();
 
                 Log.Debug("Patch {0} installed", patchPath);
 
