@@ -104,11 +104,11 @@ namespace XIVLauncher.Game.Patch
 #if !DEBUG
             var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.Root.FullName);
 
-            if (freeSpaceDownload < AllDownloadsLength)
+            if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
             {
                 OnFinish?.Invoke(this, false);
 
-                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpaceDownload)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length), Util.BytesToString(freeSpaceDownload)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -255,24 +255,7 @@ namespace XIVLauncher.Game.Patch
             Log.Information("PATCHING finish");
             _installer.FinishInstall(_gamePath);
 
-            try
-            {
-                DeletePatches();
-            }
-            catch (Exception e)
-            {
-                Log.Error("Could not delete installed patches.");
-            }
-
             OnFinish?.Invoke(this, true);
-        }
-
-        private void DeletePatches()
-        {
-            foreach (var dir in _patchStore.EnumerateDirectories())
-            {
-                dir.Delete(true);
-            }
         }
 
         private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
