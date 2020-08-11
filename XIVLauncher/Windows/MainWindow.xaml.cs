@@ -673,8 +673,13 @@ namespace XIVLauncher.Windows
             Process.Start("https://is.xivup.com/");
         }
 
+        static bool alerted = false;
+
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (_maintenanceQueueTimer != null)
+                return;
+
             _maintenanceQueueTimer = new Timer
             {
                 Interval = 15000
@@ -694,8 +699,10 @@ namespace XIVLauncher.Windows
                     // ignored
                 }
 
-                if (gateStatus || bootPatches != null)
+                if ((gateStatus || bootPatches != null) && !alerted)
                 {
+                    alerted = true;
+
                     Console.Beep(529, 130);
                     Thread.Sleep(200);
                     Console.Beep(529, 100);
@@ -716,8 +723,11 @@ namespace XIVLauncher.Windows
                         MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
                             "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
 
-                    Dispatcher.BeginInvoke(new Action(() => LoginButton_Click(null, null)));
-                    _maintenanceQueueTimer.Stop();
+                    Dispatcher.BeginInvoke(new Action(() => {
+                        LoginButton_Click(null, null);
+                        QuitMaintenanceQueueButton_OnClick(null, null);
+                    }));
+
                     return;
                 }
 

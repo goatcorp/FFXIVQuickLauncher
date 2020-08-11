@@ -1,4 +1,4 @@
-﻿<Window x:Uid="Window_1" x:Class="XIVLauncher.Windows.OtpInputDialog"
+﻿<Window x:Class="XIVLauncher.Windows.OtpInputDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,13 +13,13 @@
         AllowsTransparency="True"
         Background="Transparent"
         WindowStyle="None" Height="170.088" Width="269.186">
-    <Grid x:Uid="Grid_1" Margin="0,0,0,0">
-        <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
-            <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,0">
-                <TextBlock x:Uid="TextBlock_1" Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding OtpInputPromptLoc}"/>
+    <Grid Margin="0,0,0,0">
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
+            <StackPanel Margin="16,16,10,0">
+                <TextBlock Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding OtpInputPromptLoc}"/>
                 
                 <TextBox
-                  x:Uid="OtpTextBox" Margin="0,8,0,0"
+                  Margin="0,8,0,0"
                   HorizontalAlignment="Stretch"
                   PreviewTextInput="OtpTextBox_OnPreviewTextInput"
                   KeyDown="OtpTextBox_OnKeyDown"
@@ -27,19 +27,19 @@
                   Foreground="{DynamicResource MaterialDesignBody}"
                   x:Name="OtpTextBox" />
 
-                <StackPanel x:Uid="StackPanel_2" Orientation="Horizontal" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                     <Button
-                        x:Uid="Button_1" Content="{Binding CancelLoc}"
+                        Content="{Binding CancelLoc}"
                         Margin="10,0,0,0"
                         Width="100"
                         Click="CancelButton_OnClick" />
                     <Button
-                        x:Uid="Button_2" Content="{Binding OkLoc}"
+                        Content="{Binding OkLoc}"
                         Margin="7,0,0,0"
                         Width="100"
                         Click="OkButton_OnClick" />
                 </StackPanel>
-                <TextBlock x:Uid="TextBlock_2" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" MouseUp="OpenShortcutInfo_MouseUp" Text="{Binding OtpOneClickHintLoc}"/>
+                <TextBlock Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" MouseUp="OpenShortcutInfo_MouseUp" Text="{Binding OtpOneClickHintLoc}"/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

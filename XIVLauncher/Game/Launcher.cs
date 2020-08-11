@@ -96,6 +96,22 @@ namespace XIVLauncher.Game
 
             Log.Information($"XivGame::Login(steamServiceAccount:{isSteamServiceAccount}, cache:{useCache})");
 
+            if (string.IsNullOrEmpty(userName))
+            {
+                MessageBox.Show(
+                    "Username is empty",
+                    "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                MessageBox.Show(
+                    "Password is empty",
+                    "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+
             if (!useCache || !Cache.HasValidCache(userName))
             {
                 Log.Information("Cache is invalid or disabled, logging in normally.");
