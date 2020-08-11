@@ -228,6 +228,22 @@ namespace XIVLauncher.Windows
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(LoginUsername.Text))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyUsernameError", "Please enter an username."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(LoginPassword.Password))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyPasswordError", "Please enter a password."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (_isLoggingIn)
                 return;
 
