@@ -182,6 +182,8 @@ namespace XIVLauncher.Game.Patch
 
                 download.State = PatchState.Downloaded;
                 Slots[index] = true;
+                Progresses[index] = 0;
+                Speeds[index] = 0;
 
                 Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
             };
