@@ -673,8 +673,13 @@ namespace XIVLauncher.Windows
             Process.Start("https://is.xivup.com/");
         }
 
+        static bool alerted = false;
+
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (_maintenanceQueueTimer != null)
+                return;
+
             _maintenanceQueueTimer = new Timer
             {
                 Interval = 15000
@@ -694,8 +699,10 @@ namespace XIVLauncher.Windows
                     // ignored
                 }
 
-                if (gateStatus || bootPatches != null)
+                if ((gateStatus || bootPatches != null) && !alerted)
                 {
+                    alerted = true;
+
                     Console.Beep(529, 130);
                     Thread.Sleep(200);
                     Console.Beep(529, 100);
