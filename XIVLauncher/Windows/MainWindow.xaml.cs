@@ -542,18 +542,17 @@ namespace XIVLauncher.Windows
 
         private async Task StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus)
         {
-#if !DEBUG
-                if (!gateStatus)
-                {
-                    Log.Information("GateStatus is false.");
-                    MessageBox.Show(
-                        Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    _isLoggingIn = false;
+            if (!gateStatus)
+            {
+                Log.Information("GateStatus is false.");
+                MessageBox.Show(
+                    Loc.Localize("MaintenanceNotice",
+                        "Maintenance seems to be in progress. The game shouldn't be launched."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                _isLoggingIn = false;
 
-                    return;
-                }
-#endif
+                return;
+            }
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
 
