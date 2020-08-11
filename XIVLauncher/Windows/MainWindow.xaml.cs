@@ -321,14 +321,6 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private void DeleteOldPatches()
-        {
-            foreach (var directoryInfo in App.Settings.PatchPath.EnumerateDirectories())
-            {
-                directoryInfo.Delete(true);
-            }
-        }
-
         private void HandleLogin(bool autoLogin)
         {
             var hasValidCache = _launcher.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
@@ -421,18 +413,6 @@ namespace XIVLauncher.Windows
                         {
                             await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
                             _installer.Stop();
-
-                            // Need to wait for installer to exit and release lock on patch files TODO bother winter why is this happening
-                            Thread.Sleep(5000);
-
-                            try
-                            {
-                                DeleteOldPatches();
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error(ex, "Could not delete old patches.");
-                            }
                         }
                         else
                         {
