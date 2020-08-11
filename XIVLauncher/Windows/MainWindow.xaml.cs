@@ -723,8 +723,11 @@ namespace XIVLauncher.Windows
                         MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
                             "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
 
-                    Dispatcher.BeginInvoke(new Action(() => LoginButton_Click(null, null)));
-                    _maintenanceQueueTimer.Stop();
+                    Dispatcher.BeginInvoke(new Action(() => {
+                        LoginButton_Click(null, null);
+                        QuitMaintenanceQueueButton_OnClick(null, null);
+                    }));
+
                     return;
                 }
 
