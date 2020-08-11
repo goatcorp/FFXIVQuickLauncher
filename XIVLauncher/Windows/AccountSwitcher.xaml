@@ -1,4 +1,4 @@
-﻿<Window x:Uid="Window_1" x:Class="XIVLauncher.Windows.AccountSwitcher"
+﻿<Window x:Class="XIVLauncher.Windows.AccountSwitcher"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,52 +14,51 @@
         AllowsTransparency="True"
         Background="Transparent"
         WindowStyle="None" Height="400" Width="269.186" Deactivated="AccountSwitcher_OnDeactivated" Topmost="True">
-    <Grid x:Uid="Grid_1" Margin="0,0,0,0">
-        <materialDesign:Card x:Uid="materialDesign:Card_1" Background="{DynamicResource MaterialDesignPaper}" Height="390" Margin="0,0,10,0">
-            <StackPanel x:Uid="StackPanel_1" Margin="16,16,10,0">
-                <ListView x:Uid="AccountListView" x:Name="AccountListView" MouseUp="AccountListView_OnMouseUp" MaxHeight="370">
+    <Grid Margin="0,0,0,0">
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="390" Margin="0,0,10,0">
+            <StackPanel Margin="16,16,10,0">
+                <ListView x:Name="AccountListView" MouseUp="AccountListView_OnMouseUp" MaxHeight="370">
                     <ListView.ContextMenu>
-                        <ContextMenu x:Uid="ContextMenu_1" StaysOpen="true">
-                            <MenuItem x:Uid="MenuItem_1" Header="{Binding AccountSwitcherSetProfilePicLoc}" Click="SetProfilePicture_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <MenuItem x:Uid="MenuItem_2" Header="{Binding AccountSwitcherCreateShortcutLoc}" Click="CreateDesktopShortcut_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <MenuItem x:Uid="MenuItem_3" Header="{Binding RemoveLoc}" Click="RemoveAccount_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <MenuItem x:Uid="MenuItem_4" IsCheckable="True" Header="{Binding AccountSwitcherDontSavePasswordLoc}" Checked="DontSavePassword_OnChecked" Unchecked="DontSavePassword_OnUnchecked" Foreground="{DynamicResource MaterialDesignBody}"/>
+                        <ContextMenu StaysOpen="true">
+                            <MenuItem Header="{Binding AccountSwitcherSetProfilePicLoc}" Click="SetProfilePicture_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <MenuItem Header="{Binding AccountSwitcherCreateShortcutLoc}" Click="CreateDesktopShortcut_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <MenuItem Header="{Binding RemoveLoc}" Click="RemoveAccount_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <MenuItem IsCheckable="True" Header="{Binding AccountSwitcherDontSavePasswordLoc}" Checked="DontSavePassword_OnChecked" Unchecked="DontSavePassword_OnUnchecked" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
 
                     <ListView.ItemContainerStyle>
-                        <Style x:Uid="Style_2" TargetType="ListBoxItem">
-                            <Setter x:Uid="Setter_3" Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
-              <DataTemplate x:Uid="SingleLineDataTemplate" x:Name="SingleLineDataTemplate" DataType="accounts:AccountSwitcherEntry">
-                  <Grid x:Uid="Grid_2">
+              <DataTemplate x:Name="SingleLineDataTemplate" DataType="accounts:AccountSwitcherEntry">
+                  <Grid>
                       <Grid.ColumnDefinitions>
-                          <ColumnDefinition x:Uid="ColumnDefinition_1" Width="Auto" />
-                          <ColumnDefinition x:Uid="ColumnDefinition_2" Width="*" />
-                          <ColumnDefinition x:Uid="ColumnDefinition_3" Width="Auto" />
+                          <ColumnDefinition Width="Auto" />
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="Auto" />
                       </Grid.ColumnDefinitions>
-                      <StackPanel x:Uid="StackPanel_2" Orientation="Horizontal" Height="42">
-                          <Image x:Uid="Image_1" Source="{Binding ProfileImage}"></Image>
-                          <TextBlock x:Uid="TextBlock_1" Text="{Binding Account.UserName}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                      <StackPanel Orientation="Horizontal" Height="42">
+                          <Image Source="{Binding ProfileImage}"></Image>
+                          <TextBlock Text="{Binding Account.UserName}" VerticalAlignment="Center" Margin="12,0,0,0" />
                       </StackPanel>
 
-                      <StackPanel x:Uid="StackPanel_3" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
-                          <materialDesign:PackIcon x:Uid="materialDesign:PackIcon_1" Height="20" Width="20"
+                      <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                          <materialDesign:PackIcon Height="20" Width="20"
                                                    Margin="0,0,0,0" HorizontalAlignment="Right"
                                                    VerticalAlignment="Center">
                               <materialDesign:PackIcon.Style>
-                                  <Style x:Uid="Style_1" TargetType="materialDesign:PackIcon">
-                                      <!--<Setter x:Uid="Setter_1" Property="Kind" Value="Newspaper" />-->
+                                  <Style TargetType="materialDesign:PackIcon">
                                       <Style.Triggers>
-                                          <DataTrigger x:Uid="DataTrigger_1"
+                                          <DataTrigger
                                                        Binding="{Binding Account.UseSteamServiceAccount}" Value="True">
-                                              <Setter x:Uid="Setter_2" Property="Kind" Value="Steam" />
+                                              <Setter Property="Kind" Value="Steam" />
                                           </DataTrigger>
-                                          <DataTrigger x:Uid="DataTrigger_2"
+                                          <DataTrigger
                                                        Binding="{Binding Account.UseSteamServiceAccount}" Value="False">
-                                              <Setter x:Uid="Setter_4" Property="Visibility" Value="Hidden" />
+                                              <Setter Property="Visibility" Value="Hidden" />
                                           </DataTrigger>
                                       </Style.Triggers>
                                   </Style>
