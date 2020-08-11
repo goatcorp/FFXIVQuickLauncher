@@ -25,9 +25,9 @@
                                            x:Key="ChatTypeToFancyNameConverter" />
     </UserControl.Resources>
     <Grid x:Uid="Grid_1">
-        <dragablz:TabablzControl x:Uid="SetupTabControl" IsEnabled="True" FixedHeaderCount="6" x:Name="SetupTabControl"
+        <dragablz:TabablzControl x:Uid="SetupTabControl" IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl"
                                  Style="{StaticResource MaterialDesignTabablzControlStyle}">
-            <TabItem x:Uid="TabItem_1" Header="{Binding SettingsGameLoc}">
+            <TabItem x:Uid="SettingsTab" Header="{Binding SettingsGameLoc}">
                 <StackPanel x:Uid="StackPanel_1" Margin="10,10,0,0">
                     <TextBlock x:Uid="TextBlock_1" HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding GamePathLoc}" />
@@ -48,7 +48,7 @@
                             Content="{Binding RunIntegrityCheckLoc}" />
                 </StackPanel>
             </TabItem>
-            <TabItem x:Uid="TabItem_2" Header="{Binding SettingsGameSettingsLoc}">
+            <TabItem x:Uid="GameSettingsTab" Header="{Binding SettingsGameSettingsLoc}">
                 <StackPanel x:Uid="StackPanel_2" Margin="10,10,0,0">
                     <TextBlock x:Uid="TextBlock_2" HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding DirectXLoc}" />
@@ -77,7 +77,7 @@
                     </ComboBox>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Uid="TabItem_3" Header="{Binding SettingsAutoLaunchLoc}">
+            <TabItem x:Uid="AutoLaunchSettingsTab" Header="{Binding SettingsAutoLaunchLoc}">
                 <Grid x:Uid="Grid_3">
                     <Grid x:Uid="Grid_3" Margin="10,10,10,0">
                         <TextBlock x:Uid="TextBlock_3" HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -116,7 +116,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem x:Uid="TabItem_4" Header="{Binding SettingsInGameLoc}">
+            <TabItem x:Uid="InGameSettingsTab" Header="{Binding SettingsInGameLoc}">
                 <Grid x:Uid="Grid_4">
                     <ScrollViewer x:Uid="ScrollViewer_1" VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Uid="StackPanel_5" Margin="10,10,10,0">
@@ -241,7 +241,7 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
-            <TabItem x:Uid="TabItem_5" Header="Plugins">
+            <TabItem x:Uid="PluginsTab" Header="Plugins">
                 <Grid x:Uid="Grid_5" Margin="10,10,10,0">
                     <TextBlock x:Uid="TextBlock_5" HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PluginsDescriptionLoc}" />
@@ -263,7 +263,7 @@
                                Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10" Text="{Binding PluginsInstallHintLoc}"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Uid="TabItem_5" Header="{Binding SettingsPatchingLoc}">
+            <TabItem x:Uid="PatchingSettingsTab" Header="{Binding SettingsPatchingLoc}">
                 <StackPanel>
                     <CheckBox x:Name="AskBeforePatchingCheckBox"
                               Content="{Binding AskBeforePatchLoc}"
@@ -294,7 +294,7 @@
                 </StackPanel>
 
             </TabItem>
-            <TabItem x:Uid="TabItem_6" Header="{Binding SettingsAboutLoc}">
+            <TabItem x:Uid="AboutTab" Header="{Binding SettingsAboutLoc}">
                 <ScrollViewer x:Uid="ScrollViewer_2" VerticalScrollBarVisibility="Auto">
                     <Grid x:Uid="Grid_6">
                         <StackPanel x:Uid="StackPanel_9" Margin="10,10,10,0">
