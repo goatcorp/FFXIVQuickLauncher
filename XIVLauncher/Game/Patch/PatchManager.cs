@@ -208,6 +208,17 @@ namespace XIVLauncher.Game.Patch
                         Log.Information("All patches downloaded.");
 
                         DownloadsDone = true;
+
+                        for (var j = 0; j < Progresses.Length; j++)
+                        {
+                            Progresses[j] = 0;
+                        }
+
+                        for (var j = 0; j < Speeds.Length; j++)
+                        {
+                            Speeds[j] = 0;
+                        }
+
                         return;
                     }
 
