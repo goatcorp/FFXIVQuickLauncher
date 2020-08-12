@@ -104,11 +104,11 @@ namespace XIVLauncher.Game.Patch
 #if !DEBUG
             var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.Root.FullName);
 
-            if (freeSpaceDownload < AllDownloadsLength)
+            if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
             {
                 OnFinish?.Invoke(this, false);
 
-                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpaceDownload)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length), Util.BytesToString(freeSpaceDownload)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -182,6 +182,8 @@ namespace XIVLauncher.Game.Patch
 
                 download.State = PatchState.Downloaded;
                 Slots[index] = true;
+                Progresses[index] = 0;
+                Speeds[index] = 0;
 
                 Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
             };
@@ -208,6 +210,17 @@ namespace XIVLauncher.Game.Patch
                         Log.Information("All patches downloaded.");
 
                         DownloadsDone = true;
+
+                        for (var j = 0; j < Progresses.Length; j++)
+                        {
+                            Progresses[j] = 0;
+                        }
+
+                        for (var j = 0; j < Speeds.Length; j++)
+                        {
+                            Speeds[j] = 0;
+                        }
+
                         return;
                     }
 
@@ -255,24 +268,7 @@ namespace XIVLauncher.Game.Patch
             Log.Information("PATCHING finish");
             _installer.FinishInstall(_gamePath);
 
-            try
-            {
-                DeletePatches();
-            }
-            catch (Exception e)
-            {
-                Log.Error("Could not delete installed patches.");
-            }
-
             OnFinish?.Invoke(this, true);
-        }
-
-        private void DeletePatches()
-        {
-            foreach (var dir in _patchStore.EnumerateDirectories())
-            {
-                dir.Delete(true);
-            }
         }
 
         private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)

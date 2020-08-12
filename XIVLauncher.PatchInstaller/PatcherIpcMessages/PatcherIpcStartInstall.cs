@@ -13,5 +13,6 @@ namespace XIVLauncher.PatchInstaller.PatcherIpcMessages
         public Repository Repo { get; set; }
         public string VersionId { get; set; }
         public DirectoryInfo GameDirectory { get; set; }
+        public bool KeepPatch { get; set; }
     }
 }

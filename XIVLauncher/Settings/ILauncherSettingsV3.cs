@@ -26,9 +26,10 @@ namespace XIVLauncher.Settings
         string CurrentAccountId { get; set; }
         bool? EncryptArguments { get; set; }
         DirectoryInfo PatchPath { get; set; }
-        bool? AskBeforePatchInstall { get; set; }
-        public long SpeedLimitBytes { get; set; }
-        public decimal DalamudInjectionDelayMs { get; set; }
+        bool? AskBeforePatchInstall { get; set; } 
+        long SpeedLimitBytes { get; set; } 
+        decimal DalamudInjectionDelayMs { get; set; }
+        bool? KeepPatches { get; set; }
 
         #endregion
     }

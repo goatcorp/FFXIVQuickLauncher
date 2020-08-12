@@ -228,6 +228,22 @@ namespace XIVLauncher.Windows
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(LoginUsername.Text))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyUsernameError", "Please enter an username."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(LoginPassword.Password))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyPasswordError", "Please enter a password."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (_isLoggingIn)
                 return;
 
@@ -302,14 +318,6 @@ namespace XIVLauncher.Windows
             {
                 new ErrorWindow(ex, "Could not patch boot.", nameof(HandleBootCheck)).ShowDialog();
                 Environment.Exit(0);
-            }
-        }
-
-        private void DeleteOldPatches()
-        {
-            foreach (var directoryInfo in App.Settings.PatchPath.EnumerateDirectories())
-            {
-                directoryInfo.Delete(true);
             }
         }
 
@@ -405,18 +413,6 @@ namespace XIVLauncher.Windows
                         {
                             await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
                             _installer.Stop();
-
-                            // Need to wait for installer to exit and release lock on patch files TODO bother winter why is this happening
-                            Thread.Sleep(5000);
-
-                            try
-                            {
-                                DeleteOldPatches();
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error(ex, "Could not delete old patches.");
-                            }
                         }
                         else
                         {
@@ -526,18 +522,17 @@ namespace XIVLauncher.Windows
 
         private async Task StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus)
         {
-#if !DEBUG
-                if (!gateStatus)
-                {
-                    Log.Information("GateStatus is false.");
-                    MessageBox.Show(
-                        Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    _isLoggingIn = false;
+            if (!gateStatus)
+            {
+                Log.Information("GateStatus is false.");
+                MessageBox.Show(
+                    Loc.Localize("MaintenanceNotice",
+                        "Maintenance seems to be in progress. The game shouldn't be launched."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                _isLoggingIn = false;
 
-                    return;
-                }
-#endif
+                return;
+            }
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
 
@@ -675,25 +670,29 @@ namespace XIVLauncher.Windows
 
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (_maintenanceQueueTimer != null)
+                return;
+
             _maintenanceQueueTimer = new Timer
             {
-                Interval = 5000
+                Interval = 15000
             };
 
             _maintenanceQueueTimer.Elapsed += (o, args) =>
             {
-                bool gateStatus;
+                var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+
+                var gateStatus = false;
                 try
                 {
                     gateStatus = _launcher.GetGateStatus();
                 }
                 catch
                 {
-                    // If getting our gate status fails, we shouldn't even bother
-                    return;
+                    // ignored
                 }
 
-                if (gateStatus)
+                if (gateStatus || bootPatches != null)
                 {
                     Console.Beep(529, 130);
                     Thread.Sleep(200);
@@ -711,12 +710,15 @@ namespace XIVLauncher.Windows
                     Thread.Sleep(30);
                     Console.Beep(529, 900);
 
-                    Dispatcher.BeginInvoke(new Action(() => LoginButton_Click(null, null)));
-                    _maintenanceQueueTimer.Stop();
-                    return;
-                }
+                    if (bootPatches != null)
+                        MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
+                            "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
 
-                _maintenanceQueueTimer.Start();
+                    Dispatcher.BeginInvoke(new Action(() => {
+                        LoginButton_Click(null, null);
+                        QuitMaintenanceQueueButton_OnClick(null, null);
+                    }));
+                }
             };
 
             DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);

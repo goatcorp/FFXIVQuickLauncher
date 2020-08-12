@@ -109,6 +109,7 @@ namespace XIVLauncher.Windows.ViewModel
             InGameAddonAtransLeftHintLoc = Loc.Localize("InGameAddonAtransLeftHint", "<:atL:12345>");
             InGameAddonAtransRightHintLoc = Loc.Localize("InGameAddonAtransRightHint", "<:atR:12345>");
             InGameAddonHqHintLoc = Loc.Localize("InGameAddonHqHint", "<:hq:12345>");
+            InGameAddonChatChannelHintLoc = Loc.Localize("InGameAddonChatChannelHint", "<:companycrest:12345>");
             InGameAddonInjectionDelayLoc = Loc.Localize("InGameAddonInjectionDelayLoc", "Addon Injection Delay");
             InGameAddonInjectionDelayDescriptionLoc = Loc.Localize("InGameAddonInjectionDelayDescriptionLoc",
                 "Delay the injection of the in-game addon. This allows you to hide it from e.g. OBS and Discord, since they will inject before it does.");
@@ -127,6 +128,7 @@ namespace XIVLauncher.Windows.ViewModel
             AskBeforePatchLoc = Loc.Localize("AskBeforePatch", "Ask before installing a game patch");
             PatchPathLoc = Loc.Localize("PatchPath", "Patch Download Directory");
             PatchSpeedLimitLoc = Loc.Localize("PatchSpeedLimit", "Download Speed Limit");
+            KeepPatchesLoc = Loc.Localize("KeepPatches", "Keep downloaded patches for future reinstalls");
 
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
@@ -176,6 +178,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonAtransLeftHintLoc { get; private set; }
         public string InGameAddonAtransRightHintLoc { get; private set; }
         public string InGameAddonHqHintLoc { get; private set; }
+        public string InGameAddonChatChannelHintLoc { get; private set; }
         public string InGameAddonInjectionDelayLoc { get; private set; }
         public string InGameAddonInjectionDelayDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
@@ -189,6 +192,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string AskBeforePatchLoc { get; private set; }
         public string PatchPathLoc { get; private set; }
         public string PatchSpeedLimitLoc { get; private set; }
+        public string KeepPatchesLoc { get; private set; }
 
         public string SettingsAboutLoc { get; private set; }
         public string CreditsLoc { get; private set; }

@@ -26,13 +26,6 @@ namespace XIVLauncher.Game.Patch
         private IpcServer _server = new IpcServer();
         private IpcClient _client = new IpcClient();
 
-        public class OnPatchCommandCompleteEventArgs : EventArgs
-        {
-            public bool IsSuccess { get; set; }
-            public int CreatedFile { get; set; }
-            public int CreatedFolder { get; set; }
-        }
-
         public enum InstallerState
         {   
             NotStarted,
@@ -43,8 +36,6 @@ namespace XIVLauncher.Game.Patch
         }
 
         public InstallerState State { get; private set; } = InstallerState.NotStarted;
-
-        public event EventHandler<OnPatchCommandCompleteEventArgs> OnPatchCommandComplete;
 
         public void StartIfNeeded()
         {
@@ -139,7 +130,8 @@ namespace XIVLauncher.Game.Patch
                     GameDirectory = gameDirectory,
                     PatchFile = file,
                     Repo = repo,
-                    VersionId = patch.VersionId
+                    VersionId = patch.VersionId,
+                    KeepPatch = App.Settings.KeepPatches.GetValueOrDefault(false)
                 }
             });
         }
