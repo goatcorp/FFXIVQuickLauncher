@@ -222,7 +222,7 @@ namespace XIVLauncher.Dalamud
             else if (!CheckDotNet48() && CheckVc2019())
             {
                 var res = MessageBox.Show(
-                Loc.Localize("DalamudVcRedistError",
+                Loc.Localize("DalamudDotNet48RedistError",
                     "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
@@ -231,7 +231,7 @@ namespace XIVLauncher.Dalamud
             else if (CheckDotNet48() && !CheckVc2019())
             {
                 var res = MessageBox.Show(
-                Loc.Localize("DalamudVcRedistError",
+                Loc.Localize("DalamudVc2019RedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
