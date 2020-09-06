@@ -11,6 +11,7 @@ using CheapLoc;
 using Dalamud;
 using Dalamud.Discord;
 using Dragablz;
+using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Shell.Interop;
 using Newtonsoft.Json;
 using Serilog;
@@ -213,14 +214,80 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckVcRedist()
         {
-            if (File.Exists(Environment.ExpandEnvironmentVariables("%SystemRoot%\\System32\\vcruntime140_clr0400.dll")))
+            if (CheckDotNet48() && CheckVc2019() &&
+                File.Exists(Environment.ExpandEnvironmentVariables("%SystemRoot%\\System32\\vcruntime140_clr0400.dll")))
+            {
                 return true;
+            }
+            else if (!CheckDotNet48() && CheckVc2019())
+            {
+                var res = MessageBox.Show(
+                Loc.Localize("DalamudVcRedistError",
+                    "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage."),
+                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
-            var res = MessageBox.Show(
+                return false;
+            }
+            else if (CheckDotNet48() && !CheckVc2019())
+            {
+                var res = MessageBox.Show(
+                Loc.Localize("DalamudVcRedistError",
+                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
+                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                return false;
+            }
+            else
+            {
+                var res = MessageBox.Show(
                 Loc.Localize("DalamudVcRedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
+                return false;
+            }
+        }
+
+        private static bool CheckDotNet48()
+        {
+            Serilog.Log.Information("Checking for .Net 4.8 or later...");
+
+            // copied and adjusted from https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
+
+            const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
+
+            using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
+            {
+                if (ndpKey != null && ndpKey.GetValue("Release") != null && (int)ndpKey.GetValue("Release") >= 528040)
+                {
+                    return true;
+                }
+                else
+                {
+                    Serilog.Log.Error(".Net 4.8 or later not found");
+                    return false;
+                }
+            }
+
+            
+        }
+
+        private static bool CheckVc2019()
+        {
+            Serilog.Log.Information("Checking for VS 2015-2019 Redist...");
+
+            // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
+            // and https://github.com/bitbeans/RedistributableChecker
+
+            var vcreg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum", false);
+            if (vcreg == null) return false;
+            var vcVersion = vcreg.GetValue("Version");
+            if (((string)vcVersion).StartsWith("14"))
+            {
+                return true;
+            }
+
+            Serilog.Log.Error("VC 2015-2019 redistributable not found");
             return false;
         }
 
