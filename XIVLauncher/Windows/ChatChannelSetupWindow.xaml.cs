@@ -52,7 +52,7 @@ namespace XIVLauncher.Windows
             ChannelTypeComboBox.SelectedIndex = (int) channelConfig.Type;
             ChannelIdTextBox.Text = channelConfig.ChannelId.ToString();
             ServerIdTextBox.Text = channelConfig.GuildId.ToString();
-            ChannelPrefixTextBox.Text = channelConfig.ChannelPrefix.ToString();
+            ChannelPrefixTextBox.Text = channelConfig.ChannelPrefix?.ToString() ?? "";
         }
 
         public ChatChannelSetup(ChatTypeConfiguration chatTypeConfig = null)
