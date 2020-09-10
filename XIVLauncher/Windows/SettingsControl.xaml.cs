@@ -235,7 +235,7 @@ namespace XIVLauncher.Windows
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            Process.Start($"{App.RepoUrl}/wiki/How-to-set-up-a-discord-bot");
+            Process.Start($"{App.RepoUrl}/wiki/Discord-Integration");
         }
 
         private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
