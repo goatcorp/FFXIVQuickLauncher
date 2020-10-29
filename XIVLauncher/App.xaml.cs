@@ -196,48 +196,41 @@ namespace XIVLauncher
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            if (e.Args.Length > 0 && e.Args[0] == "--genLocalizable")
-            {
-                Loc.ExportLocalizable();
-                Environment.Exit(0);
-                return;
-            }
-
-            if (e.Args.Length > 0 && e.Args[0] == "--genIntegrity")
-            {
-                var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
-                File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
-
-                MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");
-                Environment.Exit(0);
-                return;
-            }
-
-            // Check if the accountName parameter is provided, if yes, pass it to MainWindow
             var accountName = string.Empty;
 
             if (e.Args.Length > 0)
             {
                 foreach (string arg in e.Args)
                 {
+                    if (arg == "--genLocalizable")
+                    {
+                        Loc.ExportLocalizable();
+                        Environment.Exit(0);
+                        return;
+                    }
+
+                    if (arg == "--genIntegrity")
+                    {
+                        var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
+                        File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
+
+                        MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");
+                        Environment.Exit(0);
+                        return;
+                    }
+
+                    // Check if the accountName parameter is provided, if yes, pass it to MainWindow
                     if (arg.StartsWith("--account="))
                     {
                         accountName = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
                         App.Settings.CurrentAccountId = accountName;
                     }
-                }
-            }
-                
 
-            // Override client launch language by parameter
-            if (e.Args.Length > 0)
-            {
-                foreach (string arg in e.Args)
-                {
+                    // Override client launch language by parameter
                     if (arg.StartsWith("--clientlang="))
                     {
                         string langarg = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
-                        Enum.TryParse(langarg, out ClientLanguage lang);
+                        Enum.TryParse(langarg, out ClientLanguage lang); // defaults to Japanese if the input was invalid.
                         App.Settings.Language = lang;
                         Log.Information($"Language set as {App.Settings.Language.ToString()} by launch argument.");
                     }
