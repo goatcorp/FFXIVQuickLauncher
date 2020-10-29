@@ -670,9 +670,15 @@ namespace XIVLauncher.Windows
 
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (_maintenanceQueueTimer != null)
-                return;
+            if (_maintenanceQueueTimer == null)
+                SetupMaintenanceQueueTimer();
 
+            DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
+            _maintenanceQueueTimer.Start();
+        }
+
+        private void SetupMaintenanceQueueTimer()
+        {
             _maintenanceQueueTimer = new Timer
             {
                 Interval = 15000
@@ -720,9 +726,6 @@ namespace XIVLauncher.Windows
                     }));
                 }
             };
-
-            DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
-            _maintenanceQueueTimer.Start();
         }
 
         private void QuitMaintenanceQueueButton_OnClick(object sender, RoutedEventArgs e)
