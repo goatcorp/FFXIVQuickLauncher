@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Sentry;
 using Serilog;
 using Serilog.Events;
+using Xceed.Wpf.Toolkit;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
@@ -216,10 +217,32 @@ namespace XIVLauncher
             // Check if the accountName parameter is provided, if yes, pass it to MainWindow
             var accountName = string.Empty;
 
-            if (e.Args.Length > 0 && e.Args[0].StartsWith("--account="))
+            if (e.Args.Length > 0)
             {
-                accountName = e.Args[0].Substring(e.Args[0].IndexOf("=", StringComparison.InvariantCulture) + 1);
-                App.Settings.CurrentAccountId = accountName;
+                foreach (string arg in e.Args)
+                {
+                    if (arg.StartsWith("--account="))
+                    {
+                        accountName = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
+                        App.Settings.CurrentAccountId = accountName;
+                    }
+                }
+            }
+                
+
+            // Override client launch language by parameter
+            if (e.Args.Length > 0)
+            {
+                foreach (string arg in e.Args)
+                {
+                    if (arg.StartsWith("--clientlang="))
+                    {
+                        string langarg = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
+                        Enum.TryParse(langarg, out ClientLanguage lang);
+                        App.Settings.Language = lang;
+                        Log.Information($"Language set as {App.Settings.Language.ToString()} by launch argument.");
+                    }
+                }
             }
             
             Log.Information("Loading MainWindow for account '{0}'", accountName);
