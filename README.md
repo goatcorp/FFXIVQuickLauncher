@@ -37,6 +37,16 @@ If you want to contribute to the plugin API itself, you can check it out [here](
 Compiled plugins for testing go into the ``%AppData%\XIVLauncher\devPlugins`` folder.
 Special thanks to Mino for his hooking base!
 
+### Isn't this cheating?
+
+We don't think so - our official guideline for plugins on this launcher is this:<br>
+
+Make sure that your plugin does not directly interact with the game servers in a way that is...
+<br>a) *outside of specification*, as in allowing the player to do things or submit data to the server that would not be possible by normal means or by a normal player on PC or PS4.
+<br>b) *automatic*, as in polling data or making requests without direct interaction from the user which could create unwanted load on the server or give away that XIVLauncher is being used.
+
+We feel like that this offers developers the __freedom to improve the game's functionality__ in ways that SE can't, while officially disallowing plugins that can give __unfair advantages to players on other platforms__.
+
 ## Any questions?
 
 [Please check out the FAQ](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.
