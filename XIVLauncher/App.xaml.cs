@@ -16,7 +16,6 @@ using Newtonsoft.Json;
 using Sentry;
 using Serilog;
 using Serilog.Events;
-using Xceed.Wpf.Toolkit;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
