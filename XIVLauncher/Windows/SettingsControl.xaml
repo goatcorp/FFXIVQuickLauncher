@@ -367,12 +367,12 @@
             </TabItem>
         </dragablz:TabablzControl>
         <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                ToolTip="Open Plugins Folder" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,60,10"
+                ToolTip="{Binding OpenPluginsFolderLoc}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,60,10"
                 Click="PluginsFolderButton_Click">
             <materialDesign:PackIcon Kind="FolderOpen" Height="24" Width="24" />
         </Button>
         <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                ToolTip="Save Settings" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
+                ToolTip="{Binding SaveSettingsLoc}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
                 Command="{x:Static materialDesign:Transitioner.MoveNextCommand}"
                 Click="AcceptButton_Click">
             <materialDesign:PackIcon Kind="Check" Height="24" Width="24" />
