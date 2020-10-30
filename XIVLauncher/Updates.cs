@@ -5,10 +5,13 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using CheapLoc;
+using Serilog;
 using Squirrel;
 
 namespace XIVLauncher
-{ 
+{
     class Updates
     {
 #if !XL_NOAUTOUPDATE
@@ -20,23 +23,37 @@ namespace XIVLauncher
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            using (var updateManager = await UpdateManager.GitHubUpdateManager(repoUrl: App.RepoUrl, applicationName: "XIVLauncher", prerelease: downloadPrerelease))
+            try
             {
-                SquirrelAwareApp.HandleEvents(
-                    onInitialInstall: v => updateManager.CreateShortcutForThisExe(),
-                    onAppUpdate: v => updateManager.CreateShortcutForThisExe(),
-                    onAppUninstall: v => updateManager.RemoveShortcutForThisExe());
+                using (var updateManager = await UpdateManager.GitHubUpdateManager(repoUrl: App.RepoUrl, applicationName: "XIVLauncher", prerelease: downloadPrerelease))
+                {
+                    SquirrelAwareApp.HandleEvents(
+                        onInitialInstall: v => updateManager.CreateShortcutForThisExe(),
+                        onAppUpdate: v => updateManager.CreateShortcutForThisExe(),
+                        onAppUninstall: v => updateManager.RemoveShortcutForThisExe());
 
-                var downloadedRelease = await updateManager.UpdateApp();
+                    var downloadedRelease = await updateManager.UpdateApp();
 
-                if (downloadedRelease != null)
-                    UpdateManager.RestartApp();
+                    if (downloadedRelease != null)
+                        UpdateManager.RestartApp();
 #if !XL_NOAUTOUPDATE
-                else
-                    OnUpdateCheckFinished?.Invoke(this, null);
+                    else
+                        OnUpdateCheckFinished?.Invoke(this, null);
 #endif
 
+                }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Update failed");
+                MessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support."),
+                                "XIVLauncher",
+                                 MessageBoxButton.OK,
+                                 MessageBoxImage.Error);
+                System.Environment.Exit(1);
+            }
+
+
 
             // Reset security protocol after updating
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
