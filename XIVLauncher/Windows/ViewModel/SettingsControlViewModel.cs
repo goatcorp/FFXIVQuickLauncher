@@ -63,6 +63,9 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void SetupLoc()
         {
+            OpenPluginsFolderLoc = Loc.Localize("OpenPluginsFolder", "Open Plugins Folder");
+            SaveSettingsLoc = Loc.Localize("SaveSettings", "Save Settings");
+
             SettingsGameLoc = Loc.Localize("SettingsGame", "Game");
             GamePathLoc = Loc.Localize("ChooseGamePath",
                 "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".");
@@ -131,6 +134,9 @@ namespace XIVLauncher.Windows.ViewModel
             EnabledUidCacheLoc = Loc.Localize("EnabledUidCache", "Enable experimental UID cache(might behave weirdly)");
             EnableEncryptionLoc = Loc.Localize("EnableEncryption", "Enable encrypting arguments to the client");
         }
+
+        public string OpenPluginsFolderLoc { get; private set; }
+        public string SaveSettingsLoc { get; private set; }
 
         public string SettingsGameLoc { get; private set; }
         public string GamePathLoc { get; private set; }
