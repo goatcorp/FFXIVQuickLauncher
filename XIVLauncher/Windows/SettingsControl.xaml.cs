@@ -62,6 +62,7 @@ namespace XIVLauncher.Windows
             }
 
             LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
+            LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
             AddonListView.ItemsSource = App.Settings.AddonList;
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
@@ -101,6 +102,7 @@ namespace XIVLauncher.Windows
             App.Settings.PatchPath = !string.IsNullOrEmpty(ViewModel.PatchPath) ? new DirectoryInfo(ViewModel.PatchPath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
+            App.Settings.LauncherLanguage = (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex;
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
             App.Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
             App.Settings.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;

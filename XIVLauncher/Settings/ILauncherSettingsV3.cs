@@ -23,6 +23,7 @@ namespace XIVLauncher.Settings
         bool InGameAddonEnabled { get; set; }
         bool SteamIntegrationEnabled { get; set; }
         ClientLanguage? Language { get; set; }
+        LauncherLanguage? LauncherLanguage { get; set; }
         string CurrentAccountId { get; set; }
         bool? EncryptArguments { get; set; }
         DirectoryInfo PatchPath { get; set; }
