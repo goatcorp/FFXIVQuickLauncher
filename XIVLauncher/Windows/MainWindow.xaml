@@ -11,7 +11,7 @@
     xmlns:windows="clr-namespace:XIVLauncher.Windows"
     mc:Ignorable="d"
     Title="XIVLauncher"
-    Width="845"
+    Width="875"
     Height="376"
     ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico"
@@ -169,13 +169,13 @@
                             <materialDesign:Card
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                Width="255"
+                                Width="295"
                                 Margin="0"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Stretch"
                                 KeyDown="Card_KeyDown">
                                 <DockPanel
-                                    Margin="30,18,30,18">
+                                    Margin="25,18">
                                     <TextBox
                                         DockPanel.Dock="Top"
                                         x:Name="LoginUsername"
@@ -217,11 +217,11 @@
                                     <StackPanel Orientation="Horizontal"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Bottom"
-                                                Width="142" Margin="0,0,0,0" DockPanel.Dock="Bottom">
+                                                Width="176" DockPanel.Dock="Bottom" Margin="29,0,25,0">
                                         <Button
                                            
                                             Content="{Binding LoginLoc}"
-                                            Click="LoginButton_Click" Margin="0,0,7,0" Width="84"
+                                            Click="LoginButton_Click" Margin="0,0,7,0" Width="115"
                                             ToolTip="{Binding LoginTooltipLoc}" />
                                         <Button HorizontalAlignment="Left"
                                                 x:Name="AccountSwitcherButton" Margin="0 0 0 0" Background="#FF0096DB"
