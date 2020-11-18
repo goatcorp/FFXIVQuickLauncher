@@ -30,7 +30,7 @@ To uninstall, you can use the Windows Programs & Apps menu or right click XIVLau
 ## Plugin API
 
 XIVLauncher lets you use many community-created plugins that improve your game. Please check [this site](https://goatcorp.github.io/DalamudPlugins/plugins) for a list of them.
-<br>To make your own in-game plugins for XIVLauncher, check out the [API documentation](https://goatcorp.github.io/Dalamud/api/index.html).<br>As an example, check out the [sample plugin](https://github.com/goatcorp/SamplePlugin).
+<br>To make your own in-game plugins for XIVLauncher, check out the [API documentation](https://goatcorp.github.io/Dalamud/api/index.html) and the [sample plugin](https://github.com/goatcorp/SamplePlugin).
 
 If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goatcorp/Dalamud).<br>Special thanks to Mino for his hooking base!
 
