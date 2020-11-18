@@ -1,8 +1,12 @@
-# XIVLauncher [![Actions Status](https://github.com/goaaats/FFXIVQuickLauncher/workflows/Build%20XIVLauncher/badge.svg)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5) [![Crowdin](https://badges.crowdin.net/ffxivquicklauncher/localized.svg)](https://crowdin.com/project/ffxivquicklauncher)
+# XIVLauncher [![Actions Status](https://github.com/goaaats/FFXIVQuickLauncher/workflows/Build%20XIVLauncher/badge.svg)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5) [![Crowdin](https://badges.crowdin.net/ffxivquicklauncher/localized.svg)](https://crowdin.com/project/ffxivquicklauncher) <a href="https://github.com/goatcorp/FFXIVQuickLauncher/releases"><img src="https://github.com/goatcorp/FFXIVQuickLauncher/raw/master/XIVLauncher/Resources/logo.png" alt="XL logo" width="100" align="right"/></a> 
 
 XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
 
-<img src="https://i.imgur.com/jxqlaAY.png" alt="drawing" width="800"/>
+<p align="center">
+  <a href="https://github.com/goatcorp/FFXIVQuickLauncher/releases">
+    <img src="https://i.imgur.com/jxqlaAY.png" alt="drawing" width="500"/>
+  </a>
+</p>
 
 ## Why?
 
@@ -10,10 +14,8 @@ The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your pa
 
 * Auto-login
 * Fast patching
-* Launching tools like ACT when starting the game
 * Discord Rich Presence
 * Fast in-game market board price checks
-* Integrity check for game files
 * Chat filtering
 * Chat bridge to Discord
 * Discord notifications for duties, retainer sales, etc.
@@ -28,14 +30,9 @@ To uninstall, you can use the Windows Programs & Apps menu or right click XIVLau
 ## Plugin API
 
 XIVLauncher lets you use many community-created plugins that improve your game. Please check [this site](https://goatcorp.github.io/DalamudPlugins/plugins) for a list of them.
-<br>To make your own in-game plugins for XIVLauncher, check out the [API documentation](https://goatcorp.github.io/Dalamud/api/index.html).
+<br>To make your own in-game plugins for XIVLauncher, check out the [API documentation](https://goatcorp.github.io/Dalamud/api/index.html).<br>As an example, check out the [sample plugin](https://github.com/goatcorp/SamplePlugin).
 
-As an example, check out the [market board plugin](https://github.com/goaaats/Dalamud.MbPlugin).
-
-If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goatcorp/Dalamud).
-
-Compiled plugins for testing go into the ``%AppData%\XIVLauncher\devPlugins`` folder.
-Special thanks to Mino for his hooking base!
+If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goatcorp/Dalamud).<br>Special thanks to Mino for his hooking base!
 
 ### Isn't this cheating?
 
@@ -49,7 +46,7 @@ We feel like that this offers developers the __freedom to improve the game's fun
 
 ## Any questions?
 
-[Please check out the FAQ](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.
+[Please check out the FAQ](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming moderator team.
 
 <br>
 <br>
