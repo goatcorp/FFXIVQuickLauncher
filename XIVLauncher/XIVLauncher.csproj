@@ -276,7 +276,6 @@
     <Compile Include="Dalamud\DalamudStartInfo.cs" />
     <Compile Include="Game\ProblemCheck.cs" />
     <Compile Include="Game\ClientLanguage.cs" />
-    <Compile Include="Dalamud\DiscordFeatureConfiguration.cs" />
     <Compile Include="Dalamud\XivChatType.cs" />
     <Compile Include="Encryption\ArgumentBuilder.cs" />
     <Compile Include="Encryption\Blowfish.cs" />
@@ -325,9 +324,6 @@
     <Compile Include="Windows\ViewModel\UpdateLoadingDialogViewModel.cs" />
     <Compile Include="Xaml\Components\FileEntry.xaml.cs">
       <DependentUpon>FileEntry.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\ChatChannelSetupWindow.xaml.cs">
-      <DependentUpon>ChatChannelSetupWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Game\IntegrityCheck.cs" />
     <Compile Include="Windows\IntegrityCheckProgressWindow.xaml.cs">
@@ -387,10 +383,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Xaml\Components\FileEntry.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\ChatChannelSetupWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Windows;
-using Dalamud.Discord;
-using Dalamud.Game.Chat;
-using XIVLauncher;
+﻿using System.Windows;
 using XIVLauncher.Accounts;
-using XIVLauncher.Addon;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows

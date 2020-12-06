@@ -1,17 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using CheapLoc;
-using Dalamud.Discord;
 using Serilog;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
@@ -19,7 +14,6 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
-using XIVLauncher.Game.Patch;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -70,13 +64,7 @@ namespace XIVLauncher.Windows
 
             ReloadPluginList();
 
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
-            DiscordBotTokenTextBox.Text = featureConfig.Token;
-            CheckForDuplicateMessagesCheckBox.IsChecked = featureConfig.CheckForDuplicateMessages;
-            ChatDelayTextBox.Text = featureConfig.ChatDelayMs.ToString();
             InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
-            DisableEmbedsCheckBox.IsChecked = featureConfig.DisableEmbeds;
 
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
 
@@ -109,17 +97,8 @@ namespace XIVLauncher.Windows
 
             App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-            featureConfig.Token = DiscordBotTokenTextBox.Text;
-            featureConfig.CheckForDuplicateMessages = CheckForDuplicateMessagesCheckBox.IsChecked == true;
-            if (int.TryParse(ChatDelayTextBox.Text, out var parsedDelay))
-                featureConfig.ChatDelayMs = parsedDelay;
-
             if (InjectionDelayUpDown.Value.HasValue)
                 App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
-
-            featureConfig.DisableEmbeds = DisableEmbedsCheckBox.IsChecked == true;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
 
             App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
@@ -222,110 +201,6 @@ namespace XIVLauncher.Windows
         private void ResetCacheButton_OnClick(object sender, RoutedEventArgs e)
         {
             UniqueIdCache.Reset();
-        }
-
-        private void OpenWebhookGuideLabel_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton != MouseButton.Left)
-                return;
-
-            Process.Start($"{App.RepoUrl}/wiki/Discord-Integration");
-        }
-
-        private void RemoveChatConfigEntry_OnClick(object sender, RoutedEventArgs e)
-        {
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-
-            featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
-
-            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
-        }
-
-        private void ChannelListView_OnMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton != MouseButton.Left)
-                return;
-
-            if (!(ChannelListView.SelectedItem is ChatTypeConfiguration configEntry))
-                return;
-
-            var channelSetup = new ChatChannelSetup(configEntry);
-            channelSetup.ShowDialog();
-
-            if (channelSetup.Result == null)
-                return;
-
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-
-            //featureConfig.ChatTypeConfigurations = featureConfig.ChatTypeConfigurations.Where(x => !x.CompareEx(configEntry)).ToList();
-            featureConfig.ChatTypeConfigurations.RemoveAt(ChannelListView.SelectedIndex);
-            featureConfig.ChatTypeConfigurations.Add(channelSetup.Result);
-
-            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
-        }
-
-        private void AddChannelConfig_OnClick(object sender, RoutedEventArgs e)
-        {
-            var channelSetup = new ChatChannelSetup();
-            channelSetup.ShowDialog();
-
-            if (channelSetup.Result == null)
-                return;
-
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-            featureConfig.ChatTypeConfigurations.Add(channelSetup.Result);
-            ChannelListView.ItemsSource = featureConfig.ChatTypeConfigurations;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
-        }
-
-        private void SetDutyFinderNotificationChannel_OnClick(object sender, RoutedEventArgs e)
-        {
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-
-            var channelConfig = featureConfig.CfNotificationChannel ?? new ChannelConfiguration();
-
-            var channelSetup = new ChatChannelSetup(channelConfig);
-            channelSetup.ShowDialog();
-
-            if (channelSetup.Result == null)
-                return;
-
-            featureConfig.CfNotificationChannel = channelSetup.Result.Channel;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
-        }
-
-        private void SetRetainerNotificationChannel_OnClick(object sender, RoutedEventArgs e)
-        {
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-
-            var channelConfig = featureConfig.RetainerNotificationChannel ?? new ChannelConfiguration();
-
-            var channelSetup = new ChatChannelSetup(channelConfig);
-            channelSetup.ShowDialog();
-
-            if (channelSetup.Result == null)
-                return;
-
-            featureConfig.RetainerNotificationChannel = channelSetup.Result.Channel;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
-        }
-
-        private void SetCfPreferredRoleChannel_OnClick(object sender, RoutedEventArgs e)
-        {
-            var featureConfig = DalamudSettings.DiscordFeatureConfig;
-
-            var channelConfig = featureConfig.CfPreferredRoleChannel ?? new ChannelConfiguration();
-
-            var channelSetup = new ChatChannelSetup(channelConfig);
-            channelSetup.ShowDialog();
-
-            if (channelSetup.Result == null)
-                return;
-
-            featureConfig.CfPreferredRoleChannel = channelSetup.Result.Channel;
-            DalamudSettings.DiscordFeatureConfig = featureConfig;
         }
 
         private void RunIntegrityCheck_OnClick(object s, RoutedEventArgs e)

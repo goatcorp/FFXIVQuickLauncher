@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dalamud.Discord;
 using Dalamud.Game.Chat;
 using Newtonsoft.Json;
-using XIVLauncher.Dalamud;
 
 namespace Dalamud
 {
     [Serializable]
     internal class DalamudConfiguration
     {
-        public DiscordFeatureConfiguration DiscordFeatureConfig { get; set; }
-
         public bool OptOutMbCollection { get; set; } = false;
 
         public List<string> BadWords { get; set; }

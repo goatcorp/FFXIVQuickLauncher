@@ -6,11 +6,8 @@
              xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:addon="clr-namespace:XIVLauncher.Addon"
-             xmlns:dalamudDiscord="clr-namespace:Dalamud.Discord"
              xmlns:xaml="clr-namespace:XIVLauncher.Xaml"
              xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
-             xmlns:properties="clr-namespace:XIVLauncher.Properties"
-             xmlns:windows="clr-namespace:XIVLauncher.Windows"
              xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"
@@ -133,92 +130,6 @@
 
                             <StackPanel
                                         IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
-                                <Separator />
-
-                                <Label Foreground="DarkGray" Margin="0,5,0,0" FontStyle="Italic"
-                                       HorizontalAlignment="Center" FontSize="13"
-                                       Content="{Binding InGameAddonChatSettingsLoc}" />
-
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Foreground="{DynamicResource MaterialDesignBody}"
-                                           Margin="0,10,0,0" Content="{Binding InGameAddonDiscordBotTokenLoc}" />
-                                    <Label Foreground="DarkGray" Margin="0,10,0,0" Cursor="Hand"
-                                           MouseUp="OpenWebhookGuideLabel_MouseUp"
-                                           Content="{Binding InGameAddonHowLoc}" />
-                                </StackPanel>
-
-                                <TextBox x:Name="DiscordBotTokenTextBox"
-                                         Margin="10,0,0,0" Width="400"
-                                         VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         Foreground="{DynamicResource MaterialDesignBody}"
-                                         materialDesign:HintAssist.Hint="{Binding InGameAddonDiscordBotTokenLoc}" />
-
-                                <materialDesign:Card Margin="0,10" Height="110">
-                                    <ListView x:Name="ChannelListView"
-                                              MouseUp="ChannelListView_OnMouseUp" HorizontalAlignment="Stretch">
-                                        <ListView.ContextMenu>
-                                            <ContextMenu StaysOpen="true">
-                                                <MenuItem Header="Remove"
-                                                          Click="RemoveChatConfigEntry_OnClick"
-                                                          Foreground="{DynamicResource MaterialDesignBody}" />
-                                            </ContextMenu>
-                                        </ListView.ContextMenu>
-
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate
-                                                          DataType="{x:Type dalamudDiscord:ChatTypeConfiguration}">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <materialDesign:PackIcon
-                                                                             Kind="Chat"
-                                                                             Foreground="{Binding Color, Converter={StaticResource StringToColorConverter}}" />
-                                                    <TextBlock
-                                                               Text="{Binding ChatType, Converter={StaticResource ChatTypeToFancyNameConverter}}"
-                                                               Margin="10,0,0,0"
-                                                               Foreground="{DynamicResource MaterialDesignBody}" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListView>
-                                </materialDesign:Card>
-
-                                <Button Margin="0,7,0,10" HorizontalAlignment="Center"
-                                        VerticalAlignment="Bottom" Click="AddChannelConfig_OnClick"
-                                        ToolTip="Add a new Discord chat channel."
-                                        Content="{Binding InGameAddonAddChatChannelLoc}" />
-                                <Button Margin="0,7,0,10" HorizontalAlignment="Center"
-                                        VerticalAlignment="Bottom" Click="SetDutyFinderNotificationChannel_OnClick"
-                                        ToolTip="Set the Duty Finder notification channel."
-                                        Content="{Binding InGameAddonSetCfChannelLoc}" />
-                                <Button Margin="0,0,0,10" HorizontalAlignment="Center"
-                                        VerticalAlignment="Bottom" Click="SetCfPreferredRoleChannel_OnClick"
-                                        ToolTip="Set the Roulette Bonus notification channel."
-                                        Content="{Binding InGameAddonSetRouletteChannelLoc}" />
-                                <Button Margin="0,0,0,20" HorizontalAlignment="Center"
-                                        VerticalAlignment="Bottom" Click="SetRetainerNotificationChannel_OnClick"
-                                        ToolTip="Set the retainer sale channel."
-                                        Content="{Binding InGameAddonSetRetainerChannelLoc}" />
-
-                                <CheckBox x:Name="DisableEmbedsCheckBox"
-                                          Content="Disable rich embeds (send smaller messages to Discord)"
-                                          HorizontalAlignment="Left" Margin="0,0,0,20"
-                                          Foreground="{DynamicResource MaterialDesignBody}" />
-
-                                <CheckBox
-                                          x:Name="CheckForDuplicateMessagesCheckBox"
-                                          HorizontalAlignment="Left" Margin="0,0,0,5"
-                                          Foreground="{DynamicResource MaterialDesignBody}">
-                                    <TextBlock Foreground="{DynamicResource MaterialDesignBody}"
-                                               Text="{Binding InGameAddonChatDelayDescriptionLoc}" />
-                                </CheckBox>
-
-                                <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0"
-                                       Content="{Binding InGameAddonChatDelayLoc}" />
-
-                                <TextBox x:Name="ChatDelayTextBox" Margin="10,0,0,5"
-                                         Width="400"
-                                         VerticalAlignment="Center" HorizontalAlignment="Left"
-                                         Foreground="{DynamicResource MaterialDesignBody}"
-                                         materialDesign:HintAssist.Hint="{Binding InGameAddonChatDelayLoc}" />
 
                                 <Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,10,0,0"
                                        Content="{Binding InGameAddonInjectionDelayLoc}" />
