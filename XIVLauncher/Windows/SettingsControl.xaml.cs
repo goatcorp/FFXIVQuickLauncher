@@ -63,6 +63,7 @@ namespace XIVLauncher.Windows
 
             LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
             LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
+            LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
             AddonListView.ItemsSource = App.Settings.AddonList;
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
@@ -101,8 +102,13 @@ namespace XIVLauncher.Windows
             App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
             App.Settings.PatchPath = !string.IsNullOrEmpty(ViewModel.PatchPath) ? new DirectoryInfo(ViewModel.PatchPath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
+
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
+            // Keep the notice visible if LauncherLanguage has changed
+            if (App.Settings.LauncherLanguage == (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex)
+                LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
             App.Settings.LauncherLanguage = (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex;
+
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
             App.Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
             App.Settings.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
@@ -387,6 +393,14 @@ namespace XIVLauncher.Windows
         private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
         {
             Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
+        }
+
+        private void LauncherLanguageCombo_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (LauncherLanguageNoticeTextBlock != null)
+            {
+                LauncherLanguageNoticeTextBlock.Visibility = Visibility.Visible;
+            }
         }
 
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)

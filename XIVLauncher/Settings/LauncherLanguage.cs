@@ -33,7 +33,7 @@ namespace XIVLauncher.Settings
         public static string GetLocalizationCode(this LauncherLanguage? language)
         {
 
-            return GetLangCodes()[language ?? LauncherLanguage.Japanese]; // Default localization language
+            return GetLangCodes()[language ?? LauncherLanguage.English]; // Default localization language
         }
 
         public static bool IsDefault(this LauncherLanguage? language)
