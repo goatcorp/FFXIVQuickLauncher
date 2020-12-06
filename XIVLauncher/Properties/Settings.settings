@@ -11,9 +11,6 @@
     <Setting Name="Language" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-	<Setting Name="LauncherLanguage" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
     <Setting Name="NeedsOtp" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
