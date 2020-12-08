@@ -37,8 +37,6 @@ namespace XIVLauncher
         private UpdateLoadingDialog _updateWindow;
 #endif
 
-        private readonly string[] _allowedLang = {"de", "ja", "fr", "it", "es"};
-
         private MainWindow _mainWindow;
 
         public App()
@@ -88,12 +86,16 @@ namespace XIVLauncher
 #if !XL_LOC_FORCEFALLBACKS
             try
             {
-                var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-                Log.Information("Trying to set up Loc for culture {0}", currentUiLang);
-
-                if (_allowedLang.Any(x => currentUiLang == x))
+                if (App.Settings.LauncherLanguage == null)
                 {
-                    Loc.Setup(Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{currentUiLang}.json"));
+                    var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                    App.Settings.LauncherLanguage = App.Settings.LauncherLanguage.GetLangFromTwoLetterISO(currentUiLang);
+                }
+
+                Log.Information("Trying to set up Loc for language code {0}", App.Settings.LauncherLanguage.GetLocalizationCode());
+                if (!App.Settings.LauncherLanguage.IsDefault())
+                {
+                    Loc.Setup(Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{App.Settings.LauncherLanguage.GetLocalizationCode()}.json"));
                 }
                 else
                 {
