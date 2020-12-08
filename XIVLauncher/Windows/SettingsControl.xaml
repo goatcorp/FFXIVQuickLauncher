@@ -72,6 +72,22 @@
                         <ComboBoxItem>Deutsch</ComboBoxItem>
                         <ComboBoxItem>Français</ComboBoxItem>
                     </ComboBox>
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 20, 0, 0"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseLauncherLanguageLoc}" />
+                    <ComboBox SelectedIndex="1" Margin="0, 3, 0, 0" x:Name="LauncherLanguageComboBox"
+                              Foreground="{DynamicResource MaterialDesignBody}" SelectionChanged="LauncherLanguageCombo_SelectionChanged">
+                        <ComboBoxItem>日本語</ComboBoxItem>
+                        <ComboBoxItem>English</ComboBoxItem>
+                        <ComboBoxItem>Deutsch</ComboBoxItem>
+                        <ComboBoxItem>Français</ComboBoxItem>
+                        <ComboBoxItem>Italiano</ComboBoxItem>
+                        <ComboBoxItem>Español</ComboBoxItem>
+                        <ComboBoxItem>Português</ComboBoxItem>
+                    </ComboBox>
+                    <TextBlock x:Name="LauncherLanguageNoticeTextBlock" Visibility="Hidden"
+                               HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed"
+                               Margin="0,0,0,0" Text="{Binding LauncherLanguageNoticeLoc}" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="{Binding SettingsAutoLaunchLoc}">

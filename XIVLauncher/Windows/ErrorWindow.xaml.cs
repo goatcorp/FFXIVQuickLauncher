@@ -33,6 +33,7 @@ namespace XIVLauncher.Windows
                 ExceptionTextBox.AppendText("\nAddons Enabled? " + App.Settings.InGameAddonEnabled);
                 ExceptionTextBox.AppendText("\nAuto Login Enabled? " + App.Settings.AutologinEnabled);
                 ExceptionTextBox.AppendText("\nLanguage: " + App.Settings.Language);
+                ExceptionTextBox.AppendText("\nLauncherLanguage: " + App.Settings.LauncherLanguage);
                 ExceptionTextBox.AppendText("\nGame path: " + App.Settings.GamePath);
 
                 // When this happens we probably don't want them to run into it again, in case it's an issue with a moved game for example
