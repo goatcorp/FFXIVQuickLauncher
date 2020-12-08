@@ -216,14 +216,8 @@ namespace XIVLauncher.Windows
 
             Log.Information("MainWindow initialized.");
 
-            HandleBootCheck(() =>
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    Show();
-                    Activate();
-                });
-            });
+            Show();
+            Activate();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -509,14 +503,16 @@ namespace XIVLauncher.Windows
                     MessageBox.Show(
                         Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+                    
+                    _isLoggingIn = false;
+
+                    Show();
+                    Activate();
                     return;
                 }
-                else
-                {
-                    new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
-                }
 
-                _isLoggingIn = false;
+                new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
             }
         }
 
@@ -530,6 +526,9 @@ namespace XIVLauncher.Windows
                         "Maintenance seems to be in progress. The game shouldn't be launched."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 _isLoggingIn = false;
+
+                Show();
+                Activate();
 
                 return;
             }
