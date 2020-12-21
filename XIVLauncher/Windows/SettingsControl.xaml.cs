@@ -58,7 +58,7 @@ namespace XIVLauncher.Windows
             LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
             LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
             LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
-            AddonListView.ItemsSource = App.Settings.AddonList;
+            AddonListView.ItemsSource = App.Settings.AddonList ??= new List<AddonEntry>();
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
