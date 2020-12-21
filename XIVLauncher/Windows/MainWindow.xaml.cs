@@ -554,6 +554,9 @@ namespace XIVLauncher.Windows
 
             try
             {
+                if (App.Settings.AddonList == null)
+                    App.Settings.AddonList = new List<AddonEntry>();
+
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
                 if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
