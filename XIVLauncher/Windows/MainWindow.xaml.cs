@@ -251,7 +251,22 @@ namespace XIVLauncher.Windows
             {
                 App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
-                var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+                Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
+                try
+                {
+                    bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Unable to check boot version.");
+                    MessageBox.Show(Loc.Localize("CheckBootVersionError", "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    _ = Task.Run(SetupHeadlines);
+                    Show();
+                    Activate();
+                    return;
+                }
+                
                 if (bootPatches != null)
                 {
                     var mutex = new Mutex(false, "XivLauncherIsPatching");
@@ -504,9 +519,9 @@ namespace XIVLauncher.Windows
                         Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
-                    
                     _isLoggingIn = false;
 
+                    _ = Task.Run(SetupHeadlines);
                     Show();
                     Activate();
                     return;
@@ -525,11 +540,12 @@ namespace XIVLauncher.Windows
                     Loc.Localize("MaintenanceNotice",
                         "Maintenance seems to be in progress. The game shouldn't be launched."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
                 _isLoggingIn = false;
 
+                _ = Task.Run(SetupHeadlines);
                 Show();
                 Activate();
-
                 return;
             }
 
@@ -685,7 +701,15 @@ namespace XIVLauncher.Windows
 
             _maintenanceQueueTimer.Elapsed += (o, args) =>
             {
-                var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+                Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
+                try
+                {
+                    bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+                }
+                catch
+                {
+                    // ignored
+                }
 
                 var gateStatus = false;
                 try
