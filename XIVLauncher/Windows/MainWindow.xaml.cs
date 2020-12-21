@@ -261,7 +261,9 @@ namespace XIVLauncher.Windows
                     Log.Error(ex, "Unable to check boot version.");
                     MessageBox.Show(Loc.Localize("CheckBootVersionError", "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    _ = Task.Run(SetupHeadlines);
+                    _isLoggingIn = false;
+
+                    Task.Run(SetupHeadlines);
                     Show();
                     Activate();
                     return;
