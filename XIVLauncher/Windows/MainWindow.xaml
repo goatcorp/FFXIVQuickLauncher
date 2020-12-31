@@ -222,7 +222,15 @@
                                            
                                             Content="{Binding LoginLoc}"
                                             Click="LoginButton_Click" Margin="0,0,7,0" Width="84"
-                                            ToolTip="{Binding LoginTooltipLoc}" />
+                                            ToolTip="{Binding LoginTooltipLoc}">
+
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="{Binding LoginNoStartLoc}" Click="LoginNoStart_Click"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+
+                                        </Button>
                                         <Button HorizontalAlignment="Left"
                                                 x:Name="AccountSwitcherButton" Margin="0 0 0 0" Background="#FF0096DB"
                                                 BorderBrush="#FF0096DB" ToolTip="{Binding OpenAccountSwitcherLoc}"

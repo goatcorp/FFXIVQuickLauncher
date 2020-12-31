@@ -22,6 +22,7 @@ namespace XIVLauncher.Windows.ViewModel
             OtpLoc = Loc.Localize("LoginBoxOtp", "Use One-Time-Passwords");
             SteamLoc = Loc.Localize("LoginBoxSteam", "Use Steam service account");
             LoginLoc = Loc.Localize("LoginBoxLogin", "Log in");
+            LoginNoStartLoc = Loc.Localize("LoginBoxNoStartLogin", "Update without starting");
             LoginTooltipLoc = Loc.Localize("LoginBoxLoginTooltip", "Log in with the provided credentials");
             WaitingForMaintenanceLoc = Loc.Localize("LoginBoxWaitingForMaint", "Waiting for maintenance to be over...");
             CancelLoc = Loc.Localize("Cancel", "Cancel");
@@ -37,6 +38,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string OtpLoc { get; private set; }
         public string SteamLoc { get; private set; }
         public string LoginLoc { get; private set; }
+        public string LoginNoStartLoc { get; private set; }
         public string WaitingForMaintenanceLoc { get; private set; }
         public string CancelLoc { get; private set; }
         public string LoginTooltipLoc { get; private set; }

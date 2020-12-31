@@ -222,27 +222,12 @@ namespace XIVLauncher.Windows
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(LoginUsername.Text))
-            {
-                MessageBox.Show(
-                    Loc.Localize("EmptyUsernameError", "Please enter an username."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            HandleLogin(false, true);
+        }
 
-            if (string.IsNullOrEmpty(LoginPassword.Password))
-            {
-                MessageBox.Show(
-                    Loc.Localize("EmptyPasswordError", "Please enter a password."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (_isLoggingIn)
-                return;
-
-            _isLoggingIn = true;
-            HandleLogin(false);
+        private void LoginNoStart_Click(object sender, RoutedEventArgs e)
+        {
+            HandleLogin(false, false);
         }
 
         private void HandleBootCheck(Action whenFinishAction)
@@ -315,8 +300,29 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private void HandleLogin(bool autoLogin)
+        private void HandleLogin(bool autoLogin, bool startGame = true)
         {
+            if (string.IsNullOrEmpty(LoginUsername.Text))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyUsernameError", "Please enter an username."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(LoginPassword.Password))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyPasswordError", "Please enter a password."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (_isLoggingIn)
+                return;
+
+            _isLoggingIn = true;
+
             var hasValidCache = _launcher.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
 
             Log.Information("CurrentAccount: {0}", _accountManager.CurrentAccount == null ? "null" : _accountManager.CurrentAccount.ToString());
@@ -368,7 +374,7 @@ namespace XIVLauncher.Windows
                 otp = otpDialog.Result;
             }
 
-            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp)));
+            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp, startGame)));
         }
 
         private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus)
@@ -431,9 +437,9 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private async void StartLogin(string otp)
+        private async void StartLogin(string otp, bool startGame)
         {
-            Log.Information("StartGame() called");
+            Log.Information("StartLogin() called");
 
             var gateStatus = false;
             try
@@ -491,7 +497,22 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-                await StartGameAndAddon(loginResult, gateStatus);
+                if (startGame)
+                {
+                    await StartGameAndAddon(loginResult, gateStatus);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        Loc.Localize("LoginNoStartOk",
+                            "An update check was executed and any pending updates were installed."), "XIVLauncher",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    this._isLoggingIn = false;
+                    Show();
+                    Activate();
+                }
+                
             }
             catch (Exception ex)
             {
