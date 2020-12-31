@@ -51,10 +51,12 @@ namespace XIVLauncher.Dalamud
                 {
                     Thread.Sleep(1);
                 }
+
+                if (isMine)
+                    mutex.ReleaseMutex();
             }
             finally
             {
-                mutex.ReleaseMutex();
                 mutex.Close();
                 mutex = null;
 
