@@ -34,13 +34,13 @@ namespace XIVLauncher.Dalamud
 
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
-        private readonly string DALAMUD_MUTEX_NAME = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
+        private readonly string _dalamudMutexName = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
 
         public void DoWork(object state)
         {
             var cancellationToken = (CancellationToken) state;
 
-            var mutex = new Mutex(false, DALAMUD_MUTEX_NAME);
+            var mutex = new Mutex(false, this._dalamudMutexName);
             try
             {
                 var isMine = mutex.WaitOne(0, false);
@@ -54,6 +54,7 @@ namespace XIVLauncher.Dalamud
             }
             finally
             {
+                mutex.ReleaseMutex();
                 mutex.Close();
                 mutex = null;
 
@@ -69,6 +70,8 @@ namespace XIVLauncher.Dalamud
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
         {
+            Log.Information("DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language, doDownloads);
+
             if (!CheckVcRedist())
                 return;
 
