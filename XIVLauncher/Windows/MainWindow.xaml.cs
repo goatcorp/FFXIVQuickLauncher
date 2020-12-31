@@ -20,6 +20,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch;
 using XIVLauncher.PatchInstaller;
+using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows.ViewModel;
 using Timer = System.Timers.Timer;
@@ -320,6 +321,15 @@ namespace XIVLauncher.Windows
 
             if (_isLoggingIn)
                 return;
+
+            if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == PatcherMain.BASE_GAME_VERSION && App.Settings.UniqueIdCacheEnabled)
+            {
+                MessageBox.Show(
+                    Loc.Localize("UidCacheInstallError",
+                        "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall FFXIV.\n\nIf you want to reinstall FFXIV, please take care to disable it first."),
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             _isLoggingIn = true;
 
