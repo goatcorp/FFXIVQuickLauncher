@@ -11,7 +11,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("goatsoft")]
 [assembly: AssemblyProduct("XIVLauncher")]
-[assembly: AssemblyCopyright("Copyright © goaaats 2019")]
+[assembly: AssemblyCopyright("Copyright © goaaats 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -50,8 +50,8 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.2.0.0")]
-[assembly: AssemblyFileVersion("5.2.0.0")]
+[assembly: AssemblyVersion("5.2.1.0")]
+[assembly: AssemblyFileVersion("5.2.1.0")]
 [assembly: NeutralResourcesLanguage("en")]
 
 // Squirrel-Awareness
