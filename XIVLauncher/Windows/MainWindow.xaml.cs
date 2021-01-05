@@ -133,6 +133,16 @@ namespace XIVLauncher.Windows
 
         public void Initialize()
         {
+#if DEBUG
+            var fakeStartMenuItem = new MenuItem
+            {
+                Header = "Fake start"
+            };
+            fakeStartMenuItem.Click += FakeStart_OnClick;
+
+            LoginContextMenu.Items.Add(fakeStartMenuItem);
+#endif
+
             // Upgrade the stored settings if needed
             if (Properties.Settings.Default.UpgradeRequired)
             {
@@ -820,6 +830,23 @@ namespace XIVLauncher.Windows
         private void SettingsControl_OnSettingsDismissed(object sender, EventArgs e)
         {
             Task.Run(SetupHeadlines);
+        }
+
+        private async void FakeStart_OnClick(object sender, RoutedEventArgs e)
+        {
+            await StartGameAndAddon(new Launcher.LoginResult
+            {
+                OauthLogin = new Launcher.OauthLoginResult
+                {
+                    MaxExpansion = 3,
+                    Playable = true,
+                    Region = 0,
+                    SessionId = "0",
+                    TermsAccepted = true
+                },
+                State = Launcher.LoginState.Ok,
+                UniqueId = "0"
+            }, true);
         }
     }
 }

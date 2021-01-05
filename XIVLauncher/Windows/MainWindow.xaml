@@ -225,7 +225,7 @@
                                             ToolTip="{Binding LoginTooltipLoc}">
 
                                             <Button.ContextMenu>
-                                                <ContextMenu>
+                                                <ContextMenu x:Name="LoginContextMenu">
                                                     <MenuItem Header="{Binding LoginNoStartLoc}" Click="LoginNoStart_Click"/>
                                                 </ContextMenu>
                                             </Button.ContextMenu>
