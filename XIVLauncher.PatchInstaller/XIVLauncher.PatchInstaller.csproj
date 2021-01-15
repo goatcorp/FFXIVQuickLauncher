@@ -69,8 +69,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="ZetaIpc, Version=1.0.0.9, Culture=neutral, PublicKeyToken=6c27b71344e0b736, processorArchitecture=MSIL">
-      <HintPath>..\packages\ZetaIpc.1.0.0.9\lib\netstandard2.0\ZetaIpc.dll</HintPath>
+    <Reference Include="ZetaIpc, Version=1.0.0.11, Culture=neutral, PublicKeyToken=6c27b71344e0b736, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZetaIpc.1.0.0.11\lib\netstandard2.0\ZetaIpc.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
