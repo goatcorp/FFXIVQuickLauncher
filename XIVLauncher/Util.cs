@@ -99,9 +99,6 @@ namespace XIVLauncher
             Process.Start("https://discord.gg/3NMcUV5");
         }
 
-        public static bool IsWine => bool.Parse(Environment.GetEnvironmentVariable("XL_WINEONLINUX") ?? "false");
-        public static bool IsDisableUpdates => bool.Parse(Environment.GetEnvironmentVariable("XL_NOAUTOUPDATE") ?? "false");
-
         public static string BytesToString(long byteCount)
         {
             string[] suf = {"B", "KB", "MB", "GB", "TB", "PB", "EB"}; //Longs run out around EB

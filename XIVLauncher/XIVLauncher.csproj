@@ -265,6 +265,7 @@
     <Compile Include="Addon\AddonManager.cs" />
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
+    <Compile Include="Settings\EnvironmentSettings.cs" />
     <Compile Include="Game\Patch\PatchInstaller.cs" />
     <Compile Include="Settings\LauncherLanguage.cs" />
     <Compile Include="Settings\DalamudSettings.cs" />

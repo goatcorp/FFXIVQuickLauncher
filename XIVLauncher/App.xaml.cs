@@ -116,7 +116,7 @@ namespace XIVLauncher
 
 #if !XL_NOAUTOUPDATE
 
-            if (!Util.IsDisableUpdates)
+            if (!EnvironmentSettings.IsDisableUpdates)
             {
                 try
                 {
@@ -128,7 +128,7 @@ namespace XIVLauncher
                     var updateMgr = new Updates();
                     updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
 
-                    updateMgr.Run(Environment.GetEnvironmentVariable("XL_PRERELEASE") == "True");
+                    updateMgr.Run(EnvironmentSettings.IsPreRelease);
                 }
                 catch (Exception ex)
                 {
@@ -241,7 +241,7 @@ namespace XIVLauncher
             
             Log.Information("Loading MainWindow for account '{0}'", accountName);
 
-            if (Util.IsDisableUpdates)
+            if (EnvironmentSettings.IsDisableUpdates)
             {
                 OnUpdateCheckFinished(null, null);
             }

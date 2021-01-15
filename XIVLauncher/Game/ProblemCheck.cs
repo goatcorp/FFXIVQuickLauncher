@@ -19,7 +19,7 @@ namespace XIVLauncher.Game
             var compatFlagKey = Registry.CurrentUser.OpenSubKey(
                 "Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", true);
 
-            if (compatFlagKey != null && !Util.IsWine)
+            if (compatFlagKey != null && !EnvironmentSettings.IsWine)
             {
                 var compatEntries = compatFlagKey.GetValueNames();
 
@@ -46,7 +46,7 @@ namespace XIVLauncher.Game
                 }
             }
 
-            if (runningAsAdmin && !Properties.Settings.Default.HasComplainedAboutAdmin && !Util.IsWine)
+            if (runningAsAdmin && !Properties.Settings.Default.HasComplainedAboutAdmin && !EnvironmentSettings.IsWine)
             {
                 MessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 Properties.Settings.Default.HasComplainedAboutAdmin = true;

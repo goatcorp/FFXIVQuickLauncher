@@ -68,13 +68,13 @@ namespace XIVLauncher.Windows
 #endif
 
 #if !XL_NOAUTOUPDATE
-            if (Util.IsDisableUpdates)
+            if (EnvironmentSettings.IsDisableUpdates)
 #endif
             {
                 Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
             }
 
-            if (Util.IsWine)
+            if (EnvironmentSettings.IsWine)
                 Title += " - Wine on Linux";
         }
 
