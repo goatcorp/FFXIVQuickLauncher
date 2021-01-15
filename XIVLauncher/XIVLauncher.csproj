@@ -266,7 +266,6 @@
     <Compile Include="Addon\Implementations\GenericAddon.cs" />
     <Compile Include="Addon\IAddon.cs" />
     <Compile Include="Game\Patch\PatchInstaller.cs" />
-    <Compile Include="Paths.cs" />
     <Compile Include="Settings\LauncherLanguage.cs" />
     <Compile Include="Settings\DalamudSettings.cs" />
     <Compile Include="Dalamud\DalamudLauncher.cs" />
