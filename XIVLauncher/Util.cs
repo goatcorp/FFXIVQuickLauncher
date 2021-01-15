@@ -100,6 +100,7 @@ namespace XIVLauncher
         }
 
         public static bool IsWine => bool.Parse(Environment.GetEnvironmentVariable("XL_WINEONLINUX") ?? "false");
+        public static bool IsDisableUpdates => bool.Parse(Environment.GetEnvironmentVariable("XL_NOAUTOUPDATE") ?? "false");
 
         public static string BytesToString(long byteCount)
         {
@@ -163,6 +164,8 @@ namespace XIVLauncher
 
             return reader.ReadToEnd();
         }
+
+        public static string GetRoaming() => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher");
 
     }
 }

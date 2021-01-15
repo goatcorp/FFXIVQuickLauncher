@@ -67,9 +67,12 @@ namespace XIVLauncher.Windows
             Title += " " + Util.GetGitHash();
 #endif
 
-#if XL_NOAUTOUPDATE
-            Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
+#if !XL_NOAUTOUPDATE
+            if (Util.IsDisableUpdates)
 #endif
+            {
+                Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
+            }
 
             if (Util.IsWine)
                 Title += " - Wine on Linux";

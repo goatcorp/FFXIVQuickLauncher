@@ -116,7 +116,7 @@ namespace XIVLauncher
 
 #if !XL_NOAUTOUPDATE
 
-            if (!Util.IsWine)
+            if (!Util.IsDisableUpdates)
             {
                 try
                 {
@@ -241,7 +241,7 @@ namespace XIVLauncher
             
             Log.Information("Loading MainWindow for account '{0}'", accountName);
 
-            if (Util.IsWine)
+            if (Util.IsDisableUpdates)
             {
                 OnUpdateCheckFinished(null, null);
             }
