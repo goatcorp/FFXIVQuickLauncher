@@ -72,6 +72,9 @@ namespace XIVLauncher.Windows
 
             SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
 
+            // Get old setting if there is one
+            if (App.Settings.OptOutMbCollection == null)
+                App.Settings.OptOutMbCollection = DalamudSettings.GetSettings().OptOutMbCollection.GetValueOrDefault(false);
             MbUploadOptOutCheckBox.IsChecked = App.Settings.OptOutMbCollection;
 
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
