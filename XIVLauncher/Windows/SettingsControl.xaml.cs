@@ -306,14 +306,20 @@ namespace XIVLauncher.Windows
                 foreach (var path in definitionFiles)
                 {
                     dynamic definition = JObject.Parse(File.ReadAllText(path));
-
-                    if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
+                    try
                     {
-                        if (File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                        if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
                         {
-                            File.Delete(Path.Combine(Path.GetDirectoryName(path), ".disabled")); //Enable it
-                            break;
+                            if (File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                            {
+                                File.Delete(Path.Combine(Path.GetDirectoryName(path), ".disabled")); //Enable it
+                                break;
+                            }
                         }
+                    }
+                    catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+                    {
+                        //Ignore files that are not config
                     }
                 }
             }
@@ -322,14 +328,19 @@ namespace XIVLauncher.Windows
                 foreach (var path in definitionFiles)
                 {
                     dynamic definition = JObject.Parse(File.ReadAllText(path));
-
-                    if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
-                    {
-                        if (!File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                    try {
+                        if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
                         {
-                            File.WriteAllText(Path.Combine(Path.GetDirectoryName(path), ".disabled"),""); //Disable it
-                            break;
+                            if (!File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                            {
+                                File.WriteAllText(Path.Combine(Path.GetDirectoryName(path), ".disabled"), ""); //Disable it
+                                break;
+                            }
                         }
+                    }
+                    catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+                    {
+                        //Ignore files that are not config
                     }
                 }
             }
