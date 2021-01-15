@@ -14,5 +14,7 @@ namespace Dalamud
         public ClientLanguage Language;
 
         public string GameVersion;
+
+        public bool OptOutMbCollection;
     }
 }

@@ -20,6 +20,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch;
 using XIVLauncher.PatchInstaller;
+using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows.ViewModel;
 using Timer = System.Timers.Timer;
@@ -132,6 +133,16 @@ namespace XIVLauncher.Windows
 
         public void Initialize()
         {
+#if DEBUG
+            var fakeStartMenuItem = new MenuItem
+            {
+                Header = "Fake start"
+            };
+            fakeStartMenuItem.Click += FakeStart_OnClick;
+
+            LoginContextMenu.Items.Add(fakeStartMenuItem);
+#endif
+
             // Upgrade the stored settings if needed
             if (Properties.Settings.Default.UpgradeRequired)
             {
@@ -222,27 +233,12 @@ namespace XIVLauncher.Windows
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(LoginUsername.Text))
-            {
-                MessageBox.Show(
-                    Loc.Localize("EmptyUsernameError", "Please enter an username."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            HandleLogin(false, true);
+        }
 
-            if (string.IsNullOrEmpty(LoginPassword.Password))
-            {
-                MessageBox.Show(
-                    Loc.Localize("EmptyPasswordError", "Please enter a password."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (_isLoggingIn)
-                return;
-
-            _isLoggingIn = true;
-            HandleLogin(false);
+        private void LoginNoStart_Click(object sender, RoutedEventArgs e)
+        {
+            HandleLogin(false, false);
         }
 
         private void HandleBootCheck(Action whenFinishAction)
@@ -332,8 +328,38 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private void HandleLogin(bool autoLogin)
+        private void HandleLogin(bool autoLogin, bool startGame = true)
         {
+            if (string.IsNullOrEmpty(LoginUsername.Text))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyUsernameError", "Please enter an username."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(LoginPassword.Password))
+            {
+                MessageBox.Show(
+                    Loc.Localize("EmptyPasswordError", "Please enter a password."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (_isLoggingIn)
+                return;
+
+            if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == PatcherMain.BASE_GAME_VERSION && App.Settings.UniqueIdCacheEnabled)
+            {
+                MessageBox.Show(
+                    Loc.Localize("UidCacheInstallError",
+                        "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall FFXIV.\n\nIf you want to reinstall FFXIV, please take care to disable it first."),
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            _isLoggingIn = true;
+
             var hasValidCache = _launcher.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
 
             Log.Information("CurrentAccount: {0}", _accountManager.CurrentAccount == null ? "null" : _accountManager.CurrentAccount.ToString());
@@ -385,7 +411,7 @@ namespace XIVLauncher.Windows
                 otp = otpDialog.Result;
             }
 
-            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp)));
+            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp, startGame)));
         }
 
         private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus)
@@ -448,9 +474,9 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private async void StartLogin(string otp)
+        private async void StartLogin(string otp, bool startGame)
         {
-            Log.Information("StartGame() called");
+            Log.Information("StartLogin() called");
 
             var gateStatus = false;
             try
@@ -508,7 +534,22 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-                await StartGameAndAddon(loginResult, gateStatus);
+                if (startGame)
+                {
+                    await StartGameAndAddon(loginResult, gateStatus);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        Loc.Localize("LoginNoStartOk",
+                            "An update check was executed and any pending updates were installed."), "XIVLauncher",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    this._isLoggingIn = false;
+                    Show();
+                    Activate();
+                }
+                
             }
             catch (Exception ex)
             {
@@ -572,6 +613,9 @@ namespace XIVLauncher.Windows
 
             try
             {
+                if (App.Settings.AddonList == null)
+                    App.Settings.AddonList = new List<AddonEntry>();
+
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
                 if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
@@ -692,6 +736,12 @@ namespace XIVLauncher.Windows
 
             DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
             _maintenanceQueueTimer.Start();
+
+            // Manually fire the first event, avoid waiting the first timer interval
+            Task.Run(() =>
+            {
+                OnMaintenanceQueueTimerEvent(null, null);
+            });
         }
 
         private void SetupMaintenanceQueueTimer()
@@ -701,56 +751,52 @@ namespace XIVLauncher.Windows
                 Interval = 15000
             };
 
-            _maintenanceQueueTimer.Elapsed += (o, args) =>
+            _maintenanceQueueTimer.Elapsed += OnMaintenanceQueueTimerEvent;
+        }
+
+        private void OnMaintenanceQueueTimerEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+
+            var gateStatus = false;
+            try
             {
-                Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
-                try
-                {
-                    bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
-                }
-                catch
-                {
-                    // ignored
-                }
+                gateStatus = _launcher.GetGateStatus();
+            }
+            catch
+            {
+                // ignored
+            }
 
-                var gateStatus = false;
-                try
-                {
-                    gateStatus = _launcher.GetGateStatus();
-                }
-                catch
-                {
-                    // ignored
-                }
+            if (gateStatus || bootPatches != null)
+            {
+                if (bootPatches != null)
+                    MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
+                        "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
 
-                if (gateStatus || bootPatches != null)
-                {
-                    Console.Beep(529, 130);
-                    Thread.Sleep(200);
-                    Console.Beep(529, 100);
-                    Thread.Sleep(30);
-                    Console.Beep(529, 100);
-                    Thread.Sleep(300);
-                    Console.Beep(420, 140);
-                    Thread.Sleep(300);
-                    Console.Beep(466, 100);
-                    Thread.Sleep(300);
-                    Console.Beep(529, 160);
-                    Thread.Sleep(200);
-                    Console.Beep(466, 100);
-                    Thread.Sleep(30);
-                    Console.Beep(529, 900);
+                Dispatcher.BeginInvoke(new Action(() => {
+                    QuitMaintenanceQueueButton_OnClick(null, null);
+                    LoginButton_Click(null, null);
+                }));
 
-                    if (bootPatches != null)
-                        MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
-                            "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
-
-                    Dispatcher.BeginInvoke(new Action(() => {
-                        LoginButton_Click(null, null);
-                        QuitMaintenanceQueueButton_OnClick(null, null);
-                    }));
-                }
-            };
+                Console.Beep(523, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 300);
+                Thread.Sleep(150);
+                Console.Beep(415, 300);
+                Thread.Sleep(150);
+                Console.Beep(466, 300);
+                Thread.Sleep(150);
+                Console.Beep(523, 300);
+                Thread.Sleep(25);
+                Console.Beep(466, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 900);
+            }
         }
 
         private void QuitMaintenanceQueueButton_OnClick(object sender, RoutedEventArgs e)
@@ -812,6 +858,23 @@ namespace XIVLauncher.Windows
         private void SettingsControl_OnSettingsDismissed(object sender, EventArgs e)
         {
             Task.Run(SetupHeadlines);
+        }
+
+        private async void FakeStart_OnClick(object sender, RoutedEventArgs e)
+        {
+            await StartGameAndAddon(new Launcher.LoginResult
+            {
+                OauthLogin = new Launcher.OauthLoginResult
+                {
+                    MaxExpansion = 3,
+                    Playable = true,
+                    Region = 0,
+                    SessionId = "0",
+                    TermsAccepted = true
+                },
+                State = Launcher.LoginState.Ok,
+                UniqueId = "0"
+            }, true);
         }
     }
 }

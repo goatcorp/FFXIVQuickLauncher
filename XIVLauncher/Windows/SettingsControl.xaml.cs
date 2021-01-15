@@ -58,7 +58,7 @@ namespace XIVLauncher.Windows
             LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
             LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
             LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
-            AddonListView.ItemsSource = App.Settings.AddonList;
+            AddonListView.ItemsSource = App.Settings.AddonList ??= new List<AddonEntry>();
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
@@ -72,7 +72,7 @@ namespace XIVLauncher.Windows
 
             SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
 
-            MbUploadOptOutCheckBox.IsChecked = DalamudSettings.OptOutMbUpload;
+            MbUploadOptOutCheckBox.IsChecked = App.Settings.OptOutMbCollection;
 
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
@@ -110,7 +110,7 @@ namespace XIVLauncher.Windows
 
             App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
 
-            DalamudSettings.OptOutMbUpload = MbUploadOptOutCheckBox.IsChecked == true;
+            App.Settings.OptOutMbCollection = MbUploadOptOutCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
@@ -306,14 +306,20 @@ namespace XIVLauncher.Windows
                 foreach (var path in definitionFiles)
                 {
                     dynamic definition = JObject.Parse(File.ReadAllText(path));
-
-                    if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
+                    try
                     {
-                        if (File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                        if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
                         {
-                            File.Delete(Path.Combine(Path.GetDirectoryName(path), ".disabled")); //Enable it
-                            break;
+                            if (File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                            {
+                                File.Delete(Path.Combine(Path.GetDirectoryName(path), ".disabled")); //Enable it
+                                break;
+                            }
                         }
+                    }
+                    catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+                    {
+                        //Ignore files that are not config
                     }
                 }
             }
@@ -322,14 +328,19 @@ namespace XIVLauncher.Windows
                 foreach (var path in definitionFiles)
                 {
                     dynamic definition = JObject.Parse(File.ReadAllText(path));
-
-                    if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
-                    {
-                        if (!File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                    try {
+                        if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
                         {
-                            File.WriteAllText(Path.Combine(Path.GetDirectoryName(path), ".disabled"),""); //Disable it
-                            break;
+                            if (!File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
+                            {
+                                File.WriteAllText(Path.Combine(Path.GetDirectoryName(path), ".disabled"), ""); //Disable it
+                                break;
+                            }
                         }
+                    }
+                    catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+                    {
+                        //Ignore files that are not config
                     }
                 }
             }
@@ -358,7 +369,11 @@ namespace XIVLauncher.Windows
                         continue;
                     }
 
-                    var sortedVersions = versions.OrderBy(x => int.Parse(x.Name.Replace(".", "")));
+                    var sortedVersions = versions.OrderBy(dirInfo => {
+                        var success = Version.TryParse(dirInfo.Name, out Version version);
+                        if (!success) { Log.Debug("Unparseable version: {0}", dirInfo.Name); }
+                        return version;
+                    }).ToArray();
                     var latest = sortedVersions.Last();
 
                     var localInfoFile = new FileInfo(Path.Combine(latest.FullName, $"{installed.Name}.json"));

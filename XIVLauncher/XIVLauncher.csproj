@@ -273,7 +273,6 @@
     <Compile Include="Addon\INotifyAddonAfterClose.cs" />
     <Compile Include="Addon\IPersistentAddon.cs" />
     <Compile Include="Addon\IRunnableAddon.cs" />
-    <Compile Include="Dalamud\DalamudConfiguration.cs" />
     <Compile Include="Dalamud\DalamudStartInfo.cs" />
     <Compile Include="Game\ProblemCheck.cs" />
     <Compile Include="Game\ClientLanguage.cs" />

@@ -24,23 +24,25 @@ namespace XIVLauncher.Dalamud
         private Process _gameProcess;
         private DirectoryInfo _gamePath;
         private ClientLanguage _language;
+        private bool _optOutMbCollection;
 
         public void Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
             _gameProcess = gameProcess;
             _gamePath = setting.GamePath;
             _language = setting.Language.GetValueOrDefault(ClientLanguage.English);
+            _optOutMbCollection = setting.OptOutMbCollection;
         }
 
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
-        private readonly string DALAMUD_MUTEX_NAME = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
+        private readonly string _dalamudMutexName = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
 
         public void DoWork(object state)
         {
             var cancellationToken = (CancellationToken) state;
 
-            var mutex = new Mutex(false, DALAMUD_MUTEX_NAME);
+            var mutex = new Mutex(false, this._dalamudMutexName);
             try
             {
                 var isMine = mutex.WaitOne(0, false);
@@ -51,6 +53,9 @@ namespace XIVLauncher.Dalamud
                 {
                     Thread.Sleep(1);
                 }
+
+                if (isMine)
+                    mutex.ReleaseMutex();
             }
             finally
             {
@@ -69,6 +74,8 @@ namespace XIVLauncher.Dalamud
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
         {
+            Log.Information("DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language, doDownloads);
+
             if (!CheckVcRedist())
                 return;
 
@@ -82,7 +89,7 @@ namespace XIVLauncher.Dalamud
             Directory.CreateDirectory(defaultPluginPath);
 
             var configPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
-            var config = DalamudSettings.DalamudConfig;
+            var config = new DalamudSettings(configPath).DalamudConfig;
 
             Thread.Sleep((int) App.Settings.DalamudInjectionDelayMs);
 
@@ -137,7 +144,8 @@ namespace XIVLauncher.Dalamud
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
                 ConfigurationPath = configPath,
-                GameVersion = remoteVersionInfo.SupportedGameVer
+                GameVersion = remoteVersionInfo.SupportedGameVer,
+                OptOutMbCollection = _optOutMbCollection
             };
 
             var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));

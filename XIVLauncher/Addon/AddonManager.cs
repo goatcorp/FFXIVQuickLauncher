@@ -51,16 +51,19 @@ namespace XIVLauncher.Addon
         {
             Log.Information("Stopping addons...");
 
-            foreach (var addon in _runningAddons)
+            if (_runningAddons != null)
             {
-                addon.Item3?.Cancel();
-                addon.Item2?.Join();
+                foreach (var addon in _runningAddons)
+                {
+                    addon.Item3?.Cancel();
+                    addon.Item2?.Join();
 
-                if (addon.Item1 is INotifyAddonAfterClose notifiedAddon)
-                    notifiedAddon.GameClosed();
+                    if (addon.Item1 is INotifyAddonAfterClose notifiedAddon)
+                        notifiedAddon.GameClosed();
+                }
+
+                _runningAddons = null;
             }
-
-            _runningAddons = null;
         }
     }
 }
