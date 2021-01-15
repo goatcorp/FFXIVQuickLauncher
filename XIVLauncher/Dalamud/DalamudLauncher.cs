@@ -24,12 +24,14 @@ namespace XIVLauncher.Dalamud
         private Process _gameProcess;
         private DirectoryInfo _gamePath;
         private ClientLanguage _language;
+        private bool _optOutMbCollection;
 
         public void Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
             _gameProcess = gameProcess;
             _gamePath = setting.GamePath;
             _language = setting.Language.GetValueOrDefault(ClientLanguage.English);
+            _optOutMbCollection = setting.OptOutMbCollection;
         }
 
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
@@ -87,7 +89,7 @@ namespace XIVLauncher.Dalamud
             Directory.CreateDirectory(defaultPluginPath);
 
             var configPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
-            var config = DalamudSettings.DalamudConfig;
+            var config = new DalamudSettings(configPath).DalamudConfig;
 
             Thread.Sleep((int) App.Settings.DalamudInjectionDelayMs);
 
@@ -142,7 +144,8 @@ namespace XIVLauncher.Dalamud
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
                 ConfigurationPath = configPath,
-                GameVersion = remoteVersionInfo.SupportedGameVer
+                GameVersion = remoteVersionInfo.SupportedGameVer,
+                OptOutMbCollection = _optOutMbCollection
             };
 
             var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
