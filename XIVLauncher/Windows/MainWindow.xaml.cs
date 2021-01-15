@@ -718,6 +718,12 @@ namespace XIVLauncher.Windows
 
             DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
             _maintenanceQueueTimer.Start();
+
+            // Manually fire the first event, avoid waiting the first timer interval
+            Task.Run(() =>
+            {
+                OnMaintenanceQueueTimerEvent(null, null);
+            });
         }
 
         private void SetupMaintenanceQueueTimer()
@@ -727,48 +733,52 @@ namespace XIVLauncher.Windows
                 Interval = 15000
             };
 
-            _maintenanceQueueTimer.Elapsed += (o, args) =>
+            _maintenanceQueueTimer.Elapsed += OnMaintenanceQueueTimerEvent;
+        }
+
+        private void OnMaintenanceQueueTimerEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+
+            var gateStatus = false;
+            try
             {
-                var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+                gateStatus = _launcher.GetGateStatus();
+            }
+            catch
+            {
+                // ignored
+            }
 
-                var gateStatus = false;
-                try
-                {
-                    gateStatus = _launcher.GetGateStatus();
-                }
-                catch
-                {
-                    // ignored
-                }
+            if (gateStatus || bootPatches != null)
+            {
+                if (bootPatches != null)
+                    MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
+                        "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
 
-                if (gateStatus || bootPatches != null)
-                {
-                    Console.Beep(529, 130);
-                    Thread.Sleep(200);
-                    Console.Beep(529, 100);
-                    Thread.Sleep(30);
-                    Console.Beep(529, 100);
-                    Thread.Sleep(300);
-                    Console.Beep(420, 140);
-                    Thread.Sleep(300);
-                    Console.Beep(466, 100);
-                    Thread.Sleep(300);
-                    Console.Beep(529, 160);
-                    Thread.Sleep(200);
-                    Console.Beep(466, 100);
-                    Thread.Sleep(30);
-                    Console.Beep(529, 900);
+                Dispatcher.BeginInvoke(new Action(() => {
+                    QuitMaintenanceQueueButton_OnClick(null, null);
+                    LoginButton_Click(null, null);
+                }));
 
-                    if (bootPatches != null)
-                        MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
-                            "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
-
-                    Dispatcher.BeginInvoke(new Action(() => {
-                        LoginButton_Click(null, null);
-                        QuitMaintenanceQueueButton_OnClick(null, null);
-                    }));
-                }
-            };
+                Console.Beep(523, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 300);
+                Thread.Sleep(150);
+                Console.Beep(415, 300);
+                Thread.Sleep(150);
+                Console.Beep(466, 300);
+                Thread.Sleep(150);
+                Console.Beep(523, 300);
+                Thread.Sleep(25);
+                Console.Beep(466, 150);
+                Thread.Sleep(25);
+                Console.Beep(523, 900);
+            }
         }
 
         private void QuitMaintenanceQueueButton_OnClick(object sender, RoutedEventArgs e)
