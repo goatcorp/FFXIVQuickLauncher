@@ -133,7 +133,7 @@ namespace XIVLauncher.Windows.ViewModel
             JoinDiscordLoc = Loc.Localize("JoinDiscord", "Join Discord");
             StartBackupToolLoc = Loc.Localize("StartBackupTool", "Start Backup Tool");
             StartOriginalLauncherLoc = Loc.Localize("StartOriginalLauncher", "Start Original Launcher");
-            EnabledUidCacheLoc = Loc.Localize("EnabledUidCache", "Enable experimental UID cache(might behave weirdly)");
+            EnabledUidCacheLoc = Loc.Localize("EnabledUidCache", "Enable experimental UID cache(this will break on game updates!)");
             EnableEncryptionLoc = Loc.Localize("EnableEncryption", "Enable encrypting arguments to the client");
         }
 
