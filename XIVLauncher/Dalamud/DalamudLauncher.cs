@@ -31,7 +31,7 @@ namespace XIVLauncher.Dalamud
             _gameProcess = gameProcess;
             _gamePath = setting.GamePath;
             _language = setting.Language.GetValueOrDefault(ClientLanguage.English);
-            _optOutMbCollection = setting.OptOutMbCollection;
+            _optOutMbCollection = setting.OptOutMbCollection.GetValueOrDefault(); ;
         }
 
         private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
@@ -88,8 +88,7 @@ namespace XIVLauncher.Dalamud
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
 
-            var configPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
-            var config = new DalamudSettings(configPath).DalamudConfig;
+            var doDalamudTest = DalamudSettings.GetSettings().DoDalamudTest;
 
             Thread.Sleep((int) App.Settings.DalamudInjectionDelayMs);
 
@@ -98,7 +97,7 @@ namespace XIVLauncher.Dalamud
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var versionInfoJson = client.DownloadString(REMOTE_BASE + (config.DoDalamudTest ? "stg/" : string.Empty) + "version");
+            var versionInfoJson = client.DownloadString(REMOTE_BASE + (doDalamudTest ? "stg/" : string.Empty) + "version");
 
             var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
 
@@ -108,7 +107,7 @@ namespace XIVLauncher.Dalamud
                 if (!File.Exists(addonExe))
                 {
                     Serilog.Log.Information("[HOOKS] Not found, redownloading");
-                    Download(addonDirectory, config.DoDalamudTest);
+                    Download(addonDirectory, doDalamudTest);
                 }
                 else
                 {
@@ -119,7 +118,7 @@ namespace XIVLauncher.Dalamud
                         remoteVersionInfo.AssemblyVersion);
 
                     if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
-                        Download(addonDirectory, config.DoDalamudTest);
+                        Download(addonDirectory, doDalamudTest);
                 }
             }
 
@@ -143,7 +142,7 @@ namespace XIVLauncher.Dalamud
                 Language = language,
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
-                ConfigurationPath = configPath,
+                ConfigurationPath = DalamudSettings.configPath,
                 GameVersion = remoteVersionInfo.SupportedGameVer,
                 OptOutMbCollection = _optOutMbCollection
             };
@@ -161,7 +160,7 @@ namespace XIVLauncher.Dalamud
 
             process.Start();
 
-            Serilog.Log.Information("[HOOKS] Started dalamud! Staging: " + config.DoDalamudTest);
+            Serilog.Log.Information("[HOOKS] Started dalamud! Staging: " + doDalamudTest);
 
             // Reset security protocol after updating
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
