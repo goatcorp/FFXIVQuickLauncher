@@ -72,6 +72,9 @@ namespace XIVLauncher.Windows
 
             SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
 
+            // Get old setting if there is one
+            if (App.Settings.OptOutMbCollection == null)
+                App.Settings.OptOutMbCollection = DalamudSettings.GetSettings().OptOutMbCollection.GetValueOrDefault(false);
             MbUploadOptOutCheckBox.IsChecked = App.Settings.OptOutMbCollection;
 
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
@@ -296,54 +299,85 @@ namespace XIVLauncher.Windows
             }
         }
 
+        private string GetSelectedPluginVersionPath()
+        {
+            string selectedPath = null;
+
+            var definitionFiles = Directory.GetFiles(Path.Combine(Paths.RoamingPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
+            foreach (var path in definitionFiles)
+            {
+                dynamic definition = JObject.Parse(File.ReadAllText(path));
+                try
+                {
+                    if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
+                    {
+                        selectedPath = Path.GetDirectoryName(path);
+                        break;
+                    }
+                }
+                catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+                {
+                    //Ignore files that are not config
+                }
+            }
+
+            return selectedPath;
+        }
+
         private void TogglePlugin_OnClick(object sender, RoutedEventArgs e)
         {
-            var definitionFiles = Directory.GetFiles(Path.Combine(Paths.RoamingPath, "installedPlugins"), "*.json", SearchOption.AllDirectories);
+            var pluginVersionPath = GetSelectedPluginVersionPath();
 
-            if (PluginListView.SelectedValue.ToString().Contains("(X)")) //If it's disabled...
+            if (pluginVersionPath == null)
             {
+                MessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."));
+                return;
+            }
 
-                foreach (var path in definitionFiles)
+            if (PluginListView.SelectedValue.ToString().Contains("(disabled)")) //If it's disabled...
+            {
+                if (File.Exists(Path.Combine(pluginVersionPath, ".disabled")))
                 {
-                    dynamic definition = JObject.Parse(File.ReadAllText(path));
-                    try
-                    {
-                        if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
-                        {
-                            if (File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
-                            {
-                                File.Delete(Path.Combine(Path.GetDirectoryName(path), ".disabled")); //Enable it
-                                break;
-                            }
-                        }
-                    }
-                    catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
-                    {
-                        //Ignore files that are not config
-                    }
+                    File.Delete(Path.Combine(pluginVersionPath, ".disabled")); //Enable it
                 }
             }
-            else //If it's enabled
+            else //If it's enabled...
             {
-                foreach (var path in definitionFiles)
+                if (!File.Exists(Path.Combine(pluginVersionPath, ".disabled")))
                 {
-                    dynamic definition = JObject.Parse(File.ReadAllText(path));
-                    try {
-                        if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
-                        {
-                            if (!File.Exists(Path.Combine(Path.GetDirectoryName(path), ".disabled")))
-                            {
-                                File.WriteAllText(Path.Combine(Path.GetDirectoryName(path), ".disabled"), ""); //Disable it
-                                break;
-                            }
-                        }
-                    }
-                    catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
-                    {
-                        //Ignore files that are not config
-                    }
+                    File.WriteAllText(Path.Combine(pluginVersionPath, ".disabled"), ""); //Disable it
                 }
             }
+
+            ReloadPluginList();
+        }
+
+        private void DeletePlugin_OnClick(object sender, RoutedEventArgs e)
+        {
+            if(Util.CheckIsGameOpen())
+            {
+                MessageBox.Show(Loc.Localize("GameIsOpenPluginLocked", "The game is open, please close it and try again."));
+                return;
+            }
+
+            var pluginVersionPath = GetSelectedPluginVersionPath();
+
+            if (pluginVersionPath == null)
+            {
+                MessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."));
+                return;
+            }
+
+            var pluginDirectory = Directory.GetParent(pluginVersionPath);
+
+            //Just to be safe
+            if (pluginDirectory.Parent.FullName != Path.Combine(Paths.RoamingPath, "installedPlugins"))
+            {
+                MessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."));
+                return;
+            }
+
+            pluginDirectory.Delete(true);
 
             ReloadPluginList();
         }
@@ -390,7 +424,7 @@ namespace XIVLauncher.Windows
                     if (isDisabled)
                     {
                         PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion +
-                                                 " (X)");
+                                                 Loc.Localize("DisabledPlugin", " (disabled)"));
                     }
                     else
                     {

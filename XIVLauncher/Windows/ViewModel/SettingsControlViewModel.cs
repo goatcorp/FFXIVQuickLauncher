@@ -118,6 +118,7 @@ namespace XIVLauncher.Windows.ViewModel
             PluginsDescriptionLoc = Loc.Localize("PluginsDescriptionLoc",
                 "These are the plugins that are currently available installed on your machine.");
             PluginsToggleLoc = Loc.Localize("Toggle", "Toggle");
+            PluginsDeleteLoc = Loc.Localize("Delete", "Delete");
             PluginsInstallHintLoc =
                 Loc.Localize("PluginsInstallHint", "You can use the /xlplugins command in-game to install more plugins.");
 
@@ -180,6 +181,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         public string PluginsDescriptionLoc { get; private set; }
         public string PluginsToggleLoc { get; private set; }
+        public string PluginsDeleteLoc { get; private set; }
         public string PluginsInstallHintLoc { get; private set; }
 
         public string SettingsPatchingLoc { get; private set; }

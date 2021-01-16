@@ -31,7 +31,7 @@ namespace XIVLauncher.Settings
         long SpeedLimitBytes { get; set; } 
         decimal DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
-        bool OptOutMbCollection { get; set; }
+        bool? OptOutMbCollection { get; set; }
 
         #endregion
     }
