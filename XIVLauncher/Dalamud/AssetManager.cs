@@ -31,19 +31,17 @@ namespace XIVLauncher.Dalamud
             {"https://img.finalfantasyxiv.com/lds/pc/global/fonts/FFXIV_Lodestone_SSF.ttf", "UIRes/gamesym.ttf"}
         };
 
-        private static string BasePath => Path.Combine(Util.GetRoaming(), "dalamudAssets");
-
-        public static bool EnsureAssets()
+        public static bool EnsureAssets(string baseDir)
         {
             using var client = new WebClient();
 
             Log.Verbose("[ASSET] Starting asset download");
 
-            var versionRes = CheckAssetRefreshNeeded(BasePath);
+            var versionRes = CheckAssetRefreshNeeded(baseDir);
 
             foreach (var entry in AssetDictionary)
             {
-                var filePath = Path.Combine(BasePath, entry.Value);
+                var filePath = Path.Combine(baseDir, entry.Value);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
@@ -63,7 +61,7 @@ namespace XIVLauncher.Dalamud
             }
 
             if (versionRes.isRefreshNeeded)
-                SetLocalAssetVer(BasePath, versionRes.version);
+                SetLocalAssetVer(baseDir, versionRes.version);
 
             Log.Verbose("[ASSET] Assets OK");
 

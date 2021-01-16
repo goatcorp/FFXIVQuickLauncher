@@ -137,10 +137,12 @@ namespace XIVLauncher.Dalamud
                 return;
             }
 
+            var assetPath = Path.Combine(Util.GetRoaming(), "dalamudAssets");
+
             try
             {
                 //TODO: Make async again, make UI-capable
-                if (!AssetManager.EnsureAssets())
+                if (!AssetManager.EnsureAssets(assetPath))
                 {
                     Log.Information("Assets not ensured, bailing out...");
                     return;
@@ -158,6 +160,7 @@ namespace XIVLauncher.Dalamud
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
                 ConfigurationPath = configPath,
+                AssetDirectory = assetPath,
                 GameVersion = remoteVersionInfo.SupportedGameVer,
                 OptOutMbCollection = _optOutMbCollection
             };
