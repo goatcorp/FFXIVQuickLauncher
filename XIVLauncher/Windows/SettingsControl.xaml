@@ -181,6 +181,9 @@
                                     <MenuItem Header="{Binding PluginsToggleLoc}"
                                               Click="TogglePlugin_OnClick"
                                               Foreground="{DynamicResource MaterialDesignBody}" />
+                                    <MenuItem Header="{Binding PluginsDeleteLoc}"
+                                              Click="DeletePlugin_OnClick"
+                                              Foreground="{DynamicResource MaterialDesignBody}" />
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
