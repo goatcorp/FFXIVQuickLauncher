@@ -60,7 +60,6 @@ namespace XIVLauncher.Dalamud
             finally
             {
                 mutex.Close();
-                mutex = null;
 
                 Log.Information("Dalamud mutex closed.");
             }
@@ -138,6 +137,21 @@ namespace XIVLauncher.Dalamud
                 return;
             }
 
+            try
+            {
+                //TODO: Make async again, make UI-capable
+                if (!AssetManager.EnsureAssets())
+                {
+                    Log.Information("Assets not ensured, bailing out...");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Asset ensurement error, bailing out...");
+                return;
+            }
+            
             var startInfo = new DalamudStartInfo
             {
                 Language = language,
