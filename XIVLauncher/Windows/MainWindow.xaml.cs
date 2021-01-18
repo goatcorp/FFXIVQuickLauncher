@@ -623,7 +623,9 @@ namespace XIVLauncher.Windows
 
                 if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
                 {
-                    addons.Add(new DalamudLauncher());
+                    var overlay = new DalamudLoadingOverlay();
+                    overlay.Hide();
+                    addons.Add(new DalamudLauncher(overlay));
                 }
 
                 await Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons));

@@ -298,6 +298,9 @@
     <Compile Include="Windows\PatchDownloadDialog.xaml.cs">
       <DependentUpon>PatchDownloadDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\DalamudLoadingOverlay.xaml.cs">
+      <DependentUpon>DalamudLoadingOverlay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\UpdateLoadingDialog.xaml.cs">
       <DependentUpon>UpdateLoadingDialog.xaml</DependentUpon>
     </Compile>
@@ -322,6 +325,7 @@
     <Compile Include="Windows\ViewModel\PatchDownloadDialogViewModel.cs" />
     <Compile Include="Windows\ViewModel\ProfilePictureInputWindowViewModel.cs" />
     <Compile Include="Windows\ViewModel\SettingsControlViewModel.cs" />
+    <Compile Include="Windows\ViewModel\DalamudLoadingOverlayViewModel.cs" />
     <Compile Include="Windows\ViewModel\UpdateLoadingDialogViewModel.cs" />
     <Compile Include="Xaml\Components\FileEntry.xaml.cs">
       <DependentUpon>FileEntry.xaml</DependentUpon>
@@ -356,6 +360,7 @@
     <Compile Include="SteamWorksSharp\SteamApi.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Xaml\ChatTypeToFancyNameConverter.cs" />
+    <Compile Include="Xaml\HideFromWindowSwitcher.cs" />
     <Compile Include="Xaml\StringToColorConverter.cs" />
     <Compile Include="Game\Launcher.cs" />
     <Compile Include="Game\NativeAclFix.cs" />
@@ -364,6 +369,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\PatchDownloadDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\DalamudLoadingOverlay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

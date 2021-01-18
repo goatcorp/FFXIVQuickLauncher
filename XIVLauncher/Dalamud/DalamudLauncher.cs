@@ -16,15 +16,22 @@ using XIVLauncher.Addon;
 using XIVLauncher.Game;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
+using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
 {
     class DalamudLauncher : IPersistentAddon
     {
+        private readonly DalamudLoadingOverlay _overlay;
         private Process _gameProcess;
         private DirectoryInfo _gamePath;
         private ClientLanguage _language;
         private bool _optOutMbCollection;
+
+        public DalamudLauncher(DalamudLoadingOverlay overlay)
+        {
+            _overlay = overlay;
+        }
 
         public void Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
@@ -141,7 +148,7 @@ namespace XIVLauncher.Dalamud
             try
             {
                 //TODO: Make async again, make UI-capable
-                if (!AssetManager.EnsureAssets(assetPath))
+                if (!AssetManager.EnsureAssets(assetPath, _overlay))
                 {
                     Log.Information("Assets not ensured, bailing out...");
                     return;
@@ -177,6 +184,12 @@ namespace XIVLauncher.Dalamud
 
             process.Start();
 
+            _overlay.Dispatcher.Invoke(() =>
+            {
+                _overlay.Hide();
+                _overlay.Close();
+            });
+
             Serilog.Log.Information("[HOOKS] Started dalamud! Staging: " + doDalamudTest);
 
             // Reset security protocol after updating
@@ -200,6 +213,8 @@ namespace XIVLauncher.Dalamud
         private void Download(string addonPath, bool staging)
         {
             Serilog.Log.Information("Downloading updates for Hooks and default plugins...");
+
+            _overlay.Dispatcher.Invoke(() => _overlay.SetProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud));
 
             // Ensure directory exists
             Directory.CreateDirectory(addonPath);

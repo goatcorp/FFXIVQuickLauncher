@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Serilog;
+using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
 {
@@ -31,7 +32,7 @@ namespace XIVLauncher.Dalamud
             {"https://img.finalfantasyxiv.com/lds/pc/global/fonts/FFXIV_Lodestone_SSF.ttf", "UIRes/gamesym.ttf"}
         };
 
-        public static bool EnsureAssets(string baseDir)
+        public static bool EnsureAssets(string baseDir, DalamudLoadingOverlay overlay)
         {
             using var client = new WebClient();
 
@@ -47,6 +48,8 @@ namespace XIVLauncher.Dalamud
 
                 if (!File.Exists(filePath) || versionRes.isRefreshNeeded)
                 {
+                    overlay.Dispatcher.Invoke(() => overlay.SetProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Assets));
+
                     Log.Verbose("[ASSET] Downloading {0} to {1}...", entry.Key, entry.Value);
                     try
                     {
