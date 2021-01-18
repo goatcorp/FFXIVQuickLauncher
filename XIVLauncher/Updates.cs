@@ -25,27 +25,28 @@ namespace XIVLauncher
 
             try
             {
-                using (var updateManager = await UpdateManager.GitHubUpdateManager(repoUrl: App.RepoUrl, applicationName: "XIVLauncher", prerelease: downloadPrerelease))
+                var stgPath = downloadPrerelease ? "stg/" : string.Empty;
+                var path = $"https://goaaats.github.io/ffxiv/tools/launcher/xlupdate/{stgPath}";
+
+                var updateManager = new UpdateManager(path, "XIVLauncher");
+
+                SquirrelAwareApp.HandleEvents(
+                    onInitialInstall: v => updateManager.CreateShortcutForThisExe(),
+                    onAppUpdate: v => updateManager.CreateShortcutForThisExe(),
+                    onAppUninstall: v => updateManager.RemoveShortcutForThisExe());
+
+                var downloadedRelease = await updateManager.UpdateApp();
+
+                if (downloadedRelease != null)
                 {
-                    SquirrelAwareApp.HandleEvents(
-                        onInitialInstall: v => updateManager.CreateShortcutForThisExe(),
-                        onAppUpdate: v => updateManager.CreateShortcutForThisExe(),
-                        onAppUninstall: v => updateManager.RemoveShortcutForThisExe());
-
-                    var downloadedRelease = await updateManager.UpdateApp();
-
-                    if (downloadedRelease != null)
-                    {
-                        MessageBox.Show(Loc.Localize("UpdateNotice", "An update for XIVLauncher is available and will now be installed."),
-                            "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                        UpdateManager.RestartApp();
-                    }
+                    MessageBox.Show(Loc.Localize("UpdateNotice", "An update for XIVLauncher is available and will now be installed."),
+                        "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    UpdateManager.RestartApp();
+                }
 #if !XL_NOAUTOUPDATE
                     else
                         OnUpdateCheckFinished?.Invoke(this, null);
 #endif
-
-                }
             }
             catch (Exception ex)
             {
