@@ -235,20 +235,9 @@ namespace XIVLauncher.Windows
                     case IntegrityCheck.CompareResult.Invalid:
                     {
                         File.WriteAllText("integrityreport.txt", task.Result.report);
-                        var result = MessageBox.Show(Loc.Localize("IntegrityCheckFailed",
-                            "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nDo you want to reset the game to the last patch? This will allow you to patch it again, likely fixing the issues you are encountering."),
-                            "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            var verFile = Path.Combine(App.Settings.GamePath.FullName, "game", "ffxivgame.ver");
-
-                            File.Delete(verFile);
-                            File.WriteAllText(verFile, task.Result.remoteIntegrity.LastGameVersion);
-
-                            Process.Start(Path.Combine(ViewModel.GamePath, "boot", "ffxivboot.exe"));
-                            Environment.Exit(0);
-                        }
+                        MessageBox.Show(Loc.Localize("IntegrityCheckFailed",
+                                "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, please reinstall your game."),
+                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
                         break;
                     }
