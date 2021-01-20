@@ -109,9 +109,16 @@ namespace XIVLauncher.Game
                 catch (Exception ex)
                 {
                     Log.Information(ex, "OAuth login failed.");
-                    MessageBox.Show(
-                        "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.",
-                        "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var failedOauthMessage = "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.";
+                    if (App.Settings.AutologinEnabled)
+                    {
+                        var result = MessageBox.Show(
+                        failedOauthMessage+"\nAuto-launch has been disabled to allow checking credentials.\nPress OK in order to disable Auto-launch on the next run.",
+                        "Login issue", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                        if (result == MessageBoxResult.OK) App.Settings.AutologinEnabled = false;
+                        return null;
+                    }
+                    MessageBox.Show(failedOauthMessage,"Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
 
