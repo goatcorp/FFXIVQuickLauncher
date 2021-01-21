@@ -36,7 +36,7 @@ namespace XIVLauncher.Windows
             ProgressTextBlock.Text = progress switch
             {
                 DalamudLoadingProgress.Dalamud => Loc.Localize("DalamudUpdateDalamud", "Updating Dalamud..."),
-                DalamudLoadingProgress.Assets => Loc.Localize("DalamudUpdateDalamud", "Updating assets..."),
+                DalamudLoadingProgress.Assets => Loc.Localize("DalamudUpdateAssets", "Updating assets..."),
                 _ => throw new ArgumentOutOfRangeException(nameof(progress), progress, null),
             };
             this.Show();
