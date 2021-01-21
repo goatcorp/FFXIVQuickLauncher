@@ -28,7 +28,7 @@
                              IsReadOnly="True"
                              VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="False"
                              materialDesign:HintAssist.Hint="Multiline text"
-                             Height="170" x:Name="ExceptionTextBox">
+                             Height="170" x:Name="ExceptionTextBox" Block.LineHeight="6">
                     <RichTextBox.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="4" />
