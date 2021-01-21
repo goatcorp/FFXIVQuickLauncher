@@ -25,27 +25,30 @@ namespace XIVLauncher
 
             try
             {
+                ReleaseEntry newRelease = null;
+
                 using (var updateManager = await UpdateManager.GitHubUpdateManager(repoUrl: App.RepoUrl, applicationName: "XIVLauncher", prerelease: downloadPrerelease))
                 {
+                    // TODO: is this allowed?
                     SquirrelAwareApp.HandleEvents(
                         onInitialInstall: v => updateManager.CreateShortcutForThisExe(),
                         onAppUpdate: v => updateManager.CreateShortcutForThisExe(),
                         onAppUninstall: v => updateManager.RemoveShortcutForThisExe());
 
-                    var downloadedRelease = await updateManager.UpdateApp();
-
-                    if (downloadedRelease != null)
-                    {
-                        MessageBox.Show(Loc.Localize("UpdateNotice", "An update for XIVLauncher is available and will now be installed."),
-                            "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                        UpdateManager.RestartApp();
-                    }
-#if !XL_NOAUTOUPDATE
-                    else
-                        OnUpdateCheckFinished?.Invoke(this, null);
-#endif
-
+                    var a = await updateManager.CheckForUpdate();
+                    newRelease = await updateManager.UpdateApp();
                 }
+
+                if (newRelease != null)
+                {
+                    MessageBox.Show(Loc.Localize("UpdateNotice", "An update for XIVLauncher is available and will now be installed."),
+                        "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    UpdateManager.RestartApp();
+                }
+#if !XL_NOAUTOUPDATE
+                else
+                    OnUpdateCheckFinished?.Invoke(this, null);
+#endif
             }
             catch (Exception ex)
             {
