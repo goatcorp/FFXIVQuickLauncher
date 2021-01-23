@@ -39,7 +39,6 @@ namespace XIVLauncher.Windows
                 DalamudLoadingProgress.Assets => Loc.Localize("DalamudUpdateAssets", "Updating assets..."),
                 _ => throw new ArgumentOutOfRangeException(nameof(progress), progress, null),
             };
-            this.Show();
         }
 
         private void DalamudLoadingOverlay_OnLoaded(object sender, RoutedEventArgs e)

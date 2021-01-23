@@ -32,32 +32,30 @@ namespace XIVLauncher.Dalamud
             {"https://img.finalfantasyxiv.com/lds/pc/global/fonts/FFXIV_Lodestone_SSF.ttf", "UIRes/gamesym.ttf"}
         };
 
-        public static bool EnsureAssets(string baseDir, DalamudLoadingOverlay overlay)
+        public static bool EnsureAssets(DirectoryInfo baseDir)
         {
             using var client = new WebClient();
 
-            Log.Verbose("[ASSET] Starting asset download");
+            Log.Verbose("[DASSET] Starting asset download");
 
             var versionRes = CheckAssetRefreshNeeded(baseDir);
 
             foreach (var entry in AssetDictionary)
             {
-                var filePath = Path.Combine(baseDir, entry.Value);
+                var filePath = Path.Combine(baseDir.FullName, entry.Value);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
                 if (!File.Exists(filePath) || versionRes.isRefreshNeeded)
                 {
-                    overlay.Dispatcher.Invoke(() => overlay.SetProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Assets));
-
-                    Log.Verbose("[ASSET] Downloading {0} to {1}...", entry.Key, entry.Value);
+                    Log.Verbose("[DASSET] Downloading {0} to {1}...", entry.Key, entry.Value);
                     try
                     {
                         File.WriteAllBytes(filePath, client.DownloadData(entry.Key));
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "[ASSET] Could not download asset.");
+                        Log.Error(ex, "[DASSET] Could not download asset.");
                         return false;
                     }
                 }
@@ -66,14 +64,14 @@ namespace XIVLauncher.Dalamud
             if (versionRes.isRefreshNeeded)
                 SetLocalAssetVer(baseDir, versionRes.version);
 
-            Log.Verbose("[ASSET] Assets OK");
+            Log.Verbose("[DASSET] Assets OK");
 
             return true;
         }
 
-        private static string GetAssetVerPath(string baseDir)
+        private static string GetAssetVerPath(DirectoryInfo baseDir)
         {
-            return Path.Combine(baseDir, "asset.ver");
+            return Path.Combine(baseDir.FullName, "asset.ver");
         }
 
 
@@ -83,7 +81,7 @@ namespace XIVLauncher.Dalamud
         /// </summary>
         /// <param name="baseDir">Base directory for assets</param>
         /// <returns>Update state</returns>
-        private static (bool isRefreshNeeded, int version) CheckAssetRefreshNeeded(string baseDir)
+        private static (bool isRefreshNeeded, int version) CheckAssetRefreshNeeded(DirectoryInfo baseDir)
         {
             using var client = new WebClient();
 
@@ -97,18 +95,18 @@ namespace XIVLauncher.Dalamud
 
                 var remoteVer = int.Parse(client.DownloadString(AssetStoreUrl + "asset.ver"));
 
-                Log.Verbose("[ASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer);
+                Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer);
 
                 return remoteVer > localVer ? (true, remoteVer) : (false, localVer);
             }
             catch (Exception e)
             {
-                Log.Error(e, "[ASSET] Could not check asset version");
+                Log.Error(e, "[DASSET] Could not check asset version");
                 return (false, 0);
             }
         }
 
-        private static void SetLocalAssetVer(string baseDir, int version)
+        private static void SetLocalAssetVer(DirectoryInfo baseDir, int version)
         {
             try
             {
@@ -117,7 +115,7 @@ namespace XIVLauncher.Dalamud
             }
             catch (Exception e)
             {
-                Log.Error(e, "[ASSET] Could not write local asset version");
+                Log.Error(e, "[DASSET] Could not write local asset version");
             }
         }
     }

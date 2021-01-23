@@ -164,6 +164,8 @@ namespace XIVLauncher
 
                 _mainWindow = new MainWindow();
                 _mainWindow.Initialize();
+
+                DalamudUpdater.Run(App.Settings.GamePath, new DalamudLoadingOverlay());
             });
         }
 

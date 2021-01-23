@@ -41,7 +41,7 @@ namespace XIVLauncher.Dalamud
             _optOutMbCollection = setting.OptOutMbCollection.GetValueOrDefault(); ;
         }
 
-        private const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
+        public const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
         private readonly string _dalamudMutexName = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
 
@@ -49,44 +49,19 @@ namespace XIVLauncher.Dalamud
         {
             var cancellationToken = (CancellationToken) state;
 
-            var mutex = new Mutex(false, this._dalamudMutexName);
-            try
+            Run(_gamePath, _language, _gameProcess);
+            while (!cancellationToken.IsCancellationRequested)
             {
-                var isMine = mutex.WaitOne(0, false);
-
-                Run(_gamePath, _language, _gameProcess, isMine);
-
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    Thread.Sleep(1);
-                }
-
-                if (isMine)
-                    mutex.ReleaseMutex();
-            }
-            finally
-            {
-                mutex.Close();
-
-                Log.Information("Dalamud mutex closed.");
+                Thread.Sleep(1);
             }
         }
 
-        private class HooksVersionInfo
+        private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
-            public string AssemblyVersion { get; set; }
-            public string SupportedGameVer { get; set; }
-        }
-
-        private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess, bool doDownloads)
-        {
-            Log.Information("DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language, doDownloads);
+            Log.Information("DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language);
 
             if (!CheckVcRedist())
                 return;
-
-            var addonDirectory = Path.Combine(Paths.RoamingPath, "addon", "Hooks");
-            var addonExe = Path.Combine(addonDirectory, "Dalamud.Injector.exe");
 
             var ingamePluginPath = Path.Combine(Paths.RoamingPath, "installedPlugins");
             var defaultPluginPath = Path.Combine(Paths.RoamingPath, "devPlugins");
@@ -94,80 +69,39 @@ namespace XIVLauncher.Dalamud
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
 
-            var doDalamudTest = DalamudSettings.GetSettings().DoDalamudTest;
 
             Thread.Sleep((int) App.Settings.DalamudInjectionDelayMs);
 
-            using var client = new WebClient();
+            if (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
+                DalamudUpdater.ShowOverlay();
 
-            // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            var versionInfoJson = client.DownloadString(REMOTE_BASE + (doDalamudTest ? "stg/" : string.Empty) + "version");
-
-            var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
-
-
-            if (doDownloads)
+            while (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
             {
-                if (!File.Exists(addonExe))
+                if (DalamudUpdater.State == DalamudUpdater.DownloadState.Failed)
                 {
-                    Serilog.Log.Information("[HOOKS] Not found, redownloading");
-                    Download(addonDirectory, doDalamudTest);
+                    DalamudUpdater.CloseOverlay();
+                    return;
                 }
-                else
-                {
-                    var versionInfo = FileVersionInfo.GetVersionInfo(addonExe);
-                    var version = versionInfo.ProductVersion;
 
-                    Serilog.Log.Information("[HOOKS] Hooks update check: local {0} remote {1}", version,
-                        remoteVersionInfo.AssemblyVersion);
-
-                    if (!remoteVersionInfo.AssemblyVersion.StartsWith(version))
-                        Download(addonDirectory, doDalamudTest);
-                }
+                Thread.Yield();
             }
 
-            if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
-                return;
-
-            if (!File.Exists(Path.Combine(addonDirectory, "EasyHook.dll")) ||
-                !File.Exists(Path.Combine(addonDirectory, "Dalamud.dll")) ||
-                !File.Exists(Path.Combine(addonDirectory, "Dalamud.Injector.exe")))
+            if (!DalamudUpdater.Runner.Exists)
             {
                 MessageBox.Show(
                     "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                Directory.Delete(addonDirectory, true);
                 return;
             }
 
-            var assetPath = Path.Combine(Util.GetRoaming(), "dalamudAssets");
-
-            try
-            {
-                //TODO: Make async again, make UI-capable
-                if (!AssetManager.EnsureAssets(assetPath, _overlay))
-                {
-                    Log.Information("Assets not ensured, bailing out...");
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Asset ensurement error, bailing out...");
-                return;
-            }
-            
             var startInfo = new DalamudStartInfo
             {
                 Language = language,
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
                 ConfigurationPath = DalamudSettings.configPath,
-                AssetDirectory = assetPath,
-                GameVersion = remoteVersionInfo.SupportedGameVer,
+                AssetDirectory = DalamudUpdater.AssetDirectory.FullName,
+                GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 OptOutMbCollection = _optOutMbCollection
             };
 
@@ -177,8 +111,8 @@ namespace XIVLauncher.Dalamud
             {
                 StartInfo =
                 {
-                    FileName = addonExe, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
-                    Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = addonDirectory
+                    FileName = DalamudUpdater.Runner.FullName, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
+                    Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = DalamudUpdater.Runner.DirectoryName
                 }
             };
 
@@ -190,7 +124,9 @@ namespace XIVLauncher.Dalamud
                 _overlay.Close();
             });
 
-            Serilog.Log.Information("[HOOKS] Started dalamud! Staging: " + doDalamudTest);
+            DalamudUpdater.CloseOverlay();
+
+            Serilog.Log.Information("[HOOKS] Started dalamud!");
 
             // Reset security protocol after updating
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
@@ -201,50 +137,13 @@ namespace XIVLauncher.Dalamud
             using var client = new WebClient();
 
             var versionInfoJson = client.DownloadString(REMOTE_BASE + "version");
-            var remoteVersionInfo = JsonConvert.DeserializeObject<HooksVersionInfo>(versionInfoJson);
+            var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
 
 
             if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                 return false;
 
             return true;
-        }
-
-        private void Download(string addonPath, bool staging)
-        {
-            Serilog.Log.Information("Downloading updates for Hooks and default plugins...");
-
-            _overlay.Dispatcher.Invoke(() => _overlay.SetProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud));
-
-            // Ensure directory exists
-            Directory.CreateDirectory(addonPath);
-
-            var hooksDirectory = new DirectoryInfo(addonPath);
-
-            foreach (var file in hooksDirectory.GetFiles())
-            {
-                file.Delete(); 
-            }
-
-            foreach (var dir in hooksDirectory.GetDirectories())
-            {
-                dir.Delete(true); 
-            }
-
-            using (var client = new WebClient())
-            {
-                var downloadPath = Path.GetTempFileName();
-
-                if (File.Exists(downloadPath))
-                    File.Delete(downloadPath);
-
-                client.DownloadFile(REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
-                ZipFile.ExtractToDirectory(downloadPath, addonPath);
-
-                File.Delete(downloadPath);
-            }
-
-            Thread.Sleep(1000);
         }
 
         private static bool CheckVcRedist()
