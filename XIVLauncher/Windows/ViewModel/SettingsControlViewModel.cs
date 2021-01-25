@@ -81,6 +81,8 @@ namespace XIVLauncher.Windows.ViewModel
                 "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from\r\nSE for any technical issues any additional XIVLauncher features such as Rich Presence and the\r\nIn-Game addon will not work.");
             ChooseLanguageLoc = Loc.Localize("ChooseLanguage", "Please select which language you want to load the game with.");
             ChooseLauncherLanguageLoc = Loc.Localize("ChooseLauncherLanguage", "Please select the launcher language, requires a restart.");
+            LauncherLanguageHelpCtaLoc = Loc.Localize("LauncherLanguageHelpCtaLoc",
+                "Notice any mistakes? You can help out translating the launcher! Just click here!");
             LauncherLanguageNoticeLoc = Loc.Localize("LauncherLanguageNotice", "A restart is required to apply the launcher language setting.");
 
             SettingsAutoLaunchLoc = Loc.Localize("SettingsAutoLaunch", "Auto-Launch");
@@ -153,6 +155,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string DirectX9NoticeLoc { get; private set; }
         public string ChooseLanguageLoc { get; private set; }
         public string ChooseLauncherLanguageLoc { get; private set; }
+        public string LauncherLanguageHelpCtaLoc { get; private set; }
         public string LauncherLanguageNoticeLoc { get; private set; }
 
         public string SettingsAutoLaunchLoc { get; private set; }

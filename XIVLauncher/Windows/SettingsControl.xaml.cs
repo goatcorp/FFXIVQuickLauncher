@@ -444,5 +444,10 @@ namespace XIVLauncher.Windows
                 Log.Error(ex, error);
             }
         }
+
+        private void OpenI18nLabel_OnClick(object sender, MouseButtonEventArgs e)
+        {
+            Process.Start("https://crowdin.com/project/ffxivquicklauncher");
+        }
     }
 }
