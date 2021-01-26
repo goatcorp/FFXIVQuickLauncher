@@ -51,7 +51,15 @@ namespace XIVLauncher.Dalamud
 
             Task.Run(() =>
             {
-                UpdateDalamud(gamePath, overlay);
+                try
+                {
+                    UpdateDalamud(gamePath, overlay);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[DUPDATE] Update failed...");
+                    State = DownloadState.Failed;
+                }
             });
         }
 
@@ -73,10 +81,18 @@ namespace XIVLauncher.Dalamud
             var addonPath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks", remoteVersionInfo.AssemblyVersion));
             AssetDirectory = new DirectoryInfo(Path.Combine(Util.GetRoaming(), "dalamudAssets"));
 
-            if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+            try
             {
+                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
+                {
+                    State = DownloadState.Failed;
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[DUPDATE] Could not get game version");
                 State = DownloadState.Failed;
-                return;
             }
 
             if (!addonPath.Exists)
