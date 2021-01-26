@@ -513,6 +513,20 @@ namespace XIVLauncher.Windows
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
+                    if (loginResult.State == Launcher.LoginState.NoOAuth)
+                    {
+                        var failedOauthMessage = "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.";
+                        if (App.Settings.AutologinEnabled)
+                        {
+                            failedOauthMessage += "\n\nAuto-Login has been disabled.";
+                            App.Settings.AutologinEnabled = false;
+                        }
+
+                        MessageBox.Show(failedOauthMessage, "Login issue", MessageBoxButton.OK, MessageBoxImage.Error);
+                        _isLoggingIn = false;
+                        return;
+                    }
+
                     if (App.Settings.AskBeforePatchInstall.HasValue && App.Settings.AskBeforePatchInstall.Value)
                     {
                         var selfPatchAsk = MessageBox.Show(
