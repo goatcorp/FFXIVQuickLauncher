@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using CheapLoc;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using Squirrel;
 
@@ -53,6 +55,27 @@ namespace XIVLauncher
             catch (Exception ex)
             {
                 Log.Error(ex, "Update failed");
+                try
+                {
+                    using var webClient = new WebClient();
+                    webClient.Headers.Add("user-agent", "Updater");
+                    var rawJson = webClient.DownloadString(@"https://api.github.com/rate_limit");
+                    dynamic json = JObject.Parse(rawJson);
+                    if (json.resources.core.remaining == 0)
+                    {
+                        var resetDate = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt32(json.resources.core.reset)).ToLocalTime();
+                        var resetMinutes = Math.Truncate((resetDate - DateTimeOffset.Now).TotalMinutes);
+                        MessageBox.Show(string.Format(Loc.Localize("GithubRateLimit", "XIVLauncher failed to check for updates, GitHub rate limit exceeded.\nThe limit resets at {0} in {1} minute(s)."),
+                                        resetDate.ToString("T", CultureInfo.InvariantCulture),
+                                        resetMinutes));
+                        System.Environment.Exit(1);
+                    }
+                }
+                catch
+                {
+                    // Ignored
+                }
+
                 MessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support."),
                                 "XIVLauncher",
                                  MessageBoxButton.OK,
