@@ -276,6 +276,9 @@
                                 <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                         HorizontalAlignment="Left"
                                         Click="ResetCacheButton_OnClick" Margin="0 0 0 0">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding ResetUidCacheTipLoc}" />
+                                    </Button.ToolTip>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
                                                    Foreground="DarkGray" FontSize="11">
