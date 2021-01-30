@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Serilog;
 using XIVLauncher.Game.Patch;
@@ -89,42 +90,24 @@ namespace XIVLauncher.Windows
             switch (index)
             {
                 case 0:
-                    SetProgressBar1Progress(patchName, pct);
+                    SetProgressBarProgress(ref Progress1, ref Progress1Text, patchName, pct);
                     break;
                 case 1:
-                    SetProgressBar2Progress(patchName, pct);
+                    SetProgressBarProgress(ref Progress2, ref Progress2Text, patchName, pct);
                     break;
                 case 2:
-                    SetProgressBar3Progress(patchName, pct);
+                    SetProgressBarProgress(ref Progress3, ref Progress3Text, patchName, pct);
                     break;
                 case 3:
-                    SetProgressBar4Progress(patchName, pct);
+                    SetProgressBarProgress(ref Progress4, ref Progress4Text, patchName, pct);
                     break;
             }
         }
 
-        public void SetProgressBar1Progress(string patchName, double percentage)
+        private static void SetProgressBarProgress(ref ProgressBar pb, ref TextBlock pt, string patchName, double percentage)
         {
-            Progress1.Value = percentage;
-            Progress1Text.Text = patchName;
-        }
-
-        public void SetProgressBar2Progress(string patchName, double percentage)
-        {
-            Progress2.Value = percentage;
-            Progress2Text.Text = patchName;
-        }
-
-        public void SetProgressBar3Progress(string patchName, double percentage)
-        {
-            Progress3.Value = percentage;
-            Progress3Text.Text = patchName;
-        }
-
-        public void SetProgressBar4Progress(string patchName, double percentage)
-        {
-            Progress4.Value = percentage;
-            Progress4Text.Text = patchName;
+            pb.Value = percentage;
+            pt.Text = patchName;
         }
 
         public void SetDownloadDone()

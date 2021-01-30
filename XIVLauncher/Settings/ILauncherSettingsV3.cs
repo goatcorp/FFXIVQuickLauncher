@@ -28,7 +28,8 @@ namespace XIVLauncher.Settings
         bool? EncryptArguments { get; set; }
         DirectoryInfo PatchPath { get; set; }
         bool? AskBeforePatchInstall { get; set; } 
-        long SpeedLimitBytes { get; set; } 
+        long SpeedLimitBytes { get; set; }
+        int DownloadsLimit { get; set; }
         decimal DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
         bool? OptOutMbCollection { get; set; }

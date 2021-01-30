@@ -51,7 +51,7 @@ namespace XIVLauncher.Game.Patch
                 UserAgent = "FFXIV PATCH CLIENT",
                 Accept = "*/*"
             },
-            MaximumBytesPerSecond = App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE
+            MaximumBytesPerSecond = App.Settings.SpeedLimitBytes / (App.Settings.DownloadsLimit > 0 ? App.Settings.DownloadsLimit : MAX_DOWNLOADS_AT_ONCE)
         };
 
         public event EventHandler<bool> OnFinish;
@@ -90,8 +90,9 @@ namespace XIVLauncher.Game.Patch
 
             Downloads = patches.Select(patchListEntry => new PatchDownload {Patch = patchListEntry, State = PatchState.Nothing}).ToList().AsReadOnly();
 
+            var numDownloaders = App.Settings.DownloadsLimit > 0 ? App.Settings.DownloadsLimit : MAX_DOWNLOADS_AT_ONCE;
             // All dl slots are available at the start
-            for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
+            for (var i = 0; i < numDownloaders; i++)
             {
                 Slots[i] = true;
             }
@@ -193,10 +194,11 @@ namespace XIVLauncher.Game.Patch
 
         private void RunDownloadQueue()
         {
+            var maxDownloads = App.Settings.DownloadsLimit > 0 ? App.Settings.DownloadsLimit : MAX_DOWNLOADS_AT_ONCE;
             while (Downloads.Any(x => x.State == PatchState.Nothing))
             {
                 Thread.Sleep(500);
-                for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
+                for (var i = 0; i < maxDownloads; i++)
                 {
                     if (!Slots[i]) 
                         continue;

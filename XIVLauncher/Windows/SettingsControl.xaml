@@ -211,9 +211,16 @@
 
                     <Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,10,0,0"
                            Content="{Binding PatchSpeedLimitLoc}" />
-
                     <StackPanel Orientation="Horizontal">
                         <xctk:DecimalUpDown x:Name="SpeedLimiterUpDown" Margin="10,0,0,0" Width="60" HorizontalAlignment="Left" Value="0"/>
+                        <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
+                               Content="MB/s" />
+                    </StackPanel>
+
+                    <Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,10,0,0"
+                           Content="{Binding PatchDownloadsLimitLoc}" />
+                    <StackPanel Orientation="Horizontal">
+                        <xctk:IntegerUpDown x:Name="DownloadsLimiterUpDown" Margin="10,0,0,0" Width="60" HorizontalAlignment="Left" Value="0" Minimum="1" Maximum="4"/>
                         <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
                                Content="MB/s" />
                     </StackPanel>
