@@ -32,12 +32,18 @@ namespace XIVLauncher.Dalamud
             DownloadDalamud,
             DownloadAssets,
             Done,
-            Failed
+            Failed,
+            Unavailable
+        }
+
+        public static void SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress progress)
+        {
+            overlay.Dispatcher.Invoke(() => overlay.SetProgress(progress));
         }
 
         public static void ShowOverlay()
         {
-            overlay.Dispatcher.Invoke(() => overlay.Show());
+            overlay.Dispatcher.Invoke(() => overlay.SetVisible());
         }
 
         public static void CloseOverlay()
@@ -48,6 +54,8 @@ namespace XIVLauncher.Dalamud
         public static void Run(DirectoryInfo gamePath, DalamudLoadingOverlay overlay)
         {
             Log.Information("[DUPDATE] Starting...");
+
+            DalamudUpdater.overlay = overlay;
 
             Task.Run(() =>
             {
@@ -65,8 +73,6 @@ namespace XIVLauncher.Dalamud
 
         private static void UpdateDalamud(DirectoryInfo gamePath, DalamudLoadingOverlay overlay)
         {
-            DalamudUpdater.overlay = overlay;
-
             using var client = new WebClient();
 
             var doDalamudTest = DalamudSettings.GetSettings().DoDalamudTest;
@@ -85,7 +91,8 @@ namespace XIVLauncher.Dalamud
             {
                 if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                 {
-                    State = DownloadState.Failed;
+                    State = DownloadState.Unavailable;
+                    SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Unavailable);
                     return;
                 }
             }
@@ -99,15 +106,15 @@ namespace XIVLauncher.Dalamud
             {
                 Log.Information("[DUPDATE] Not found, redownloading");
 
-                overlay.Dispatcher.Invoke(() => overlay.SetProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud));
-                Download(addonPath, doDalamudTest);
+                SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud);
+                Download(addonPath, doDalamudTest, versionInfoJson);
 
                 Log.Information("[DUPDATE] Download OK!");
             }
 
             try
             {
-                overlay.Dispatcher.Invoke(() => overlay.SetProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Assets));
+                SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Assets);
 
                 if (!AssetManager.EnsureAssets(AssetDirectory))
                 {
@@ -130,10 +137,8 @@ namespace XIVLauncher.Dalamud
             State = DownloadState.Done;
         }
 
-        private static void Download(DirectoryInfo addonPath, bool staging)
+        private static void Download(DirectoryInfo addonPath, bool staging, string versionInfoJson)
         {
-            Serilog.Log.Information("Downloading updates for Hooks and default plugins...");
-
             // Ensure directory exists
             if (!addonPath.Exists)
                 addonPath.Create();
@@ -147,6 +152,8 @@ namespace XIVLauncher.Dalamud
 
                 client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
                 ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
+
+                File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), versionInfoJson);
 
                 File.Delete(downloadPath);
             }

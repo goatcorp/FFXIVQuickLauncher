@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Web.SessionState;
 using System.Windows;
 using CheapLoc;
 using Dalamud;
@@ -20,7 +21,7 @@ using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
 {
-    class DalamudLauncher : IPersistentAddon
+    class DalamudLauncher : IRunnableAddon
     {
         private readonly DalamudLoadingOverlay _overlay;
         private Process _gameProcess;
@@ -41,24 +42,16 @@ namespace XIVLauncher.Dalamud
             _optOutMbCollection = setting.OptOutMbCollection.GetValueOrDefault(); ;
         }
 
-        public const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
-
-        private readonly string _dalamudMutexName = Environment.UserName + "_" + (int.Parse(Util.GetAssemblyVersion().Replace(".", "")) % 0x10 == 0 ? typeof(DalamudLauncher).Name : typeof(DalamudLauncher).Name.Reverse());
-
-        public void DoWork(object state)
+        public void Run()
         {
-            var cancellationToken = (CancellationToken) state;
-
             Run(_gamePath, _language, _gameProcess);
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                Thread.Sleep(1);
-            }
         }
+
+        public const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
-            Log.Information("DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language);
+            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language);
 
             if (!CheckVcRedist())
                 return;
@@ -83,6 +76,9 @@ namespace XIVLauncher.Dalamud
                     return;
                 }
 
+                if (DalamudUpdater.State == DalamudUpdater.DownloadState.Unavailable)
+                    return;
+
                 Thread.Yield();
             }
 
@@ -91,6 +87,15 @@ namespace XIVLauncher.Dalamud
                 MessageBox.Show(
                     "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (!ReCheckVersion(gamePath))
+            {
+                DalamudUpdater.SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Unavailable);
+                DalamudUpdater.ShowOverlay();
+                Log.Error("[HOOKS] ReCheckVersion fail.");
+
                 return;
             }
 
@@ -130,6 +135,20 @@ namespace XIVLauncher.Dalamud
 
             // Reset security protocol after updating
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+        }
+
+        private static bool ReCheckVersion(DirectoryInfo gamePath)
+        {
+            if (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
+                return false;
+
+            var info = DalamudVersionInfo.Load(new FileInfo(Path.Combine(DalamudUpdater.Runner.DirectoryName,
+                "version.json")));
+
+            if (Repository.Ffxiv.GetVer(gamePath) != info.SupportedGameVer)
+                return false;
+
+            return true;
         }
 
         public static bool CanRunDalamud(DirectoryInfo gamePath)

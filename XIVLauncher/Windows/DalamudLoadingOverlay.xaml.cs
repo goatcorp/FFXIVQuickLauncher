@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using CheapLoc;
@@ -28,17 +29,50 @@ namespace XIVLauncher.Windows
         public enum DalamudLoadingProgress
         {
             Dalamud,
-            Assets
+            Assets,
+            Unavailable
         }
+
+        private DalamudLoadingProgress _progress;
 
         public void SetProgress(DalamudLoadingProgress progress)
         {
-            ProgressTextBlock.Text = progress switch
+            _progress = progress;
+
+            switch (progress)
             {
-                DalamudLoadingProgress.Dalamud => Loc.Localize("DalamudUpdateDalamud", "Updating Dalamud..."),
-                DalamudLoadingProgress.Assets => Loc.Localize("DalamudUpdateAssets", "Updating assets..."),
-                _ => throw new ArgumentOutOfRangeException(nameof(progress), progress, null),
-            };
+                case DalamudLoadingProgress.Dalamud:
+                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateDalamud", "Updating Dalamud...");
+                    break;
+                case DalamudLoadingProgress.Assets:
+                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateAssets", "Updating assets...");
+                    break;
+                case DalamudLoadingProgress.Unavailable:
+                    ProgressTextBlock.Text = Loc.Localize("DalamudUnavailable",
+                        "Plugins are currently unavailable\ndue to a game update.");
+                    InfoIcon.Visibility = Visibility.Visible;
+                    ProgressBar.Visibility = Visibility.Collapsed;
+                    UpdateText.Visibility = Visibility.Collapsed;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(progress), progress, null);
+            }
+        }
+
+        public void SetVisible()
+        {
+            if (_progress == DalamudLoadingProgress.Unavailable)
+            {
+                var t = new Timer(15000) {AutoReset = false};
+
+                t.Elapsed += (_, _) =>
+                {
+                    this.Dispatcher.Invoke(this.Close);
+                };
+                t.Start();
+            }
+
+            this.Show();
         }
 
         private void DalamudLoadingOverlay_OnLoaded(object sender, RoutedEventArgs e)

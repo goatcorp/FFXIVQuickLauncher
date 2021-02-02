@@ -16,16 +16,16 @@
         WindowStyle="None" Height="170.088" Width="270"
         Loaded="DalamudLoadingOverlay_OnLoaded">
     <Grid Margin="0,0,0,0">
-        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="100" Margin="0,0,60,0">
-            <StackPanel Margin="16,16,10,0">
-                <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding DalamudUpdateLoc}"></TextBlock>
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="107" Margin="0,0,56,0">
+            <StackPanel Margin="16,16,16,0">
+                <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding DalamudUpdateLoc}" x:Name="UpdateText"/>
+
+                <materialDesign:PackIcon Kind="About" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="30" Height="30" Foreground="White" x:Name="InfoIcon" Visibility="Collapsed" Margin="0,8,0,0"/>
 
                 <ProgressBar
-                    IsIndeterminate="True" Margin="0,20,5,0" />
+                    IsIndeterminate="True" Margin="0,20,0,0" x:Name="ProgressBar"/>
 
-                <TextBlock Foreground="DarkGray" Margin="0, 16,0,0" TextAlignment="Center" x:Name="ProgressTextBlock">
-
-                </TextBlock>
+                <TextBlock Foreground="DarkGray" Margin="0, 16,0,0" TextAlignment="Center" x:Name="ProgressTextBlock"/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>
