@@ -14,16 +14,17 @@
         Background="Transparent"
         WindowStyle="None" Height="170.088" Width="269.186">
     <Grid Margin="0,0,0,0">
-        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
+        <materialDesign:Card x:Name="UpdateLoadingCard" Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
             <StackPanel Margin="16,16,10,0">
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding UpdateCheckLoc}"></TextBlock>
 
                 <ProgressBar
                     IsIndeterminate="True" Margin="0,50,0,0" />
 
-                <TextBlock Foreground="DarkGray" Margin="0,35,0,0" TextAlignment="Center" x:Name="AutoLoginDisclaimer" Text="{Binding AutoLoginHintLoc}">
-                    
-                </TextBlock>
+                <Separator Opacity="0" Height="30"/>
+                
+                <TextBlock Foreground="DarkGray" Margin="0,5,0,0" TextAlignment="Center" x:Name="AutoLoginDisclaimer" Text="{Binding AutoLoginHintLoc}"></TextBlock>
+                <TextBlock Foreground="DarkGray" Margin="0,5,0,0" TextAlignment="Center" x:Name="ResetUidCacheDisclaimer" Text="{Binding ResetUidCacheHintLoc}"></TextBlock>
             </StackPanel>
         </materialDesign:Card>
     </Grid>
