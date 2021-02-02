@@ -77,6 +77,12 @@ namespace XIVLauncher.Windows
             Close();
         }
 
+        private void AccountListViewContext_Opened(object sender, RoutedEventArgs e)
+        {
+            var selectedEntry = AccountListView.SelectedItem as AccountSwitcherEntry;
+            AccountEntrySavePasswordCheck.IsChecked = !selectedEntry.Account.SavePassword;
+        }
+
         private void AccountSwitcher_OnDeactivated(object sender, EventArgs e)
         {
             if (!_closing)

@@ -19,11 +19,11 @@
             <StackPanel Margin="16,16,10,0">
                 <ListView x:Name="AccountListView" MouseUp="AccountListView_OnMouseUp" MaxHeight="370">
                     <ListView.ContextMenu>
-                        <ContextMenu StaysOpen="true">
+                        <ContextMenu Opened="AccountListViewContext_Opened" StaysOpen="true">
                             <MenuItem Header="{Binding AccountSwitcherSetProfilePicLoc}" Click="SetProfilePicture_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem Header="{Binding AccountSwitcherCreateShortcutLoc}" Click="CreateDesktopShortcut_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem Header="{Binding RemoveLoc}" Click="RemoveAccount_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
-                            <MenuItem IsCheckable="True" Header="{Binding AccountSwitcherDontSavePasswordLoc}" Checked="DontSavePassword_OnChecked" Unchecked="DontSavePassword_OnUnchecked" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <MenuItem x:Name="AccountEntrySavePasswordCheck" IsCheckable="True" Header="{Binding AccountSwitcherDontSavePasswordLoc}" Checked="DontSavePassword_OnChecked" Unchecked="DontSavePassword_OnUnchecked" Foreground="{DynamicResource MaterialDesignBody}"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
 

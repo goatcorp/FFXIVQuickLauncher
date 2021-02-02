@@ -193,6 +193,13 @@ namespace XIVLauncher.Windows
 
             AutoLoginCheckBox.IsChecked = App.Settings.AutologinEnabled;
 
+            if (App.Settings.UniqueIdCacheEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+                UniqueIdCache.Reset();
+                _launcher.Cache.Load();
+                Console.Beep(523, 150); // Feedback without popup
+            }
+
             if (App.Settings.AutologinEnabled && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Log.Information("Engaging Autologin...");

@@ -20,7 +20,13 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            AutoLoginDisclaimer.Visibility = App.Settings.AutologinEnabled ? Visibility.Visible : Visibility.Hidden;
+            AutoLoginDisclaimer.Visibility = App.Settings.AutologinEnabled ? Visibility.Visible : Visibility.Collapsed;
+            ResetUidCacheDisclaimer.Visibility = App.Settings.UniqueIdCacheEnabled ? Visibility.Visible : Visibility.Collapsed;
+            if (ResetUidCacheDisclaimer.Visibility == Visibility.Visible
+                && AutoLoginDisclaimer.Visibility == Visibility.Visible) {
+                UpdateLoadingCard.Height += 19;
+            }
+
             this.DataContext = new UpdateLoadingDialogViewModel();
         }
     }
