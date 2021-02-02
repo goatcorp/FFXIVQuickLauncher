@@ -47,7 +47,7 @@ namespace XIVLauncher.Dalamud
             Run(_gamePath, _language, _gameProcess);
         }
 
-        public const string REMOTE_BASE = "https://goaaats.github.io/ffxiv/tools/launcher/addons/Hooks/";
+        public const string REMOTE_BASE = "https://goatcorp.github.io/dalamud-distrib/";
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
