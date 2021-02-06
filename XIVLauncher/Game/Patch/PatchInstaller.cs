@@ -37,7 +37,7 @@ namespace XIVLauncher.Game.Patch
 
         public InstallerState State { get; private set; } = InstallerState.NotStarted;
 
-        public void StartIfNeeded()
+        public void StartIfNeeded(bool needAdminRights = true)
         {
             if (State != InstallerState.NotStarted)
                 return;
@@ -51,8 +51,8 @@ namespace XIVLauncher.Game.Patch
             var startInfo = new ProcessStartInfo(path);
             startInfo.UseShellExecute = true;
 
-            //Start as admin
-            if (System.Environment.OSVersion.Version.Major >= 6)
+            //Start as admin if needed
+            if (needAdminRights && System.Environment.OSVersion.Version.Major >= 6)
             {
                 startInfo.Verb = "runas";
             }

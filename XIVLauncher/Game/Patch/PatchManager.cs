@@ -122,8 +122,20 @@ namespace XIVLauncher.Game.Patch
                 return;
             }
 #endif
+            // Check if user needs admin rights to start patcher (inspired by: https://stackoverflow.com/questions/1410127/c-sharp-test-if-user-has-write-access-to-a-folder)
+            bool needAdminRights = true;
 
-            _installer.StartIfNeeded();
+            try
+            {
+                // will throw exception if user does not have admin rights to write on game folder
+                _gamePath.GetAccessControl();
+                needAdminRights = false;
+            } catch (UnauthorizedAccessException)
+            {
+                needAdminRights = true;
+            }
+
+            _installer.StartIfNeeded(needAdminRights);
             _installer.WaitOnHello();
 
             Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
