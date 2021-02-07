@@ -51,11 +51,9 @@ namespace XIVLauncher.Game.Patch
             var startInfo = new ProcessStartInfo(path);
             startInfo.UseShellExecute = true;
 
-            //Start as admin
-            if (System.Environment.OSVersion.Version.Major >= 6)
-            {
+            //Start as admin if needed
+            if (!EnvironmentSettings.IsNoRunas && System.Environment.OSVersion.Version.Major >= 6)
                 startInfo.Verb = "runas";
-            }
 
             State = InstallerState.NotReady;
 
