@@ -85,6 +85,7 @@
                         <ComboBoxItem>Español</ComboBoxItem>
                         <ComboBoxItem>Português</ComboBoxItem>
                         <ComboBoxItem>한국어</ComboBoxItem>
+                        <ComboBoxItem>Norsk</ComboBoxItem>
                         <ComboBoxItem>русский</ComboBoxItem>
                         <ComboBoxItem>简体中文</ComboBoxItem>
                     </ComboBox>
