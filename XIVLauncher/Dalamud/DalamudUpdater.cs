@@ -185,10 +185,10 @@ namespace XIVLauncher.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
+            File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), versionInfoJson);
+
             client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
-
-            File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), versionInfoJson);
 
             File.Delete(downloadPath);
         }
