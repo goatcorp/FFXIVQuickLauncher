@@ -3,12 +3,20 @@
     "message": "Impossibile ottenere informazioni sulla versione.",
     "description": "ChangelogWindow..ctor"
   },
-  "EnterValidIdsError": {
-    "message": "Inserire delle credenziali valide.",
-    "description": "ChatChannelSetup.NextButton_Click"
+  "DalamudUpdateDalamud": {
+    "message": "Aggiornamento di Dalamud...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUpdateAssets": {
+    "message": "Aggiornamento delle risorse...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "GamePathEmptyError": {
+    "message": "Per favore seleziona il percorso del gioco.",
+    "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.",
+    "message": "La cartella selezionata non contiene installazione di FFXIV.\nXIVLauncher installerà FFXIV la prima volta che accedi.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
@@ -23,6 +31,18 @@
     "message": "Impossibile contattare il server per ottenere la versione degli addon compatibile con FFXIV. Questo potrebbe significare che la versione di .NET installata è troppo vecchia.\nPer favore, controlla discord per ottenere ulteriori informazioni.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
+  "PluginPathNotFound": {
+    "message": "Non ho trovato il percorso della directory dei plugin.",
+    "description": "SettingsControl.TogglePlugin_OnClick"
+  },
+  "GameIsOpenPluginLocked": {
+    "message": "Il gioco è aperto, per favore chiudilo e riprova.",
+    "description": "SettingsControl.DeletePlugin_OnClick"
+  },
+  "DisabledPlugin": {
+    "message": " (disabilitato/a)",
+    "description": "SettingsControl.ReloadPluginList"
+  },
   "NewsLoading": {
     "message": "Caricamento...",
     "description": "MainWindow..ctor"
@@ -31,9 +51,33 @@
     "message": "Inoltre, controlla le credenziali o riprova.",
     "description": "MainWindow.Initialize"
   },
-  "GameIsOpenError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
+  "CheckBootVersionError": {
+    "message": "XIVLauncher non è stato in grado di controllare la versione del gioco selezionato. Questo può succedere nel caso ci sia una manutenzione in corso o se la tua connessione con i server di controllo non sia disponibile. Per favore segnala questo errore nel caso tu possa accedere con il launcher ufficiale, ma non con XIVLauncher.",
     "description": "MainWindow.HandleBootCheck"
+  },
+  "GameIsOpenError": {
+    "message": "Il gioco e/o il launcher ufficiale sono aperti. XIVLauncher non può aggiornare il gioco in questo caso.\nChiudi il launcher ufficiale e riprova.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher sta già aggiornando il gioco in un'altra istanza. Controlla se XIVLauncher è ancora aperto.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "EmptyUsernameError": {
+    "message": "Per favore inserisci un nome utente.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "EmptyPasswordError": {
+    "message": "Per favore inserisci una password.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "UidCacheInstallError": {
+    "message": "Hai abilitato la cache UID nelle impostazioni del patcher.\nQuesta impostazione non ti permette di reinstallare FFXIV.\n\nSe si desidera reinstallare FFXIV, si prega di fare attenzione a disattivarlo prima.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
+    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
   },
   "NewsDlFailed": {
     "message": "Impossibile scaricare i dati sulle news.",
@@ -183,6 +227,10 @@
     "message": "Accedi",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoStartLogin": {
+    "message": "Aggiorna senza partire",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxLoginTooltip": {
     "message": "Accedi con le credenziali fornite",
     "description": "MainWindowViewModel.SetupLoc"
@@ -220,7 +268,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
-    "message": "Preparing...",
+    "message": "In preparazione...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchGeneralStatus": {
@@ -228,23 +276,23 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchChecking": {
-    "message": "Checking...",
+    "message": "Controllo in corso...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchDone": {
-    "message": "Download done!",
+    "message": "Download completato!",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstalling": {
-    "message": "Installing...",
+    "message": "Installazione...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingFormatted": {
-    "message": "Installing #{0}...",
+    "message": "Installazione di #{0}...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
-    "message": "{0} left to download at {1}/s.",
+    "message": "{0} rimasti da scaricare a {1}/s.",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "ProfilePictureInputTitle": {
@@ -262,6 +310,14 @@
   "WorldName": {
     "message": "Nome del mondo",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "OpenPluginsFolder": {
+    "message": "Apri la cartella Plugins",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SaveSettings": {
+    "message": "Salva Impostazioni",
+    "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGame": {
     "message": "Gioco",
@@ -281,6 +337,14 @@
   },
   "SettingsGameSettings": {
     "message": "Impostazioni del gioco",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLauncherLanguage": {
+    "message": "Seleziona la lingua del launcher, richiede un riavvio.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageNotice": {
+    "message": "Per applicare l'impostazione della lingua del launcher è necessario un riavvio.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAutoLaunch": {
@@ -347,6 +411,14 @@
     "message": "Controlla i messaggi recente per evitare duplicati.\nQuesto permetterà a più utenti di utilizzare lo stesso canale come chat log.\nImposta un ritardo appropriato in millisecondi qui sotto (es. 1000).",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "InGameAddonInjectionDelayLoc": {
+    "message": "Ritardo di inserimento addon",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayDescriptionLoc": {
+    "message": "Ritarda l’inserimento dell'addon in gioco. Questo ti permette di nasconderlo ad esempio da OBS e Discord, poiché si inseriscono prima.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "UniversalisHint": {
     "message": "I dati della Market board sono forniti in cooperazione con Universalis.",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -363,20 +435,32 @@
     "message": "Abilita/Disabilita",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "Delete": {
+    "message": "Elimina",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "PluginsInstallHint": {
     "message": "Puoi utilizzare il comando \"/xlplugins\" all'interno del gioco per installare altri plugins.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
-    "message": "Patching",
+    "message": "Patch in corso",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
-    "message": "Ask before installing a game patch",
+    "message": "Chiedi prima di installare una patch di gioco",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchPath": {
-    "message": "Patch Download Directory",
+    "message": "Cartella di download delle patch",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchSpeedLimit": {
+    "message": "Limite velocità di download",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "KeepPatches": {
+    "message": "Mantieni le patch scaricate per reinstallazioni future",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -403,6 +487,10 @@
     "message": "Abilita la crittografia dei parametri verso il client",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "DalamudUpdate": {
+    "message": "Aggiornamento degli addon in-game...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
+  },
   "UpdateCheckMsg": {
     "message": "Cercando aggiornamenti...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
@@ -423,20 +511,40 @@
     "message": "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType.",
     "description": "ProblemCheck.RunCheck"
   },
+  "PatchInstallerNotOpen": {
+    "message": "Could not connect to the patch installer.\nPlease report this error.",
+    "description": "PatchInstaller.WaitOnHello"
+  },
   "FreeSpaceError": {
-    "message": "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
     "description": "PatchManager.Start"
+  },
+  "FreeSpaceGameError": {
+    "message": "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "description": "PatchManager.Start"
+  },
+  "DalamudDotNet48RedistError": {
+    "message": "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage.",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage.",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVcRedistError": {
+    "message": "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage.",
+    "description": "DalamudLauncher.CheckVcRedist"
   },
   "IntegrityCheckImpossible": {
     "message": "Impossibile effettuare un controllo d'integrità su questa versione di gioco. Riprova più tardi.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
     "message": "Alcuni file di gioco risultano modificati o corrotti. Controlla il file \"integrityreport.txt\" nella cartella di XIVLauncher per avere più informazioni.\n\nVuoi ripristinare il gioco all'ultima patch? Questo ti permetterà di installare nuovamente la patch, risolvendo probabilmente i problemi riscontrati.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "L'installazione del gioco risulta valida.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }

@@ -1,50 +1,94 @@
 {
   "ReleaseInfoUnavailable": {
-    "message": "No pudo obtener el información de la versión.",
+    "message": "No se pudo obtener la información de lanzamiento.",
     "description": "ChangelogWindow..ctor"
   },
-  "EnterValidIdsError": {
-    "message": "Por favor ingrese IDs provisto.",
-    "description": "ChatChannelSetup.NextButton_Click"
+  "DalamudUpdateDalamud": {
+    "message": "Actualizando Dalamud...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUpdateAssets": {
+    "message": "Actualizando valores...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "GamePathEmptyError": {
+    "message": "Por favor, elige un directorio de juego.",
+    "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.",
+    "message": "La carpeta que seleccionaste no tiene una instalación de FFXIV.\nXIVLauncher instalará FFXIV la primera vez que inicies sesión.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
-    "message": "¿Lanza como un usuario Steam?",
+    "message": "¿Iniciar como usuario de Steam?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "El extra In-Game de XIVLauncher no había actualizado para la versión de FFXIV currente.\n¡Es normal después de los parches, entonces por favor sé paciente o pregunta en el Discord para una actualización de estado!",
+    "message": "El addon in-game de XIVLauncher no ha sido todavía actualizado para la versión actual de FFXIV.\n¡Es normal después de parches, por favor sé paciente o pregunta en el Discord para una actualización de estado!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "No pudo contactar el servidor para que obtener la último versión compatible de FFXIV para el extra In-Game. Puede significar que su .NET instalación ser demasiado viejo.\nPor favor comproba el Discord para más información.",
+    "message": "No se pudo contactar con el servidor para obtener la versión actual compatible de FFXIV para el addon in-game. Puede significar que tu instalación .NET es demasiado antigua.\nPor favor comprueba el Discord para más información.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "PluginPathNotFound": {
+    "message": "No se pudo encontrar la ruta del directorio del plugin.",
+    "description": "SettingsControl.TogglePlugin_OnClick"
+  },
+  "GameIsOpenPluginLocked": {
+    "message": "El juego está abierto, por favor ciérralo e inténtalo de nuevo.",
+    "description": "SettingsControl.DeletePlugin_OnClick"
+  },
+  "DisabledPlugin": {
+    "message": " (desactivado)",
+    "description": "SettingsControl.ReloadPluginList"
   },
   "NewsLoading": {
     "message": "Cargando...",
     "description": "MainWindow..ctor"
   },
   "CheckLoginInfo": {
-    "message": "Además, por favor revisa su información del acceso o intenta otra véz.",
+    "message": "Además, por favor revisa tu información de acceso o inténtalo otra vez.",
     "description": "MainWindow.Initialize"
   },
-  "GameIsOpenError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
+  "CheckBootVersionError": {
+    "message": "XIVLauncher no pudo comprobar la versión de lanzamiento para la instalación del juego seleccionado. Esto puede suceder si un mantenimiento está actualmente en curso o si tu conexión al servidor de verificación de versiones no está disponible. Por favor, informa de este error si puedes iniciar sesión con el lanzador oficial, pero no con XIVLauncher.",
     "description": "MainWindow.HandleBootCheck"
   },
+  "GameIsOpenError": {
+    "message": "El juego y/o launcher oficial están abiertos. XIVLauncher no puede parchear el juego si es el caso.\nPor favor cierra el launcher oficial e inténtalo otra vez.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher ya está parcheando tu juego en otra ventana. Por favor comprueba si XIVLauncher sigue abierto.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "EmptyUsernameError": {
+    "message": "Por favor introduce un usuario.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "EmptyPasswordError": {
+    "message": "Por favor introduce una contraseña.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "UidCacheInstallError": {
+    "message": "Has activado la caché UID en los ajustes del parcheador.\nEsta configuración no te permite reinstalar FFXIV.\n\nSi deseas reinstalar FFXIV, por favor ten en cuenta deshabilitarlo primero.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "Se detectó un parche para el launcher de FFXIV.\nEsto suele significar que también hay un parche para el juego.\n\nAhora iniciarás sesión.",
+    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
+  },
   "NewsDlFailed": {
-    "message": "No puedo descargar las noticias.",
+    "message": "No se han podido descargar las noticias.",
     "description": "MainWindow.<SetupHeadlines>b__10_3"
   },
   "AccountSwitcherSetProfilePic": {
-    "message": "Ajusta una foto del perfil",
+    "message": "Añade una foto del perfil",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AccountSwitcherCreateShortcut": {
-    "message": "Crea acceso directo en el escritorio",
+    "message": "Crea un acceso directo en el escritorio",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "Remove": {
@@ -52,15 +96,15 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AccountSwitcherDontSavePassword": {
-    "message": "No guarda la contraseña",
+    "message": "No guardar la contraseña",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "XIVLauncher ha actualizado a la versión {0}.",
+    "message": "XIVLauncher se ha actualizado a la versión {0}.",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
-    "message": "Únase a Discord",
+    "message": "Únete a Discord",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -72,7 +116,7 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "ChatChannelSetupDescription": {
-    "message": "Por favor introduce si XIVLauncher debe publicar a un canal en un servidor o a un usario en DM, y sus identificaciónes respectivos.",
+    "message": "Por favor indica si XIVLauncher debe publicar a un canal en un servidor o a un usuario en DM, y sus respectivas identificaciones.",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "HowToHint": {
@@ -80,11 +124,11 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "ErrorExplanation": {
-    "message": "Un error ocurrió en XIVLauncher. Por favor consulta el FAQ. Si esto problema persiste, por favor lo reporta en GitHub por está haciendo clic el boton debajo, describiendo el problema y copiando el texto en la casilla.",
+    "message": "Se ha producido un error en XIVLauncher. Por favor consulta el FAQ. Si este problema persiste, por favor repórtalo en GitHub haciendo clic el botón de abajo, describiendo el problema y copiando el texto en la casilla.",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
-    "message": "Abre el FAQ",
+    "message": "Abrir el FAQ",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ReportError": {
@@ -92,35 +136,35 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ChooseGamePath": {
-    "message": "Por favor selecta la carpeta en que su juego ha instalado.\nLo debe contener las carpetas \"game\" y \"boot\".",
+    "message": "Por favor selecciona la carpeta en la que está instalado el juego.\nDebe contener las carpetas \"game\" y \"boot\".",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Por favor marque esta casilla si típicamente lanza el juego por Steam.",
+    "message": "Por favor marca esta casilla si normalmente inicias el juego por Steam.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
-    "message": "Activa integración con Steam",
+    "message": "Activar integración con Steam",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectX": {
-    "message": "Por favor selecta la versión de DirectX que quiere utilizar.",
+    "message": "Por favor selecciona la versión de DirectX que quieres utilizar.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9Notice": {
-    "message": "El modo DirectX 9 ya no ha apoyado. Se ejecutará, pero usted no recibiré servicio de SE para algunos problemas tecnicales y los funciónes adicional de XIVLauncher como Rich Presence y el extra In-Game no funcionará.",
+    "message": "El modo DirectX 9 ya no se puede utilizar. Se ejecutará, pero no recibirás servicio de SE para problemas técnicos, y las funciones adicionales de XIVLauncher como Rich Presence y los addon in-game no funcionarán.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguage": {
-    "message": "Por favor selecta la lengua con que quiere cargar el juego.",
+    "message": "Por favor selecciona el idioma en el que quieras cargar el juego.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
-    "message": "Advanced Combat Tracker ha instalado en su PC.\n¿Quiere lanzarlo automáticamente cuando está lanzando el juego?",
+    "message": "Advanced Combat Tracker ha sido instalado en su Pc.\n¿Quieres iniciarlo automáticamente cuando se inicie el juego?",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunchCheckBox": {
-    "message": "Activa el comienzo auto de ACT",
+    "message": "Activar el inicio automático de ACT",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "Next": {
@@ -128,19 +172,19 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "¿Quiere activar los funciónes de XIVLauncher In-Game?\nAgregará los funciónes extra a su juego, como filtrando de chat RMT y notificaciónes en Discord para mensajes chat o los pumes de Duty Finder.\n\nPara configura estos ajustes, por favor utiliza el menú de ajustes de XIVLauncher y cambia a la pestaña In-Game.\nEsto sin embargo puede causar un falso positive en su software antivirus. Por favor chequea sus ajustes y agrega algunas exclusiónes que deben si tenga unos problemas.",
+    "message": "¿Quieres activar las funciones de XIVLauncher in-game?\nAñadirá algunas funciones extra al juego, como el filtrado de chat RMT y notificaciones en Discord para mensajes de chat o las notificaciones de Duty Finder.\n\nPara configurar estos ajustes, por favor utiliza el menú de ajustes de XIVLauncher y cambia a la pestaña \"In-Game\".\nEsto, sin embargo, puede provocar un falso positivo en el antivirus. Por favor comprueba tus ajustes y añade la exclusiones que sean necesarias si se produce algún problema.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Activa las funcionalidades In-Game",
+    "message": "Activar las funcionalidades in-game",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
-    "message": "Configura el comienzo auto",
+    "message": "Configurar el inicio automático",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupDescription": {
-    "message": "Por favor selecta los aplicaciones que debería lanzar, los parámetros adicional y si lo debería lanzar como administrador.",
+    "message": "Por favor selecciona las aplicaciones que se deberían iniciar, algún parámetro adicional y si debería ser iniciado como administrador.",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "CommandLineParameters": {
@@ -148,15 +192,15 @@
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "RunAsAdminLoc": {
-    "message": "Se ejecute como admin",
+    "message": "Ejecutar como administrador",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "KillAfterCloseLoc": {
-    "message": "Mata despues de cerrar el jeugo",
+    "message": "Cerrar por completo después de cerrar el juego",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "IntegrityCheckRunning": {
-    "message": "Está ejecutando el verificación de integridad...",
+    "message": "Ejecutando verificación de integridad...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginBoxUsername": {
@@ -168,35 +212,39 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxAutoLogin": {
-    "message": "Ingrese automáticamente",
+    "message": "Iniciar sesión automáticamente",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxOtp": {
-    "message": "Utiliza contraseñas de solo uso",
+    "message": "Utilizar contraseña de un solo uso",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxSteam": {
-    "message": "Utiliza una cuenta del servicio Steam",
+    "message": "Utilizar una cuenta de servicio de Steam",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLogin": {
-    "message": "Ingrese",
+    "message": "Iniciar sesión",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoStartLogin": {
+    "message": "Actualizar sin iniciar",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
-    "message": "Ingrese con las credenciales provisto",
+    "message": "Iniciar sesión con las credenciales proporcionadas",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
-    "message": "Esperando por el fin del mantenimiento...",
+    "message": "Esperando a que termine el mantenimiento...",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "Cancel": {
-    "message": "Anula",
+    "message": "Cancelar",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
-    "message": "Abre el selector de la cuenta",
+    "message": "Abrir el selector de cuenta",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "Settings": {
@@ -208,7 +256,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "MaintenanceQueue": {
-    "message": "Espera por el fin del mantenimiento",
+    "message": "Espera a que termine el mantenimiento",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OtpInputPrompt": {
@@ -216,35 +264,35 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "O utiliza los shortcuts del smartphone.\n¡Haz un clic aquí para aprender más!",
+    "message": "O utiliza los accesos directos 1-click.\n¡Haz clic aquí para aprender más!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
-    "message": "Preparing...",
+    "message": "Preparando...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchGeneralStatus": {
-    "message": "Patching through {0} updates...",
+    "message": "Está parcheando por {0} actualizaciones...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchChecking": {
-    "message": "Checking...",
+    "message": "Comprobando...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchDone": {
-    "message": "Download done!",
+    "message": "¡Descarga completada!",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstalling": {
-    "message": "Installing...",
+    "message": "Instalando...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingFormatted": {
-    "message": "Installing #{0}...",
+    "message": "Instalando #{0}...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
-    "message": "{0} left to download at {1}/s.",
+    "message": "Aún queda por descargar {0} a {1}/s.",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "ProfilePictureInputTitle": {
@@ -263,56 +311,72 @@
     "message": "Nombre del mundo",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
+  "OpenPluginsFolder": {
+    "message": "Abrir Carpeta de Plugins",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SaveSettings": {
+    "message": "Guardar Configuración",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsGame": {
     "message": "Juego",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
-    "message": "Parámetros del lanzamiento adicional",
+    "message": "Parámetros de inicio adicionales",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
-    "message": "Ejecute un verificación de integridad",
+    "message": "Ejecutar verificación de integridad",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheckTooltip": {
-    "message": "Ejecute un verificación de integridad en los archivos del juego.",
+    "message": "Ejecutar verificación de integridad en los archivos del juego.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
     "message": "Ajustes del juego",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ChooseLauncherLanguage": {
+    "message": "Por favor, selecciona el idioma del lanzador, es necesario reiniciar.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageNotice": {
+    "message": "Es necesario reiniciar para aplicar la configuración de idioma del lanzador.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAutoLaunch": {
-    "message": "Lanza automáticamente",
+    "message": "Inicio automático",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchHint": {
-    "message": "Estas son las aplicaciónes que se inician tan pronto el juego se ejecuta.",
+    "message": "Estas son las aplicaciones que se inician al mismo tiempo que el juego.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AddNew": {
-    "message": "Agrega nuevo",
+    "message": "Añadir nuevo",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchAddNewToolTip": {
-    "message": "Agrega una entrada nueva del comienzo auto que se ejecute cualquiera programa.",
+    "message": "Añade una nueva entrada de inicio automático que te permite iniciar cualquier programa.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
-    "message": "In-Game",
+    "message": "In-game",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "Estos opciones afectan los funciónes In-Game de XIVLauncher. Estos funciónes estará activado si está utilizando la versión del juego DirectX 11, la versión del juego está compatible, y la casilla debaja está activada.",
+    "message": "Estas opciones afectan las funciones in-game de XIVLauncher. Estas funciones estarán activadas automáticamente si estás utilizando la versión del juego DirectX 11, la versión del juego es compatible, y la casilla de abajo está activada.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
-    "message": "Cuando activado, tecla \"/xlhelp\" en juego para ver otras comandos disponibles.",
+    "message": "Cuando esté activado, escribe \"/xlhelp\" en el juego para ver otros comandos disponibles.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "Activa las funcionalidades In-Game",
+    "message": "Activar las funcionalidades in-game",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
@@ -324,59 +388,79 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AddChatChannel": {
-    "message": "Agrega un canal del chat",
+    "message": "Añade un canal de chat",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetCfChannel": {
-    "message": "Configura el canal de las notificaciónes del Duty Finder",
+    "message": "Establece un canal para las notificaciones del Duty Finder",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetRouletteChannel": {
-    "message": "Configura el canal de las notificaciónes del Roulette Bonus",
+    "message": "Establece un canal para las notificaciones del bonus de ruleta",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetRetainerChannel": {
-    "message": "Configura un canal de la vienta del criado",
+    "message": "Establece un canal de venta del retainer",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelay": {
-    "message": "Demora del chat",
+    "message": "Demora de publicación en el chat",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelayDescription": {
-    "message": "Chequea para los mensajes que se publica recientemente para que evita unos duplicados.\nEsto permite para unos usuarios a utilizan el mismo canal por un registro de chat.\nPor favor configura una demora apropridado en milisegundos debajo (por ejemplo 1000).",
+    "message": "Comprueba los mensajes publicados recientemente para evitar duplicados.\nEsto permite utilizar para múltiples usuarios el mismo canal como registro de chat.\nPor favor establece una demora apropiada en milisegundos debajo (por ejemplo 1000).",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayLoc": {
+    "message": "Demora en la inyección del addon",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayDescriptionLoc": {
+    "message": "Demora la inyección del addon in-game. Esto te permite esconderlo por ejemplo de OBS o Discord, ya que se inyectarán antes de que lo haga.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
-    "message": "Los datos de Market Board están proveyendo en cooperación con Universalis.",
+    "message": "Los datos del Market Board son provistos en colaboración con Universalis.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisOptOut": {
-    "message": "No contribe anónimamente a crowdsourcing información del Market Board",
+    "message": "No contribuir de forma anónima a la colaboración abierta de información del Market Board",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsDescriptionLoc": {
-    "message": "Estos son los plugins actualmente disponible que están instalado en su PC.",
+    "message": "Estos son los plugins actualmente disponibles instalados en tu Pc.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Toggle": {
-    "message": "Conmuta",
+    "message": "Alternar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Delete": {
+    "message": "Eliminar",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsInstallHint": {
-    "message": "Puede utilizar el comando /xlplugins en juego para instalar más plugins.",
+    "message": "Puedes utilizar el comando /xlplugins en el juego para instalar más plugins.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
-    "message": "Patching",
+    "message": "Parcheando",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
-    "message": "Ask before installing a game patch",
+    "message": "Preguntar antes de instalar un parche",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchPath": {
-    "message": "Patch Download Directory",
+    "message": "Carpeta de descarga de parches",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchSpeedLimit": {
+    "message": "Velocidad límite de descarga",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "KeepPatches": {
+    "message": "Mantener parches descargados para reinstalaciones futuras",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -384,59 +468,83 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Hecho por goat.\n¡Agradecimiento especial a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, y el artista de las paissas enojado!\n\n¿Unos problemas o peticiones? ¡Únase el Discord o cree un Issue en GitHub!",
+    "message": "Hecho por goat.\n¡Agradecimientos especiales a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, Aireil, y al artista de las paissas enfadadas!\n\n¿Algún problema o petición? ¡Únete al Discord o crea un asunto en GitHub!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
-    "message": "Arranca la herramienta de backup",
+    "message": "Iniciar herramienta de copia de seguridad",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartOriginalLauncher": {
-    "message": "Arranca el selector oficial",
+    "message": "Iniciar el launcher oficial",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "EnabledUidCache": {
-    "message": "Activa la caché UID experimental (puede funcionar extrañamente)",
+    "message": "Activar caché experimental UID (¡esto cesará al actualizar juego!)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "EnableEncryption": {
-    "message": "Activa el cifrado de los argumentos al cliente",
+    "message": "Activar el cifrado de argumentos al cliente",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "DalamudUpdate": {
+    "message": "Actualizando el addon in-game...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
+  },
   "UpdateCheckMsg": {
-    "message": "Buscando actualizaciónes...",
+    "message": "Buscando actualizaciones...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AutoLoginHint": {
-    "message": "¡Mantenga pulsada la tecla Mayús para cambia los ajustes!",
+    "message": "¡Mantén pulsada la tecla Shift para cambiar los ajustes!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
-    "message": "XIVLauncher y/o FINAL FANTASY XIV se configuran que ejecutar como administrador.\nPuede causar unos problemas varios, como los extras están fallando que lanzar y applicaciónes hotkey fallando que responder.\n\n¿Quiere resolver esto problema automáticamente?",
+    "message": "XIVLauncher y/o FINAL FANTASY XIV están configurados para ser iniciados como administrador.\nEsto puede causar varios problemas, como que los addon fallen al ser iniciados y que no respondan las aplicaciones de acceso directo.\n\n¿Quieres resolver este problema automáticamente?",
     "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
-    "message": "XIVLauncher está ejecutando como administrador.\nPuede causar unos problemas varios, como los extras están fallando que lanzar y applicaciónes hotkey fallando que responder.\n\nPor favor tenga cuidado a evite ejecutar XIVLauncher como administrador.",
+    "message": "XIVLauncher se está ejecutando como administrador.\nEsto puede causar varios problemas, como que los addon fallen al ser iniciados o que no respondan las aplicaciones de acceso directo\n\nPor favor ten cuidado y evita ejecutar XIVLauncher como administrador.",
     "description": "ProblemCheck.RunCheck"
   },
   "MacTypeNag": {
-    "message": "Ha detectado MacType en esto PC.\nCausará problemas con FFXIV; los dos el selector oficial y XIVLauncher.\n\nPor favor excluyen XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater, y ffxiv_dx11 de MacType.",
+    "message": "Se ha detectado MacType en este PC.\nCausará problemas con FFXIV; tanto con el selector oficial como con XIVLauncher.\n\nPor favor excluye XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater, y ffxiv_dx11 de MacType.",
     "description": "ProblemCheck.RunCheck"
   },
+  "PatchInstallerNotOpen": {
+    "message": "No se pudo conectar al instalador de parches.\nPor favor reporta este error.",
+    "description": "PatchInstaller.WaitOnHello"
+  },
   "FreeSpaceError": {
-    "message": "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "No hay espacio suficiente para descargar e instalar parches en el disco.\n\nPuedes cambiar la carpeta en la que se descargan los parches en los ajustes.\n\nNecesario:{0}\nLibre:{1}",
     "description": "PatchManager.Start"
   },
+  "FreeSpaceGameError": {
+    "message": "No hay espacio suficiente en tu disco para instalar parches.\n\nPuedes cambiar la localización donde el juego está instalado en los ajustes.\n\nRequerido:{0}\nLibre:{1}",
+    "description": "PatchManager.Start"
+  },
+  "DalamudDotNet48RedistError": {
+    "message": "El addon in-game de XIVLauncher necesita tener instalado .NET Framework 4.8 para continuar. Por favor instálalo desde la página principal de Microsoft.",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "El addon in-game de XIVLauncher necesita tener instalado Microsoft Visual C++ 2015-2019 redistributable para continuar. Por favor instálalo desde la página principal de Microsoft.",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVcRedistError": {
+    "message": "El addon in-game de XIVLauncher necesita tener instalados Microsoft Visual C++ 2015 redistributable y .NET Framework 4.8 para continuar. Por favor instálalos desde la página principal de Microsoft.",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
   "IntegrityCheckImpossible": {
-    "message": "Aún no hay un reporte de referencia para esta versíon del juego. Por favor inténtelo más tarde.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "message": "Aún no hay un informe de referencia para esta versión del juego. Por favor inténtalo de nuevo más tarde.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "Algunos archivos parecen ser modificado o corrupto. Por favor comproba el archivo \"integrityreport.txt\" en la carpeta de XIVLauncher para más información.\n\n¿Quiere reajustar el juego a la proxima versión? Esto permitira que aplicar el parche otra vez, probablemente arreglando los problemas que encuentra.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "message": "Algunos archivos parecen estar modificados o corruptos. Por favor comprueba el archivo \"integrityreport.txt\" en la carpeta de XIVLauncher para más información.\n\nSi usas mods de TexTools, es un resultado esperado.\n\nSi no usas mods, por favor reinstala tu juego.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
-    "message": "Su instalación del juego parece ser válido.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "message": "Tu instalación del juego parece ser válida.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }

@@ -1,6 +1,6 @@
 {
   "ReleaseInfoUnavailable": {
-    "message": "Não foi possível obter as informações do lançamento.",
+    "message": "Kunne ikke hente utgivelsesinfo.",
     "description": "ChangelogWindow..ctor"
   },
   "DalamudUpdateDalamud": {
@@ -12,23 +12,23 @@
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "GamePathEmptyError": {
-    "message": "Por favor, selecione a pasta do jogo.",
+    "message": "Vennligst angi stien til spillet.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "A pasta que você selecionou não tem uma instalação de FFXIV.\nXIVLauncher irá instalar FFXIV na primeira vez que você se conectar.",
+    "message": "Mappen du valgte har ingen FFXIV installasjon. XIVLauncher vil installere FFXIV første gangen du logger inn.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
-    "message": "Iniciar como usuário do Steam?",
+    "message": "Start som Steam bruker?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "O addon do jogo XIVLauncher ainda não foi atualizado para a sua versão atual de FFXIV.\nIsso é comum depois de um patch, então por favor, seja paciente ou peça por uma atualização de status no Discord!",
+    "message": "Spilltillegget for XIVLauncher har ikke blitt oppdatert for din gjeldende FFXIV versjon.\nDette er normalt etter spilloppdateringer, så vennlig vær tålmodig, eller sjekk Discord-serveren for en statusoppdatering!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Não foi possível contatar o servidor para obter a versão do addon do jogo compatível com a versão de FFXIV. Isto pode significar que sua instalação do .NET é muito antiga.\nPor favor, verifique o Discord para mais informações.",
+    "message": "Kunne ikke nå serveren for å sjekke den nyeste kompatible versjonen av FFXIV for spilltillegget. Dette kan bety at .NET installasjonen din er for gammel.\nVennligst sjekk Discord-serveren for mer informasjon.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -44,11 +44,11 @@
     "description": "SettingsControl.ReloadPluginList"
   },
   "NewsLoading": {
-    "message": "Carregando...",
+    "message": "Laster inn...",
     "description": "MainWindow..ctor"
   },
   "CheckLoginInfo": {
-    "message": "Além disso, verifique suas informações de acesso ou tente novamente.",
+    "message": "I tillegg, vennligst sjekk innloggingsinformasjonen din, eller prøv igjen.",
     "description": "MainWindow.Initialize"
   },
   "CheckBootVersionError": {
@@ -56,19 +56,19 @@
     "description": "MainWindow.HandleBootCheck"
   },
   "GameIsOpenError": {
-    "message": "O jogo e/ou o launcher oficial estão abertos. O XIVLauncher não pode fazer o patch do jogo nesse caso.\nFeche o launcher oficial e tente novamente.",
+    "message": "Spillet og/eller det offisielle oppstartsprogrammet er åpent. XIVLauncher kan isåfall ikke oppdatere spillet.\nVennligst lukk det offisielle oppstartsprogrammet og prøv igjen.",
     "description": "MainWindow.HandleBootCheck"
   },
   "PatcherAlreadyInProgress": {
-    "message": "O XIVLauncher já está modificando seu jogo em outra instância. Por favor, verifique se o XIVLauncher ainda está aberto.",
+    "message": "XIVLauncher oppdaterer allerede spillet ditt i en annen forekomst. Vennligst sjekk om XIVLauncher ennå er åpen.",
     "description": "MainWindow.HandleBootCheck"
   },
   "EmptyUsernameError": {
-    "message": "Por favor, insira um nome de usuário.",
+    "message": "Vennligst skriv inn et brukernavn.",
     "description": "MainWindow.HandleLogin"
   },
   "EmptyPasswordError": {
-    "message": "Por favor, insira a senha.",
+    "message": "Vennligst skriv inn et passord.",
     "description": "MainWindow.HandleLogin"
   },
   "UidCacheInstallError": {
@@ -76,131 +76,131 @@
     "description": "MainWindow.HandleLogin"
   },
   "MaintenanceQueueBootPatch": {
-    "message": "Um patch para o launcher de FFXIV foi detectado.\nIsso normalmente significa que há um patch para o jogo também.\n\nVocê será logado agora.",
+    "message": "Det ble oppdaget en ny oppdatering til FFXIV starteren.\nVanligvis betyr dette at det også finnes en oppdatering til spillet.\n\nDu blir nå logget inn.",
     "description": "MainWindow.OnMaintenanceQueueTimerEvent"
   },
   "NewsDlFailed": {
-    "message": "Não foi possível efetuar o download das notícias.",
+    "message": "Kunne ikke laste ned nyhetsdata.",
     "description": "MainWindow.<SetupHeadlines>b__10_3"
   },
   "AccountSwitcherSetProfilePic": {
-    "message": "Definir imagem de perfil",
+    "message": "Sett profilbilde",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AccountSwitcherCreateShortcut": {
-    "message": "Criar atalho na área de trabalho",
+    "message": "Lag skrivebordssnarvei",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "Remove": {
-    "message": "Remover",
+    "message": "Fjern",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AccountSwitcherDontSavePassword": {
-    "message": "Não salvar a senha",
+    "message": "Ikke lagre passord",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "O XIVLauncher foi atualizado para a versão {0}.",
+    "message": "XIVLauncher ble oppdatert til versjon {0}.",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
-    "message": "Entre no nosso Discord",
+    "message": "Bli med i Discorden",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
-    "message": "Ok",
+    "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
-    "message": "Configurar canal de chat",
+    "message": "Konfigurer chat-kanal",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "ChatChannelSetupDescription": {
-    "message": "Por favor, indique se o XIVLauncher deve postar em um canal em um servidor ou para um usuário em DMs, e seus respectivos IDs.",
+    "message": "Vennligst oppgi om XIVLauncher skal sende til en kanal i en server eller til en bruker via DM, og de respektive IDene.",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "HowToHint": {
-    "message": "Como faço para configurar isto?",
+    "message": "Hvordan gjør jeg dette?",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "ErrorExplanation": {
-    "message": "Ocorreu um erro no XIVLauncher. Por favor, consulte o FAQ. Se este problema persistir, reporte-o\nno GitHub clicando no botão abaixo, descrevendo o problema e copiando o texto na caixa.",
+    "message": "En feil har oppstått i XIVLauncher. Vennligst sjekk vår FAQ. Om feilen vedvarer, vennligst rapporter problemet på GitHub ved å trykke på knappen nedenfor. Beskriv deretter problemet og kopier teksten inn i boksen.",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
-    "message": "Abrir FAQ",
+    "message": "Åpne FAQ",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ReportError": {
-    "message": "Reportar erro",
+    "message": "Rapporter feil",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ChooseGamePath": {
-    "message": "Por favor, selecione a pasta na qual seu jogo está instalado.\nEla deve conter as pastas \"game\" e \"boot\".",
+    "message": "Vennligst velg mappen du har installert spillet i.\nDen må inneholde mappene \"game\" og \"boot\".",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Por favor, marque esta caixa se você customa iniciar o jogo usando o Steam.",
+    "message": "Kryss av i denne boksen om du vanligvis starter spillet med Steam.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
-    "message": "Habilitar integração com o Steam",
+    "message": "Aktiver Steam-integrering",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectX": {
-    "message": "Selecione qual versão DirectX deseja usar.",
+    "message": "Vennligst velg hvilken DirectX versjon du vil bruke.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9Notice": {
-    "message": "Modo DirectX 9 não é mais suportado. O jogo ainda vai iniciar, mas você não obterá suporte da\nSquare Enix para quaisquer problemas técnicos. Quaisquer funções adicionais do XIVLauncher como o Rich Presence e o\naddon no Jogo não funcionarão.",
+    "message": "DirectX 9 modus er ikke støttet lengere. Spillet vil starte, men du vil ikke få noe støtte fra Square Enix om det oppstår feil. Ytterlige funksjoner i XIVLauncher som støtte for Discord Rich Presence og spilltillegget vil ikke virke.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguage": {
-    "message": "Por favor, selecione com qual idioma você deseja carregar o jogo.",
+    "message": "Vennligst velg språket du vil starte spillet med.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
-    "message": "O Advanced Combat Tracker está instalado no seu computador.\nDeseja iniciá-lo automaticamente ao iniciar o jogo?",
+    "message": "Advanced Combat Tracker er installert på maskinen din.\nVil du starte det automatisk når spillet starter?",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunchCheckBox": {
-    "message": "Habilitar inicialização automática do ACT",
+    "message": "Aktiver ACT Autostart",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "Next": {
-    "message": "Avançar",
+    "message": "Neste",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Deseja ativar as funções do XIVLauncher dentro do jogo?\nIsto adicionará algumas funcionalidades extras ao seu jogo, tais como filtragem de RMT no chat e\nnotificações do Discord para mensagens de chat ou fila do Duty Finder.\n\nPara ajustar essas configurações, por favor, use o menu de configuração do XIVLauncher e mude para a aba\ndentro do jogo.\nPorém, ativar esse recurso pode causar um falso positivo no seu software antivírus. Por favor,\nverifique as configurações do mesmo e adicione as exceções necessárias caso tenha problemas.",
+    "message": "Vil du aktivere XIVLauncher funksjoner i spillet?\nDette vil legge til litt ekstra funksjonalitet i spillet, som filtrering av svindelforsøk og Discord notifikasjoner for pratemeldinger eller når Duty Finder er klar.\n\nFor å konfigurere disse innstillingene, vennligst bruk innstillingsmenyen til XIVLauncher og bytt til fanen \"I spill\".\nAktivering av dette kan forvirre antiviruset ditt, så vennligst sjekk antivirus-innstillingene dine og legg til nødvendige utelatelser om det oppstår problemer.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Ativar funções dentro do jogo",
+    "message": "Aktiver funksjonalitet i spillet",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
-    "message": "Configurar início automático",
+    "message": "Konfigurer Autostart",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupDescription": {
-    "message": "Selecione o aplicativo que deve ser iniciado, quaisquer parâmetros adicionais, e\nse deve ser executado como administrador.",
+    "message": "Vennligst velg programmet som skal startes, legg til eventuelle parametere og om det skal startes som administrator.",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "CommandLineParameters": {
-    "message": "Parâmetros de linha de comando",
+    "message": "Ledetekstparametere",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "RunAsAdminLoc": {
-    "message": "Executar como administrador",
+    "message": "Kjør som admin",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "KillAfterCloseLoc": {
-    "message": "Encerrar após o fechamento do jogo",
+    "message": "Avslutt etter spillet lukkes",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "IntegrityCheckRunning": {
-    "message": "Executando verificação de integridade...",
+    "message": "Kjører integritetssjekk...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginBoxUsername": {
@@ -208,23 +208,23 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxPassword": {
-    "message": "Senha",
+    "message": "Passord",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxAutoLogin": {
-    "message": "Entrar automaticamente",
+    "message": "Logg inn automatisk",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxOtp": {
-    "message": "Usar uma senha de uso único",
+    "message": "Bruk Engangspassord",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxSteam": {
-    "message": "Usar uma conta de serviço do Steam",
+    "message": "Bruk Steam service-konto",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLogin": {
-    "message": "Entrar",
+    "message": "Logg inn",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoStartLogin": {
@@ -232,83 +232,83 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
-    "message": "Entrar com as credenciais fornecidas",
+    "message": "Logg inn med de angitte opplysningene",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
-    "message": "Aguardando a manutenção terminar...",
+    "message": "Venter på at vedlikeholdet skal bli ferdig...",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "Cancel": {
-    "message": "Cancelar",
+    "message": "Avbryt",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
-    "message": "Abrir Alternador de Conta",
+    "message": "Åpne Kontovelger",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "Settings": {
-    "message": "Configurações",
+    "message": "Innstillinger",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "WorldStatus": {
-    "message": "Status do Mundo",
+    "message": "Verdensstatus",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "MaintenanceQueue": {
-    "message": "Aguardando a manutenção terminar",
+    "message": "Vent til vedlikeholdet er ferdig",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OtpInputPrompt": {
-    "message": "Por favor, insira sua senha de uso único.",
+    "message": "Vennligst skriv din OTP-nøkkel.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "Ou use os atalhos com um clique.\nClique aqui para saber mais!",
+    "message": "Eller bruk enkelttrykk-snarveiene.\nTrykk her for å lære mer!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
-    "message": "Preparando...",
+    "message": "Forbereder...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchGeneralStatus": {
-    "message": "Fazendo {0} atualizações...",
+    "message": "Oppdaterer gjennom {0} oppdateringer...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchChecking": {
-    "message": "Verificando...",
+    "message": "Sjekker...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchDone": {
-    "message": "Download concluído!",
+    "message": "Nedlasting ferdig!",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstalling": {
-    "message": "Instalando...",
+    "message": "Installerer...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingFormatted": {
-    "message": "Instalando #{0}...",
+    "message": "Installerer #{0}...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
-    "message": "Terminando de baixar {0} a {1}/s.",
+    "message": "{0} igjen for å laste ned med fart på {1}/s.",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "ProfilePictureInputTitle": {
-    "message": "Configurar foto de perfil",
+    "message": "Konfigurer profilbilde",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "ProfilePictureInputDescription": {
-    "message": "Por favor, digite o nome de seu personagem e mundo.",
+    "message": "Vennligst skriv inn navn og verden til en karakter.",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "CharacterName": {
-    "message": "Nome do Personagem",
+    "message": "Karakternavn",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "WorldName": {
-    "message": "Nome do Mundo",
+    "message": "Verdensnavn",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "OpenPluginsFolder": {
@@ -320,23 +320,23 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGame": {
-    "message": "Jogo",
+    "message": "Spill",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
-    "message": "Argumentos adicionais de inicialização",
+    "message": "Flere oppstartsargumenter",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
-    "message": "Executar verificação de integridade",
+    "message": "Kjør integritetssjekk",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheckTooltip": {
-    "message": "Executar verificação de integridade nos arquivos de jogo.",
+    "message": "Kjør integritetssjekk på spillfiler.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
-    "message": "Configurações do jogo",
+    "message": "Spillinnstillinger",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLauncherLanguage": {
@@ -348,91 +348,91 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAutoLaunch": {
-    "message": "Abrir automaticamente",
+    "message": "Autostart",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchHint": {
-    "message": "Estas são aplicações que são iniciadas assim que o jogo começa.",
+    "message": "Dette er programmene som starter så snart spillet har startet.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AddNew": {
-    "message": "Adicionar nova",
+    "message": "Legg til ny",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchAddNewToolTip": {
-    "message": "Adicione uma nova entrada de início automático que permite iniciar qualquer programa.",
+    "message": "Legg til ny Autostart-oppføring som lar deg starte hvilket som helst program.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
-    "message": "No Jogo",
+    "message": "I spill",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "Estas opções afetam as funções do XIVLauncher no jogo. Estas funções serão automaticamente\nativadas se você estiver executando o jogo usando o DirectX 11, a versão do jogo for\ncompatível e a caixa de seleção abaixo estiver marcada.",
+    "message": "Disse innstillingene påvirker XIVLauncher's funksjoner i spillet. Funksjonene vil automatisk bli aktivert om du bruker DirectX 11 versjonen av spillet, spillversjonen er kompatibel, og boksen nedenfor er krysset av.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
-    "message": "Quando ativado, digite \"/xlhelp\" no jogo para ver outros comandos disponíveis.",
+    "message": "Når aktivert, skriv \"/xlhelp\" i spillet for å se tilgjengelige kommandoer.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "Habilitar funções dentro do jogo",
+    "message": "Aktiver funksjonalitet i spillet",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
-    "message": "Configurações do Chat",
+    "message": "Chat-innstillinger",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DiscordBotToken": {
-    "message": "Token do Bot do Discord",
+    "message": "Discord Bot Token",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AddChatChannel": {
-    "message": "Adicionar canal de chat",
+    "message": "Legg til chat-kanal",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetCfChannel": {
-    "message": "Configurar canal de notificação do Duty Finder",
+    "message": "Angi notifikasjonskanal for Duty Finder",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetRouletteChannel": {
-    "message": "Definir canal de notificação de Bônus de Roleta",
+    "message": "Angi notifikasjonskanal for Rulettbonus",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetRetainerChannel": {
-    "message": "Definir canal de vendas do retainer",
+    "message": "Angi salgskanal for tjenere",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelay": {
-    "message": "Atraso da Postagem no Chat",
+    "message": "Forsinkele for chattemeldinger",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelayDescription": {
-    "message": "Verifique as mensagens enviadas recentemente para evitar duplicatas.\nIsto permite que vários usuários usem o mesmo canal como um log de chat.\nPor favor, defina um atraso apropriado em milissegundos abaixo (p. ex. 1000).",
+    "message": "Se etter nylig sendte meldinger for å unngå duplikater.\nDette lar flere brukere bruke samme kanal som en pratelogg.\nVennligst angi en passende forsinkelse i millisekunder nedenfor (f.eks 1000).",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayLoc": {
-    "message": "Atraso na Injeção de Addon",
+    "message": "Tilleggs-injeksjonsforsinkelse",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayDescriptionLoc": {
-    "message": "Atrasa a injeção do addon no jogo. Isso permite que você o esconda, por exemplo, do OBS e do Discord, pois eles vão se injetar antes que o mesmo faça.",
+    "message": "Utsett injiseringen av tillegg i spillet. Dette lar deg gjemme de fra programmer som OBS og Discord, siden de vil injiseres før tilleggene.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
-    "message": "Dados do Market Board fornecidos da colaboração com Universalis.",
+    "message": "Data for markedstavle gitt i samarbeid med Universalis.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisOptOut": {
-    "message": "Optar por não contribuir anonimamente para colaboração de informações do Market Board",
+    "message": "Avmeld meg fra å anonymt sende inn gruppeprodusert markedstavleinformasjon",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsDescriptionLoc": {
-    "message": "Estas são os plugins que estão atualmente disponíveis e instalados no seu PC.",
+    "message": "Dette er de tilgjengelige tilleggene som er installert på din maskin.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Toggle": {
-    "message": "Alternar",
+    "message": "Veksle",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Delete": {
@@ -440,51 +440,51 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsInstallHint": {
-    "message": "Você pode usar o comando /xlplugins no jogo para instalar mais extensões.",
+    "message": "Du kan bruke /xlplugins kommandoen i spillet for å installere flere tillegg.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
-    "message": "Atualizações",
+    "message": "Oppdaterer",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
-    "message": "Perguntar antes de instalar uma atualização do jogo",
+    "message": "Spør før installasjon av spillopdatering",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchPath": {
-    "message": "Pasta de Download das Atualizações",
+    "message": "Oppdateringsmappe",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchSpeedLimit": {
-    "message": "Velocidade de Download Limite",
+    "message": "Nedlastingsfartsgrense",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "KeepPatches": {
-    "message": "Manter atualizações baixados para reinstalações futuras",
+    "message": "Behold nedlastede oppdateringer for fremtidige ominstalleringer",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
-    "message": "Sobre",
+    "message": "Om",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Feito por goat.\nUm agradecimento especial a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna e o artista do paissa bravo!\n\nAlgum problema ou pedido? Junte-se ao Discord ou crie um issue no GitHub!",
+    "message": "Laget av goat.\nTakk til Mino, sky, LeonBlade, Wintermute, Zyian, Roy, Meli, Aida Enna, og den sinte paissa artisten!\n\nSpørsmål eller idéer? Bli med i Discorden eller opprett en sak på GitHub!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
-    "message": "Iniciar Ferramenta de Backup",
+    "message": "Start Backup Verktøyet",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartOriginalLauncher": {
-    "message": "Iniciar o Launcher Oficial",
+    "message": "Start Offisiell Spillstarter",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "EnabledUidCache": {
-    "message": "Ativar cache de UID experimental (pode se comportar de maneira estranha)",
+    "message": "Aktiver eksperimentell UID-cache(kan oppføre seg rart)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "EnableEncryption": {
-    "message": "Ativar criptografia de argumentos para o cliente",
+    "message": "Aktiver kryptering av argumenter til klienten",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DalamudUpdate": {
@@ -492,59 +492,59 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {
-    "message": "Verificando atualizações...",
+    "message": "Ser etter oppdateringer...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AutoLoginHint": {
-    "message": "Segure a tecla shift para alterar as configurações!",
+    "message": "Hold skift knappen for å endre innstillinger!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
-    "message": "O XIVLauncher e/ou o FINAL FANTASY XIV estão definidos para serem executados como administrador.\nIsso pode causar vários problemas, incluindo extensões falhando ao iniciar e aplicativos com teclas de atalho falhando em responder.\n\nVocê deseja corrigir este problema automaticamente?",
+    "message": "XIVLauncher og/eller FINAL FANTASY XIV kjører som administrator.\nDette kan forårsake forskjellige problemer, for eksempel kan det hende at tillegg ikke starter, og snarveistaster kan slutte å virke.\n\nVil du løse problemet automatisk?",
     "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
-    "message": "O XIVLauncher está sendo executado como administrador.\nIsso pode causar vários problemas, incluindo extensões falhando ao iniciar e aplicativos com teclas de atalho falhando em responder.\n\nPor favor, tenha cuidado e evite a execução do XIVLauncher como administrador.",
+    "message": "XIVLauncher kjører som administrator.\nDette kan forårsake forskjellige problemer, for eksempel kan det hende at tillegg ikke starter, og snarveistaster kan slutte å virke.\n\nVennligst unngå å kjøre XIVLauncher som admin.",
     "description": "ProblemCheck.RunCheck"
   },
   "MacTypeNag": {
-    "message": "MacType foi detectado neste PC.\nIsso causará problemas com o FFXIV; tanto o launcher oficial quanto o XIVLauncher.\n\nPor favor, exclua XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater e ffxiv_dx11 do MacType.",
+    "message": "MacType ble oppdaget på denne PCen.\nDette vil skape problemer med FFXIV; både med det offisielle oppstartsprogrammet og XIVLauncher.\n\nVennligst ekskluder XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater og ffxiv_dx11 fra MacType.",
     "description": "ProblemCheck.RunCheck"
   },
   "PatchInstallerNotOpen": {
-    "message": "Não foi possível conectar ao instalador de atualizações.\nPor favor, reporte este erro.",
+    "message": "Kunne ikke koble til oppdateringsinstallatøren.\nVennligst rapporter denne feilen.",
     "description": "PatchInstaller.WaitOnHello"
   },
   "FreeSpaceError": {
-    "message": "Não há espaço suficiente em disco para baixar as atualizações.\n\nVocê pode alterar o local de download das atualizações nas configurações.\n\nNecessário:{0}\nLivre:{1}",
+    "message": "Det er ikke nok diskplass for å laste ned og installere oppdateringer.\n\nDu kan velge hvor oppdateringene lastes ned til i innstillingene.\n\nNødvendig:{0}\nLedig:{1}",
     "description": "PatchManager.Start"
   },
   "FreeSpaceGameError": {
-    "message": "Não há espaço suficiente em disco para instalar as atualizações.\n\nVocê pode alterar o local de instalação do jogo nas configurações.\n\nNecessário:{0}\nLivre:{1}",
+    "message": "Det er ikke nok diskplass for å laste ned og installere oppdateringer.\n\nDu kan velge hvor oppdateringene lastes ned til i innstillingene.\n\nNødvendig:{0}\nLedig:{1}",
     "description": "PatchManager.Start"
   },
   "DalamudDotNet48RedistError": {
-    "message": "Para funcionar dentro do jogo o addon do XIVLauncher precisa do .NET Framework 4.8 instalado.\nPor favor, instale-o a partir do site da Microsoft.",
+    "message": "Tillegget til XIVLauncher i spillet krever .NET Rammeverk 4.8 for å fortsette. Vennligst installer den fra Microsoft's hjemmeside.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVc2019RedistError": {
-    "message": "Para funcionar dentro do jogo o addon do XIVLauncher precisa do Microsoft Visual C++ 2015-2019 redistributable instalado. Por favor, instale-o a partir do site da Microsoft.",
+    "message": "Tillegget til XIVLauncher i spillet krever de omdistruerbare Microsoft Visual C++ 2015-2019 pakkene for å fortsette. Vennligst installer dem fra Microsoft's hjemmeside.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVcRedistError": {
-    "message": "O addon de jogo XIVLauncher precisa que o redistribuidor Microsoft Visual C ++ 2015 e o .NET Framework 4.8 estejam instalados para continuar. Instale-os a partir da página inicial da Microsoft.",
+    "message": "Tillegget til XIVLauncher i spillet krever den omdistruerbare pakken Microsoft Visual C++ 2015 og .NET Rammeverk 4.8 før du kan fortsette.\nVennligst installer dem fra Microsoft's hjemmeside.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "IntegrityCheckImpossible": {
-    "message": "Ainda não há nenhum relatório de referência para esta versão do jogo. Por favor, tente novamente mais tarde.",
+    "message": "Det er ingen referanserapport for denne spillversjonen ennå. Vennligst prøv igjen senere.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "Alguns arquivos do jogo parecem ter sido modificados ou corrompidos. Por favor, verifique o arquivo \"integrityreport.txt\" na pasta do XIVLauncher para mais informações.\n\nVocê quer voltar o jogo para a versão anterior? Isso permitirá que você faça a atualização novamente, provavelmente corrigindo os problemas que você está encontrando.",
+    "message": "Noen spillfiler ser ut til å være modifsert eller korruptert. Vennligst sjekk \"integrityreport.txt\" filen i XIVLauncher mappen for mer informasjon.\n\nVil du tilbakestille spillet til den forrige oppdateringen? Dette vil la deg oppdatere igjen, og løser muligens dette problemet.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
-    "message": "Sua instalação do jogo parece ser válida.",
+    "message": "Installasjonen av spillet ser ut til å være gyldig.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }

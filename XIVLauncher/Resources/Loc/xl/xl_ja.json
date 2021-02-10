@@ -3,12 +3,20 @@
     "message": "バージョン情報を取得できませんでした。",
     "description": "ChangelogWindow..ctor"
   },
-  "EnterValidIdsError": {
-    "message": "有効なIDを入力して下さい。",
-    "description": "ChatChannelSetup.NextButton_Click"
+  "DalamudUpdateDalamud": {
+    "message": "Dalamudを更新しています...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUpdateAssets": {
+    "message": "アセットを更新しています...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "GamePathEmptyError": {
+    "message": "ホームパスを選択しなければなりません。",
+    "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.",
+    "message": "選択したフォルダにはFFXIVがインストールされていません。\n最初にログインしたとき、XIVLauncherはクライアントをインストールします。",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
@@ -23,6 +31,18 @@
     "message": "現在の FFXIV バージョンに対応した In-Game アドオンの互換性情報について、サーバから取得できませんでした。インストールされている .NET のバージョンが古いかもしれません。\n詳細な情報については、Discordを確認して下さい。",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
+  "PluginPathNotFound": {
+    "message": "プラグインのディレクトリが見つかりません。",
+    "description": "SettingsControl.TogglePlugin_OnClick"
+  },
+  "GameIsOpenPluginLocked": {
+    "message": "ゲームが実行中です。終了させてもう一度実行してください。",
+    "description": "SettingsControl.DeletePlugin_OnClick"
+  },
+  "DisabledPlugin": {
+    "message": " (無効化)",
+    "description": "SettingsControl.ReloadPluginList"
+  },
   "NewsLoading": {
     "message": "ロード中……",
     "description": "MainWindow..ctor"
@@ -31,9 +51,33 @@
     "message": "ログイン情報をご確認の上、再度お試し下さい。",
     "description": "MainWindow.Initialize"
   },
-  "GameIsOpenError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
+  "CheckBootVersionError": {
+    "message": "XIVLauncherは起動対象のゲームファイルのブートバージョンを確認することができませんでした。サーバーがメンテナンス中もしくはバージョンチェックサーバーに接続できない状態の可能性があります。公式のランチャーではログインできる場合はこのエラーを報告してください。",
     "description": "MainWindow.HandleBootCheck"
+  },
+  "GameIsOpenError": {
+    "message": "ゲームクライアントまたは公式ランチャが起動されているため、パッチを適用できません。\nゲームクライアントと公式ランチャを閉じて再実行してください。",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "他インスタンスでXIVLauncherはもうアップデートを適用しています。他インスタンスをチェックしてください。",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "EmptyUsernameError": {
+    "message": "ユーザー名を入力してください。",
+    "description": "MainWindow.HandleLogin"
+  },
+  "EmptyPasswordError": {
+    "message": "パスワードを入力して下さい。",
+    "description": "MainWindow.HandleLogin"
+  },
+  "UidCacheInstallError": {
+    "message": "UIDキャッシュの設定が有効です。\nこの設定によりFFXIVを再インストールすることができません。\n\n再インストールする場合は最初にUIDキャッシュの無効化を行ってください。",
+    "description": "MainWindow.HandleLogin"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "FFXIVランチャーのパッチが検出されました。\nこれは通常、ゲームにパッチがあることを意味します。\n\nこれでログインします。",
+    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
   },
   "NewsDlFailed": {
     "message": "最新ニュースを取得できませんでした。",
@@ -183,6 +227,10 @@
     "message": "ログイン",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoStartLogin": {
+    "message": "開始せずに更新",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxLoginTooltip": {
     "message": "指定された認証情報でログインします",
     "description": "MainWindowViewModel.SetupLoc"
@@ -220,31 +268,31 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
-    "message": "Preparing...",
+    "message": "準備中……",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchGeneralStatus": {
-    "message": "Patching through {0} updates...",
+    "message": "{0} 個のアップデートを適用しています……",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchChecking": {
-    "message": "Checking...",
+    "message": "確認中……",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchDone": {
-    "message": "Download done!",
+    "message": "ダウンロード完了!",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstalling": {
-    "message": "Installing...",
+    "message": "インストール中……",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingFormatted": {
-    "message": "Installing #{0}...",
+    "message": "#{0} をインストール中……",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
-    "message": "{0} left to download at {1}/s.",
+    "message": "残り {0} （ダウンロード速度：{1}/s）",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "ProfilePictureInputTitle": {
@@ -262,6 +310,14 @@
   "WorldName": {
     "message": "ワールド名",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "OpenPluginsFolder": {
+    "message": "プラグインフォルダーを開く",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SaveSettings": {
+    "message": "設定を保存",
+    "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGame": {
     "message": "ゲーム",
@@ -281,6 +337,14 @@
   },
   "SettingsGameSettings": {
     "message": "ゲーム設定",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLauncherLanguage": {
+    "message": "ランチャーの言語を選択してください。再起動が必要です。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageNotice": {
+    "message": "ランチャーの言語設定を適用するには再起動が必要です。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAutoLaunch": {
@@ -347,6 +411,14 @@
     "message": "直近のメッセージをチェックして重複投稿しないようにします。\nこれにより、複数のユーザが同じチャンネルをチャットログとして利用することができます。\n以下に遅延時間をミリ秒単位で設定してください。(例：1000)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "InGameAddonInjectionDelayLoc": {
+    "message": "アドオン注入遅延",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayDescriptionLoc": {
+    "message": "ゲーム内アドオンの注入を遅らせます。これにより、OBSやDiscordなどから非表示にすることができます。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "UniversalisHint": {
     "message": "マーケットボードデータはUniversalisと協力して提供されています。",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -363,20 +435,32 @@
     "message": "トグルする",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "Delete": {
+    "message": "削除",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "PluginsInstallHint": {
     "message": "ゲーム内で /xlplugins コマンドを使用すると、さらにプラグインをインストールできます。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
-    "message": "Patching",
+    "message": "パッチ適用中",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
-    "message": "Ask before installing a game patch",
+    "message": "パッチを適用する前に確認する",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchPath": {
-    "message": "Patch Download Directory",
+    "message": "パッチファイルのダウンロード先ディレクトリ",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchSpeedLimit": {
+    "message": "ダウンロード際限速度",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "KeepPatches": {
+    "message": "今後の再インストールのためにダウンロードしたパッチを保持する",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -403,6 +487,10 @@
     "message": "クライエントへ引数を暗号化",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "DalamudUpdate": {
+    "message": "In-Gameアドオンを更新",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
+  },
   "UpdateCheckMsg": {
     "message": "更新をチェック中……",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
@@ -423,20 +511,40 @@
     "message": "PCでMacTypeを見つけました。\n公式ランチャーとXIVLauncherに問題を引き起こします。\n\nXIVLauncherとffxivboot、ffxivlauncher、ffxivupdater、ffxiv_dx11は、MacTypeから除いてください。",
     "description": "ProblemCheck.RunCheck"
   },
+  "PatchInstallerNotOpen": {
+    "message": "パッチインストーラに接続できませんでした。\nこのエラーを報告してください。",
+    "description": "PatchInstaller.WaitOnHello"
+  },
   "FreeSpaceError": {
-    "message": "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "パッチデータをダウンロードするのに十分なストレージ容量がありません。\n\n設定画面から保存先を変更することができます。\n\n必要な空き容量：{0}\n利用可能な容量：{1}",
     "description": "PatchManager.Start"
+  },
+  "FreeSpaceGameError": {
+    "message": "パッチデータをダウンロードするのに十分なストレージ容量がありません。\n\n設定から保存先を変更することができます。\n\n必要な空き容量：{0}\n利用可能な容量：{1}",
+    "description": "PatchManager.Start"
+  },
+  "DalamudDotNet48RedistError": {
+    "message": "続行するにはXIVLauncherのアドオンに.NET Framework 4.8が必要です。Microsoftのホームページからインストールしてください。",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "XIVLauncher のゲーム内アドオンでは、Microsoft Visual C++ 2015-2019 をインストールする必要があります。続行するには、Microsoft のホームページからインストールしてください。",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVcRedistError": {
+    "message": "XIVLauncher のゲーム内アドオンには、Microsoft Visual C++ 2015 の再配布可能と が必要です。 続行するには.NET Framework 4.8をインストールします。Microsoftホームページからインストールしてください。",
+    "description": "DalamudLauncher.CheckVcRedist"
   },
   "IntegrityCheckImpossible": {
     "message": "このゲームバージョンはまだ参照レポートがありません。後ほど再度お試し下さい。",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
     "message": "一部のゲームファイルが変更、または破損しているようです。詳しくはXIVLauncherフォルダ内の \"Integrityreport.txt \"ファイルをご確認ください。\n\nゲームを最新パッチのデータでリセットしますか？再度パッチを当てることで、問題が解決される可能性があります。",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "ゲームインストールは有効性がありそうです。",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }

@@ -3,12 +3,20 @@
     "message": "Impossible de récupérer les informations de version.",
     "description": "ChangelogWindow..ctor"
   },
-  "EnterValidIdsError": {
-    "message": "Veuillez saisir des identifiants valides.",
-    "description": "ChatChannelSetup.NextButton_Click"
+  "DalamudUpdateDalamud": {
+    "message": "Mise à jour de Dalamud...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUpdateAssets": {
+    "message": "Mise à jour des ressources...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "GamePathEmptyError": {
+    "message": "Veuillez sélectionner un chemin contenant le jeu.",
+    "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
-    "message": "Le dossier que vous avez sélectionné ne contient pas d’installation de FFXIV.\nXIVLauncher va réinstaller FFXIV quand tu te connecteras.",
+    "message": "Le dossier que vous avez sélectionné ne contient pas d’installation de FFXIV.\nXIVLauncher va installer FFXIV quand vous vous connecterez pour la première fois.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "LaunchAsSteam": {
@@ -23,6 +31,18 @@
     "message": "Impossible de vérifier la dernière version de FFXIV compatible avec l'addon en jeu. Cela peut venir d'une version trop ancienne de .NET Framework.\nRéférez-vous au Discord pour plus d’informations.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
+  "PluginPathNotFound": {
+    "message": "Impossible de trouver le chemin du répertoire des plugins.",
+    "description": "SettingsControl.TogglePlugin_OnClick"
+  },
+  "GameIsOpenPluginLocked": {
+    "message": "Le jeu est ouvert, veuillez le fermer et réessayer.",
+    "description": "SettingsControl.DeletePlugin_OnClick"
+  },
+  "DisabledPlugin": {
+    "message": " (désactivé)",
+    "description": "SettingsControl.ReloadPluginList"
+  },
   "NewsLoading": {
     "message": "Chargement...",
     "description": "MainWindow..ctor"
@@ -31,9 +51,33 @@
     "message": "De plus, veuillez vérifier vos identifiants ou réessayer.",
     "description": "MainWindow.Initialize"
   },
-  "GameIsOpenError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
+  "CheckBootVersionError": {
+    "message": "XIVLauncher n’a pas pu vérifier la version du jeu sélectionné. Cela peut se produire en cas de maintenance ou d’absence de connexion internet. Veuillez signaler cette erreur si vous pouvez vous connecter avec le lanceur officiel, mais pas avec XIVLauncher.",
     "description": "MainWindow.HandleBootCheck"
+  },
+  "GameIsOpenError": {
+    "message": "Le jeu et/ou le lanceur officiel sont ouverts. XIVLauncher ne peut pas mettre à jour le jeu si c’est le cas.\nVeuillez fermer le jeu et le lanceur officiel et réessayer.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher est déjà en train de mettre à jour votre jeu dans une autre instance. Veuillez vérifier que XIVLauncher est encore ouvert.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "EmptyUsernameError": {
+    "message": "Veuillez entrer un identifiant.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "EmptyPasswordError": {
+    "message": "Veuillez entrer un mot de passe.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "UidCacheInstallError": {
+    "message": "Vous avez activé le cache UID dans les paramètres de l'outil de mise à jour.\nCe paramètre vous empêche de réinstaller FFXIV.\n\nSi vous voulez réinstaller FFXIV, veuillez vous assurer de le désactiver d'abord.",
+    "description": "MainWindow.HandleLogin"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "Une mise à jour du lanceur de FFXIV a été détectée.\nCela signifie généralement qu'il y a également une mise à jour du jeu.\n\nVous allez maintenant être identifié.",
+    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
   },
   "NewsDlFailed": {
     "message": "Le téléchargement des dernières nouvelles à échoué.",
@@ -183,6 +227,10 @@
     "message": "Connexion",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoStartLogin": {
+    "message": "Mettre à jour sans démarrer le jeu",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxLoginTooltip": {
     "message": "Connexion avec les identifiants fournis",
     "description": "MainWindowViewModel.SetupLoc"
@@ -263,6 +311,14 @@
     "message": "Nom du monde",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
+  "OpenPluginsFolder": {
+    "message": "Ouvrir le dossier des plugins",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SaveSettings": {
+    "message": "Sauvegarder les paramètres",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsGame": {
     "message": "Jeu",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -281,6 +337,14 @@
   },
   "SettingsGameSettings": {
     "message": "Options du jeu",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLauncherLanguage": {
+    "message": "Veuillez sélectionner la langue du lanceur, nécessite un redémarrage.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageNotice": {
+    "message": "Un redémarrage est nécessaire pour modifier la langue du lanceur.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAutoLaunch": {
@@ -347,6 +411,14 @@
     "message": "Vérification des derniers messages envoyés pour éviter les doublons.\nCela permet à plusieurs utilisateurs d’utiliser le même canal Discord.\nVeuillez saisir un temps d’attente en millisecondes dans le champ ci-dessous (par ex. 1000).",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "InGameAddonInjectionDelayLoc": {
+    "message": "Délai d'injection de l'addon",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayDescriptionLoc": {
+    "message": "Retarde l’injection de l'addon en jeu, ce qui permet de le cacher de, par exemple, OBS et Discord puisqu'ils seront injectés avant.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "UniversalisHint": {
     "message": "Données du Tableau des ventes fournies en coopération avec Universalis.",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -363,6 +435,10 @@
     "message": "Basculer",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "Delete": {
+    "message": "Effacer",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "PluginsInstallHint": {
     "message": "Vous pouvez utiliser la commande /xlplugins en jeu pour installer d'autres plugins.",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -372,11 +448,19 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
-    "message": "Ask before installing a game patch",
+    "message": "Demander avant d'installer",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchPath": {
-    "message": "Dossier de téléchargement du patch",
+    "message": "Dossier de téléchargement des mises à jour",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchSpeedLimit": {
+    "message": "Limitation de la vitesse de téléchargement",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "KeepPatches": {
+    "message": "Conserver les mises à jour téléchargées pour de futures réinstallations",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -384,7 +468,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Développé par une chèvre. \nRemerciement spéciaux à Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, et à l'artiste paissa !\n\nUn problème ou des questions?\nRejoignez le Discord ou reportez-le sur GitHub!",
+    "message": "Développé par une chèvre. \nRemerciement spéciaux à Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, et à l'artiste paissa !\n\nUn problème ou des questions?\nRejoignez le Discord ou rapportez-le sur GitHub !",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
@@ -402,6 +486,10 @@
   "EnableEncryption": {
     "message": "Activer le chiffrement des paramètres du client",
     "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "Mise à jour de l'addon en jeu...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {
     "message": "Recherche de mises à jour...",
@@ -423,20 +511,40 @@
     "message": "MacType est installé sur cet ordinateur.\nCela causera des problèmes avec FFXIV, peu importe le lanceur.\n\nVous devez exclure XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater et ffxiv_dx11 de MacType.",
     "description": "ProblemCheck.RunCheck"
   },
+  "PatchInstallerNotOpen": {
+    "message": "Impossible de se connecter à l'installateur de mise à jour.\nVeuillez rapporter cette erreur.",
+    "description": "PatchInstaller.WaitOnHello"
+  },
   "FreeSpaceError": {
-    "message": "There is not enough space on your drive to download and install patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "Il n’y a pas assez de place sur votre disque dur pour installer la mise à jour.\n\nVous pouvez modifier le dossier de téléchargement dans les paramètres.\n\nEspace nécessaire : {0}\nEspace libre : {1}",
     "description": "PatchManager.Start"
+  },
+  "FreeSpaceGameError": {
+    "message": "Il n'y a pas assez d'espace libre sur votre disque pour installer la mise à jour.\n\nVous pouvez modifier l'emplacement du jeu dans les paramètres.\n\nNécessaire : {0}\nLibre : {1}",
+    "description": "PatchManager.Start"
+  },
+  "DalamudDotNet48RedistError": {
+    "message": "L'addon en jeu de XIVLauncher nécessite .NET Framework 4.8 d'installé pour continuer.\nVeuillez les installer depuis la page d’accueil Microsoft.",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "L'addon en jeu de XIVLauncher nécessite Microsoft Visual C++ 2015 redistributable d'installé pour continuer.\nVeuillez les installer depuis la page d’accueil Microsoft.",
+    "description": "DalamudLauncher.CheckVcRedist"
+  },
+  "DalamudVcRedistError": {
+    "message": "L'addon en jeu de XIVLauncher nécessite Microsoft Visual C++ 2015 redistributable et .NET Framework 4.8 d'installés pour continuer.\nVeuillez les installer depuis la page d’accueil Microsoft.",
+    "description": "DalamudLauncher.CheckVcRedist"
   },
   "IntegrityCheckImpossible": {
     "message": "Impossible d’effectuer un contrôle d’intégrité pour cette version du jeu. Veuillez essayer plus tard.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
     "message": "Certains fichiers du jeu semblent avoir été modifiés ou corrompus. Référez-vous au fichier \"integrityreport.txt\" dans le dossier de XIVLauncher pour plus d'informations.\n\nVoulez-vous réinitialiser le jeu a la version précédente ? Cela vous permettra de le mettre à jour à nouveau, ce qui pourrait résoudre vos problèmes.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "Votre installation semble valide.",
-    "description": "<>c__DisplayClass23_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   }
 }
