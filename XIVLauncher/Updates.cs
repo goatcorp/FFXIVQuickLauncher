@@ -41,8 +41,10 @@ namespace XIVLauncher
 
                 if (newRelease != null)
                 {
+                    /*
                     MessageBox.Show(Loc.Localize("UpdateNotice", "An update for XIVLauncher is available and will now be installed."),
                         "XIVLauncher Update", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    */
                     UpdateManager.RestartApp();
                 }
 #if !XL_NOAUTOUPDATE
