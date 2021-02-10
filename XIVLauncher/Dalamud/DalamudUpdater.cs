@@ -109,7 +109,19 @@ namespace XIVLauncher.Dalamud
                 Log.Information("[DUPDATE] Not found, redownloading");
 
                 SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud);
-                Download(addonPath, doDalamudTest, versionInfoJson);
+
+                try
+                {
+                    Download(addonPath, doDalamudTest, versionInfoJson);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[DUPDATE] Could not download update package.");
+
+                    State = DownloadState.Unavailable;
+                    SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Unavailable);
+                    return;
+                }
 
                 Log.Information("[DUPDATE] Download OK!");
             }
@@ -191,6 +203,28 @@ namespace XIVLauncher.Dalamud
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
 
             File.Delete(downloadPath);
+
+            try
+            {
+                var devPath = new DirectoryInfo(Path.Combine(addonPath.FullName, "..", "dev"));
+
+                if (!devPath.Exists)
+                    devPath.Create();
+                else
+                {
+                    devPath.Delete(true);
+                    devPath.Create();
+                }
+
+                foreach (var fileInfo in addonPath.GetFiles())
+                {
+                    fileInfo.CopyTo(Path.Combine(devPath.FullName, fileInfo.Name));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[DUPDATE] Could not copy to dev folder.");
+            }
         }
     }
 }
