@@ -69,6 +69,13 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
+                if (!Util.LetChoosePath(GamePathEntry.Text))
+                {
+                    MessageBox.Show(Loc.Localize("GamePathSafeguardError", "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead."), "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 if (!Util.IsValidFfxivPath(GamePathEntry.Text))
                 {
                     MessageBox.Show(Loc.Localize("GamePathInvalidError", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in."), "XIVLauncher",

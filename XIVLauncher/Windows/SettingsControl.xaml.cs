@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using CheapLoc;
 using Serilog;
@@ -448,6 +449,11 @@ namespace XIVLauncher.Windows
         private void OpenI18nLabel_OnClick(object sender, MouseButtonEventArgs e)
         {
             Process.Start("https://crowdin.com/project/ffxivquicklauncher");
+        }
+
+        private void GamePathEntry_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            GamePathSafeguardText.Visibility = !Util.LetChoosePath(ViewModel.GamePath) ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

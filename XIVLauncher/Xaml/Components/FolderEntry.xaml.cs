@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Serilog;
 
 namespace XIVLauncher.Xaml.Components
 {
@@ -18,6 +20,8 @@ namespace XIVLauncher.Xaml.Components
 
         public static DependencyProperty DescriptionProperty = DependencyProperty.Register("Description",
             typeof(string), typeof(FolderEntry), new PropertyMetadata(null));
+
+        public event TextChangedEventHandler TextChanged;
 
         public string Text
         {
@@ -54,6 +58,11 @@ namespace XIVLauncher.Xaml.Components
                         be.UpdateSource();
                 }
             }
+        }
+
+        private void TextBoxBase_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextChanged?.Invoke(sender, e);
         }
     }
 }

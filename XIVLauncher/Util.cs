@@ -50,6 +50,25 @@ namespace XIVLauncher
             return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
         }
 
+        public static bool LetChoosePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return true;
+
+            var di = new DirectoryInfo(path);
+
+            if (di.Name == "game")
+                return false;
+
+            if (di.Name == "boot")
+                return false;
+
+            if (di.Name == "sqpack")
+                return false;
+
+            return true;
+        }
+
         private static string DefaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn");
 
         private static readonly string[] PathsToTry = DriveInfo.GetDrives().Select(drive => $"{drive.Name}SquareEnix\\FINAL FANTASY XIV - A Realm Reborn").Concat(new List<string>
