@@ -456,6 +456,10 @@
     <EmbeddedResource Include="Resources\Loc\xl\xl_it.json" />
     <EmbeddedResource Include="Resources\Loc\xl\xl_ja.json" />
     <EmbeddedResource Include="Resources\Loc\xl\xl_pt.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_ko.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_no.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_ru.json" />
+    <EmbeddedResource Include="Resources\Loc\xl\xl_zh.json" />
     <Resource Include="Resources\logo.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

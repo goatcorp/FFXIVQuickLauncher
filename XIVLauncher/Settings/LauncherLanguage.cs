@@ -10,7 +10,11 @@ namespace XIVLauncher.Settings
         French,
         Italian,
         Spanish,
-        Portuguese
+        Portuguese,
+        Korean,
+        Norwegian,
+        Russian,
+        SimplifiedChinese
     }
 
     public static class LauncherLanguageExtensions
@@ -26,7 +30,11 @@ namespace XIVLauncher.Settings
                 { LauncherLanguage.French, "fr" },
                 { LauncherLanguage.Italian, "it" },
                 { LauncherLanguage.Spanish, "es" },
-                { LauncherLanguage.Portuguese, "pt" }
+                { LauncherLanguage.Portuguese, "pt" },
+                { LauncherLanguage.Korean, "ko" },
+                { LauncherLanguage.Norwegian, "no" },
+                { LauncherLanguage.Russian, "ru" },
+                { LauncherLanguage.SimplifiedChinese, "zh" },
             };
         }
 
