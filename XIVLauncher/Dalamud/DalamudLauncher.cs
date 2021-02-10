@@ -76,6 +76,15 @@ namespace XIVLauncher.Dalamud
                     return;
                 }
 
+                if (DalamudUpdater.State == DalamudUpdater.DownloadState.NoIntegrity)
+                {
+                    DalamudUpdater.CloseOverlay();
+
+                    MessageBox.Show(Loc.Localize("DalamudAntivirusHint",
+                        "The in-game addon ran into an error.\n\nThis is most likely caused by your antivirus. Please whitelist the quarantined files or disable the in-game addon."));
+                    return;
+                }
+
                 if (DalamudUpdater.State == DalamudUpdater.DownloadState.Unavailable)
                     return;
 

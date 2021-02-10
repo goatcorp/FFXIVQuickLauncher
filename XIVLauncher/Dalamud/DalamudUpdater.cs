@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using Newtonsoft.Json;
+using NuGet;
 using Serilog;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
@@ -33,7 +34,8 @@ namespace XIVLauncher.Dalamud
             DownloadAssets,
             Done,
             Failed,
-            Unavailable
+            Unavailable,
+            NoIntegrity
         }
 
         public static void SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress progress)
@@ -102,7 +104,7 @@ namespace XIVLauncher.Dalamud
                 State = DownloadState.Failed;
             }
 
-            if (!addonPath.Exists)
+            if (!addonPath.Exists || !IsIntegrity(addonPath))
             {
                 Log.Information("[DUPDATE] Not found, redownloading");
 
@@ -130,6 +132,14 @@ namespace XIVLauncher.Dalamud
                 return;
             }
 
+            if (!IsIntegrity(addonPath))
+            {
+                Log.Error("[DUPDATE] Integrity check failed.");
+
+                State = DownloadState.NoIntegrity;
+                return;
+            }
+
             Log.Information("[DUPDATE] All set.");
 
             Runner = new FileInfo(Path.Combine(addonPath.FullName, "Dalamud.Injector.exe"));
@@ -137,26 +147,50 @@ namespace XIVLauncher.Dalamud
             State = DownloadState.Done;
         }
 
+        public static bool IsIntegrity(DirectoryInfo addonPath)
+        {
+            var files = addonPath.GetFiles();
+
+            try
+            {
+                files.First(x => x.Name == "Dalamud.Injector.exe").OpenRead().ReadAllBytes();
+                files.First(x => x.Name == "Dalamud.dll").OpenRead().ReadAllBytes();
+                files.First(x => x.Name == "CheapLoc.dll").OpenRead().ReadAllBytes();
+                files.First(x => x.Name == "ImGuiScene.dll").OpenRead().ReadAllBytes();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[DUPDATE] No dalamud integrity.");
+                return false;
+            }
+            
+            return true;
+        }
+
         private static void Download(DirectoryInfo addonPath, bool staging, string versionInfoJson)
         {
             // Ensure directory exists
             if (!addonPath.Exists)
                 addonPath.Create();
-
-            using (var client = new WebClient())
+            else
             {
-                var downloadPath = Path.GetTempFileName();
-
-                if (File.Exists(downloadPath))
-                    File.Delete(downloadPath);
-
-                client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
-                ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
-
-                File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), versionInfoJson);
-
-                File.Delete(downloadPath);
+                addonPath.Delete(true);
+                addonPath.Create();
             }
+
+            using var client = new WebClient();
+
+            var downloadPath = Path.GetTempFileName();
+
+            if (File.Exists(downloadPath))
+                File.Delete(downloadPath);
+
+            client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
+            ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
+
+            File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), versionInfoJson);
+
+            File.Delete(downloadPath);
         }
     }
 }
