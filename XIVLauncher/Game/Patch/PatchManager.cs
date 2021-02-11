@@ -46,6 +46,7 @@ namespace XIVLauncher.Game.Patch
             MaxTryAgainOnFailover = int.MaxValue, // the maximum number of times to fail.
             OnTheFlyDownload = false, // caching in-memory mode
             Timeout = 1000, // timeout (millisecond) per stream block reader
+            TempDirectory = Path.GetTempPath(), // this is the library default
             RequestConfiguration = new RequestConfiguration
             {
                 UserAgent = "FFXIV PATCH CLIENT",
@@ -126,6 +127,16 @@ namespace XIVLauncher.Game.Patch
             _installer.StartIfNeeded();
             _installer.WaitOnHello();
 
+            var freeSpaceDownloadAll = (long)Util.GetDiskFreeSpace(_patchStore.Root.FullName);
+
+            if ((AllDownloadsLength) > freeSpaceDownloadAll)
+            {
+                OnFinish?.Invoke(this, false);
+
+                MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the xivlauncher settings, patch section.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpaceDownloadAll)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
             Task.Run(RunApplyQueue, _cancelTokenSource.Token);
         }
@@ -145,6 +156,9 @@ namespace XIVLauncher.Game.Patch
                 Progresses[index] = download.Patch.Length;
                 return;
             }
+
+            // fun little thing to override the default.
+            _downloadOpt.TempDirectory = Path.Combine(_patchStore.FullName, "temp");
 
             var dlService = new DownloadService(_downloadOpt);
             dlService.DownloadProgressChanged += (sender, args) =>
