@@ -118,8 +118,7 @@ namespace XIVLauncher.Dalamud
                 {
                     Log.Error(ex, "[DUPDATE] Could not download update package.");
 
-                    State = DownloadState.Unavailable;
-                    SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Unavailable);
+                    State = DownloadState.NoIntegrity;
                     return;
                 }
 
