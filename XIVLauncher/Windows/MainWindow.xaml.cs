@@ -291,7 +291,7 @@ namespace XIVLauncher.Windows
                             return;
                         }
 
-                        var patcher = new PatchManager(Repository.Boot, bootPatches, App.Settings.GamePath,
+                        var patcher = new PatchManager(bootPatches, App.Settings.GamePath,
                             App.Settings.PatchPath, _installer);
 
                         var progressDialog = new PatchDownloadDialog(patcher);
@@ -446,7 +446,7 @@ namespace XIVLauncher.Windows
                     Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
                         "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
 
-                    var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer);
+                    var patcher = new PatchManager(loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer);
 
                     var progressDialog = new PatchDownloadDialog(patcher);
                     progressDialog.Show();
