@@ -537,7 +537,7 @@ namespace XIVLauncher.Windows
                     if (App.Settings.AskBeforePatchInstall.HasValue && App.Settings.AskBeforePatchInstall.Value)
                     {
                         var selfPatchAsk = MessageBox.Show(
-                            Loc.Localize("PatchInstallDisclaimer", "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?\nThis is an experimental feature, but has been tested considerably and should work fine."),
+                            Loc.Localize("PatchInstallDisclaimer", "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?"),
                             "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                         if (selfPatchAsk == MessageBoxResult.Yes)
