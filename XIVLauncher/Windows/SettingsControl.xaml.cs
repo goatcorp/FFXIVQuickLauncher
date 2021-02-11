@@ -275,7 +275,7 @@ namespace XIVLauncher.Windows
         {
             try
             {
-                if (!DalamudLauncher.CanRunDalamud(App.Settings.GamePath))
+                if (!string.IsNullOrEmpty(ViewModel.GamePath) && Util.IsValidFfxivPath(ViewModel.GamePath) && !DalamudLauncher.CanRunDalamud(new DirectoryInfo(ViewModel.GamePath)))
                     MessageBox.Show(
                         Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
