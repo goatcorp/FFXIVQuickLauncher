@@ -9,23 +9,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XIVLauncher.PatchInstaller"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-		ReleaseNoUpdate|Any CPU = ReleaseNoUpdate|Any CPU
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+		ReleaseNoUpdate|x64 = ReleaseNoUpdate|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|Any CPU.ActiveCfg = ReleaseNoUpdate|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|Any CPU.Build.0 = ReleaseNoUpdate|Any CPU
-		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.ReleaseNoUpdate|Any CPU.ActiveCfg = Release|Any CPU
-		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.ReleaseNoUpdate|Any CPU.Build.0 = Release|Any CPU
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Debug|x64.ActiveCfg = Debug|x64
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Debug|x64.Build.0 = Debug|x64
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|x64.ActiveCfg = Release|x64
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|x64.Build.0 = Release|x64
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|x64.ActiveCfg = ReleaseNoUpdate|Any CPU
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|x64.Build.0 = ReleaseNoUpdate|Any CPU
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|x64.ActiveCfg = Debug|x64
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|x64.Build.0 = Debug|x64
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|x64.ActiveCfg = Release|x64
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|x64.Build.0 = Release|x64
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.ReleaseNoUpdate|x64.ActiveCfg = Release|x64
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.ReleaseNoUpdate|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

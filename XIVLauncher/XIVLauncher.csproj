@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <LangVersion>latest</LangVersion>
     <TargetFramework>net5.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <LangVersion>latest</LangVersion>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -66,6 +67,19 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\placeholder-news.png" />
+    <Resource Include="Resources\dalamud_icon.ico" />
+    <Resource Include="Resources\richpresence.png" />
+    <Resource Include="Resources\actlaunch.png" />
+    <Resource Include="Resources\defaultprofile.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
+    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x86\steam_api.dll" />
   </ItemGroup>
 
 </Project>

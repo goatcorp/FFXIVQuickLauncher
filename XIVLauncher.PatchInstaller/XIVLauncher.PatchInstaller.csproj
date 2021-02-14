@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <TargetFramework>net5.0-windows</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
