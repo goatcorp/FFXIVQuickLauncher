@@ -5,6 +5,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Platforms>x64</Platforms>
+    <Configurations>Debug;Release;ReleaseNoUpdate</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -14,6 +15,10 @@
     <UseWPF>true</UseWPF>
     <Deterministic>true</Deterministic>
     <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseNoUpdate|AnyCPU' ">
+    <DefineConstants>TRACE;XL_NOAUTOUPDATE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

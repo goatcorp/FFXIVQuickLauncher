@@ -18,8 +18,8 @@ Global
 		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Debug|x64.Build.0 = Debug|x64
 		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|x64.ActiveCfg = Release|x64
 		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|x64.Build.0 = Release|x64
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|x64.ActiveCfg = ReleaseNoUpdate|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|x64.Build.0 = ReleaseNoUpdate|Any CPU
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|x64.ActiveCfg = ReleaseNoUpdate|x64
+		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|x64.Build.0 = ReleaseNoUpdate|x64
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|x64.ActiveCfg = Debug|x64
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|x64.Build.0 = Debug|x64
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|x64.ActiveCfg = Release|x64
