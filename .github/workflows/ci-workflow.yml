@@ -3,18 +3,22 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: Build on Windows
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Initialize Submodules
-        run: git submodule update --init --recursive
-      - name: Setup Nuget
-        uses: nuget/setup-nuget@v1
+      - uses: actions/checkout@v2
         with:
-          nuget-version: "latest"
-      - name: Restore Nuget Packages
-        run: nuget restore XIVLauncher.sln
+            submodules: recursive
+
+      # https://github.com/dotnet/msbuild/issues/4332#issuecomment-485923582
+      - uses: microsoft/setup-msbuild@v1
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
+
       - name: Define VERSION
         run: |
           $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
@@ -25,12 +29,15 @@ jobs:
           ($env:BRANCH) >> VERSION
           ($env:COMMIT) >> VERSION
 
-      - name: Build DotNet4
-        run: |
-          cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=ReleaseNoUpdate
+      - name: Restore Nuget Packages
+        run: dotnet restore
+      
+      - name: Build
+        run: msbuild -m -target:Publish -p:SelfContained=false -p:Configuration=ReleaseNoUpdate -p:PublishDir=${{ github.workspace }}/bin
+
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: xivlauncher-artifact
           path: bin\
+          retention-days: 14
