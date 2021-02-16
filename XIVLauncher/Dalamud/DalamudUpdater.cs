@@ -112,7 +112,7 @@ namespace XIVLauncher.Dalamud
 
                 try
                 {
-                    Download(addonPath, doDalamudTest, versionInfoJson);
+                    Download(addonPath, doDalamudTest);
                 }
                 catch (Exception ex)
                 {
@@ -151,7 +151,9 @@ namespace XIVLauncher.Dalamud
                 return;
             }
 
-            Log.Information("[DUPDATE] All set.");
+            WriteVersionJson(addonPath, versionInfoJson);
+
+            Log.Information("[DUPDATE] All set for " + remoteVersionInfo.SupportedGameVer);
 
             Runner = new FileInfo(Path.Combine(addonPath.FullName, "Dalamud.Injector.exe"));
 
@@ -178,7 +180,13 @@ namespace XIVLauncher.Dalamud
             return true;
         }
 
-        private static void Download(DirectoryInfo addonPath, bool staging, string versionInfoJson)
+        private static void WriteVersionJson(DirectoryInfo addonPath, string info)
+        {
+
+            File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
+        }
+
+        private static void Download(DirectoryInfo addonPath, bool staging)
         {
             // Ensure directory exists
             if (!addonPath.Exists)
@@ -195,8 +203,6 @@ namespace XIVLauncher.Dalamud
 
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
-
-            File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), versionInfoJson);
 
             client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
