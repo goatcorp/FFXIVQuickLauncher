@@ -58,7 +58,7 @@ namespace XIVLauncher
                     o.MinimumBreadcrumbLevel = LogEventLevel.Debug; // Debug and higher are stored as breadcrumbs (default is Information)
                     o.MinimumEventLevel = LogEventLevel.Error; // Error and higher is sent as event (default is Error)
                     // If DSN is not set, the SDK will look for an environment variable called SENTRY_DSN. If nothing is found, SDK is disabled.
-                    o.Dsn = new Dsn("https://53970fece4974473b84157b45a47e54f@sentry.io/1548116");
+                    o.Dsn = "https://53970fece4974473b84157b45a47e54f@sentry.io/1548116";
                     o.AttachStacktrace = true;
                     o.SendDefaultPii = false; // send PII like the username of the user logged in to the device
 
