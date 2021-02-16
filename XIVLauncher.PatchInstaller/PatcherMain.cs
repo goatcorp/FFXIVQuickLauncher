@@ -23,8 +23,6 @@ namespace XIVLauncher.PatchInstaller
 
         private static IpcServer _server = new IpcServer();
         private static IpcClient _client = new IpcClient();
-        public const int IPC_SERVER_PORT = 0xff16;
-        public const int IPC_CLIENT_PORT = 0xff30;
 
         public static JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
@@ -43,11 +41,12 @@ namespace XIVLauncher.PatchInstaller
                     .MinimumLevel.Verbose()
                     .CreateLogger();
 
-                if (args.Length > 1)
+
+                if (args.Length > 1 && args[0] == "install")
                 {
                     try
                     {
-                        InstallPatch(args[0], args[1]);
+                        InstallPatch(args[1], args[2]);
                         Log.Information("OK");
                     }
                     catch (Exception ex)
@@ -60,8 +59,18 @@ namespace XIVLauncher.PatchInstaller
                     return;
                 }
 
-                _client.Initialize(IPC_SERVER_PORT);
-                _server.Start(IPC_CLIENT_PORT);
+                if (args.Length == 0)
+                {
+                    Log.Information("usage: XIVLauncher.PatchInstaller.exe install <patch> <game dir>\n" +
+                                    "OR\n" +
+                                    "usage: XIVLauncher.PatchInstaller.exe <server port> <client port>");
+
+                    Environment.Exit(-1);
+                    return;
+                }
+
+                _client.Initialize(int.Parse(args[0]));
+                _server.Start(int.Parse(args[1]));
                 _server.ReceivedRequest += ServerOnReceivedRequest;
 
                 Log.Information("[PATCHER] IPC connected");

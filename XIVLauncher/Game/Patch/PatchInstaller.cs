@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Text;
@@ -26,6 +27,12 @@ namespace XIVLauncher.Game.Patch
         private IpcServer _server = new IpcServer();
         private IpcClient _client = new IpcClient();
 
+        public const int DEFAULT_IPC_SERVER_PORT = 0x114;
+        public const int DEFAULT_IPC_CLIENT_PORT = 0x115;
+
+        private int _serverPort;
+        private int _clientPort;
+        
         public enum InstallerState
         {   
             NotStarted,
@@ -42,8 +49,23 @@ namespace XIVLauncher.Game.Patch
             if (State != InstallerState.NotStarted)
                 return;
 
+            _serverPort = DEFAULT_IPC_SERVER_PORT;
+            _clientPort = DEFAULT_IPC_CLIENT_PORT;
+
+            try
+            {
+                _serverPort = GetAvailablePort(DEFAULT_IPC_SERVER_PORT);
+                _clientPort = GetAvailablePort(_serverPort + 1);
+            }
+            catch(Exception ex)
+            {
+                Log.Warning(ex, "[PATCHERIPC] Could not find free ports, using defaults.");
+            }
+
+            Log.Verbose("[PATCHERIPC] Starting patcher with sp#{0} cp#{1}", _serverPort, _clientPort);
+
             _server.ReceivedRequest += ServerOnReceivedRequest;
-            _server.Start(XIVLauncher.PatchInstaller.PatcherMain.IPC_SERVER_PORT);
+            _server.Start(_serverPort);
 
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 "XIVLauncher.PatchInstaller.exe");
@@ -52,8 +74,10 @@ namespace XIVLauncher.Game.Patch
             startInfo.UseShellExecute = true;
 
             //Start as admin if needed
-            if (!EnvironmentSettings.IsNoRunas && System.Environment.OSVersion.Version.Major >= 6)
+            if (!EnvironmentSettings.IsNoRunas && Environment.OSVersion.Version.Major >= 6)
                 startInfo.Verb = "runas";
+
+            startInfo.Arguments = $"{_serverPort} {_clientPort}";
 
             State = InstallerState.NotReady;
 
@@ -86,7 +110,7 @@ namespace XIVLauncher.Game.Patch
             switch (msg.OpCode)
             {
                 case PatcherIpcOpCode.Hello:
-                    _client.Initialize(XIVLauncher.PatchInstaller.PatcherMain.IPC_CLIENT_PORT);
+                    _client.Initialize(_clientPort);
                     Log.Information("[PATCHERIPC] GOT HELLO");
                     State = InstallerState.Ready;
                     break;
@@ -153,6 +177,39 @@ namespace XIVLauncher.Game.Patch
             {
                 Log.Error(e, "[PATCHERIPC] Failed to send message.");
             }
+        }
+
+        public static int GetAvailablePort(int startingPort)
+        {
+            var portArray = new List<int>();
+
+            var properties = IPGlobalProperties.GetIPGlobalProperties();
+
+            // Ignore active connections
+            var connections = properties.GetActiveTcpConnections();
+            portArray.AddRange(from n in connections
+                where n.LocalEndPoint.Port >= startingPort
+                select n.LocalEndPoint.Port);
+
+            // Ignore active tcp listeners
+            var endPoints = properties.GetActiveTcpListeners();
+            portArray.AddRange(from n in endPoints
+                where n.Port >= startingPort
+                select n.Port);
+
+            // Ignore active UDP listeners
+            endPoints = properties.GetActiveUdpListeners();
+            portArray.AddRange(from n in endPoints
+                where n.Port >= startingPort
+                select n.Port);
+
+            portArray.Sort();
+
+            for (var i = startingPort; i < UInt16.MaxValue; i++)
+                if (!portArray.Contains(i))
+                    return i;
+
+            return 0;
         }
 
         public void Dispose()
