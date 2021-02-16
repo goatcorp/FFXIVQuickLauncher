@@ -90,6 +90,8 @@ namespace XIVLauncher.Dalamud
             var addonPath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks", remoteVersionInfo.AssemblyVersion));
             AssetDirectory = new DirectoryInfo(Path.Combine(Util.GetRoaming(), "dalamudAssets"));
 
+            Log.Information("[DUPDATE] Now starting for Dalamud {0}", remoteVersionInfo.AssemblyVersion);
+
             try
             {
                 if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
@@ -103,6 +105,7 @@ namespace XIVLauncher.Dalamud
             {
                 Log.Error(ex, "[DUPDATE] Could not get game version");
                 State = DownloadState.Failed;
+                return;
             }
 
             if (!addonPath.Exists || !IsIntegrity(addonPath))
