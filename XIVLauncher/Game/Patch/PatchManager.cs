@@ -160,8 +160,8 @@ namespace XIVLauncher.Game.Patch
             var dlService = new DownloadService(_downloadOpt);
             dlService.DownloadProgressChanged += (sender, args) =>
             {
-                Progresses[index] = args.BytesReceived;
-                Speeds[index] = dlService.DownloadSpeed;
+                Progresses[index] = args.ProgressedByteSize;
+                Speeds[index] = (long)args.AverageBytesPerSecondSpeed;
             };
 
             dlService.DownloadFileCompleted += (sender, args) =>

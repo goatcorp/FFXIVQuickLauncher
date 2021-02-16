@@ -257,7 +257,7 @@
                                     HorizontalAlignment="Left"
                                     x:Name="GitHubButton" Click="GitHubButton_OnClick" Margin="0 0 0 0">
                                 <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="GithubCircle" />
+                                    <materialDesign:PackIcon Kind="Github" />
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
                                 </StackPanel>
                             </Button>

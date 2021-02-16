@@ -4,6 +4,7 @@
     <LangVersion>latest</LangVersion>
     <TargetFramework>net5.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
