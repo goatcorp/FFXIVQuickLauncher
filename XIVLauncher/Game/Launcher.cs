@@ -78,8 +78,6 @@ namespace XIVLauncher.Game
             NoTerms
         }
 
-        public UniqueIdCache Cache = new UniqueIdCache();
-
         public class LoginResult
         {
             public LoginState State { get; set; }
@@ -99,7 +97,7 @@ namespace XIVLauncher.Game
 
             Log.Information($"XivGame::Login(steamServiceAccount:{isSteamServiceAccount}, cache:{useCache})");
 
-            if (!useCache || !Cache.HasValidCache(userName))
+            if (!useCache || !UniqueIdCache.Instance.HasValidCache(userName))
             {
                 Log.Information("Cache is invalid or disabled, logging in normally.");
 
@@ -138,13 +136,13 @@ namespace XIVLauncher.Game
                 (uid, loginState, pendingPatches) = Task.Run(() => RegisterSession(oauthLoginResult, gamePath)).Result;
 
                 if (useCache)
-                    Task.Run(() => Cache.AddCachedUid(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion))
+                    Task.Run(() => UniqueIdCache.Instance.AddCachedUid(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion))
                         .Wait();
             }
             else
             {
                 Log.Information("Cached UID found, using instead.");
-                var (cachedUid, region, expansionLevel) = Task.Run(() => Cache.GetCachedUid(userName)).Result;
+                var (cachedUid, region, expansionLevel) = Task.Run(() => UniqueIdCache.Instance.GetCachedUid(userName)).Result;
                 uid = cachedUid;
                 loginState = LoginState.Ok;
 

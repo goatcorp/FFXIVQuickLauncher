@@ -212,7 +212,7 @@ namespace XIVLauncher.Windows
 
         private void ResetCacheButton_OnClick(object sender, RoutedEventArgs e)
         {
-            UniqueIdCache.Reset();
+            UniqueIdCache.Instance.Reset();
         }
 
         private void RunIntegrityCheck_OnClick(object s, RoutedEventArgs e)

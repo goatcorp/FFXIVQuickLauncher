@@ -195,8 +195,7 @@ namespace XIVLauncher.Windows
 
             if (App.Settings.UniqueIdCacheEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                UniqueIdCache.Reset();
-                _launcher.Cache.Load();
+                UniqueIdCache.Instance.Reset();
                 Console.Beep(523, 150); // Feedback without popup
             }
 
@@ -313,7 +312,10 @@ namespace XIVLauncher.Windows
                                     _isLoggingIn = false;
                                 });
                             }
-                            
+
+                            // This is a good indicator that we should clear the UID cache
+                            UniqueIdCache.Instance.Reset();
+
                             mutex.Close();
                             mutex = null;
                         };
@@ -370,7 +372,7 @@ namespace XIVLauncher.Windows
 
             _isLoggingIn = true;
 
-            var hasValidCache = _launcher.Cache.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
+            var hasValidCache = UniqueIdCache.Instance.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
 
             Log.Information("CurrentAccount: {0}", _accountManager.CurrentAccount == null ? "null" : _accountManager.CurrentAccount.ToString());
 
@@ -788,6 +790,9 @@ namespace XIVLauncher.Windows
 
         private void SetupMaintenanceQueueTimer()
         {
+            // This is a good indicator that we should clear the UID cache
+            UniqueIdCache.Instance.Reset();
+
             _maintenanceQueueTimer = new Timer
             {
                 Interval = 15000

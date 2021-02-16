@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace XIVLauncher.Cache
 {
     public class UniqueIdCache
     {
+        private static UniqueIdCache _instance;
+        public static UniqueIdCache Instance => _instance ??= new UniqueIdCache();
+
         private const int DAYS_TO_TIMEOUT = 1;
 
         private List<UniqueIdCacheEntry> _cache;
@@ -44,7 +48,11 @@ namespace XIVLauncher.Cache
             });
         }
 
-        public static void Reset() => File.Delete(ConfigPath);
+        public void Reset()
+        {
+            _cache.Clear();
+            Save();
+        }
         
         #endregion
 

@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using Newtonsoft.Json;
 using NuGet;
 using Serilog;
+using XIVLauncher.Cache;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows;
@@ -113,6 +114,9 @@ namespace XIVLauncher.Dalamud
                 try
                 {
                     Download(addonPath, doDalamudTest);
+
+                    // This is a good indicator that we should clear the UID cache
+                    UniqueIdCache.Instance.Reset();
                 }
                 catch (Exception ex)
                 {
