@@ -73,7 +73,9 @@ namespace XIVLauncher.Game
             Ok,
             NeedsPatchGame,
             NeedsPatchBoot,
-            NoOAuth
+            NoOAuth,
+            NoService,
+            NoTerms
         }
 
         public UniqueIdCache Cache = new UniqueIdCache();
@@ -119,16 +121,18 @@ namespace XIVLauncher.Game
 
                 if (!oauthLoginResult.Playable)
                 {
-                    MessageBox.Show("This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return null;
+                    return new LoginResult
+                    {
+                        State = LoginState.NoService
+                    };
                 }
 
                 if (!oauthLoginResult.TermsAccepted)
                 {
-                    MessageBox.Show("Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return null;
+                    return new LoginResult
+                    {
+                        State = LoginState.NoTerms
+                    };
                 }
 
                 (uid, loginState, pendingPatches) = Task.Run(() => RegisterSession(oauthLoginResult, gamePath)).Result;

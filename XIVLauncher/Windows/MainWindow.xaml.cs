@@ -502,21 +502,7 @@ namespace XIVLauncher.Windows
             {
                 var loginResult = _launcher.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, App.Settings.UniqueIdCacheEnabled, App.Settings.GamePath);
 
-                if (loginResult == null)
-                {
-                    Log.Information("LoginResult was null...");
-                    _isLoggingIn = false;
-
-                    // If this is an autologin, we don't want to stick around after a failed login
-                    if (AutoLoginCheckBox.IsChecked == true)
-                    {
-                        Close();
-                        CleanUp();
-                        Environment.Exit(0);
-                    }
-
-                    return;
-                }
+                Debug.Assert(loginResult != null, "ASSERTION FAILED loginResult != null!");
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
@@ -530,7 +516,35 @@ namespace XIVLauncher.Windows
                         }
 
                         MessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+                        
                         _isLoggingIn = false;
+                        Show();
+                        Activate();
+                        return;
+                    }
+
+                    if (loginResult.State == Launcher.LoginState.NoService)
+                    {
+                        MessageBox.Show(
+                            Loc.Localize("LoginNoServiceMessage",
+                                "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
+                            "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+
+                        _isLoggingIn = false;
+                        Show();
+                        Activate();
+                        return;
+                    }
+
+                    if (loginResult.State == Launcher.LoginState.NoTerms)
+                    {
+                        MessageBox.Show(Loc.Localize("LoginAcceptTermsMessage", "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                        _isLoggingIn = false;
+                        Show();
+                        Activate();
                         return;
                     }
 
@@ -547,6 +561,8 @@ namespace XIVLauncher.Windows
                         else
                         {
                             _isLoggingIn = false;
+                            Show();
+                            Activate();
                             return;
                         }
                     }
@@ -569,7 +585,7 @@ namespace XIVLauncher.Windows
                             "An update check was executed and any pending updates were installed."), "XIVLauncher",
                         MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    this._isLoggingIn = false;
+                    _isLoggingIn = false;
                     Show();
                     Activate();
                 }
