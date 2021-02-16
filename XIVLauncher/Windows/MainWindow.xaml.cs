@@ -299,9 +299,14 @@ namespace XIVLauncher.Windows
 
                         patcher.OnFinish += (sender, args) =>
                         {
+                            progressDialog.Dispatcher.Invoke(() =>
+                            {
+                                progressDialog.Hide();
+                                progressDialog.Close();
+                            });
+
                             if (args)
                             {
-                                progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
                                 whenFinishAction?.Invoke();
                             }
                             else
@@ -456,7 +461,11 @@ namespace XIVLauncher.Windows
 
                     patcher.OnFinish += async (sender, args) =>
                     {
-                        progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
+                        progressDialog.Dispatcher.Invoke(() =>
+                        {
+                            progressDialog.Hide();
+                            progressDialog.Close();
+                        });
 
                         if (args)
                         {
