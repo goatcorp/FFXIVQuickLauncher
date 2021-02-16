@@ -14,7 +14,7 @@
         AllowsTransparency="True"
         Background="Transparent"
         WindowStyle="None" Height="225" Width="340"
-        d:DataContext="{d:DesignInstance viewModel:PatchDownloadDialogViewModel}">
+        d:DataContext="{d:DesignInstance viewModel:PatchDownloadDialogViewModel}" Closing="PatchDownloadDialog_OnClosing">
     <Grid Margin="0,0,0,0">
         <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="Auto" Margin="0,0,10,0">
             <StackPanel Margin="16,16,16,0">

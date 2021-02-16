@@ -141,5 +141,10 @@ namespace XIVLauncher.Windows
             Progress4.Visibility = Visibility.Collapsed;
             Progress4Text.Visibility = Visibility.Collapsed;
         }
+
+        private void PatchDownloadDialog_OnClosing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true; // We can't cancel patching yet, big TODO
+        }
     }
 }
