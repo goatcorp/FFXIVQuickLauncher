@@ -168,24 +168,25 @@ namespace XIVLauncher.Game.Patch
             {
                 if (args.Error != null)
                 {
-                    Log.Error(args.Error, "Download failed for {0}", download.Patch.VersionId);
-                    MessageBox.Show($"Download FAILED for {download.Patch.VersionId}.\nPlease try again.\n\n" + args.Error, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Log.Error(args.Error, "Download failed for {0} with reason {1}", download.Patch.VersionId, args.Error);
+                    MessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Problem", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
                     return;
                 }
 
                 if (args.Cancelled)
                 {
-                    Log.Error("Download cancelled for {0}", download.Patch.VersionId);
-                    MessageBox.Show($"Download CANCELLED for {download.Patch.VersionId}.\nPlease try again.\n\n" + args.Error, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Log.Error("Download cancelled for {0} with reason {1}", download.Patch.VersionId, args.Error);
+                    MessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Cancelled", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
+                    return;
                 }
 
                 // Let's just bail for now, need better handling of this later
                 if (!IsHashCheckPass(download.Patch, outFile))
                 {
-                    Log.Error("HashCHeck failed for {0} after DL", download.Patch.VersionId);
-                    MessageBox.Show($"IsHashCheckPass FAILED for {download.Patch.VersionId}.\nPlease try again.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Log.Error("IsHashCheckPass failed for {0} after DL", download.Patch.VersionId);
+                    MessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "IsHashCheckPass", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     outFile.Delete();
                     Environment.Exit(0);
                     return;
