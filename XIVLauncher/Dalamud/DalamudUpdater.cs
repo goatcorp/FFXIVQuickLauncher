@@ -31,11 +31,8 @@ namespace XIVLauncher.Dalamud
         public enum DownloadState
         {
             Unknown,
-            DownloadDalamud,
-            DownloadAssets,
             Done,
             Failed,
-            Unavailable,
             NoIntegrity
         }
 

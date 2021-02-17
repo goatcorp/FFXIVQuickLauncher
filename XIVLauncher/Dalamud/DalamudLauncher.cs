@@ -85,9 +85,6 @@ namespace XIVLauncher.Dalamud
                     return;
                 }
 
-                if (DalamudUpdater.State == DalamudUpdater.DownloadState.Unavailable)
-                    return;
-
                 Thread.Yield();
             }
 
