@@ -26,7 +26,7 @@ namespace XIVLauncher.Dalamud
         public static FileInfo Runner { get; private set; }
         public static DirectoryInfo AssetDirectory { get; private set; }
 
-        private static DalamudLoadingOverlay overlay;
+        private static DalamudLoadingOverlay _overlay;
 
         public enum DownloadState
         {
@@ -38,24 +38,24 @@ namespace XIVLauncher.Dalamud
 
         public static void SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress progress)
         {
-            overlay.Dispatcher.Invoke(() => overlay.SetProgress(progress));
+            _overlay.Dispatcher.Invoke(() => _overlay.SetProgress(progress));
         }
 
         public static void ShowOverlay()
         {
-            overlay.Dispatcher.Invoke(() => overlay.SetVisible());
+            _overlay.Dispatcher.Invoke(() => _overlay.SetVisible());
         }
 
         public static void CloseOverlay()
         {
-            overlay.Dispatcher.Invoke(() => overlay.Close());
+            _overlay.Dispatcher.Invoke(() => _overlay.Close());
         }
 
         public static void Run(DirectoryInfo gamePath, DalamudLoadingOverlay overlay)
         {
             Log.Information("[DUPDATE] Starting...");
 
-            DalamudUpdater.overlay = overlay;
+            _overlay = overlay;
 
             Task.Run(() =>
             {
@@ -88,24 +88,6 @@ namespace XIVLauncher.Dalamud
             AssetDirectory = new DirectoryInfo(Path.Combine(Util.GetRoaming(), "dalamudAssets"));
 
             Log.Information("[DUPDATE] Now starting for Dalamud {0}", remoteVersionInfo.AssemblyVersion);
-
-            /* We don't need this, since ReCheckVersion() in DalamudLauncher does this job
-            try
-            {
-                if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
-                {
-                    State = DownloadState.Unavailable;
-                    SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Unavailable);
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "[DUPDATE] Could not get game version");
-                State = DownloadState.Failed;
-                return;
-            }
-            */
 
             if (!addonPath.Exists || !IsIntegrity(addonPath))
             {
