@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Windows;
 using CheapLoc;
 using Microsoft.Win32;
+using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game
 {
@@ -48,7 +49,7 @@ namespace XIVLauncher.Game
 
             if (runningAsAdmin && !Properties.Settings.Default.HasComplainedAboutAdmin && !EnvironmentSettings.IsWine)
             {
-                MessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                CustomMessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 Properties.Settings.Default.HasComplainedAboutAdmin = true;
                 Properties.Settings.Default.Save();
             }
@@ -56,7 +57,7 @@ namespace XIVLauncher.Game
             var procModules = Process.GetCurrentProcess().Modules.Cast<ProcessModule>();
             if (procModules.Any(x => x.ModuleName == "MacType.dll" || x.ModuleName == "MacType64.dll"))
             {
-                MessageBox.Show(Loc.Localize("MacTypeNag", "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(Loc.Localize("MacTypeNag", "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(-1);
             }
         }

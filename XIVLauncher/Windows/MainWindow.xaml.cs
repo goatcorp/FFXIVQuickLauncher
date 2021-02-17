@@ -349,7 +349,7 @@ namespace XIVLauncher.Windows
         {
             if (string.IsNullOrEmpty(LoginUsername.Text))
             {
-                MessageBox.Show(
+                CustomMessageBox.Show(
                     Loc.Localize("EmptyUsernameError", "Please enter an username."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -357,7 +357,7 @@ namespace XIVLauncher.Windows
 
             if (string.IsNullOrEmpty(LoginPassword.Password))
             {
-                MessageBox.Show(
+                CustomMessageBox.Show(
                     Loc.Localize("EmptyPasswordError", "Please enter a password."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -368,7 +368,7 @@ namespace XIVLauncher.Windows
 
             if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == PatcherMain.BASE_GAME_VERSION && App.Settings.UniqueIdCacheEnabled)
             {
-                MessageBox.Show(
+                CustomMessageBox.Show(
                     Loc.Localize("UidCacheInstallError",
                         "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall FFXIV.\n\nIf you want to reinstall FFXIV, please take care to disable it first."),
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -438,7 +438,7 @@ namespace XIVLauncher.Windows
             {
                 if (Util.CheckIsGameOpen())
                 {
-                    MessageBox.Show(
+                    CustomMessageBox.Show(
                         Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
@@ -490,7 +490,7 @@ namespace XIVLauncher.Windows
             }
             else
             {
-                MessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(0);
             }
         }
@@ -526,7 +526,7 @@ namespace XIVLauncher.Windows
                             App.Settings.AutologinEnabled = false;
                         }
 
-                        MessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+                        CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
                         
                         _isLoggingIn = false;
                         Show();
@@ -536,11 +536,11 @@ namespace XIVLauncher.Windows
 
                     if (loginResult.State == Launcher.LoginState.NoService)
                     {
-                        MessageBox.Show(
+                        CustomMessageBox.Show(
                             Loc.Localize("LoginNoServiceMessage",
                                 "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
                             "Error",
-                            MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBoxButton.OK, MessageBoxImage.Error, false);
 
                         _isLoggingIn = false;
                         Show();
@@ -550,7 +550,7 @@ namespace XIVLauncher.Windows
 
                     if (loginResult.State == Launcher.LoginState.NoTerms)
                     {
-                        MessageBox.Show(Loc.Localize("LoginAcceptTermsMessage", "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
+                        CustomMessageBox.Show(Loc.Localize("LoginAcceptTermsMessage", "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                         _isLoggingIn = false;
@@ -591,10 +591,10 @@ namespace XIVLauncher.Windows
                 }
                 else
                 {
-                    MessageBox.Show(
+                    CustomMessageBox.Show(
                         Loc.Localize("LoginNoStartOk",
                             "An update check was executed and any pending updates were installed."), "XIVLauncher",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBoxButton.OK, MessageBoxImage.Information, false);
 
                     _isLoggingIn = false;
                     Show();
@@ -609,9 +609,9 @@ namespace XIVLauncher.Windows
                 if (!gateStatus)
                 {
                     Log.Information("GateStatus is false.");
-                    MessageBox.Show(
+                    CustomMessageBox.Show(
                         Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false);
 
                     _isLoggingIn = false;
 
@@ -630,10 +630,10 @@ namespace XIVLauncher.Windows
             if (!gateStatus)
             {
                 Log.Information("GateStatus is false.");
-                MessageBox.Show(
+                CustomMessageBox.Show(
                     Loc.Localize("MaintenanceNotice",
                         "Maintenance seems to be in progress. The game shouldn't be launched."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false);
 
                 _isLoggingIn = false;
 
@@ -827,8 +827,8 @@ namespace XIVLauncher.Windows
             if (gateStatus || bootPatches != null)
             {
                 if (bootPatches != null)
-                    MessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
-                        "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."));
+                    CustomMessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
+                        "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher");
 
                 Dispatcher.BeginInvoke(new Action(() => {
                     QuitMaintenanceQueueButton_OnClick(null, null);

@@ -294,6 +294,9 @@
     <Compile Include="Windows\ChangelogWindow.xaml.cs">
       <DependentUpon>ChangelogWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\CustomMessageBox.xaml.cs">
+      <DependentUpon>CustomMessageBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\PatchDownloadDialog.xaml.cs">
       <DependentUpon>PatchDownloadDialog.xaml</DependentUpon>
     </Compile>
@@ -364,6 +367,10 @@
     <Compile Include="Game\Launcher.cs" />
     <Compile Include="Game\NativeAclFix.cs" />
     <Page Include="Windows\ChangelogWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\CustomMessageBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

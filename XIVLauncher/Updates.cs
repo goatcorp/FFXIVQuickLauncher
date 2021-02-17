@@ -9,6 +9,7 @@ using System.Windows;
 using CheapLoc;
 using Serilog;
 using Squirrel;
+using XIVLauncher.Windows;
 
 namespace XIVLauncher
 {
@@ -55,7 +56,7 @@ namespace XIVLauncher
             catch (Exception ex)
             {
                 Log.Error(ex, "Update failed");
-                MessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support."),
+                CustomMessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support."),
                                 "XIVLauncher",
                                  MessageBoxButton.OK,
                                  MessageBoxImage.Error);

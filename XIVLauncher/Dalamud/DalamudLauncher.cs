@@ -93,7 +93,7 @@ namespace XIVLauncher.Dalamud
 
             if (!DalamudUpdater.Runner.Exists)
             {
-                MessageBox.Show(
+                CustomMessageBox.Show(
                     "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -183,7 +183,7 @@ namespace XIVLauncher.Dalamud
             }
             else if (!CheckDotNet48() && CheckVc2019())
             {
-                var res = MessageBox.Show(
+                CustomMessageBox.Show(
                 Loc.Localize("DalamudDotNet48RedistError",
                     "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -192,7 +192,7 @@ namespace XIVLauncher.Dalamud
             }
             else if (CheckDotNet48() && !CheckVc2019())
             {
-                var res = MessageBox.Show(
+                CustomMessageBox.Show(
                 Loc.Localize("DalamudVc2019RedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -201,7 +201,7 @@ namespace XIVLauncher.Dalamud
             }
             else
             {
-                var res = MessageBox.Show(
+                CustomMessageBox.Show(
                 Loc.Localize("DalamudVcRedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);

@@ -26,7 +26,7 @@ namespace XIVLauncher.Windows
             if (detectedPath != null) GamePathEntry.Text = detectedPath;
 
 #if XL_NOAUTOUPDATE
-            MessageBox.Show(
+            CustomMessageBox.Show(
                 $"You're running an unsupported version of XIVLauncher.\n\nThis can be unsafe and a danger to your SE account. If you have not gotten this unsupported version on purpose, please reinstall a clean version from {App.RepoUrl}/releases.",
                 "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 #endif
@@ -64,21 +64,21 @@ namespace XIVLauncher.Windows
             {
                 if (string.IsNullOrEmpty(GamePathEntry.Text))
                 {
-                    MessageBox.Show(Loc.Localize("GamePathEmptyError", "Please select a game path."), "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show(Loc.Localize("GamePathEmptyError", "Please select a game path."), "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error, false);
                     return;
                 }
 
                 if (!Util.LetChoosePath(GamePathEntry.Text))
                 {
-                    MessageBox.Show(Loc.Localize("GamePathSafeguardError", "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead."), "Error",
+                    CustomMessageBox.Show(Loc.Localize("GamePathSafeguardError", "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead."), "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (!Util.IsValidFfxivPath(GamePathEntry.Text))
                 {
-                    MessageBox.Show(Loc.Localize("GamePathInvalidError", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in."), "XIVLauncher",
+                    CustomMessageBox.Show(Loc.Localize("GamePathInvalidError", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in."), "XIVLauncher",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
