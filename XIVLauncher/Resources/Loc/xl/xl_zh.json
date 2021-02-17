@@ -11,8 +11,16 @@
     "message": "正在更新资源文件...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
+  "DalamudUnavailable": {
+    "message": "由于游戏更新，插件目前无法使用。",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
   "GamePathEmptyError": {
     "message": "请选择游戏所在文件夹。",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathSafeguardError": {
+    "message": "请不要选择您的FFXIV安装的 \"game\" 或 \"boot\" 文件夹，而是选择包含这些文件夹的文件夹。",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
@@ -108,7 +116,7 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
-    "message": "知道了",
+    "message": "确定",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
@@ -343,6 +351,10 @@
     "message": "请选择启动器语言。（修改后需要重启以生效）",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "LauncherLanguageHelpCtaLoc": {
+    "message": "发现了翻译错误？您可以帮助翻译启动器！只需点击这里！",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "LauncherLanguageNotice": {
     "message": "您需要重启 XIVLauncher 以应用启动器语言设置。",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -483,6 +495,10 @@
     "message": "启用实验性 UID 缓存（这将在游戏更新后失效！）",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ResetUidCacheTip": {
+    "message": "启动启动器时长按 Ctrl 以重置 UID 缓存",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "EnableEncryption": {
     "message": "启用客户端加密参数",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -497,6 +513,10 @@
   },
   "AutoLoginHint": {
     "message": "按住 shift 键以更改设置！",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "ResetUidCacheHint": {
+    "message": "按住 Ctrl 键以重置 UID 缓存！",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
@@ -515,13 +535,9 @@
     "message": "无法连接到更新程序。\n请报告此错误。",
     "description": "PatchInstaller.WaitOnHello"
   },
-  "FreeSpaceError": {
-    "message": "您的磁盘空间不足，无法下载更新。\n\n您可以在设置中更改更新下载目录。\n\n需要：{0}\n可用：{1}",
-    "description": "PatchManager.Start"
-  },
-  "FreeSpaceGameError": {
-    "message": "您的磁盘空间不足，无法安装更新。\n\n您可以在设置中更改游戏安装目录。\n\n需要：{0}\n可用：{1}",
-    "description": "PatchManager.Start"
+  "DalamudAntivirusHint": {
+    "message": "游戏内插件出现了一个错误。\n\n这很可能是由您的杀毒软件引起的。 请将隔离的文件加入白名单或禁用游戏内插件。",
+    "description": "DalamudLauncher.Run"
   },
   "DalamudDotNet48RedistError": {
     "message": "XIVLauncher 游戏内组件需要安装 .NET Framework 4.8 才能启用。请在微软官网下载并安装。",
@@ -535,6 +551,10 @@
     "message": "XIVLauncher 游戏内组件需要安装 Microsoft Visual C++ 2015 Redistributable 及 .NET Framework 4.8 才能启用。请在微软官网下载并安装。",
     "description": "DalamudLauncher.CheckVcRedist"
   },
+  "updatefailureerror": {
+    "message": "XIVLauncher无法检查更新。这可能是连接到 GitHub 造成的问题。等待几分钟后重试。\n如果仍未改善，请禁用您的 VPN。\n如果它在几分钟后仍未成功，请加入在 GitHub 上链接的 Discord 服务器以获取支持。",
+    "description": "<Run>d__0.MoveNext"
+  },
   "IntegrityCheckImpossible": {
     "message": "此游戏版本尚无参考报告。我们无法为您运行完整性检查，请稍后再试。",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
@@ -546,5 +566,41 @@
   "IntegrityCheckValid": {
     "message": "您的游戏安装完整。",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "LoginNoOauthMessage": {
+    "message": "无法登录到您的 Square Enix 帐户。\n这可能是密码错误或 OTP 造成的。\n\n还请检查您的电子邮件收件箱中任何来自Square Enix 的消息 - 他们可能因为“可疑活动”希望您重置您的密码。\n这不是由 XIVLauncher 的安全问题引起的， 它仅仅是 Square Enix 的安全措施，以防止您的帐户被盗或从新的地点登录。\n重置密码后，XIVLauncher 和官方启动器将再次正常工作。",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n自动登录已被禁用。",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "登录问题",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "这个 Square Enix 帐户不能进入 FINAL FANTASY XIV。\n\n如果您在 Steam 上购买 FINAL FANTASY XIV，请确保登录时检查\"使用 Steam 账户\"复选框。\n如果启用自动登录，则在开始时按住 Shift 键访问设置。",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "请在官方启动器中接受 FINAL FANTASY XIV 的使用条款。",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "发现新的补丁需要安装才能游玩。\n您想要 XIVLauncher 安装吗？",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "执行了更新检查并安装了任何待处理的更新。",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "维护似乎正在进行中。游戏不应启动。",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher无法验证已下载的游戏文件。\n\n这通常表明您的互联网连接存在问题。\n如果再次发生错误，请尝试使用 VPN 设置为日本。\n\n上下文： {0}\n{1}",
+    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
   }
 }

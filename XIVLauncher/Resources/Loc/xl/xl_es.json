@@ -11,8 +11,16 @@
     "message": "Actualizando valores...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
+  "DalamudUnavailable": {
+    "message": "Los plugins no están disponibles actualmente\ndebido a una actualización del juego.",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
   "GamePathEmptyError": {
     "message": "Por favor, elige un directorio de juego.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathSafeguardError": {
+    "message": "Por favor, no selecciones la carpeta \"game\" o \"boot\" en la instalación de FFXIV, y elige la carpeta que contiene estos en su lugar.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
@@ -343,6 +351,10 @@
     "message": "Por favor, selecciona el idioma del lanzador, es necesario reiniciar.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "LauncherLanguageHelpCtaLoc": {
+    "message": "¿Encontraste algún error? ¡Puedes ayudar a traducir el launcher! ¡Solo haz click aquí!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "LauncherLanguageNotice": {
     "message": "Es necesario reiniciar para aplicar la configuración de idioma del lanzador.",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -483,6 +495,10 @@
     "message": "Activar caché experimental UID (¡esto cesará al actualizar juego!)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ResetUidCacheTip": {
+    "message": "Mantén pulsado control mientras inicias el launcher para resetear la caché UID",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "EnableEncryption": {
     "message": "Activar el cifrado de argumentos al cliente",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -497,6 +513,10 @@
   },
   "AutoLoginHint": {
     "message": "¡Mantén pulsada la tecla Shift para cambiar los ajustes!",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "ResetUidCacheHint": {
+    "message": "¡Mantén pulsada la tecla control para restablecer la caché UID!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
@@ -515,13 +535,9 @@
     "message": "No se pudo conectar al instalador de parches.\nPor favor reporta este error.",
     "description": "PatchInstaller.WaitOnHello"
   },
-  "FreeSpaceError": {
-    "message": "No hay espacio suficiente para descargar e instalar parches en el disco.\n\nPuedes cambiar la carpeta en la que se descargan los parches en los ajustes.\n\nNecesario:{0}\nLibre:{1}",
-    "description": "PatchManager.Start"
-  },
-  "FreeSpaceGameError": {
-    "message": "No hay espacio suficiente en tu disco para instalar parches.\n\nPuedes cambiar la localización donde el juego está instalado en los ajustes.\n\nRequerido:{0}\nLibre:{1}",
-    "description": "PatchManager.Start"
+  "DalamudAntivirusHint": {
+    "message": "El addon in-game ha tenido un error.\n\nEsto es probablemente causado por tu antivirus. Por favor añade a la lista blanca los archivos en cuarentena o deshabilita el addon in-game.",
+    "description": "DalamudLauncher.Run"
   },
   "DalamudDotNet48RedistError": {
     "message": "El addon in-game de XIVLauncher necesita tener instalado .NET Framework 4.8 para continuar. Por favor instálalo desde la página principal de Microsoft.",
@@ -535,6 +551,10 @@
     "message": "El addon in-game de XIVLauncher necesita tener instalados Microsoft Visual C++ 2015 redistributable y .NET Framework 4.8 para continuar. Por favor instálalos desde la página principal de Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
+  "updatefailureerror": {
+    "message": "XIVLauncher no pudo comprobar actualizaciones. Esto puede ser causado por problemas de conectividad a GitHub. Espera unos minutos y vuelva a intentarlo.\nDesactiva tu VPN, si tienes una.\nSi continúa fallando después de varios minutos, por favor únete al discord enlazado en GitHub para obtener soporte.",
+    "description": "<Run>d__0.MoveNext"
+  },
   "IntegrityCheckImpossible": {
     "message": "Aún no hay un informe de referencia para esta versión del juego. Por favor inténtalo de nuevo más tarde.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
@@ -546,5 +566,41 @@
   "IntegrityCheckValid": {
     "message": "Tu instalación del juego parece ser válida.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "LoginNoOauthMessage": {
+    "message": "No se pudo iniciar sesión en su cuenta Square Enix.\nEsto podría ser causado por credenciales incorrectas o OTPs.\n\nPor favor, revisa tu bandeja de entrada para ver si hay algún mensaje de Square Enix - es posible que quieran que restablezcas tu contraseña por \"actividad sospechosa\".\nEsto NO es causado por un problema de seguridad en XIVLauncher, es simplemente una medida de seguridad de Square Enix para evitar los accesos desde nuevos lugares, en caso de que tu cuenta sea robada.\nXIVLauncher y el lanzador oficial volverán a funcionar bien después de restablecer tu contraseña.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nSe ha desactivado el inicio de sesión automático.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Problema al iniciar sesión",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Esta cuenta de Square Enix no puede jugar FINAL FANTASY XIV.\n\nSi compraste FINAL FANTASY XIV en Steam, asegúrate de marcar la casilla de \"Usar cuenta de servicio de Steam\" cuando inicies sesión.\nSi el inicio de sesión automático está activado, mantén pulsado shift mientras comienza a acceder a la configuración.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Por favor acepta las condiciones de uso de FINAL FANTASY XIV en el lanzador oficial.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "Se ha encontrado un nuevo parche que debe instalarse antes de poder jugar.\n¿Deseas que XIVLauncher lo instale?",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "Se ha ejecutado una comprobación de actualizaciones y se han instalado las actualizaciones pendientes.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "Parece haber un mantenimiento en curso. No se debería iniciar el juego.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher no pudo verificar los archivos de juego descargados.\n\nEsto normalmente indica un problema con tu conexión a Internet.\nSi este error se produce de nuevo, intenta usar una VPN establecida en Japón.\n\nContexto: {0}\n{1}",
+    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
   }
 }

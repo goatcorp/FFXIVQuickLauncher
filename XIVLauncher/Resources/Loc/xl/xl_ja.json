@@ -11,8 +11,16 @@
     "message": "アセットを更新しています...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
+  "DalamudUnavailable": {
+    "message": "ゲーム本体のアップデートにより一時的にプラグインが利用できません。",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
   "GamePathEmptyError": {
-    "message": "ホームパスを選択しなければなりません。",
+    "message": "ゲームパスを選択してください。",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathSafeguardError": {
+    "message": "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
@@ -343,6 +351,10 @@
     "message": "ランチャーの言語を選択してください。再起動が必要です。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "LauncherLanguageHelpCtaLoc": {
+    "message": "Notice any mistakes? You can help out translating the launcher! Just click here!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "LauncherLanguageNotice": {
     "message": "ランチャーの言語設定を適用するには再起動が必要です。",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -412,11 +424,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayLoc": {
-    "message": "アドオン注入遅延",
+    "message": "アドオンを開始するまでの待機時間",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayDescriptionLoc": {
-    "message": "ゲーム内アドオンの注入を遅らせます。これにより、OBSやDiscordなどから非表示にすることができます。",
+    "message": "ゲーム内アドオンの開始を遅らせます。これにより、OBSやDiscordなどから非表示にすることができます。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
@@ -456,7 +468,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchSpeedLimit": {
-    "message": "ダウンロード際限速度",
+    "message": "ダウンロード速度制限",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "KeepPatches": {
@@ -483,6 +495,10 @@
     "message": "UID キャッシュを有効化 ※実験的機能 (おかしな動作をするかもしれません)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ResetUidCacheTip": {
+    "message": "UIDキャッシュをリセットするにはランチャーの起動中Controlキーを押しっぱなしにします。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "EnableEncryption": {
     "message": "クライエントへ引数を暗号化",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -497,6 +513,10 @@
   },
   "AutoLoginHint": {
     "message": "設定を変更するには、Shiftキーを押したままにして下さい。",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "ResetUidCacheHint": {
+    "message": "UIDキャッシュをリセットする場合はControlキーを押しっぱなしにしてください！",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
@@ -515,13 +535,9 @@
     "message": "パッチインストーラに接続できませんでした。\nこのエラーを報告してください。",
     "description": "PatchInstaller.WaitOnHello"
   },
-  "FreeSpaceError": {
-    "message": "パッチデータをダウンロードするのに十分なストレージ容量がありません。\n\n設定画面から保存先を変更することができます。\n\n必要な空き容量：{0}\n利用可能な容量：{1}",
-    "description": "PatchManager.Start"
-  },
-  "FreeSpaceGameError": {
-    "message": "パッチデータをダウンロードするのに十分なストレージ容量がありません。\n\n設定から保存先を変更することができます。\n\n必要な空き容量：{0}\n利用可能な容量：{1}",
-    "description": "PatchManager.Start"
+  "DalamudAntivirusHint": {
+    "message": "The in-game addon ran into an error.\n\nThis is most likely caused by your antivirus. Please whitelist the quarantined files or disable the in-game addon.",
+    "description": "DalamudLauncher.Run"
   },
   "DalamudDotNet48RedistError": {
     "message": "続行するにはXIVLauncherのアドオンに.NET Framework 4.8が必要です。Microsoftのホームページからインストールしてください。",
@@ -535,6 +551,10 @@
     "message": "XIVLauncher のゲーム内アドオンには、Microsoft Visual C++ 2015 の再配布可能と が必要です。 続行するには.NET Framework 4.8をインストールします。Microsoftホームページからインストールしてください。",
     "description": "DalamudLauncher.CheckVcRedist"
   },
+  "updatefailureerror": {
+    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support.",
+    "description": "<Run>d__0.MoveNext"
+  },
   "IntegrityCheckImpossible": {
     "message": "このゲームバージョンはまだ参照レポートがありません。後ほど再度お試し下さい。",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
@@ -546,5 +566,41 @@
   "IntegrityCheckValid": {
     "message": "ゲームインストールは有効性がありそうです。",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "LoginNoOauthMessage": {
+    "message": "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nAuto-Login has been disabled.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Login issue",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "An update check was executed and any pending updates were installed.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "Maintenance seems to be in progress. The game shouldn't be launched.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
+    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
   }
 }

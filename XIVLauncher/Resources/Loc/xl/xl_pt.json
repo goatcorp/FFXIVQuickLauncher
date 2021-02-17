@@ -4,15 +4,23 @@
     "description": "ChangelogWindow..ctor"
   },
   "DalamudUpdateDalamud": {
-    "message": "Updating Dalamud...",
+    "message": "Atualizando Dalamud...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
-    "message": "Updating assets...",
+    "message": "Atualizando recursos...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUnavailable": {
+    "message": "Plugins estão atualmente indisponíveis\ndevido a uma atualização do jogo.",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "GamePathEmptyError": {
     "message": "Por favor, selecione a pasta do jogo.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathSafeguardError": {
+    "message": "Por favor, não selecione a pasta \"jogo\" ou \"iniciar\" da sua instalação do FFXIV. Em vez disso, selecione a pasta que contém estas.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
@@ -32,15 +40,15 @@
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
-    "message": "Couldn't find plugin directory path.",
+    "message": "Não foi possível encontrar o diretório do plugin.",
     "description": "SettingsControl.TogglePlugin_OnClick"
   },
   "GameIsOpenPluginLocked": {
-    "message": "The game is open, please close it and try again.",
+    "message": "O jogo está aberto. Por favor, feche-o e tente novamente.",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "DisabledPlugin": {
-    "message": " (disabled)",
+    "message": " (desabilitado)",
     "description": "SettingsControl.ReloadPluginList"
   },
   "NewsLoading": {
@@ -52,7 +60,7 @@
     "description": "MainWindow.Initialize"
   },
   "CheckBootVersionError": {
-    "message": "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher.",
+    "message": "XIVLauncher não foi capaz de verificar a versão de inicialização para a instalação do jogo selecionada. Isso pode acontecer se uma manutenção estiver em andamento ou se sua conexão com o servidor de verificação de versão não estiver disponível. Por favor, reporte este erro se você é capaz de entrar com o launcher oficial, mas não com o XIVLauncher.",
     "description": "MainWindow.HandleBootCheck"
   },
   "GameIsOpenError": {
@@ -72,7 +80,7 @@
     "description": "MainWindow.HandleLogin"
   },
   "UidCacheInstallError": {
-    "message": "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall FFXIV.\n\nIf you want to reinstall FFXIV, please take care to disable it first.",
+    "message": "Você ativou o cache UID nas configurações do patcher.\nEsta configuração não permite que você reinstale o FFXIV.\n\nSe você deseja reinstalar o FFXIV, por favor desabilite-o primeiro.",
     "description": "MainWindow.HandleLogin"
   },
   "MaintenanceQueueBootPatch": {
@@ -104,11 +112,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
-    "message": "Entre no nosso Discord",
+    "message": "Junte-se ao nosso Discord",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
-    "message": "Ok",
+    "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
@@ -116,7 +124,7 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "ChatChannelSetupDescription": {
-    "message": "Por favor, indique se o XIVLauncher deve postar em um canal em um servidor ou para um usuário em DMs, e seus respectivos IDs.",
+    "message": "Por favor, indique se o XIVLauncher deve postar em um canal em um servidor ou para um usuário em DMs, \ne seus respectivos IDs.",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "HowToHint": {
@@ -140,7 +148,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Por favor, marque esta caixa se você customa iniciar o jogo usando o Steam.",
+    "message": "Por favor, marque esta caixa se você costuma iniciar o jogo usando o Steam.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -152,7 +160,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9Notice": {
-    "message": "Modo DirectX 9 não é mais suportado. O jogo ainda vai iniciar, mas você não obterá suporte da\nSquare Enix para quaisquer problemas técnicos. Quaisquer funções adicionais do XIVLauncher como o Rich Presence e o\naddon no Jogo não funcionarão.",
+    "message": "O modo DirectX 9 não é mais suportado. O jogo ainda vai iniciar, mas você não obterá suporte da\nSquare Enix para quaisquer problemas técnicos. Quaisquer funções adicionais do XIVLauncher como o Rich Presence e o\naddon no jogo não funcionarão.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguage": {
@@ -168,15 +176,15 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "Next": {
-    "message": "Avançar",
+    "message": "Próximo",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Deseja ativar as funções do XIVLauncher dentro do jogo?\nIsto adicionará algumas funcionalidades extras ao seu jogo, tais como filtragem de RMT no chat e\nnotificações do Discord para mensagens de chat ou fila do Duty Finder.\n\nPara ajustar essas configurações, por favor, use o menu de configuração do XIVLauncher e mude para a aba\ndentro do jogo.\nPorém, ativar esse recurso pode causar um falso positivo no seu software antivírus. Por favor,\nverifique as configurações do mesmo e adicione as exceções necessárias caso tenha problemas.",
+    "message": "Deseja ativar os recursos do XIVLauncher dentro do jogo?\nIsto adicionará algumas funcionalidades extras ao seu jogo, tais como filtragem de RMT no chat e\nnotificações do Discord para mensagens de chat ou de fila do Duty Finder.\n\nPara ajustar essas configurações, por favor, use o menu de configuração do XIVLauncher e mude para a aba\ndentro do jogo.\nPorém, ativar esse recurso pode causar um falso positivo no seu software antivírus. Por favor,\nverifique as configurações do mesmo e adicione as exceções necessárias caso tenha problemas.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Ativar funções dentro do jogo",
+    "message": "Ativar recursos dentro do jogo",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -216,11 +224,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxOtp": {
-    "message": "Usar uma senha de uso único",
+    "message": "Usar senha de uso único",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxSteam": {
-    "message": "Usar uma conta de serviço do Steam",
+    "message": "Usar conta de serviço Steam",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLogin": {
@@ -228,7 +236,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoStartLogin": {
-    "message": "Update without starting",
+    "message": "Atualizar sem iniciar",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -256,7 +264,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "MaintenanceQueue": {
-    "message": "Aguardando a manutenção terminar",
+    "message": "Aguarde a manutenção terminar",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OtpInputPrompt": {
@@ -292,7 +300,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
-    "message": "Terminando de baixar {0} a {1}/s.",
+    "message": "{0} restantes para baixar a {1}/s.",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "ProfilePictureInputTitle": {
@@ -300,7 +308,7 @@
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "ProfilePictureInputDescription": {
-    "message": "Por favor, digite o nome de seu personagem e mundo.",
+    "message": "Por favor, digite o nome e mundo do personagem.",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "CharacterName": {
@@ -312,11 +320,11 @@
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "OpenPluginsFolder": {
-    "message": "Open Plugins Folder",
+    "message": "Abrir pasta plugins",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SaveSettings": {
-    "message": "Save Settings",
+    "message": "Salvar configurações",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGame": {
@@ -340,11 +348,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLauncherLanguage": {
-    "message": "Please select the launcher language, requires a restart.",
+    "message": "Por favor selecione o idioma do launcher (requer reinicialização).",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageHelpCtaLoc": {
+    "message": "Encontrou algum erro? Você pode ajudar a traduzir o launcher! Basta clicar aqui!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageNotice": {
-    "message": "A restart is required to apply the launcher language setting.",
+    "message": "É necessário reiniciar para aplicar a configuração de idioma do launcher.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAutoLaunch": {
@@ -436,7 +448,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Delete": {
-    "message": "Delete",
+    "message": "Excluir",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsInstallHint": {
@@ -483,12 +495,16 @@
     "message": "Ativar cache de UID experimental (pode se comportar de maneira estranha)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ResetUidCacheTip": {
+    "message": "Segure a tecla control enquanto inicia o launcher para redefinir o cache UID",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "EnableEncryption": {
     "message": "Ativar criptografia de argumentos para o cliente",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DalamudUpdate": {
-    "message": "Updating in-game addon...",
+    "message": "Atualizando addon...",
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {
@@ -497,6 +513,10 @@
   },
   "AutoLoginHint": {
     "message": "Segure a tecla shift para alterar as configurações!",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "ResetUidCacheHint": {
+    "message": "Segure a tecla control para redefinir o cache UID!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
@@ -515,13 +535,9 @@
     "message": "Não foi possível conectar ao instalador de atualizações.\nPor favor, reporte este erro.",
     "description": "PatchInstaller.WaitOnHello"
   },
-  "FreeSpaceError": {
-    "message": "Não há espaço suficiente em disco para baixar as atualizações.\n\nVocê pode alterar o local de download das atualizações nas configurações.\n\nNecessário:{0}\nLivre:{1}",
-    "description": "PatchManager.Start"
-  },
-  "FreeSpaceGameError": {
-    "message": "Não há espaço suficiente em disco para instalar as atualizações.\n\nVocê pode alterar o local de instalação do jogo nas configurações.\n\nNecessário:{0}\nLivre:{1}",
-    "description": "PatchManager.Start"
+  "DalamudAntivirusHint": {
+    "message": "O addon encontrou um erro.\n\nIsso provavelmente é causado pelo seu antivírus. Por favor coloque na lista de exceções os arquivos em quarentena ou desative o addon.",
+    "description": "DalamudLauncher.Run"
   },
   "DalamudDotNet48RedistError": {
     "message": "Para funcionar dentro do jogo o addon do XIVLauncher precisa do .NET Framework 4.8 instalado.\nPor favor, instale-o a partir do site da Microsoft.",
@@ -535,6 +551,10 @@
     "message": "O addon de jogo XIVLauncher precisa que o redistribuidor Microsoft Visual C ++ 2015 e o .NET Framework 4.8 estejam instalados para continuar. Instale-os a partir da página inicial da Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
+  "updatefailureerror": {
+    "message": "XIVLauncher não conseguiu procurar por atualizações. Isso pode ser causado por problemas de conectividade ao GitHub. Aguarde alguns minutos e tente novamente.\nDesative sua VPN, se você tiver uma.\nSe continuar a falhar depois de alguns minutos, junte-se ao Discord encontrado no GitHub para assistência.",
+    "description": "<Run>d__0.MoveNext"
+  },
   "IntegrityCheckImpossible": {
     "message": "Ainda não há nenhum relatório de referência para esta versão do jogo. Por favor, tente novamente mais tarde.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
@@ -546,5 +566,41 @@
   "IntegrityCheckValid": {
     "message": "Sua instalação do jogo parece ser válida.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "LoginNoOauthMessage": {
+    "message": "Não foi possível iniciar a sessão na sua conta do Square Enix.\nIsso poderia ser causado por credenciais ou senhas de uso único incorretas.\n\nPor favor, verifique seu email para quaisquer mensagens da Square Enix - talvez eles queiram que você redefina a sua senha devido a \"atividade suspeita\".\nIsto NÃO é causado por um problema de segurança no XIVLauncher, é apenas uma medida de segurança da Square Enix para evitar que logins de novas localizações, caso sua conta esteja sendo roubada.\nXIVLauncher e o launcher oficial funcionarão corretamente após redefinir sua senha.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nO Login automático foi desativado.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Problema de login",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Esta conta da Square Enix não pode jogar FINAL FANTASY XIV.\n\nSe você comprou FINAL FANTASY XIV no Steam, verifique a caixa de seleção \"Use a conta de serviço Steam\" enquanto faz o login.\nSe o Login Automático estiver ativado, pressione shift enquanto inicializa a acessar as configurações.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Por favor, aceite os Termos de Uso do FINAL FANTASY XIV no launcher oficial.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "Uma nova atualização foi encontrada que precisa ser instalada antes que você possa jogar.\nVocê deseja que o XIVLauncher o instale?",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "Uma verificação de atualização foi executada e todas as atualizações pendentes foram instaladas.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "A manutenção parece estar em andamento. O jogo não deve ser iniciado.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher não pôde verificar os arquivos do jogo baixados.\n\nIsto geralmente indica um problema com a sua conexão com a internet.\nSe este erro ocorrer novamente, tente usar uma VPN definida para o Japão.\n\nContexto: {0}\n{1}",
+    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
   }
 }
