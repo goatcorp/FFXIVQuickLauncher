@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Windows;
 
@@ -12,25 +13,19 @@ namespace XIVLauncher.Dalamud
 {
     internal class AssetManager
     {
-        private const string AssetStoreUrl = "https://goatcorp.github.io/DalamudAssets/";
+        private const string ASSET_STORE_URL = "https://goatcorp.github.io/DalamudAssets/";
 
-        private static readonly Dictionary<string, string> AssetDictionary = new()
+        internal class AssetInfo
         {
-            {AssetStoreUrl + "UIRes/serveropcode.json", "UIRes/serveropcode.json"},
-            {AssetStoreUrl + "UIRes/clientopcode.json", "UIRes/clientopcode.json"},
-            {AssetStoreUrl + "UIRes/NotoSansCJKjp-Medium.otf", "UIRes/NotoSansCJKjp-Medium.otf"},
-            {AssetStoreUrl + "UIRes/FontAwesome5FreeSolid.otf", "UIRes/FontAwesome5FreeSolid.otf"},
-            {AssetStoreUrl + "UIRes/logo.png", "UIRes/logo.png"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_de.json", "UIRes/loc/dalamud/dalamud_de.json"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_es.json", "UIRes/loc/dalamud/dalamud_es.json"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_fr.json", "UIRes/loc/dalamud/dalamud_fr.json"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_it.json", "UIRes/loc/dalamud/dalamud_it.json"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_ja.json", "UIRes/loc/dalamud/dalamud_ja.json"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_ko.json", "UIRes/loc/dalamud/dalamud_ko.json"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_no.json", "UIRes/loc/dalamud/dalamud_no.json"},
-            {AssetStoreUrl + "UIRes/loc/dalamud/dalamud_ru.json", "UIRes/loc/dalamud/dalamud_ru.json"},
-            {"https://img.finalfantasyxiv.com/lds/pc/global/fonts/FFXIV_Lodestone_SSF.ttf", "UIRes/gamesym.ttf"}
-        };
+            public int Version { get; set; }
+            public List<Asset> Assets { get; set; }
+            
+            public class Asset
+            {
+                public string Url { get; set; }
+                public string FileName { get; set; }
+            }
+        }
 
         public static bool EnsureAssets(DirectoryInfo baseDir)
         {
@@ -38,20 +33,23 @@ namespace XIVLauncher.Dalamud
 
             Log.Verbose("[DASSET] Starting asset download");
 
-            var versionRes = CheckAssetRefreshNeeded(baseDir);
+            var (isRefreshNeeded, info) = CheckAssetRefreshNeeded(baseDir);
 
-            foreach (var entry in AssetDictionary)
+            if (info == null)
+                return false;
+
+            foreach (var entry in info.Assets)
             {
-                var filePath = Path.Combine(baseDir.FullName, entry.Value);
+                var filePath = Path.Combine(baseDir.FullName, entry.FileName);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
-                if (!File.Exists(filePath) || versionRes.isRefreshNeeded)
+                if (!File.Exists(filePath) || isRefreshNeeded)
                 {
-                    Log.Verbose("[DASSET] Downloading {0} to {1}...", entry.Key, entry.Value);
+                    Log.Verbose("[DASSET] Downloading {0} to {1}...", entry.Url, entry.FileName);
                     try
                     {
-                        File.WriteAllBytes(filePath, client.DownloadData(entry.Key));
+                        File.WriteAllBytes(filePath, client.DownloadData(entry.Url));
                     }
                     catch (Exception ex)
                     {
@@ -61,8 +59,8 @@ namespace XIVLauncher.Dalamud
                 }
             }
 
-            if (versionRes.isRefreshNeeded)
-                SetLocalAssetVer(baseDir, versionRes.version);
+            if (isRefreshNeeded)
+                SetLocalAssetVer(baseDir, info.Version);
 
             Log.Verbose("[DASSET] Assets OK");
 
@@ -81,7 +79,7 @@ namespace XIVLauncher.Dalamud
         /// </summary>
         /// <param name="baseDir">Base directory for assets</param>
         /// <returns>Update state</returns>
-        private static (bool isRefreshNeeded, int version) CheckAssetRefreshNeeded(DirectoryInfo baseDir)
+        private static (bool isRefreshNeeded, AssetInfo info) CheckAssetRefreshNeeded(DirectoryInfo baseDir)
         {
             using var client = new WebClient();
 
@@ -93,16 +91,18 @@ namespace XIVLauncher.Dalamud
                 if (File.Exists(localVerFile))
                     localVer = int.Parse(File.ReadAllText(localVerFile));
 
-                var remoteVer = int.Parse(client.DownloadString(AssetStoreUrl + "asset.ver"));
+                var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL + "asset.json"));
 
-                Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer);
+                Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer.Version);
 
-                return remoteVer > localVer ? (true, remoteVer) : (false, localVer);
+                var needsUpdate = remoteVer.Version > localVer;
+
+                return (needsUpdate, remoteVer);
             }
             catch (Exception e)
             {
                 Log.Error(e, "[DASSET] Could not check asset version");
-                return (false, 0);
+                return (false, null);
             }
         }
 

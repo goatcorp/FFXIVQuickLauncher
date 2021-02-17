@@ -92,6 +92,7 @@ namespace XIVLauncher.Dalamud
 
             Log.Information("[DUPDATE] Now starting for Dalamud {0}", remoteVersionInfo.AssemblyVersion);
 
+            /* We don't need this, since ReCheckVersion() in DalamudLauncher does this job
             try
             {
                 if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
@@ -107,6 +108,7 @@ namespace XIVLauncher.Dalamud
                 State = DownloadState.Failed;
                 return;
             }
+            */
 
             if (!addonPath.Exists || !IsIntegrity(addonPath))
             {
