@@ -73,6 +73,7 @@ namespace XIVLauncher.Game.Patch
         public readonly long[] Speeds = new long[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchDownload[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
         public readonly bool[] Slots = new bool[MAX_DOWNLOADS_AT_ONCE];
+        public readonly DownloadService[] DownloadServices = new DownloadService[MAX_DOWNLOADS_AT_ONCE];
 
         public bool DownloadsDone { get; private set; }
 
@@ -168,6 +169,11 @@ namespace XIVLauncher.Game.Patch
             {
                 if (args.Error != null)
                 {
+                    // If we cancel downloads, we don't want to see an error message
+                    if (args.Error is OperationCanceledException)
+                        return;
+
+                    CancelAllDownloads();
                     Log.Error(args.Error, "Download failed for {0} with reason {1}", download.Patch.VersionId, args.Error);
                     MessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Problem", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
@@ -176,6 +182,7 @@ namespace XIVLauncher.Game.Patch
 
                 if (args.Cancelled)
                 {
+                    CancelAllDownloads();
                     Log.Error("Download cancelled for {0} with reason {1}", download.Patch.VersionId, args.Error);
                     MessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Cancelled", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
@@ -185,6 +192,7 @@ namespace XIVLauncher.Game.Patch
                 // Let's just bail for now, need better handling of this later
                 if (!IsHashCheckPass(download.Patch, outFile))
                 {
+                    CancelAllDownloads();
                     Log.Error("IsHashCheckPass failed for {0} after DL", download.Patch.VersionId);
                     MessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "IsHashCheckPass", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     outFile.Delete();
@@ -200,7 +208,17 @@ namespace XIVLauncher.Game.Patch
                 Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
             };
 
+            DownloadServices[index] = dlService;
+
             await dlService.DownloadFileAsync(download.Patch.Url, outFile.FullName);
+        }
+
+        public void CancelAllDownloads()
+        {
+            foreach (var downloadService in DownloadServices)
+            {
+                downloadService.CancelAsync();
+            }
         }
 
         private void RunDownloadQueue()

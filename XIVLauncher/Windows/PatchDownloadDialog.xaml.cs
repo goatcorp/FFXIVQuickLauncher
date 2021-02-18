@@ -146,5 +146,12 @@ namespace XIVLauncher.Windows
         {
             e.Cancel = true; // We can't cancel patching yet, big TODO
         }
+
+        private void BytesLeftText_OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+#if DEBUG
+            _manager.CancelAllDownloads();
+#endif
+        }
     }
 }
