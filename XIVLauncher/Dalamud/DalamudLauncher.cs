@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Web.SessionState;
@@ -215,20 +216,25 @@ namespace XIVLauncher.Dalamud
 
             const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
 
-            using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
-            {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null && (int)ndpKey.GetValue("Release") >= 528040)
-                {
-                    return true;
-                }
-                else
-                {
-                    Serilog.Log.Error(".Net 4.8 or later not found");
-                    return false;
-                }
-            }
+            using var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey);
 
-            
+            if (ndpKey?.GetValue("Release") != null && (int)ndpKey.GetValue("Release") >= 528040)
+            {
+                return true;
+            }
+            else
+            {
+                Log.Error(".Net 4.8 or later not found");
+                return false;
+            }
+        }
+
+        [DllImport("kernel32", SetLastError = true)]
+        static extern IntPtr LoadLibrary(string lpFileName);
+
+        private static bool CheckLibrary(string fileName)
+        {
+            return LoadLibrary(fileName) != IntPtr.Zero;
         }
 
         private static bool CheckVc2019()
@@ -243,10 +249,17 @@ namespace XIVLauncher.Dalamud
             var vcVersion = vcreg.GetValue("Version");
             if (((string)vcVersion).StartsWith("14"))
             {
-                return true;
+                if (!EnvironmentSettings.IsWine)
+                {
+                    if (CheckLibrary("ucrtbase_clr0400") &&
+                        CheckLibrary("vcruntime140_clr0400") &&
+                        CheckLibrary("vcruntime140"))
+                        return true;
+                }
+                else return true;
             }
 
-            Serilog.Log.Error("VC 2015-2019 redistributable not found");
+            Log.Error("VC 2015-2019 redistributable not found");
             return false;
         }
 
