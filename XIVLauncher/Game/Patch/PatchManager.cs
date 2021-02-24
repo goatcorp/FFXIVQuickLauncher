@@ -169,12 +169,13 @@ namespace XIVLauncher.Game.Patch
             {
                 if (args.Error != null)
                 {
+                    Log.Error(args.Error, "Download failed for {0} with reason {1}", download.Patch.VersionId, args.Error);
+
                     // If we cancel downloads, we don't want to see an error message
                     if (args.Error is OperationCanceledException)
                         return;
 
                     CancelAllDownloads();
-                    Log.Error(args.Error, "Download failed for {0} with reason {1}", download.Patch.VersionId, args.Error);
                     CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Problem", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
                     return;
@@ -182,10 +183,14 @@ namespace XIVLauncher.Game.Patch
 
                 if (args.Cancelled)
                 {
-                    CancelAllDownloads();
                     Log.Error("Download cancelled for {0} with reason {1}", download.Patch.VersionId, args.Error);
+                    /*
+                    Cancellation should not produce an error message, since it is always triggered by another error or the user.
+
+                    CancelAllDownloads();
                     CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Cancelled", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
+                    */
                     return;
                 }
 
