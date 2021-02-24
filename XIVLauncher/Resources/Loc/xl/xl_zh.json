@@ -180,11 +180,15 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "您希望启用 XIVLauncher 游戏内功能吗？\n这将为您的游戏添加额外的功能，例如 RMT 自动屏蔽、聊天消息和副本弹窗的 Discord 通知。\n\n您可以在 XIVLauncher 设置面板，游戏内功能选项卡处更改这些设置。\n启用此功能后，您的杀毒软件可能会误报病毒。请手动检查杀毒软件的设置并将 XIVLauncher 添加到白名单。",
+    "message": "您想要启用 XIVLauncher 的游戏内组件吗？\n这将为您的游戏添加一些额外的功能，例如：RMT 消息过滤 以及 聊天消息和副本匹配的 Discord 通知。\n\n您可以通过 XIVLauncher 设置中的游戏内功能选项卡进行设置。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeAntivirus": {
+    "message": "然而，启用此项可能会导致您的杀毒软件出现误报。如果您遇到了误报情况，请检查杀毒软件的设置并将 XIVLauncher 添加至白名单。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "启用游戏内功能",
+    "message": "启用游戏内组件",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -376,11 +380,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
-    "message": "游戏内功能",
+    "message": "游戏内组件",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "这些选项影响 XIVLauncher 的游戏内功能。只有在您勾选了下方的单选框，且使用 DirectX 11 模式启动受支持的游戏时，游戏内功能才会正常运行。",
+    "message": "这些选项影响 XIVLauncher 的游戏内组件。只有在您勾选了下方的单选框，且使用 DirectX 11 模式启动受支持的游戏时，游戏内组件才会正常运行。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
@@ -388,7 +392,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "启用游戏内功能",
+    "message": "启用游戏内组件",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
@@ -601,6 +605,6 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher无法验证已下载的游戏文件。\n\n这通常表明您的互联网连接存在问题。\n如果再次发生错误，请尝试使用 VPN 设置为日本。\n\n上下文： {0}\n{1}",
-    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass27_0.<DownloadPatchAsync>b__1"
   }
 }

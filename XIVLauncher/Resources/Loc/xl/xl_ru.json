@@ -180,7 +180,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Хотите включить функции XIVLauncher в игре?\nЭто добавит некоторые дополнительные функции в игру, такие как фильтрация чата от RMT и уведомления о сообщениях в чате или оповещения Duty Finder для Discord.\n\nЧтобы настроить эти параметры, пожалуйста, используйте меню настроек XIVLauncher - Игровые.\nОднако включение этой функции может привести к ложному срабатыванию вашего антивируса, проверьте его настройки и добавьте все необходимые исключения, если у вас возникнут проблемы.",
+    "message": "Do you want to enable the XIVLauncher in-game features?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and\r\nDiscord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the\r\nin-game tab.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeAntivirus": {
+    "message": "Enabling this however could cause a false positive on your antivirus software, please\r\ncheck its settings and add any needed exclusions if you run into problems.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -601,6 +605,6 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
-    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass27_0.<DownloadPatchAsync>b__1"
   }
 }

@@ -20,7 +20,7 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
-    "message": "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead.",
+    "message": "FFXIVインストール先のgameフォルダーや bootフォルダーを選択するのではなく、これら2フォルダーの親フォルダーを選択してください。",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
@@ -180,7 +180,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "XIVLauncher の In-Game 機能を有効にしますか?\n有効にすると、RMTチャットのフィルタや、チャットメッセージやコンテンツファインダーのポップアップを Discordへ通知するなどの機能を追加することができます。\n\nこれらの機能を設定するには、XIVLauncher の設定画面で In-Game タブを開いて下さい。\nこの機能を有効にした場合、ウイルス対策ソフトで誤検出される場合があります。問題が発生した場合は、設定を確認の上で必要な除外設定を行って下さい。",
+    "message": "XIVLauncherのin-game機能を有効にしますか？\nRMT関連のメッセージを除外するチャットフィルター機能や、チャットにメッセージが来たときやシャキったときにDiscordに通知を飛ばす機能、といった拡張を追加することができます。\n\nこれらの設定については、XIVLauncherの設定メニューのin-gameタブで行うことができます。",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeAntivirus": {
+    "message": "ただしこの機能を有効にするとウイルス対策ソフトウェアにより誤検知される場合があります。 問題が起きた場合は対策ソフトの設定を確認し、必要な除外設定を行うようにしてください。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -352,7 +356,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageHelpCtaLoc": {
-    "message": "Notice any mistakes? You can help out translating the launcher! Just click here!",
+    "message": "何かおかしいと思いましたか？このランチャーの翻訳を手伝ってくれる人を募集しています！ここをクリックしてください！",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageNotice": {
@@ -500,7 +504,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "EnableEncryption": {
-    "message": "クライエントへ引数を暗号化",
+    "message": "クライアントへの引数を暗号化する",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DalamudUpdate": {
@@ -536,7 +540,7 @@
     "description": "PatchInstaller.WaitOnHello"
   },
   "DalamudAntivirusHint": {
-    "message": "The in-game addon ran into an error.\n\nThis is most likely caused by your antivirus. Please whitelist the quarantined files or disable the in-game addon.",
+    "message": "in-gameアドオンにエラーが発生しました。\n\nウイルス対策ソフトが原因になっていることがよくあります。隔離されたファイルをホワイトリストに登録するか、in-gameアドオンを無効にしてください。",
     "description": "DalamudLauncher.Run"
   },
   "DalamudDotNet48RedistError": {
@@ -544,15 +548,15 @@
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVc2019RedistError": {
-    "message": "XIVLauncher のゲーム内アドオンでは、Microsoft Visual C++ 2015-2019 をインストールする必要があります。続行するには、Microsoft のホームページからインストールしてください。",
+    "message": "XIVLauncher のin-gameアドオンを利用するには「 Visual Studio 2015、2017、および 2019 用 Microsoft Visual C++ 再頒布可能パッケージ」をインストールする必要があります。続行するには、Microsoft のホームページからインストールしてください。",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVcRedistError": {
-    "message": "XIVLauncher のゲーム内アドオンには、Microsoft Visual C++ 2015 の再配布可能と が必要です。 続行するには.NET Framework 4.8をインストールします。Microsoftホームページからインストールしてください。",
+    "message": "XIVLauncher のin-gameアドオンを利用するには「Visual Studio 2015 の Visual C++ 再頒布可能パッケージ」と  .NET Framework 4.8 のインストールが必要です。Microsoftのホームページからインストールしてください。",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support.",
+    "message": "XIVLauncherは更新の確認に失敗しました。GitHubへの接続の問題の可能性があります。数分待ってからもう一度試してください。\nもしVPNを利用している場合は無効化してみてください。\n数分待っても問題が続くようであれば、GitHubにリンクを載せているDiscordに参加して助けを求めてみてください。",
     "description": "<Run>d__0.MoveNext"
   },
   "IntegrityCheckImpossible": {
@@ -568,39 +572,39 @@
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "LoginNoOauthMessage": {
-    "message": "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.",
+    "message": "入力されたスクウェア・エニックス アカウントではログインできませんでした。\n認証情報に誤りがあるか、ワンタイムパスワードが間違っている可能性があります。\n\n「不審な挙動」によるパスワードリセットのメールがスクウェア・エニックスから届いていないかメールを確認してみてください。\nXIVLauncherのセキュリティの問題ではなく、アカウントハック対策として記録にない地域からログインしようとした際にスクウェア・エニックスが行うことがあります。\nパスワードリセット後は今まで通りXIVLauncherでも公式のランチャーでも正常に動作します。",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
-    "message": "\n\nAuto-Login has been disabled.",
+    "message": "\n\n自動ログインは無効になっています。",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "LoginNoOauthTitle": {
-    "message": "Login issue",
+    "message": "ログインの問題",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "LoginNoServiceMessage": {
-    "message": "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.",
+    "message": "このスクウェア・エニックス アカウントでFINAL FANTASY XIVをプレイすることができません。\n\nFINAL FANTASY XIVをSteamで購入している場合は、「Steamアカウントを使用」にチェックを付けてください。\nもし「自動的にログイン」を有効にしている場合は、設定が表示されるまでシフトキーを押し続けてください。",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "LoginAcceptTermsMessage": {
-    "message": "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
+    "message": "公式ランチャーで「ファイナルファンタジーXIV 利用規約」に同意してください。",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "PatchInstallDisclaimer": {
-    "message": "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?",
+    "message": "新しいパッチをインストールする必要があります。\nXIVLauncherにインストールさせますか？",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "LoginNoStartOk": {
-    "message": "An update check was executed and any pending updates were installed.",
+    "message": "更新チェックが実行され、保留中のアップデートがインストールされました。",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "MaintenanceNotice": {
-    "message": "Maintenance seems to be in progress. The game shouldn't be launched.",
+    "message": "メンテナンス中です。ゲームを起動しないでください。",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "PatchManDlFailure": {
-    "message": "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
-    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
+    "message": "XIVLauncherはダウンロードしたゲーム本体のファイルが正しいことを確認できませんでした。\n\nインターネットの接続に問題がある可能性があります。\nこのエラーが続くようであれば、日本に接続するVPNを利用してみてください。\n\n状況: {0}\n{1}",
+    "description": "<>c__DisplayClass27_0.<DownloadPatchAsync>b__1"
   }
 }

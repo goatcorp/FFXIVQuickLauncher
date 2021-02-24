@@ -180,7 +180,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "¿Quieres activar las funciones de XIVLauncher in-game?\nAñadirá algunas funciones extra al juego, como el filtrado de chat RMT y notificaciones en Discord para mensajes de chat o las notificaciones de Duty Finder.\n\nPara configurar estos ajustes, por favor utiliza el menú de ajustes de XIVLauncher y cambia a la pestaña \"In-Game\".\nEsto, sin embargo, puede provocar un falso positivo en el antivirus. Por favor comprueba tus ajustes y añade la exclusiones que sean necesarias si se produce algún problema.",
+    "message": "¿Quieres habilitar las funciones dentro del juego de XIVLauncher?\nÉsto añadirá algunas funcionalidades extra al juego, como filtros de chat anti RMT y\nnotificaciones de Discord para mensajes del chat o avisos del Duty Finder.\n\nPara configurar estos ajustes, por favor utiliza el menú de ajustes de XIVLauncher y pasa a la pestaña \"In-game\".",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeAntivirus": {
+    "message": "Sin embargo, habilitar ésto podría causar falsos positivos en tu antivirus, por favor \ncomprueba sus ajustes y añade cualquier exclusión necesaria si te encuentras con problemas.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -601,6 +605,6 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher no pudo verificar los archivos de juego descargados.\n\nEsto normalmente indica un problema con tu conexión a Internet.\nSi este error se produce de nuevo, intenta usar una VPN establecida en Japón.\n\nContexto: {0}\n{1}",
-    "description": "<>c__DisplayClass26_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass27_0.<DownloadPatchAsync>b__1"
   }
 }
