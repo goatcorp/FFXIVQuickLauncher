@@ -72,6 +72,8 @@ namespace XIVLauncher
             TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
 
+            CustomMessageBox.InvokableApp = this;
+
             try
             {
                 SetupSettings();

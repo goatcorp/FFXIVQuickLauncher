@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Media;
+using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -15,6 +16,8 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class CustomMessageBox : Window
     {
+        public static App InvokableApp { get; set; } 
+
         private CustomMessageBox()
         {
             InitializeComponent();
@@ -30,53 +33,62 @@ namespace XIVLauncher.Windows
 
         public static void Show(string text, string caption, MessageBoxButton buttons = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Asterisk, bool showHelpLinks = true)
         {
-            var box = new CustomMessageBox {MessageTextBlock = {Text = text}, Title = caption};
+            var signal = new ManualResetEvent(false);
 
-            switch (image)
+            InvokableApp.Dispatcher.Invoke(() =>
             {
-                case MessageBoxImage.None:
-                    box.ErrorPackIcon.Visibility = Visibility.Collapsed;
-                    break;
-                case MessageBoxImage.Hand:
-                    box.ErrorPackIcon.Visibility = Visibility.Visible;
-                    box.ErrorPackIcon.Kind = PackIconKind.Error;
-                    box.ErrorPackIcon.Foreground = Brushes.Red;
-                    SystemSounds.Hand.Play();
-                    break;
-                case MessageBoxImage.Question:
-                    box.ErrorPackIcon.Visibility = Visibility.Visible;
-                    box.ErrorPackIcon.Kind = PackIconKind.QuestionMarkCircle;
-                    box.ErrorPackIcon.Foreground = Brushes.DodgerBlue;
-                    SystemSounds.Question.Play();
-                    break;
-                case MessageBoxImage.Exclamation:
-                    box.ErrorPackIcon.Visibility = Visibility.Visible;
-                    box.ErrorPackIcon.Kind = PackIconKind.Warning;
-                    box.ErrorPackIcon.Foreground = Brushes.Yellow;
-                    SystemSounds.Exclamation.Play();
-                    break;
-                case MessageBoxImage.Asterisk:
-                    box.ErrorPackIcon.Visibility = Visibility.Visible;
-                    box.ErrorPackIcon.Kind = PackIconKind.Information;
-                    box.ErrorPackIcon.Foreground = Brushes.DodgerBlue;
-                    SystemSounds.Asterisk.Play();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(image), image, null);
-            }
+                var box = new CustomMessageBox { MessageTextBlock = { Text = text }, Title = caption };
 
-            if (!showHelpLinks)
-            {
-                box.DiscordButton.Visibility = Visibility.Collapsed;
-                box.FaqButton.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                box.DiscordButton.Visibility = Visibility.Visible;
-                box.FaqButton.Visibility = Visibility.Visible;
-            }
+                switch (image)
+                {
+                    case MessageBoxImage.None:
+                        box.ErrorPackIcon.Visibility = Visibility.Collapsed;
+                        break;
+                    case MessageBoxImage.Hand:
+                        box.ErrorPackIcon.Visibility = Visibility.Visible;
+                        box.ErrorPackIcon.Kind = PackIconKind.Error;
+                        box.ErrorPackIcon.Foreground = Brushes.Red;
+                        SystemSounds.Hand.Play();
+                        break;
+                    case MessageBoxImage.Question:
+                        box.ErrorPackIcon.Visibility = Visibility.Visible;
+                        box.ErrorPackIcon.Kind = PackIconKind.QuestionMarkCircle;
+                        box.ErrorPackIcon.Foreground = Brushes.DodgerBlue;
+                        SystemSounds.Question.Play();
+                        break;
+                    case MessageBoxImage.Exclamation:
+                        box.ErrorPackIcon.Visibility = Visibility.Visible;
+                        box.ErrorPackIcon.Kind = PackIconKind.Warning;
+                        box.ErrorPackIcon.Foreground = Brushes.Yellow;
+                        SystemSounds.Exclamation.Play();
+                        break;
+                    case MessageBoxImage.Asterisk:
+                        box.ErrorPackIcon.Visibility = Visibility.Visible;
+                        box.ErrorPackIcon.Kind = PackIconKind.Information;
+                        box.ErrorPackIcon.Foreground = Brushes.DodgerBlue;
+                        SystemSounds.Asterisk.Play();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(image), image, null);
+                }
 
-            box.ShowDialog();
+                if (!showHelpLinks)
+                {
+                    box.DiscordButton.Visibility = Visibility.Collapsed;
+                    box.FaqButton.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    box.DiscordButton.Visibility = Visibility.Visible;
+                    box.FaqButton.Visibility = Visibility.Visible;
+                }
+
+                box.ShowDialog();
+
+                signal.Set();
+            });
+
+            signal.WaitOne();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

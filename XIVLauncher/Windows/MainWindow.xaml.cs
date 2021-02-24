@@ -76,6 +76,12 @@ namespace XIVLauncher.Windows
 
             if (EnvironmentSettings.IsWine)
                 Title += " - Wine on Linux";
+
+            Task.Run(() =>
+            {
+                CustomMessageBox.Show("test", "test");
+                MessageBox.Show("OK");
+            });
         }
 
         private void SetupHeadlines()
