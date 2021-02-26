@@ -27,8 +27,8 @@ namespace XIVLauncher.Game.Patch
         private IpcServer _server = new IpcServer();
         private IpcClient _client = new IpcClient();
 
-        public const int DEFAULT_IPC_SERVER_PORT = 0x114;
-        public const int DEFAULT_IPC_CLIENT_PORT = 0x115;
+        public const int DEFAULT_IPC_SERVER_PORT = 0xff16;
+        public const int DEFAULT_IPC_CLIENT_PORT = 0xff30;
 
         private int _serverPort;
         private int _clientPort;
