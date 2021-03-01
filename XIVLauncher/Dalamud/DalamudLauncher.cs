@@ -174,13 +174,18 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckVcRedist()
         {
-            if (CheckDotNet48() && CheckVc2019() &&
-                File.Exists(Environment.ExpandEnvironmentVariables("%SystemRoot%\\System32\\vcruntime140_clr0400.dll")))
+            // we only need to run these once.
+            bool checkForDotNet48 = CheckDotNet48();
+            bool checkforVc2019 = CheckVc2019(); // this also checks all the dll locations now
+
+            if (checkForDotNet48 && checkforVc2019)
             {
                 return true;
             }
-            else if (!CheckDotNet48() && CheckVc2019())
+            else if (!checkForDotNet48 && checkforVc2019)
             {
+                Log.Error(".Net 4.8 or later not found");
+
                 CustomMessageBox.Show(
                 Loc.Localize("DalamudDotNet48RedistError",
                     "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage."),
@@ -188,8 +193,10 @@ namespace XIVLauncher.Dalamud
 
                 return false;
             }
-            else if (CheckDotNet48() && !CheckVc2019())
+            else if (checkForDotNet48 && !checkforVc2019)
             {
+                Log.Error("VC 2015-2019 redistributable not found");
+
                 CustomMessageBox.Show(
                 Loc.Localize("DalamudVc2019RedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
@@ -199,9 +206,12 @@ namespace XIVLauncher.Dalamud
             }
             else
             {
+                Log.Error(".Net 4.8 or later not found");
+                Log.Error("VC 2015-2019 redistributable not found");
+
                 CustomMessageBox.Show(
                 Loc.Localize("DalamudVcRedistError",
-                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
+                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
                 return false;
@@ -210,7 +220,7 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckDotNet48()
         {
-            Serilog.Log.Information("Checking for .Net 4.8 or later...");
+            Log.Information("Checking for .Net 4.8 or later...");
 
             // copied and adjusted from https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
 
@@ -222,11 +232,7 @@ namespace XIVLauncher.Dalamud
             {
                 return true;
             }
-            else
-            {
-                Log.Error(".Net 4.8 or later not found");
-                return false;
-            }
+            else return false;
         }
 
         [DllImport("kernel32", SetLastError = true)]
@@ -239,7 +245,7 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckVc2019()
         {
-            Serilog.Log.Information("Checking for VS 2015-2019 Redist...");
+            Log.Information("Checking for VS 2015-2019 Redist...");
 
             // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
             // and https://github.com/bitbeans/RedistributableChecker
@@ -258,8 +264,6 @@ namespace XIVLauncher.Dalamud
                 }
                 else return true;
             }
-
-            Log.Error("VC 2015-2019 redistributable not found");
             return false;
         }
 
