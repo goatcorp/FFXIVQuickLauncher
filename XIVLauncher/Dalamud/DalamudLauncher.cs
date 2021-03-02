@@ -175,14 +175,14 @@ namespace XIVLauncher.Dalamud
         private static bool CheckVcRedist()
         {
             // we only need to run these once.
-            bool checkForDotNet48 = CheckDotNet48();
-            bool checkforVc2019 = CheckVc2019(); // this also checks all the dll locations now
+            var checkForDotNet48 = CheckDotNet48();
+            var checkForVc2019 = CheckVc2019(); // this also checks all the dll locations now
 
-            if (checkForDotNet48 && checkforVc2019)
+            if (checkForDotNet48 && checkForVc2019)
             {
                 return true;
             }
-            else if (!checkForDotNet48 && checkforVc2019)
+            else if (!checkForDotNet48 && checkForVc2019)
             {
                 Log.Error(".Net 4.8 or later not found");
 
@@ -193,7 +193,7 @@ namespace XIVLauncher.Dalamud
 
                 return false;
             }
-            else if (checkForDotNet48 && !checkforVc2019)
+            else if (checkForDotNet48 && !checkForVc2019)
             {
                 Log.Error("VC 2015-2019 redistributable not found");
 
@@ -220,8 +220,6 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckDotNet48()
         {
-            Log.Information("Checking for .Net 4.8 or later...");
-
             // copied and adjusted from https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
 
             const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
@@ -245,8 +243,6 @@ namespace XIVLauncher.Dalamud
 
         private static bool CheckVc2019()
         {
-            Log.Information("Checking for VS 2015-2019 Redist...");
-
             // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
             // and https://github.com/bitbeans/RedistributableChecker
 

@@ -675,6 +675,10 @@ namespace XIVLauncher.Windows
                     overlay.Hide();
                     addons.Add(new DalamudLauncher(overlay));
                 }
+                else
+                {
+                    Log.Warning("In-Game addon was not enabled.");
+                }
 
                 await Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons));
             }
