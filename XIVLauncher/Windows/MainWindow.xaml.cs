@@ -453,6 +453,8 @@ namespace XIVLauncher.Windows
                     Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
                         "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
 
+                    Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
+
                     var patcher = new PatchManager(loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer);
 
                     var progressDialog = new PatchDownloadDialog(patcher);
@@ -517,6 +519,8 @@ namespace XIVLauncher.Windows
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
+                    Log.Verbose($"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin.Playable}");
+
                     if (loginResult.State == Launcher.LoginState.NoOAuth)
                     {
                         var failedOauthMessage = Loc.Localize("LoginNoOauthMessage", "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.");
@@ -551,6 +555,17 @@ namespace XIVLauncher.Windows
                     if (loginResult.State == Launcher.LoginState.NoTerms)
                     {
                         CustomMessageBox.Show(Loc.Localize("LoginAcceptTermsMessage", "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                        _isLoggingIn = false;
+                        Show();
+                        Activate();
+                        return;
+                    }
+
+                    if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
+                    {
+                        CustomMessageBox.Show(Loc.Localize("EverythingIsFuckedMessage", "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the completely game to continue.\n\nIf this keeps happening, please contact us via Discord."),
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                         _isLoggingIn = false;

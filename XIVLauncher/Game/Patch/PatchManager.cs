@@ -81,6 +81,8 @@ namespace XIVLauncher.Game.Patch
 
         public PatchManager(IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer)
         {
+            Debug.Assert(patches != null, "patches != null ASSERTION FAILED");
+
             _gamePath = gamePath;
             _patchStore = patchStore;
             _installer = installer;
