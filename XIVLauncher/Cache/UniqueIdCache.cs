@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -45,7 +46,7 @@ namespace XIVLauncher.Cache
             _cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
-            });
+            }) ?? new List<UniqueIdCacheEntry>();
         }
 
         public void Reset()
