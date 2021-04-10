@@ -48,7 +48,7 @@ We feel like that this offers developers the __freedom to improve the game's fun
 
 ## Any questions?
 
-[Please check out the FAQ](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/FAQ), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming moderator team.
+[Please check out the FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming moderator team.
 
 <br>
 <br>
