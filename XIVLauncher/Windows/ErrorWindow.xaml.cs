@@ -68,7 +68,7 @@ namespace XIVLauncher.Windows
 
         private void FaqButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start($"{App.RepoUrl}/wiki/FAQ");
+            Process.Start("https://goatcorp.github.io/faq/");
         }
     }
 }
