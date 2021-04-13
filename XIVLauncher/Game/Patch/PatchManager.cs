@@ -224,7 +224,14 @@ namespace XIVLauncher.Game.Patch
         {
             foreach (var downloadService in DownloadServices)
             {
-                downloadService.CancelAsync();
+                try
+                {
+                    downloadService?.CancelAsync();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not cancel download.");
+                }
             }
         }
 
