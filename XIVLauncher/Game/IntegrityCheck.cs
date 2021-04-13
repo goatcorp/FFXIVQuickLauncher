@@ -13,7 +13,7 @@ namespace XIVLauncher.Game
 {
     public static class IntegrityCheck
     {
-        private const string INTEGRITY_CHECK_BASE_URL = "https://goaaats.github.io/ffxiv/tools/launcher/integrity/";
+        private const string INTEGRITY_CHECK_BASE_URL = "https://goatcorp.github.io/integrity/";
 
         public class IntegrityCheckResult
         {
