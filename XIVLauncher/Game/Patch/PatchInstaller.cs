@@ -62,7 +62,7 @@ namespace XIVLauncher.Game.Patch
                 Log.Warning(ex, "[PATCHERIPC] Could not find free ports, using defaults.");
             }
 
-            Log.Verbose("[PATCHERIPC] Starting patcher with sp#{0} cp#{1}", _serverPort, _clientPort);
+            Log.Information("[PATCHERIPC] Starting patcher with sp#{0} cp#{1}", _serverPort, _clientPort);
 
             _server.ReceivedRequest += ServerOnReceivedRequest;
             _server.Start(_serverPort);

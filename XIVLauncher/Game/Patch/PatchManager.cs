@@ -212,7 +212,7 @@ namespace XIVLauncher.Game.Patch
                 Progresses[index] = 0;
                 Speeds[index] = 0;
 
-                Log.Verbose("Patch at {0} downloaded completely", download.Patch.Url);
+                Log.Information("Patch at {0} downloaded completely", download.Patch.Url);
             };
 
             DownloadServices[index] = dlService;
@@ -319,7 +319,7 @@ namespace XIVLauncher.Game.Patch
         {
             if (patchListEntry.HashType != "sha1")
             {
-                Log.Verbose("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
+                Log.Error("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
                 return true;
             }
 
