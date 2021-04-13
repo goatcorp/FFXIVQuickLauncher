@@ -200,7 +200,7 @@ namespace XIVLauncher.PatchInstaller
         {
             try
             {
-                Log.Debug("Installing {0} to {1}", patchPath, gamePath);
+                Log.Information("Installing {0} to {1}", patchPath, gamePath);
 
                 using var patchFile = ZiPatchFile.FromFileName(patchPath);
 
@@ -212,7 +212,7 @@ namespace XIVLauncher.PatchInstaller
                         chunk.ApplyChunk(config);
                 }
 
-                Log.Debug("Patch {0} installed", patchPath);
+                Log.Information("Patch {0} installed", patchPath);
 
                 return true;
             }
