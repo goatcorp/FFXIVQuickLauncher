@@ -180,11 +180,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "您想要启用 XIVLauncher 的游戏内组件吗？\n这将为您的游戏添加一些额外的功能，例如：RMT 消息过滤 以及 聊天消息和副本匹配的 Discord 通知。\n\n您可以通过 XIVLauncher 设置中的游戏内功能选项卡进行设置。",
-    "description": "FirstTimeSetupViewModel.SetupLoc"
-  },
-  "FirstTimeAntivirus": {
-    "message": "然而，启用此项可能会导致您的杀毒软件出现误报。如果您遇到了误报情况，请检查杀毒软件的设置并将 XIVLauncher 添加至白名单。",
+    "message": "您希望启用 XIVLauncher 游戏内功能吗？\n这将为您的游戏添加额外的功能，例如 RMT 自动屏蔽、聊天消息和副本弹窗的 Discord 通知。\n\n您可以在 XIVLauncher 设置面板，游戏内功能选项卡处更改这些设置。\n启用此功能后，您的杀毒软件可能会误报病毒。请手动检查杀毒软件的设置并将 XIVLauncher 添加到白名单。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -552,7 +548,7 @@
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVcRedistError": {
-    "message": "XIVLauncher 游戏内组件需要安装 Microsoft Visual C++ 2015 Redistributable 及 .NET Framework 4.8 才能启用。请在微软官网下载并安装。",
+    "message": "XIVLauncher 游戏内组件需要安装 Microsoft Visual C++ 2015-2019 Redistributable 及 .NET Framework 4.8 才能启用。请在微软官网下载并安装。",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "updatefailureerror": {
@@ -589,6 +585,10 @@
   },
   "LoginAcceptTermsMessage": {
     "message": "请在官方启动器中接受 FINAL FANTASY XIV 的使用条款。",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "部分游戏文件已损坏或被第三方篡改，无法进行更新和启动。\n请重新安装游戏以修复此问题。\n\n如果该错误仍然持续，请通过 Discord 联系我们。",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "PatchInstallDisclaimer": {

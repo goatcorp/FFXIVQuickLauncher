@@ -180,11 +180,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Voulez-vous activer les fonctionnalités en jeu de XIVLauncher ?\nCeci ajoutera quelques extensions à FFXIV, telles que le filtrage de chat (RMT) et\ndes notifications Discord pour les messages de chat ou l'outil de mission.\n\nPour activer cette option, veuillez cocher la case correspondante dans l’onglet \"En jeu\" \ndes paramètres de XIVLauncher.",
-    "description": "FirstTimeSetupViewModel.SetupLoc"
-  },
-  "FirstTimeAntivirus": {
-    "message": "L'activation de cette option pourrait cependant causer un faux positif sur votre antivirus,\nauquel cas il faudra vérifier ses paramètres et ajouter toutes les exclusions nécessaires.",
+    "message": "Voulez-vous activer les fonctionnalités en jeu de XIVLauncher ?\nCela ajoutera des fonctionnalités additionnelles à votre jeu, tel que le filtrage des messages de vendeurs de gils et notifications Discord pour les messages dans le chat ou les procs de l'Outil de Mission.\n\nPour configurer ces paramètres, veuillez utiliser le menu Paramètres de XIVLauncher et sélectionnez l'onglet En jeu.\nActiver cette option peut provoquer un faux positif au niveau de votre antivirus, merci de vérifier ses paramètres et d'ajouter une exception si besoin.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -552,7 +548,7 @@
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVcRedistError": {
-    "message": "L'addon en jeu de XIVLauncher nécessite Microsoft Visual C++ 2015 redistributable et .NET Framework 4.8 d'installés pour continuer.\nVeuillez les installer depuis la page d’accueil Microsoft.",
+    "message": "L'addon en jeu de XIVLauncher nécessite Microsoft Visual C++ 2015-2019 redistributable et .NET Framework 4.8 d'installés pour continuer. Veuillez les installer depuis la page d'accueil Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "updatefailureerror": {
@@ -589,6 +585,10 @@
   },
   "LoginAcceptTermsMessage": {
     "message": "Veuillez accepter les conditions d'utilisation de FINAL FANTASY XIV dans le lanceur officiel.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Certains fichiers essentiels du jeu ont été modifiés/cassés par un tiers et le jeu ne peut ni se mettre à jour ni démarrer.\nVous devez réinstaller le jeu pour continuer.\n\nSi cela se reproduit, veuillez nous contacter via Discord.",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "PatchInstallDisclaimer": {

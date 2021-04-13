@@ -180,11 +180,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Deseja ativar os recursos do XIVLauncher dentro do jogo?\nIsto adicionará algumas funcionalidades extras ao seu jogo, tais como filtro de RMT\nno chat enotificações do Discord para mensagens de chat ou filas do Duty Finder.\n\nPara configurar essas configurações, por favor, use o menu de configurações do\nXIVLauncher e mude para a aba dentro do jogo.",
-    "description": "FirstTimeSetupViewModel.SetupLoc"
-  },
-  "FirstTimeAntivirus": {
-    "message": "No entanto, esta opção pode causar uma falsa positiva no seu antivírus, por favor verifique\nas suas configurações e adicione quaisquer exceções necessárias se houver problemas.",
+    "message": "Deseja ativar as funções In-game do XIVLauncher?\nIsso permitirá adicionar algumas funcionalidades extras em seu jogo, como por exemplo habilitar notificações do Discord para mensagens recebidas no chat, um filtro de Spam (RTM) ou até mesmo alertas caso seu Duty Finder encontre uma partida, entre muitas outras funções.\n\nPara configurar está opção, entre no Menu de Configurações do XIVLauncher e navegue até a Aba In-Game/Em jogo. \nNo entanto, isso pode fazer com que seu Antivírus acuse o XIVLauncher como sendo um Falso Positivo, impossibilitando sua execução. Caso isso aconteça, verifique as configurações do seu Antivírus e adicione o executável na lista de exceções para evitar problemas.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -380,7 +376,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
-    "message": "No Jogo",
+    "message": "In-Game",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
@@ -552,7 +548,7 @@
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVcRedistError": {
-    "message": "O addon de jogo XIVLauncher precisa que o redistribuidor Microsoft Visual C ++ 2015 e o .NET Framework 4.8 estejam instalados para continuar. Instale-os a partir da página inicial da Microsoft.",
+    "message": "Os addons in-game do XIVLauncher necessitam do Microsoft Visual C++ 2015-2019 Redistributable e do .NET Framework 4.8 instalados em seu PC para funcionarem. Por favor, faça a instalação deles através do site oficial da Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "updatefailureerror": {
@@ -589,6 +585,10 @@
   },
   "LoginAcceptTermsMessage": {
     "message": "Por favor, aceite os Termos de Uso do FINAL FANTASY XIV no launcher oficial.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Alguns arquivos essenciais do jogo foram modificados/corrompidos por alguma ferramenta de terceiro, impossibilitando a atualização e até mesmo a abertura do jogo.\nSerá necessário reinstalar o jogo por completo para poder continuar.\n\nCaso isso continue acontecendo, entre em contato conosco através do nosso servidor do Discord.",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "PatchInstallDisclaimer": {

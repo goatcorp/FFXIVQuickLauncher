@@ -180,11 +180,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Willst du die XIVLauncher In-Game Features aktivieren?\nDies wird einige Erweiterungen zu FFXIV hinzufügen, wie z. B. Discord-\nBenachrichtigungen für Chat-Nachrichten oder die Inhaltssuche.\n\nUm diese Erweiterungen zu konfigurieren, bitte nutze den In-Game-Tab in den\nXIVLauncher-Einstellungen.",
-    "description": "FirstTimeSetupViewModel.SetupLoc"
-  },
-  "FirstTimeAntivirus": {
-    "message": "Diese Features könnten jedoch dazu führen, dass dein Antivirus-Programm\nFFXIV oder XIVLauncher als Virus identifiziert. In diesem Fall, füge bitte die nötigen Ausnahmen hinzu.",
+    "message": "Willst du die XIVLauncher In-Game Features aktivieren?\nDies wird einige Erweiterungen zu FFXIV hinzufügen, wie z. B. Discord-\nBenachrichtigungen für Chat-Nachrichten oder die Inhaltssuche.\n\nUm diese Erweiterungen zu konfigurieren, bitte nutze den In-Game-Tab in den\nXIVLauncher-Einstellungen.\nDiese Features könnten jedoch dazu führen, dass dein Antivirus-Programm\nFFXIV oder XIVLauncher als Virus identifiziert. In diesem Fall, füge bitte die nötigen Ausnahmen hinzu.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -552,7 +548,7 @@
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVcRedistError": {
-    "message": "Das XIVLauncher in-game addon benötigt Microsoft Visual C++ 2015 Redistributable und .NET Framework 4.8, um zu starten.\nBitte installiere diese von der Microsoft homepage.",
+    "message": "Das XIVLauncher In-Game Addon benötigt Microsoft Visual C++ 2015-2019 Redistributable und .NET Framework 4.8, um zu starten.\nBitte installiere diese von der Microsoft-Homepage oder schaue im FAQ nach.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "updatefailureerror": {
@@ -589,6 +585,10 @@
   },
   "LoginAcceptTermsMessage": {
     "message": "Bitte akzeptiere die FINAL FANTASY XIV Nutzungsbedingungen im offiziellen Launcher.",
+    "description": "<StartLogin>d__17.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Bestimmte wesentliche Spieldateien wurden von Dritten geändert/beschädigt, und das Spiel kann weder aktualisiert noch gestartet werden.\nDu musst das komplette Spiel neu installieren, um fortzufahren.\n\nFalls dies weiterhin geschieht, kontaktiere uns bitte über Discord.",
     "description": "<StartLogin>d__17.MoveNext"
   },
   "PatchInstallDisclaimer": {
