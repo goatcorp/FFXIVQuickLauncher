@@ -96,6 +96,9 @@ namespace XIVLauncher.Accounts
                     TypeNameHandling = TypeNameHandling.Objects
                 });
 
+                // If the file is corrupted, this will be null anyway
+                Accounts ??= new ObservableCollection<XivAccount>();
+
                 Save();
 
                 return;
