@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Serilog;
 using System;
+using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -28,9 +29,18 @@ namespace XIVLauncher.Accounts
             }
             set
             {
-                var a = CredentialManager.RemoveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
+                // TODO: Remove logging here after making sure fix was good
+                // This will throw when the account doesn't actually exist
+                try
+                {
+                    var a = CredentialManager.RemoveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
 
-                Log.Information($"Set Password RemoveCredentials: {a}");
+                    Log.Information($"Set Password RemoveCredentials: {a}");
+                }
+                catch (Win32Exception)
+                {
+                    // ignored
+                }
 
                 var b = CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}", new NetworkCredential
                 {
