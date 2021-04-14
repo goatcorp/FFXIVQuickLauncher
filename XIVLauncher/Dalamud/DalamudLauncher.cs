@@ -92,7 +92,7 @@ namespace XIVLauncher.Dalamud
             if (!DalamudUpdater.Runner.Exists)
             {
                 CustomMessageBox.Show(
-                    "Could not launch the in-game addon successfully. This might be caused by your antivirus.\n To prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+                    "Could not launch the in-game addon successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
