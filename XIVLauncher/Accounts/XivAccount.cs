@@ -44,7 +44,7 @@ namespace XIVLauncher.Accounts
 
         public XivAccount(string userName)
         {
-            UserName = userName;
+            UserName = userName.ToLower();
         }
 
         public string FindCharacterThumb()
