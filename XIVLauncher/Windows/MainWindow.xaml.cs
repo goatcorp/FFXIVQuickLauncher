@@ -519,7 +519,7 @@ namespace XIVLauncher.Windows
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
-                    Log.Verbose($"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin.Playable}");
+                    Log.Verbose($"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");
 
                     if (loginResult.State == Launcher.LoginState.NoOAuth)
                     {
