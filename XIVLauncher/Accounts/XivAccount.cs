@@ -22,15 +22,24 @@ namespace XIVLauncher.Accounts
         {
             get
             {
-                var credentials = CredentialManager.GetCredentials($"FINAL FANTASY XIV-{UserName}");
+                var credentials = CredentialManager.GetCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
 
                 return credentials != null ? credentials.Password : string.Empty;
             }
-            set => CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName}", new NetworkCredential
+            set
             {
-                UserName = UserName,
-                Password = value
-            });
+                var a = CredentialManager.RemoveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
+
+                Log.Information($"Set Password RemoveCredentials: {a}");
+
+                var b = CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}", new NetworkCredential
+                {
+                    UserName = UserName,
+                    Password = value
+                });
+
+                Log.Information($"Set Password SaveCredentials: {b}");
+            }
         }
 
         public bool SavePassword { get; set; }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog;
 using XIVLauncher.Settings;
 
 namespace XIVLauncher.Accounts
@@ -43,6 +44,7 @@ namespace XIVLauncher.Accounts
 
         public void UpdatePassword(XivAccount account, string password)
         {
+            Log.Information("UpdatePassword() called");
             var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);
             existingAccount.Password = password;
         }
@@ -51,8 +53,11 @@ namespace XIVLauncher.Accounts
         {
             var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);
 
+            Log.Information($"existingAccount: {existingAccount?.Id}");
+
             if (existingAccount != null && existingAccount.Password != account.Password)
             {
+                Log.Information("Updating password...");
                 existingAccount.Password = account.Password;
                 return;
             }
