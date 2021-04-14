@@ -96,18 +96,16 @@ namespace XIVLauncher.Accounts
                     TypeNameHandling = TypeNameHandling.Objects
                 });
 
-                // If the file is corrupted, this will be null anyway
-                Accounts ??= new ObservableCollection<XivAccount>();
-
                 Save();
-
-                return;
             }
 
             Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects
             });
+
+            // If the file is corrupted, this will be null anyway
+            Accounts ??= new ObservableCollection<XivAccount>();
         }
 
         #endregion
