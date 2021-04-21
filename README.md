@@ -1,4 +1,4 @@
-# XIVLauncher [![Actions Status](https://github.com/goaaats/FFXIVQuickLauncher/workflows/Build%20XIVLauncher/badge.svg)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5) [![Crowdin](https://badges.crowdin.net/ffxivquicklauncher/localized.svg)](https://crowdin.com/project/ffxivquicklauncher) <a href="https://github.com/goatcorp/FFXIVQuickLauncher/releases"><img src="https://github.com/goatcorp/FFXIVQuickLauncher/raw/master/XIVLauncher/Resources/logo.png" alt="XL logo" width="100" align="right"/></a> 
+# XIVLauncher [![Actions Status](https://img.shields.io/github/workflow/status/goatcorp/FFXIVQuickLauncher/Build%20XIVLauncher)](https://github.com/goaaats/FFXIVQuickLauncher/actions) [![Discord Shield](https://discordapp.com/api/guilds/581875019861328007/widget.png?style=shield)](https://discord.gg/3NMcUV5) [![Crowdin](https://badges.crowdin.net/ffxivquicklauncher/localized.svg)](https://crowdin.com/project/ffxivquicklauncher) [![GitHub all releases](https://img.shields.io/github/downloads/goatcorp/FFXIVQuickLauncher/total)](https://github.com/goatcorp/FFXIVQuickLauncher/releases/latest) [![GitHub release (latest by date)](https://img.shields.io/github/v/release/goatcorp/FFXIVQuickLauncher)](https://github.com/goatcorp/FFXIVQuickLauncher/releases/latest) <a href="https://github.com/goatcorp/FFXIVQuickLauncher/releases"><img src="https://github.com/goatcorp/FFXIVQuickLauncher/raw/master/XIVLauncher/Resources/logo.png" alt="XL logo" width="100" align="right"/></a> 
 
 XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
 
@@ -55,6 +55,5 @@ We feel like that this offers developers the __freedom to improve the game's fun
 
 ## Disclaimer
 As with all of my stuff, this is technically not in line with Square Enix TOS - I've tried to make it as undetectable as possible and no one, as far as I know, has gotten into trouble for using this - but it always could be a possibility.
-Sentry is used for error tracking, all personal data like usernames or passwords is stripped and will never be stored.
 
 ##### Final Fantasy XIV © 2010-2020 SQUARE ENIX CO., LTD. All Rights Reserved. We are not affiliated with SQUARE ENIX CO., LTD. in any way.
