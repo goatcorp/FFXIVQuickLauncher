@@ -360,6 +360,12 @@ namespace XIVLauncher.Windows
                 CustomMessageBox.Show(
                     Loc.Localize("EmptyPasswordError", "Please enter a password."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                _isLoggingIn = false;
+                App.Settings.AutologinEnabled = false;
+                AutoLoginCheckBox.IsChecked = false;
+                _ = Task.Run(SetupHeadlines);
+                Show();
+                Activate();
                 return;
             }
 
