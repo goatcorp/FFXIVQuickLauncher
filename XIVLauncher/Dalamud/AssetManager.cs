@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Windows;
+using System.Security.Cryptography;
+using NuGet;
 
 namespace XIVLauncher.Dalamud
 {
@@ -24,12 +26,14 @@ namespace XIVLauncher.Dalamud
             {
                 public string Url { get; set; }
                 public string FileName { get; set; }
+                public string Hash { get; set; }
             }
         }
 
         public static bool EnsureAssets(DirectoryInfo baseDir)
         {
             using var client = new WebClient();
+            var sha1 = SHA1.Create();
 
             Log.Verbose("[DASSET] Starting asset download");
 
@@ -44,7 +48,8 @@ namespace XIVLauncher.Dalamud
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
-                if (!File.Exists(filePath) || isRefreshNeeded)
+                var fileHash = sha1.ComputeHash(File.OpenRead(filePath).ReadAllBytes());
+                if (!File.Exists(filePath) || isRefreshNeeded || entry.Hash.Length > 0 && fileHash.ToString() != entry.Hash)
                 {
                     Log.Verbose("[DASSET] Downloading {0} to {1}...", entry.Url, entry.FileName);
                     try
