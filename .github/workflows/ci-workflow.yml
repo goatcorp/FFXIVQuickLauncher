@@ -56,6 +56,7 @@ jobs:
         with:
           files: Releases\**
           name: Release ${{ steps.build-squirrel.outputs.version }}
+          body_path:  RELEASE.md
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
