@@ -100,7 +100,8 @@ namespace XIVLauncher.Dalamud
                     Download(addonPath, doDalamudTest);
 
                     // This is a good indicator that we should clear the UID cache
-                    UniqueIdCache.Instance.Reset();
+                    if (!doDalamudTest)
+                        UniqueIdCache.Instance.Reset();
                 }
                 catch (Exception ex)
                 {
