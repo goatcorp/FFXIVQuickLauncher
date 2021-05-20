@@ -164,8 +164,8 @@ namespace XIVLauncher.Game
             };
         }
 
-        public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-            bool encryptArguments)
+        public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, DirectoryInfo gamePath, bool isDx11, int refreshRate,
+            ClientLanguage language, bool encryptArguments)
         {
             Log.Information($"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
 
@@ -185,6 +185,9 @@ namespace XIVLauncher.Game
                         Log.Error(ex, "Could not initialize Steam.");
                     }
                 }
+
+                if (refreshRate != 0)
+                    RefreshRate.ChangeRefreshRate(refreshRate);
 
                 var exePath = gamePath + "/game/ffxiv_dx11.exe";
                 if (!isDx11)

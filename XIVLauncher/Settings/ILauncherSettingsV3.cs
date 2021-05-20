@@ -16,6 +16,7 @@ namespace XIVLauncher.Settings
 
         DirectoryInfo GamePath { get; set; }
         bool IsDx11 { get; set; }
+        int RefreshRate { get; set; }
         bool AutologinEnabled { get; set; }
         List<AddonEntry> AddonList { get; set; }
         bool UniqueIdCacheEnabled { get; set; }

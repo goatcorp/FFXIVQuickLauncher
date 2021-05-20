@@ -56,6 +56,8 @@ namespace XIVLauncher.Windows
                 Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
             }
 
+            RefreshRateUpDown.Value = App.Settings.RefreshRate;
+
             LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
             LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
             LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
@@ -94,6 +96,7 @@ namespace XIVLauncher.Windows
             App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
             App.Settings.PatchPath = !string.IsNullOrEmpty(ViewModel.PatchPath) ? new DirectoryInfo(ViewModel.PatchPath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
+            App.Settings.RefreshRate = Convert.ToInt32(RefreshRateUpDown.Value ?? 0);
 
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             // Keep the notice visible if LauncherLanguage has changed
