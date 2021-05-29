@@ -29,6 +29,34 @@ jobs:
         run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
            .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=ReleaseNoUpdate
+      - name: Build Squirrel Release
+        id: build-squirrel
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          $baseuri = 'https://github.com/goatcorp/FFXIVQuickLauncher/releases/latest/download' 
+          $refver = $env:GITHUB_REF -replace '.*/'
+          echo "::set-output name=version::$refver"
+          nuget pack .\XIVLauncher.nuspec -properties version=$refver
+          mkdir Releases
+          Invoke-WebRequest -Uri $baseuri/RELEASES -OutFile .\Releases\RELEASES
+          $latest = Select-String -Path "Releases\RELEASES" -Pattern "XIVLauncher-(.*)-.*.nupkg" | Select-Object * -Last 1
+          $ver = $latest.Matches.groups[1].value
+          Invoke-WebRequest -Uri $baseuri/XIVLauncher-$ver-delta.nupkg -OutFile .\Releases\XIVLauncher-$ver-delta.nupkg
+          Invoke-WebRequest -Uri $baseuri/XIVLauncher-$ver-full.nupkg -OutFile .\Releases\XIVLauncher-$ver-full.nupkg
+          Invoke-WebRequest -Uri $baseuri/Setup.exe -OutFile .\Releases\Setup.exe
+           ~\.nuget\packages\squirrel.windows\1.9.1\tools\Squirrel.exe --no-msi --releasify .\XIVLauncher.$refver.nupkg
+          Start-Sleep -s 30
+          rm .\Releases\XIVLauncher-$ver-delta.nupkg
+          rm .\Releases\XIVLauncher-$ver-full.nupkg
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: Releases\**
+          name: Release ${{ steps.build-squirrel.outputs.version }}
+          body_path:  RELEASE.md
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
