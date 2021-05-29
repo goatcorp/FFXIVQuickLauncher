@@ -18,4 +18,17 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+
+    <JumpList.JumpList>
+        <JumpList ShowRecentCategory="False"
+                  ShowFrequentCategory="False">
+            <JumpTask Title="Disable Auto-Login" 
+                      Description="If enabled, disable the Auto-Login functionality to allow for setting changes." 
+                      ApplicationPath="%LocalAppData%\XIVLauncher\XIVLauncher.exe"
+                      IconResourcePath="C:\Windows\System32\shell32.dll"
+                      IconResourceIndex="44"
+                      WorkingDirectory="%LocalAppData%\XIVLauncher"
+                      Arguments="--noautologin"/>
+        </JumpList>
+    </JumpList.JumpList>
 </Application>
