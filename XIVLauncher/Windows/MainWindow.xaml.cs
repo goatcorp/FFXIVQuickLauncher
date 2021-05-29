@@ -199,6 +199,12 @@ namespace XIVLauncher.Windows
                 Console.Beep(523, 150); // Feedback without popup
             }
 
+            if (App.GlobalIsDisableAutologin)
+            {
+                Log.Information("Autologin was disabled globally, saving into settings...");
+                App.Settings.AutologinEnabled = false;
+            }
+
             if (App.Settings.AutologinEnabled && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Log.Information("Engaging Autologin...");

@@ -32,6 +32,8 @@ namespace XIVLauncher
 
         private MainWindow _mainWindow;
 
+        public static bool GlobalIsDisableAutologin { get; private set; }
+
         public App()
         {
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
@@ -190,6 +192,11 @@ namespace XIVLauncher
             {
                 foreach (string arg in e.Args)
                 {
+                    if (arg == "--noautologin")
+                    {
+                        GlobalIsDisableAutologin = true;
+                    }
+
                     if (arg == "--genLocalizable")
                     {
                         Loc.ExportLocalizable();
