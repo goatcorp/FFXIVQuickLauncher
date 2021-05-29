@@ -22,6 +22,7 @@ namespace XIVLauncher.Windows
                 PathEntry.Text = addon.Path;
                 CommandLineTextBox.Text = addon.CommandLine;
                 AdminCheckBox.IsChecked = addon.RunAsAdmin;
+                RunOnCloseCheckBox.IsChecked = addon.RunOnClose;
                 KillCheckBox.IsChecked = addon.KillAfterClose;
             }
         }
@@ -36,6 +37,7 @@ namespace XIVLauncher.Windows
                 Path = PathEntry.Text,
                 CommandLine = CommandLineTextBox.Text,
                 RunAsAdmin = AdminCheckBox.IsChecked == true,
+                RunOnClose = RunOnCloseCheckBox.IsChecked == true,
                 KillAfterClose = KillCheckBox.IsChecked == true
             };
 

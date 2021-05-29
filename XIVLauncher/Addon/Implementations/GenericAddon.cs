@@ -16,13 +16,19 @@ namespace XIVLauncher.Addon
             _gameProcess = gameProcess;
         }
 
-        public void Run()
+        public void Run() => 
+            Run(false);
+
+        private void Run(bool gameClosed)
         {
             if (string.IsNullOrEmpty(Path))
             {
                 Serilog.Log.Error("Generic addon path was null.");
                 return;
             }
+
+            if (RunOnClose && !gameClosed)
+                return; // This Addon only runs when the game is closed.
 
             try
             {
@@ -53,6 +59,11 @@ namespace XIVLauncher.Addon
 
         public void GameClosed()
         {
+            if (RunOnClose)
+            {
+                Run(true);
+            }
+
             if (!RunAsAdmin)
             {
                 try
@@ -161,6 +172,7 @@ namespace XIVLauncher.Addon
         public string Path;
         public string CommandLine;
         public bool RunAsAdmin;
+        public bool RunOnClose;
         public bool KillAfterClose;
 
         private static readonly Lazy<string> LazyPwsh = new Lazy<string>(() => GetPwsh());
