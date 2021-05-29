@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Windows;
+using System.Security.Cryptography;
+using Castle.Core.Internal;
+using NuGet;
 
 namespace XIVLauncher.Dalamud
 {
@@ -24,12 +27,14 @@ namespace XIVLauncher.Dalamud
             {
                 public string Url { get; set; }
                 public string FileName { get; set; }
+                public string Hash { get; set; }
             }
         }
 
         public static bool EnsureAssets(DirectoryInfo baseDir)
         {
             using var client = new WebClient();
+            using var sha1 = SHA1.Create();
 
             Log.Verbose("[DASSET] Starting asset download");
 
@@ -43,8 +48,25 @@ namespace XIVLauncher.Dalamud
                 var filePath = Path.Combine(baseDir.FullName, entry.FileName);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-                if (!File.Exists(filePath) || isRefreshNeeded)
+                
+                var refreshFile = false;
+                if (File.Exists(filePath) && !entry.Hash.IsNullOrEmpty())
+                {
+                    try
+                    {
+                        using var file = File.OpenRead(filePath);
+                        var fileHash = sha1.ComputeHash(file);
+                        var stringHash = BitConverter.ToString(fileHash).Replace("-", "");
+                        refreshFile = stringHash != entry.Hash;
+                        Log.Verbose("[DASSET] {0} has hash {1} when remote asset has {2}.", entry.FileName, stringHash, entry.Hash);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[DASSET] Could not read asset.");
+                    }
+                }
+                
+                if (!File.Exists(filePath) || isRefreshNeeded || refreshFile)
                 {
                     Log.Verbose("[DASSET] Downloading {0} to {1}...", entry.Url, entry.FileName);
                     try
