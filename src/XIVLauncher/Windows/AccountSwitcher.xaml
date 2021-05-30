@@ -24,6 +24,7 @@
                             <MenuItem Header="{Binding AccountSwitcherCreateShortcutLoc}" Click="CreateDesktopShortcut_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem Header="{Binding RemoveLoc}" Click="RemoveAccount_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem x:Name="AccountEntrySavePasswordCheck" IsCheckable="True" Header="{Binding AccountSwitcherDontSavePasswordLoc}" Checked="DontSavePassword_OnChecked" Unchecked="DontSavePassword_OnUnchecked" Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <MenuItem Header="{Binding ModifyOtpUriLoc}" Click="ModifyOtpUri_Click" Foreground="{DynamicResource MaterialDesignBody}" />
                         </ContextMenu>
                     </ListView.ContextMenu>
 

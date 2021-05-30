@@ -45,6 +45,40 @@ namespace XIVLauncher.Accounts
                 });
             }
         }
+        
+        [JsonIgnore]
+        public string OtpUri
+        {
+            get
+            {
+                var credentials = CredentialManager.GetCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}-OTP");
+
+                return credentials != null ? credentials.Password : string.Empty;
+            }
+            set
+            {
+                // TODO: Remove logging here after making sure fix was good
+                // This will throw when the account doesn't actually exist
+                try
+                {
+                    var a = CredentialManager.RemoveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}-OTP");
+
+                    Log.Information($"Set Password RemoveCredentials: {a}");
+                }
+                catch (Win32Exception)
+                {
+                    // ignored
+                }
+
+                var b = CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}-OTP", new NetworkCredential
+                {
+                    UserName = UserName,
+                    Password = value
+                });
+
+                Log.Information($"Set Password SaveCredentials: {b}");
+            }
+        }
 
         public bool SavePassword { get; set; }
         public bool UseSteamServiceAccount { get; set; }
