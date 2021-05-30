@@ -24,8 +24,13 @@ jobs:
           ($env:REPO_NAME) >> VERSION
           ($env:BRANCH) >> VERSION
           ($env:COMMIT) >> VERSION
-
-      - name: Build DotNet4
+      - name: Build DotNet4 Master
+        if: "!(startsWith(github.ref, 'refs/tags/'))"
+        run: |
+          cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
+           .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=ReleaseNoUpdate
+      - name: Build DotNet4 for Release
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
            .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=Release
