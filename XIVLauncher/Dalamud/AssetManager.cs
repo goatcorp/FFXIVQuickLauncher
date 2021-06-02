@@ -110,9 +110,17 @@ namespace XIVLauncher.Dalamud
                 var localVerFile = GetAssetVerPath(baseDir);
                 var localVer = 0;
 
-                if (File.Exists(localVerFile))
-                    localVer = int.Parse(File.ReadAllText(localVerFile));
-
+                try
+                {
+                    if (File.Exists(localVerFile))
+                        localVer = int.Parse(File.ReadAllText(localVerFile));
+                }
+                catch (Exception ex)
+                {
+                    // This means it'll stay on 0, which will redownload all assets - good by me
+                    Log.Error(ex, "[DASSET] Could not read asset.ver");
+                }
+                
                 var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL + "asset.json"));
 
                 Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer.Version);
