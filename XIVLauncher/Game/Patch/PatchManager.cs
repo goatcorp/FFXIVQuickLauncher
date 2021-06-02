@@ -213,6 +213,8 @@ namespace XIVLauncher.Game.Patch
                 Speeds[index] = 0;
 
                 Log.Information("Patch at {0} downloaded completely", download.Patch.Url);
+
+                this.CheckIsDone();
             };
 
             DownloadServices[index] = dlService;
@@ -250,28 +252,36 @@ namespace XIVLauncher.Game.Patch
                     var toDl = Downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
 
                     if (toDl == null)
-                    {
-                        Log.Information("All patches downloaded.");
-
-                        DownloadsDone = true;
-
-                        for (var j = 0; j < Progresses.Length; j++)
-                        {
-                            Progresses[j] = 0;
-                        }
-
-                        for (var j = 0; j < Speeds.Length; j++)
-                        {
-                            Speeds[j] = 0;
-                        }
-
                         return;
-                    }
 
                     toDl.State = PatchState.IsDownloading;
                     var curIndex = i;
                     Task.Run(() => DownloadPatchAsync(toDl, curIndex));
                 }
+            }
+        }
+
+        private void CheckIsDone()
+        {
+            Log.Information("CheckIsDone!!");
+
+            if (!Downloads.Any(x => x.State is PatchState.Nothing or PatchState.IsDownloading))
+            {
+                Log.Information("All patches downloaded.");
+
+                DownloadsDone = true;
+
+                for (var j = 0; j < Progresses.Length; j++)
+                {
+                    Progresses[j] = 0;
+                }
+
+                for (var j = 0; j < Speeds.Length; j++)
+                {
+                    Speeds[j] = 0;
+                }
+
+                return;
             }
         }
 
@@ -292,7 +302,7 @@ namespace XIVLauncher.Game.Patch
                 MessageBox.Show("INSTALLING " + toInstall.Patch.VersionId);
 #endif
 
-                Log.Information("Starting patch install for {0} at {1}", toInstall.Patch.VersionId, toInstall.Patch.Url);
+                Log.Information("Starting patch install for {0} at {1}({2})", toInstall.Patch.VersionId, toInstall.Patch.Url, CurrentInstallIndex);
 
                 _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch, GetRepoForPatch(toInstall.Patch));
 
@@ -304,6 +314,8 @@ namespace XIVLauncher.Game.Patch
                 // TODO need to handle this better
                 if (_installer.State == PatchInstaller.InstallerState.Failed)
                     return;
+
+                Log.Information($"Patch at {CurrentInstallIndex} installed");
 
                 toInstall.State = PatchState.Finished;
                 CurrentInstallIndex++;
