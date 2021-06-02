@@ -19,7 +19,7 @@ namespace XIVLauncher.Windows.ViewModel
             OtpInputPromptLoc = Loc.Localize("OtpInputPrompt", "Please enter your OTP key.");
             CancelLoc = Loc.Localize("Cancel", "Cancel");
             OkLoc = Loc.Localize("OK", "OK");
-            OtpOneClickHintLoc = Loc.Localize("OtpOneClickHint", "Or use the one-click shortcuts.\r\nClick here to learn more!");
+            OtpOneClickHintLoc = Loc.Localize("OtpOneClickHint", "Or use the app!\r\nClick here to learn more!");
         }
 
         public string OtpInputPromptLoc { get; private set; }

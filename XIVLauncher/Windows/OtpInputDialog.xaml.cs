@@ -84,7 +84,7 @@ namespace XIVLauncher.Windows
 
         public void OpenShortcutInfo_MouseUp(object sender, RoutedEventArgs e)
         {
-            Process.Start($"{App.RepoUrl}/wiki/Setting-up-OTP-Phone-Shortcuts");
+            Process.Start($"https://goatcorp.github.io/faq/mobile_otp");
         }
     }
 }
