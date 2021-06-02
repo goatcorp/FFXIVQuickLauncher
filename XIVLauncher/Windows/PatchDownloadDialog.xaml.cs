@@ -79,7 +79,7 @@ namespace XIVLauncher.Windows
             InstallingText.Text = string.Format(ViewModel.PatchInstallingFormattedLoc, curr);
         }
 
-        public void SetLeft(long left, long rate)
+        public void SetLeft(long left, double rate)
         {
             BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, Util.BytesToString(left), Util.BytesToString(rate));
         }

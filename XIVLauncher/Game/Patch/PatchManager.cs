@@ -45,7 +45,7 @@ namespace XIVLauncher.Game.Patch
             ChunkCount = 8, // file parts to download
             MaxTryAgainOnFailover = int.MaxValue, // the maximum number of times to fail.
             OnTheFlyDownload = false, // caching in-memory mode
-            Timeout = 1000, // timeout (millisecond) per stream block reader
+            Timeout = 10000, // timeout (millisecond) per stream block reader
             TempDirectory = Path.GetTempPath(), // this is the library default
             RequestConfiguration = new RequestConfiguration
             {
@@ -70,7 +70,7 @@ namespace XIVLauncher.Game.Patch
         public int CurrentInstallIndex { get; private set; }
 
         public readonly long[] Progresses = new long[MAX_DOWNLOADS_AT_ONCE];
-        public readonly long[] Speeds = new long[MAX_DOWNLOADS_AT_ONCE];
+        public readonly double[] Speeds = new double[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchDownload[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
         public readonly bool[] Slots = new bool[MAX_DOWNLOADS_AT_ONCE];
         public readonly DownloadService[] DownloadServices = new DownloadService[MAX_DOWNLOADS_AT_ONCE];
@@ -99,6 +99,8 @@ namespace XIVLauncher.Game.Patch
             }
 
             ServicePointManager.DefaultConnectionLimit = 255;
+
+            Log.Information($"Downloading each patch with max speed of: {this._downloadOpt.MaximumBytesPerSecond}");
         }
 
         public void Start()
@@ -163,8 +165,8 @@ namespace XIVLauncher.Game.Patch
             var dlService = new DownloadService(_downloadOpt);
             dlService.DownloadProgressChanged += (sender, args) =>
             {
-                Progresses[index] = args.BytesReceived;
-                Speeds[index] = dlService.DownloadSpeed;
+                Progresses[index] = args.ReceivedBytesSize;
+                Speeds[index] = args.BytesPerSecondSpeed;
             };
 
             dlService.DownloadFileCompleted += (sender, args) =>
@@ -219,7 +221,7 @@ namespace XIVLauncher.Game.Patch
 
             DownloadServices[index] = dlService;
 
-            await dlService.DownloadFileAsync(download.Patch.Url, outFile.FullName);
+            await dlService.DownloadFileTaskAsync(download.Patch.Url, outFile.FullName);
         }
 
         public void CancelAllDownloads()
@@ -397,8 +399,6 @@ namespace XIVLauncher.Game.Patch
             return Repository.Ffxiv;
         }
 
-        private long GetDownloadLength() => GetDownloadLength(Downloads.Count);
-
-        private long GetDownloadLength(int takeAmount) => Downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Take(takeAmount).Sum(x => x.Patch.Length) - Progresses.Sum();
+        private long GetDownloadLength() => Downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();
     }
 }

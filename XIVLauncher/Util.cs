@@ -118,6 +118,8 @@ namespace XIVLauncher
             Process.Start("https://discord.gg/3NMcUV5");
         }
 
+        public static string BytesToString(double byteCount) => BytesToString(Convert.ToInt64(Math.Floor(byteCount)));
+
         public static string BytesToString(long byteCount)
         {
             string[] suf = {"B", "KB", "MB", "GB", "TB", "PB", "EB"}; //Longs run out around EB
