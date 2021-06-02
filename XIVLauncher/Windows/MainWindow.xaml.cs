@@ -211,7 +211,7 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-                    HandleLogin(true);
+                    this.Kickoff(true);
                     return;
                 }
                 catch (Exception ex)
@@ -248,12 +248,12 @@ namespace XIVLauncher.Windows
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            HandleLogin(false, true);
+            this.Kickoff(false, true);
         }
 
         private void LoginNoStart_Click(object sender, RoutedEventArgs e)
         {
-            HandleLogin(false, false);
+            this.Kickoff(false, false);
         }
 
         private void HandleBootCheck(Action whenFinishAction)
@@ -351,7 +351,12 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private void HandleLogin(bool autoLogin, bool startGame = true)
+        private void Kickoff(bool autoLogin, bool startGame = true)
+        {
+            HandleBootCheck(() => this.Dispatcher.Invoke(() => this.PrepareLogin(autoLogin, startGame)));
+        }
+
+        private void PrepareLogin(bool autoLogin, bool startGame = true)
         {
             if (string.IsNullOrEmpty(LoginUsername.Text))
             {
@@ -440,7 +445,7 @@ namespace XIVLauncher.Windows
                 otp = otpDialog.Result;
             }
 
-            HandleBootCheck(() => this.Dispatcher.Invoke(() => StartLogin(otp, startGame)));
+            StartLogin(otp, startGame);
         }
 
         private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus)
@@ -897,7 +902,7 @@ namespace XIVLauncher.Windows
             if (e.Key != Key.Enter && e.Key != Key.Return || _isLoggingIn)
                 return;
 
-            HandleLogin(false);
+            this.Kickoff(false);
             _isLoggingIn = true;
         }
 
