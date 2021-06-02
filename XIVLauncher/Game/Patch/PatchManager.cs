@@ -399,6 +399,7 @@ namespace XIVLauncher.Game.Patch
             return Repository.Ffxiv;
         }
 
-        private long GetDownloadLength() => Downloads.Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();
-    }
+        private long GetDownloadLength() => GetDownloadLength(Downloads.Count);
+
+        private long GetDownloadLength(int takeAmount) => Downloads.Take(takeAmount).Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();    }
 }
