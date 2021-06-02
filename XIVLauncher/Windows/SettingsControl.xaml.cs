@@ -457,5 +457,10 @@ namespace XIVLauncher.Windows
         {
             GamePathSafeguardText.Visibility = !Util.LetChoosePath(ViewModel.GamePath) ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        private void LicenseText_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Process.Start(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources", "LICENSE.txt"));
+        }
     }
 }

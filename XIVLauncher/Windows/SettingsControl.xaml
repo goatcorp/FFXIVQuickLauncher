@@ -244,6 +244,8 @@
                             </TextBlock>
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                        Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding CreditsLoc}"/>
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                                       Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding LicenseLoc}" TextDecorations="Underline" MouseUp="LicenseText_OnMouseUp" Cursor="Hand"/>
 
                             <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                     HorizontalAlignment="Left"
