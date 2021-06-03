@@ -30,6 +30,7 @@ namespace XIVLauncher.Windows
         {
             Dalamud,
             Assets,
+            Runtime,
             Unavailable
         }
 
@@ -46,6 +47,9 @@ namespace XIVLauncher.Windows
                     break;
                 case DalamudLoadingProgress.Assets:
                     ProgressTextBlock.Text = Loc.Localize("DalamudUpdateAssets", "Updating assets...");
+                    break;
+                case DalamudLoadingProgress.Runtime:
+                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateRuntime", "Updating runtime...");
                     break;
                 case DalamudLoadingProgress.Unavailable:
                     ProgressTextBlock.Text = Loc.Localize("DalamudUnavailable",

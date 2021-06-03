@@ -12,6 +12,8 @@ namespace XIVLauncher.Dalamud
     {
         public string AssemblyVersion { get; set; }
         public string SupportedGameVer { get; set; }
+        public string RuntimeVersion { get; set; }
+        public bool RuntimeRequired { get; set; }
 
         public static DalamudVersionInfo Load(FileInfo file) =>
             JsonConvert.DeserializeObject<DalamudVersionInfo>(File.ReadAllText(file.FullName));
