@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   build-release:
-    name: Build Relase on Windows
+    name: Build Release on Windows
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: windows-2019
     steps:
