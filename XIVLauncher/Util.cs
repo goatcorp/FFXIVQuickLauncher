@@ -182,8 +182,5 @@ namespace XIVLauncher
 
             return reader.ReadToEnd();
         }
-
-        public static string GetRoaming() => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "XIVLauncher");
-
     }
 }

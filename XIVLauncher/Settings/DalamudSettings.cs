@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace XIVLauncher.Settings
@@ -8,6 +8,7 @@ namespace XIVLauncher.Settings
         public class DalamudConfiguration
         {
             public bool DoDalamudTest { get; set; } = false;
+            public bool DoDalamudRuntime { get; set; } = false;
             public bool? OptOutMbCollection { get; set; }
         }
 

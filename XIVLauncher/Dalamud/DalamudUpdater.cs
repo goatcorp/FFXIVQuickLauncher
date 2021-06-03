@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -75,17 +75,25 @@ namespace XIVLauncher.Dalamud
         {
             using var client = new WebClient();
 
-            var doDalamudTest = DalamudSettings.GetSettings().DoDalamudTest;
+            var settings = DalamudSettings.GetSettings();
 
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var versionInfoJson = client.DownloadString(DalamudLauncher.REMOTE_BASE + (doDalamudTest ? "stg/" : string.Empty) + "version");
+            var versionInfoJson = client.DownloadString(DalamudLauncher.REMOTE_BASE + (settings.DoDalamudTest ? "stg/" : string.Empty) + "version");
 
             var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
 
             var addonPath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks", remoteVersionInfo.AssemblyVersion));
-            AssetDirectory = new DirectoryInfo(Path.Combine(Util.GetRoaming(), "dalamudAssets"));
+            var runtimePath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "runtime"));
+            var runtimePaths = new DirectoryInfo[]
+            {
+                new DirectoryInfo(Path.Combine(runtimePath.FullName, "host", "fxr", remoteVersionInfo.RuntimeVersion)),
+                new DirectoryInfo(Path.Combine(runtimePath.FullName, "shared", "Microsoft.NETCore.App", remoteVersionInfo.RuntimeVersion)),
+                new DirectoryInfo(Path.Combine(runtimePath.FullName, "shared", "Microsoft.WindowsDesktop.App", remoteVersionInfo.RuntimeVersion)),
+            };
+
+            AssetDirectory = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets"));
 
             Log.Information("[DUPDATE] Now starting for Dalamud {0}", remoteVersionInfo.AssemblyVersion);
 
@@ -97,7 +105,7 @@ namespace XIVLauncher.Dalamud
 
                 try
                 {
-                    Download(addonPath, doDalamudTest);
+                    Download(addonPath, settings.DoDalamudTest);
 
                     // This is a good indicator that we should clear the UID cache
                     UniqueIdCache.Instance.Reset();
@@ -111,6 +119,32 @@ namespace XIVLauncher.Dalamud
                 }
 
                 Log.Information("[DUPDATE] Download OK!");
+            }
+
+            if (remoteVersionInfo.RuntimeRequired || settings.DoDalamudRuntime)
+            {
+                Log.Information("[DUPDATE] Now starting for .NET Runtime {0}", remoteVersionInfo.RuntimeVersion);
+
+                if (runtimePaths.Any(p => !p.Exists))
+                {
+                    Log.Information("[DUPDATE] Not found, redownloading");
+
+                    SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Runtime);
+
+                    try
+                    {
+                        DownloadRuntime(runtimePath, remoteVersionInfo.RuntimeVersion);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[DUPDATE] Could not download update package.");
+
+                        State = DownloadState.Failed;
+                        return;
+                    }
+
+                    Log.Information("[DUPDATE] Download OK!");
+                }
             }
 
             try
@@ -164,7 +198,7 @@ namespace XIVLauncher.Dalamud
                 Log.Error(ex, "[DUPDATE] No dalamud integrity.");
                 return false;
             }
-            
+
             return true;
         }
 
@@ -218,6 +252,38 @@ namespace XIVLauncher.Dalamud
             {
                 Log.Error(ex, "[DUPDATE] Could not copy to dev folder.");
             }
+        }
+
+        private static void DownloadRuntime(DirectoryInfo runtimePath, string version)
+        {
+            // Ensure directory exists
+            if (!runtimePath.Exists)
+            {
+                runtimePath.Create();
+            }
+            else
+            {
+                runtimePath.Delete(true);
+                runtimePath.Create();
+            }
+
+            using var client = new WebClient();
+
+            var dotnetUrl = $"https://dotnetcli.azureedge.net/dotnet/Runtime/{version}/dotnet-runtime-{version}-win-x64.zip";
+            var desktopUrl = $"https://dotnetcli.azureedge.net/dotnet/WindowsDesktop/{version}/windowsdesktop-runtime-{version}-win-x64.zip";
+
+            var downloadPath = Path.GetTempFileName();
+
+            if (File.Exists(downloadPath))
+                File.Delete(downloadPath);
+
+            client.DownloadFile(dotnetUrl, downloadPath);
+            ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
+
+            client.DownloadFile(desktopUrl, downloadPath);
+            ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
+
+            File.Delete(downloadPath);
         }
     }
 }
