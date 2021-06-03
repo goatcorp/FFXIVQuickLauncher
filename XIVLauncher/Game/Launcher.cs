@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using CheapLoc;
 using Serilog;
 using SteamworksSharp;
 using SteamworksSharp.Native;
@@ -216,6 +217,15 @@ namespace XIVLauncher.Game
                         argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value);
                 }
 
+                if (!File.Exists(exePath))
+                {
+                    CustomMessageBox.Show(
+                        Loc.Localize("BinaryNotPresentError", "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    Log.Error("Game binary at {0} wasn't present.", exePath);
+
+                    return null;
+                }
 
                 var workingDir = Path.Combine(gamePath.FullName, "game");
 
