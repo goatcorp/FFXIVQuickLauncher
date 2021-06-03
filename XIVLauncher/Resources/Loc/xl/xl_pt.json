@@ -73,15 +73,15 @@
   },
   "EmptyUsernameError": {
     "message": "Por favor, insira um nome de usuário.",
-    "description": "MainWindow.HandleLogin"
+    "description": "MainWindow.PrepareLogin"
   },
   "EmptyPasswordError": {
     "message": "Por favor, insira a senha.",
-    "description": "MainWindow.HandleLogin"
+    "description": "MainWindow.PrepareLogin"
   },
   "UidCacheInstallError": {
     "message": "Você ativou o cache UID nas configurações do patcher.\nEsta configuração não permite que você reinstale o FFXIV.\n\nSe você deseja reinstalar o FFXIV, por favor desabilite-o primeiro.",
-    "description": "MainWindow.HandleLogin"
+    "description": "MainWindow.PrepareLogin"
   },
   "MaintenanceQueueBootPatch": {
     "message": "Um patch para o launcher de FFXIV foi detectado.\nIsso normalmente significa que há um patch para o jogo também.\n\nVocê será logado agora.",
@@ -203,6 +203,10 @@
     "message": "Executar como administrador",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
+  "RunOnCloseLoc": {
+    "message": "Executar ao fechar o jogo",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
   "KillAfterCloseLoc": {
     "message": "Encerrar após o fechamento do jogo",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
@@ -272,7 +276,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "Ou use os atalhos com um clique.\nClique aqui para saber mais!",
+    "message": "Ou use o aplicativo!\nClique aqui para saber mais!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
@@ -480,7 +484,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Feito por goat.\nUm agradecimento especial a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna e o artista do paissa bravo!\n\nAlgum problema ou pedido? Junte-se ao Discord ou crie um issue no GitHub!",
+    "message": "Feito por goat. Agradecimentos especiais a Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, Aireil e ao artista do paissa bravo!\n\nAlgum problema ou pedido? Chame no Discord ou crie uma issue no GitHub!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "License": {
+    "message": "Licenciado sob GPLv3 ou posterior. Clique aqui para saber mais.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
@@ -569,39 +577,39 @@
   },
   "LoginNoOauthMessage": {
     "message": "Não foi possível iniciar a sessão na sua conta do Square Enix.\nIsso poderia ser causado por credenciais ou senhas de uso único incorretas.\n\nPor favor, verifique seu email para quaisquer mensagens da Square Enix - talvez eles queiram que você redefina a sua senha devido a \"atividade suspeita\".\nIsto NÃO é causado por um problema de segurança no XIVLauncher, é apenas uma medida de segurança da Square Enix para evitar que logins de novas localizações, caso sua conta esteja sendo roubada.\nXIVLauncher e o launcher oficial funcionarão corretamente após redefinir sua senha.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
     "message": "\n\nO Login automático foi desativado.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "Problema de login",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoServiceMessage": {
     "message": "Esta conta da Square Enix não pode jogar FINAL FANTASY XIV.\n\nSe você comprou FINAL FANTASY XIV no Steam, verifique a caixa de seleção \"Use a conta de serviço Steam\" enquanto faz o login.\nSe o Login Automático estiver ativado, pressione shift enquanto inicializa a acessar as configurações.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginAcceptTermsMessage": {
     "message": "Por favor, aceite os Termos de Uso do FINAL FANTASY XIV no launcher oficial.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "EverythingIsFuckedMessage": {
     "message": "Alguns arquivos essenciais do jogo foram modificados/corrompidos por alguma ferramenta de terceiro, impossibilitando a atualização e até mesmo a abertura do jogo.\nSerá necessário reinstalar o jogo por completo para poder continuar.\n\nCaso isso continue acontecendo, entre em contato conosco através do nosso servidor do Discord.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "PatchInstallDisclaimer": {
     "message": "Uma nova atualização foi encontrada que precisa ser instalada antes que você possa jogar.\nVocê deseja que o XIVLauncher o instale?",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoStartOk": {
     "message": "Uma verificação de atualização foi executada e todas as atualizações pendentes foram instaladas.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "MaintenanceNotice": {
     "message": "A manutenção parece estar em andamento. O jogo não deve ser iniciado.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher não pôde verificar os arquivos do jogo baixados.\n\nIsto geralmente indica um problema com a sua conexão com a internet.\nSe este erro ocorrer novamente, tente usar uma VPN definida para o Japão.\n\nContexto: {0}\n{1}",

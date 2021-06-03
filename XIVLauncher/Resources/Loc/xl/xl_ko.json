@@ -73,15 +73,15 @@
   },
   "EmptyUsernameError": {
     "message": "ID를 입력하십시오.",
-    "description": "MainWindow.HandleLogin"
+    "description": "MainWindow.PrepareLogin"
   },
   "EmptyPasswordError": {
     "message": "비밀번호를 입력하십시오.",
-    "description": "MainWindow.HandleLogin"
+    "description": "MainWindow.PrepareLogin"
   },
   "UidCacheInstallError": {
     "message": "UID 캐시를 활성화했습니다.\n이 설정은 FF14의 재설치를 허용하지 않습니다.\n\n재설치하기 전에 반드시 해당 설정을 비활성화하세요.",
-    "description": "MainWindow.HandleLogin"
+    "description": "MainWindow.PrepareLogin"
   },
   "MaintenanceQueueBootPatch": {
     "message": "FFXIV 공식 런처의 업데이트가 감지되었습니다.\n이럴 땐 대부분의 경우 게임 쪽에도 새로운 패치가 있음을 나타냅니다.\n\n로그인을 계속 진행합니다.",
@@ -203,6 +203,10 @@
     "message": "관리자 권한으로 실행",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
+  "RunOnCloseLoc": {
+    "message": "Run on game close",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
   "KillAfterCloseLoc": {
     "message": "게임 종료 시 강제 종료",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
@@ -252,7 +256,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
-    "message": "계정 전환기 열기",
+    "message": "계정 전환",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "Settings": {
@@ -272,7 +276,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "또는, 원클릭 단축키를 사용합니다.\n자세한 사항은 여기를 클릭하십시오.",
+    "message": "Or use the app!\r\nClick here to learn more!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
@@ -308,7 +312,7 @@
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "ProfilePictureInputDescription": {
-    "message": "캐릭터의 서버와 이름을 입력해 주세요.",
+    "message": "캐릭터의 월드와 이름을 입력해 주세요.",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "CharacterName": {
@@ -316,7 +320,7 @@
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "WorldName": {
-    "message": "서버 이름",
+    "message": "월드 이름",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "OpenPluginsFolder": {
@@ -480,7 +484,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "제작: goat\nSpecial Thanks: Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, 그리고 the angry paissa artist\n\n문제가 있거나 이랬으면 좋겠다- 하는 사항들은, Discord 서버에 참여하거나 GitHub에 이슈로 남겨주세요!",
+    "message": "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "License": {
+    "message": "Licensed under GPLv3 or later. Click here for more.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
@@ -569,39 +577,39 @@
   },
   "LoginNoOauthMessage": {
     "message": "Square Enix 게정에 로그인 할 수 없습니다.\nOTP의 인증정보가 잘못 된 것일 수도 있습니다.\n\nSquare Enix로부터 온 이메일이 있는지 확인하십시오. \"의심스러운 활동\"으로 인해 비밀번호 변경을 요구할 수 있습니다.\n이 에러는 XIVLauncher의 보안 문제로 인해 발생한 것이 아닙니다. 계정 도난에 대비한 Square Enix의 안전 조치입니다.\nXIVLancher와 공식 런처는 비밀번호 변경 후 정상적으로 작동 할 것입니다.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
     "message": "\n\n자동 로그인이 비활성화 되었습니다.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "로그인 문제",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoServiceMessage": {
     "message": "이 Square Enix 계정은 FINAL FANTASY XIV를 플레이 할 수 없습니다.\n\n만약 스팀판이라면 \"Steam 서비스 계정 사용\" 체크박스를 체크하십시오.\n만약 자동 로그인이 켜져 있다면 런처 실행시 Shift를 홀드하여 설정을 확인할 수 있습니다.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginAcceptTermsMessage": {
     "message": "공식 런처에서 FINAL FANTASY XIV의 사용자 계약에 동의하십시오.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "EverythingIsFuckedMessage": {
     "message": "몇개의 필수 게임 파일들이 외부 요인에 의해 수정되거나 손상되었기 때문에 업데이트나 실행을 할 수 없습니다.\n계속하려면 게임을 완전히 지웠다가 재설치 하십시오.\n\n계속 오류가 발생하면 디스코드를 통해 알려주십시오.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "PatchInstallDisclaimer": {
     "message": "새로운 패치가 발견되어 설치 해야 게임을 이용할 수 있습니다.\nXIVLauncher를 통해 설치하시겠습니까?",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "LoginNoStartOk": {
     "message": "업데이트 체크가 이루어졌으며 모든 업데이트가 설치되었습니다.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "MaintenanceNotice": {
     "message": "점검이 진행 중인 것 같습니다. 게임을 실행할 수 없습니다.",
-    "description": "<StartLogin>d__17.MoveNext"
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "PatchManDlFailure": {
     "message": "XIVLancher가 다운로드 된 게임 파일을 검증할 수 없습니다.\n\n보통 사용자의 인터넷 연결에 문제가 있다는 것을 의미합니다.\n다시 이 에러가 발생한다면 일본 서버로 VPN을 사용하십시오.\n\nContext: {0}\n{1}",
