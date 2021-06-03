@@ -240,7 +240,7 @@ namespace XIVLauncher.Game
                 catch (Win32Exception ex)
                 {
                     CustomMessageBox.Show(
-                        "Could not start the game correctly. Please report this error.", "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        string.Format(Loc.Localize("NativeLauncherError", "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}"), ex.NativeErrorCode.ToString("X")), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                     Log.Error(ex, $"NativeLauncher error; {ex.NativeErrorCode}: {ex.Message}");
 
