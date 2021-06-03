@@ -32,21 +32,24 @@ jobs:
       - name: Build Squirrel Release
         id: build-squirrel
         run: |
-          $baseuri = 'https://github.com/goatcorp/FFXIVQuickLauncher/releases/latest/download' 
+          $releases = Invoke-WebRequest -Uri 'https://api.github.com/repos/goatcorp/FFXIVQuickLauncher/releases'
+          $current = ConvertFrom-Json -InputObject $releases.Content | Select-Object -First 1
           $refver = $env:GITHUB_REF -replace '.*/'
           echo "::set-output name=version::$refver"
           nuget pack .\XIVLauncher.nuspec -properties version=$refver
           mkdir Releases
-          Invoke-WebRequest -Uri $baseuri/RELEASES -OutFile .\Releases\RELEASES
-          $latest = Select-String -Path "Releases\RELEASES" -Pattern "XIVLauncher-(.*)-.*.nupkg" | Select-Object * -Last 1
-          $ver = $latest.Matches.groups[1].value
-          Invoke-WebRequest -Uri $baseuri/XIVLauncher-$ver-delta.nupkg -OutFile .\Releases\XIVLauncher-$ver-delta.nupkg
-          Invoke-WebRequest -Uri $baseuri/XIVLauncher-$ver-full.nupkg -OutFile .\Releases\XIVLauncher-$ver-full.nupkg
-          Invoke-WebRequest -Uri $baseuri/Setup.exe -OutFile .\Releases\Setup.exe
+          $release_file = $current.assets | Where-Object -Property name -Value RELEASES -EQ
+          Invoke-WebRequest -Uri $release_file.browser_download_url -OutFile .\Releases\RELEASES
+          $delta_file = $current.assets | Where-Object -Property name -Value "*delta.nupkg" -Like
+          Invoke-WebRequest -Uri $delta_file.browser_download_url -OutFile ".\Releases\$($delta_file.name)"
+          $full_file = $current.assets | Where-Object -Property name -Value "*full.nupkg" -Like
+          Invoke-WebRequest -Uri $full_file.browser_download_url -OutFile ".\Releases\$($full_file.name)"
+          $setup_file = $current.assets | Where-Object -Property name -Value "Setup.exe" -EQ
+          Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\Setup.exe
            ~\.nuget\packages\squirrel.windows\1.9.1\tools\Squirrel.exe --no-msi --releasify .\XIVLauncher.$refver.nupkg
           Start-Sleep -s 30
-          rm .\Releases\XIVLauncher-$ver-delta.nupkg
-          rm .\Releases\XIVLauncher-$ver-full.nupkg
+          rm ".\Releases\$($delta_file.name)"
+          rm ".\Releases\$($full_file.name)"
       - name: Create Release
         uses: softprops/action-gh-release@91409e712cf565ce9eff10c87a8d1b11b81757ae
         env:
