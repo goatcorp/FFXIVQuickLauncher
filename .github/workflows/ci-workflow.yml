@@ -62,6 +62,7 @@ jobs:
   build:
     name: Build on Windows
     runs-on: windows-2019
+    if: "!startsWith(github.ref, 'refs/tags/')"
     steps:
       - uses: actions/checkout@v1
       - name: Initialize Submodules
