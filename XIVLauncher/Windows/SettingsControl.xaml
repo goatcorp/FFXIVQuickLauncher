@@ -18,8 +18,6 @@
              d:DataContext="{d:DesignInstance viewModel:SettingsControlViewModel}">
     <UserControl.Resources>
         <xaml:StringToColorConverter x:Key="StringToColorConverter" />
-        <xaml:ChatTypeToFancyNameConverter
-                                           x:Key="ChatTypeToFancyNameConverter" />
     </UserControl.Resources>
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl"
