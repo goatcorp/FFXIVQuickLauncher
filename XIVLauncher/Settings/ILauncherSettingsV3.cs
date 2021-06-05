@@ -21,6 +21,7 @@ namespace XIVLauncher.Settings
         bool UniqueIdCacheEnabled { get; set; }
         string AdditionalLaunchArgs { get; set; }
         bool InGameAddonEnabled { get; set; }
+        bool OtpServerEnabled { get; set; }
         bool SteamIntegrationEnabled { get; set; }
         ClientLanguage? Language { get; set; }
         LauncherLanguage? LauncherLanguage { get; set; }

@@ -72,6 +72,7 @@ namespace XIVLauncher.Windows
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
 
             SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
+            OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
 
             // Get old setting if there is one
             if (App.Settings.OptOutMbCollection == null)
@@ -113,6 +114,7 @@ namespace XIVLauncher.Windows
                 App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
 
             App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
+            App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
 
             App.Settings.OptOutMbCollection = MbUploadOptOutCheckBox.IsChecked == true;
 

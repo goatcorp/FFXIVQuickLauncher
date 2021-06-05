@@ -28,25 +28,29 @@ namespace XIVLauncher.Windows
 
             OtpTextBox.Focus();
 
-            _otpListener = new OtpListener();
-            _otpListener.OnOtpReceived += otp =>
+            if (App.Settings.OtpServerEnabled)
             {
-                Result = otp;
-                Dispatcher.Invoke(() =>
+                _otpListener = new OtpListener();
+                _otpListener.OnOtpReceived += otp =>
                 {
-                    Close();
-                    _otpListener.Stop();
-                });
-            };
+                    Result = otp;
+                    Dispatcher.Invoke(() =>
+                    {
+                        Close();
+                        _otpListener?.Stop();
+                    });
+                };
 
-            try
-            {
-                // Start Listen
-                Task.Run(() => _otpListener.Start());
-            }
-            catch(Exception ex)
-            {
-                Log.Error(ex, "Could not start OTP HTTP listener.");
+                try
+                {
+                    // Start Listen
+                    Task.Run(() => _otpListener.Start());
+                    Log.Debug("OTP server started...");
+                }
+                catch(Exception ex)
+                {
+                    Log.Error(ex, "Could not start OTP HTTP listener.");
+                }
             }
         }
 
@@ -62,7 +66,7 @@ namespace XIVLauncher.Windows
                 return;
 
             Result = OtpTextBox.Text;
-            _otpListener.Stop();
+            _otpListener?.Stop();
             Close();
         }
 
@@ -72,13 +76,13 @@ namespace XIVLauncher.Windows
                 return;
 
             Result = OtpTextBox.Text;
-            _otpListener.Stop();
+            _otpListener?.Stop();
             Close();
         }
 
         private void CancelButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _otpListener.Stop();
+            _otpListener?.Stop();
             Close();
         }
 

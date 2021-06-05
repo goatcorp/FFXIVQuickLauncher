@@ -72,6 +72,7 @@ namespace XIVLauncher.Windows.ViewModel
             GamePathSafeguardLoc = Loc.Localize("GamePathSafeguardError",
                 "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead.");
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
+            OtpServerCheckBoxLoc = Loc.Localize("OtpServerCheckBox", "Enable XL Authenticator app/OTP macro support");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
             RunIntegrityCheckLoc = Loc.Localize("RunIntegrityCheck", "Run integrity check");
             RunIntegrityCheckTooltipLoc =
@@ -151,6 +152,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string GamePathLoc { get; private set; }
         public string GamePathSafeguardLoc { get; private set; }
         public string SteamCheckBoxLoc { get; private set; }
+        public string OtpServerCheckBoxLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
         public string RunIntegrityCheckLoc { get; private set; }
         public string RunIntegrityCheckTooltipLoc { get; private set; }
