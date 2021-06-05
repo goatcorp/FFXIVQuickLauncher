@@ -6,7 +6,7 @@ XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with
 
 <p align="center">
   <a href="https://github.com/goatcorp/FFXIVQuickLauncher/releases">
-    <img src="https://i.imgur.com/jxqlaAY.png" alt="drawing" width="500"/>
+    <img src="https://raw.githubusercontent.com/goatcorp/FFXIVQuickLauncher/master/misc/screenshot.png" alt="drawing" width="500"/>
   </a>
 </p>
 
