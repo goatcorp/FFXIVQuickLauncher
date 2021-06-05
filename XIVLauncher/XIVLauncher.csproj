@@ -267,7 +267,6 @@
     <Compile Include="Dalamud\DalamudStartInfo.cs" />
     <Compile Include="Game\ProblemCheck.cs" />
     <Compile Include="Game\ClientLanguage.cs" />
-    <Compile Include="Dalamud\XivChatType.cs" />
     <Compile Include="Encryption\ArgumentBuilder.cs" />
     <Compile Include="Encryption\Blowfish.cs" />
     <Compile Include="Game\OauthLoginException.cs" />
@@ -352,7 +351,6 @@
     <Compile Include="SteamWorksSharp\Native\Windows_x86\NativeLibrary.cs" />
     <Compile Include="SteamWorksSharp\SteamApi.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="Xaml\ChatTypeToFancyNameConverter.cs" />
     <Compile Include="Xaml\HideFromWindowSwitcher.cs" />
     <Compile Include="Xaml\StringToColorConverter.cs" />
     <Compile Include="Game\Launcher.cs" />
