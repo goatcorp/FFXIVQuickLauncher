@@ -582,7 +582,7 @@ namespace XIVLauncher.Windows
 
                     if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
                     {
-                        CustomMessageBox.Show(Loc.Localize("EverythingIsFuckedMessage", "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the completely game to continue.\n\nIf this keeps happening, please contact us via Discord."),
+                        CustomMessageBox.Show(Loc.Localize("EverythingIsFuckedMessage", "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord."),
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                         _isLoggingIn = false;
