@@ -597,6 +597,18 @@ namespace XIVLauncher.Windows
                         return;
                     }
 
+                    /*
+                     * The server requested us to patch Boot, even though in order to get to this code, we just checked for boot patches.
+                     *
+                     * This means that something or someone modified boot binaries without our involvement.
+                     * We have no way to go back to a "known" good state other than to do a full reinstall.
+                     *
+                     * This has happened multiple times with users that have viruses that infect other EXEs and change their hashes, causing the update
+                     * server to reject our boot hashes.
+                     *
+                     * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
+                     * complexity and if boot is fucked game probably is too.
+                     */
                     if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
                     {
                         CustomMessageBox.Show(Loc.Localize("EverythingIsFuckedMessage", "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord."),
