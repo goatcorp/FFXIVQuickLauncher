@@ -448,7 +448,7 @@ namespace XIVLauncher.Windows
             StartLogin(otp, startGame);
         }
 
-        private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus)
+        private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus, bool startGame)
         {
             var mutex = new Mutex(false, "XivLauncherIsPatching");
             if (mutex.WaitOne(0, false))
@@ -488,7 +488,24 @@ namespace XIVLauncher.Windows
 
                         if (args)
                         {
-                            await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
+                            if (!startGame)
+                            {
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    CustomMessageBox.Show(
+                                        Loc.Localize("LoginNoStartOk",
+                                            "An update check was executed and any pending updates were installed."), "XIVLauncher",
+                                        MessageBoxButton.OK, MessageBoxImage.Information, false);
+
+                                    _isLoggingIn = false;
+                                    Show();
+                                    Activate();
+                                });
+                            }
+                            else
+                            {
+                                await this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
+                            }
                             _installer.Stop();
                         }
                         else
@@ -599,7 +616,7 @@ namespace XIVLauncher.Windows
 
                         if (selfPatchAsk == MessageBoxResult.Yes)
                         {
-                            InstallGamePatch(loginResult, gateStatus);
+                            InstallGamePatch(loginResult, gateStatus, startGame);
                         }
                         else
                         {
@@ -611,7 +628,7 @@ namespace XIVLauncher.Windows
                     }
                     else
                     {
-                        InstallGamePatch(loginResult, gateStatus);
+                        InstallGamePatch(loginResult, gateStatus, startGame);
                     }
 
                     return;
