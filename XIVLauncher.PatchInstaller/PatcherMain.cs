@@ -90,8 +90,8 @@ namespace XIVLauncher.PatchInstaller
                 {
                     while (true)
                     {
-                        RunInstallQueue();
-                        if (Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher") && _queuedInstalls.IsEmpty)
+                        
+                        if ((Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher") && _queuedInstalls.IsEmpty) || !RunInstallQueue())
                         {
                             Environment.Exit(0);
                             return;
@@ -158,7 +158,7 @@ namespace XIVLauncher.PatchInstaller
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
-        private static void RunInstallQueue()
+        private static bool RunInstallQueue()
         {
             if (_queuedInstalls.TryDequeue(out var installData))
             {
@@ -209,8 +209,12 @@ namespace XIVLauncher.PatchInstaller
                     {
                         OpCode = PatcherIpcOpCode.InstallFailed
                     });
+
+                    return false;
                 }
             }
+
+            return true;
         }
 
         private static bool InstallPatch(string patchPath, string gamePath)
