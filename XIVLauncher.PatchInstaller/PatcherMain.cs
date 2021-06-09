@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -29,6 +30,8 @@ namespace XIVLauncher.PatchInstaller
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
             TypeNameHandling = TypeNameHandling.All
         };
+
+        private static readonly ConcurrentQueue<PatcherIpcStartInstall> _queuedInstalls = new ConcurrentQueue<PatcherIpcStartInstall>();
 
         static void Main(string[] args)
         {
@@ -83,15 +86,23 @@ namespace XIVLauncher.PatchInstaller
 
                 Log.Information("[PATCHER] sent hello");
 
-                while (true)
+                try
                 {
-                    if (Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher"))
+                    while (true)
                     {
-                        Environment.Exit(0);
-                        return;
-                    }
+                        RunInstallQueue();
+                        if (Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher") && _queuedInstalls.IsEmpty)
+                        {
+                            Environment.Exit(0);
+                            return;
+                        }
 
-                    Thread.Sleep(1000);
+                        Thread.Sleep(1000);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "PatcherMain loop encountered an error.");
                 }
             }
             catch (Exception ex)
@@ -117,58 +128,9 @@ namespace XIVLauncher.PatchInstaller
                     break;  
 
                 case PatcherIpcOpCode.StartInstall:
+
                     var installData = (PatcherIpcStartInstall) msg.Data;
-
-                    // Ensure that subdirs exist
-                    if (!installData.GameDirectory.Exists)
-                        installData.GameDirectory.Create();
-
-                    installData.GameDirectory.CreateSubdirectory("game");
-                    installData.GameDirectory.CreateSubdirectory("boot");
-
-                    Task.Run(() =>
-                        InstallPatch(installData.PatchFile.FullName,
-                            Path.Combine(installData.GameDirectory.FullName, installData.Repo == Repository.Boot ? "boot" : "game")))
-                        .ContinueWith(t =>
-                    {
-                        if (!t.Result)
-                        {
-                            Log.Error(t.Exception, "PATCH INSTALL FAILED");
-                            SendIpcMessage(new PatcherIpcEnvelope
-                            {
-                                OpCode = PatcherIpcOpCode.InstallFailed
-                            });
-                        }
-                        else
-                        {
-                            try
-                            {
-                                installData.Repo.SetVer(installData.GameDirectory, installData.VersionId);
-                                SendIpcMessage(new PatcherIpcEnvelope
-                                {
-                                    OpCode = PatcherIpcOpCode.InstallOk
-                                });
-
-                                try
-                                {
-                                    if (!installData.KeepPatch)
-                                        installData.PatchFile.Delete();
-                                }
-                                catch (Exception exception)
-                                {
-                                    Log.Error(exception, "Could not delete patch file.");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error(ex, "Could not set ver file");
-                                SendIpcMessage(new PatcherIpcEnvelope
-                                {
-                                    OpCode = PatcherIpcOpCode.InstallFailed
-                                });
-                            }
-                        }
-                    });
+                    _queuedInstalls.Enqueue(installData);
                     break;
 
                 case PatcherIpcOpCode.Finish:
@@ -194,6 +156,61 @@ namespace XIVLauncher.PatchInstaller
         {
             var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        private static void RunInstallQueue()
+        {
+            if (_queuedInstalls.TryDequeue(out var installData))
+            {
+                // Ensure that subdirs exist
+                if (!installData.GameDirectory.Exists)
+                    installData.GameDirectory.Create();
+
+                installData.GameDirectory.CreateSubdirectory("game");
+                installData.GameDirectory.CreateSubdirectory("boot");
+
+                try
+                {
+                    InstallPatch(installData.PatchFile.FullName,
+                        Path.Combine(installData.GameDirectory.FullName,
+                            installData.Repo == Repository.Boot ? "boot" : "game"));
+
+                    try
+                    {
+                        installData.Repo.SetVer(installData.GameDirectory, installData.VersionId);
+                        SendIpcMessage(new PatcherIpcEnvelope
+                        {
+                            OpCode = PatcherIpcOpCode.InstallOk
+                        });
+
+                        try
+                        {
+                            if (!installData.KeepPatch)
+                                installData.PatchFile.Delete();
+                        }
+                        catch (Exception exception)
+                        {
+                            Log.Error(exception, "Could not delete patch file.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not set ver file");
+                        SendIpcMessage(new PatcherIpcEnvelope
+                        {
+                            OpCode = PatcherIpcOpCode.InstallFailed
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "PATCH INSTALL FAILED");
+                    SendIpcMessage(new PatcherIpcEnvelope
+                    {
+                        OpCode = PatcherIpcOpCode.InstallFailed
+                    });
+                }
+            }
         }
 
         private static bool InstallPatch(string patchPath, string gamePath)
