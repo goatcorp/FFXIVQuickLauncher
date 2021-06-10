@@ -52,7 +52,7 @@ namespace XIVLauncher.Game.Patch
                 UserAgent = "FFXIV PATCH CLIENT",
                 Accept = "*/*"
             },
-            MaximumBytesPerSecond = App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE
+            MaximumBytesPerSecond = int.MaxValue
         };
 
         public event EventHandler<bool> OnFinish;
@@ -98,7 +98,7 @@ namespace XIVLauncher.Game.Patch
                 Slots[i] = true;
             }
 
-            ServicePointManager.DefaultConnectionLimit = 255;
+            //ServicePointManager.DefaultConnectionLimit = 255;
 
             Log.Information($"Downloading each patch with max speed of: {this._downloadOpt.MaximumBytesPerSecond}");
         }
@@ -151,7 +151,7 @@ namespace XIVLauncher.Game.Patch
 
             Actives[index] = download;
 
-            if (outFile.Exists && IsHashCheckPass(download.Patch, outFile))
+            if (outFile.Exists && CheckPatchValidity(download.Patch, outFile) == HashCheckResult.Pass)
             {
                 download.State = PatchState.Downloaded;
                 Slots[index] = true;
@@ -163,6 +163,7 @@ namespace XIVLauncher.Game.Patch
             _downloadOpt.TempDirectory = Path.Combine(_patchStore.FullName, "temp");
 
             var dlService = new DownloadService(_downloadOpt);
+
             dlService.DownloadProgressChanged += (sender, args) =>
             {
                 Progresses[index] = args.ReceivedBytesSize;
@@ -198,12 +199,14 @@ namespace XIVLauncher.Game.Patch
                     return;
                 }
 
+                var checkResult = CheckPatchValidity(download.Patch, outFile);
+
                 // Let's just bail for now, need better handling of this later
-                if (!IsHashCheckPass(download.Patch, outFile))
+                if (checkResult != HashCheckResult.Pass)
                 {
                     CancelAllDownloads();
                     Log.Error("IsHashCheckPass failed for {0} after DL", download.Patch.VersionId);
-                    CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "IsHashCheckPass", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), $"IsHashCheckPass({checkResult})", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     outFile.Delete();
                     Environment.Exit(0);
                     return;
@@ -226,6 +229,9 @@ namespace XIVLauncher.Game.Patch
 
         public void CancelAllDownloads()
         {
+            if (MessageBox.Show("Cancel downloads?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
+
             foreach (var downloadService in DownloadServices)
             {
                 try
@@ -258,7 +264,18 @@ namespace XIVLauncher.Game.Patch
 
                     toDl.State = PatchState.IsDownloading;
                     var curIndex = i;
-                    Task.Run(() => DownloadPatchAsync(toDl, curIndex));
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await DownloadPatchAsync(toDl, curIndex);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Exception in DownloadPatchAsync");
+                            throw;
+                        }
+                    });
                 }
             }
         }
@@ -329,15 +346,27 @@ namespace XIVLauncher.Game.Patch
             OnFinish?.Invoke(this, true);
         }
 
-        private static bool IsHashCheckPass(PatchListEntry patchListEntry, FileInfo path)
+        private enum HashCheckResult
+        {
+            Pass,
+            BadHash,
+            BadLength,
+        }
+
+        private static HashCheckResult CheckPatchValidity(PatchListEntry patchListEntry, FileInfo path)
         {
             if (patchListEntry.HashType != "sha1")
             {
                 Log.Error("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
-                return true;
+                return HashCheckResult.Pass;
             }
 
             var stream = path.OpenRead();
+
+            if (stream.Length != patchListEntry.Length)
+            {
+                return HashCheckResult.BadLength;
+            }
 
             var parts = (int) Math.Round((double) patchListEntry.Length / patchListEntry.HashBlockSize);
             var block = new byte[patchListEntry.HashBlockSize];
@@ -367,16 +396,16 @@ namespace XIVLauncher.Game.Patch
                     continue;
 
                 stream.Close();
-                return false;
+                return HashCheckResult.BadHash;
             }
 
             stream.Close();
-            return true;
+            return HashCheckResult.Pass;
         }
 
         private FileInfo GetPatchFile(PatchListEntry patch)
         {
-            var file = new FileInfo(Path.Combine(_patchStore.FullName, patch.Url.Substring("http://patch-dl.ffxiv.com/".Length)));
+            var file = new FileInfo(Path.Combine(_patchStore.FullName, patch.GetFilePath()));
             file.Directory.Create();
 
             return file;
