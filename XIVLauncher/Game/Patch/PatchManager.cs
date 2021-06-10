@@ -52,7 +52,7 @@ namespace XIVLauncher.Game.Patch
                 UserAgent = "FFXIV PATCH CLIENT",
                 Accept = "*/*"
             },
-            MaximumBytesPerSecond = int.MaxValue
+            MaximumBytesPerSecond = App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE,
         };
 
         public event EventHandler<bool> OnFinish;
