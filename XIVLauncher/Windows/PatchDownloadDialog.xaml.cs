@@ -55,7 +55,7 @@ namespace XIVLauncher.Windows
 
                     var pct = Math.Round((double) (100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
                     SetPatchProgress(i,
-                        $"{activePatch.Patch} ({pct:#0.00}%, {Util.BytesToString(_manager.Speeds[i])}/s)",
+                        $"{activePatch.Patch} ({pct:#0.0}%, {Util.BytesToString(_manager.Speeds[i])}/s)",
                         pct);
                 }
 
