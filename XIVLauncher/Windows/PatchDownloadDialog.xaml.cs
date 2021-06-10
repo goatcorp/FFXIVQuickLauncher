@@ -47,13 +47,13 @@ namespace XIVLauncher.Windows
                 {
                     var activePatch = _manager.Actives[i];
 
-                    if (_manager.Slots[i] || activePatch == null)
+                    if (_manager.Slots[i] == PatchManager.SlotState.Done || activePatch == null)
                     {
                         SetPatchProgress(i, ViewModel.PatchDoneLoc, 100f);
                         continue;
                     }
 
-                    if (_manager.Progresses[i] == -1)
+                    if (_manager.Slots[i] == PatchManager.SlotState.Checking)
                     {
                         SetPatchProgress(i,
                             $"{activePatch.Patch} ({ViewModel.PatchCheckingLoc})", 100f);

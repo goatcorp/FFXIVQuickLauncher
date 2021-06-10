@@ -69,10 +69,17 @@ namespace XIVLauncher.Game.Patch
 
         public int CurrentInstallIndex { get; private set; }
 
+        public enum SlotState
+        {
+            InProgress,
+            Checking,
+            Done,
+        }
+
         public readonly long[] Progresses = new long[MAX_DOWNLOADS_AT_ONCE];
         public readonly double[] Speeds = new double[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchDownload[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
-        public readonly bool[] Slots = new bool[MAX_DOWNLOADS_AT_ONCE];
+        public readonly SlotState[] Slots = new SlotState[MAX_DOWNLOADS_AT_ONCE];
         public readonly DownloadService[] DownloadServices = new DownloadService[MAX_DOWNLOADS_AT_ONCE];
 
         public bool DownloadsDone { get; private set; }
@@ -95,7 +102,7 @@ namespace XIVLauncher.Game.Patch
             // All dl slots are available at the start
             for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
             {
-                Slots[i] = true;
+                Slots[i] = SlotState.Done;
             }
 
             //ServicePointManager.DefaultConnectionLimit = 255;
@@ -154,7 +161,7 @@ namespace XIVLauncher.Game.Patch
             if (outFile.Exists && CheckPatchValidity(download.Patch, outFile) == HashCheckResult.Pass)
             {
                 download.State = PatchState.Downloaded;
-                Slots[index] = true;
+                Slots[index] = SlotState.Done;
                 Progresses[index] = download.Patch.Length;
                 return;
             }
@@ -202,7 +209,7 @@ namespace XIVLauncher.Game.Patch
                 var checkResult = CheckPatchValidity(download.Patch, outFile);
 
                 // Indicate "Checking..."
-                Progresses[index] = -1;
+                Slots[index] = SlotState.Checking;
 
                 // Let's just bail for now, need better handling of this later
                 if (checkResult != HashCheckResult.Pass)
@@ -216,7 +223,7 @@ namespace XIVLauncher.Game.Patch
                 }
 
                 download.State = PatchState.Downloaded;
-                Slots[index] = true;
+                Slots[index] = SlotState.Done;
                 Progresses[index] = 0;
                 Speeds[index] = 0;
 
@@ -257,10 +264,10 @@ namespace XIVLauncher.Game.Patch
                 Thread.Sleep(500);
                 for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
                 {
-                    if (!Slots[i]) 
+                    if (Slots[i] != SlotState.Done) 
                         continue;
 
-                    Slots[i] = false;
+                    Slots[i] = SlotState.InProgress;
 
                     var toDl = Downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
 
