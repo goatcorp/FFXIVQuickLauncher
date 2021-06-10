@@ -53,10 +53,18 @@ namespace XIVLauncher.Windows
                         continue;
                     }
 
-                    var pct = Math.Round((double) (100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
-                    SetPatchProgress(i,
-                        $"{activePatch.Patch} ({pct:#0.0}%, {Util.BytesToString(_manager.Speeds[i])}/s)",
-                        pct);
+                    if (_manager.Progresses[i] == -1)
+                    {
+                        SetPatchProgress(i,
+                            $"{activePatch.Patch} ({ViewModel.PatchCheckingLoc})", 100f);
+                    }
+                    else
+                    {
+                        var pct = Math.Round((double) (100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
+                        SetPatchProgress(i,
+                            $"{activePatch.Patch} ({pct:#0.0}%, {Util.BytesToString(_manager.Speeds[i])}/s)",
+                            pct);
+                    }
                 }
 
                 if (_manager.DownloadsDone)

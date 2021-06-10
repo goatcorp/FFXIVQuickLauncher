@@ -201,6 +201,9 @@ namespace XIVLauncher.Game.Patch
 
                 var checkResult = CheckPatchValidity(download.Patch, outFile);
 
+                // Indicate "Checking..."
+                Progresses[index] = -1;
+
                 // Let's just bail for now, need better handling of this later
                 if (checkResult != HashCheckResult.Pass)
                 {
@@ -229,8 +232,10 @@ namespace XIVLauncher.Game.Patch
 
         public void CancelAllDownloads()
         {
+            #if DEBUG
             if (MessageBox.Show("Cancel downloads?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 return;
+            #endif
 
             foreach (var downloadService in DownloadServices)
             {
