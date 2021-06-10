@@ -44,10 +44,10 @@ namespace XIVLauncher.Game.Patch
 
         public InstallerState State { get; private set; } = InstallerState.NotStarted;
 
-        public void StartIfNeeded()
+        public bool StartIfNeeded()
         {
             if (State != InstallerState.NotStarted)
-                return;
+                return true;
 
             _serverPort = DEFAULT_IPC_SERVER_PORT;
             _clientPort = DEFAULT_IPC_CLIENT_PORT;
@@ -81,7 +81,17 @@ namespace XIVLauncher.Game.Patch
 
             State = InstallerState.NotReady;
 
-            Process.Start(startInfo);
+            try
+            {
+                Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not launch Patch Installer");
+                return false;
+            }
+
+            return true;
         }
 
         public void WaitOnHello()

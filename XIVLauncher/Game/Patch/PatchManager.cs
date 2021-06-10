@@ -143,7 +143,13 @@ namespace XIVLauncher.Game.Patch
             }
 #endif
 
-            _installer.StartIfNeeded();
+            if(!_installer.StartIfNeeded())
+            {
+                CustomMessageBox.Show(Loc.Localize("PatchManNoInstaller", "The patch installer could not start correctly.\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                OnFinish?.Invoke(this, false);
+                return;
+            }
             _installer.WaitOnHello();
 
             Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
