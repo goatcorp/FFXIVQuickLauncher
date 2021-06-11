@@ -465,5 +465,17 @@ namespace XIVLauncher.Windows
         {
             Process.Start(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources", "LICENSE.txt"));
         }
+
+        private void Logo_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+#if DEBUG
+            var fts = new FirstTimeSetup();
+            fts.ShowDialog();
+
+            Log.Debug($"WasCompleted: {fts.WasCompleted}");
+
+            this.ReloadSettings();
+#endif
+        }
     }
 }

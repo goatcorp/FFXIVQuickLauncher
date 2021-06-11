@@ -306,7 +306,7 @@
 
                         <Image Source="pack://application:,,,/Resources/logo.png" Width="200"
                                HorizontalAlignment="Left" Margin="500,0,0,0" Opacity="0.8"
-                               RenderOptions.BitmapScalingMode="HighQuality" />
+                               RenderOptions.BitmapScalingMode="HighQuality" MouseUp="Logo_OnMouseUp" />
                     </Grid>
                 </ScrollViewer>
             </TabItem>
