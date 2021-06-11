@@ -23,14 +23,14 @@ namespace XIVLauncher.Windows.ViewModel
             FirstTimeSteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
             FirstTimeDirectXLoc = Loc.Localize("ChooseDirectX", "Please select which DirectX version you want to use.");
             DirectX9NoticeLoc = Loc.Localize("DirectX9Notice",
-                "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from\r\nSE for any technical issues any additional XIVLauncher features such as Rich Presence and the\r\nIn-Game addon will not work.");
+                "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and the In-Game addon will not work.");
             FirstTimeLanguageLoc = Loc.Localize("ChooseLanguage", "Please select which language you want to load the game with.");
             FirstTimeActLaunchLoc = Loc.Localize("FirstTimeActLaunch",
                 "Advanced Combat Tracker is installed on your computer.\r\nDo you want to launch it automatically when launching the game?");
             FirstTimeActLaunchCheckBoxLoc = Loc.Localize("FirstTimeActLaunchCheckBox", "Enable ACT Auto-Launch");
             NextLoc = Loc.Localize("Next", "Next");
             FirstTimeDalamudLoc = Loc.Localize("FirstTimeDalamudNotice",
-                "Do you want to enable the XIVLauncher in-game features?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and\r\nDiscord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the\r\nin-game tab.\r\nEnabling this however could cause a false positive on your antivirus software, please\r\ncheck its settings and add any needed exclusions if you run into problems.");
+                "Do you want to enable the XIVLauncher in-game features?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the in-game tab.\r\nEnabling this however could cause a false positive on your antivirus software, please check its settings and add any needed exclusions if you run into problems.");
             FirstTimeDalamudCheckBoxLoc = Loc.Localize("FirstTimeDalamudCheckBox", "Enable In-Game features");
         }
 
