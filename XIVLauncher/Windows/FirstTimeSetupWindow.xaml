@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:XIVLauncher"
         xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
         mc:Ignorable="d"
-        Title="XIVLauncher Setup" Height="241.747" Width="533.495" WindowStartupLocation="CenterScreen"
+        Title="XIVLauncher Setup" SizeToContent="Height" Width="450" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
@@ -22,27 +22,27 @@
             </TabControl.ItemContainerStyle>
 
             <TabItem Header="Path">
-                <Grid>
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                               Margin="10,10,0,0" Foreground="{DynamicResource MaterialDesignBody}"
+                <StackPanel Margin="10, 0, 0, 0">
+                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"
+                               Margin="0,10,0,10" Foreground="{DynamicResource MaterialDesignBody}"
                                Text="{Binding FirstTimeGamePathLoc}" />
                     <components:FolderEntry x:Name="GamePathEntry" Description="Select a folder"
-                                            Margin="10,0,0,60" Width="400" VerticalAlignment="Center"
+                                            Margin="0,0,0,40" Width="400" VerticalAlignment="Center"
                                             HorizontalAlignment="Left"
                                             Foreground="{DynamicResource MaterialDesignBody}" />
-                    <TextBlock Margin="10,110,0,0"
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeSteamNoticeLoc}"/>
                     <CheckBox x:Name="SteamCheckBox" Content="{Binding FirstTimeSteamCheckBoxLoc}"
-                              HorizontalAlignment="Left" Margin="10,75,0,0"
+                              HorizontalAlignment="Left" Margin="0,0,0,15"
                               Foreground="{DynamicResource MaterialDesignBody}" />
                     <Button Content="{Binding NextLoc}" Width="79" VerticalAlignment="Bottom"
                             HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click" />
-                </Grid>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Dx">
                 <Grid>
                     <StackPanel Margin="10,10,0,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeDirectXLoc}"/>
 
                         <RadioButton Margin="0, 5, 0, 0" GroupName="dx" IsChecked="True"
@@ -66,10 +66,10 @@
             <TabItem Header="Language">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeLanguageLoc}"/>
 
-                        <ComboBox SelectedIndex="1" Margin="0, 5, 0, 0"
+                        <ComboBox SelectedIndex="1" Margin="0, 5, 0, 70"
                                   x:Name="LanguageComboBox" Foreground="{DynamicResource MaterialDesignBody}">
                             <ComboBoxItem>日本語</ComboBoxItem>
                             <ComboBoxItem>English</ComboBoxItem>
@@ -84,13 +84,13 @@
             <TabItem Header="ACT">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeActLaunchLoc}"/>
 
                         <!--<Image Source="pack://application:,,,/Resources/actlaunch.png" Width="100" HorizontalAlignment="Left" Margin="0,30,0,0" />-->
 
                         <CheckBox x:Name="ActCheckBox" Content="{Binding FirstTimeActLaunchCheckBoxLoc}"
-                                  HorizontalAlignment="Left" Margin="0,10,0,0"
+                                  HorizontalAlignment="Left" Margin="0,10,0,50"
                                   Foreground="{DynamicResource MaterialDesignBody}" />
 
                     </StackPanel>
@@ -101,11 +101,11 @@
             <TabItem Header="Hooks">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
+                        <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeDalamudLoc}"/>
 
                         <CheckBox x:Name="HooksCheckBox" Content="{Binding FirstTimeDalamudCheckBoxLoc}"
-                                  HorizontalAlignment="Left" Margin="0,25,0,0"
+                                  HorizontalAlignment="Left" Margin="0,25,0,50"
                                   Foreground="{DynamicResource MaterialDesignBody}" IsChecked="True" />
 
                     </StackPanel>
