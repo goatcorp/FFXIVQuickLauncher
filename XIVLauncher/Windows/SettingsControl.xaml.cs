@@ -69,7 +69,10 @@ namespace XIVLauncher.Windows
 
             InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
 
+            // Prevent raising events...
+            this.EnableHooksCheckBox.Checked -= this.EnableHooksCheckBox_OnChecked;
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
+            this.EnableHooksCheckBox.Checked += this.EnableHooksCheckBox_OnChecked;
 
             SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
             OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
@@ -82,8 +85,6 @@ namespace XIVLauncher.Windows
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
-
-            EnableHooksCheckBox.Checked += EnableHooksCheckBox_OnChecked;
 
             var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
 
