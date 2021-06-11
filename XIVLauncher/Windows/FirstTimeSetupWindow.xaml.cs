@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using CheapLoc;
+using IWshRuntimeLibrary;
 using Microsoft.Win32;
+using Shell32;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
@@ -36,25 +38,23 @@ namespace XIVLauncher.Windows
 #endif
         }
 
+        public static string GetShortcutTargetFile(string path)
+        {
+            var shell = new WshShell();
+            var shortcut = (IWshShortcut) shell.CreateShortcut(path);
+
+            return shortcut.TargetPath;
+        }
+
         private string FindAct()
         {
             try
             {
-                var parentKey =
-                    Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall");
+                var shortcutDir = new DirectoryInfo(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs",
+                    "Advanced Combat Tracker"));
 
-                var nameList = parentKey.GetSubKeyNames();
-                foreach (var name in nameList)
-                {
-                    var regKey = parentKey.OpenSubKey(name);
-
-                    var value = regKey.GetValue("DisplayName");
-                    if (value != null && value.ToString() == "Advanced Combat Tracker (remove only)")
-                        return Path.GetDirectoryName(regKey.GetValue("UninstallString").ToString()
-                            .Replace("\"", string.Empty));
-                }
-
-                return null;
+                return GetShortcutTargetFile(Path.Combine(shortcutDir.FullName, "ACT - Advanced Combat Tracker.lnk"));
             }
             catch
             {
