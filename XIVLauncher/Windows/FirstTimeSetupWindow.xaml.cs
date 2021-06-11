@@ -5,11 +5,8 @@ using System.IO;
 using System.Windows;
 using CheapLoc;
 using IWshRuntimeLibrary;
-using Microsoft.Win32;
-using Shell32;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
-using XIVLauncher.Settings;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
