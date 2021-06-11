@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using CheapLoc;
@@ -15,6 +17,8 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class FirstTimeSetup : Window
     {
+        public bool WasCompleted { get; private set; } = false;
+
         public FirstTimeSetup()
         {
             InitializeComponent();
@@ -120,6 +124,7 @@ namespace XIVLauncher.Windows
                     });
                 }
 
+                WasCompleted = true;
                 Close();
             }
 

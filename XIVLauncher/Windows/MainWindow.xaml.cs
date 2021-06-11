@@ -232,6 +232,13 @@ namespace XIVLauncher.Windows
             {
                 var setup = new FirstTimeSetup();
                 setup.ShowDialog();
+
+                // If the user didn't reach the end of the setup, we should quit
+                if (!setup.WasCompleted)
+                {
+                    Environment.Exit(0);
+                    return;
+                }
                 
                 SettingsControl.ReloadSettings();
             }
