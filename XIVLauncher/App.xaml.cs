@@ -232,7 +232,7 @@ namespace XIVLauncher
                 }
             }
             
-            Log.Information("Loading MainWindow for account '{0}'", accountName);
+            Log.Verbose("Loading MainWindow for account '{0}'", accountName);
 
             if (EnvironmentSettings.IsDisableUpdates)
             {

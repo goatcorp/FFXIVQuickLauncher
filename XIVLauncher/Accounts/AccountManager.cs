@@ -53,11 +53,11 @@ namespace XIVLauncher.Accounts
         {
             var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);
 
-            Log.Information($"existingAccount: {existingAccount?.Id}");
+            Log.Verbose($"existingAccount: {existingAccount?.Id}");
 
             if (existingAccount != null && existingAccount.Password != account.Password)
             {
-                Log.Information("Updating password...");
+                Log.Verbose("Updating password...");
                 existingAccount.Password = account.Password;
                 return;
             }
