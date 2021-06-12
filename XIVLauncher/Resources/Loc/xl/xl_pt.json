@@ -1,4 +1,8 @@
 {
+  "updatefailureerror": {
+    "message": "XIVLauncher não conseguiu procurar por atualizações. Isso pode ser causado por problemas de conectividade ao GitHub. Aguarde alguns minutos e tente novamente.\nDesative sua VPN, se você tiver uma.\nSe continuar a falhar depois de alguns minutos, junte-se ao Discord encontrado no GitHub para assistência.",
+    "description": "<Run>d__0.MoveNext"
+  },
   "ReleaseInfoUnavailable": {
     "message": "Não foi possível obter as informações do lançamento.",
     "description": "ChangelogWindow..ctor"
@@ -9,6 +13,10 @@
   },
   "DalamudUpdateAssets": {
     "message": "Atualizando recursos...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUpdateRuntime": {
+    "message": "Atualizando runtime...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUnavailable": {
@@ -51,6 +59,18 @@
     "message": " (desabilitado)",
     "description": "SettingsControl.ReloadPluginList"
   },
+  "IntegrityCheckImpossible": {
+    "message": "Ainda não há nenhum relatório de referência para esta versão do jogo. Por favor, tente novamente mais tarde.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckFailed": {
+    "message": "Alguns arquivos do jogo parecem ter sido modificados ou corrompidos. Por favor, verifique o arquivo \"integrityreport.txt\" na pasta do XIVLauncher para mais informações.\n\nVocê quer voltar o jogo para a versão anterior? Isso permitirá que você faça a atualização novamente, provavelmente corrigindo os problemas que você está encontrando.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckValid": {
+    "message": "Sua instalação do jogo parece ser válida.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
   "NewsLoading": {
     "message": "Carregando...",
     "description": "MainWindow..ctor"
@@ -90,6 +110,42 @@
   "NewsDlFailed": {
     "message": "Não foi possível efetuar o download das notícias.",
     "description": "MainWindow.<SetupHeadlines>b__10_3"
+  },
+  "LoginNoStartOk": {
+    "message": "Uma verificação de atualização foi executada e todas as atualizações pendentes foram instaladas.",
+    "description": "<>c__DisplayClass17_0.<InstallGamePatch>b__3"
+  },
+  "LoginNoOauthMessage": {
+    "message": "Não foi possível iniciar a sessão na sua conta do Square Enix.\nIsso poderia ser causado por credenciais ou senhas de uso único incorretas.\n\nPor favor, verifique seu email para quaisquer mensagens da Square Enix - talvez eles queiram que você redefina a sua senha devido a \"atividade suspeita\".\nIsto NÃO é causado por um problema de segurança no XIVLauncher, é apenas uma medida de segurança da Square Enix para evitar que logins de novas localizações, caso sua conta esteja sendo roubada.\nXIVLauncher e o launcher oficial funcionarão corretamente após redefinir sua senha.",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nO Login automático foi desativado.",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Problema de login",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Esta conta da Square Enix não pode jogar FINAL FANTASY XIV.\n\nSe você comprou FINAL FANTASY XIV no Steam, verifique a caixa de seleção \"Use a conta de serviço Steam\" enquanto faz o login.\nSe o Login Automático estiver ativado, pressione shift enquanto inicializa a acessar as configurações.",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Por favor, aceite os Termos de Uso do FINAL FANTASY XIV no launcher oficial.",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Alguns arquivos essenciais do jogo foram modificados/corrompidos por alguma ferramenta de terceiro, impossibilitando a atualização e até mesmo a abertura do jogo.\nSerá necessário reinstalar o jogo por completo para poder continuar.\n\nCaso isso continue acontecendo, entre em contato conosco através do nosso servidor do Discord.",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "Uma nova atualização foi encontrada que precisa ser instalada antes que você possa jogar.\nVocê deseja que o XIVLauncher o instale?",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "A manutenção parece estar em andamento. O jogo não deve ser iniciado.",
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "Definir imagem de perfil",
@@ -143,8 +199,8 @@
     "message": "Reportar erro",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
-  "ChooseGamePath": {
-    "message": "Por favor, selecione a pasta na qual seu jogo está instalado.\nEla deve conter as pastas \"game\" e \"boot\".",
+  "ChooseGamePathFTS": {
+    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
@@ -155,16 +211,16 @@
     "message": "Habilitar integração com o Steam",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "ChooseDirectX": {
-    "message": "Selecione qual versão DirectX deseja usar.",
+  "ChooseDirectXFTS": {
+    "message": "Please select which DirectX version you want to use.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "DirectX9Notice": {
-    "message": "O modo DirectX 9 não é mais suportado. O jogo ainda vai iniciar, mas você não obterá suporte da\nSquare Enix para quaisquer problemas técnicos. Quaisquer funções adicionais do XIVLauncher como o Rich Presence e o\naddon no jogo não funcionarão.",
+  "DirectX9NoticeFTS": {
+    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and the In-Game addon will not work.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "ChooseLanguage": {
-    "message": "Por favor, selecione com qual idioma você deseja carregar o jogo.",
+  "ChooseLanguageFTS": {
+    "message": "Please select which language you want to load the game with.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
@@ -180,7 +236,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Deseja ativar as funções In-game do XIVLauncher?\nIsso permitirá adicionar algumas funcionalidades extras em seu jogo, como por exemplo habilitar notificações do Discord para mensagens recebidas no chat, um filtro de Spam (RTM) ou até mesmo alertas caso seu Duty Finder encontre uma partida, entre muitas outras funções.\n\nPara configurar está opção, entre no Menu de Configurações do XIVLauncher e navegue até a Aba In-Game/Em jogo. \nNo entanto, isso pode fazer com que seu Antivírus acuse o XIVLauncher como sendo um Falso Positivo, impossibilitando sua execução. Caso isso aconteça, verifique as configurações do seu Antivírus e adicione o executável na lista de exceções para evitar problemas.",
+    "message": "Do you want to enable the XIVLauncher in-game features?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the in-game tab.\r\nEnabling this however could cause a false positive on your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -335,6 +391,14 @@
     "message": "Jogo",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ChooseGamePath": {
+    "message": "Por favor, selecione a pasta na qual seu jogo está instalado.\nEla deve conter as pastas \"game\" e \"boot\".",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpServerCheckBox": {
+    "message": "Ativar o supoorte às macros do aplicativo/OTP XL Authenticator",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "Argumentos adicionais de inicialização",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -349,6 +413,18 @@
   },
   "SettingsGameSettings": {
     "message": "Configurações do jogo",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDirectX": {
+    "message": "Selecione qual versão DirectX deseja usar.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DirectX9Notice": {
+    "message": "O modo DirectX 9 não é mais suportado. O jogo ainda vai iniciar, mas você não obterá suporte da\nSquare Enix para quaisquer problemas técnicos. Quaisquer funções adicionais do XIVLauncher como o Rich Presence e o\naddon no jogo não funcionarão.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLanguage": {
+    "message": "Por favor, selecione com qual idioma você deseja carregar o jogo.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLauncherLanguage": {
@@ -539,9 +615,25 @@
     "message": "MacType foi detectado neste PC.\nIsso causará problemas com o FFXIV; tanto o launcher oficial quanto o XIVLauncher.\n\nPor favor, exclua XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater e ffxiv_dx11 do MacType.",
     "description": "ProblemCheck.RunCheck"
   },
+  "BinaryNotPresentError": {
+    "message": "Não foi possível encontrar o executável do jogo.\nIsso pode ser causado pelo seu antivírus. Você poderá ter que reinstalar o jogo.",
+    "description": "Launcher.LaunchGame"
+  },
+  "NativeLauncherError": {
+    "message": "Não foi possível iniciar o jogo corretamente. Por favor, reporte este erro.\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
   "PatchInstallerNotOpen": {
     "message": "Não foi possível conectar ao instalador de atualizações.\nPor favor, reporte este erro.",
     "description": "PatchInstaller.WaitOnHello"
+  },
+  "PatchManNoInstaller": {
+    "message": "O instalador de patch não pôde ser iniciado corretamente.\n\nSe você negou o acesso a ele, por favor, tente novamente. Se este problema persistir, entre em contato conosco por meio do Discord.",
+    "description": "PatchManager.Start"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher não pôde verificar os arquivos do jogo baixados.\n\nIsto geralmente indica um problema com a sua conexão com a internet.\nSe este erro ocorrer novamente, tente usar uma VPN definida para o Japão.\n\nContexto: {0}\n{1}",
+    "description": "<>c__DisplayClass28_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "O addon encontrou um erro.\n\nIsso provavelmente é causado pelo seu antivírus. Por favor coloque na lista de exceções os arquivos em quarentena ou desative o addon.",
@@ -558,61 +650,5 @@
   "DalamudVcRedistError": {
     "message": "Os addons in-game do XIVLauncher necessitam do Microsoft Visual C++ 2015-2019 Redistributable e do .NET Framework 4.8 instalados em seu PC para funcionarem. Por favor, faça a instalação deles através do site oficial da Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
-  },
-  "updatefailureerror": {
-    "message": "XIVLauncher não conseguiu procurar por atualizações. Isso pode ser causado por problemas de conectividade ao GitHub. Aguarde alguns minutos e tente novamente.\nDesative sua VPN, se você tiver uma.\nSe continuar a falhar depois de alguns minutos, junte-se ao Discord encontrado no GitHub para assistência.",
-    "description": "<Run>d__0.MoveNext"
-  },
-  "IntegrityCheckImpossible": {
-    "message": "Ainda não há nenhum relatório de referência para esta versão do jogo. Por favor, tente novamente mais tarde.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckFailed": {
-    "message": "Alguns arquivos do jogo parecem ter sido modificados ou corrompidos. Por favor, verifique o arquivo \"integrityreport.txt\" na pasta do XIVLauncher para mais informações.\n\nVocê quer voltar o jogo para a versão anterior? Isso permitirá que você faça a atualização novamente, provavelmente corrigindo os problemas que você está encontrando.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckValid": {
-    "message": "Sua instalação do jogo parece ser válida.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "LoginNoOauthMessage": {
-    "message": "Não foi possível iniciar a sessão na sua conta do Square Enix.\nIsso poderia ser causado por credenciais ou senhas de uso único incorretas.\n\nPor favor, verifique seu email para quaisquer mensagens da Square Enix - talvez eles queiram que você redefina a sua senha devido a \"atividade suspeita\".\nIsto NÃO é causado por um problema de segurança no XIVLauncher, é apenas uma medida de segurança da Square Enix para evitar que logins de novas localizações, caso sua conta esteja sendo roubada.\nXIVLauncher e o launcher oficial funcionarão corretamente após redefinir sua senha.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\nO Login automático foi desativado.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "Problema de login",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "Esta conta da Square Enix não pode jogar FINAL FANTASY XIV.\n\nSe você comprou FINAL FANTASY XIV no Steam, verifique a caixa de seleção \"Use a conta de serviço Steam\" enquanto faz o login.\nSe o Login Automático estiver ativado, pressione shift enquanto inicializa a acessar as configurações.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "Por favor, aceite os Termos de Uso do FINAL FANTASY XIV no launcher oficial.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "Alguns arquivos essenciais do jogo foram modificados/corrompidos por alguma ferramenta de terceiro, impossibilitando a atualização e até mesmo a abertura do jogo.\nSerá necessário reinstalar o jogo por completo para poder continuar.\n\nCaso isso continue acontecendo, entre em contato conosco através do nosso servidor do Discord.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "Uma nova atualização foi encontrada que precisa ser instalada antes que você possa jogar.\nVocê deseja que o XIVLauncher o instale?",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoStartOk": {
-    "message": "Uma verificação de atualização foi executada e todas as atualizações pendentes foram instaladas.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "MaintenanceNotice": {
-    "message": "A manutenção parece estar em andamento. O jogo não deve ser iniciado.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchManDlFailure": {
-    "message": "XIVLauncher não pôde verificar os arquivos do jogo baixados.\n\nIsto geralmente indica um problema com a sua conexão com a internet.\nSe este erro ocorrer novamente, tente usar uma VPN definida para o Japão.\n\nContexto: {0}\n{1}",
-    "description": "<>c__DisplayClass27_0.<DownloadPatchAsync>b__1"
   }
 }

@@ -1,4 +1,8 @@
 {
+  "updatefailureerror": {
+    "message": "XIVLauncherは更新の確認に失敗しました。GitHubへの接続の問題の可能性があります。数分待ってからもう一度試してください。\nもしVPNを利用している場合は無効化してみてください。\n数分待っても問題が続くようであれば、GitHubにリンクを載せているDiscordに参加して助けを求めてみてください。",
+    "description": "<Run>d__0.MoveNext"
+  },
   "ReleaseInfoUnavailable": {
     "message": "バージョン情報を取得できませんでした。",
     "description": "ChangelogWindow..ctor"
@@ -9,6 +13,10 @@
   },
   "DalamudUpdateAssets": {
     "message": "アセットを更新しています...",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUpdateRuntime": {
+    "message": "ランタイムを更新中...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUnavailable": {
@@ -51,6 +59,18 @@
     "message": " (無効化)",
     "description": "SettingsControl.ReloadPluginList"
   },
+  "IntegrityCheckImpossible": {
+    "message": "このゲームバージョンはまだ参照レポートがありません。後ほど再度お試し下さい。",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckFailed": {
+    "message": "一部のゲームファイルが変更、または破損しているようです。詳しくはXIVLauncherフォルダ内の \"Integrityreport.txt \"ファイルをご確認ください。\n\nゲームを最新パッチのデータでリセットしますか？再度パッチを当てることで、問題が解決される可能性があります。",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckValid": {
+    "message": "ゲームインストールは有効性がありそうです。",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
   "NewsLoading": {
     "message": "ロード中……",
     "description": "MainWindow..ctor"
@@ -90,6 +110,42 @@
   "NewsDlFailed": {
     "message": "最新ニュースを取得できませんでした。",
     "description": "MainWindow.<SetupHeadlines>b__10_3"
+  },
+  "LoginNoStartOk": {
+    "message": "更新チェックが実行され、保留中のアップデートがインストールされました。",
+    "description": "<>c__DisplayClass17_0.<InstallGamePatch>b__3"
+  },
+  "LoginNoOauthMessage": {
+    "message": "入力されたスクウェア・エニックス アカウントではログインできませんでした。\n認証情報に誤りがあるか、ワンタイムパスワードが間違っている可能性があります。\n\n「不審な挙動」によるパスワードリセットのメールがスクウェア・エニックスから届いていないかメールを確認してみてください。\nXIVLauncherのセキュリティの問題ではなく、アカウントハック対策として記録にない地域からログインしようとした際にスクウェア・エニックスが行うことがあります。\nパスワードリセット後は今まで通りXIVLauncherでも公式のランチャーでも正常に動作します。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n自動ログインは無効になっています。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "ログインの問題",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "このスクウェア・エニックス アカウントでFINAL FANTASY XIVをプレイすることができません。\n\nFINAL FANTASY XIVをSteamで購入している場合は、「Steamアカウントを使用」にチェックを付けてください。\nもし「自動的にログイン」を有効にしている場合は、設定が表示されるまでシフトキーを押し続けてください。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "公式ランチャーで「ファイナルファンタジーXIV 利用規約」に同意してください。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "特定の重要なゲームファイルが第三者によって変更/破損されており、ゲームを更新したり開始したりすることができません。\n続行するには、ゲームを完全に再インストールする必要があります。\n\nこの問題が続く場合は、Discordからお問い合わせください。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "新しいパッチをインストールする必要があります。\nXIVLauncherにインストールさせますか？",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "メンテナンス中です。ゲームを起動しないでください。",
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "プロフィール画像を設定",
@@ -143,8 +199,8 @@
     "message": "エラーを報告します",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
-  "ChooseGamePath": {
-    "message": "\nゲームがインストールされているフォルダを選択してください。\n対象のフォルダには \"game\" と \"boot\" フォルダが入っています。",
+  "ChooseGamePathFTS": {
+    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
@@ -155,16 +211,16 @@
     "message": "Steamとの統合を有効化",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "ChooseDirectX": {
-    "message": "使用する DirectX のバージョンを選択して下さい。",
+  "ChooseDirectXFTS": {
+    "message": "Please select which DirectX version you want to use.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "DirectX9Notice": {
-    "message": "DirectX 9モードはサポートされていません。 ゲームの起動はできますが、SEからの技術的サポートがなく、Rich PresenceやIn-Gameアドオンのような追加のXIVLauncher機能は動作しません。",
+  "DirectX9NoticeFTS": {
+    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and the In-Game addon will not work.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "ChooseLanguage": {
-    "message": "ゲームで使用する言語を選択して下さい。",
+  "ChooseLanguageFTS": {
+    "message": "Please select which language you want to load the game with.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
@@ -180,7 +236,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "XIVLauncher の In-Game 機能を有効にしますか?\n有効にすると、RMTチャットのフィルタや、チャットメッセージやコンテンツファインダーのポップアップを Discordへ通知するなどの機能を追加することができます。\n\nこれらの機能を設定するには、XIVLauncher の設定画面で In-Game タブを開いて下さい。\nこの機能を有効にした場合、ウイルス対策ソフトで誤検出される場合があります。問題が発生した場合は、設定を確認の上で必要な除外設定を行って下さい。",
+    "message": "Do you want to enable the XIVLauncher in-game features?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the in-game tab.\r\nEnabling this however could cause a false positive on your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -335,6 +391,14 @@
     "message": "ゲーム",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ChooseGamePath": {
+    "message": "\nゲームがインストールされているフォルダを選択してください。\n対象のフォルダには \"game\" と \"boot\" フォルダが入っています。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpServerCheckBox": {
+    "message": "Enable XL Authenticator app/OTP macro support",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "追加の起動パラメータ",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -349,6 +413,18 @@
   },
   "SettingsGameSettings": {
     "message": "ゲーム設定",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDirectX": {
+    "message": "使用する DirectX のバージョンを選択して下さい。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DirectX9Notice": {
+    "message": "DirectX 9モードはサポートされていません。 ゲームの起動はできますが、SEからの技術的サポートがなく、Rich PresenceやIn-Gameアドオンのような追加のXIVLauncher機能は動作しません。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLanguage": {
+    "message": "ゲームで使用する言語を選択して下さい。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLauncherLanguage": {
@@ -539,9 +615,25 @@
     "message": "PCでMacTypeを見つけました。\n公式ランチャーとXIVLauncherに問題を引き起こします。\n\nXIVLauncherとffxivboot、ffxivlauncher、ffxivupdater、ffxiv_dx11は、MacTypeから除いてください。",
     "description": "ProblemCheck.RunCheck"
   },
+  "BinaryNotPresentError": {
+    "message": "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game.",
+    "description": "Launcher.LaunchGame"
+  },
+  "NativeLauncherError": {
+    "message": "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
   "PatchInstallerNotOpen": {
     "message": "パッチインストーラに接続できませんでした。\nこのエラーを報告してください。",
     "description": "PatchInstaller.WaitOnHello"
+  },
+  "PatchManNoInstaller": {
+    "message": "The patch installer could not start correctly.\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
+    "description": "PatchManager.Start"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncherはダウンロードしたゲーム本体のファイルが正しいことを確認できませんでした。\n\nインターネットの接続に問題がある可能性があります。\nこのエラーが続くようであれば、日本に接続するVPNを利用してみてください。\n\n状況: {0}\n{1}",
+    "description": "<>c__DisplayClass28_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "in-gameアドオンにエラーが発生しました。\n\nウイルス対策ソフトが原因になっていることがよくあります。隔離されたファイルをホワイトリストに登録するか、in-gameアドオンを無効にしてください。",
@@ -558,61 +650,5 @@
   "DalamudVcRedistError": {
     "message": "XIVLauncher のin-gameアドオンを利用するには「Visual Studio 2015、2017、および 2019 用 Microsoft Visual C++ 再頒布可能パッケージ」と 「.NET Framework 4.8」 のインストールが必要です。Microsoftのホームページからインストールしてください。",
     "description": "DalamudLauncher.CheckVcRedist"
-  },
-  "updatefailureerror": {
-    "message": "XIVLauncherは更新の確認に失敗しました。GitHubへの接続の問題の可能性があります。数分待ってからもう一度試してください。\nもしVPNを利用している場合は無効化してみてください。\n数分待っても問題が続くようであれば、GitHubにリンクを載せているDiscordに参加して助けを求めてみてください。",
-    "description": "<Run>d__0.MoveNext"
-  },
-  "IntegrityCheckImpossible": {
-    "message": "このゲームバージョンはまだ参照レポートがありません。後ほど再度お試し下さい。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckFailed": {
-    "message": "一部のゲームファイルが変更、または破損しているようです。詳しくはXIVLauncherフォルダ内の \"Integrityreport.txt \"ファイルをご確認ください。\n\nゲームを最新パッチのデータでリセットしますか？再度パッチを当てることで、問題が解決される可能性があります。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckValid": {
-    "message": "ゲームインストールは有効性がありそうです。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "LoginNoOauthMessage": {
-    "message": "入力されたスクウェア・エニックス アカウントではログインできませんでした。\n認証情報に誤りがあるか、ワンタイムパスワードが間違っている可能性があります。\n\n「不審な挙動」によるパスワードリセットのメールがスクウェア・エニックスから届いていないかメールを確認してみてください。\nXIVLauncherのセキュリティの問題ではなく、アカウントハック対策として記録にない地域からログインしようとした際にスクウェア・エニックスが行うことがあります。\nパスワードリセット後は今まで通りXIVLauncherでも公式のランチャーでも正常に動作します。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\n自動ログインは無効になっています。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "ログインの問題",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "このスクウェア・エニックス アカウントでFINAL FANTASY XIVをプレイすることができません。\n\nFINAL FANTASY XIVをSteamで購入している場合は、「Steamアカウントを使用」にチェックを付けてください。\nもし「自動的にログイン」を有効にしている場合は、設定が表示されるまでシフトキーを押し続けてください。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "公式ランチャーで「ファイナルファンタジーXIV 利用規約」に同意してください。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "特定の重要なゲームファイルが第三者によって変更/破損されており、ゲームを更新したり開始したりすることができません。\n続行するには、ゲームを完全に再インストールする必要があります。\n\nこの問題が続く場合は、Discordからお問い合わせください。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "新しいパッチをインストールする必要があります。\nXIVLauncherにインストールさせますか？",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoStartOk": {
-    "message": "更新チェックが実行され、保留中のアップデートがインストールされました。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "MaintenanceNotice": {
-    "message": "メンテナンス中です。ゲームを起動しないでください。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchManDlFailure": {
-    "message": "XIVLauncherはダウンロードしたゲーム本体のファイルが正しいことを確認できませんでした。\n\nインターネットの接続に問題がある可能性があります。\nこのエラーが続くようであれば、日本に接続するVPNを利用してみてください。\n\n状況: {0}\n{1}",
-    "description": "<>c__DisplayClass27_0.<DownloadPatchAsync>b__1"
   }
 }

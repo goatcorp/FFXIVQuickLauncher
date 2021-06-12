@@ -1,4 +1,8 @@
 {
+  "updatefailureerror": {
+    "message": "XIVLauncher 無法檢查更新。這可能是因為無法連接至 GitHub。您可以等待幾分鐘後重試。\n如果您正在使用 VPN，請禁用後重試。\n如果此錯誤持續發生，請加入 Discord 伺服器以尋求幫助，您可以在 GitHub 上找到邀請鏈接。",
+    "description": "<Run>d__0.MoveNext"
+  },
   "ReleaseInfoUnavailable": {
     "message": "無法獲取版本信息。",
     "description": "ChangelogWindow..ctor"
@@ -9,6 +13,10 @@
   },
   "DalamudUpdateAssets": {
     "message": "正在更新資源文件",
+    "description": "DalamudLoadingOverlay.SetProgress"
+  },
+  "DalamudUpdateRuntime": {
+    "message": "正在更新運行時...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUnavailable": {
@@ -51,6 +59,18 @@
     "message": " （已禁用）",
     "description": "SettingsControl.ReloadPluginList"
   },
+  "IntegrityCheckImpossible": {
+    "message": "此遊戲版本尚無參考報告。我們無法為您執行完整性檢查，請稍後再試。",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckFailed": {
+    "message": "一些遊戲檔案似乎已被修改或損壞。您可以從 XIVLauncher 資料夾中的「integrityreport.txt」檔案中獲取更多信息。\n\n如果您正在使用 TexTools 或其他模組，則這是必然的結果。\n\n如果您沒有使用任何模組，請重新安裝您的遊戲。",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckValid": {
+    "message": "您的遊戲安裝完整。",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
   "NewsLoading": {
     "message": "加載中...",
     "description": "MainWindow..ctor"
@@ -90,6 +110,42 @@
   "NewsDlFailed": {
     "message": "無法獲取公告信息",
     "description": "MainWindow.<SetupHeadlines>b__10_3"
+  },
+  "LoginNoStartOk": {
+    "message": "執行了更新檢查，並安裝了所有可用更新。",
+    "description": "<>c__DisplayClass17_0.<InstallGamePatch>b__3"
+  },
+  "LoginNoOauthMessage": {
+    "message": "無法登入您的 Square Enix 賬戶。\n請可能是由於密碼或是一次性密碼錯誤導致的。\n\n另外，也請檢查您的電子郵箱中來自 Square Enix 的郵件 - 他們可能會因為您的「可疑活動」而要求您重置密碼。\n這並非是由 XIVLauncher 的安全問題引起的，它僅僅是 Square Enix 的安全措施，用於防止您的賬戶被盜或從新的地點登入。\n重置密碼後，XIVLauncher 和官方啟動器將再次正常工作。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n自動登入已被禁用。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "登入問題",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "該賬戶無法遊玩 FINAL FANTASY XIV。\n\n如果您的 FFXIV 在 Steam 上購買，請確保您在登入時勾選了「使用 Steam 賬戶」。\n如果您啟用了自動登入，請在啟動時按住 Shift 鍵以訪問設置。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "請先在官方啟動器中接受 FINAL FANTASY XIV 的使用條款。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "部分遊戲檔案已損毀或被篡改，無法進行更新或啟動。\n請重新安裝遊戲以修復此問題。\n\n如果該錯誤仍然持續，請通過 Discord 聯繫我們。",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "發現了新的遊戲更新，您必須進行更新才能繼續遊玩。\n您希望 XIVLauncher 為您安裝更新嗎？",
+    "description": "<StartLogin>d__18.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "維護似乎正在進行。遊戲不應該在此時啟動。",
+    "description": "<StartLogin>d__18.MoveNext"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "更改頭像",
@@ -143,7 +199,7 @@
     "message": "報告錯誤",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
-  "ChooseGamePath": {
+  "ChooseGamePathFTS": {
     "message": "請選擇遊戲所在資料夾。\n該資料夾應該包含「game」和「boot」資料夾。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
@@ -155,15 +211,15 @@
     "message": "啟用 Steam 集成",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "ChooseDirectX": {
+  "ChooseDirectXFTS": {
     "message": "請選擇您希望使用的 DirectX 版本。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "DirectX9Notice": {
+  "DirectX9NoticeFTS": {
     "message": "DirectX 9 已經不再受支持。您仍然可以啟動遊戲，但 SE 不再對此提供任何技術支持。此外，所有的 XIVLauncher 組件（如 Discord 集成 和 遊戲內組件）將無法正常運作。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
-  "ChooseLanguage": {
+  "ChooseLanguageFTS": {
     "message": "請選擇您希望使用的遊戲語言。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
@@ -335,6 +391,14 @@
     "message": "遊戲",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ChooseGamePath": {
+    "message": "請選擇遊戲所在資料夾。\n該資料夾應該包含「game」和「boot」資料夾。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpServerCheckBox": {
+    "message": "啟用 XL Authenticator APP/OTP 巨集支持",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "額外啟動參數",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -349,6 +413,18 @@
   },
   "SettingsGameSettings": {
     "message": "遊戲設置",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDirectX": {
+    "message": "請選擇您希望使用的 DirectX 版本。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DirectX9Notice": {
+    "message": "DirectX 9 已經不再受支持。您仍然可以啟動遊戲，但 SE 不再對此提供任何技術支持。此外，所有的 XIVLauncher 組件（如 Discord 集成 和 遊戲內組件）將無法正常運作。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLanguage": {
+    "message": "請選擇您希望使用的遊戲語言。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLauncherLanguage": {
@@ -539,9 +615,25 @@
     "message": "檢測到您的電腦上存在 MacType。\n這可能會導致遊戲出現問題，不論您使用的是官方啟動器還是 XIVLauncher。\n\n請將 XIVLauncher、ffxivboot、ffxivlauncher、ffxivupdater 和 ffxiv_dx11 添加至 MacType 的例外名單。",
     "description": "ProblemCheck.RunCheck"
   },
+  "BinaryNotPresentError": {
+    "message": "無法找到遊戲可執行檔。\n這可能是您的防毒軟體造成的。您可能需要重新安裝遊戲。",
+    "description": "Launcher.LaunchGame"
+  },
+  "NativeLauncherError": {
+    "message": "無法正確啟動遊戲。請向我們回報此錯誤。\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
   "PatchInstallerNotOpen": {
     "message": "無法連接至更新程式。\n請報告此錯誤。",
     "description": "PatchInstaller.WaitOnHello"
+  },
+  "PatchManNoInstaller": {
+    "message": "更新安裝程序無法正常執行。\n\n如果您剛剛拒絕了權限請求，請重試并授權。\n如果此問題仍然存在，請在 Discord 上聯繫我們。",
+    "description": "PatchManager.Start"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher 無法驗證已下載的遊戲檔案。\n\n這通常代表您的網絡連接存在問題。\n如果此錯誤持續發生，請嘗試使用日本 VPN。\n\n上下文：{0}\n{1}",
+    "description": "<>c__DisplayClass28_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "遊戲內組件發生了錯誤。\n\n這很可能是由您的防毒軟體造成的。請將被隔離的當然加入到例外名單或禁用遊戲內組件。",
@@ -558,61 +650,5 @@
   "DalamudVcRedistError": {
     "message": "XIVLauncher 遊戲內組件需要安裝 Microsoft Visual C++ 2015-2019 Redistributable 及 .NET Framework 4.8 才能啟用。請在微軟官網下載並安裝。",
     "description": "DalamudLauncher.CheckVcRedist"
-  },
-  "updatefailureerror": {
-    "message": "XIVLauncher 無法檢查更新。這可能是因為無法連接至 GitHub。您可以等待幾分鐘後重試。\n如果您正在使用 VPN，請禁用後重試。\n如果此錯誤持續發生，請加入 Discord 伺服器以尋求幫助，您可以在 GitHub 上找到邀請鏈接。",
-    "description": "<Run>d__0.MoveNext"
-  },
-  "IntegrityCheckImpossible": {
-    "message": "此遊戲版本尚無參考報告。我們無法為您執行完整性檢查，請稍後再試。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckFailed": {
-    "message": "一些遊戲檔案似乎已被修改或損壞。您可以從 XIVLauncher 資料夾中的「integrityreport.txt」檔案中獲取更多信息。\n\n如果您正在使用 TexTools 或其他模組，則這是必然的結果。\n\n如果您沒有使用任何模組，請重新安裝您的遊戲。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckValid": {
-    "message": "您的遊戲安裝完整。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "LoginNoOauthMessage": {
-    "message": "無法登入您的 Square Enix 賬戶。\n請可能是由於密碼或是一次性密碼錯誤導致的。\n\n另外，也請檢查您的電子郵箱中來自 Square Enix 的郵件 - 他們可能會因為您的「可疑活動」而要求您重置密碼。\n這並非是由 XIVLauncher 的安全問題引起的，它僅僅是 Square Enix 的安全措施，用於防止您的賬戶被盜或從新的地點登入。\n重置密碼後，XIVLauncher 和官方啟動器將再次正常工作。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\n自動登入已被禁用。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "登入問題",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "該賬戶無法遊玩 FINAL FANTASY XIV。\n\n如果您的 FFXIV 在 Steam 上購買，請確保您在登入時勾選了「使用 Steam 賬戶」。\n如果您啟用了自動登入，請在啟動時按住 Shift 鍵以訪問設置。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "請先在官方啟動器中接受 FINAL FANTASY XIV 的使用條款。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "部分遊戲檔案已損毀或被篡改，無法進行更新或啟動。\n請重新安裝遊戲以修復此問題。\n\n如果該錯誤仍然持續，請通過 Discord 聯繫我們。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "發現了新的遊戲更新，您必須進行更新才能繼續遊玩。\n您希望 XIVLauncher 為您安裝更新嗎？",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoStartOk": {
-    "message": "執行了更新檢查，並安裝了所有可用更新。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "MaintenanceNotice": {
-    "message": "維護似乎正在進行。遊戲不應該在此時啟動。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchManDlFailure": {
-    "message": "XIVLauncher 無法驗證已下載的遊戲檔案。\n\n這通常代表您的網絡連接存在問題。\n如果此錯誤持續發生，請嘗試使用日本 VPN。\n\n上下文：{0}\n{1}",
-    "description": "<>c__DisplayClass27_0.<DownloadPatchAsync>b__1"
   }
 }
