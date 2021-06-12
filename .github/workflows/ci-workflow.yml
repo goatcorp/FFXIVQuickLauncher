@@ -73,6 +73,7 @@ jobs:
         uses: crowdin/github-action@1.1.0
         with:
           download_translations: true
+          upload_sources: false
           push_translations: false
           translation: $Env:GITHUB_WORKSPACE\XIVLauncher\Resources\Loc
         env:
