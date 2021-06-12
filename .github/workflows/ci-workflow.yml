@@ -69,6 +69,7 @@ jobs:
     name: Download localization files
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
       - name: Fetch up-to-date translations
         uses: crowdin/github-action@1.1.0
         with:
@@ -76,6 +77,7 @@ jobs:
           upload_sources: false
           push_translations: false
           translation: $Env:GITHUB_WORKSPACE\XIVLauncher\Resources\Loc
+          source: .
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
