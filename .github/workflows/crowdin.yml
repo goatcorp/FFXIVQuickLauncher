@@ -2,7 +2,9 @@ name: Update localization
 
 on:
   workflow_dispatch:
-  
+  schedule:
+    - cron:  '0 0 * * *'
+
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-latest
