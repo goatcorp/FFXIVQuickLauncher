@@ -18,7 +18,10 @@ jobs:
           upload_sources: true
           upload_translations: false
           download_translations: true
-          export_only_approved: true
+          
+          # We should put this to true when every language has someone that can approve
+          export_only_approved: false
+          
           push_translations: true
           commit_message: 'Update localization'
           create_pull_request: true
