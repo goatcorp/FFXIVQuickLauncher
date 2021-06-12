@@ -16,15 +16,15 @@ namespace XIVLauncher.Windows.ViewModel
 
         public void SetupLoc()
         {
-            FirstTimeGamePathLoc = Loc.Localize("ChooseGamePath",
+            FirstTimeGamePathLoc = Loc.Localize("ChooseGamePathFTS",
                 "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".");
             FirstTimeSteamNoticeLoc = Loc.Localize("FirstTimeSteamNotice",
                 "Please check this box if you are usually launching the game using Steam.");
             FirstTimeSteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
-            FirstTimeDirectXLoc = Loc.Localize("ChooseDirectX", "Please select which DirectX version you want to use.");
-            DirectX9NoticeLoc = Loc.Localize("DirectX9Notice",
+            FirstTimeDirectXLoc = Loc.Localize("ChooseDirectXFTS", "Please select which DirectX version you want to use.");
+            DirectX9NoticeLoc = Loc.Localize("DirectX9NoticeFTS",
                 "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and the In-Game addon will not work.");
-            FirstTimeLanguageLoc = Loc.Localize("ChooseLanguage", "Please select which language you want to load the game with.");
+            FirstTimeLanguageLoc = Loc.Localize("ChooseLanguageFTS", "Please select which language you want to load the game with.");
             FirstTimeActLaunchLoc = Loc.Localize("FirstTimeActLaunch",
                 "Advanced Combat Tracker is installed on your computer.\r\nDo you want to launch it automatically when launching the game?");
             FirstTimeActLaunchCheckBoxLoc = Loc.Localize("FirstTimeActLaunchCheckBox", "Enable ACT Auto-Launch");
