@@ -64,15 +64,11 @@ jobs:
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
           files: ./Releases/*.exe
-  build:
-    name: Build on Windows
-    runs-on: windows-2019
-    if: "!startsWith(github.ref, 'refs/tags/')"
+          
+  pull-localizations:
+    name: Download localization files
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Initialize Submodules
-        run: git submodule update --init --recursive
-        
       - name: Fetch up-to-date translations
         uses: crowdin/github-action@1.1.0
         with:
@@ -82,6 +78,16 @@ jobs:
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+  build:
+    name: Build on Windows
+    runs-on: windows-2019
+    needs: pull-localizations
+    if: "!startsWith(github.ref, 'refs/tags/')"
+    steps:
+      - uses: actions/checkout@v1
+      - name: Initialize Submodules
+        run: git submodule update --init --recursive
           
       - name: Setup Nuget
         uses: nuget/setup-nuget@v1
