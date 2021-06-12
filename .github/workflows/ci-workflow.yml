@@ -72,6 +72,17 @@ jobs:
       - uses: actions/checkout@v1
       - name: Initialize Submodules
         run: git submodule update --init --recursive
+        
+      - name: Fetch up-to-date translations
+        uses: crowdin/github-action@1.1.0
+        with:
+          download_translations: true
+          push_translations: false
+          translation: $Env:GITHUB_WORKSPACE\XIVLauncher\Resources\Loc
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          
       - name: Setup Nuget
         uses: nuget/setup-nuget@v1
         with:
