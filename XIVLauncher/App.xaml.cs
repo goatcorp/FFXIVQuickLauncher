@@ -199,7 +199,14 @@ namespace XIVLauncher
 
                     if (arg == "--genLocalizable")
                     {
-                        Loc.ExportLocalizable();
+                        try
+                        {
+                            Loc.ExportLocalizable();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                        }
                         Environment.Exit(0);
                         return;
                     }
