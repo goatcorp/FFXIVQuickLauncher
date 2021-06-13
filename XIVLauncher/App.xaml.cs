@@ -69,8 +69,6 @@ namespace XIVLauncher
                 SetupSettings();
             }
 
-            App.Settings.IsTorrentMode = true;
-
 #if !XL_LOC_FORCEFALLBACKS
             try
             {
