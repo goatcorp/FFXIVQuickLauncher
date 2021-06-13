@@ -31,6 +31,8 @@ namespace XIVLauncher.Game.Patch.PatchList
             return name == "4e9a232b" ? "ffxiv" : name;
         }
 
-        public string GetFilePath() => this.Deconstruct().Groups[1].Captures[0].Value.Replace('/', Path.DirectorySeparatorChar);
+        public string GetUrlPath() => this.Deconstruct().Groups[1].Captures[0].Value;
+
+        public string GetFilePath() => GetUrlPath().Replace('/', Path.DirectorySeparatorChar);
     }
 }
