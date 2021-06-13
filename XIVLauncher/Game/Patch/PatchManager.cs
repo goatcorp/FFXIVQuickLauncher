@@ -38,6 +38,8 @@ namespace XIVLauncher.Game.Patch
 
     public class PatchManager
     {
+        private string DownloadTempPath => Path.Combine(_patchStore.FullName, "temp");
+
         private DownloadConfiguration _downloadOpt = new DownloadConfiguration
         {
             ParallelDownload = true, // download parts of file as parallel or not
@@ -105,9 +107,18 @@ namespace XIVLauncher.Game.Patch
                 Slots[i] = SlotState.Done;
             }
 
-            //ServicePointManager.DefaultConnectionLimit = 255;
+            _downloadOpt.TempDirectory = DownloadTempPath; 
+            CleanupTemp();
 
             Log.Information($"Downloading each patch with max speed of: {this._downloadOpt.MaximumBytesPerSecond}");
+        }
+
+        private void CleanupTemp()
+        {
+            if (Directory.Exists(DownloadTempPath))
+                Directory.Delete(DownloadTempPath, true);
+
+            Directory.CreateDirectory(DownloadTempPath);
         }
 
         public void Start()
@@ -171,9 +182,6 @@ namespace XIVLauncher.Game.Patch
                 Progresses[index] = download.Patch.Length;
                 return;
             }
-
-            // fun little thing to override the default.
-            _downloadOpt.TempDirectory = Path.Combine(_patchStore.FullName, "temp");
 
             var dlService = new DownloadService(_downloadOpt);
 
