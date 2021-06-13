@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MonoTorrent;
 using MonoTorrent.BEncoding;
 using MonoTorrent.Client;
+using Serilog;
 using XIVLauncher.Game.Patch.PatchList;
 
 namespace XIVLauncher.Game.Patch.Acquisition
@@ -15,6 +16,9 @@ namespace XIVLauncher.Game.Patch.Acquisition
     public class TorrentPatchAcquisition : IPatchAcquisition
     {
         private static ClientEngine torrentEngine;
+
+        private TorrentManager _torrentManager;
+        private byte[] _torrentBytes;
 
         public static void Init(int maxDownloadSpeed = 0)
         {
@@ -43,38 +47,66 @@ namespace XIVLauncher.Game.Patch.Acquisition
             await torrentEngine.UpdateSettingsAsync(builder.ToSettings());
         }
 
-        public async Task StartDownloadAsync(PatchListEntry patch, DirectoryInfo patchStore)
+        public bool IsApplicable(PatchListEntry patch)
         {
-            using var client = new WebClient();
+            try
+            {
+                using var client = new WebClient();
 
-            var torrent = Torrent.Load(client.DownloadData("http://goaaats.github.io/patchtorrent/" + patch.GetUrlPath() + ".torrent?1092381"));
+                this._torrentBytes =
+                    client.DownloadData("http://goaaats.github.io/patchtorrent/" + patch.GetUrlPath() + ".torrent");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"[TORRENT] Could not get torrent for patch: {patch.GetUrlPath()}");
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
+        {
+            if (this._torrentBytes == null)
+            {
+                if (!IsApplicable(patch))
+                    throw new Exception("This patch is not applicable to be downloaded with this acquisition method.");
+            }
+
+            var torrent = await Torrent.LoadAsync(this._torrentBytes);
             var hasSignaledComplete = false;
 
-            var tm = await torrentEngine.AddAsync(torrent, patchStore.FullName);
-            tm.TorrentStateChanged += async (sender, args) =>
+            _torrentManager = await torrentEngine.AddAsync(torrent, outFile.Directory.FullName);
+            _torrentManager.TorrentStateChanged += async (sender, args) =>
             {
-                if ((int) tm.Progress == 100 && !hasSignaledComplete && args.NewState == TorrentState.Seeding)
+                if ((int) _torrentManager.Progress == 100 && !hasSignaledComplete && args.NewState == TorrentState.Seeding)
                 {
-                    this.Complete?.Invoke(null, null);
+                    this.Complete?.Invoke(null, AcquisitionResult.Success);
                     hasSignaledComplete = true;
-                    await tm.StopAsync();
+                    await _torrentManager.StopAsync();
                 }
             };
 
-            tm.PieceHashed += (sender, args) =>
+            _torrentManager.PieceHashed += (sender, args) =>
             {
                 ProgressChanged?.Invoke(null, new AcquisitionProgress
                 {
-                    Progress = tm.Progress,
-                    BytesPerSecondSpeed = tm.Monitor.DownloadSpeed
+                    Progress = _torrentManager.Monitor.DataBytesDownloaded,
+                    BytesPerSecondSpeed = _torrentManager.Monitor.DownloadSpeed
                 });
             };
 
-            await tm.StartAsync();
-            await tm.DhtAnnounceAsync();
+            await _torrentManager.StartAsync();
+            await _torrentManager.DhtAnnounceAsync();
+        }
+
+        public async Task CancelAsync()
+        {
+            await _torrentManager.StopAsync();
+            await torrentEngine.RemoveAsync(_torrentManager);
         }
 
         public event EventHandler<AcquisitionProgress> ProgressChanged;
-        public event EventHandler Complete;
+        public event EventHandler<AcquisitionResult> Complete;
     }
 }

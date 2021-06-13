@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher.Game.Patch.Acquisition
 {
-    public class AcquisitionProgress
+    public enum AcquisitionResult
     {
-        public long Progress { get; set; }
-        public long BytesPerSecondSpeed { get; set; }
+        Success,
+        Error,
+        Cancelled,
     }
 }

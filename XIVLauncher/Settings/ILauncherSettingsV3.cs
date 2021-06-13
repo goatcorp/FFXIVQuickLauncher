@@ -33,6 +33,7 @@ namespace XIVLauncher.Settings
         decimal DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
         bool? OptOutMbCollection { get; set; }
+        bool? IsTorrentMode { get; set; }
 
         #endregion
     }

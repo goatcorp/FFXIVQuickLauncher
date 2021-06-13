@@ -14,6 +14,7 @@ using System.Windows;
 using CheapLoc;
 using Downloader;
 using Serilog;
+using XIVLauncher.Game.Patch.Acquisition;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
@@ -38,25 +39,6 @@ namespace XIVLauncher.Game.Patch
 
     public class PatchManager
     {
-        private string DownloadTempPath => Path.Combine(_patchStore.FullName, "temp");
-
-        private DownloadConfiguration _downloadOpt = new DownloadConfiguration
-        {
-            ParallelDownload = true, // download parts of file as parallel or not
-            BufferBlockSize = 8000, // usually, hosts support max to 8000 bytes
-            ChunkCount = 8, // file parts to download
-            MaxTryAgainOnFailover = int.MaxValue, // the maximum number of times to fail.
-            OnTheFlyDownload = false, // caching in-memory mode
-            Timeout = 10000, // timeout (millisecond) per stream block reader
-            TempDirectory = Path.GetTempPath(), // this is the library default
-            RequestConfiguration = new RequestConfiguration
-            {
-                UserAgent = "FFXIV PATCH CLIENT",
-                Accept = "*/*"
-            },
-            MaximumBytesPerSecond = App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE,
-        };
-
         public event EventHandler<bool> OnFinish;
 
         public const int MAX_DOWNLOADS_AT_ONCE = 4;
@@ -82,7 +64,7 @@ namespace XIVLauncher.Game.Patch
         public readonly double[] Speeds = new double[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchDownload[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
         public readonly SlotState[] Slots = new SlotState[MAX_DOWNLOADS_AT_ONCE];
-        public readonly DownloadService[] DownloadServices = new DownloadService[MAX_DOWNLOADS_AT_ONCE];
+        public readonly IPatchAcquisition[] DownloadServices = new IPatchAcquisition[MAX_DOWNLOADS_AT_ONCE];
 
         public bool DownloadsDone { get; private set; }
 
@@ -107,18 +89,10 @@ namespace XIVLauncher.Game.Patch
                 Slots[i] = SlotState.Done;
             }
 
-            _downloadOpt.TempDirectory = DownloadTempPath; 
-            CleanupTemp();
-
-            Log.Information($"Downloading each patch with max speed of: {this._downloadOpt.MaximumBytesPerSecond}");
-        }
-
-        private void CleanupTemp()
-        {
-            if (Directory.Exists(DownloadTempPath))
-                Directory.Delete(DownloadTempPath, true);
-
-            Directory.CreateDirectory(DownloadTempPath);
+            if (App.Settings.IsTorrentMode.GetValueOrDefault(false))
+            {
+                TorrentPatchAcquisition.Init((int) App.Settings.SpeedLimitBytes);
+            }
         }
 
         public void Start()
@@ -183,23 +157,32 @@ namespace XIVLauncher.Game.Patch
                 return;
             }
 
-            var dlService = new DownloadService(_downloadOpt);
+            IPatchAcquisition acquisition = new TorrentPatchAcquisition();
 
-            dlService.DownloadProgressChanged += (sender, args) =>
+            if (App.Settings.IsTorrentMode.GetValueOrDefault(false))
             {
-                Progresses[index] = args.ReceivedBytesSize;
+                acquisition = new TorrentPatchAcquisition();
+
+                var torrentAcquisition = acquisition as TorrentPatchAcquisition;
+                if (!torrentAcquisition.IsApplicable(download.Patch))
+                    acquisition = new WebPatchAcquisition(this._patchStore);
+            }
+            else
+            {
+                acquisition = new WebPatchAcquisition(this._patchStore);
+            }
+
+            acquisition.ProgressChanged += (sender, args) =>
+            {
+                Progresses[index] = args.Progress;
                 Speeds[index] = args.BytesPerSecondSpeed;
             };
 
-            dlService.DownloadFileCompleted += (sender, args) =>
+            acquisition.Complete += (sender, args) =>
             {
-                if (args.Error != null)
+                if (args == AcquisitionResult.Error)
                 {
-                    Log.Error(args.Error, "Download failed for {0} with reason {1}", download.Patch.VersionId, args.Error);
-
-                    // If we cancel downloads, we don't want to see an error message
-                    if (args.Error is OperationCanceledException)
-                        return;
+                    Log.Error("Download failed for {0}", download.Patch.VersionId);
 
                     CancelAllDownloads();
                     CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Problem", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -207,9 +190,9 @@ namespace XIVLauncher.Game.Patch
                     return;
                 }
 
-                if (args.Cancelled)
+                if (args == AcquisitionResult.Cancelled)
                 {
-                    Log.Error("Download cancelled for {0} with reason {1}", download.Patch.VersionId, args.Error);
+                    Log.Error("Download cancelled for {0}", download.Patch.VersionId);
                     /*
                     Cancellation should not produce an error message, since it is always triggered by another error or the user.
 
@@ -246,9 +229,9 @@ namespace XIVLauncher.Game.Patch
                 this.CheckIsDone();
             };
 
-            DownloadServices[index] = dlService;
+            DownloadServices[index] = acquisition;
 
-            await dlService.DownloadFileTaskAsync(download.Patch.Url, outFile.FullName);
+            await acquisition.StartDownloadAsync(download.Patch, outFile);
         }
 
         public void CancelAllDownloads()
@@ -262,7 +245,7 @@ namespace XIVLauncher.Game.Patch
             {
                 try
                 {
-                    downloadService?.CancelAsync();
+                    downloadService?.CancelAsync().GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {

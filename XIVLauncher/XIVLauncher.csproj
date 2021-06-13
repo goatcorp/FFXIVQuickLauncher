@@ -266,8 +266,10 @@
     <Compile Include="Dalamud\DalamudUpdater.cs" />
     <Compile Include="Dalamud\DalamudVersionInfo.cs" />
     <Compile Include="Game\Patch\Acquisition\AcquisitionProgress.cs" />
+    <Compile Include="Game\Patch\Acquisition\AcquisitionResult.cs" />
     <Compile Include="Game\Patch\Acquisition\IPatchAcquisition.cs" />
     <Compile Include="Game\Patch\Acquisition\TorrentPatchAcquisition.cs" />
+    <Compile Include="Game\Patch\Acquisition\WebPatchAcquisition.cs" />
     <Compile Include="Settings\EnvironmentSettings.cs" />
     <Compile Include="Game\Patch\PatchInstaller.cs" />
     <Compile Include="Settings\LauncherLanguage.cs" />

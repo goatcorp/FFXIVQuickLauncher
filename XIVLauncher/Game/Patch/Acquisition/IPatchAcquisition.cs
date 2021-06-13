@@ -5,11 +5,12 @@ using XIVLauncher.Game.Patch.PatchList;
 
 namespace XIVLauncher.Game.Patch.Acquisition
 {
-    interface IPatchAcquisition
+    public interface IPatchAcquisition
     {
-        public Task StartDownloadAsync(PatchListEntry patch, DirectoryInfo patchStore);
+        public Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile);
+        public Task CancelAsync();
 
         public event EventHandler<AcquisitionProgress> ProgressChanged;
-        public event EventHandler Complete;
+        public event EventHandler<AcquisitionResult> Complete;
     }
 }
