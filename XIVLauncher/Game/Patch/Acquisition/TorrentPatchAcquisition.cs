@@ -20,14 +20,14 @@ namespace XIVLauncher.Game.Patch.Acquisition
         private TorrentManager _torrentManager;
         private byte[] _torrentBytes;
 
-        public static void Init(int maxDownloadSpeed = 0)
+        public static async Task InitAsync(int maxDownloadSpeed = 0)
         {
-            var builder = new EngineSettingsBuilder
-            {
-                MaximumDownloadSpeed = maxDownloadSpeed
-            };
+            torrentEngine = new ClientEngine();
 
-            torrentEngine = new ClientEngine(builder.ToSettings());
+            var builder = new EngineSettingsBuilder(torrentEngine.Settings);
+            builder.MaximumDownloadSpeed = maxDownloadSpeed;
+
+            await torrentEngine.UpdateSettingsAsync(builder.ToSettings());
         }
 
         public static async Task UnInit()
@@ -37,14 +37,6 @@ namespace XIVLauncher.Game.Patch.Acquisition
                 await torrentEngine.StopAllAsync();
                 torrentEngine = null;
             }
-        }
-
-        public static async Task SetMaxDownloadSpeed(int speed)
-        {
-            var builder = new EngineSettingsBuilder();
-            builder.MaximumDownloadSpeed = speed;
-
-            await torrentEngine.UpdateSettingsAsync(builder.ToSettings());
         }
 
         public bool IsApplicable(PatchListEntry patch)
@@ -89,6 +81,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
             _torrentManager.PieceHashed += (sender, args) =>
             {
+                Log.Information("Progress");
                 ProgressChanged?.Invoke(null, new AcquisitionProgress
                 {
                     Progress = _torrentManager.Monitor.DataBytesDownloaded,

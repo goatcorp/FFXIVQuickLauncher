@@ -91,7 +91,7 @@ namespace XIVLauncher.Game.Patch
 
             if (App.Settings.IsTorrentMode.GetValueOrDefault(false))
             {
-                TorrentPatchAcquisition.Init((int) App.Settings.SpeedLimitBytes);
+                TorrentPatchAcquisition.InitAsync((int) App.Settings.SpeedLimitBytes).GetAwaiter().GetResult();
             }
         }
 
