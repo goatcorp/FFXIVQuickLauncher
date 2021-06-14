@@ -45,8 +45,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             {
                 using var client = new WebClient();
 
-                this._torrentBytes =
-                    client.DownloadData("http://goaaats.github.io/patchtorrent/" + patch.GetUrlPath() + ".torrent");
+                _torrentBytes = client.DownloadData("http://goaaats.github.io/patchtorrent/" + patch.GetUrlPath() + ".torrent");
             }
             catch (Exception ex)
             {
@@ -59,13 +58,13 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
         public async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
         {
-            if (this._torrentBytes == null)
+            if (_torrentBytes == null)
             {
                 if (!IsApplicable(patch))
                     throw new Exception("This patch is not applicable to be downloaded with this acquisition method.");
             }
 
-            var torrent = await Torrent.LoadAsync(this._torrentBytes);
+            var torrent = await Torrent.LoadAsync(_torrentBytes);
             var hasSignaledComplete = false;
 
             _torrentManager = await torrentEngine.AddAsync(torrent, outFile.Directory.FullName);
@@ -73,7 +72,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             {
                 if ((int) _torrentManager.Progress == 100 && !hasSignaledComplete && args.NewState == TorrentState.Seeding)
                 {
-                    this.Complete?.Invoke(null, AcquisitionResult.Success);
+                    Complete?.Invoke(null, AcquisitionResult.Success);
                     hasSignaledComplete = true;
                     await _torrentManager.StopAsync();
                 }
@@ -95,7 +94,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
         public async Task CancelAsync()
         {
-            if (this._torrentManager == null)
+            if (_torrentManager == null)
                 return;
 
             await _torrentManager.StopAsync();
