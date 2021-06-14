@@ -65,7 +65,7 @@ namespace XIVLauncher.Tests
         [TestMethod]
         public async Task TestTorrentDownload()
         {
-            TorrentPatchAcquisition.Init();
+            await TorrentPatchAcquisition.InitAsync();
 
             var t = new TorrentPatchAcquisition();
             var completeSignal = new ManualResetEvent(false);
@@ -81,7 +81,7 @@ namespace XIVLauncher.Tests
                 Debug.WriteLine($"recv: {progress.Progress} - speed: {Util.BytesToString(progress.BytesPerSecondSpeed)}");
             };
 
-            await t.StartDownloadAsync(testPatch, new DirectoryInfo(Environment.CurrentDirectory));
+            await t.StartDownloadAsync(testPatch, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));
 
             completeSignal.WaitOne();
         }
