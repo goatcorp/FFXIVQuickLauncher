@@ -616,7 +616,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "BinaryNotPresentError": {
-    "message": "无法找到游戏本体程序。\n这可能是您的防毒软件造成的。您可能需要重装游戏。",
+    "message": "无法找到游戏本体程序。\n这可能是您的杀毒软件造成的。您可能需要重装游戏。",
     "description": "Launcher.LaunchGame"
   },
   "NativeLauncherError": {
