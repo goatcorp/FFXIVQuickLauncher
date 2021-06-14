@@ -80,7 +80,6 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
             _torrentManager.PieceHashed += (sender, args) =>
             {
-                Log.Information("Progress");
                 ProgressChanged?.Invoke(null, new AcquisitionProgress
                 {
                     Progress = _torrentManager.Monitor.DataBytesDownloaded,
