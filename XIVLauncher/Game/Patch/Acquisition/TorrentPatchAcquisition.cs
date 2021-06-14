@@ -95,6 +95,9 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
         public async Task CancelAsync()
         {
+            if (this._torrentManager == null)
+                return;
+
             await _torrentManager.StopAsync();
             await torrentEngine.RemoveAsync(_torrentManager);
         }
