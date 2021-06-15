@@ -200,7 +200,7 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".",
+    "message": "Sélectionnez le répertoire d'installation du jeu. Il devrait contenir les dossiers \"game\" et \"boot\".",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
@@ -212,15 +212,15 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectXFTS": {
-    "message": "Please select which DirectX version you want to use.",
+    "message": "Veuillez choisir la version de DirectX que vous souhaitez utiliser.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and the In-Game addon will not work.",
+    "message": "Le mode DirectX 9 n'est plus supporté. Il démarrera encore, mais vous n'obtiendrez aucun support de SE pour tout problème technique, et toutes les fonctionnalités supplémentaires de XIVLauncher, telles que Rich Presence et l'addon en jeu, ne fonctionneront pas.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
-    "message": "Please select which language you want to load the game with.",
+    "message": "Veuillez choisir la langue dans laquelle vous voulez lancer le jeu.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
@@ -236,7 +236,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Do you want to enable the XIVLauncher in-game features?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the in-game tab.\r\nEnabling this however could cause a false positive on your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
+    "message": "Voulez-vous activer les fonctionnalités en jeu de XIVLauncher ?\nCela ajoutera des fonctionnalités additionnelles à votre jeu, tel que le filtrage des messages de vendeurs de gils et notifications Discord pour les messages dans le chat ou les procs de l'Outil de Mission.\n\nPour configurer ces paramètres, veuillez utiliser le menu Paramètres de XIVLauncher et sélectionnez l'onglet En jeu.\nActiver cette option peut provoquer un faux positif au niveau de votre antivirus, merci de vérifier ses paramètres et d'ajouter une exception si besoin.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
