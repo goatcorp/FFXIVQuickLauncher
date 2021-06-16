@@ -1,5 +1,6 @@
 name: Build XIVLauncher
 on: [push, pull_request]
+concurrency: build_xl
 
 jobs:
   build-release:
