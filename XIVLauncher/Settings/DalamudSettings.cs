@@ -9,6 +9,7 @@ namespace XIVLauncher.Settings
         {
             public bool DoDalamudTest { get; set; } = false;
             public bool DoDalamudRuntime { get; set; } = false;
+            public string DalamudBetaKind { get; set; }
             public bool? OptOutMbCollection { get; set; }
         }
 

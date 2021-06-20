@@ -105,7 +105,7 @@ namespace XIVLauncher.Dalamud
 
                 try
                 {
-                    Download(addonPath, settings.DoDalamudTest);
+                    Download(addonPath, settings.DoDalamudTest, settings.DalamudBetaKind);
 
                     // This is a good indicator that we should clear the UID cache
                     UniqueIdCache.Instance.Reset();
@@ -208,7 +208,7 @@ namespace XIVLauncher.Dalamud
             File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
         }
 
-        private static void Download(DirectoryInfo addonPath, bool staging)
+        private static void Download(DirectoryInfo addonPath, bool staging, string betaKind)
         {
             // Ensure directory exists
             if (!addonPath.Exists)
@@ -226,7 +226,9 @@ namespace XIVLauncher.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? "stg/" : string.Empty) + "latest.zip", downloadPath);
+            var betaFolder = string.IsNullOrEmpty(betaKind) ? "stg/" : $"{betaKind}/";
+
+            client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? betaFolder : string.Empty) + "latest.zip", downloadPath);
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
 
             File.Delete(downloadPath);
