@@ -22,6 +22,7 @@
                   Margin="0,8,0,0"
                   HorizontalAlignment="Stretch"
                   PreviewTextInput="OtpTextBox_OnPreviewTextInput"
+                  PreviewKeyDown="OtpTextBox_PreviewKeyDown"
                   KeyDown="OtpTextBox_OnKeyDown"
                   MaxLength="6"
                   Foreground="{DynamicResource MaterialDesignBody}"

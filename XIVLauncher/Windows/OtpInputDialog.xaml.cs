@@ -60,6 +60,14 @@ namespace XIVLauncher.Windows
             e.Handled = regex.IsMatch(e.Text);
         }
 
+        private void OtpTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        }
+
         private void OtpTextBox_OnKeyDown(object sender, KeyEventArgs e)
         {
             if ((e.Key != Key.Enter && e.Key != Key.Return) || OtpTextBox.Text.Length != 6) 
