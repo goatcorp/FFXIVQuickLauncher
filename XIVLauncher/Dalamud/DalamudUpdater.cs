@@ -71,7 +71,7 @@ namespace XIVLauncher.Dalamud
             });
         }
 
-        private static string GetBetaPath(DalamudSettings.DalamudConfiguration settings) =>
+        private static string GetBetaPath(DalamudSettings settings) =>
             string.IsNullOrEmpty(settings.DalamudBetaKind) ? "stg/" : $"{settings.DalamudBetaKind}/";
 
         private static void UpdateDalamud(DirectoryInfo gamePath, DalamudLoadingOverlay overlay)
@@ -211,7 +211,7 @@ namespace XIVLauncher.Dalamud
             File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
         }
 
-        private static void Download(DirectoryInfo addonPath, DalamudSettings.DalamudConfiguration settings)
+        private static void Download(DirectoryInfo addonPath, DalamudSettings settings)
         {
             // Ensure directory exists
             if (!addonPath.Exists)

@@ -111,7 +111,7 @@ namespace XIVLauncher.Dalamud
                 Language = language,
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
-                ConfigurationPath = DalamudSettings.configPath,
+                ConfigurationPath = DalamudSettings.ConfigPath,
                 AssetDirectory = DalamudUpdater.AssetDirectory.FullName,
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 OptOutMbCollection = _optOutMbCollection
