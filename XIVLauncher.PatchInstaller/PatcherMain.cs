@@ -200,6 +200,8 @@ namespace XIVLauncher.PatchInstaller
                         {
                             OpCode = PatcherIpcOpCode.InstallFailed
                         });
+
+                        return false;
                     }
                 }
                 catch (Exception ex)
