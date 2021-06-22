@@ -217,31 +217,21 @@ namespace XIVLauncher.PatchInstaller
             return true;
         }
 
-        private static bool InstallPatch(string patchPath, string gamePath)
+        private static void InstallPatch(string patchPath, string gamePath)
         {
-            try
+            Log.Information("Installing {0} to {1}", patchPath, gamePath);
+
+            using var patchFile = ZiPatchFile.FromFileName(patchPath);
+
+            using (var store = new SqexFileStreamStore())
             {
-                Log.Information("Installing {0} to {1}", patchPath, gamePath);
+                var config = new ZiPatchConfig(gamePath) { Store = store };
 
-                using var patchFile = ZiPatchFile.FromFileName(patchPath);
-
-                using (var store = new SqexFileStreamStore())
-                {
-                    var config = new ZiPatchConfig(gamePath) { Store = store };
-
-                    foreach (var chunk in patchFile.GetChunks())
-                        chunk.ApplyChunk(config);
-                }
-
-                Log.Information("Patch {0} installed", patchPath);
-
-                return true;
+                foreach (var chunk in patchFile.GetChunks())
+                    chunk.ApplyChunk(config);
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Patch install failed.");
-                return false;
-            }
+
+            Log.Information("Patch {0} installed", patchPath);
         }
 
         private static void VerToBck(DirectoryInfo gamePath)
