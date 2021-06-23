@@ -1,9 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
+    <Product>XIVLauncher Patcher</Product>
+    <AssemblyTitle>XIVLauncher Patcher</AssemblyTitle>
+    <Description>
+    This application installs FFXIV patches from XIVLauncher
+    and needs administrator rights to access your game folder.
+    </Description>
+    <VersionPrefix>1.4.0</VersionPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <OutputPath>..\bin\</OutputPath>

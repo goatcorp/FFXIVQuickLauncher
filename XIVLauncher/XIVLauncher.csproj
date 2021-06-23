@@ -1,15 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
+    <Product>XIVLauncher</Product>
+    <AssemblyTitle>XIVLauncher</AssemblyTitle>
+    <Description>Custom launcher for FFXIV.</Description>
+    <VersionPrefix>5.5.7</VersionPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <OutputPath>..\bin\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-
 
   <!-- To create a desktop shortcut -->
   <ItemGroup>
