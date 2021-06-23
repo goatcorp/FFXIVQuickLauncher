@@ -17,6 +17,7 @@ using Serilog;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
+using XIVLauncher.Windows;
 using ZetaIpc.Runtime.Client;
 using ZetaIpc.Runtime.Server;
 
@@ -130,8 +131,10 @@ namespace XIVLauncher.Game.Patch
                     break;
                 case PatcherIpcOpCode.InstallFailed:
                     State = InstallerState.Failed;
-                    MessageBox.Show(
-                        "The patch installer ran into an error.\nPlease report this error.\nPlease use the official launcher.");
+                    CustomMessageBox.Show(
+                        Loc.Localize("PatchInstallerInstallFailed", "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher."),
+                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
                     Stop();
                     Environment.Exit(0);
                     break;

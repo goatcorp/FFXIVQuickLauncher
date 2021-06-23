@@ -71,6 +71,9 @@ namespace XIVLauncher.Dalamud
             });
         }
 
+        private static string GetBetaPath(DalamudSettings settings) =>
+            string.IsNullOrEmpty(settings.DalamudBetaKind) ? "stg/" : $"{settings.DalamudBetaKind}/";
+
         private static void UpdateDalamud(DirectoryInfo gamePath, DalamudLoadingOverlay overlay)
         {
             using var client = new WebClient();
@@ -80,7 +83,7 @@ namespace XIVLauncher.Dalamud
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var versionInfoJson = client.DownloadString(DalamudLauncher.REMOTE_BASE + (settings.DoDalamudTest ? "stg/" : string.Empty) + "version");
+            var versionInfoJson = client.DownloadString(DalamudLauncher.REMOTE_BASE + (settings.DoDalamudTest ? GetBetaPath(settings) : string.Empty) + "version");
 
             var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
 
@@ -105,7 +108,7 @@ namespace XIVLauncher.Dalamud
 
                 try
                 {
-                    Download(addonPath, settings.DoDalamudTest, settings.DalamudBetaKind);
+                    Download(addonPath, settings);
 
                     // This is a good indicator that we should clear the UID cache
                     UniqueIdCache.Instance.Reset();
@@ -208,7 +211,7 @@ namespace XIVLauncher.Dalamud
             File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
         }
 
-        private static void Download(DirectoryInfo addonPath, bool staging, string betaKind)
+        private static void Download(DirectoryInfo addonPath, DalamudSettings settings)
         {
             // Ensure directory exists
             if (!addonPath.Exists)
@@ -226,9 +229,7 @@ namespace XIVLauncher.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            var betaFolder = string.IsNullOrEmpty(betaKind) ? "stg/" : $"{betaKind}/";
-
-            client.DownloadFile(DalamudLauncher.REMOTE_BASE + (staging ? betaFolder : string.Empty) + "latest.zip", downloadPath);
+            client.DownloadFile(DalamudLauncher.REMOTE_BASE + (settings.DoDalamudTest ? GetBetaPath(settings) : string.Empty) + "latest.zip", downloadPath);
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
 
             File.Delete(downloadPath);

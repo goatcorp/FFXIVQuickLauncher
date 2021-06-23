@@ -3,24 +3,19 @@ using Newtonsoft.Json;
 
 namespace XIVLauncher.Settings
 {
-    static class DalamudSettings
+    class DalamudSettings
     {
-        public class DalamudConfiguration
-        {
-            public bool DoDalamudTest { get; set; } = false;
-            public bool DoDalamudRuntime { get; set; } = false;
-            public string DalamudBetaKind { get; set; }
-            public bool? OptOutMbCollection { get; set; }
-        }
+        public bool DoDalamudTest { get; set; } = false;
+        public bool DoDalamudRuntime { get; set; } = false;
+        public string DalamudBetaKind { get; set; }
+        public bool? OptOutMbCollection { get; set; }
 
-        public static string configPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
 
-        public static DalamudConfiguration GetSettings()
+        public static readonly string ConfigPath = Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
+
+        public static DalamudSettings GetSettings()
         {
-            if (File.Exists(configPath))
-                return JsonConvert.DeserializeObject<DalamudConfiguration>(File.ReadAllText(configPath));
-            else
-                return new DalamudConfiguration();
+            return File.Exists(ConfigPath) ? JsonConvert.DeserializeObject<DalamudSettings>(File.ReadAllText(ConfigPath)) : new DalamudSettings();
         }
     }
 }
