@@ -47,11 +47,10 @@ namespace XIVLauncher.Game
                 }
             }
 
-            if (runningAsAdmin && !Properties.Settings.Default.HasComplainedAboutAdmin && !EnvironmentSettings.IsWine)
+            if (runningAsAdmin && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
             {
                 CustomMessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                Properties.Settings.Default.HasComplainedAboutAdmin = true;
-                Properties.Settings.Default.Save();
+                App.Settings.HasComplainedAboutAdmin = true;
             }
 
             var procModules = Process.GetCurrentProcess().Modules.Cast<ProcessModule>();

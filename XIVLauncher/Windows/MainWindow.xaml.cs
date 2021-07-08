@@ -149,15 +149,6 @@ namespace XIVLauncher.Windows
             LoginContextMenu.Items.Add(fakeStartMenuItem);
 #endif
 
-            // Upgrade the stored settings if needed
-            if (Properties.Settings.Default.UpgradeRequired)
-            {
-                Log.Information("Settings upgrade required...");
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.UpgradeRequired = false;
-                Properties.Settings.Default.Save();
-            }
-
             // Clean up invalid addons
             if (App.Settings.AddonList != null)
                 App.Settings.AddonList = App.Settings.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
@@ -178,13 +169,11 @@ namespace XIVLauncher.Windows
             if (!gateStatus) WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(242, 24, 24));
 
             var version = Util.GetAssemblyVersion();
-            if (Properties.Settings.Default.LastVersion != version)
+            if (App.Settings.LastVersion != version)
             {
                 new ChangelogWindow().ShowDialog();
 
-                Properties.Settings.Default.LastVersion = version;
-
-                Properties.Settings.Default.Save();
+                App.Settings.LastVersion = version;
             }
 
             _accountManager = new AccountManager(App.Settings);

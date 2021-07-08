@@ -33,6 +33,8 @@ namespace XIVLauncher.Settings
         decimal DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
         bool? OptOutMbCollection { get; set; }
+        bool? HasComplainedAboutAdmin { get; set; }
+        string LastVersion { get; set; }
 
         #endregion
     }

@@ -44,8 +44,6 @@ namespace XIVLauncher.Windows
             ExceptionTextBox.AppendText("\nDebugging");
 #endif
 
-            ExceptionTextBox.AppendText("\n\n\nAddons: " + Properties.Settings.Default.Addons);
-
             ContextTextBlock.Text = message;
 
             SystemSounds.Hand.Play();
