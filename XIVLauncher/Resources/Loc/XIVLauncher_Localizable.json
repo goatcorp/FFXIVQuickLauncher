@@ -55,6 +55,10 @@
     "message": "Please enter an username.",
     "description": "MainWindow.PrepareLogin"
   },
+  "EmailUsernameError": {
+    "message": "Please enter your SE account name, not your email address.",
+    "description": "MainWindow.PrepareLogin"
+  },
   "EmptyPasswordError": {
     "message": "Please enter a password.",
     "description": "MainWindow.PrepareLogin"
@@ -73,39 +77,39 @@
   },
   "LoginNoStartOk": {
     "message": "An update check was executed and any pending updates were installed.",
-    "description": "<>c__DisplayClass17_0.<InstallGamePatch>b__3"
+    "description": "<>c__DisplayClass18_0.<InstallGamePatch>b__3"
   },
   "LoginNoOauthMessage": {
     "message": "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
     "message": "\n\nAuto-Login has been disabled.",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "Login issue",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LoginNoServiceMessage": {
     "message": "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LoginAcceptTermsMessage": {
     "message": "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "EverythingIsFuckedMessage": {
     "message": "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord.",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "PatchInstallDisclaimer": {
     "message": "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "MaintenanceNotice": {
     "message": "Maintenance seems to be in progress. The game shouldn't be launched.",
-    "description": "<StartLogin>d__18.MoveNext"
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "Launch as a steam user?",
