@@ -86,6 +86,23 @@ namespace XIVLauncher.Game
                     }
                 }
             }
+
+            if (d3d11.Exists && dxgi.Exists)
+            {
+                if (MessageBox.Show(
+                    Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."),
+                    "XIVLauncher Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        dxgi.Delete();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not delete duplicate GShade.");
+                    }
+                }
+            }
         }
 
         private static bool CheckSymlinkValid(FileInfo file)
