@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Windows;
+using System.Windows.Documents;
 using CheapLoc;
 using Microsoft.Win32;
+using Serilog;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game
@@ -59,6 +62,48 @@ namespace XIVLauncher.Game
                 CustomMessageBox.Show(Loc.Localize("MacTypeNag", "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(-1);
             }
+
+
+            if (App.Settings.GamePath == null)
+                return;
+
+            var d3d11 = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "d3d11.dll"));
+            var dxgi = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "dxgi.dll"));
+
+            if (!CheckSymlinkValid(d3d11) || !CheckSymlinkValid(dxgi))
+            {
+                if (MessageBox.Show(
+                    Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."),
+                    "XIVLauncher Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        d3d11.Delete();
+                        dxgi.Delete();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not delete broken GShade.");
+                    }
+                }
+            }
+        }
+
+        private static bool CheckSymlinkValid(FileInfo file)
+        {
+            if (!file.Exists)
+                return true;
+
+            try
+            {
+                file.OpenRead();
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
