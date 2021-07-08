@@ -355,6 +355,15 @@ namespace XIVLauncher.Windows
             HandleBootCheck(() => this.Dispatcher.Invoke(() => this.PrepareLogin(autoLogin, startGame)));
         }
 
+        private void Reactivate()
+        {
+            _isLoggingIn = false;
+
+            _ = Task.Run(SetupHeadlines);
+            Show();
+            Activate();
+        }
+
         private void PrepareLogin(bool autoLogin, bool startGame = true)
         {
             if (string.IsNullOrEmpty(LoginUsername.Text))
@@ -362,6 +371,18 @@ namespace XIVLauncher.Windows
                 CustomMessageBox.Show(
                     Loc.Localize("EmptyUsernameError", "Please enter an username."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                this.Reactivate();
+                return;
+            }
+
+            if (LoginUsername.Text.Contains("@"))
+            {
+                CustomMessageBox.Show(
+                    Loc.Localize("EmailUsernameError", "Please enter your SE account name, not your E-Mail address."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                this.Reactivate();
                 return;
             }
 
@@ -370,12 +391,11 @@ namespace XIVLauncher.Windows
                 CustomMessageBox.Show(
                     Loc.Localize("EmptyPasswordError", "Please enter a password."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                _isLoggingIn = false;
+
                 App.Settings.AutologinEnabled = false;
                 AutoLoginCheckBox.IsChecked = false;
-                _ = Task.Run(SetupHeadlines);
-                Show();
-                Activate();
+                
+                this.Reactivate();
                 return;
             }
 
