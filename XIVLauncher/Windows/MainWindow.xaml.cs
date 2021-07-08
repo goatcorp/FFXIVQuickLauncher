@@ -379,7 +379,7 @@ namespace XIVLauncher.Windows
             if (LoginUsername.Text.Contains("@"))
             {
                 CustomMessageBox.Show(
-                    Loc.Localize("EmailUsernameError", "Please enter your SE account name, not your E-Mail address."),
+                    Loc.Localize("EmailUsernameError", "Please enter your SE account name, not your email address."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 this.Reactivate();
