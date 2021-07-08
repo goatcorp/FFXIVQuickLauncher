@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Media;
 using System.Net;
+using System.Text.Encodings.Web;
+using System.Web;
 using System.Windows;
 using System.Windows.Documents;
 using CheapLoc;
+using Microsoft.Win32;
 using Newtonsoft.Json;
+using XIVLauncher.Settings;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -21,27 +26,10 @@ namespace XIVLauncher.Windows
 
             DiscordButton.Click += Util.OpenDiscord;
             DataContext = new ChangeLogWindowViewModel();
-            try
-            {
-                // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                using (var client = new WebClient())
-                {
-                    client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36");
-
-                    dynamic releaseInfo = JsonConvert.DeserializeObject(
-                        client.DownloadString("https://api.github.com/repos/goaaats/FFXIVQuickLauncher/releases/latest"));
-
-                    ExceptionTextBox.AppendText((string) releaseInfo.body);
-                }
-
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
-            }
-            catch(Exception)
-            {
-                ExceptionTextBox.AppendText(Loc.Localize("ReleaseInfoUnavailable", "Couldn't get release info."));
-            }
+            this.ChangeLogText.Text = File.ReadAllText(Path.Combine(
+                Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources",
+                "CHANGELOG.txt"));
             
             SystemSounds.Asterisk.Play();
 
@@ -54,6 +42,30 @@ namespace XIVLauncher.Windows
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void EmailButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            // Try getting the Windows 10 "build", e.g. 1909
+            var releaseId = "???";
+            try
+            {
+                releaseId = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion",
+                    "ReleaseId", "").ToString();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            var os = HttpUtility.HtmlEncode($"{Environment.OSVersion} - {releaseId} ({Environment.Version})");
+            var lang = HttpUtility.HtmlEncode(App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English)
+                .ToString());
+            var wine = EnvironmentSettings.IsWine ? "Yes" : "No";
+
+            Process.Start(string.Format(
+                "mailto:goatsdev@protonmail.com?subject=XIVLauncher%20Feedback&body=This%20is%20my%20XIVLauncher%20Feedback.%0A%0AMy%20OS%3A%0D{0}%0ALauncher%20Language%3A%0D{1}%0ARunning%20on%20Wine%3A%0D{2}",
+                os, lang, wine));
         }
     }
 }

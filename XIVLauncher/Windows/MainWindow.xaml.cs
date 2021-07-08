@@ -52,6 +52,9 @@ namespace XIVLauncher.Windows
 
             this.DataContext = new MainWindowViewModel();
 
+            var a = new ChangelogWindow();
+            a.ShowDialog();
+
             NewsListView.ItemsSource = new List<News>
             {
                 new News
