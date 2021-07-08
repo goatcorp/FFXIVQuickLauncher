@@ -3,10 +3,6 @@
     "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support.",
     "description": "<Run>d__0.MoveNext"
   },
-  "ReleaseInfoUnavailable": {
-    "message": "Couldn't get release info.",
-    "description": "ChangelogWindow..ctor"
-  },
   "DalamudUpdateDalamud": {
     "message": "Updating Dalamud...",
     "description": "DalamudLoadingOverlay.SetProgress"
@@ -34,42 +30,6 @@
   "GamePathInvalidError": {
     "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.",
     "description": "FirstTimeSetup.NextButton_Click"
-  },
-  "LaunchAsSteam": {
-    "message": "Launch as a steam user?",
-    "description": "SettingsControl.OriginalLauncherButton_OnClick"
-  },
-  "DalamudIncompatible": {
-    "message": "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
-    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
-  },
-  "DalamudCompatCheckFailed": {
-    "message": "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
-    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
-  },
-  "PluginPathNotFound": {
-    "message": "Couldn't find plugin directory path.",
-    "description": "SettingsControl.TogglePlugin_OnClick"
-  },
-  "GameIsOpenPluginLocked": {
-    "message": "The game is open, please close it and try again.",
-    "description": "SettingsControl.DeletePlugin_OnClick"
-  },
-  "DisabledPlugin": {
-    "message": " (disabled)",
-    "description": "SettingsControl.ReloadPluginList"
-  },
-  "IntegrityCheckImpossible": {
-    "message": "There is no reference report yet for this game version. Please try again later.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckFailed": {
-    "message": "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, please reinstall your game.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
-  },
-  "IntegrityCheckValid": {
-    "message": "Your game install seems to be valid.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "NewsLoading": {
     "message": "Loading...",
@@ -147,6 +107,42 @@
     "message": "Maintenance seems to be in progress. The game shouldn't be launched.",
     "description": "<StartLogin>d__18.MoveNext"
   },
+  "LaunchAsSteam": {
+    "message": "Launch as a steam user?",
+    "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "DalamudIncompatible": {
+    "message": "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "DalamudCompatCheckFailed": {
+    "message": "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "PluginPathNotFound": {
+    "message": "Couldn't find plugin directory path.",
+    "description": "SettingsControl.TogglePlugin_OnClick"
+  },
+  "GameIsOpenPluginLocked": {
+    "message": "The game is open, please close it and try again.",
+    "description": "SettingsControl.DeletePlugin_OnClick"
+  },
+  "DisabledPlugin": {
+    "message": " (disabled)",
+    "description": "SettingsControl.ReloadPluginList"
+  },
+  "IntegrityCheckImpossible": {
+    "message": "There is no reference report yet for this game version. Please try again later.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckFailed": {
+    "message": "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, please reinstall your game.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
+  "IntegrityCheckValid": {
+    "message": "Your game install seems to be valid.",
+    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+  },
   "AccountSwitcherSetProfilePic": {
     "message": "Set profile picture",
     "description": "AccountSwitcherViewModel.SetupLoc"
@@ -171,6 +167,14 @@
     "message": "Join Discord",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
+  "SendEmail": {
+    "message": "Send Email",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "EmailInfo": {
+    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation.\n\nThank you very much!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
   "OK": {
     "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
@@ -186,6 +190,10 @@
   "HowToHint": {
     "message": "How do I set this up?",
     "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "Updating in-game addon...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
     "message": "An error in XIVLauncher occured. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.",
@@ -587,10 +595,6 @@
     "message": "Enable encrypting arguments to the client",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "DalamudUpdate": {
-    "message": "Updating in-game addon...",
-    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
-  },
   "UpdateCheckMsg": {
     "message": "Checking for updates...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
@@ -603,6 +607,14 @@
     "message": "Hold the control key to reset UID cache!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
+  "BinaryNotPresentError": {
+    "message": "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game.",
+    "description": "Launcher.LaunchGame"
+  },
+  "NativeLauncherError": {
+    "message": "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
   "AdminCheck": {
     "message": "XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?",
     "description": "ProblemCheck.RunCheck"
@@ -614,14 +626,6 @@
   "MacTypeNag": {
     "message": "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType.",
     "description": "ProblemCheck.RunCheck"
-  },
-  "BinaryNotPresentError": {
-    "message": "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game.",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
   },
   "PatchInstallerNotOpen": {
     "message": "Could not connect to the patch installer.\nPlease report this error.",
