@@ -48,6 +48,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Resource Remove="Resources\CHANGELOG.txt" />
+    <Resource Remove="Resources\LICENSE.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\CHANGELOG.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AdysTech.CredentialManager" Version="1.8.0" />
     <PackageReference Include="CheapLoc" Version="1.1.5" />
     <PackageReference Include="Config.Net.Json" Version="4.14.23" />
