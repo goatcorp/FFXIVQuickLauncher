@@ -18,6 +18,8 @@ namespace XIVLauncher.Windows
     {
         public bool WasCompleted { get; private set; } = false;
 
+        private readonly string actPath;
+
         public FirstTimeSetup()
         {
             InitializeComponent();
@@ -27,6 +29,8 @@ namespace XIVLauncher.Windows
             var detectedPath = Util.TryGamePaths();
 
             if (detectedPath != null) GamePathEntry.Text = detectedPath;
+
+            this.actPath = this.FindAct();
 
 #if XL_NOAUTOUPDATE
             CustomMessageBox.Show(
@@ -50,8 +54,9 @@ namespace XIVLauncher.Windows
                 var shortcutDir = new DirectoryInfo(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs",
                     "Advanced Combat Tracker"));
+                var shortcutPath = Path.Combine(shortcutDir.FullName, "ACT - Advanced Combat Tracker.lnk");
 
-                return GetShortcutTargetFile(Path.Combine(shortcutDir.FullName, "ACT - Advanced Combat Tracker.lnk"));
+                return System.IO.File.Exists(shortcutPath) ? GetShortcutTargetFile(shortcutPath) : null;
             }
             catch
             {
@@ -87,9 +92,7 @@ namespace XIVLauncher.Windows
             if (SetupTabControl.SelectedIndex == 2)
             {
                 // Check if ACT is installed, if it isn't, just skip this step
-                var actPath = FindAct();
-
-                if (actPath == null)
+                if (string.IsNullOrEmpty(this.actPath))
                 {
                     SetupTabControl.SelectedIndex++;
                     NextButton_Click(null, null);
@@ -109,14 +112,12 @@ namespace XIVLauncher.Windows
 
                 if (ActCheckBox.IsChecked == true)
                 {
-                    var actPath = FindAct();
-
                     App.Settings.AddonList.Add(new AddonEntry
                     {
                         IsEnabled = true,
                         Addon = new GenericAddon
                         {
-                            Path = actPath
+                            Path = this.actPath
                         }
                     });
                 }
