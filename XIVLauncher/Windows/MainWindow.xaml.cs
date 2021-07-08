@@ -234,8 +234,6 @@ namespace XIVLauncher.Windows
 
             Task.Run(SetupHeadlines);
 
-            ProblemCheck.RunCheck();
-
             Log.Information("MainWindow initialized.");
 
             Show();
@@ -349,6 +347,8 @@ namespace XIVLauncher.Windows
 
         private void Kickoff(bool autoLogin, bool startGame = true)
         {
+            ProblemCheck.RunCheck();
+
             HandleBootCheck(() => this.Dispatcher.Invoke(() => this.PrepareLogin(autoLogin, startGame)));
         }
 

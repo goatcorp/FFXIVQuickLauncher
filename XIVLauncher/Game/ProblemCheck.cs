@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Windows;
-using System.Windows.Documents;
 using CheapLoc;
 using Microsoft.Win32;
 using Serilog;
@@ -98,7 +97,7 @@ namespace XIVLauncher.Game
             {
                 file.OpenRead();
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 return false;
             }
