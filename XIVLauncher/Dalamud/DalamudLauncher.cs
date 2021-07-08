@@ -7,7 +7,6 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Web.SessionState;
 using System.Windows;
 using CheapLoc;
 using Dalamud;
