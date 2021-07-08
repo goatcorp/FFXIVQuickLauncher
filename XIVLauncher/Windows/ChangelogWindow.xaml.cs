@@ -2,14 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Media;
-using System.Net;
-using System.Text.Encodings.Web;
 using System.Web;
 using System.Windows;
-using System.Windows.Documents;
-using CheapLoc;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows.ViewModel;
 
