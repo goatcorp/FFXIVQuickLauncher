@@ -3,7 +3,7 @@
     <Product>XIVLauncher</Product>
     <AssemblyTitle>XIVLauncher</AssemblyTitle>
     <Description>Custom launcher for FFXIV.</Description>
-    <VersionPrefix>5.5.9</VersionPrefix>
+    <VersionPrefix>6.0.0</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup>
