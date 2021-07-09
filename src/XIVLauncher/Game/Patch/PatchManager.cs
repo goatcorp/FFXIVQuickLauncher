@@ -67,6 +67,8 @@ namespace XIVLauncher.Game.Patch
         public readonly SlotState[] Slots = new SlotState[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchAcquisition[] DownloadServices = new PatchAcquisition[MAX_DOWNLOADS_AT_ONCE];
 
+        public bool IsInstallerBusy { get; private set; }
+
         public bool DownloadsDone { get; private set; }
 
         public long AllDownloadsLength => GetDownloadLength();
@@ -380,6 +382,8 @@ namespace XIVLauncher.Game.Patch
 
                 Log.Information("Starting patch install for {0} at {1}({2})", toInstall.Patch.VersionId, toInstall.Patch.Url, CurrentInstallIndex);
 
+                IsInstallerBusy = true;
+
                 _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch, GetRepoForPatch(toInstall.Patch));
 
                 while (_installer.State != PatchInstaller.InstallerState.Ready)
@@ -392,6 +396,8 @@ namespace XIVLauncher.Game.Patch
                     return;
 
                 Log.Information($"Patch at {CurrentInstallIndex} installed");
+
+                IsInstallerBusy = false;
 
                 toInstall.State = PatchState.Finished;
                 CurrentInstallIndex++;

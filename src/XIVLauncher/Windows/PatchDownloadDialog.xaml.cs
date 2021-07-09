@@ -44,7 +44,7 @@ namespace XIVLauncher.Windows
         {
             this.Dispatcher.Invoke(() =>
             {
-                SetGeneralProgress(_manager.CurrentInstallIndex, _manager.Downloads.Count);
+                SetGeneralProgress(_manager.CurrentInstallIndex, _manager.Downloads.Count, this._manager.IsInstallerBusy);
 
                 for (var i = 0; i < PatchManager.MAX_DOWNLOADS_AT_ONCE; i++)
                 {
@@ -82,12 +82,12 @@ namespace XIVLauncher.Windows
             });
         }
 
-        public void SetGeneralProgress(int curr, int final)
+        public void SetGeneralProgress(int curr, int final, bool busy)
         {
             PatchProgressText.Text = string.Format(ViewModel.PatchGeneralStatusLoc,
                 $"{curr}/{final}");
 
-            InstallingText.Text = string.Format(ViewModel.PatchInstallingFormattedLoc, curr);
+            InstallingText.Text = busy ? string.Format(ViewModel.PatchInstallingFormattedLoc, curr) : ViewModel.PatchInstallingIdleLoc;
         }
 
         public void SetLeft(long left, double rate)

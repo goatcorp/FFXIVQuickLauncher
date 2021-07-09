@@ -73,7 +73,11 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
         {
             if (ariaProcess is {HasExited: false})
             {
-                await manager.Shutdown();
+                manager.Shutdown();
+                Thread.Sleep(1000);
+
+                if (!ariaProcess.HasExited)
+                    ariaProcess.Kill();
             }
         }
 
