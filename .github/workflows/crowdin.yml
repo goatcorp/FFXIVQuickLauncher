@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Update localization
-      uses: crowdin/github-action@1.1.1
+      uses: crowdin/github-action@1.1.2
       with:
           upload_sources: true
           upload_translations: false
