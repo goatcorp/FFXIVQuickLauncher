@@ -50,6 +50,7 @@
   <ItemGroup>
     <Resource Remove="Resources\aria2c.exe" />
     <Resource Remove="Resources\CHANGELOG.txt" />
+    <Resource Remove="Resources\COPYING.aria2" />
     <Resource Remove="Resources\LICENSE.txt" />
   </ItemGroup>
 
@@ -58,6 +59,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\CHANGELOG.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\COPYING.aria2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\LICENSE.txt">
