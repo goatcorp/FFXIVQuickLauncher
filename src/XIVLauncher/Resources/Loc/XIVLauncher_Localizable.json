@@ -371,6 +371,10 @@
     "message": "Installing #{0}...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
+  "PatchInstallingIdle": {
+    "message": "Waiting for download...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
   "PatchEta": {
     "message": "{0} left to download at {1}/s.",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
@@ -653,7 +657,7 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
-    "description": "<>c__DisplayClass29_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass33_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "The in-game addon ran into an error.\n\nThis is most likely caused by your antivirus. Please whitelist the quarantined files or disable the in-game addon.",
