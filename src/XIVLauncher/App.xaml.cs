@@ -40,8 +40,8 @@ namespace XIVLauncher
 
             foreach (var arg in Environment.GetCommandLineArgs())
             {
-                if (!arg.StartsWith("RoamingPath=")) continue;
-                Paths.RoamingPath = arg.Substring(12);
+                if (!arg.StartsWith("--roamingPath=")) continue;
+                Paths.RoamingPath = arg.Substring(14);
                 break;
             }
 
