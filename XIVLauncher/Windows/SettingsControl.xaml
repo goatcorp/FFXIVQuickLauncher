@@ -230,13 +230,11 @@
                               Content="{Binding KeepPatchesLoc}"
                               HorizontalAlignment="Left" Margin="10,10,0,15"
                               Foreground="{DynamicResource MaterialDesignBody}" />
-                    
-                    <!--
+
                     <CheckBox x:Name="UseTorrentsCheckBox"
                               Content="{Binding UseTorrentsLoc}"
                               HorizontalAlignment="Left" Margin="10,10,0,15"
-                              Foreground="{DynamicResource MaterialDesignBody}" />
-                    -->
+                              Foreground="{DynamicResource MaterialDesignBody}" Visibility="Collapsed"/>
                 </StackPanel>
 
             </TabItem>
