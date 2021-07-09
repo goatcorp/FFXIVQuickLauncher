@@ -52,21 +52,21 @@ namespace XIVLauncher.Windows
 
                     if (_manager.Slots[i] == PatchManager.SlotState.Done || activePatch == null)
                     {
-                        SetPatchProgress(i, ViewModel.PatchDoneLoc, 100f, false);
+                        SetPatchProgress(i, ViewModel.PatchDoneLoc, 100f, false, false);
                         continue;
                     }
 
                     if (_manager.Slots[i] == PatchManager.SlotState.Checking)
                     {
                         SetPatchProgress(i,
-                            $"{activePatch.Patch} ({ViewModel.PatchCheckingLoc})", 100f, false);
+                            $"{activePatch.Patch} ({ViewModel.PatchCheckingLoc})", 100f, false, true);
                     }
                     else
                     {
                         var pct = Math.Round((double) (100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
                         SetPatchProgress(i,
                             $"{activePatch.Patch} ({pct:#0.0}%, {Util.BytesToString(_manager.Speeds[i])}/s)",
-                            pct, this._manager.DownloadServices[i] is TorrentPatchAcquisition);
+                            pct, this._manager.DownloadServices[i] is TorrentPatchAcquisition, false);
                     }
                 }
 
@@ -95,28 +95,29 @@ namespace XIVLauncher.Windows
             BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, Util.BytesToString(left), Util.BytesToString(rate));
         }
 
-        public void SetPatchProgress(int index, string patchName, double pct, bool torrent)
+        public void SetPatchProgress(int index, string patchName, double pct, bool torrent, bool indeterminate)
         {
             switch (index)
             {
                 case 0:
-                    SetProgressBar1Progress(patchName, pct, torrent);
+                    SetProgressBar1Progress(patchName, pct, torrent, indeterminate);
                     break;
                 case 1:
-                    SetProgressBar2Progress(patchName, pct, torrent);
+                    SetProgressBar2Progress(patchName, pct, torrent, indeterminate);
                     break;
                 case 2:
-                    SetProgressBar3Progress(patchName, pct, torrent);
+                    SetProgressBar3Progress(patchName, pct, torrent, indeterminate);
                     break;
                 case 3:
-                    SetProgressBar4Progress(patchName, pct, torrent);
+                    SetProgressBar4Progress(patchName, pct, torrent, indeterminate);
                     break;
             }
         }
 
-        public void SetProgressBar1Progress(string patchName, double percentage, bool torrent)
+        public void SetProgressBar1Progress(string patchName, double percentage, bool torrent, bool indeterminate)
         {
             Progress1.Value = percentage;
+            Progress1.IsIndeterminate = indeterminate;
             Progress1Text.Text = patchName;
 
             if (torrent)
@@ -133,9 +134,10 @@ namespace XIVLauncher.Windows
             }
         }
 
-        public void SetProgressBar2Progress(string patchName, double percentage, bool torrent)
+        public void SetProgressBar2Progress(string patchName, double percentage, bool torrent, bool indeterminate)
         {
             Progress2.Value = percentage;
+            Progress2.IsIndeterminate = indeterminate;
             Progress2Text.Text = patchName;
 
             if (torrent)
@@ -152,9 +154,10 @@ namespace XIVLauncher.Windows
             }
         }
 
-        public void SetProgressBar3Progress(string patchName, double percentage, bool torrent)
+        public void SetProgressBar3Progress(string patchName, double percentage, bool torrent, bool indeterminate)
         {
             Progress3.Value = percentage;
+            Progress3.IsIndeterminate = indeterminate;
             Progress3Text.Text = patchName;
 
             if (torrent)
@@ -171,9 +174,10 @@ namespace XIVLauncher.Windows
             }
         }
 
-        public void SetProgressBar4Progress(string patchName, double percentage, bool torrent)
+        public void SetProgressBar4Progress(string patchName, double percentage, bool torrent, bool indeterminate)
         {
             Progress4.Value = percentage;
+            Progress4.IsIndeterminate = indeterminate;
             Progress4Text.Text = patchName;
 
             if (torrent)
