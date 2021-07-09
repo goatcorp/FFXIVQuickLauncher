@@ -77,7 +77,7 @@ namespace XIVLauncher.Windows
                 }
                 else
                 {
-                    SetLeft(_manager.AllDownloadsLength, _manager.Speeds.Sum());
+                    SetLeft(_manager.AllDownloadsLength < 0 ? 0 : _manager.AllDownloadsLength, _manager.Speeds.Sum());
                 }
             });
         }

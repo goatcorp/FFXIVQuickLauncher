@@ -293,6 +293,7 @@ namespace XIVLauncher.Game.Patch
                 try
                 {
                     downloadService?.CancelAsync().GetAwaiter().GetResult();
+                    Thread.Sleep(200);
                 }
                 catch (Exception ex)
                 {

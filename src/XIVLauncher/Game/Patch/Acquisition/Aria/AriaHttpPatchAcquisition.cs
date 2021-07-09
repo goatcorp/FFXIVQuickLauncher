@@ -26,11 +26,25 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
 
             if (ariaProcess == null || ariaProcess.HasExited)
             {
+                // Kill stray aria2c-xl processes
+                var stray = Process.GetProcessesByName("aria2c-xl");
+                foreach (var process in stray)
+                {
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[ARIA] Could not kill stray process.");
+                    }
+                }
+
                 // I don't really see the point of this, but aria complains if we don't provide a secret
                 var rng = new Random();
                 var secret = BitConverter.ToString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes($"{rng.Next()}{rng.Next()}{rng.Next()}{rng.Next()}")));
 
-                var ariaPath = Path.Combine(Paths.ResourcesPath, "aria2c.exe");
+                var ariaPath = Path.Combine(Paths.ResourcesPath, "aria2c-xl.exe");
 
                 Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath}...");
 
