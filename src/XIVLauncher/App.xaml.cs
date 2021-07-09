@@ -38,6 +38,13 @@ namespace XIVLauncher
         {
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
+            foreach (var arg in Environment.GetCommandLineArgs())
+            {
+                if (!arg.StartsWith("RoamingPath=")) continue;
+                Paths.RoamingPath = arg.Substring(12);
+                break;
+            }
+
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
             Log.Logger = new LoggerConfiguration()
