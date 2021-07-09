@@ -35,6 +35,7 @@ namespace XIVLauncher.Settings
         bool? OptOutMbCollection { get; set; }
         bool? HasComplainedAboutAdmin { get; set; }
         string LastVersion { get; set; }
+        bool? IsTorrentMode { get; set; }
 
         #endregion
     }

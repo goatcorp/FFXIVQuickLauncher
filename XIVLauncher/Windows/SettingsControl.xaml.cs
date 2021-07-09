@@ -64,6 +64,7 @@ namespace XIVLauncher.Windows
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
+            this.UseTorrentsCheckBox.IsChecked = App.Settings.IsTorrentMode;
 
             ReloadPluginList();
 
@@ -108,6 +109,7 @@ namespace XIVLauncher.Windows
             App.Settings.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
             App.Settings.KeepPatches = KeepPatchesCheckBox.IsChecked == true;
+            App.Settings.IsTorrentMode = UseTorrentsCheckBox.IsChecked == true;
 
             App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 

@@ -88,10 +88,15 @@
   <ItemGroup>
     <Reference Include="System.Web" />
   </ItemGroup>
+<<<<<<< HEAD
 
 
 
   <!-- Git -->
+=======
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+>>>>>>> bt_patches
   <Target Name="GetGitHash" BeforeTargets="WriteGitHash" Condition="'$(BuildHash)' == ''">
     <PropertyGroup>
       <!-- temp file for the git version (lives in "obj" folder)-->
