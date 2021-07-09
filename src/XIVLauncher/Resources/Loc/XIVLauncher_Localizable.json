@@ -567,6 +567,10 @@
     "message": "Keep downloaded patches for future reinstalls",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "PatchAcquisitionMethod": {
+    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAbout": {
     "message": "About",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -649,7 +653,7 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
-    "description": "<>c__DisplayClass31_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass29_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "The in-game addon ran into an error.\n\nThis is most likely caused by your antivirus. Please whitelist the quarantined files or disable the in-game addon.",
