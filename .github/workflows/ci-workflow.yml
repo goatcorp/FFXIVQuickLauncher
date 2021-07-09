@@ -16,7 +16,7 @@ jobs:
         with:
           nuget-version: "latest"
       - name: Restore Nuget Packages
-        run: nuget restore XIVLauncher.sln
+        run: nuget restore src\XIVLauncher.sln
       - name: Define VERSION
         run: |
           $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
@@ -29,10 +29,11 @@ jobs:
       - name: Build DotNet4 for Release
         run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=Release
+           .\MSBuild.exe $Env:GITHUB_WORKSPACE\src\XIVLauncher.sln /t:Build /p:Configuration=Release
       - name: Build Squirrel Release
         id: build-squirrel
         run: |
+          cd src\
           $releases = Invoke-WebRequest -Uri 'https://api.github.com/repos/goatcorp/FFXIVQuickLauncher/releases'
           $current = ConvertFrom-Json -InputObject $releases.Content | Select-Object -First 1
           $refver = $env:GITHUB_REF -replace '.*/'
@@ -80,7 +81,7 @@ jobs:
         with:
           nuget-version: "latest"
       - name: Restore Nuget Packages
-        run: nuget restore XIVLauncher.sln
+        run: nuget restore src\XIVLauncher.sln
       - name: Define VERSION
         run: |
           $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
@@ -93,9 +94,9 @@ jobs:
       - name: Build DotNet4 Master
         run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\XIVLauncher.sln /t:Build /p:Configuration=ReleaseNoUpdate
+           .\MSBuild.exe $Env:GITHUB_WORKSPACE\src\XIVLauncher.sln /t:Build /p:Configuration=ReleaseNoUpdate
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: xivlauncher-artifact
-          path: bin\
+          path: src\bin\

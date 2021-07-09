@@ -252,6 +252,6 @@ paket-files/
 *.sln.iml
 
 # XL Debug dirs
-XIVLauncher/XIVLauncher/app-*
-/XIVLauncher/XIVLauncher
-Update.exe
+src/XIVLauncher/XIVLauncher/app-*
+src/XIVLauncher/XIVLauncher
+src/Update.exe
