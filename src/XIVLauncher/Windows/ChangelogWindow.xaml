@@ -23,7 +23,7 @@
 
             <StackPanel
                 Orientation="Horizontal">
-                <TextBlock Margin="10" Width="510" Height="Auto" x:Name="ChangeLogText"></TextBlock>
+                <TextBlock Margin="10" MaxWidth="550" Height="Auto" x:Name="ChangeLogText"></TextBlock>
 
                 <materialDesign:PackIcon Kind="Globe" HorizontalAlignment="Stretch" Foreground="DodgerBlue"
                                          VerticalAlignment="Stretch" Width="30" Height="30" Margin="10,0,20,0" />
