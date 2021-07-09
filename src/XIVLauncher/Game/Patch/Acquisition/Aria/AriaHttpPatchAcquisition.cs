@@ -36,8 +36,8 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
 
                 var startInfo = new ProcessStartInfo(ariaPath, $"--enable-rpc --rpc-secret={secret} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8")
                 {
-                    //CreateNoWindow = true,
-                    //WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = true
                 };
 
