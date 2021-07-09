@@ -26,14 +26,15 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
 
             if (ariaProcess == null || ariaProcess.HasExited)
             {
-                Log.Verbose("[ARIA] Aria process not there, creating...");
-
                 // I don't really see the point of this, but aria complains if we don't provide a secret
                 var rng = new Random();
                 var secret = BitConverter.ToString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes($"{rng.Next()}{rng.Next()}{rng.Next()}{rng.Next()}")));
 
                 var ariaPath = Path.Combine(Paths.ResourcesPath, "aria2c.exe");
-                var startInfo = new ProcessStartInfo(ariaPath, $"--enable-rpc --rpc-secret={secret} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice -x=8")
+
+                Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath}...");
+
+                var startInfo = new ProcessStartInfo(ariaPath, $"--enable-rpc --rpc-secret={secret} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8")
                 {
                     //CreateNoWindow = true,
                     //WindowStyle = ProcessWindowStyle.Hidden,
@@ -44,8 +45,11 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
 
                 Thread.Sleep(400);
 
-                if (ariaProcess == null || ariaProcess.HasExited)
-                    throw new Exception("Could not start aria.");
+                if (ariaProcess == null)
+                    throw new Exception("ariaProcess was null.");
+
+                if (ariaProcess.HasExited)
+                    throw new Exception("ariaProcess has exited.");
 
                 manager = new AriaManager(secret);
             }
