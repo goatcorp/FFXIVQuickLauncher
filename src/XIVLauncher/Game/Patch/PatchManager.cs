@@ -164,8 +164,15 @@ namespace XIVLauncher.Game.Patch
 
         public async Task UnInitializeAcquisition()
         {
-            await AriaHttpPatchAcquisition.UnInitializeAsync();
-            await TorrentPatchAcquisition.UnInitializeAsync();
+            try
+            {
+                await AriaHttpPatchAcquisition.UnInitializeAsync();
+                await TorrentPatchAcquisition.UnInitializeAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not uninitialize patch acquisition.");
+            }
         }
 
         private async Task DownloadPatchAsync(PatchDownload download, int index)
