@@ -15,6 +15,7 @@ using CheapLoc;
 using Downloader;
 using Serilog;
 using XIVLauncher.Game.Patch.Acquisition;
+using XIVLauncher.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
@@ -43,7 +44,7 @@ namespace XIVLauncher.Game.Patch
 
         public const int MAX_DOWNLOADS_AT_ONCE = 4;
 
-        private CancellationTokenSource _cancelTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancelTokenSource = new();
 
         private readonly DirectoryInfo _gamePath;
         private readonly DirectoryInfo _patchStore;
@@ -64,7 +65,7 @@ namespace XIVLauncher.Game.Patch
         public readonly double[] Speeds = new double[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchDownload[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
         public readonly SlotState[] Slots = new SlotState[MAX_DOWNLOADS_AT_ONCE];
-        public readonly IPatchAcquisition[] DownloadServices = new IPatchAcquisition[MAX_DOWNLOADS_AT_ONCE];
+        public readonly PatchAcquisition[] DownloadServices = new PatchAcquisition[MAX_DOWNLOADS_AT_ONCE];
 
         public bool DownloadsDone { get; private set; }
 
@@ -87,11 +88,6 @@ namespace XIVLauncher.Game.Patch
             for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
             {
                 Slots[i] = SlotState.Done;
-            }
-
-            if (App.Settings.IsTorrentMode.GetValueOrDefault(false))
-            {
-                TorrentPatchAcquisition.InitAsync((int) App.Settings.SpeedLimitBytes).GetAwaiter().GetResult();
             }
         }
 
@@ -137,6 +133,25 @@ namespace XIVLauncher.Game.Patch
             }
             _installer.WaitOnHello();
 
+            // TODO: Come up with a better pattern for initialization. This sucks.
+            switch (App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria))
+            {
+                case AcquisitionMethod.NetDownloader:
+                    // ignored
+                    break;
+                case AcquisitionMethod.MonoTorrentNetFallback:
+                    break;
+                case AcquisitionMethod.MonoTorrentAriaFallback:
+                    AriaHttpPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE).GetAwaiter().GetResult();
+                    TorrentPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE).GetAwaiter().GetResult();
+                    break;
+                case AcquisitionMethod.Aria:
+                    AriaHttpPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE).GetAwaiter().GetResult();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
             Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
             Task.Run(RunApplyQueue, _cancelTokenSource.Token);
         }
@@ -157,19 +172,32 @@ namespace XIVLauncher.Game.Patch
                 return;
             }
 
-            IPatchAcquisition acquisition = new TorrentPatchAcquisition();
+            PatchAcquisition acquisition;
 
-            if (App.Settings.IsTorrentMode.GetValueOrDefault(false))
+            switch (App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria))
             {
-                acquisition = new TorrentPatchAcquisition();
+                case AcquisitionMethod.NetDownloader:
+                    acquisition = new NetDownloaderPatchAcquisition(this._patchStore);
+                    break;
+                case AcquisitionMethod.MonoTorrentNetFallback:
+                    acquisition = new TorrentPatchAcquisition();
 
-                var torrentAcquisition = acquisition as TorrentPatchAcquisition;
-                if (!torrentAcquisition.IsApplicable(download.Patch))
-                    acquisition = new WebPatchAcquisition(this._patchStore);
-            }
-            else
-            {
-                acquisition = new WebPatchAcquisition(this._patchStore);
+                    var torrentAcquisition = acquisition as TorrentPatchAcquisition;
+                    if (!torrentAcquisition.IsApplicable(download.Patch))
+                        acquisition = new NetDownloaderPatchAcquisition(this._patchStore);
+                    break;
+                case AcquisitionMethod.MonoTorrentAriaFallback:
+                    acquisition = new TorrentPatchAcquisition();
+
+                    torrentAcquisition = acquisition as TorrentPatchAcquisition;
+                    if (!torrentAcquisition.IsApplicable(download.Patch))
+                        acquisition = new AriaHttpPatchAcquisition();
+                    break;
+                case AcquisitionMethod.Aria:
+                    acquisition = new AriaHttpPatchAcquisition();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             acquisition.ProgressChanged += (sender, args) =>

@@ -48,11 +48,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Resource Remove="Resources\aria2c.exe" />
     <Resource Remove="Resources\CHANGELOG.txt" />
     <Resource Remove="Resources\LICENSE.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\aria2c.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\CHANGELOG.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -76,6 +80,7 @@
     <PackageReference Include="Serilog.Sinks.Async" Version="1.4.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="Spooky.Json20" Version="1.0.5" />
     <PackageReference Include="squirrel.windows" Version="1.9.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />

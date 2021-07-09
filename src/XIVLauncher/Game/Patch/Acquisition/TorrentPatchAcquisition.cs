@@ -13,24 +13,26 @@ using XIVLauncher.Game.Patch.PatchList;
 
 namespace XIVLauncher.Game.Patch.Acquisition
 {
-    public class TorrentPatchAcquisition : IPatchAcquisition
+    public class TorrentPatchAcquisition : PatchAcquisition
     {
         private static ClientEngine torrentEngine;
 
         private TorrentManager _torrentManager;
         private byte[] _torrentBytes;
 
-        public static async Task InitAsync(int maxDownloadSpeed = 0)
+        public static async Task InitializeAsync(long maxDownloadSpeed)
         {
-            torrentEngine = new ClientEngine();
+            if (torrentEngine == null)
+            {
+                torrentEngine = new ClientEngine();
 
-            var builder = new EngineSettingsBuilder(torrentEngine.Settings);
-            builder.MaximumDownloadSpeed = maxDownloadSpeed;
+                var builder = new EngineSettingsBuilder(torrentEngine.Settings) {MaximumDownloadSpeed = (int)maxDownloadSpeed};
 
-            await torrentEngine.UpdateSettingsAsync(builder.ToSettings());
+                await torrentEngine.UpdateSettingsAsync(builder.ToSettings());
+            }
         }
 
-        public static async Task UnInit()
+        public static async Task UnInitializeAsync()
         {
             if (torrentEngine != null)
             {
@@ -56,7 +58,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             return true;
         }
 
-        public async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
+        public override async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
         {
             if (_torrentBytes == null)
             {
@@ -72,7 +74,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             {
                 if ((int) _torrentManager.Progress == 100 && !hasSignaledComplete && args.NewState == TorrentState.Seeding)
                 {
-                    Complete?.Invoke(null, AcquisitionResult.Success);
+                    OnComplete(AcquisitionResult.Success);
                     hasSignaledComplete = true;
                     await _torrentManager.StopAsync();
                 }
@@ -80,7 +82,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
             _torrentManager.PieceHashed += (sender, args) =>
             {
-                ProgressChanged?.Invoke(null, new AcquisitionProgress
+                OnProgressChanged(new AcquisitionProgress
                 {
                     Progress = _torrentManager.Monitor.DataBytesDownloaded,
                     BytesPerSecondSpeed = _torrentManager.Monitor.DownloadSpeed
@@ -91,7 +93,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             await _torrentManager.DhtAnnounceAsync();
         }
 
-        public async Task CancelAsync()
+        public override async Task CancelAsync()
         {
             if (_torrentManager == null)
                 return;
@@ -99,8 +101,5 @@ namespace XIVLauncher.Game.Patch.Acquisition
             await _torrentManager.StopAsync();
             await torrentEngine.RemoveAsync(_torrentManager);
         }
-
-        public event EventHandler<AcquisitionProgress> ProgressChanged;
-        public event EventHandler<AcquisitionResult> Complete;
     }
 }

@@ -15,6 +15,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
+using XIVLauncher.Game.Patch.Acquisition;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -64,7 +65,7 @@ namespace XIVLauncher.Windows
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
-            this.UseTorrentsCheckBox.IsChecked = App.Settings.IsTorrentMode;
+            PatchAcquisitionComboBox.SelectedIndex = (int) App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria);
 
             ReloadPluginList();
 
@@ -109,7 +110,7 @@ namespace XIVLauncher.Windows
             App.Settings.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
             App.Settings.KeepPatches = KeepPatchesCheckBox.IsChecked == true;
-            App.Settings.IsTorrentMode = UseTorrentsCheckBox.IsChecked == true;
+            App.Settings.PatchAcquisitionMethod = (AcquisitionMethod) PatchAcquisitionComboBox.SelectedIndex;
 
             App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 
@@ -465,7 +466,7 @@ namespace XIVLauncher.Windows
 
         private void LicenseText_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            Process.Start(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources", "LICENSE.txt"));
+            Process.Start(Path.Combine(Paths.ResourcesPath, "LICENSE.txt"));
         }
 
         private void Logo_OnMouseUp(object sender, MouseButtonEventArgs e)

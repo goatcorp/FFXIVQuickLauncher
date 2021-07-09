@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using XIVLauncher.Addon;
 using XIVLauncher.Game;
+using XIVLauncher.Game.Patch.Acquisition;
 
 namespace XIVLauncher.Settings
 {
@@ -35,7 +36,7 @@ namespace XIVLauncher.Settings
         bool? OptOutMbCollection { get; set; }
         bool? HasComplainedAboutAdmin { get; set; }
         string LastVersion { get; set; }
-        bool? IsTorrentMode { get; set; }
+        AcquisitionMethod? PatchAcquisitionMethod { get; set; }
 
         #endregion
     }

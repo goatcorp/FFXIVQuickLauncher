@@ -22,9 +22,7 @@ namespace XIVLauncher.Windows
             DiscordButton.Click += Util.OpenDiscord;
             DataContext = new ChangeLogWindowViewModel();
 
-            this.ChangeLogText.Text = File.ReadAllText(Path.Combine(
-                Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "Resources",
-                "CHANGELOG.txt"));
+            this.ChangeLogText.Text = File.ReadAllText(Path.Combine(Paths.ResourcesPath, "CHANGELOG.txt"));
             
             SystemSounds.Asterisk.Play();
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using XIVLauncher.Game.Patch.Acquisition;
+using XIVLauncher.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Game.Patch.PatchList;
 
 namespace XIVLauncher.Tests
@@ -62,28 +63,38 @@ namespace XIVLauncher.Tests
             Assert.AreEqual("ffxiv", testPatch.GetRepoName());
         }
 
-        [TestMethod]
-        public async Task TestTorrentDownload()
+        private async Task TestPatchDownload(PatchAcquisition acquisition)
         {
-            await TorrentPatchAcquisition.InitAsync();
-
-            var t = new TorrentPatchAcquisition();
             var completeSignal = new ManualResetEvent(false);
 
-            t.Complete += (sender, args) =>
+            acquisition.Complete += (sender, args) =>
             {
-                Debug.WriteLine("[TORRENT] Download completed!");
+                Debug.WriteLine($"[{acquisition.GetType().FullName}] Download completed!");
                 completeSignal.Set();
             };
 
-            t.ProgressChanged += (sender, progress) =>
+            acquisition.ProgressChanged += (sender, progress) =>
             {
-                Debug.WriteLine($"recv: {progress.Progress} - speed: {Util.BytesToString(progress.BytesPerSecondSpeed)}");
+                Debug.WriteLine($"[{acquisition.GetType().FullName}] recv: {progress.Progress} - speed: {Util.BytesToString(progress.BytesPerSecondSpeed)}");
             };
 
-            await t.StartDownloadAsync(testPatch, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));
+            await acquisition.StartDownloadAsync(testPatch, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));
 
             completeSignal.WaitOne();
+        }
+
+        [TestMethod]
+        public async Task TestAriaDownload()
+        {
+            await AriaHttpPatchAcquisition.InitializeAsync(0);
+            await TestPatchDownload(new AriaHttpPatchAcquisition());
+        }
+
+        [TestMethod]
+        public async Task TestTorrentDownload()
+        {
+            await TorrentPatchAcquisition.InitializeAsync(0);
+            await TestPatchDownload(new TorrentPatchAcquisition());
         }
     }
 }

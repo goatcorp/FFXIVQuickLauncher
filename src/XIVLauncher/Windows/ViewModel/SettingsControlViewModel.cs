@@ -132,7 +132,7 @@ namespace XIVLauncher.Windows.ViewModel
             PatchPathLoc = Loc.Localize("PatchPath", "Patch Download Directory");
             PatchSpeedLimitLoc = Loc.Localize("PatchSpeedLimit", "Download Speed Limit");
             KeepPatchesLoc = Loc.Localize("KeepPatches", "Keep downloaded patches for future reinstalls");
-            UseTorrentsLoc = Loc.Localize("UseTorrents", "Use BitTorrent to acquire patches");
+            this.ChoosePatchAcquisitionMethodLoc = Loc.Localize("PatchAcquisitionMethod", "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".");
 
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
@@ -200,7 +200,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string PatchPathLoc { get; private set; }
         public string PatchSpeedLimitLoc { get; private set; }
         public string KeepPatchesLoc { get; private set; }
-        public string UseTorrentsLoc { get; private set; }
+        public string ChoosePatchAcquisitionMethodLoc { get; private set; }
 
         public string SettingsAboutLoc { get; private set; }
         public string CreditsLoc { get; private set; }
