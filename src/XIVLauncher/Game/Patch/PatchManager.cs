@@ -250,10 +250,10 @@ namespace XIVLauncher.Game.Patch
                     return;
                 }
 
-                var checkResult = CheckPatchValidity(download.Patch, outFile);
-
                 // Indicate "Checking..."
                 Slots[index] = SlotState.Checking;
+
+                var checkResult = CheckPatchValidity(download.Patch, outFile);
 
                 // Let's just bail for now, need better handling of this later
                 if (checkResult != HashCheckResult.Pass)
