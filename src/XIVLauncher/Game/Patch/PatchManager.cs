@@ -133,6 +133,14 @@ namespace XIVLauncher.Game.Patch
             }
             _installer.WaitOnHello();
 
+            this.InitializeAcquisition().GetAwaiter().GetResult();
+
+            Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
+            Task.Run(RunApplyQueue, _cancelTokenSource.Token);
+        }
+
+        public async Task InitializeAcquisition()
+        {
             // TODO: Come up with a better pattern for initialization. This sucks.
             switch (App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria))
             {
@@ -140,20 +148,24 @@ namespace XIVLauncher.Game.Patch
                     // ignored
                     break;
                 case AcquisitionMethod.MonoTorrentNetFallback:
+                    await TorrentPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
                 case AcquisitionMethod.MonoTorrentAriaFallback:
-                    AriaHttpPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE).GetAwaiter().GetResult();
-                    TorrentPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE).GetAwaiter().GetResult();
+                    await AriaHttpPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    await TorrentPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
                 case AcquisitionMethod.Aria:
-                    AriaHttpPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE).GetAwaiter().GetResult();
+                    await AriaHttpPatchAcquisition.InitializeAsync(App.Settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
 
-            Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
-            Task.Run(RunApplyQueue, _cancelTokenSource.Token);
+        public async Task UnInitializeAcquisition()
+        {
+            await AriaHttpPatchAcquisition.UnInitializeAsync();
+            await TorrentPatchAcquisition.UnInitializeAsync();
         }
 
         private async Task DownloadPatchAsync(PatchDownload download, int index)

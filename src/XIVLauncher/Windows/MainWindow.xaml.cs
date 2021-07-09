@@ -297,7 +297,7 @@ namespace XIVLauncher.Windows
                         progressDialog.Show();
                         this.Hide();
 
-                        patcher.OnFinish += (sender, args) =>
+                        patcher.OnFinish += async (sender, args) =>
                         {
                             progressDialog.Dispatcher.Invoke(() =>
                             {
@@ -320,6 +320,8 @@ namespace XIVLauncher.Windows
 
                             // This is a good indicator that we should clear the UID cache
                             UniqueIdCache.Instance.Reset();
+
+                            await patcher.UnInitializeAcquisition();
 
                             mutex.Close();
                             mutex = null;
@@ -494,7 +496,7 @@ namespace XIVLauncher.Windows
                     progressDialog.Show();
                     this.Hide();
 
-                    patcher.OnFinish += async (sender, args) =>
+                    patcher.OnFinish += async (sender, success) =>
                     {
                         progressDialog.Dispatcher.Invoke(() =>
                         {
@@ -502,7 +504,7 @@ namespace XIVLauncher.Windows
                             progressDialog.Close();
                         });
 
-                        if (args)
+                        if (success)
                         {
                             if (!startGame)
                             {
@@ -532,6 +534,8 @@ namespace XIVLauncher.Windows
                                 _isLoggingIn = false;
                             });
                         }
+
+                        await patcher.UnInitializeAcquisition();
 
                         mutex.Close();
                         mutex = null;
