@@ -3,10 +3,6 @@
     "message": "XIVLauncher n'a pas pu vérifier les mises à jour. Cela peut être dû à des problèmes de connectivité avec GitHub. Attendez quelques minutes et réessayez.\nDésactivez votre VPN, si vous en avez un.\nSi ces erreurs surviennent encore dans quelques minutes, merci de nous contacter sur notre serveur Discord.",
     "description": "<Run>d__0.MoveNext"
   },
-  "ReleaseInfoUnavailable": {
-    "message": "Impossible de récupérer les informations de version.",
-    "description": "ChangelogWindow..ctor"
-  },
   "DalamudUpdateDalamud": {
     "message": "Mise à jour de Dalamud...",
     "description": "DalamudLoadingOverlay.SetProgress"
@@ -34,6 +30,86 @@
   "GamePathInvalidError": {
     "message": "Le dossier que vous avez sélectionné ne contient pas d’installation de FFXIV.\nXIVLauncher va installer FFXIV quand vous vous connecterez pour la première fois.",
     "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "NewsLoading": {
+    "message": "Chargement...",
+    "description": "MainWindow..ctor"
+  },
+  "CheckLoginInfo": {
+    "message": "De plus, veuillez vérifier vos identifiants ou réessayer.",
+    "description": "MainWindow.Initialize"
+  },
+  "CheckBootVersionError": {
+    "message": "XIVLauncher n’a pas pu vérifier la version du jeu sélectionné. Cela peut se produire en cas de maintenance ou d’absence de connexion internet. Veuillez signaler cette erreur si vous pouvez vous connecter avec le lanceur officiel, mais pas avec XIVLauncher.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "GameIsOpenError": {
+    "message": "Le jeu et/ou le lanceur officiel sont ouverts. XIVLauncher ne peut pas mettre à jour le jeu si c’est le cas.\nVeuillez fermer le jeu et le lanceur officiel et réessayer.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher est déjà en train de mettre à jour votre jeu dans une autre instance. Veuillez vérifier que XIVLauncher est encore ouvert.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "EmptyUsernameError": {
+    "message": "Veuillez entrer un identifiant.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "EmailUsernameError": {
+    "message": "Please enter your SE account name, not your email address.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "EmptyPasswordError": {
+    "message": "Veuillez entrer un mot de passe.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "UidCacheInstallError": {
+    "message": "Vous avez activé le cache UID dans les paramètres de l'outil de mise à jour.\nCe paramètre vous empêche de réinstaller FFXIV.\n\nSi vous voulez réinstaller FFXIV, veuillez vous assurer de le désactiver d'abord.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "Une mise à jour du lanceur de FFXIV a été détectée.\nCela signifie généralement qu'il y a également une mise à jour du jeu.\n\nVous allez maintenant être identifié.",
+    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
+  },
+  "NewsDlFailed": {
+    "message": "Le téléchargement des dernières nouvelles à échoué.",
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
+  },
+  "LoginNoStartOk": {
+    "message": "Une vérification de mise à jour a été exécutée et toutes les mises à jour en attente ont été installées.",
+    "description": "<>c__DisplayClass18_0.<InstallGamePatch>b__3"
+  },
+  "LoginNoOauthMessage": {
+    "message": "Impossible de se connecter à votre compte Square Enix.\nCela pourrait être dû à des identifiants erronées ou à votre OTP.\n\nVérifiez aussi votre boîte mail pour d'éventuels messages de Square Enix - il se peut que vous deviez réinitialiser votre mot de passe pour cause d' \"activité suspecte\".\nCe n’est PAS causé par un problème de sécurité dans XIVLauncher, c’est une mesure de sécurité de Square Enix pour empêcher la connexion depuis de nouveaux emplacements, en cas de vol de votre compte.\nXIVLauncher et le lanceur officiel fonctionneront après la réinitialisation du mot de passe.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nConnexion automatique désactivée.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Problème de connexion",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Ce compte Square Enix ne peut pas jouer FINAL FANTASY XIV.\n\nSi vous avez acheté FINAL FANTASY XIV sur Steam, veuillez activer l’option \"Compte de service Steam\" lors de la connexion.\nSi la connexion automatique est activée, maintenez la touche Maj enfoncée lors du démarrage pour modifier les paramètres.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Veuillez accepter les conditions d'utilisation de FINAL FANTASY XIV dans le lanceur officiel.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Certains fichiers essentiels du jeu ont été modifiés/cassés par un tiers et le jeu ne peut ni se mettre à jour ni démarrer.\nVous devez réinstaller le jeu pour continuer.\n\nSi cela se reproduit, veuillez nous contacter via Discord.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "Un nouveau patch a été trouvé qui doit être installé avant de pouvoir jouer.\nVoulez-vous que XIVLauncher l'installe ?",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "La maintenance semble en cours. Le jeu ne devrait pas être lancé maintenant.",
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "Démarrer en tant qu'utilisateur Steam ?",
@@ -71,82 +147,6 @@
     "message": "Votre installation semble valide.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
-  "NewsLoading": {
-    "message": "Chargement...",
-    "description": "MainWindow..ctor"
-  },
-  "CheckLoginInfo": {
-    "message": "De plus, veuillez vérifier vos identifiants ou réessayer.",
-    "description": "MainWindow.Initialize"
-  },
-  "CheckBootVersionError": {
-    "message": "XIVLauncher n’a pas pu vérifier la version du jeu sélectionné. Cela peut se produire en cas de maintenance ou d’absence de connexion internet. Veuillez signaler cette erreur si vous pouvez vous connecter avec le lanceur officiel, mais pas avec XIVLauncher.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "GameIsOpenError": {
-    "message": "Le jeu et/ou le lanceur officiel sont ouverts. XIVLauncher ne peut pas mettre à jour le jeu si c’est le cas.\nVeuillez fermer le jeu et le lanceur officiel et réessayer.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "PatcherAlreadyInProgress": {
-    "message": "XIVLauncher est déjà en train de mettre à jour votre jeu dans une autre instance. Veuillez vérifier que XIVLauncher est encore ouvert.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "EmptyUsernameError": {
-    "message": "Veuillez entrer un identifiant.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "EmptyPasswordError": {
-    "message": "Veuillez entrer un mot de passe.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "UidCacheInstallError": {
-    "message": "Vous avez activé le cache UID dans les paramètres de l'outil de mise à jour.\nCe paramètre vous empêche de réinstaller FFXIV.\n\nSi vous voulez réinstaller FFXIV, veuillez vous assurer de le désactiver d'abord.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "MaintenanceQueueBootPatch": {
-    "message": "Une mise à jour du lanceur de FFXIV a été détectée.\nCela signifie généralement qu'il y a également une mise à jour du jeu.\n\nVous allez maintenant être identifié.",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
-  "NewsDlFailed": {
-    "message": "Le téléchargement des dernières nouvelles à échoué.",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
-  },
-  "LoginNoStartOk": {
-    "message": "Une vérification de mise à jour a été exécutée et toutes les mises à jour en attente ont été installées.",
-    "description": "<>c__DisplayClass17_0.<InstallGamePatch>b__3"
-  },
-  "LoginNoOauthMessage": {
-    "message": "Impossible de se connecter à votre compte Square Enix.\nCela pourrait être dû à des identifiants erronées ou à votre OTP.\n\nVérifiez aussi votre boîte mail pour d'éventuels messages de Square Enix - il se peut que vous deviez réinitialiser votre mot de passe pour cause d' \"activité suspecte\".\nCe n’est PAS causé par un problème de sécurité dans XIVLauncher, c’est une mesure de sécurité de Square Enix pour empêcher la connexion depuis de nouveaux emplacements, en cas de vol de votre compte.\nXIVLauncher et le lanceur officiel fonctionneront après la réinitialisation du mot de passe.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\nConnexion automatique désactivée.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "Problème de connexion",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "Ce compte Square Enix ne peut pas jouer FINAL FANTASY XIV.\n\nSi vous avez acheté FINAL FANTASY XIV sur Steam, veuillez activer l’option \"Compte de service Steam\" lors de la connexion.\nSi la connexion automatique est activée, maintenez la touche Maj enfoncée lors du démarrage pour modifier les paramètres.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "Veuillez accepter les conditions d'utilisation de FINAL FANTASY XIV dans le lanceur officiel.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "Certains fichiers essentiels du jeu ont été modifiés/cassés par un tiers et le jeu ne peut ni se mettre à jour ni démarrer.\nVous devez réinstaller le jeu pour continuer.\n\nSi cela se reproduit, veuillez nous contacter via Discord.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "Un nouveau patch a été trouvé qui doit être installé avant de pouvoir jouer.\nVoulez-vous que XIVLauncher l'installe ?",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "MaintenanceNotice": {
-    "message": "La maintenance semble en cours. Le jeu ne devrait pas être lancé maintenant.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
   "AccountSwitcherSetProfilePic": {
     "message": "Définir un avatar",
     "description": "AccountSwitcherViewModel.SetupLoc"
@@ -171,6 +171,14 @@
     "message": "Rejoindre le Discord",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
+  "SendEmail": {
+    "message": "Send Email",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "EmailInfo": {
+    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation.\n\nThank you very much!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
   "OK": {
     "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
@@ -186,6 +194,10 @@
   "HowToHint": {
     "message": "Comment configurer ceci ?",
     "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "Mise à jour de l'addon en jeu...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
     "message": "Une erreur s'est produite dans XIVLauncher. Veuillez consulter la FAQ. Si le problème persiste,\nreportez-le sur GitHub via le bouton ci-dessous, en décrivant le problème et en copiant le texte de la fenêtre.",
@@ -357,6 +369,10 @@
   },
   "PatchInstallingFormatted": {
     "message": "Installation de #{0}...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingIdle": {
+    "message": "Waiting for download...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -555,6 +571,10 @@
     "message": "Conserver les mises à jour téléchargées pour de futures réinstallations",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "PatchAcquisitionMethod": {
+    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAbout": {
     "message": "À propos",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -587,10 +607,6 @@
     "message": "Activer le chiffrement des paramètres du client",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "DalamudUpdate": {
-    "message": "Mise à jour de l'addon en jeu...",
-    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
-  },
   "UpdateCheckMsg": {
     "message": "Recherche de mises à jour...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
@@ -602,6 +618,14 @@
   "ResetUidCacheHint": {
     "message": "Maintenez la touche contrôle pour réinitialiser le cache UID !",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "BinaryNotPresentError": {
+    "message": "Impossible de trouver le jeu.\nCela pourrait être dû à votre antivirus. Vous devrez peut-être réinstaller le jeu.",
+    "description": "Launcher.LaunchGame"
+  },
+  "NativeLauncherError": {
+    "message": "Impossible de démarrer le jeu, veuillez signaler cette erreur.\n\nHRESULT : 0x{0}",
+    "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {
     "message": "XIVLauncher et/ou FFXIV sont configurés pour se lancer en tant qu'administrateur.\nCela peut créer des problèmes, notamment des plugins ou des raccourcis clavier ne fonctionnant pas.\n\nVoulez-vous régler ce problème automatiquement ?",
@@ -615,17 +639,17 @@
     "message": "MacType est installé sur cet ordinateur.\nCela causera des problèmes avec FFXIV, peu importe le lanceur.\n\nVous devez exclure XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater et ffxiv_dx11 de MacType.",
     "description": "ProblemCheck.RunCheck"
   },
-  "BinaryNotPresentError": {
-    "message": "Impossible de trouver le jeu.\nCela pourrait être dû à votre antivirus. Vous devrez peut-être réinstaller le jeu.",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "Impossible de démarrer le jeu, veuillez signaler cette erreur.\n\nHRESULT : 0x{0}",
-    "description": "Launcher.LaunchGame"
+  "GShadeError": {
+    "message": "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "description": "ProblemCheck.RunCheck"
   },
   "PatchInstallerNotOpen": {
     "message": "Impossible de se connecter à l'installateur de mise à jour.\nVeuillez rapporter cette erreur.",
     "description": "PatchInstaller.WaitOnHello"
+  },
+  "PatchInstallerInstallFailed": {
+    "message": "L'installateur de mise à jour a rencontré une erreur.\nVeuillez signaler cette erreur.\n\nVous pouvez réessayer ou utilisez le lanceur officiel.",
+    "description": "PatchInstaller.ServerOnReceivedRequest"
   },
   "PatchManNoInstaller": {
     "message": "L'installateur de mise à jour n'a pas pu démarrer correctement.\n\nSi vous lui avez refusé l'accès, veuillez réessayer. Si le problème persiste, contactez nous via Discord.",
@@ -633,7 +657,7 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher n'a pas pu vérifier les fichiers de jeu téléchargés.\n\nCela indique généralement un problème avec votre connexion Internet.\nSi cette erreur se reproduit, essayez d'utiliser un VPN configuré au Japon.\n\nContexte : {0}\n{1}",
-    "description": "<>c__DisplayClass28_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass33_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "L'addon en jeu a rencontré une erreur.\n\nCeci est probablement causé par votre antivirus. Veuillez mettre en liste blanche les fichiers en quarantaine ou désactiver les fonctionnalités en jeu.",

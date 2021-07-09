@@ -3,10 +3,6 @@
     "message": "XIVLancher가 업데이트 확인에 실패했습니다. GitHub와의 연결 문제일 수 있습니다. 잠시 기다리고 다시 시도하십시오.\n만약 VPN을 쓰고 계시다면 해제해 주십시오.\n계속 실패한다면 GitHub에 있는 Discord 링크를 통해 지원을 받으십시오.",
     "description": "<Run>d__0.MoveNext"
   },
-  "ReleaseInfoUnavailable": {
-    "message": "릴리즈 정보를 가져올 수 없습니다.",
-    "description": "ChangelogWindow..ctor"
-  },
   "DalamudUpdateDalamud": {
     "message": "Dalamud 업데이트 중...",
     "description": "DalamudLoadingOverlay.SetProgress"
@@ -34,6 +30,86 @@
   "GamePathInvalidError": {
     "message": "선택한 폴더에 FFXIV가 설치되어 있지 않습니다.\n처음 로그인할 때 XIVLauncher가 FFXIV 클라이언트를 설치하게 됩니다.",
     "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "NewsLoading": {
+    "message": "불러오는 중…",
+    "description": "MainWindow..ctor"
+  },
+  "CheckLoginInfo": {
+    "message": "로그인 정보를 확인하고 다시 시도하십시오.",
+    "description": "MainWindow.Initialize"
+  },
+  "CheckBootVersionError": {
+    "message": "XIVLauncher가 게임 설치에 대한 boot 버전 체크를 할 수 없습니다. 게임이 점검 중이거나 버전 체크 서버에 접속할 수 없을 수 있습니다. 공식 런처로 로그인이 성공했다면, 에러로 보고해주세요.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "GameIsOpenError": {
+    "message": "현재 게임 클라이언트나 공식 런처가 열려 있습니다. 이 상태에서는 게임을 패치할 수 없습니다.\n클라이언트와 런처를 닫고 다시 시도하십시오.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "다른 XIVLauncher가 실행 중이고, 패치를 진행하고 있습니다. 다른 XIVLauncher 창이 아직 열려 있는지 확인하십시오.",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "EmptyUsernameError": {
+    "message": "ID를 입력하십시오.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "EmailUsernameError": {
+    "message": "Please enter your SE account name, not your email address.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "EmptyPasswordError": {
+    "message": "비밀번호를 입력하십시오.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "UidCacheInstallError": {
+    "message": "UID 캐시를 활성화했습니다.\n이 설정은 FF14의 재설치를 허용하지 않습니다.\n\n재설치하기 전에 반드시 해당 설정을 비활성화하세요.",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "FFXIV 공식 런처의 업데이트가 감지되었습니다.\n이럴 땐 대부분의 경우 게임 쪽에도 새로운 패치가 있음을 나타냅니다.\n\n로그인을 계속 진행합니다.",
+    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
+  },
+  "NewsDlFailed": {
+    "message": "새로운 소식 데이터를 가져오지 못했습니다.",
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
+  },
+  "LoginNoStartOk": {
+    "message": "업데이트 체크가 이루어졌으며 모든 업데이트가 설치되었습니다.",
+    "description": "<>c__DisplayClass18_0.<InstallGamePatch>b__3"
+  },
+  "LoginNoOauthMessage": {
+    "message": "Square Enix 게정에 로그인 할 수 없습니다.\nOTP의 인증정보가 잘못 된 것일 수도 있습니다.\n\nSquare Enix로부터 온 이메일이 있는지 확인하십시오. \"의심스러운 활동\"으로 인해 비밀번호 변경을 요구할 수 있습니다.\n이 에러는 XIVLauncher의 보안 문제로 인해 발생한 것이 아닙니다. 계정 도난에 대비한 Square Enix의 안전 조치입니다.\nXIVLancher와 공식 런처는 비밀번호 변경 후 정상적으로 작동 할 것입니다.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n자동 로그인이 비활성화 되었습니다.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "로그인 문제",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "이 Square Enix 계정은 FINAL FANTASY XIV를 플레이 할 수 없습니다.\n\n만약 스팀판이라면 \"Steam 서비스 계정 사용\" 체크박스를 체크하십시오.\n만약 자동 로그인이 켜져 있다면 런처 실행시 Shift를 홀드하여 설정을 확인할 수 있습니다.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "공식 런처에서 FINAL FANTASY XIV의 사용자 계약에 동의하십시오.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "몇개의 필수 게임 파일들이 외부 요인에 의해 수정되거나 손상되었기 때문에 업데이트나 실행을 할 수 없습니다.\n계속하려면 게임을 완전히 지웠다가 재설치 하십시오.\n\n계속 오류가 발생하면 디스코드를 통해 알려주십시오.",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "새로운 패치가 발견되어 설치 해야 게임을 이용할 수 있습니다.\nXIVLauncher를 통해 설치하시겠습니까?",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "점검이 진행 중인 것 같습니다. 게임을 실행할 수 없습니다.",
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "Steam 계정으로 실행합니까?",
@@ -71,82 +147,6 @@
     "message": "게임 파일에서 문제를 발견하지 못했습니다.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
-  "NewsLoading": {
-    "message": "불러오는 중…",
-    "description": "MainWindow..ctor"
-  },
-  "CheckLoginInfo": {
-    "message": "로그인 정보를 확인하고 다시 시도하십시오.",
-    "description": "MainWindow.Initialize"
-  },
-  "CheckBootVersionError": {
-    "message": "XIVLauncher가 게임 설치에 대한 boot 버전 체크를 할 수 없습니다. 게임이 점검 중이거나 버전 체크 서버에 접속할 수 없을 수 있습니다. 공식 런처로 로그인이 성공했다면, 에러로 보고해주세요.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "GameIsOpenError": {
-    "message": "현재 게임 클라이언트나 공식 런처가 열려 있습니다. 이 상태에서는 게임을 패치할 수 없습니다.\n클라이언트와 런처를 닫고 다시 시도하십시오.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "PatcherAlreadyInProgress": {
-    "message": "다른 XIVLauncher가 실행 중이고, 패치를 진행하고 있습니다. 다른 XIVLauncher 창이 아직 열려 있는지 확인하십시오.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "EmptyUsernameError": {
-    "message": "ID를 입력하십시오.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "EmptyPasswordError": {
-    "message": "비밀번호를 입력하십시오.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "UidCacheInstallError": {
-    "message": "UID 캐시를 활성화했습니다.\n이 설정은 FF14의 재설치를 허용하지 않습니다.\n\n재설치하기 전에 반드시 해당 설정을 비활성화하세요.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "MaintenanceQueueBootPatch": {
-    "message": "FFXIV 공식 런처의 업데이트가 감지되었습니다.\n이럴 땐 대부분의 경우 게임 쪽에도 새로운 패치가 있음을 나타냅니다.\n\n로그인을 계속 진행합니다.",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
-  "NewsDlFailed": {
-    "message": "새로운 소식 데이터를 가져오지 못했습니다.",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
-  },
-  "LoginNoStartOk": {
-    "message": "업데이트 체크가 이루어졌으며 모든 업데이트가 설치되었습니다.",
-    "description": "<>c__DisplayClass17_0.<InstallGamePatch>b__3"
-  },
-  "LoginNoOauthMessage": {
-    "message": "Square Enix 게정에 로그인 할 수 없습니다.\nOTP의 인증정보가 잘못 된 것일 수도 있습니다.\n\nSquare Enix로부터 온 이메일이 있는지 확인하십시오. \"의심스러운 활동\"으로 인해 비밀번호 변경을 요구할 수 있습니다.\n이 에러는 XIVLauncher의 보안 문제로 인해 발생한 것이 아닙니다. 계정 도난에 대비한 Square Enix의 안전 조치입니다.\nXIVLancher와 공식 런처는 비밀번호 변경 후 정상적으로 작동 할 것입니다.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\n자동 로그인이 비활성화 되었습니다.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "로그인 문제",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "이 Square Enix 계정은 FINAL FANTASY XIV를 플레이 할 수 없습니다.\n\n만약 스팀판이라면 \"Steam 서비스 계정 사용\" 체크박스를 체크하십시오.\n만약 자동 로그인이 켜져 있다면 런처 실행시 Shift를 홀드하여 설정을 확인할 수 있습니다.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "공식 런처에서 FINAL FANTASY XIV의 사용자 계약에 동의하십시오.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "몇개의 필수 게임 파일들이 외부 요인에 의해 수정되거나 손상되었기 때문에 업데이트나 실행을 할 수 없습니다.\n계속하려면 게임을 완전히 지웠다가 재설치 하십시오.\n\n계속 오류가 발생하면 디스코드를 통해 알려주십시오.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "새로운 패치가 발견되어 설치 해야 게임을 이용할 수 있습니다.\nXIVLauncher를 통해 설치하시겠습니까?",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "MaintenanceNotice": {
-    "message": "점검이 진행 중인 것 같습니다. 게임을 실행할 수 없습니다.",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
   "AccountSwitcherSetProfilePic": {
     "message": "프로필 사진 설정",
     "description": "AccountSwitcherViewModel.SetupLoc"
@@ -171,6 +171,14 @@
     "message": "Discord 서버 참여하기",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
+  "SendEmail": {
+    "message": "Send Email",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "EmailInfo": {
+    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation.\n\nThank you very much!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
   "OK": {
     "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
@@ -186,6 +194,10 @@
   "HowToHint": {
     "message": "(어떻게 설정하나요?)",
     "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "인게임 애드온 업데이트 중...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
     "message": "XIVLauncher에 오류가 발생했습니다. FAQ를 먼저 확인하십시오. 만약 문제가 계속된다면, 아래 버튼을 눌러서 GitHub의 Issue에 문제를 설명하고 에러 로그를 남기십시오.",
@@ -357,6 +369,10 @@
   },
   "PatchInstallingFormatted": {
     "message": "#{0} 설치 중...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingIdle": {
+    "message": "Waiting for download...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -555,6 +571,10 @@
     "message": "다운로드한 패치 삭제하지 않기 (재설치할 경우를 대비)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "PatchAcquisitionMethod": {
+    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAbout": {
     "message": "정보",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -587,10 +607,6 @@
     "message": "클라이언트에 넘기는 명령줄 인수를 암호화하기",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "DalamudUpdate": {
-    "message": "인게임 애드온 업데이트 중...",
-    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
-  },
   "UpdateCheckMsg": {
     "message": "업데이트 확인 중...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
@@ -602,6 +618,14 @@
   "ResetUidCacheHint": {
     "message": "Ctrl 키를 꾹 누르고 있으면 UID 캐시를 초기화합니다.",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "BinaryNotPresentError": {
+    "message": "게임 실행 파일을 찾을 수 없습니다.\n백신 프로그램에 의한 것일 수도 있습니다. 게임을 재설치 해야 할 수도 있습니다.",
+    "description": "Launcher.LaunchGame"
+  },
+  "NativeLauncherError": {
+    "message": "게임을 정상적으로 실행할 수 없습니다. 에러를 제보해 주십시오.\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {
     "message": "XIVLauncher 또는 FFXIV가 관리자 권한으로 실행하게 되어 있습니다.\n이렇게 하면 단축키를 사용하는 다른 프로그램이 키 입력에 반응하지 않거나, 애드온이 작동하지 않는 등 문제가 발생할 수 있습니다.\n\n이 문제를 자동으로 수정하도록 합니까?",
@@ -615,17 +639,17 @@
     "message": "MacType이 설치되어 있음을 감지했습니다.\n이 프로그램은 공식 런처와 XIVLauncher 어느 쪽이든 문제를 일으킬 수 있습니다.\n\nMacType의 제외 목록에 XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater, ffxiv_dx11을 추가해주세요.",
     "description": "ProblemCheck.RunCheck"
   },
-  "BinaryNotPresentError": {
-    "message": "게임 실행 파일을 찾을 수 없습니다.\n백신 프로그램에 의한 것일 수도 있습니다. 게임을 재설치 해야 할 수도 있습니다.",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "게임을 정상적으로 실행할 수 없습니다. 에러를 제보해 주십시오.\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
+  "GShadeError": {
+    "message": "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "description": "ProblemCheck.RunCheck"
   },
   "PatchInstallerNotOpen": {
     "message": "패치 인스톨러에 연결하지 못했습니다.\n오류를 보고해주세요.",
     "description": "PatchInstaller.WaitOnHello"
+  },
+  "PatchInstallerInstallFailed": {
+    "message": "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher.",
+    "description": "PatchInstaller.ServerOnReceivedRequest"
   },
   "PatchManNoInstaller": {
     "message": "The patch installer could not start correctly.\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
@@ -633,7 +657,7 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLancher가 다운로드 된 게임 파일을 검증할 수 없습니다.\n\n보통 사용자의 인터넷 연결에 문제가 있다는 것을 의미합니다.\n다시 이 에러가 발생한다면 일본 서버로 VPN을 사용하십시오.\n\nContext: {0}\n{1}",
-    "description": "<>c__DisplayClass28_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass33_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "인게임 애드온에 에러가 발생했습니다.\n\n백신으로 인해 일어났을 수 있습니다. 검역된 파일을 검사 에외로 두거나 인게임 애드온을 비활성화 하십시오.",

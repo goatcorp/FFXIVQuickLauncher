@@ -3,10 +3,6 @@
     "message": "XIVLauncher 无法检查更新。这可能是因为无法连接至 GitHub。您可以等待几分钟后重试。\n如果您正在使用 VPN，请禁用后重试。\n如果此错误持续发生，请加入 Discord 伺服器以寻求帮助，您可以在 GitHub 上找到邀请链接。",
     "description": "<Run>d__0.MoveNext"
   },
-  "ReleaseInfoUnavailable": {
-    "message": "无法获取版本信息。",
-    "description": "ChangelogWindow..ctor"
-  },
   "DalamudUpdateDalamud": {
     "message": "正在更新 Dalamud 框架...",
     "description": "DalamudLoadingOverlay.SetProgress"
@@ -34,6 +30,86 @@
   "GamePathInvalidError": {
     "message": "无法在此文件夹中找到 FFXIV。\nXIVLauncher 将在您下次登录时自动为您安装游戏。",
     "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "NewsLoading": {
+    "message": "加载中...",
+    "description": "MainWindow..ctor"
+  },
+  "CheckLoginInfo": {
+    "message": "另外，请检查您的账号密码是否正确无误并再试一次。",
+    "description": "MainWindow.Initialize"
+  },
+  "CheckBootVersionError": {
+    "message": "XIVLauncher 无法获取可用的启动器版本。这可能是因为游戏服务器正在进行维护，或者您与版本服务器的连接不可用。如果您能够使用官方启动器登录，请向我们报告此问题。",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "GameIsOpenError": {
+    "message": "游戏或官方启动器正在运行中，XIVLauncher 无法为您更新游戏。\n请关闭游戏或官方启动器后再试一遍。",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher 正在另一个进程中为您更新游戏。请检查您是否启动了两个 XIVLauncher。",
+    "description": "MainWindow.HandleBootCheck"
+  },
+  "EmptyUsernameError": {
+    "message": "请输入您的账号。",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "EmailUsernameError": {
+    "message": "请输入您的 SE 账号，而不是您的邮箱。",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "EmptyPasswordError": {
+    "message": "请输入您的密码。",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "UidCacheInstallError": {
+    "message": "您在更新设置中启用了 UID 缓存。\n我们无法在此情况下为您重新安装游戏。\n\n如果您希望重新安装游戏，请先禁用 UID 缓存。",
+    "description": "MainWindow.PrepareLogin"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "检测到启动器更新。\n这通常意味着游戏也有更新。\n\n即将为您登录。",
+    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
+  },
+  "NewsDlFailed": {
+    "message": "无法获取公告信息。",
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
+  },
+  "LoginNoStartOk": {
+    "message": "执行了更新检查并安装了任何待处理的更新。",
+    "description": "<>c__DisplayClass18_0.<InstallGamePatch>b__3"
+  },
+  "LoginNoOauthMessage": {
+    "message": "无法登入您的 Square Enix 账户。\n请可能是由于密码或是动态密码（OTP）错误导致的。\n\n另外，也请检查您的电子邮箱中来自 Square Enix 的邮件 - 他们可能会因为您的「可疑活动」而要求您重置密码。\n这并非是由 XIVLauncher 的安全问题引起的，它仅仅是 Square Enix 的安全措施，用于防止您的账户被盗或从新的地点登入。\n重置密码后，XIVLauncher 和官方启动器将再次正常工作。",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n自动登录已被禁用。",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "登录问题",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "该账户无法游玩 FINAL FANTASY XIV。\n\n如果您的 FFXIV 在 Steam 上购买，请确保您在登入时勾选了「使用 Steam 账户」。\n如果您启用了自动登入，请在启动时按住 Shift 键以访问设置。",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "请在官方启动器中接受 FINAL FANTASY XIV 的使用条款。",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "部分游戏文件已损坏或被第三方篡改，无法进行更新和启动。\n请重新安装游戏以修复此问题。\n\n如果该错误仍然持续，请通过 Discord 联系我们。",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "发现新的补丁需要安装才能游玩。\n您想要 XIVLauncher 安装吗？",
+    "description": "<StartLogin>d__19.MoveNext"
+  },
+  "MaintenanceNotice": {
+    "message": "维护似乎正在进行中。游戏不应启动。",
+    "description": "<StartLogin>d__19.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "您希望使用 Steam 启动游戏吗？",
@@ -71,82 +147,6 @@
     "message": "您的游戏安装完整。",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
-  "NewsLoading": {
-    "message": "加载中...",
-    "description": "MainWindow..ctor"
-  },
-  "CheckLoginInfo": {
-    "message": "另外，请检查您的账号密码是否正确无误并再试一次。",
-    "description": "MainWindow.Initialize"
-  },
-  "CheckBootVersionError": {
-    "message": "XIVLauncher 无法获取可用的启动器版本。这可能是因为游戏服务器正在进行维护，或者您与版本服务器的连接不可用。如果您能够使用官方启动器登录，请向我们报告此问题。",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "GameIsOpenError": {
-    "message": "游戏或官方启动器正在运行中，XIVLauncher 无法为您更新游戏。\n请关闭游戏或官方启动器后再试一遍。",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "PatcherAlreadyInProgress": {
-    "message": "XIVLauncher 正在另一个进程中为您更新游戏。请检查您是否启动了两个 XIVLauncher。",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "EmptyUsernameError": {
-    "message": "请输入您的账号。",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "EmptyPasswordError": {
-    "message": "请输入您的密码。",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "UidCacheInstallError": {
-    "message": "您在更新设置中启用了 UID 缓存。\n我们无法在此情况下为您重新安装游戏。\n\n如果您希望重新安装游戏，请先禁用 UID 缓存。",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "MaintenanceQueueBootPatch": {
-    "message": "检测到启动器更新。\n这通常意味着游戏也有更新。\n\n即将为您登录。",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
-  "NewsDlFailed": {
-    "message": "无法获取公告信息。",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
-  },
-  "LoginNoStartOk": {
-    "message": "执行了更新检查并安装了任何待处理的更新。",
-    "description": "<>c__DisplayClass17_0.<InstallGamePatch>b__3"
-  },
-  "LoginNoOauthMessage": {
-    "message": "无法登入您的 Square Enix 账户。\n请可能是由于密码或是动态密码（OTP）错误导致的。\n\n另外，也请检查您的电子邮箱中来自 Square Enix 的邮件 - 他们可能会因为您的「可疑活动」而要求您重置密码。\n这并非是由 XIVLauncher 的安全问题引起的，它仅仅是 Square Enix 的安全措施，用于防止您的账户被盗或从新的地点登入。\n重置密码后，XIVLauncher 和官方启动器将再次正常工作。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\n自动登录已被禁用。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "登录问题",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "该账户无法游玩 FINAL FANTASY XIV。\n\n如果您的 FFXIV 在 Steam 上购买，请确保您在登入时勾选了「使用 Steam 账户」。\n如果您启用了自动登入，请在启动时按住 Shift 键以访问设置。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "请在官方启动器中接受 FINAL FANTASY XIV 的使用条款。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "部分游戏文件已损坏或被第三方篡改，无法进行更新和启动。\n请重新安装游戏以修复此问题。\n\n如果该错误仍然持续，请通过 Discord 联系我们。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "发现新的补丁需要安装才能游玩。\n您想要 XIVLauncher 安装吗？",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
-  "MaintenanceNotice": {
-    "message": "维护似乎正在进行中。游戏不应启动。",
-    "description": "<StartLogin>d__18.MoveNext"
-  },
   "AccountSwitcherSetProfilePic": {
     "message": "更改头像",
     "description": "AccountSwitcherViewModel.SetupLoc"
@@ -171,6 +171,14 @@
     "message": "加入 Discord 服务器",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
+  "SendEmail": {
+    "message": "发送邮件",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "EmailInfo": {
+    "message": "XIVLauncher 是一个免费的开源软件。我们不会在未经您同意的情况下收集您的信息。但如果您能够将相关信息通过邮件发送给我们，会对我们的维护工作帮助巨大，相关信息包括：您的操作系统、使用本软件的原因以及您遇到的困难或您想对我们提出的意见。您的邮件将会在处理完毕后立即删除。\n\n非常感谢您对我们的支持。",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
   "OK": {
     "message": "确定",
     "description": "ChangeLogWindowViewModel.SetupLoc"
@@ -186,6 +194,10 @@
   "HowToHint": {
     "message": "如何设置？",
     "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "正在更新游戏内组件...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
     "message": "XIVLauncher 发生了未知错误。请先尝试查阅常见问题以找到解决方案。如果问题仍然存在，请点击下方按钮前往 GitHub 报告此问题。请简单描述您的问题并附上方框内的文本。",
@@ -357,6 +369,10 @@
   },
   "PatchInstallingFormatted": {
     "message": "正在安装第 #{0} 个更新...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingIdle": {
+    "message": "Waiting for download...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -555,6 +571,10 @@
     "message": "保留已下载更新包以用于游戏重装",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "PatchAcquisitionMethod": {
+    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsAbout": {
     "message": "关于",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -587,10 +607,6 @@
     "message": "启用客户端加密参数传输",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "DalamudUpdate": {
-    "message": "正在更新游戏内组件...",
-    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
-  },
   "UpdateCheckMsg": {
     "message": "正在检查更新...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
@@ -602,6 +618,14 @@
   "ResetUidCacheHint": {
     "message": "按住 Ctrl 键以重置 UID 缓存！",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "BinaryNotPresentError": {
+    "message": "无法找到游戏本体程序。\n这可能是您的杀毒软件造成的。您可能需要重装游戏。",
+    "description": "Launcher.LaunchGame"
+  },
+  "NativeLauncherError": {
+    "message": "无法正确启动游戏。请向我们报告此错误。\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {
     "message": "XIVLauncher 或 FFXIV 已被设置为使用管理员身份运行。\n这可能会引起各类问题，包括无法注入游戏内组件或快捷键无响应等。\n\n是否自动修复此问题？",
@@ -615,17 +639,17 @@
     "message": "检测到您在电脑上安装了 MacType 。\n这可能会导致游戏出现问题，不管您使用的是官方启动器还是 XIVLauncher。\n\n请将 XIVLauncher、ffxivboot、ffxivlauncher、ffxivupdater 和 ffxiv_dx11 添加进 MacType 的白名单中。",
     "description": "ProblemCheck.RunCheck"
   },
-  "BinaryNotPresentError": {
-    "message": "无法找到游戏本体程序。\n这可能是您的杀毒软件造成的。您可能需要重装游戏。",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "无法正确启动游戏。请向我们报告此错误。\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
+  "GShadeError": {
+    "message": "检测到您的 GShade 已经损坏。\n\n游戏无法启动。您需要 XIVLauncher 为您解决此问题吗？您需要重新安装 GShade 。",
+    "description": "ProblemCheck.RunCheck"
   },
   "PatchInstallerNotOpen": {
     "message": "无法连接到更新程序。\n请报告此错误。",
     "description": "PatchInstaller.WaitOnHello"
+  },
+  "PatchInstallerInstallFailed": {
+    "message": "更新程序发生错误。\n请向我们报告此错误。\n\n请再试一次或使用官方启动器进行更新。",
+    "description": "PatchInstaller.ServerOnReceivedRequest"
   },
   "PatchManNoInstaller": {
     "message": "更新程序无法正常启动。\n\n\n如果您刚才拒绝了权限请求，请重试并授权。\n如果该问题仍然持续，请在 Discord 上联系我们。",
@@ -633,7 +657,7 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher无法验证已下载的游戏文件。\n\n这通常表明您的互联网连接存在问题。\n如果再次发生错误，请尝试使用 VPN 设置为日本。\n\n上下文： {0}\n{1}",
-    "description": "<>c__DisplayClass28_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass33_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
     "message": "游戏内插件出现了一个错误。\n\n这很可能是由您的杀毒软件引起的。 请将隔离的文件加入白名单或禁用游戏内插件。",
