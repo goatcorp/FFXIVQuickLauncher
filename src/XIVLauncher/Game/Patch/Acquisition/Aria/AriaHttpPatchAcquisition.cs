@@ -20,6 +20,8 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
         private static AriaManager manager;
         private static long maxDownloadSpeed;
 
+        public const int DEFAULT_ARIA_SERVER_PORT = 0xff45;
+
         public static async Task InitializeAsync(long maxDownloadSpeed)
         {
             AriaHttpPatchAcquisition.maxDownloadSpeed = maxDownloadSpeed;
@@ -46,9 +48,15 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
 
                 var ariaPath = Path.Combine(Paths.ResourcesPath, "aria2c-xl.exe");
 
-                Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath}...");
+                var ariaPort = Util.GetAvailablePort(DEFAULT_ARIA_SERVER_PORT);
+                var ariaHost = $"http://localhost:{ariaPort}/jsonrpc";
 
-                var startInfo = new ProcessStartInfo(ariaPath, $"--enable-rpc --rpc-secret={secret} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8")
+                var ariaArgs =
+                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false";
+
+                Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath} {ariaArgs}...");
+
+                var startInfo = new ProcessStartInfo(ariaPath, ariaArgs)
                 {
 #if !DEBUG
                     CreateNoWindow = true,
@@ -67,7 +75,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
                 if (ariaProcess.HasExited)
                     throw new Exception("ariaProcess has exited.");
 
-                manager = new AriaManager(secret);
+                manager = new AriaManager(secret, ariaHost);
             }
         }
 
@@ -95,7 +103,8 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
                 {"dir", outFile.Directory.FullName},
                 {"max-connection-per-server", "8"},
                 {"max-tries", "100"},
-                {"max-download-limit", maxDownloadSpeed.ToString()}
+                {"max-download-limit", maxDownloadSpeed.ToString()},
+                {"auto-file-renaming", "false"},
             });
 
             Log.Verbose($"[ARIA] GID# {gid} for {patch}");
