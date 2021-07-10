@@ -65,7 +65,7 @@ jobs:
         uses: crazy-max/ghaction-virustotal@a3f74cfd584b0658320aec5e94ab6a8d16dca05f
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
-          files: ./Releases/*.exe
+          files: ./src/Releases/*.exe
 
   build:
     name: Build on Windows
