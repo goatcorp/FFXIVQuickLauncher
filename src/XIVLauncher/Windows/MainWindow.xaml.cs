@@ -152,10 +152,8 @@ namespace XIVLauncher.Windows
 #endif
             
             // Set the default patch acquisition method
-            if (!App.Settings.PatchAcquisitionMethod.HasValue)
-            {
-                App.Settings.PatchAcquisitionMethod = EnvironmentSettings.IsWine ? AcquisitionMethod.NetDownloader : AcquisitionMethod.Aria;
-            }
+            App.Settings.PatchAcquisitionMethod ??=
+                EnvironmentSettings.IsWine ? AcquisitionMethod.NetDownloader : AcquisitionMethod.Aria;
 
             // Clean up invalid addons
             if (App.Settings.AddonList != null)
