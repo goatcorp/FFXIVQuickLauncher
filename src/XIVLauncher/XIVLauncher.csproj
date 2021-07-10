@@ -48,6 +48,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
+    <None Remove="SteamWorksSharp\Native\Windows_x86\steam_api.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Remove="Resources\aria2c-xl.exe" />
     <Resource Remove="Resources\CHANGELOG.txt" />
     <Resource Remove="Resources\COPYING.aria2" />
@@ -67,6 +72,12 @@
     <Content Include="Resources\LICENSE.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <!-- SteamWorksSharp natives -->
+  <ItemGroup>
+    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x86\steam_api.dll" />
+    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
   </ItemGroup>
 
   <ItemGroup>
