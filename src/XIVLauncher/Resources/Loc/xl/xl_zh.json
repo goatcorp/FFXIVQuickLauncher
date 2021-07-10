@@ -372,7 +372,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "Waiting for download...",
+    "message": "正在等待下载...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -572,7 +572,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchAcquisitionMethod": {
-    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "message": "请选择用于下载更新包的方法。我们建议您选择「ARIA(HTTP)」。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
