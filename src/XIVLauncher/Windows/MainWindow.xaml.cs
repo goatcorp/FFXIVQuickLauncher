@@ -19,6 +19,7 @@ using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch;
+using XIVLauncher.Game.Patch.Acquisition;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.Settings;
@@ -149,6 +150,12 @@ namespace XIVLauncher.Windows
 
             LoginContextMenu.Items.Add(fakeStartMenuItem);
 #endif
+            
+            // Set the default patch acquisition method
+            if (!App.Settings.PatchAcquisitionMethod.HasValue)
+            {
+                App.Settings.PatchAcquisitionMethod = EnvironmentSettings.IsWine ? AcquisitionMethod.NetDownloader : AcquisitionMethod.Aria;
+            }
 
             // Clean up invalid addons
             if (App.Settings.AddonList != null)
