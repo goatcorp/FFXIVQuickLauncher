@@ -372,7 +372,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "Waiting for download...",
+    "message": "Aguardando o download...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
