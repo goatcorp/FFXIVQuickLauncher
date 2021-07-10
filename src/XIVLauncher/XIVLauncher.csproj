@@ -82,7 +82,7 @@
 
   <ItemGroup>
     <PackageReference Include="AdysTech.CredentialManager" Version="1.8.0" />
-    <PackageReference Include="CheapLoc" Version="1.1.5" />
+    <PackageReference Include="CheapLoc" Version="1.1.6" />
     <PackageReference Include="Config.Net.Json" Version="4.14.23" />
     <PackageReference Include="Downloader" Version="2.2.8" />
     <PackageReference Include="Dragablz" Version="0.0.3.203" />
