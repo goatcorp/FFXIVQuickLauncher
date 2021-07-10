@@ -60,6 +60,8 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
         public override async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
         {
+            throw new NotImplementedException("WIP");
+
             if (_torrentBytes == null)
             {
                 if (!IsApplicable(patch))

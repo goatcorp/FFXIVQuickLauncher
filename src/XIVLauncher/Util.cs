@@ -4,14 +4,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Windows;
 using System.Windows.Media;
-using Microsoft.Win32;
-using XIVLauncher.Game;
 
 namespace XIVLauncher
 {
@@ -181,6 +179,39 @@ namespace XIVLauncher
             using var reader = new StreamReader(stream);
 
             return reader.ReadToEnd();
+        }
+
+        public static int GetAvailablePort(int startingPort)
+        {
+            var portArray = new List<int>();
+
+            var properties = IPGlobalProperties.GetIPGlobalProperties();
+
+            // Ignore active connections
+            var connections = properties.GetActiveTcpConnections();
+            portArray.AddRange(from n in connections
+                where n.LocalEndPoint.Port >= startingPort
+                select n.LocalEndPoint.Port);
+
+            // Ignore active tcp listeners
+            var endPoints = properties.GetActiveTcpListeners();
+            portArray.AddRange(from n in endPoints
+                where n.Port >= startingPort
+                select n.Port);
+
+            // Ignore active UDP listeners
+            endPoints = properties.GetActiveUdpListeners();
+            portArray.AddRange(from n in endPoints
+                where n.Port >= startingPort
+                select n.Port);
+
+            portArray.Sort();
+
+            for (var i = startingPort; i < UInt16.MaxValue; i++)
+                if (!portArray.Contains(i))
+                    return i;
+
+            return 0;
         }
     }
 }

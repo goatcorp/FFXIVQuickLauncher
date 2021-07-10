@@ -55,8 +55,8 @@ namespace XIVLauncher.Game.Patch
 
             try
             {
-                _serverPort = GetAvailablePort(DEFAULT_IPC_SERVER_PORT);
-                _clientPort = GetAvailablePort(_serverPort + 1);
+                _serverPort = Util.GetAvailablePort(DEFAULT_IPC_SERVER_PORT);
+                _clientPort = Util.GetAvailablePort(_serverPort + 1);
             }
             catch(Exception ex)
             {
@@ -190,39 +190,6 @@ namespace XIVLauncher.Game.Patch
             {
                 Log.Error(e, "[PATCHERIPC] Failed to send message.");
             }
-        }
-
-        public static int GetAvailablePort(int startingPort)
-        {
-            var portArray = new List<int>();
-
-            var properties = IPGlobalProperties.GetIPGlobalProperties();
-
-            // Ignore active connections
-            var connections = properties.GetActiveTcpConnections();
-            portArray.AddRange(from n in connections
-                where n.LocalEndPoint.Port >= startingPort
-                select n.LocalEndPoint.Port);
-
-            // Ignore active tcp listeners
-            var endPoints = properties.GetActiveTcpListeners();
-            portArray.AddRange(from n in endPoints
-                where n.Port >= startingPort
-                select n.Port);
-
-            // Ignore active UDP listeners
-            endPoints = properties.GetActiveUdpListeners();
-            portArray.AddRange(from n in endPoints
-                where n.Port >= startingPort
-                select n.Port);
-
-            portArray.Sort();
-
-            for (var i = startingPort; i < UInt16.MaxValue; i++)
-                if (!portArray.Contains(i))
-                    return i;
-
-            return 0;
         }
 
         public void Dispose()
