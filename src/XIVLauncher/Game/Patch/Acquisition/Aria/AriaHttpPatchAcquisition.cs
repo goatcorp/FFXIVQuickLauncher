@@ -50,8 +50,10 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
 
                 var startInfo = new ProcessStartInfo(ariaPath, $"--enable-rpc --rpc-secret={secret} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8")
                 {
+#if !DEBUG
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
+#endif
                     UseShellExecute = true
                 };
 
@@ -143,7 +145,6 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
                 {
                     Log.Error(ex, $"[ARIA] Failed to get status for GID# {gid} ({patch})");
                 }
-                
             });
         }
 

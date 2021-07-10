@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Spooky.Json20;
 using AriaNet.Attributes;
+using XIVLauncher.Game.Patch.Acquisition.Aria.JsonRpc;
 
 namespace AriaNet
 {
@@ -20,7 +20,7 @@ namespace AriaNet
         public AriaManager(string secret, string rpcUrl = "http://localhost:6800/jsonrpc")
         {
             this.secret = secret;
-            RpcClient = new JsonRpcHttpClient(new Uri(rpcUrl));
+            RpcClient = new JsonRpcHttpClient(rpcUrl);
         }
 
         private async Task<T> Invoke<T>(string method, params object[] arguments)
