@@ -45,6 +45,7 @@ We don't think so - our official guideline for plugins on this launcher is this:
 Make sure that your plugin does not directly interact with the game servers in a way that is...
 <br>a) *outside of specification*, as in allowing the player to do things or submit data to the server that would not be possible by normal means or by a normal player on PC or PS4.
 <br>b) *automatic*, as in polling data or making requests without direct interaction from the user which could create unwanted load on the server or give away that XIVLauncher is being used.
+<br>c) *circumvent paywall*, as in any attempts to bypass restrictions that require purchase to be lifted such as enabling access to mog station emotes.
 
 We feel like that this offers developers the __freedom to improve the game's functionality__ in ways that SE can't, while officially disallowing plugins that can give __unfair advantages over players on other platforms__.
 
