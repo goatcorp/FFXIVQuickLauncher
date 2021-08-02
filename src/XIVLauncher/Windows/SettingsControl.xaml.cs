@@ -243,7 +243,11 @@ namespace XIVLauncher.Windows
 
                     case IntegrityCheck.CompareResult.Invalid:
                     {
-                        File.WriteAllText("integrityreport.txt", task.Result.report);
+                            string saveIntegrityPath = Path.Combine(Paths.RoamingPath, "integrityreport.txt");
+#if DEBUG
+                            Log.Information("Saving integrity to " + saveIntegrityPath);
+#endif
+                        File.WriteAllText(saveIntegrityPath, task.Result.report);
                         CustomMessageBox.Show(Loc.Localize("IntegrityCheckFailed",
                                 "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, please reinstall your game."),
                             "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
