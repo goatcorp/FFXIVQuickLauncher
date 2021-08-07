@@ -14,7 +14,7 @@ namespace XIVLauncher.Windows
     /// <summary>
     /// Interaction logic for ErrorWindow.xaml
     /// </summary>
-    public partial class CustomMessageBox : Window
+    public partial class CustomMessageBox
     {
         public static App InvokableApp { get; set; } 
 

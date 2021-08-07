@@ -14,7 +14,7 @@ namespace XIVLauncher.Windows
     /// <summary>
     ///     Interaction logic for FirstTimeSetup.xaml
     /// </summary>
-    public partial class FirstTimeSetup : Window
+    public partial class FirstTimeSetup 
     {
         public bool WasCompleted { get; private set; } = false;
 

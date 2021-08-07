@@ -7,7 +7,7 @@ namespace XIVLauncher.Windows
     /// <summary>
     /// Interaction logic for FirstTimeSetup.xaml
     /// </summary>
-    public partial class ProfilePictureInputWindow : Window
+    public partial class ProfilePictureInputWindow
     {
         public string ResultName, ResultWorld;
 

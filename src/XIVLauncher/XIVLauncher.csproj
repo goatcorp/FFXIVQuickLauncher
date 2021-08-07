@@ -87,7 +87,9 @@
     <PackageReference Include="Downloader" Version="2.2.8" />
     <PackageReference Include="Dragablz" Version="0.0.3.203" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="3.5.0" />
-    <PackageReference Include="MaterialDesignThemes" Version="2.5.1" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.7" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.7" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="MonoTorrent" Version="2.0.0" />

@@ -1,17 +1,15 @@
-﻿<Window
+﻿<mah:MetroWindow
   x:Class="XIVLauncher.Windows.ErrorWindow"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
   mc:Ignorable="d"
+  Style="{DynamicResource DalamudWindow}"
   Title="XIVLauncher Error" Height="295" Width="598" WindowStartupLocation="CenterScreen"
-  Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
-  TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-  Background="{DynamicResource MaterialDesignPaper}"
-  TextElement.FontWeight="Medium"
-  FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+  ResizeMode="NoResize">
   <Grid>
     <StackPanel>
       <TextBlock
@@ -56,11 +54,11 @@
       <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                     x:Name="GitHubButton" Margin="0,0,5,0" Click="GitHubButton_OnClick">
         <StackPanel Orientation="Horizontal">
-          <materialDesign:PackIcon Kind="GithubCircle" />
+          <materialDesign:PackIcon Kind="Github" />
                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding ReportErrorLoc}"/>
         </StackPanel>
       </Button>
             <Button Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click" Content="{Binding OkLoc}"/>
     </StackPanel>
   </Grid>
-</Window>
+</mah:MetroWindow>

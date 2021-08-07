@@ -7,7 +7,7 @@ namespace XIVLauncher.Windows
     /// <summary>
     ///     Interaction logic for FirstTimeSetup.xaml
     /// </summary>
-    public partial class IntegrityCheckProgressWindow : Window
+    public partial class IntegrityCheckProgressWindow
     {
         public IntegrityCheckProgressWindow()
         {

@@ -13,7 +13,7 @@ namespace XIVLauncher.Windows
     /// <summary>
     /// Interaction logic for ErrorWindow.xaml
     /// </summary>
-    public partial class ChangelogWindow : Window
+    public partial class ChangelogWindow
     {
         public ChangelogWindow()
         {

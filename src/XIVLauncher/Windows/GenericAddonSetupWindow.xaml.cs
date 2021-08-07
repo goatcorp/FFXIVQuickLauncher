@@ -7,7 +7,7 @@ namespace XIVLauncher.Windows
     /// <summary>
     ///     Interaction logic for FirstTimeSetup.xaml
     /// </summary>
-    public partial class GenericAddonSetupWindow : Window
+    public partial class GenericAddonSetupWindow
     {
         public GenericAddon Result { get; private set; }
 
