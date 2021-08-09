@@ -224,7 +224,7 @@ namespace XIVLauncher.Dalamud
 
             using var client = new WebClient();
 
-            var downloadPath = Path.GetTempFileName();
+            var downloadPath = Util.GetTempFileName();
 
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
@@ -275,7 +275,7 @@ namespace XIVLauncher.Dalamud
             var dotnetUrl = $"https://dotnetcli.azureedge.net/dotnet/Runtime/{version}/dotnet-runtime-{version}-win-x64.zip";
             var desktopUrl = $"https://dotnetcli.azureedge.net/dotnet/WindowsDesktop/{version}/windowsdesktop-runtime-{version}-win-x64.zip";
 
-            var downloadPath = Path.GetTempFileName();
+            var downloadPath = Util.GetTempFileName();
 
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
