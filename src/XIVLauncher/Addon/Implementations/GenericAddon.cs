@@ -75,7 +75,12 @@ namespace XIVLauncher.Addon
                         return;
 
                     if (!_addonProcess.HasExited && KillAfterClose)
+                    {
+                        if (!_addonProcess.CloseMainWindow() || !_addonProcess.WaitForExit(1000))
+                            _addonProcess.Kill();
+
                         _addonProcess.Close();
+                    }
                 }
                 catch(Exception ex)
                 {
