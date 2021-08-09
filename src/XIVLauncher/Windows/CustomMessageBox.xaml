@@ -27,17 +27,24 @@
                     x:Name="DiscordButton" Margin="0,0,5,0">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Discord" />
-                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}"/>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                     x:Name="FaqButton" Margin="0,0,5,0" Click="FaqButton_OnClick">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Information" />
-                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OpenFaqLoc}" />
+                    <materialDesign:PackIcon  Kind="Information" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OpenFaqLoc}"/>
                 </StackPanel>
             </Button>
-            <Button Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click" Content="{Binding OkLoc}" />
+            <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                    x:Name="IntegrityReportButton" Margin="0,0,5,0" Click="IntegrityReportButton_OnClick">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="FileDocument" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OpenIntegrityReportLoc}"/>
+                </StackPanel>
+            </Button>
+            <Button Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click" Content="{Binding OkLoc}"/>
         </StackPanel>
     </Grid>
 </Window>

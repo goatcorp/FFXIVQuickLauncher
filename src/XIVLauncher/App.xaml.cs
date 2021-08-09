@@ -221,7 +221,11 @@ namespace XIVLauncher
                     if (arg == "--genIntegrity")
                     {
                         var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
-                        File.WriteAllText($"{result.GameVersion}.json", JsonConvert.SerializeObject(result));
+                        string saveIntegrityPath = Path.Combine(Paths.RoamingPath, $"{result.GameVersion}.json");
+#if DEBUG
+                        Log.Information("Saving integrity to " + saveIntegrityPath);
+#endif
+                        File.WriteAllText(saveIntegrityPath, JsonConvert.SerializeObject(result));
 
                         MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");
                         Environment.Exit(0);
