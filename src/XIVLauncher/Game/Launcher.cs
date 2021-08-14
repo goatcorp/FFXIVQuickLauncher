@@ -266,7 +266,22 @@ namespace XIVLauncher.Game
 
                     // Something went wrong here, why even bother
                     if (game.HasExited)
-                        throw new Exception("Game exited prematurely");
+                    {
+                        if (Process.GetProcessesByName("ffxiv_dx11").Length +
+                            Process.GetProcessesByName("ffxiv").Length > 2)
+                        {
+                            CustomMessageBox.Show(
+                                Loc.Localize("MultiboxDeniedWarning",
+                                    "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly."),
+                                "XIVLauncher Error", image: MessageBoxImage.Error);
+
+                            return null;
+                        }
+                        else
+                        {
+                            throw new Exception("Game exited prematurely");
+                        }
+                    }
 
                     // Is the main window open? Let's wait so any addons won't run into nothing
                     if (game.MainWindowHandle == IntPtr.Zero)
