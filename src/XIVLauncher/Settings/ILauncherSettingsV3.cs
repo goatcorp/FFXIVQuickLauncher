@@ -37,6 +37,7 @@ namespace XIVLauncher.Settings
         bool? HasComplainedAboutAdmin { get; set; }
         string LastVersion { get; set; }
         AcquisitionMethod? PatchAcquisitionMethod { get; set; }
+        bool? HasShownAutoLaunchDisclaimer { get; set; }
 
         #endregion
     }
