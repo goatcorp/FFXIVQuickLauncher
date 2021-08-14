@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -15,6 +16,16 @@ namespace XIVLauncher
 {
     public static class Util
     {
+        /// <summary>
+        ///     Generates a temporary file name.
+        /// </summary>
+        /// <returns>A temporary file name that is almost guaranteed to be unique.</returns>
+        public static string GetTempFileName()
+        {
+            // https://stackoverflow.com/a/50413126
+            return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        }
+
         public static void ShowError(string message, string caption, [CallerMemberName] string callerName = "",
             [CallerLineNumber] int callerLineNumber = 0)
         {
@@ -31,6 +42,14 @@ namespace XIVLauncher
             var asm = typeof(Util).Assembly;
             var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
             return attrs.FirstOrDefault(a => a.Key == "GitHash")?.Value;
+        }
+
+        /// <summary>
+        ///     Returns <see langword="true"/> if the current system region is set to North America.
+        /// </summary>
+        public static bool IsRegionNorthAmerica()
+        {
+            return RegionInfo.CurrentRegion.ThreeLetterISORegionName is "USA" or "MEX" or "CAN";
         }
 
         public static string GetAssemblyVersion()

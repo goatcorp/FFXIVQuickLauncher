@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Media;
 using System.Threading;
 using System.Windows;
@@ -31,7 +32,7 @@ namespace XIVLauncher.Windows
             Focus();
         }
 
-        public static void Show(string text, string caption, MessageBoxButton buttons = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Asterisk, bool showHelpLinks = true)
+        public static void Show(string text, string caption, MessageBoxButton buttons = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Asterisk, bool showHelpLinks = true, bool showReportLinks = false)
         {
             var signal = new ManualResetEvent(false);
 
@@ -83,6 +84,15 @@ namespace XIVLauncher.Windows
                     box.FaqButton.Visibility = Visibility.Visible;
                 }
 
+                if(!showReportLinks)
+                {
+                    box.IntegrityReportButton.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    box.IntegrityReportButton.Visibility = Visibility.Visible;
+                }
+
                 box.ShowDialog();
 
                 signal.Set();
@@ -100,5 +110,11 @@ namespace XIVLauncher.Windows
         {
             Process.Start("https://goatcorp.github.io/faq/");
         }
+
+         private void IntegrityReportButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Path.Combine(Paths.RoamingPath, "integrityreport.txt"));
+        }
+
     }
 }
