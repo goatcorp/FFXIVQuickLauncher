@@ -251,6 +251,12 @@ namespace XIVLauncher.Windows
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
+            if (AutoLoginCheckBox.IsChecked == true && App.Settings.HasShownAutoLaunchDisclaimer.GetValueOrDefault(false) == false)
+            {
+                CustomMessageBox.Show(Loc.Localize("AutoLoginIntro", "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon."), "XIVLauncher");
+                App.Settings.HasShownAutoLaunchDisclaimer = true;
+            }
+
             this.Kickoff(false, true);
         }
 
@@ -448,12 +454,6 @@ namespace XIVLauncher.Windows
             if (!autoLogin)
             {
                 App.Settings.AutologinEnabled = AutoLoginCheckBox.IsChecked == true;
-            }
-
-            if (App.Settings.AutologinEnabled && App.Settings.HasShownAutoLaunchDisclaimer.GetValueOrDefault(false) == false)
-            {
-                CustomMessageBox.Show(Loc.Localize("AutoLoginIntro", "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon."), "XIVLauncher");
-                App.Settings.HasShownAutoLaunchDisclaimer = true;
             }
 
             var otp = "";
