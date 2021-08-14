@@ -30,12 +30,12 @@
             </StackPanel>
         </StackPanel>
 
-        <TextBlock Margin="10 20 10 20" MaxWidth="640" Height="Auto" Text="{Binding EmailInfoLoc}" TextWrapping="Wrap"></TextBlock>
+        <TextBlock Margin="10 20 10 20" MaxWidth="640" Height="Auto" Text="{Binding ChangelogThanksLoc}" TextWrapping="Wrap"></TextBlock>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                     VerticalAlignment="Bottom" Margin="0 15 10 10">
             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    Margin="0,0,5,0" Click="EmailButton_OnClick">
+                    Margin="0,0,5,0" Click="EmailButton_OnClick" Visibility="Collapsed">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Email" />
                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center"

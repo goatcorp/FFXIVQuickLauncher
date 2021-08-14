@@ -480,5 +480,10 @@ namespace XIVLauncher.Windows
             this.ReloadSettings();
 #endif
         }
+
+        private void VersionLabel_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            new ChangelogWindow().ShowDialog();
+        }
     }
 }

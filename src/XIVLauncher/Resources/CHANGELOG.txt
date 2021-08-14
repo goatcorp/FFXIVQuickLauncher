@@ -1,8 +1,8 @@
 ﻿• Fixes an issue wherein, in some cases, patch downloads may have seized up.
-	=> XIVLauncher now uses a different system to download patches by default(aria2)
+   => XIVLauncher now uses a different system to download patches by default(aria2)
 • Fixes an issue wherein, in some cases, the patcher may not have indicated progress correctly.
 • Adds some checks for broken GShade installations that may cause issues when starting the game
 • Now shows an error message when entering an email address instead of a SE account name
 • Redesign changelog(which you are looking at right now)
 • Updated the localization files
-	=> Thanks a bunch to all translators - if you want to help out, feel free to register on Crowdin!
+   => Thanks a bunch to all translators - if you want to help out, feel free to register on Crowdin!

@@ -248,7 +248,7 @@
                     <Grid>
                         <StackPanel Margin="10,10,10,0">
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                                       x:Name="VersionLabel" Foreground="{DynamicResource MaterialDesignBody}">
+                                       x:Name="VersionLabel" Foreground="{DynamicResource MaterialDesignBody}" MouseUp="VersionLabel_OnMouseUp">
                                 XIVLauncher
                             </TextBlock>
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
