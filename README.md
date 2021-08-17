@@ -12,7 +12,7 @@ XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with
 
 ## Why?
 
-The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your password. This project aims to fix that and add some QoL features to the game that were not there before, such as:
+The original FFXIV launcher is slow and cannot save your password. This project aims to fix that and add some QoL features to the game, such as:
 
 * Auto-login
 * Fast patching
@@ -22,14 +22,26 @@ The original FFXIV launcher is slow, tedious, kinda ugly and cannot save your pa
 * Chat bridge to Discord
 * Discord notifications for duties, retainer sales, etc.
 
-Check the settings page and use the /xlhelp command in-game to see available commands.
-
-## How to install
+## How to install the launcher
 
 [Download the latest "Setup.exe" from the releases](https://github.com/goatcorp/FFXIVQuickLauncher/releases/latest) page and run it. XIVLauncher will start and will be installed to your start menu.
 To uninstall, you can use the Windows Programs & Apps menu or right click XIVLauncher in your start menu.
 
 ⚠ <b>Attention!</b> If you receive errors during the installation or if the launcher doesn't work correctly, make sure to <b>check your antivirus</b> first and disable it for XIVLauncher. Many commercial antivirus programs detect XIVLauncher as a false positive. You can check for yourself on VirusTotal. If you need any help with this, please [check our FAQ](https://goatcorp.github.io/faq/xl_troubleshooting#q-how-do-i-whitelist-xivlauncher-and-dalamud-so-my-antivirus-leaves-them-alone) or join our Discord channel.
+
+## How to install plugins
+XIVLauncher supports the installation of __plugins/addons__ made by __third-party developers__ in-game.
+
+Open the system menu in-game by pressing escape, and then select "Dalamud Plugins" from there. You can also use the ``/xlplugins`` command in chat.<br>If the command is not found, or the options don't show up, make sure that the in-game addon is enabled in the launcher settings.
+
+## Need any help?
+[Please check out our exhaustive FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming community.
+
+## Is XIVLauncher safe to use?
+We put a lot of effort into ensuring that XIVLauncher is safe to use for everyone.<br>Please read through our [FAQ entry](https://goatcorp.github.io/faq/xl_troubleshooting#q-are-xivlauncher-dalamud-and-dalamud-plugins-safe-to-use) on this matter if you want to know more.
+
+<br>
+<br>
 
 ## Plugin API
 
@@ -38,25 +50,21 @@ XIVLauncher lets you use many community-created plugins that improve your game. 
 
 If you want to contribute to the plugin API itself, you can check it out [here](https://github.com/goatcorp/Dalamud).<br>Special thanks to Mino for his hooking base!
 
-### Isn't this cheating?
+### Is this cheating?
 
 We don't think so - our official guideline for plugins on this launcher is this:<br>
 
 Make sure that your plugin does not directly interact with the game servers in a way that is...
 <br>a) *outside of specification*, as in allowing the player to do things or submit data to the server that would not be possible by normal means or by a normal player on PC or PS4.
 <br>b) *automatic*, as in polling data or making requests without direct interaction from the user which could create unwanted load on the server or give away that XIVLauncher is being used.
-<br>c) *circumvent paywall*, as in any attempts to bypass restrictions that require purchase to be lifted such as enabling access to mog station emotes.
+<br>c) *circumvent paywalls*, as in any attempts to bypass restrictions that require purchase to be lifted such as enabling access to mog station emotes.
 
 We feel like that this offers developers the __freedom to improve the game's functionality__ in ways that SE can't, while officially disallowing plugins that can give __unfair advantages over players on other platforms__.
-
-## Any questions?
-
-[Please check out the FAQ](https://goatcorp.github.io/faq/), you may find what you need there.<br>You can also join our discord at [https://discord.gg/3NMcUV5](https://discord.gg/3NMcUV5) and ask our incredibly forthcoming moderator team.
 
 <br>
 <br>
 
 ## Disclaimer
-As with all of my stuff, this is technically not in line with Square Enix TOS - I've tried to make it as undetectable as possible and no one, as far as I know, has gotten into trouble for using this - but it always could be a possibility.
+XIVLauncher is not in-line with Square Enix ToS. We are doing our best to make it safe to use for everyone, and to our knowledge, no one ever got into trouble for using XIVLauncher, but please be aware that it is a possibility.<br>You can read through our [FAQ entry](https://goatcorp.github.io/faq/xl_troubleshooting#q-are-xivlauncher-dalamud-and-dalamud-plugins-safe-to-use) on this matter if you want to know more.
 
 ##### Final Fantasy XIV © 2010-2021 SQUARE ENIX CO., LTD. All Rights Reserved. We are not affiliated with SQUARE ENIX CO., LTD. in any way.
