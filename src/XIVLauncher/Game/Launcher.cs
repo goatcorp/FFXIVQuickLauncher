@@ -268,7 +268,7 @@ namespace XIVLauncher.Game
                     if (game.HasExited)
                     {
                         if (Process.GetProcessesByName("ffxiv_dx11").Length +
-                            Process.GetProcessesByName("ffxiv").Length > 2)
+                            Process.GetProcessesByName("ffxiv").Length >= 2)
                         {
                             CustomMessageBox.Show(
                                 Loc.Localize("MultiboxDeniedWarning",
