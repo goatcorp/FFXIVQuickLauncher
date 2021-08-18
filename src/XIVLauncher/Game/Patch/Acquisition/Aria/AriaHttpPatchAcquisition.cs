@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -92,8 +90,8 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
         }
 
         public override async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
-        {
-            var gid = await manager.AddUri(new List<string>()
+        { 
+            await manager.AddUri(new List<string>()
             {
                 patch.Url
             }, new Dictionary<string, string>()
@@ -105,55 +103,65 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
                 {"max-tries", "100"},
                 {"max-download-limit", maxDownloadSpeed.ToString()},
                 {"auto-file-renaming", "false"},
-            });
-
-            Log.Verbose($"[ARIA] GID# {gid} for {patch}");
-
-            var _ = Task.Run(async () =>
+            }).ContinueWith(t =>
             {
-                try
+                if (t.IsFaulted || t.IsCanceled)
+                {
+                    Log.Error(t.Exception, $"[ARIA] Could not send download RPC for {patch}");
+                    OnComplete(AcquisitionResult.Error);
+                    return;
+                }
+
+                var gid = t.Result;
+
+                Log.Verbose($"[ARIA] GID# {gid} for {patch}");
+
+                var _ = Task.Run(async () =>
                 {
                     while (true)
                     {
-                        var status = await manager.GetStatus(gid);
-
-                        if (status.Status == "complete")
+                        try
                         {
-                            Log.Verbose($"[ARIA] GID# {gid} for {patch} SUCCESS");
+                            var status = await manager.GetStatus(gid);
 
-                            OnComplete(AcquisitionResult.Success);
-                            return;
+                            if (status.Status == "complete")
+                            {
+                                Log.Verbose($"[ARIA] GID# {gid} for {patch} SUCCESS");
+
+                                OnComplete(AcquisitionResult.Success);
+                                return;
+                            }
+
+                            if (status.Status == "removed")
+                            {
+                                Log.Verbose($"[ARIA] GID# {gid} for {patch} CANCEL");
+
+                                OnComplete(AcquisitionResult.Cancelled);
+                                return;
+                            }
+
+                            if (status.Status == "error")
+                            {
+                                Log.Verbose($"[ARIA] GID# {gid} for {patch} FAULTED");
+
+                                OnComplete(AcquisitionResult.Error);
+                                return;
+                            }
+
+                            OnProgressChanged(new AcquisitionProgress
+                            {
+                                BytesPerSecondSpeed = long.Parse(status.DownloadSpeed),
+                                Progress = long.Parse(status.CompletedLength),
+                            });
                         }
-
-                        if (status.Status == "removed")
+                        catch (Exception ex)
                         {
-                            Log.Verbose($"[ARIA] GID# {gid} for {patch} CANCEL");
-
-                            OnComplete(AcquisitionResult.Cancelled);
-                            return;
+                            Log.Error(ex, $"[ARIA] Failed to get status for GID# {gid} ({patch})");
                         }
-
-                        if (status.Status == "error")
-                        {
-                            Log.Verbose($"[ARIA] GID# {gid} for {patch} FAULTED");
-
-                            OnComplete(AcquisitionResult.Error);
-                            return;
-                        }
-
-                        OnProgressChanged(new AcquisitionProgress
-                        {
-                            BytesPerSecondSpeed = long.Parse(status.DownloadSpeed),
-                            Progress = long.Parse(status.CompletedLength),
-                        });
 
                         Thread.Sleep(500);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, $"[ARIA] Failed to get status for GID# {gid} ({patch})");
-                }
+                });
             });
         }
 
