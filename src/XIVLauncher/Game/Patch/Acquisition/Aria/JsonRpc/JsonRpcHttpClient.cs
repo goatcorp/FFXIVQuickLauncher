@@ -23,7 +23,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria.JsonRpc
             _endpoint = endpoint;
             _client = new HttpClient
             {
-                Timeout = new TimeSpan(0, 0, 10)
+                Timeout = new TimeSpan(0, 5, 0)
             };
         }
 
