@@ -39,6 +39,10 @@
     "message": "De plus, veuillez vérifier vos identifiants ou réessayer.",
     "description": "MainWindow.Initialize"
   },
+  "AutoLoginIntro": {
+    "message": "Vous activez la connexion automatique.\nCela signifie que XIVLauncher vous connectera toujours avec le compte actuel et que vous ne verrez plus cette fenêtre.\n\nPour modifier les paramètres et les comptes, vous devez maintenir la touche Maj sur votre clavier en cliquant sur l'icône XIVLauncher.",
+    "description": "MainWindow.LoginButton_Click"
+  },
   "CheckBootVersionError": {
     "message": "XIVLauncher n’a pas pu vérifier la version du jeu sélectionné. Cela peut se produire en cas de maintenance ou d’absence de connexion internet. Veuillez signaler cette erreur si vous pouvez vous connecter avec le lanceur officiel, mais pas avec XIVLauncher.",
     "description": "MainWindow.HandleBootCheck"
@@ -56,7 +60,7 @@
     "description": "MainWindow.PrepareLogin"
   },
   "EmailUsernameError": {
-    "message": "Please enter your SE account name, not your email address.",
+    "message": "Veuillez entrer votre nom de compte SE, et non votre adresse email.",
     "description": "MainWindow.PrepareLogin"
   },
   "EmptyPasswordError": {
@@ -172,11 +176,15 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "SendEmail": {
-    "message": "Send Email",
+    "message": "Envoyer un email",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation.\n\nThank you very much!",
+    "message": "XIVLauncher est un logiciel gratuit et open-source - il n'utilise aucun outil de télémétrie ou d'analyse pour collecter vos données, mais cela aiderait beaucoup si vous pouviez m'envoyer un court e-mail comprenant: Votre système d'exploitation, pourquoi vous utilisez XIVLauncher et, si nécessaire, des critiques ou suggestions d'amélioration. Votre email sera supprimé immédiatement après l'évaluation et ne sera jamais utilisé pour vous contacter.\n\nMerci beaucoup d'utiliser XIVLauncher !",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogThanks": {
+    "message": "XIVLauncher est un logiciel gratuit et open-source pris en charge par toutes sortes de personnes du monde entier.\nMerci de votre présence !",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -201,6 +209,10 @@
   },
   "ErrorExplanation": {
     "message": "Une erreur s'est produite dans XIVLauncher. Veuillez consulter la FAQ. Si le problème persiste,\nreportez-le sur GitHub via le bouton ci-dessous, en décrivant le problème et en copiant le texte de la fenêtre.",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "Ouvrir le rapport d'intégrité",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -372,7 +384,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "Waiting for download...",
+    "message": "En attente de téléchargement...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -572,7 +584,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchAcquisitionMethod": {
-    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "message": "Choisissez la méthode à utiliser pour télécharger les patchs. Nous recommandons \"ARIA(HTTP)\".",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -627,6 +639,10 @@
     "message": "Impossible de démarrer le jeu, veuillez signaler cette erreur.\n\nHRESULT : 0x{0}",
     "description": "Launcher.LaunchGame"
   },
+  "MultiboxDeniedWarning": {
+    "message": "Vous ne pouvez pas lancer plus de deux instances du jeu par défaut.\n\nVeuillez vérifier s'il y a une instance du jeu qui ne se serait pas fermée correctement.",
+    "description": "Launcher.LaunchGame"
+  },
   "AdminCheck": {
     "message": "XIVLauncher et/ou FFXIV sont configurés pour se lancer en tant qu'administrateur.\nCela peut créer des problèmes, notamment des plugins ou des raccourcis clavier ne fonctionnant pas.\n\nVoulez-vous régler ce problème automatiquement ?",
     "description": "ProblemCheck.RunCheck"
@@ -640,7 +656,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
-    "message": "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "message": "Une installation défectueuse de GShade a été détéctée.\n\nLe jeu ne peut pas démarrer. Voulez-vous que XIVLauncher corrige cela ? Vous devrez réinstaller GShade.",
     "description": "ProblemCheck.RunCheck"
   },
   "PatchInstallerNotOpen": {
