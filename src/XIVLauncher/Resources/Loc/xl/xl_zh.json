@@ -39,6 +39,10 @@
     "message": "另外，请检查您的账号密码是否正确无误并再试一次。",
     "description": "MainWindow.Initialize"
   },
+  "AutoLoginIntro": {
+    "message": "您正在启用自动登录功能。\nXIVLauncher 此后将使用当前账户登录，并不再弹出主窗口。\n\n如果您需要更改设置和账户，请在登录时按住 SHIFT 键。",
+    "description": "MainWindow.LoginButton_Click"
+  },
   "CheckBootVersionError": {
     "message": "XIVLauncher 无法获取可用的启动器版本。这可能是因为游戏服务器正在进行维护，或者您与版本服务器的连接不可用。如果您能够使用官方启动器登录，请向我们报告此问题。",
     "description": "MainWindow.HandleBootCheck"
@@ -176,7 +180,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher 是一个免费的开源软件。我们不会在未经您同意的情况下收集您的信息。但如果您能够将相关信息通过邮件发送给我们，会对我们的维护工作帮助巨大，相关信息包括：您的操作系统、使用本软件的原因以及您遇到的困难或您想对我们提出的意见。您的邮件将会在处理完毕后立即删除。\n\n非常感谢您对我们的支持。",
+    "message": "XIVLauncher 是一个免费的开源软件。我们不会在未经您同意的情况下收集您的信息。但如果您能够将相关信息通过邮件发送给我们，会对我们的维护工作帮助巨大，相关信息包括：您的操作系统、使用本软件的原因以及您遇到的困难或您想对我们提出的意见。您的邮件将会在处理完毕后立即删除，且开发人员不会就此联系您。\n\n非常感谢您对我们的支持。",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogThanks": {
+    "message": "XIVLauncher 是由无数来自世界各地的人共同创造出的、免费且开源的软件。\n衷心感谢您在我们成长之路上的陪伴。",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -201,6 +209,10 @@
   },
   "ErrorExplanation": {
     "message": "XIVLauncher 发生了未知错误。请先尝试查阅常见问题以找到解决方案。如果问题仍然存在，请点击下方按钮前往 GitHub 报告此问题。请简单描述您的问题并附上方框内的文本。",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "打开检查报告",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -625,6 +637,10 @@
   },
   "NativeLauncherError": {
     "message": "无法正确启动游戏。请向我们报告此错误。\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "您无法启动两个以上的游戏程序。\n\n请检查是否存在没有正确关闭的游戏进程。",
     "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {

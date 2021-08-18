@@ -39,6 +39,10 @@
     "message": "로그인 정보를 확인하고 다시 시도하십시오.",
     "description": "MainWindow.Initialize"
   },
+  "AutoLoginIntro": {
+    "message": "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon.",
+    "description": "MainWindow.LoginButton_Click"
+  },
   "CheckBootVersionError": {
     "message": "XIVLauncher가 게임 설치에 대한 boot 버전 체크를 할 수 없습니다. 게임이 점검 중이거나 버전 체크 서버에 접속할 수 없을 수 있습니다. 공식 런처로 로그인이 성공했다면, 에러로 보고해주세요.",
     "description": "MainWindow.HandleBootCheck"
@@ -176,7 +180,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation.\n\nThank you very much!",
+    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation and I won't ever contact you.\n\nThank you very much for using XIVLauncher!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogThanks": {
+    "message": "XIVLauncher is free, open-source software supported by a variety of people from all over the world.\nThank you for sticking around!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -201,6 +209,10 @@
   },
   "ErrorExplanation": {
     "message": "XIVLauncher에 오류가 발생했습니다. FAQ를 먼저 확인하십시오. 만약 문제가 계속된다면, 아래 버튼을 눌러서 GitHub의 Issue에 문제를 설명하고 에러 로그를 남기십시오.",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "Open Integrity Report",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -625,6 +637,10 @@
   },
   "NativeLauncherError": {
     "message": "게임을 정상적으로 실행할 수 없습니다. 에러를 제보해 주십시오.\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly.",
     "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {

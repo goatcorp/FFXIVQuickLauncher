@@ -39,6 +39,10 @@
     "message": "Bitte prüfe deine Anmeldedaten und probiere es noch einmal.",
     "description": "MainWindow.Initialize"
   },
+  "AutoLoginIntro": {
+    "message": "Du hast Auto-Login aktiviert.\nDas bedeutet, dass XIVLauncher dich immer mit dem aktuellen Konto anmelden wird und du dieses Fenster nicht mehr sehen wirst.\n\nUm Einstellungen und Konten zu ändern, musst du die Shift-Taste auf deiner Tastatur gedrückt halten, während du auf das XIVLauncher-Symbol klickst.",
+    "description": "MainWindow.LoginButton_Click"
+  },
   "CheckBootVersionError": {
     "message": "XIVLauncher konnte nicht auf ein Spiel-Update prüfen. Dies kann passieren, falls Wartungsarbeiten durchgeführt werden oder keine Internetverbindung besteht. Bitte melde diesen Fehler, falls du dich mit dem offiziellen Launcher anmelden kannst.",
     "description": "MainWindow.HandleBootCheck"
@@ -179,6 +183,10 @@
     "message": "XIVLauncher ist kostenlos und quelloffen - es nutzt keine \"Telemetrie\" oder Analyse-Software um deine Daten zu sammeln, aber es würde mir sehr helfen, falls du mir eine kurze E-Mail senden könntest, die deine Betriebssystem-Version, warum du XIVLauncher nutzt, und falls nötig, Kritik und Anregungen enthält. Deine E-Mail wird direkt nach der Auswertung gelöscht.\n\nVielen Dank!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
+  "ChangelogThanks": {
+    "message": "XIVLauncher ist kostenlose und quelloffene Software, die von Menschen aus der ganzen Welt gepflegt wird.\nDanke für eure Unterstützung!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
   "OK": {
     "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
@@ -201,6 +209,10 @@
   },
   "ErrorExplanation": {
     "message": "Ein kritischer Fehler ist aufgetreten. Bitte prüfe die FAQ. Falls dieses Problem weiterhin besteht, reiche bitte einen Fehlerbericht auf GitHub ein, in dem du den Text in diesem Fenster einfügst.",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "Integritätsbericht öffnen",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -625,6 +637,10 @@
   },
   "NativeLauncherError": {
     "message": "Das Spiel konnte nicht gestartet werden. Bitte melde diesen Fehler.\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "Du kannst standardmäßig nicht mehr als zwei Instanzen des Spiels starten.\n\nBitte überprüfe, ob es eine Instanz des Spiels gibt, die nicht korrekt geschlossen wurde.",
     "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {

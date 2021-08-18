@@ -39,6 +39,10 @@
     "message": "Além disso, verifique suas informações de acesso ou tente novamente.",
     "description": "MainWindow.Initialize"
   },
+  "AutoLoginIntro": {
+    "message": "Você está ativando o Login automático.\nIsto significa que o XIVLauncher sempre fará login com a conta atual e você não verá esta janela.\n\nPara alterar configurações e contas, você precisa segurar o botão shift no seu teclado enquanto clica no ícone do XIVLauncher.",
+    "description": "MainWindow.LoginButton_Click"
+  },
   "CheckBootVersionError": {
     "message": "XIVLauncher não foi capaz de verificar a versão de inicialização para a instalação do jogo selecionada. Isso pode acontecer se uma manutenção estiver em andamento ou se sua conexão com o servidor de verificação de versão não estiver disponível. Por favor, reporte este erro se você é capaz de entrar com o launcher oficial, mas não com o XIVLauncher.",
     "description": "MainWindow.HandleBootCheck"
@@ -176,7 +180,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher é gratuito e um software de código aberto - ele não usa quaisquer ferramentas de telemetria ou análise para coletar seus dados, mas nos ajudaria muito se você enviasse um e-mail curto para nós informando qual sistema operacional você usa, por que você usa o XIVLauncher e, se necessário, qualquer crítica ou coisa que possamos melhorar. Seu e-mail será excluído imediatamente após a avaliação.\n\nMuito obrigado!",
+    "message": "XIVLauncher é gratuito e um software de código aberto - ele não usa quaisquer ferramentas de telemetria ou análise para coletar seus dados, mas nos ajudaria muito se você enviasse um e-mail curto para nós informando qual sistema operacional você usa, por que você usa o XIVLauncher e, se necessário, qualquer crítica ou coisa que possamos melhorar. Seu e-mail será excluído imediatamente após a avaliação e eu jamais entrarei em contato com você.\n\nMuito obrigado por usar o XIVLauncher!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogThanks": {
+    "message": "XIVLauncher é um software gratuito, de código aberto suportado por uma variedade de pessoas de todo o mundo.\nObrigado por ficar conosco!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -201,6 +209,10 @@
   },
   "ErrorExplanation": {
     "message": "Ocorreu um erro no XIVLauncher. Por favor, consulte o FAQ. Se este problema persistir, reporte-o\nno GitHub clicando no botão abaixo, descrevendo o problema e copiando o texto na caixa.",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "Abrir Relatório de Integridade",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -625,6 +637,10 @@
   },
   "NativeLauncherError": {
     "message": "Não foi possível iniciar o jogo corretamente. Por favor, reporte este erro.\n\nHRESULT: 0x{0}",
+    "description": "Launcher.LaunchGame"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "Você não pode iniciar mais de duas instâncias do jogo por padrão.\n\nPor favor, verifique se há uma instância do jogo que não foi fechada corretamente.",
     "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {
