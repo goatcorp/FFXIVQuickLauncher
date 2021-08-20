@@ -113,7 +113,8 @@ namespace XIVLauncher.Dalamud
                 ConfigurationPath = DalamudSettings.ConfigPath,
                 AssetDirectory = DalamudUpdater.AssetDirectory.FullName,
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
-                OptOutMbCollection = _optOutMbCollection
+                OptOutMbCollection = _optOutMbCollection,
+                WorkingDirectory = DalamudUpdater.Runner.Directory?.FullName,
             };
 
             var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
