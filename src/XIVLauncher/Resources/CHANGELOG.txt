@@ -1,8 +1,2 @@
-﻿• Fixes an issue wherein patches may not have reported their progress correctly.
-• Fixes an issue wherein the launcher would show European news, even if the user was using a North American account.
-• Fixes an issue wherein the launcher would not be able to start when there were no temporary files left on the device.
-• Fixes an issue wherein generic addons would not close correctly after closing the game.
-• Adds back a disclaimer on how to exit Auto-Login.
-   => You can hold shift while starting the launcher to get back to the launcher menu!
-• Updated the localization files.
-   => Thanks a bunch to all translators - if you want to help out, feel free to register on Crowdin!
+﻿• Fixes an issue wherein, in certain cases, the launcher would not show the correct error message
+• Fixes an issue wherein the launcher would provide incomplete data to the plugin system
