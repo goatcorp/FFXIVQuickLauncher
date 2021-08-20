@@ -102,21 +102,9 @@ namespace XIVLauncher.Game
             {
                 Log.Information("Cache is invalid or disabled, logging in normally.");
 
-                try
-                {
-                    oauthLoginResult = OauthLogin(userName, password, otp, isSteamServiceAccount, 3);
+                oauthLoginResult = OauthLogin(userName, password, otp, isSteamServiceAccount, 3);
 
-                    Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
-                }
-                catch (Exception ex)
-                {
-                    Log.Information(ex, "OAuth login failed.");
-                    
-                    return new LoginResult
-                    {
-                        State = LoginState.NoOAuth
-                    };
-                }
+                Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
 
                 if (!oauthLoginResult.Playable)
                 {
@@ -473,7 +461,7 @@ namespace XIVLauncher.Game
             var matches = regex.Matches(reply);
 
             if (matches.Count == 0)
-                throw new OauthLoginException("Could not log in to oauth. Result: " + reply);
+                throw new OauthLoginException(reply);
 
             var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
 

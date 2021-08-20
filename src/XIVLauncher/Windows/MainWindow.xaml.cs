@@ -583,30 +583,15 @@ namespace XIVLauncher.Windows
 
             try
             {
-                var loginResult = _launcher.Login(LoginUsername.Text, LoginPassword.Password, otp, SteamCheckBox.IsChecked == true, App.Settings.UniqueIdCacheEnabled, App.Settings.GamePath);
+                var loginResult = _launcher.Login(LoginUsername.Text, LoginPassword.Password, otp,
+                    SteamCheckBox.IsChecked == true, App.Settings.UniqueIdCacheEnabled, App.Settings.GamePath);
 
                 Debug.Assert(loginResult != null, "ASSERTION FAILED loginResult != null!");
 
                 if (loginResult.State != Launcher.LoginState.Ok)
                 {
-                    Log.Verbose($"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");
-
-                    if (loginResult.State == Launcher.LoginState.NoOAuth)
-                    {
-                        var failedOauthMessage = Loc.Localize("LoginNoOauthMessage", "Could not login into your Square Enix account.\nThis could be caused by bad credentials or OTPs.\n\nPlease also check your email inbox for any messages from Square Enix - they might want you to reset your password due to \"suspicious activity\".\nThis is NOT caused by a security issue in XIVLauncher, it is merely a safety measure by Square Enix to prevent logins from new locations, in case your account is getting stolen.\nXIVLauncher and the official launcher will work fine again after resetting your password.");
-                        if (App.Settings.AutologinEnabled)
-                        {
-                            failedOauthMessage += Loc.Localize("LoginNoOauthAutologinHint", "\n\nAuto-Login has been disabled.");
-                            App.Settings.AutologinEnabled = false;
-                        }
-
-                        CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
-                        
-                        _isLoggingIn = false;
-                        Show();
-                        Activate();
-                        return;
-                    }
+                    Log.Verbose(
+                        $"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");
 
                     if (loginResult.State == Launcher.LoginState.NoService)
                     {
@@ -624,7 +609,9 @@ namespace XIVLauncher.Windows
 
                     if (loginResult.State == Launcher.LoginState.NoTerms)
                     {
-                        CustomMessageBox.Show(Loc.Localize("LoginAcceptTermsMessage", "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
+                        CustomMessageBox.Show(
+                            Loc.Localize("LoginAcceptTermsMessage",
+                                "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                         _isLoggingIn = false;
@@ -647,7 +634,9 @@ namespace XIVLauncher.Windows
                      */
                     if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
                     {
-                        CustomMessageBox.Show(Loc.Localize("EverythingIsFuckedMessage", "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord."),
+                        CustomMessageBox.Show(
+                            Loc.Localize("EverythingIsFuckedMessage",
+                                "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord."),
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                         _isLoggingIn = false;
@@ -659,7 +648,8 @@ namespace XIVLauncher.Windows
                     if (App.Settings.AskBeforePatchInstall.HasValue && App.Settings.AskBeforePatchInstall.Value)
                     {
                         var selfPatchAsk = MessageBox.Show(
-                            Loc.Localize("PatchInstallDisclaimer", "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?"),
+                            Loc.Localize("PatchInstallDisclaimer",
+                                "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?"),
                             "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                         if (selfPatchAsk == MessageBoxResult.Yes)
@@ -697,7 +687,23 @@ namespace XIVLauncher.Windows
                     Show();
                     Activate();
                 }
-                
+
+            }
+            catch (OauthLoginException oauthLoginException)
+            {
+                var failedOauthMessage = oauthLoginException.Message;
+                if (App.Settings.AutologinEnabled)
+                {
+                    failedOauthMessage += Loc.Localize("LoginNoOauthAutologinHint", "\n\nAuto-Login has been disabled.");
+                    App.Settings.AutologinEnabled = false;
+                }
+
+                CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+                        
+                _isLoggingIn = false;
+                Show();
+                Activate();
+                return;
             }
             catch (Exception ex)
             {
