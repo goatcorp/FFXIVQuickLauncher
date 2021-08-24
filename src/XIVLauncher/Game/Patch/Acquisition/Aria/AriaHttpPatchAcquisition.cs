@@ -50,7 +50,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
                 var ariaHost = $"http://localhost:{ariaPort}/jsonrpc";
 
                 var ariaArgs =
-                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false";
+                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false --allow-overwrite=true";
 
                 Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath} {ariaArgs}...");
 
@@ -103,6 +103,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
                 {"max-tries", "100"},
                 {"max-download-limit", maxDownloadSpeed.ToString()},
                 {"auto-file-renaming", "false"},
+                {"allow-overwrite", "true"},
             }).ContinueWith(t =>
             {
                 if (t.IsFaulted || t.IsCanceled)
