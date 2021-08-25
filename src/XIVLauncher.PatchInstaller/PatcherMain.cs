@@ -10,11 +10,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using Newtonsoft.Json;
 using Serilog;
+using SharedMemory;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.PatchInstaller.ZiPatch;
 using XIVLauncher.PatchInstaller.ZiPatch.Util;
-using ZetaIpc.Runtime.Client;
-using ZetaIpc.Runtime.Server;
 
 namespace XIVLauncher.PatchInstaller
 {
@@ -22,16 +21,15 @@ namespace XIVLauncher.PatchInstaller
     {
         public const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
 
-        private static IpcServer _server = new IpcServer();
-        private static IpcClient _client = new IpcClient();
+        private static RpcBuffer _rpc;
 
-        public static JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        public static JsonSerializerSettings JsonSettings = new()
         {
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
             TypeNameHandling = TypeNameHandling.All
         };
 
-        private static readonly ConcurrentQueue<PatcherIpcStartInstall> _queuedInstalls = new ConcurrentQueue<PatcherIpcStartInstall>();
+        private static readonly ConcurrentQueue<PatcherIpcStartInstall> _queuedInstalls = new();
 
         static void Main(string[] args)
         {
@@ -62,7 +60,7 @@ namespace XIVLauncher.PatchInstaller
                     return;
                 }
 
-                if (args.Length == 0)
+                if (args.Length == 0 || args[0] != "rpc")
                 {
                     Log.Information("usage: XIVLauncher.PatchInstaller.exe install <patch> <game dir>\n" +
                                     "OR\n" +
@@ -72,9 +70,7 @@ namespace XIVLauncher.PatchInstaller
                     return;
                 }
 
-                _client.Initialize(int.Parse(args[0]));
-                _server.Start(int.Parse(args[1]));
-                _server.ReceivedRequest += ServerOnReceivedRequest;
+                _rpc = new RpcBuffer(args[1], RemoteCallHandler);
 
                 Log.Information("[PATCHER] IPC connected");
 
@@ -111,11 +107,12 @@ namespace XIVLauncher.PatchInstaller
             }
         }
 
-        private static void ServerOnReceivedRequest(object sender, ReceivedRequestEventArgs e)
+        private static void RemoteCallHandler(ulong msgId, byte[] payload)
         {
-            Log.Information("[PATCHER] IPC: " + e.Request);
+            var json = Base64Decode(Encoding.ASCII.GetString(payload));
+            Log.Information("[PATCHER] IPC({0}): {1}", msgId, json);
 
-            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(Base64Decode(e.Request), JsonSettings);
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, JsonSettings);
 
             switch (msg.OpCode)
             {
@@ -143,7 +140,17 @@ namespace XIVLauncher.PatchInstaller
 
         private static void SendIpcMessage(PatcherIpcMessages.PatcherIpcEnvelope envelope)
         {
-            _client.Send(Base64Encode(JsonConvert.SerializeObject(envelope, Formatting.None, JsonSettings)));
+            try
+            {
+                var json = PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, PatcherMain.JsonSettings));
+
+                Log.Information("[PATCHERIPC] SEND: {1}", json);
+                _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "[PATCHERIPC] Failed to send message.");
+            }
         }
 
         public static string Base64Encode(string plainText)

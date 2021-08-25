@@ -14,26 +14,18 @@ using System.Windows;
 using CheapLoc;
 using Newtonsoft.Json;
 using Serilog;
+using SharedMemory;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.Windows;
-using ZetaIpc.Runtime.Client;
-using ZetaIpc.Runtime.Server;
 
 namespace XIVLauncher.Game.Patch
 {
     public class PatchInstaller : IDisposable
     {
-        private IpcServer _server = new IpcServer();
-        private IpcClient _client = new IpcClient();
+        private RpcBuffer _rpc;
 
-        public const int DEFAULT_IPC_SERVER_PORT = 0xff16;
-        public const int DEFAULT_IPC_CLIENT_PORT = 0xff30;
-
-        private int _serverPort;
-        private int _clientPort;
-        
         public enum InstallerState
         {   
             NotStarted,
@@ -50,23 +42,11 @@ namespace XIVLauncher.Game.Patch
             if (State != InstallerState.NotStarted)
                 return true;
 
-            _serverPort = DEFAULT_IPC_SERVER_PORT;
-            _clientPort = DEFAULT_IPC_CLIENT_PORT;
+            var rpcName = "XLPatcher" + Guid.NewGuid().ToString();
 
-            try
-            {
-                _serverPort = Util.GetAvailablePort(DEFAULT_IPC_SERVER_PORT);
-                _clientPort = Util.GetAvailablePort(_serverPort + 1);
-            }
-            catch(Exception ex)
-            {
-                Log.Warning(ex, "[PATCHERIPC] Could not find free ports, using defaults.");
-            }
+            Log.Information("[PATCHERIPC] Starting patcher with '{0}'", rpcName);
 
-            Log.Information("[PATCHERIPC] Starting patcher with sp#{0} cp#{1}", _serverPort, _clientPort);
-
-            _server.ReceivedRequest += ServerOnReceivedRequest;
-            _server.Start(_serverPort);
+            _rpc = new RpcBuffer(rpcName, RemoteCallHandler);
 
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 "XIVLauncher.PatchInstaller.exe");
@@ -78,7 +58,7 @@ namespace XIVLauncher.Game.Patch
             if (!EnvironmentSettings.IsNoRunas && Environment.OSVersion.Version.Major >= 6)
                 startInfo.Verb = "runas";
 
-            startInfo.Arguments = $"{_serverPort} {_clientPort}";
+            startInfo.Arguments = $"rpc {rpcName}";
 
             State = InstallerState.NotReady;
 
@@ -95,33 +75,17 @@ namespace XIVLauncher.Game.Patch
             return true;
         }
 
-        public void WaitOnHello()
+        private void RemoteCallHandler(ulong msgId, byte[] payload)
         {
-            for (var i = 0; i < 20; i++)
-            {
-                if (State == InstallerState.Ready)
-                    return;
+            var json = PatcherMain.Base64Decode(Encoding.ASCII.GetString(payload));
+            Log.Information("[PATCHERIPC] IPC({0}): {1}", msgId, json);
 
-                Thread.Sleep(1000);
-            }
-
-            MessageBox.Show(
-                Loc.Localize("PatchInstallerNotOpen",
-                    "Could not connect to the patch installer.\nPlease report this error."), "XIVLauncher",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-            Environment.Exit(0);
-        }
-
-        private void ServerOnReceivedRequest(object sender, ReceivedRequestEventArgs e)
-        {
-            Log.Information("[PATCHERIPC] IPC: " + e.Request);
-
-            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(PatcherMain.Base64Decode(e.Request), XIVLauncher.PatchInstaller.PatcherMain.JsonSettings);
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, PatcherMain.JsonSettings);
 
             switch (msg.OpCode)
             {
                 case PatcherIpcOpCode.Hello:
-                    _client.Initialize(_clientPort);
+                    //_client.Initialize(_clientPort);
                     Log.Information("[PATCHERIPC] GOT HELLO");
                     State = InstallerState.Ready;
                     break;
@@ -141,6 +105,23 @@ namespace XIVLauncher.Game.Patch
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void WaitOnHello()
+        {
+            for (var i = 0; i < 20; i++)
+            {
+                if (State == InstallerState.Ready)
+                    return;
+
+                Thread.Sleep(1000);
+            }
+
+            MessageBox.Show(
+                Loc.Localize("PatchInstallerNotOpen",
+                    "Could not connect to the patch installer.\nPlease report this error."), "XIVLauncher",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            Environment.Exit(0);
         }
 
         public void Stop()
@@ -184,7 +165,10 @@ namespace XIVLauncher.Game.Patch
         {
             try
             {
-                _client.Send(PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, Formatting.Indented, XIVLauncher.PatchInstaller.PatcherMain.JsonSettings)));
+                var json = PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, PatcherMain.JsonSettings));
+
+                Log.Information("[PATCHERIPC] SEND: {1}", json);
+                _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
             }
             catch (Exception e)
             {
