@@ -109,12 +109,12 @@ namespace XIVLauncher.Game.Patch
 
         public void WaitOnHello()
         {
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 40; i++)
             {
                 if (State == InstallerState.Ready)
                     return;
 
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
             }
 
             MessageBox.Show(
@@ -167,7 +167,7 @@ namespace XIVLauncher.Game.Patch
             {
                 var json = PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, PatcherMain.JsonSettings));
 
-                Log.Information("[PATCHERIPC] SEND: {1}", json);
+                Log.Information("[PATCHERIPC] SEND: " + json);
                 _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
             }
             catch (Exception e)

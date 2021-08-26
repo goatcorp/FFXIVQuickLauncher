@@ -144,7 +144,7 @@ namespace XIVLauncher.PatchInstaller
             {
                 var json = PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, PatcherMain.JsonSettings));
 
-                Log.Information("[PATCHERIPC] SEND: {1}", json);
+                Log.Information("[PATCHERIPC] SEND: " + json);
                 _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
             }
             catch (Exception e)
