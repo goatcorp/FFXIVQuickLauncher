@@ -1,6 +1,8 @@
+using Serilog;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using XIVLauncher.Settings;
 
@@ -10,20 +12,20 @@ namespace XIVLauncher.Addon
     {
         private Process _addonProcess;
         private Process _gameProcess;
-        
+
         void IAddon.Setup(Process gameProcess, ILauncherSettingsV3 setting)
         {
             _gameProcess = gameProcess;
         }
 
-        public void Run() => 
+        public void Run() =>
             Run(false);
 
         private void Run(bool gameClosed)
         {
             if (string.IsNullOrEmpty(Path))
             {
-                Serilog.Log.Error("Generic addon path was null.");
+                Log.Error("Generic addon path was null.");
                 return;
             }
 
@@ -37,7 +39,7 @@ namespace XIVLauncher.Addon
                 switch (ext)
                 {
                     case ".ps1":
-                        RunPwsh();
+                        RunPowershell();
                         break;
 
                     case ".bat":
@@ -49,11 +51,11 @@ namespace XIVLauncher.Addon
                         break;
                 }
 
-                Serilog.Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
+                Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
             }
             catch (Exception e)
             {
-                Serilog.Log.Error(e, "Could not launch generic addon.");
+                Log.Error(e, "Could not launch generic addon.");
             }
         }
 
@@ -82,9 +84,9 @@ namespace XIVLauncher.Addon
                         _addonProcess.Close();
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Serilog.Log.Information(ex, "Could not kill addon process.");
+                    Log.Information(ex, "Could not kill addon process.");
                 }
             }
         }
@@ -94,7 +96,7 @@ namespace XIVLauncher.Addon
             // If there already is a process like this running - we don't need to spawn another one.
             if (Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(Path)).Any())
             {
-                Serilog.Log.Information("Addon {0} is already running.", Name);
+                Log.Information("Addon {0} is already running.", Name);
                 return;
             }
 
@@ -105,12 +107,12 @@ namespace XIVLauncher.Addon
                     FileName = Path,
                     Arguments = CommandLine,
                     WorkingDirectory = System.IO.Path.GetDirectoryName(Path),
-                }
+                },
             };
 
             if (RunAsAdmin)
-            // Vista or higher check
-            // https://stackoverflow.com/a/2532775
+                // Vista or higher check
+                // https://stackoverflow.com/a/2532775
                 if (Environment.OSVersion.Version.Major >= 6) _addonProcess.StartInfo.Verb = "runas";
 
             _addonProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
@@ -118,26 +120,28 @@ namespace XIVLauncher.Addon
             _addonProcess.Start();
         }
 
-        private void RunPwsh()
+        private void RunPowershell()
         {
-            var ps = new ProcessStartInfo();
-
-            ps.FileName = Pwsh;
-            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(Path);
-            ps.Arguments = $@"-File ""{Path}"" {CommandLine}";
-            ps.UseShellExecute = false;
+            var ps = new ProcessStartInfo
+            {
+                FileName = Powershell,
+                WorkingDirectory = System.IO.Path.GetDirectoryName(Path),
+                Arguments = $@"-File ""{Path}"" {CommandLine}",
+                UseShellExecute = false,
+            };
 
             RunScript(ps);
         }
 
         private void RunBatch()
         {
-            var ps = new ProcessStartInfo();
-
-            ps.FileName = Environment.GetEnvironmentVariable("ComSpec");
-            ps.WorkingDirectory = System.IO.Path.GetDirectoryName(Path);
-            ps.Arguments = $@"/C ""{Path}"" {CommandLine}";
-            ps.UseShellExecute = false;
+            var ps = new ProcessStartInfo
+            {
+                FileName = Environment.GetEnvironmentVariable("ComSpec"),
+                WorkingDirectory = System.IO.Path.GetDirectoryName(Path),
+                Arguments = $@"/C ""{Path}"" {CommandLine}",
+                UseShellExecute = false,
+            };
 
             RunScript(ps);
         }
@@ -148,19 +152,19 @@ namespace XIVLauncher.Addon
             ps.CreateNoWindow = true;
 
             if (RunAsAdmin)
-            // Vista or higher check
-            // https://stackoverflow.com/a/2532775
+                // Vista or higher check
+                // https://stackoverflow.com/a/2532775
                 if (Environment.OSVersion.Version.Major >= 6) ps.Verb = "runas";
 
             try
             {
                 _addonProcess = Process.Start(ps);
-                Serilog.Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
+                Log.Information("Launched addon {0}.", System.IO.Path.GetFileNameWithoutExtension(Path));
             }
             catch (Win32Exception exc)
             {
                 // If the user didn't cause this manually by dismissing the UAC prompt, we throw it
-                if ((uint) exc.HResult != 0x80004005)
+                if ((uint)exc.HResult != 0x80004005)
                     throw;
             }
         }
@@ -180,23 +184,23 @@ namespace XIVLauncher.Addon
         public bool RunOnClose;
         public bool KillAfterClose;
 
-        private static readonly Lazy<string> LazyPwsh = new Lazy<string>(() => GetPwsh());
+        private static readonly Lazy<string> LazyPowershell = new(GetPowershell);
 
-        private static string Pwsh => LazyPwsh.Value;
+        private static string Powershell => LazyPowershell.Value;
 
-        private static string GetPwsh()
+        private static string GetPowershell()
         {
             var result = "powershell.exe";
 
             var path = Environment.GetEnvironmentVariable("Path");
-            var values = path.Split(';');
+            var values = path?.Split(';') ?? Array.Empty<string>();
 
             foreach (var dir in values)
             {
-                var pwsh = System.IO.Path.Combine(dir, "pwsh.exe");
-                if (System.IO.File.Exists(pwsh))
+                var powershell = System.IO.Path.Combine(dir, "pwsh.exe");
+                if (File.Exists(powershell))
                 {
-                    result = pwsh;
+                    result = powershell;
                     break;
                 }
             }
