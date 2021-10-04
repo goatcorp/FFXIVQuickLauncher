@@ -144,7 +144,7 @@
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "一部のゲームファイルが変更、または破損しているようです。詳しくはXIVLauncherフォルダ内の \"Integrityreport.txt \"ファイルをご確認ください。\n\nゲームを最新パッチのデータでリセットしますか？再度パッチを当てることで、問題が解決される可能性があります。",
+    "message": "一部のゲームファイルが変更、または破損しているようです。詳しくはXIVLauncherフォルダ内の \"Integrityreport.txt \"ファイルをご確認ください。\n\nTexToolsでModを使用している場合、この結果は想定通りです。\nModを使用していない場合は、ゲームの再インストールをおすすめします。",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
