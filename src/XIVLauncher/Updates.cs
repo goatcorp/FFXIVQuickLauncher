@@ -28,11 +28,7 @@ namespace XIVLauncher
             {
                 ReleaseEntry newRelease = null;
 
-                var url = "https://goatsoft.fra1.cdn.digitaloceanspaces.com/xl/RELEASES";
-                if (downloadPrerelease)
-                    url = "https://goatsoft.fra1.cdn.digitaloceanspaces.com/xl-pre/RELEASES";
-
-                using (var updateManager = new UpdateManager(url))
+                using (var updateManager = await UpdateManager.GitHubUpdateManager(repoUrl: App.RepoUrl, applicationName: "XIVLauncher", prerelease: downloadPrerelease))
                 {
                     // TODO: is this allowed?
                     SquirrelAwareApp.HandleEvents(
