@@ -40,7 +40,7 @@
     "description": "MainWindow.Initialize"
   },
   "AutoLoginIntro": {
-    "message": "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon.",
+    "message": "您正在啟用自動登入功能。\nXIVLauncher 此後將使用當前賬戶登入，並不再顯示主窗口。\n\n如果您需要更改設置或賬戶，請在登入時按住 SHIFT 鍵。",
     "description": "MainWindow.LoginButton_Click"
   },
   "CheckBootVersionError": {
@@ -180,11 +180,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation and I won't ever contact you.\n\nThank you very much for using XIVLauncher!",
+    "message": "XIVLauncher 是免費的開源軟體。我們不會在未經您授權的情況下收集您的信息。但如果您能夠將有關信息通過電子郵件發送給我們，會對我們的維護工作幫助巨大，有關信息包括：您的操作系統、使用本軟體的原因以及您遇到的困難或您想對我們提出的建議。您的郵件會在處理完成後立刻刪除，且開發人員不會就此聯繫您。\n\n非常感謝您對我們的支持。",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogThanks": {
-    "message": "XIVLauncher is free, open-source software supported by a variety of people from all over the world.\nThank you for sticking around!",
+    "message": "XIVLauncher 是由無數來自世界各地的人共同創造出的、免費且開源的軟體。\n非常感謝您在我們成長之路上的陪伴。",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -640,7 +640,7 @@
     "description": "Launcher.LaunchGame"
   },
   "MultiboxDeniedWarning": {
-    "message": "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly.",
+    "message": "您無法啟動兩個以上的遊戲程式。\n\n請檢查是否存在沒有正確關閉的遊戲進程。",
     "description": "Launcher.LaunchGame"
   },
   "AdminCheck": {
