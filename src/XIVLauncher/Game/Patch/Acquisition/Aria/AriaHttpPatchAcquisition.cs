@@ -81,7 +81,15 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
         {
             if (ariaProcess is {HasExited: false})
             {
-                manager.Shutdown();
+                try
+                {
+                    manager.Shutdown();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
                 Thread.Sleep(1000);
 
                 if (!ariaProcess.HasExited)
@@ -90,7 +98,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
         }
 
         public override async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
-        { 
+        {
             await manager.AddUri(new List<string>()
             {
                 patch.Url

@@ -87,7 +87,8 @@ namespace XIVLauncher.Dalamud
 
             var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
 
-            var addonPath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks", remoteVersionInfo.AssemblyVersion));
+            var addonPath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks"));
+            var currentVersionPath = new DirectoryInfo(Path.Combine(addonPath.FullName, remoteVersionInfo.AssemblyVersion));
             var runtimePath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "runtime"));
             var runtimePaths = new DirectoryInfo[]
             {
@@ -100,7 +101,7 @@ namespace XIVLauncher.Dalamud
 
             Log.Information("[DUPDATE] Now starting for Dalamud {0}", remoteVersionInfo.AssemblyVersion);
 
-            if (!addonPath.Exists || !IsIntegrity(addonPath))
+            if (!currentVersionPath.Exists || !IsIntegrity(currentVersionPath))
             {
                 Log.Information("[DUPDATE] Not found, redownloading");
 
@@ -108,7 +109,8 @@ namespace XIVLauncher.Dalamud
 
                 try
                 {
-                    Download(addonPath, settings);
+                    Download(currentVersionPath, settings);
+                    CleanUpOld(addonPath, remoteVersionInfo.AssemblyVersion);
 
                     // This is a good indicator that we should clear the UID cache
                     UniqueIdCache.Instance.Reset();
@@ -168,7 +170,7 @@ namespace XIVLauncher.Dalamud
                 return;
             }
 
-            if (!IsIntegrity(addonPath))
+            if (!IsIntegrity(currentVersionPath))
             {
                 Log.Error("[DUPDATE] Integrity check failed.");
 
@@ -176,11 +178,11 @@ namespace XIVLauncher.Dalamud
                 return;
             }
 
-            WriteVersionJson(addonPath, versionInfoJson);
+            WriteVersionJson(currentVersionPath, versionInfoJson);
 
             Log.Information("[DUPDATE] All set for " + remoteVersionInfo.SupportedGameVer);
 
-            Runner = new FileInfo(Path.Combine(addonPath.FullName, "Dalamud.Injector.exe"));
+            Runner = new FileInfo(Path.Combine(currentVersionPath.FullName, "Dalamud.Injector.exe"));
 
             State = DownloadState.Done;
         }
@@ -203,6 +205,26 @@ namespace XIVLauncher.Dalamud
             }
 
             return true;
+        }
+
+        private static void CleanUpOld(DirectoryInfo addonPath, string currentVer)
+        {
+            if (!addonPath.Exists)
+                return;
+
+            foreach (var directory in addonPath.GetDirectories())
+            {
+                if (directory.Name == "dev" || directory.Name == currentVer) continue;
+
+                try
+                {
+                    directory.Delete(true);
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
         }
 
         private static void WriteVersionJson(DirectoryInfo addonPath, string info)
