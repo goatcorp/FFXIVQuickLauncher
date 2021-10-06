@@ -14,7 +14,8 @@ namespace XIVLauncher.PatchInstaller
         Ffxiv,
         Ex1,
         Ex2,
-        Ex3
+        Ex3,
+        Ex4
     }
 
     public static class RepoExtensions
@@ -33,6 +34,8 @@ namespace XIVLauncher.PatchInstaller
                     return new DirectoryInfo(Path.Combine(gamePath.FullName, "game", "sqpack", "ex2"));
                 case Repository.Ex3:
                     return new DirectoryInfo(Path.Combine(gamePath.FullName, "game", "sqpack", "ex3"));
+                case Repository.Ex4:
+                    return new DirectoryInfo(Path.Combine(gamePath.FullName, "game", "sqpack", "ex4"));
                 default:
                     throw new ArgumentOutOfRangeException(nameof(repo), repo, null);
             }
@@ -53,6 +56,8 @@ namespace XIVLauncher.PatchInstaller
                     return new FileInfo(Path.Combine(repoPath, "ex2" + (isBck ? ".bck" : ".ver")));
                 case Repository.Ex3:
                     return new FileInfo(Path.Combine(repoPath, "ex3" + (isBck ? ".bck" : ".ver")));
+                case Repository.Ex4:
+                    return new FileInfo(Path.Combine(repoPath, "ex4" + (isBck ? ".bck" : ".ver")));
                 default:
                     throw new ArgumentOutOfRangeException(nameof(repo), repo, null);
             }
@@ -62,7 +67,7 @@ namespace XIVLauncher.PatchInstaller
         {
             var verFile = repo.GetVerFile(gamePath, isBck);
 
-            if (!verFile.Exists) 
+            if (!verFile.Exists)
                 return PatcherMain.BASE_GAME_VERSION;
 
             return File.ReadAllText(verFile.FullName);
@@ -92,6 +97,8 @@ namespace XIVLauncher.PatchInstaller
                 case Repository.Ex2:
                     return null;
                 case Repository.Ex3:
+                    return null;
+                case Repository.Ex4:
                     return null;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(repo), repo, null);

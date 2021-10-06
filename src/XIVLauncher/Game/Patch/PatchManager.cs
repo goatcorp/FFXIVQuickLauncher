@@ -311,7 +311,7 @@ namespace XIVLauncher.Game.Patch
                 Thread.Sleep(500);
                 for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
                 {
-                    if (Slots[i] != SlotState.Done) 
+                    if (Slots[i] != SlotState.Done)
                         continue;
 
                     Slots[i] = SlotState.InProgress;
@@ -448,7 +448,7 @@ namespace XIVLauncher.Game.Patch
                 using var sha1 = new SHA1Managed();
 
                 var hash = sha1.ComputeHash(block);
-                var sb = new StringBuilder(hash.Length * 2); 
+                var sb = new StringBuilder(hash.Length * 2);
 
                 foreach (var b in hash)
                 {
@@ -487,6 +487,9 @@ namespace XIVLauncher.Game.Patch
 
             if (patch.Url.Contains("ex3"))
                 return Repository.Ex3;
+
+            if (patch.Url.Contains("ex4"))
+                return Repository.Ex4;
 
             return Repository.Ffxiv;
         }

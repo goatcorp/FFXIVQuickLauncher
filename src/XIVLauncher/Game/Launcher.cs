@@ -37,7 +37,7 @@ namespace XIVLauncher.Game
                 client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
 
                 client.Headers.Add("Accept-Encoding", "gzip, deflate");
-                client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+                client.Headers.Add("Accept-Language", "en-US");
 
                 var lang = App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
 
@@ -175,9 +175,9 @@ namespace XIVLauncher.Game
                     }
                 }
 
-                var exePath = gamePath + "/game/ffxiv_dx11.exe";
+                var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
                 if (!isDx11)
-                    exePath = gamePath + "/game/ffxiv.exe";
+                    exePath = Path.Combine(gamePath.FullName, "game", "ffxiv.exe");
 
                 var environment = new Dictionary<string, string>();
 
@@ -305,6 +305,9 @@ namespace XIVLauncher.Game
             if (exLevel >= 3)
                 verReport += $"\nex3\t{Repository.Ex3.GetVer(gamePath)}";
 
+            if (exLevel >= 4)
+                verReport += $"\nex4\t{Repository.Ex4.GetVer(gamePath)}";
+
             return verReport;
         }
 
@@ -414,7 +417,7 @@ namespace XIVLauncher.Game
 
             client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
             client.Headers.Add("Accept-Encoding", "gzip, deflate");
-            client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+            client.Headers.Add("Accept-Language", "en-US");
             client.Headers.Add("User-Agent", _userAgent);
             var reply = client.DownloadString(
                 $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
@@ -440,7 +443,7 @@ namespace XIVLauncher.Game
             client.Headers.Add("Cache-Control", "no-cache");
             client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
             client.Headers.Add("Accept-Encoding", "gzip, deflate");
-            client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+            client.Headers.Add("Accept-Language", "en-US");
             client.Headers.Add("Referer",
                 $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
             client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
@@ -532,7 +535,7 @@ namespace XIVLauncher.Game
             }
 
             client.Headers.Add("Accept-Encoding", "gzip, deflate");
-            client.Headers.Add("Accept-Language", "en-US,en;q=0.8,ja;q=0.6,de-DE;q=0.4,de;q=0.2");
+            client.Headers.Add("Accept-Language", "en-US");
 
             client.Headers.Add("Origin", "https://launcher.finalfantasyxiv.com");
 
