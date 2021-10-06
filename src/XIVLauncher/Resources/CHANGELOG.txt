@@ -1,2 +1,6 @@
-﻿• Fixes an issue wherein, in certain cases, the launcher would not show the correct error message
-• Fixes an issue wherein the launcher would provide incomplete data to the plugin system
+﻿• Prepares the launcher for the 4th expansion.
+• Fixes an issue wherein, in certain cases, patcher and launcher could not communicate correctly.
+• Fixes an issue wherein, in certain cases, the launcher would incorrectly warn about broken GShade installations.
+• Fixes an issue wherein old versions of the in-game addon would be left behind after updates.
+• Fixes an issue wherein, in certain
+• Updated the localization files.
