@@ -98,7 +98,7 @@ namespace XIVLauncher
             catch(Exception ex){
                 Log.Error(ex, "Could not get language information. Setting up fallbacks.");
                 Loc.Setup("{}");
-            }  
+            }
 #else
             // Force all fallbacks
             Loc.Setup("{}");
@@ -142,6 +142,11 @@ namespace XIVLauncher
                 .UseTypeParser(new DirectoryInfoParser())
                 .UseTypeParser(new AddonListParser())
                 .Build();
+
+            if (string.IsNullOrEmpty(Settings.AcceptLanguage))
+            {
+                Settings.AcceptLanguage = Util.GenerateAcceptLanguage();
+            }
         }
 
         private void OnUpdateCheckFinished(object sender, EventArgs e)
@@ -151,7 +156,7 @@ namespace XIVLauncher
                 _useFullExceptionHandler = true;
 
 #if !XL_NOAUTOUPDATE
-                if (_updateWindow != null) 
+                if (_updateWindow != null)
                     _updateWindow.Hide();
 #endif
 
@@ -249,7 +254,7 @@ namespace XIVLauncher
                     }
                 }
             }
-            
+
             Log.Verbose("Loading MainWindow for account '{0}'", accountName);
 
             if (EnvironmentSettings.IsDisableUpdates)

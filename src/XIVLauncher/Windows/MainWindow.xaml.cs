@@ -79,7 +79,7 @@ namespace XIVLauncher.Windows
 #if DEBUG
             Title += " - Debugging";
 #endif
-            
+
             if (EnvironmentSettings.IsWine)
                 Title += " - Wine on Linux";
         }
@@ -151,7 +151,7 @@ namespace XIVLauncher.Windows
 
             LoginContextMenu.Items.Add(fakeStartMenuItem);
 #endif
-            
+
             // Set the default patch acquisition method
             App.Settings.PatchAcquisitionMethod ??=
                 EnvironmentSettings.IsWine ? AcquisitionMethod.NetDownloader : AcquisitionMethod.Aria;
@@ -238,7 +238,7 @@ namespace XIVLauncher.Windows
                     Environment.Exit(0);
                     return;
                 }
-                
+
                 SettingsControl.ReloadSettings();
             }
 
@@ -289,7 +289,7 @@ namespace XIVLauncher.Windows
                     Activate();
                     return;
                 }
-                
+
                 if (bootPatches != null)
                 {
                     var mutex = new Mutex(false, "XivLauncherIsPatching");
@@ -409,7 +409,7 @@ namespace XIVLauncher.Windows
 
                 App.Settings.AutologinEnabled = false;
                 AutoLoginCheckBox.IsChecked = false;
-                
+
                 this.Reactivate();
                 return;
             }
@@ -691,7 +691,7 @@ namespace XIVLauncher.Windows
             }
             catch (OauthLoginException oauthLoginException)
             {
-                var failedOauthMessage = oauthLoginException.Message;
+                var failedOauthMessage = oauthLoginException.Message.Replace("\\r\\n", "\n").Replace("\r\n", "\n");
                 if (App.Settings.AutologinEnabled)
                 {
                     failedOauthMessage += Loc.Localize("LoginNoOauthAutologinHint", "\n\nAuto-Login has been disabled.");
@@ -699,7 +699,7 @@ namespace XIVLauncher.Windows
                 }
 
                 CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
-                        
+
                 _isLoggingIn = false;
                 Show();
                 Activate();
@@ -805,7 +805,7 @@ namespace XIVLauncher.Windows
 
                 Log.Information("Game has exited.");
                 addonMgr.StopAddons();
-                
+
                 CleanUp();
 
                 Environment.Exit(0);
@@ -847,7 +847,7 @@ namespace XIVLauncher.Windows
             if (_headlines == null)
                 return;
 
-            if (!(NewsListView.SelectedItem is News item)) 
+            if (!(NewsListView.SelectedItem is News item))
                 return;
 
             if (!string.IsNullOrEmpty(item.Url))

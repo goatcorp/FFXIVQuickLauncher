@@ -29,8 +29,8 @@ namespace XIVLauncher.Settings
         string CurrentAccountId { get; set; }
         bool? EncryptArguments { get; set; }
         DirectoryInfo PatchPath { get; set; }
-        bool? AskBeforePatchInstall { get; set; } 
-        long SpeedLimitBytes { get; set; } 
+        bool? AskBeforePatchInstall { get; set; }
+        long SpeedLimitBytes { get; set; }
         decimal DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
         bool? OptOutMbCollection { get; set; }
@@ -38,6 +38,7 @@ namespace XIVLauncher.Settings
         string LastVersion { get; set; }
         AcquisitionMethod? PatchAcquisitionMethod { get; set; }
         bool? HasShownAutoLaunchDisclaimer { get; set; }
+        string AcceptLanguage { get; set; }
 
         #endregion
     }

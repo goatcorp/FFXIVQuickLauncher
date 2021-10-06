@@ -232,5 +232,32 @@ namespace XIVLauncher
 
             return 0;
         }
+
+        public static string GenerateAcceptLanguage()
+        {
+            var codes = new string[] { "de-DE", "en-US", "ja" };
+            var codesMany = new string[] { "de-DE", "en-US,en", "en-GB,en", "fr-BE,fr", "ja", "fr-FR,fr", "fr-CH,fr" };
+            var rng = new Random();
+
+            var many = rng.Next(10) < 3;
+            if (many)
+            {
+                var howMany = rng.Next(2, 4);
+                var deck = codesMany.OrderBy((x) => rng.Next()).Take(howMany).ToArray();
+
+                var hdr = string.Empty;
+                for (int i = 0; i < deck.Count(); i++)
+                {
+                    hdr += deck.ElementAt(i) + $";q=0.{10 - (i + 1)}";
+
+                    if (i != deck.Length - 1)
+                        hdr += ";";
+                }
+
+                return hdr;
+            }
+
+            return codes[rng.Next(0, codes.Length)];
+        }
     }
 }

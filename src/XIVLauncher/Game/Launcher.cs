@@ -37,7 +37,7 @@ namespace XIVLauncher.Game
                 client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
 
                 client.Headers.Add("Accept-Encoding", "gzip, deflate");
-                client.Headers.Add("Accept-Language", "en-US");
+                client.Headers.Add("Accept-Language", App.Settings.AcceptLanguage);
 
                 var lang = App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
 
@@ -417,7 +417,7 @@ namespace XIVLauncher.Game
 
             client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
             client.Headers.Add("Accept-Encoding", "gzip, deflate");
-            client.Headers.Add("Accept-Language", "en-US");
+            client.Headers.Add("Accept-Language", App.Settings.AcceptLanguage);
             client.Headers.Add("User-Agent", _userAgent);
             var reply = client.DownloadString(
                 $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
@@ -443,7 +443,7 @@ namespace XIVLauncher.Game
             client.Headers.Add("Cache-Control", "no-cache");
             client.Headers.Add("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
             client.Headers.Add("Accept-Encoding", "gzip, deflate");
-            client.Headers.Add("Accept-Language", "en-US");
+            client.Headers.Add("Accept-Language", App.Settings.AcceptLanguage);
             client.Headers.Add("Referer",
                 $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
             client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
@@ -535,7 +535,7 @@ namespace XIVLauncher.Game
             }
 
             client.Headers.Add("Accept-Encoding", "gzip, deflate");
-            client.Headers.Add("Accept-Language", "en-US");
+            client.Headers.Add("Accept-Language", App.Settings.AcceptLanguage);
 
             client.Headers.Add("Origin", "https://launcher.finalfantasyxiv.com");
 
