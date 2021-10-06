@@ -31,7 +31,7 @@ namespace XIVLauncher.Settings
         DirectoryInfo PatchPath { get; set; }
         bool? AskBeforePatchInstall { get; set; } 
         long SpeedLimitBytes { get; set; } 
-        decimal DalamudInjectionDelayMs { get; set; }
+        double DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
         bool? OptOutMbCollection { get; set; }
         bool? HasComplainedAboutAdmin { get; set; }

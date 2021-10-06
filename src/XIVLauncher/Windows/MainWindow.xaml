@@ -1,4 +1,4 @@
-﻿<Window
+﻿<mah:MetroWindow
     x:Class="XIVLauncher.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,16 +9,13 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:game="clr-namespace:XIVLauncher.Game"
     xmlns:windows="clr-namespace:XIVLauncher.Windows"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     mc:Ignorable="d"
     Title="XIVLauncher"
     Width="845"
     Height="376"
+    Style="{DynamicResource DalamudWindow}"
     ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen"
-    Icon="pack://application:,,,/Resources/dalamud_icon.ico"
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-    Background="{DynamicResource MaterialDesignPaper}"
-    TextElement.FontWeight="Medium"
-    FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
     Closed="MainWindow_OnClosed">
 
     <Window.Resources>
@@ -274,4 +271,4 @@
             </materialDesign:TransitionerSlide>
         </materialDesign:Transitioner>
     </Grid>
-</Window>
+</mah:MetroWindow>

@@ -88,7 +88,7 @@ namespace XIVLauncher.Windows
 
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
 
-            var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
+            var val = (double) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
 
             SpeedLimiterUpDown.Value = val;
         }

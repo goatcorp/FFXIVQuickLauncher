@@ -10,6 +10,7 @@
              xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
              xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
@@ -21,7 +22,8 @@
     </UserControl.Resources>
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl"
-                                 Style="{StaticResource MaterialDesignTabablzControlStyle}">
+                                 BorderThickness="0"
+                                 Style="{DynamicResource MaterialDesignTabablzControlStyle}">
             <TabItem Header="{Binding SettingsGameLoc}">
                 <StackPanel Margin="10,10,0,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -161,7 +163,7 @@
                                        Content="{Binding InGameAddonInjectionDelayLoc}" />
 
                                 <StackPanel Orientation="Horizontal">
-                                    <xctk:DecimalUpDown x:Name="InjectionDelayUpDown" Margin="10,0,0,10" Width="60" HorizontalAlignment="Left" Value="0"/>
+                                    <mah:NumericUpDown Minimum="0" x:Name="InjectionDelayUpDown" Margin="10,0,0,10" Width="150" HorizontalAlignment="Left" Value="0"/>
                                     <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
                                            Content="ms" ToolTip="{Binding InGameAddonInjectionDelayDescriptionLoc}"/>
                                 </StackPanel>
@@ -221,7 +223,7 @@
                            Content="{Binding PatchSpeedLimitLoc}" />
 
                     <StackPanel Orientation="Horizontal">
-                        <xctk:DecimalUpDown x:Name="SpeedLimiterUpDown" Margin="10,0,0,0" Width="60" HorizontalAlignment="Left" Value="0"/>
+                        <mah:NumericUpDown Minimum="0" MinWidth="150" x:Name="SpeedLimiterUpDown" Margin="10,0,0,0" Width="60" HorizontalAlignment="Left" Value="0"/>
                         <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
                                Content="MB/s" />
                     </StackPanel>
@@ -268,7 +270,7 @@
                                     HorizontalAlignment="Left"
                                     x:Name="GitHubButton" Click="GitHubButton_OnClick" Margin="0 0 0 0">
                                 <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="GithubCircle" />
+                                    <materialDesign:PackIcon Kind="Github" />
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center">GitHub</TextBlock>
                                 </StackPanel>
                             </Button>
