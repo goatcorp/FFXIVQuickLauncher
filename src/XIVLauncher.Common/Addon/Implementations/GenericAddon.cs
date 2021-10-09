@@ -10,6 +10,7 @@ namespace XIVLauncher.Common.Addon.Implementations
     public class GenericAddon : IRunnableAddon, INotifyAddonAfterClose
     {
         private Process _addonProcess;
+        private bool _scheduledTask;
 
         void IAddon.Setup(int gamePid)
         {
@@ -86,6 +87,28 @@ namespace XIVLauncher.Common.Addon.Implementations
                     Log.Information(ex, "Could not kill addon process.");
                 }
             }
+
+            if (_scheduledTask)
+            {
+                string taskName = TaskName;
+                if (!string.IsNullOrEmpty(taskName))
+                {
+                    ProcessStartInfo si = new("schtasks.exe", $@"/end /tn ""{taskName}"" /hresult")
+                    {
+                        UseShellExecute = true,
+                    };
+                    using Process p = Process.Start(si);
+                    p.WaitForExit();
+                    if (p.ExitCode != 0)
+                    {
+                        Log.Information("Addon {0} failed to end Task.", Name);
+                    }
+                }
+                else
+                {
+                    Log.Information("Addon {0} could not find Task.", Name);
+                }
+            }
         }
 
         private void RunApp()
@@ -95,6 +118,16 @@ namespace XIVLauncher.Common.Addon.Implementations
             {
                 Log.Information("Addon {0} is already running.", Name);
                 return;
+            }
+
+            if (RunAsAdmin && UseSchTask)
+            {
+                if (RunTask(TaskName))
+                {
+                    _scheduledTask = true;
+                    return;
+                }
+                Log.Information("Addon {0} failed to start Scheduled Task. Trying normal start.", Name);
             }
 
             _addonProcess = new Process
@@ -166,10 +199,103 @@ namespace XIVLauncher.Common.Addon.Implementations
             }
         }
 
+        private bool RunTask(string taskName)
+        {
+            ProcessStartInfo si = new(
+                @"schtasks.exe",
+                $@"/run /tn ""{taskName}""")
+            {
+                UseShellExecute = true,
+                WorkingDirectory = System.IO.Path.GetDirectoryName(Path),
+                CreateNoWindow = false,
+            };
+            using Process p = Process.Start(si);
+            p.WaitForExit();
+            return p.ExitCode == 0;
+        }
+
+        public bool? CreateTask()
+        {
+            if (!RunAsAdmin || !UseSchTask)
+            {
+                return null; // Only needed for Admin + Scheduled Task
+            }
+
+            string taskName = TaskName;
+            if (string.IsNullOrEmpty(taskName))
+            {
+                return null; // So the file doesn't exist? Umm, that's odd, just bomb out.
+            }
+
+            ProcessStartInfo si = new(
+                @"schtasks.exe",
+                @$"/create /sc once /st {DateTime.Now.AddMinutes(-1):HH:mm} /tn ""{taskName}"" /tr ""'{Path}'{(string.IsNullOrEmpty(CommandLine) ? string.Empty : CommandLine.Replace("\"", "\\\""))}"" /rl HIGHEST /f /hresult")
+            {
+                UseShellExecute = true,
+                Verb = "runas",
+                CreateNoWindow = false,
+            };
+            using Process p = Process.Start(si);
+            p.WaitForExit();
+            if (p.ExitCode != 0)
+            {
+                Log.Information("Addon {0} failed to create Task", Name);
+                return false;
+            }
+
+            return true;
+        }
+
+        public void DeleteTask()
+        {
+            if (!RunAsAdmin || !UseSchTask)
+            {
+                return;
+            }
+
+            string taskName = TaskName;
+            if (string.IsNullOrEmpty(taskName))
+            {
+                return; // So the file doesn't exist? Umm, that's odd, just bomb out.
+            }
+
+            ProcessStartInfo si = new(
+                @"schtasks.exe",
+                @$"/delete /tn ""{taskName}"" /f /hresult")
+            {
+                UseShellExecute = true,
+                Verb = "runas",
+                CreateNoWindow = false,
+            };
+            using Process p = Process.Start(si);
+            p.WaitForExit();
+            if (p.ExitCode != 0)
+            {
+                Log.Information("Addon {0} failed to delete Task.", Name);
+            }
+        }
+
+        public string TaskName
+        {
+            get
+            {
+                try
+                {
+                    FileInfo fi = new(Path);
+                    if (!fi.Exists) return null;
+                    return $@"\XIVLauncher\{System.IO.Path.GetFileNameWithoutExtension(Path)}";
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
         public string Name =>
             string.IsNullOrEmpty(Path)
                 ? "Invalid addon"
-                : $"Launch{(IsApp ? " EXE" : string.Empty)} : {System.IO.Path.GetFileNameWithoutExtension(Path)}";
+                : $"Launch{(IsApp ? " EXE" : string.Empty)} : {System.IO.Path.GetFileNameWithoutExtension(Path)} {(UseSchTask ? " (Scheduled Task)" : string.Empty)}";
 
         private bool IsApp =>
             !string.IsNullOrEmpty(Path) &&
@@ -178,6 +304,7 @@ namespace XIVLauncher.Common.Addon.Implementations
         public string Path;
         public string CommandLine;
         public bool RunAsAdmin;
+        public bool UseSchTask;
         public bool RunOnClose;
         public bool KillAfterClose;
 

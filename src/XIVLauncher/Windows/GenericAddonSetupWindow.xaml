@@ -25,9 +25,12 @@
         <CheckBox x:Name="AdminCheckBox" Content="{Binding RunAsAdminLoc}" Margin="10,0,0,-100" Width="400"
                   VerticalAlignment="Center" HorizontalAlignment="Left" Checked="AdminCheckBox_OnChecked"
                   Unchecked="AdminCheckBox_OnUnchecked" />
-        <CheckBox x:Name="RunOnCloseCheckBox" Content="{Binding RunOnCloseLoc}" Margin="10,0,0,-140"
+        <CheckBox x:Name="SchTaskCheckBox" Content="{Binding UseSchTaskLoc}" Margin="10,0,0,-140" Width="400"
+                  VerticalAlignment="Center" HorizontalAlignment="Left" Checked="SchTaskCheckBox_OnChecked"
+                  Unchecked="SchTaskCheckBox_OnUnchecked" />
+        <CheckBox x:Name="RunOnCloseCheckBox" Content="{Binding RunOnCloseLoc}" Margin="10,0,0,-180"
                   Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" />
-        <CheckBox x:Name="KillCheckBox" Content="{Binding KillAfterCloseLoc}" Margin="10,0,0,-180"
+        <CheckBox x:Name="KillCheckBox" Content="{Binding KillAfterCloseLoc}" Margin="10,0,0,-220"
                   Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" />
         <Button Content="{Binding OkLoc}" Width="79" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                 Margin="0,0,10,10" Click="NextButton_Click" />
