@@ -13,7 +13,18 @@ namespace XIVLauncher.Http
     public class HttpServer
     {
         private TcpListener _listener;
-        private readonly byte[] httpResponse = Encoding.Default.GetBytes("HTTP/1.0 200 OK\n\nContent-Type: text/plain; charset=UTF-8\r\n\r\n");
+        private readonly byte[] httpResponse = Encoding.Default.GetBytes(
+            "HTTP/1.0 200 OK\n"+
+            "Content-Type: application/json; charset=UTF-8\n"+
+            "\n"+
+            "{app:\"XIVLauncher\", version: \"" +
+#if !XL_NOAUTOUPDATE
+            Util.GetAssemblyVersion() +
+#else
+            Util.GetGitHash() +
+#endif
+            "\"}"
+        );
 
         public EventHandler<HttpServerGetEvent> GetReceived;
 
