@@ -139,6 +139,7 @@ namespace XIVLauncher.Windows.ViewModel
                 "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!");
             LicenseLoc = Loc.Localize("License", "Licensed under GPLv3 or later. Click here for more.");
             JoinDiscordLoc = Loc.Localize("JoinDiscord", "Join Discord");
+            OpenFaqLoc = Loc.Localize("OpenFaq", "Open FAQ");
             StartBackupToolLoc = Loc.Localize("StartBackupTool", "Start Backup Tool");
             StartOriginalLauncherLoc = Loc.Localize("StartOriginalLauncher", "Start Original Launcher");
             EnabledUidCacheLoc = Loc.Localize("EnabledUidCache", "Enable experimental UID cache (this will break on game updates!)");
@@ -206,6 +207,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string CreditsLoc { get; private set; }
         public string LicenseLoc { get; private set; }
         public string JoinDiscordLoc { get; private set; }
+        public string OpenFaqLoc { get; private set; }
         public string StartBackupToolLoc { get; private set; }
         public string StartOriginalLauncherLoc { get; private set; }
         public string EnabledUidCacheLoc { get; private set; }

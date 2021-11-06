@@ -47,7 +47,7 @@
         </StackPanel>
       </Button>
       <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    x:Name="FaqButton" Margin="0,0,5,0" Click="FaqButton_OnClick">
+                x:Name="FaqButton" Margin="0,0,5,0">
         <StackPanel Orientation="Horizontal">
           <materialDesign:PackIcon  Kind="Information" />
                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OpenFaqLoc}"/>
