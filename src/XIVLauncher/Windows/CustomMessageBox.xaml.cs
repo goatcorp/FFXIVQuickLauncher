@@ -24,6 +24,7 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             DiscordButton.Click += Util.OpenDiscord;
+            FaqButton.Click += Util.OpenFaq;
             DataContext = new ErrorWindowViewModel();
 
             Activate();
@@ -104,11 +105,6 @@ namespace XIVLauncher.Windows
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
-        }
-
-        private void FaqButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://goatcorp.github.io/faq/");
         }
 
          private void IntegrityReportButton_OnClick(object sender, RoutedEventArgs e)

@@ -36,6 +36,7 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             DiscordButton.Click += Util.OpenDiscord;
+            FaqButton.Click += Util.OpenFaq;
             DataContext = new SettingsControlViewModel();
             
             ReloadSettings();

@@ -135,6 +135,11 @@ namespace XIVLauncher
             Process.Start("https://discord.gg/3NMcUV5");
         }
 
+        public static void OpenFaq(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://goatcorp.github.io/faq/");
+        }
+
         public static string BytesToString(double byteCount) => BytesToString(Convert.ToInt64(Math.Floor(byteCount)));
 
         public static string BytesToString(long byteCount)
