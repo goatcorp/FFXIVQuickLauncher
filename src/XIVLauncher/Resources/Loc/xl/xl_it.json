@@ -1,6 +1,6 @@
 {
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one.\nIf it continues to fail after several minutes, please join the discord linked on GitHub for support.",
+    "message": "XIVLauncher ha fallito a controllare gli aggiornamenti. Questo potrebbe essere causato da problemi di connessione a GitHub. Attendi un paio di minuti e riprova.\nDisabilita il tuo VPN, se ne hai uno.\nSe continuasse a fallire dopo diversi minuti, si prega di unirsi al server Discord collegato su GitHub per supporto.",
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
@@ -88,11 +88,11 @@
     "description": "<StartLogin>d__19.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
-    "message": "\n\nAuto-Login has been disabled.",
+    "message": "\n\nIl login automatico è stato disabilitato.",
     "description": "<StartLogin>d__19.MoveNext"
   },
   "LoginNoOauthTitle": {
-    "message": "Login issue",
+    "message": "Problemi di accesso",
     "description": "<StartLogin>d__19.MoveNext"
   },
   "LoginNoServiceMessage": {
@@ -676,19 +676,19 @@
     "description": "<>c__DisplayClass33_0.<DownloadPatchAsync>b__1"
   },
   "DalamudAntivirusHint": {
-    "message": "The in-game addon ran into an error.\n\nThis is most likely caused by your antivirus. Please whitelist the quarantined files or disable the in-game addon.",
+    "message": "Si è verificato un errore nell'addon in-game.\n\nQuesto è molto probabilmente causato dall'antivirus. Si prega di mettere in whitelist i file in quarantena o disabilitare l'addon in-game.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudDotNet48RedistError": {
-    "message": "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage.",
+    "message": "L'addon in-game di XIVLauncher richiede che il .NET Framework 4.8 sia installato per continuare. Installalo dalla homepage di Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVc2019RedistError": {
-    "message": "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage.",
+    "message": "L'addon in-game di XIVLauncher richiede che il Microsoft Visual C++ 2015-2019 redistributable sia installato per continuare. Installalo dalla homepage di Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVcRedistError": {
-    "message": "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage.",
+    "message": "L'addon in-game di XIVLauncher richiede che il Microsoft Visual C++ 2015-2019 redistributable e il .NET Framework 4.8 sia installato per continuare. Installali dalla homepage di Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   }
 }
