@@ -12,8 +12,10 @@ namespace XIVLauncher.Accounts
 {
     class AccountSwitcherEntry
     {
+        private static readonly ImageSource DefaultImage = new BitmapImage(new Uri("pack://application:,,,/Resources/defaultprofile.png", UriKind.Absolute));
+
         public XivAccount Account { get; set; }
-        public ImageSource ProfileImage { get; set; } = new BitmapImage(new Uri("pack://application:,,,/Resources/defaultprofile.png", UriKind.Absolute));
+        public ImageSource ProfileImage { get; set; } = DefaultImage;
 
         public void UpdateProfileImage()
         {
