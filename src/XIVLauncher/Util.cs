@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -105,9 +106,9 @@ namespace XIVLauncher
             return DefaultPath;
         }
 
-        public static int GetUnixMillis()
+        public static long GetUnixMillis()
         {
-            return (int) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
+            return (long) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
         public static Color ColorFromArgb(int argb)
@@ -233,11 +234,11 @@ namespace XIVLauncher
             return 0;
         }
 
-        public static string GenerateAcceptLanguage()
+        public static string GenerateAcceptLanguage(int asdf = 0)
         {
             var codes = new string[] { "de-DE", "en-US", "ja" };
             var codesMany = new string[] { "de-DE", "en-US,en", "en-GB,en", "fr-BE,fr", "ja", "fr-FR,fr", "fr-CH,fr" };
-            var rng = new Random();
+            var rng = new Random(asdf);
 
             var many = rng.Next(10) < 3;
             if (many)
@@ -258,6 +259,14 @@ namespace XIVLauncher
             }
 
             return codes[rng.Next(0, codes.Length)];
+        }
+
+        public static void AddWithoutValidation(this HttpHeaders headers, string key, string value)
+        {
+            var res = headers.TryAddWithoutValidation(key, value);
+
+            if (!res)
+                throw new Exception($"Could not add header - {key}: {value}");
         }
     }
 }
