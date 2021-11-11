@@ -785,7 +785,7 @@ namespace XIVLauncher.Windows
                     Log.Warning("In-Game addon was not enabled.");
                 }
 
-                Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons)).Wait();
+                addonMgr.RunAddons(gameProcess, App.Settings, addons);
             }
             catch (Exception ex)
             {
@@ -802,7 +802,7 @@ namespace XIVLauncher.Windows
                 while (!gameProcess.HasExited)
                 {
                     gameProcess.Refresh();
-                    Thread.Sleep(1);
+                    Thread.Sleep(100);
                 }
 
                 Log.Information("Game has exited.");
