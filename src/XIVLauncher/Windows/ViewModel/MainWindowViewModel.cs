@@ -32,8 +32,11 @@ namespace XIVLauncher.Windows.ViewModel
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
 
-        public event EventHandler Activate;
-        public event EventHandler Hide;
+        public Action Activate;
+        public Action Hide;
+
+        public Func<PatchManager, PatchDownloadDialog> PatchDownloadDialogFactory { get; set; }
+        public Func<OtpInputDialog> OtpInputDialogFactory { get; set; }
 
         public MainWindowViewModel()
         {
@@ -321,7 +324,10 @@ namespace XIVLauncher.Windows.ViewModel
 
                 var patcher = new PatchManager(loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer);
 
-                var progressDialog = new PatchDownloadDialog(patcher);
+                IsEnabled = false;
+                Hide();
+
+                var progressDialog = PatchDownloadDialogFactory(patcher);
                 progressDialog.Show();
 
                 patcher.Start();
@@ -336,6 +342,8 @@ namespace XIVLauncher.Windows.ViewModel
                     progressDialog.Hide();
                     progressDialog.Close();
                 });
+
+                IsEnabled = false;
 
                 if (patcher.IsSuccess)
                 {
@@ -389,7 +397,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             CleanUp();
 
-            Hide(this, null);
+            Hide();
 
             var addonMgr = new AddonManager();
 
@@ -451,9 +459,15 @@ namespace XIVLauncher.Windows.ViewModel
             Application.Current.Shutdown();
         }
 
+        public void OnWindowClosing(object sender, CancelEventArgs args)
+        {
+            if (IsLoggingIn)
+                args.Cancel = true;
+        }
+
         private string AskForOtp()
         {
-            var otpDialog = new OtpInputDialog();
+            var otpDialog = OtpInputDialogFactory();
             otpDialog.ShowDialog();
 
             return otpDialog.Result;
@@ -494,7 +508,7 @@ namespace XIVLauncher.Windows.ViewModel
             IsLoggingIn = false;
 
             // _ = Task.Run(SetupHeadlines);
-            Activate?.Invoke(this, null);
+            Activate();
         }
 
         private async Task<bool> HandleBootCheck()
@@ -537,7 +551,9 @@ namespace XIVLauncher.Windows.ViewModel
                     var patcher = new PatchManager(bootPatches, App.Settings.GamePath,
                         App.Settings.PatchPath, _installer);
 
-                    var progressDialog = new PatchDownloadDialog(patcher);
+                    IsEnabled = false;
+
+                    var progressDialog = PatchDownloadDialogFactory(patcher);
                     progressDialog.Show();
 
                     while (!patcher.IsDone)
@@ -551,6 +567,7 @@ namespace XIVLauncher.Windows.ViewModel
                         progressDialog.Close();
                     });
 
+                    IsEnabled = true;
 
                     // This is a good indicator that we should clear the UID cache
                     UniqueIdCache.Instance.Reset();
@@ -592,6 +609,17 @@ namespace XIVLauncher.Windows.ViewModel
         public bool IsSteam { get; set; }
 
         public string Username { get; set; }
+
+        private bool _isEnabled;
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set
+            {
+                _isEnabled = value;
+                OnPropertyChanged(nameof(IsEnabled));
+            }
+        }
 
         private bool _isLoadingDialogOpen;
         public bool IsLoadingDialogOpen

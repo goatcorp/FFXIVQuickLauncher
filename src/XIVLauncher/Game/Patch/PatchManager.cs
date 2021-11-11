@@ -102,7 +102,8 @@ namespace XIVLauncher.Game.Patch
 
             if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
             {
-                OnFinish?.Invoke(this, false);
+                IsSuccess = false;
+                IsDone = true;
 
                 MessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length), Util.BytesToString(freeSpaceDownload)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -111,7 +112,8 @@ namespace XIVLauncher.Game.Patch
             // If the first 6 patches altogether are bigger than the patch drive, we might run out of space
             if (freeSpaceDownload < GetDownloadLength(6))
             {
-                OnFinish?.Invoke(this, false);
+                IsSuccess = false;
+                IsDone = true;
 
                 MessageBox.Show(string.Format(Loc.Localize("FreeSpaceErrorAll", "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpaceDownload)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -121,7 +123,8 @@ namespace XIVLauncher.Game.Patch
 
             if (freeSpaceGame < AllDownloadsLength)
             {
-                OnFinish?.Invoke(this, false);
+                IsSuccess = false;
+                IsDone = true;
 
                 MessageBox.Show(string.Format(Loc.Localize("FreeSpaceGameError", "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(AllDownloadsLength), Util.BytesToString(freeSpaceGame)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;

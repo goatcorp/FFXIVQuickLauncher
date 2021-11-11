@@ -55,18 +55,53 @@ namespace XIVLauncher.Windows
 
             this.DataContext = new MainWindowViewModel();
             Closed += Model.OnWindowClosed;
+            Closing += Model.OnWindowClosing;
 
-            Model.Activate += (s, a) => this.Dispatcher.Invoke(() =>
+            Model.Activate += () => this.Dispatcher.Invoke(() =>
             {
                 this.Show();
                 this.Activate();
                 this.Focus();
             });
 
-            Model.Hide += (s, a) => this.Dispatcher.Invoke(() =>
+            Model.Hide += () => this.Dispatcher.Invoke(() =>
             {
                 this.Hide();
             });
+
+            Model.PatchDownloadDialogFactory = patcher =>
+            {
+                var dialog = new PatchDownloadDialog(patcher);
+
+                if (this.IsVisible)
+                {
+                    dialog.Owner = this;
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+                else
+                {
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                }
+
+                return dialog;
+            };
+
+            Model.OtpInputDialogFactory = () =>
+            {
+                var dialog = new OtpInputDialog();
+
+                if (this.IsVisible)
+                {
+                    dialog.Owner = this;
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+                else
+                {
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                }
+
+                return dialog;
+            };
 
             NewsListView.ItemsSource = new List<News>
             {
@@ -225,9 +260,9 @@ namespace XIVLauncher.Windows
                 try
                 {
                     Model.IsLoggingIn = true;
-                    Task.Run(() => Model.Login(savedAccount.UserName, savedAccount.Password, savedAccount.UseOtp,
-                        savedAccount.UseSteamServiceAccount, true, true))
-                        .ContinueWith(t => Model.IsLoggingIn = false);
+                    Dispatcher.InvokeAsync(() => Model.Login(savedAccount.UserName, savedAccount.Password,
+                        savedAccount.UseOtp,
+                        savedAccount.UseSteamServiceAccount, true, true));
 
                     return;
                 }
