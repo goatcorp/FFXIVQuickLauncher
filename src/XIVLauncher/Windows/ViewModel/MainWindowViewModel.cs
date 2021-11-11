@@ -34,6 +34,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         public Action Activate;
         public Action Hide;
+        public Action ReloadHeadlines;
 
         public Func<PatchManager, PatchDownloadDialog> PatchDownloadDialogFactory { get; set; }
         public Func<OtpInputDialog> OtpInputDialogFactory { get; set; }
@@ -507,7 +508,7 @@ namespace XIVLauncher.Windows.ViewModel
         {
             IsLoggingIn = false;
 
-            // _ = Task.Run(SetupHeadlines);
+            ReloadHeadlines();
             Activate();
         }
 

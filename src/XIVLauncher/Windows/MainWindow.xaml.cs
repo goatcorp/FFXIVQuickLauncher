@@ -69,6 +69,8 @@ namespace XIVLauncher.Windows
                 this.Hide();
             });
 
+            Model.ReloadHeadlines += () => Task.Run(SetupHeadlines);
+
             Model.PatchDownloadDialogFactory = patcher =>
             {
                 var dialog = new PatchDownloadDialog(patcher);
