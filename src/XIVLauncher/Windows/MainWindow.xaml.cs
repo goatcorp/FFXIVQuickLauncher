@@ -337,8 +337,6 @@ namespace XIVLauncher.Windows
                             // This is a good indicator that we should clear the UID cache
                             UniqueIdCache.Instance.Reset();
 
-                            await patcher.UnInitializeAcquisition();
-
                             mutex.Close();
                             mutex = null;
                         };
@@ -550,8 +548,6 @@ namespace XIVLauncher.Windows
                                 _isLoggingIn = false;
                             });
                         }
-
-                        await patcher.UnInitializeAcquisition();
 
                         mutex.Close();
                         mutex = null;
@@ -823,6 +819,7 @@ namespace XIVLauncher.Windows
 
         private void CleanUp()
         {
+            Task.Run(PatchManager.UnInitializeAcquisition).Wait();
             _installer.Stop();
         }
 

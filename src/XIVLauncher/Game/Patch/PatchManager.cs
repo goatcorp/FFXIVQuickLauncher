@@ -164,7 +164,7 @@ namespace XIVLauncher.Game.Patch
             }
         }
 
-        public async Task UnInitializeAcquisition()
+        public static async Task UnInitializeAcquisition()
         {
             try
             {
