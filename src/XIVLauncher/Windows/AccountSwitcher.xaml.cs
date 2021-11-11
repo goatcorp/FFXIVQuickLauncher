@@ -46,15 +46,20 @@ namespace XIVLauncher.Windows
 
             foreach (var accountManagerAccount in _accountManager.Accounts)
             {
-                if (string.IsNullOrEmpty(accountManagerAccount.ThumbnailUrl))
-                    accountManagerAccount.ThumbnailUrl = accountManagerAccount.FindCharacterThumb();
-
-                accountEntries.Add(new AccountSwitcherEntry
+                var entry = new AccountSwitcherEntry
                 {
                     Account = accountManagerAccount
+                };
+
+                Task.Run(() =>
+                {
+                    if (string.IsNullOrEmpty(accountManagerAccount.ThumbnailUrl))
+                        accountManagerAccount.ThumbnailUrl = accountManagerAccount.FindCharacterThumb();
+
+                    entry.UpdateProfileImage();
                 });
 
-                accountEntries.Last().UpdateProfileImage();
+                accountEntries.Add(entry);
             }
 
             _accountManager.Save();
