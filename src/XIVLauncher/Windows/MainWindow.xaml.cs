@@ -472,9 +472,9 @@ namespace XIVLauncher.Windows
             var switcher = new AccountSwitcher(_accountManager);
 
             switcher.WindowStartupLocation = WindowStartupLocation.Manual;
-            var location = AccountSwitcherButton.PointToScreen(new Point(0,0));
-            switcher.Left = location.X + 15;
-            switcher.Top = location.Y + 15;
+            var location = PointToScreen(Mouse.GetPosition(this));
+            switcher.Left = location.X - 15;
+            switcher.Top = location.Y - 15;
 
             switcher.OnAccountSwitchedEventHandler += OnAccountSwitchedEventHandler;
 
