@@ -83,7 +83,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
             {
                 try
                 {
-                    manager.Shutdown();
+                    await manager.Shutdown();
                 }
                 catch (Exception)
                 {
