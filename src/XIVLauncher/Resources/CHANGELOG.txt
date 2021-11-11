@@ -1,4 +1,1 @@
-﻿• Fixes an issue wherein the launcher would not patch boot and game in succession in certain cases
-• Added new links to the FAQ to various places (by Philpax)
-• Fixes some internal behaviour regarding the OTP app/macro system (by PofMagicfingers)
-• Reworded some error messages for improved clarity.
+﻿• Fixes an issue wherein, in certain cases, the login button would not log you in
