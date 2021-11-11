@@ -611,13 +611,49 @@ namespace XIVLauncher.Windows.ViewModel
 
         #region Bindings
 
-        public bool IsAutoLogin { get; set; }
+        private bool _isAutoLogin;
+        public bool IsAutoLogin
+        {
+            get => _isAutoLogin;
+            set
+            {
+                _isAutoLogin = value;
+                OnPropertyChanged(nameof(IsAutoLogin));
+            }
+        }
 
-        public bool IsOtp { get; set; }
+        private bool _isOtp;
+        public bool IsOtp
+        {
+            get => _isOtp;
+            set
+            {
+                _isOtp = value;
+                OnPropertyChanged(nameof(IsOtp));
+            }
+        }
 
-        public bool IsSteam { get; set; }
+        private bool _isSteam;
+        public bool IsSteam
+        {
+            get => _isSteam;
+            set
+            {
+                _isSteam = value;
+                OnPropertyChanged(nameof(IsSteam));
+            }
+        }
 
-        public string Username { get; set; }
+        private string _username;
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                _username = value;
+                OnPropertyChanged(nameof(Username));
+            }
+        }
 
         private bool _isEnabled;
         public bool IsEnabled
