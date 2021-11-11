@@ -1,6 +1,4 @@
-﻿• Prepares the launcher for the 4th expansion.
-• Fixes an issue wherein, in certain cases, patcher and launcher could not communicate correctly.
-• Fixes an issue wherein, in certain cases, the launcher would incorrectly warn about broken GShade installations.
-• Fixes an issue wherein, in certain cases, account-related error messages would not be displayed correctly.
-• Fixes an issue wherein old versions of the in-game addon would be left behind after updates.
-• Updated the localization files.
+﻿• Fixes an issue wherein the launcher would not patch boot and game in succession in certain cases
+• Added new links to the FAQ to various places (by Philpax)
+• Fixes some internal behaviour regarding the OTP app/macro system (by PofMagicfingers)
+• Reworded some error messages for improved clarity.
