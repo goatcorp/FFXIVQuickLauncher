@@ -14,6 +14,8 @@ namespace XIVLauncher.Addon
     {
         private List<Tuple<IAddon, Thread, CancellationTokenSource>> _runningAddons;
 
+        public bool IsRunning { get; private set; }
+
         public void RunAddons(Process gameProcess, ILauncherSettingsV3 setting, List<IAddon> addonEntries)
         {
             if (_runningAddons != null)
@@ -45,6 +47,8 @@ namespace XIVLauncher.Addon
                 if (addonEntry is INotifyAddonAfterClose notifiedAddon)
                     _runningAddons.Add(new Tuple<IAddon, Thread, CancellationTokenSource>(notifiedAddon, null, null));
             }
+
+            IsRunning = true;
         }
 
         public void StopAddons()
@@ -64,6 +68,8 @@ namespace XIVLauncher.Addon
 
                 _runningAddons = null;
             }
+
+            IsRunning = false;
         }
     }
 }

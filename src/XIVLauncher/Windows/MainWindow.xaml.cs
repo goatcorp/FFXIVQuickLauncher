@@ -767,6 +767,8 @@ namespace XIVLauncher.Windows
 
             var addonMgr = new AddonManager();
 
+            var addonMgrCancelTokenSource = new CancellationTokenSource();
+
             try
             {
                 if (App.Settings.AddonList == null)
@@ -785,7 +787,7 @@ namespace XIVLauncher.Windows
                     Log.Warning("In-Game addon was not enabled.");
                 }
 
-                addonMgr.RunAddons(gameProcess, App.Settings, addons);
+                Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons), addonMgrCancelTokenSource.Token);
             }
             catch (Exception ex)
             {
@@ -806,7 +808,10 @@ namespace XIVLauncher.Windows
                 }
 
                 Log.Information("Game has exited.");
-                addonMgr.StopAddons();
+                addonMgrCancelTokenSource.Cancel();
+
+                if (addonMgr.IsRunning)
+                    addonMgr.StopAddons();
 
                 CleanUp();
 
