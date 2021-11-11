@@ -334,7 +334,10 @@ namespace XIVLauncher.Windows
             if (_maintenanceQueueTimer == null)
                 SetupMaintenanceQueueTimer();
 
-            DialogHost.OpenDialogCommand.Execute(null, MaintenanceQueueDialogHost);
+            Model.LoadingDialogCancelButtonVisibility = Visibility.Visible;
+            Model.LoadingDialogMessage = Model.WaitingForMaintenanceLoc;
+            Model.IsLoadingDialogOpen = true;
+
             _maintenanceQueueTimer.Start();
 
             // Manually fire the first event, avoid waiting the first timer interval
@@ -411,7 +414,7 @@ namespace XIVLauncher.Windows
         private void QuitMaintenanceQueueButton_OnClick(object sender, RoutedEventArgs e)
         {
             _maintenanceQueueTimer.Stop();
-            DialogHost.CloseDialogCommand.Execute(null, MaintenanceQueueDialogHost);
+            Model.IsLoadingDialogOpen = false;
         }
 
         private async void Card_KeyDown(object sender, KeyEventArgs e)
