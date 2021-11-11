@@ -58,7 +58,26 @@
                                           </DataTrigger>
                                           <DataTrigger
                                                        Binding="{Binding Account.UseSteamServiceAccount}" Value="False">
-                                              <Setter Property="Visibility" Value="Hidden" />
+                                              <Setter Property="Visibility" Value="Collapsed" />
+                                          </DataTrigger>
+                                      </Style.Triggers>
+                                  </Style>
+                              </materialDesign:PackIcon.Style>
+                          </materialDesign:PackIcon>
+
+                          <materialDesign:PackIcon Height="20" Width="20"
+                                                   Margin="0,0,0,0" HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center">
+                              <materialDesign:PackIcon.Style>
+                                  <Style TargetType="materialDesign:PackIcon">
+                                      <Style.Triggers>
+                                          <DataTrigger
+                                              Binding="{Binding Account.UseOtp}" Value="True">
+                                              <Setter Property="Kind" Value="Key" />
+                                          </DataTrigger>
+                                          <DataTrigger
+                                              Binding="{Binding Account.UseOtp}" Value="False">
+                                              <Setter Property="Visibility" Value="Collapsed" />
                                           </DataTrigger>
                                       </Style.Triggers>
                                   </Style>
@@ -66,7 +85,7 @@
                           </materialDesign:PackIcon>
                       </StackPanel>
                   </Grid>
-                  
+
               </DataTemplate>
             </ListView.ItemTemplate>
           </ListView>
