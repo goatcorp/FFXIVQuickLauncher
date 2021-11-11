@@ -18,6 +18,7 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             DiscordButton.Click += Util.OpenDiscord;
+            FaqButton.Click += Util.OpenFaq;
             DataContext = new ErrorWindowViewModel();
 
             ExceptionTextBox.AppendText(exc.ToString());
@@ -62,11 +63,6 @@ namespace XIVLauncher.Windows
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
         {
             Process.Start($"{App.RepoUrl}/issues/new");
-        }
-
-        private void FaqButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://goatcorp.github.io/faq/");
         }
     }
 }
