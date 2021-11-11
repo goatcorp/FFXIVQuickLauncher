@@ -563,6 +563,8 @@ namespace XIVLauncher.Windows.ViewModel
                     var progressDialog = PatchDownloadDialogFactory(patcher);
                     progressDialog.Show();
 
+                    patcher.Start();
+
                     while (!patcher.IsDone)
                     {
                         await Task.Delay(1000);
