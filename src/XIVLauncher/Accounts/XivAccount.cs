@@ -29,26 +29,20 @@ namespace XIVLauncher.Accounts
             }
             set
             {
-                // TODO: Remove logging here after making sure fix was good
-                // This will throw when the account doesn't actually exist
                 try
                 {
-                    var a = CredentialManager.RemoveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
-
-                    Log.Information($"Set Password RemoveCredentials: {a}");
+                    CredentialManager.RemoveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
                 }
                 catch (Win32Exception)
                 {
                     // ignored
                 }
 
-                var b = CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}", new NetworkCredential
+                CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}", new NetworkCredential
                 {
                     UserName = UserName,
                     Password = value
                 });
-
-                Log.Information($"Set Password SaveCredentials: {b}");
             }
         }
 
@@ -107,7 +101,7 @@ namespace XIVLauncher.Accounts
 
         public static async Task<dynamic> Get(string endpoint)
         {
-            
+
             using (var client = new WebClient())
             {
                 var result = client.DownloadString(URL + endpoint);
