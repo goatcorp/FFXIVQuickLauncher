@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using CheapLoc;
 using MaterialDesignThemes.Wpf;
@@ -46,13 +47,26 @@ namespace XIVLauncher.Windows
 
         private AccountManager _accountManager;
 
-        private bool _isLoggingIn;
+        private MainWindowViewModel Model => this.DataContext as MainWindowViewModel;
 
         public MainWindow()
         {
             InitializeComponent();
 
             this.DataContext = new MainWindowViewModel();
+            Closed += Model.OnWindowClosed;
+
+            Model.Activate += (s, a) => this.Dispatcher.Invoke(() =>
+            {
+                this.Show();
+                this.Activate();
+                this.Focus();
+            });
+
+            Model.Hide += (s, a) => this.Dispatcher.Invoke(() =>
+            {
+                this.Hide();
+            });
 
             NewsListView.ItemsSource = new List<News>
             {
@@ -190,7 +204,7 @@ namespace XIVLauncher.Windows
             if (savedAccount != null)
                 SwitchAccount(savedAccount, false);
 
-            AutoLoginCheckBox.IsChecked = App.Settings.AutologinEnabled;
+            Model.IsAutoLogin = App.Settings.AutologinEnabled;
 
             if (App.Settings.UniqueIdCacheEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
@@ -210,7 +224,11 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-                    this.Kickoff(true);
+                    Model.IsLoggingIn = true;
+                    Task.Run(() => Model.Login(savedAccount.UserName, savedAccount.Password, savedAccount.UseOtp,
+                        savedAccount.UseSteamServiceAccount, true, true))
+                        .ContinueWith(t => Model.IsLoggingIn = false);
+
                     return;
                 }
                 catch (Exception ex)
@@ -218,7 +236,6 @@ namespace XIVLauncher.Windows
                     new ErrorWindow(ex, Loc.Localize("CheckLoginInfo", "Additionally, please check your login information or try again."), "AutoLogin")
                         .ShowDialog();
                     App.Settings.AutologinEnabled = false;
-                    _isLoggingIn = false;
                 }
             }
             else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) || bool.Parse(Environment.GetEnvironmentVariable("XL_NOAUTOLOGIN") ?? "false"))
@@ -250,601 +267,12 @@ namespace XIVLauncher.Windows
             Activate();
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (AutoLoginCheckBox.IsChecked == true && App.Settings.HasShownAutoLaunchDisclaimer.GetValueOrDefault(false) == false)
-            {
-                CustomMessageBox.Show(Loc.Localize("AutoLoginIntro", "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon."), "XIVLauncher");
-                App.Settings.HasShownAutoLaunchDisclaimer = true;
-            }
-
-            this.Kickoff(false, true);
-        }
-
-        private void LoginNoStart_Click(object sender, RoutedEventArgs e)
-        {
-            this.Kickoff(false, false);
-        }
-
-        private async Task HandleBootCheck(Action whenFinishAction)
-        {
-            try
-            {
-                App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
-
-                Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
-                try
-                {
-                    bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Unable to check boot version.");
-                    MessageBox.Show(Loc.Localize("CheckBootVersionError", "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    _isLoggingIn = false;
-
-                    var _ = Task.Run(SetupHeadlines);
-                    Show();
-                    Activate();
-                    return;
-                }
-
-                if (bootPatches != null)
-                {
-                    var mutex = new Mutex(false, "XivLauncherIsPatching");
-                    if (mutex.WaitOne(0, false))
-                    {
-                        if (Util.CheckIsGameOpen())
-                        {
-                            MessageBox.Show(
-                                Loc.Localize("GameIsOpenError",
-                                    "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
-                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-                            Environment.Exit(0);
-                            return;
-                        }
-
-                        var patcher = new PatchManager(bootPatches, App.Settings.GamePath,
-                            App.Settings.PatchPath, _installer);
-
-                        var progressDialog = new PatchDownloadDialog(patcher);
-                        progressDialog.Show();
-                        this.Hide();
-
-                        patcher.OnFinish += async (sender, args) =>
-                        {
-                            progressDialog.Dispatcher.Invoke(() =>
-                            {
-                                progressDialog.Hide();
-                                progressDialog.Close();
-                            });
-
-                            if (args)
-                            {
-                                whenFinishAction?.Invoke();
-                            }
-                            else
-                            {
-                                this.Dispatcher.Invoke(() =>
-                                {
-                                    this.Show();
-                                    _isLoggingIn = false;
-                                });
-                            }
-
-                            // This is a good indicator that we should clear the UID cache
-                            UniqueIdCache.Instance.Reset();
-
-                            mutex.Close();
-                            mutex = null;
-                        };
-
-                        patcher.Start();
-                    }
-                    else
-                    {
-                        MessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Environment.Exit(0);
-                    }
-                }
-                else
-                {
-                    whenFinishAction?.Invoke();
-                }
-            }
-            catch (Exception ex)
-            {
-                new ErrorWindow(ex, "Could not patch boot.", nameof(HandleBootCheck)).ShowDialog();
-                Environment.Exit(0);
-            }
-        }
-
-        private void Kickoff(bool autoLogin, bool startGame = true)
-        {
-            ProblemCheck.RunCheck();
-
-            var _ = HandleBootCheck(() => this.Dispatcher.Invoke(() => this.PrepareLogin(autoLogin, startGame)));
-        }
-
-        private void Reactivate()
-        {
-            _isLoggingIn = false;
-
-            _ = Task.Run(SetupHeadlines);
-            Show();
-            Activate();
-        }
-
-        private void PrepareLogin(bool autoLogin, bool startGame = true)
-        {
-            if (string.IsNullOrEmpty(LoginUsername.Text))
-            {
-                CustomMessageBox.Show(
-                    Loc.Localize("EmptyUsernameError", "Please enter an username."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                this.Reactivate();
-                return;
-            }
-
-            if (LoginUsername.Text.Contains("@"))
-            {
-                CustomMessageBox.Show(
-                    Loc.Localize("EmailUsernameError", "Please enter your SE account name, not your email address."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                this.Reactivate();
-                return;
-            }
-
-            if (string.IsNullOrEmpty(LoginPassword.Password))
-            {
-                CustomMessageBox.Show(
-                    Loc.Localize("EmptyPasswordError", "Please enter a password."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                App.Settings.AutologinEnabled = false;
-                AutoLoginCheckBox.IsChecked = false;
-
-                this.Reactivate();
-                return;
-            }
-
-            if (_isLoggingIn)
-                return;
-
-            if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == PatcherMain.BASE_GAME_VERSION && App.Settings.UniqueIdCacheEnabled)
-            {
-                CustomMessageBox.Show(
-                    Loc.Localize("UidCacheInstallError",
-                        "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall FFXIV.\n\nIf you want to reinstall FFXIV, please take care to disable it first."),
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            _isLoggingIn = true;
-
-            var hasValidCache = UniqueIdCache.Instance.HasValidCache(LoginUsername.Text) && App.Settings.UniqueIdCacheEnabled;
-
-            Log.Information("CurrentAccount: {0}", _accountManager.CurrentAccount == null ? "null" : _accountManager.CurrentAccount.ToString());
-
-            if (_accountManager.CurrentAccount != null && _accountManager.CurrentAccount.UserName.Equals(LoginUsername.Text) && _accountManager.CurrentAccount.Password != LoginPassword.Password && _accountManager.CurrentAccount.SavePassword)
-            {
-                _accountManager.UpdatePassword(_accountManager.CurrentAccount, LoginPassword.Password);
-            }
-
-            if (_accountManager.CurrentAccount == null || _accountManager.CurrentAccount.Id != $"{LoginUsername.Text}-{OtpCheckBox.IsChecked == true}-{SteamCheckBox.IsChecked == true}")
-            {
-                var accountToSave = new XivAccount(LoginUsername.Text)
-                {
-                    Password = LoginPassword.Password,
-                    SavePassword = true,
-                    UseOtp = OtpCheckBox.IsChecked == true,
-                    UseSteamServiceAccount = SteamCheckBox.IsChecked == true
-                };
-
-                _accountManager.AddAccount(accountToSave);
-
-                _accountManager.CurrentAccount = accountToSave;
-            }
-
-            if (!autoLogin)
-            {
-                App.Settings.AutologinEnabled = AutoLoginCheckBox.IsChecked == true;
-            }
-
-            var otp = "";
-            if (OtpCheckBox.IsChecked == true && !hasValidCache)
-            {
-                var otpDialog = new OtpInputDialog();
-                otpDialog.ShowDialog();
-
-                if (otpDialog.Result == null)
-                {
-                    _isLoggingIn = false;
-
-                    if (autoLogin)
-                    {
-                        CleanUp();
-                        Environment.Exit(0);
-                    }
-
-                    return;
-                }
-
-                otp = otpDialog.Result;
-            }
-
-            StartLogin(otp, startGame);
-        }
-
-        private void InstallGamePatch(Launcher.LoginResult loginResult, bool gateStatus, bool startGame)
-        {
-            var mutex = new Mutex(false, "XivLauncherIsPatching");
-            if (mutex.WaitOne(0, false))
-            {
-                if (Util.CheckIsGameOpen())
-                {
-                    CustomMessageBox.Show(
-                        Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        this.Show();
-                        _isLoggingIn = false;
-                    });
-                }
-                else
-                {
-                    Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
-                        "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
-
-                    Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
-
-                    var patcher = new PatchManager(loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer);
-
-                    var progressDialog = new PatchDownloadDialog(patcher);
-                    progressDialog.Show();
-                    this.Hide();
-
-                    patcher.OnFinish += async (sender, success) =>
-                    {
-                        progressDialog.Dispatcher.Invoke(() =>
-                        {
-                            progressDialog.Hide();
-                            progressDialog.Close();
-                        });
-
-                        if (success)
-                        {
-                            if (!startGame)
-                            {
-                                this.Dispatcher.Invoke(() =>
-                                {
-                                    CustomMessageBox.Show(
-                                        Loc.Localize("LoginNoStartOk",
-                                            "An update check was executed and any pending updates were installed."), "XIVLauncher",
-                                        MessageBoxButton.OK, MessageBoxImage.Information, false);
-
-                                    _isLoggingIn = false;
-                                    Show();
-                                    Activate();
-                                });
-                            }
-                            else
-                            {
-                                this.Dispatcher.Invoke(() => StartGameAndAddon(loginResult, gateStatus));
-                            }
-                            _installer.Stop();
-                        }
-                        else
-                        {
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                this.Show();
-                                _isLoggingIn = false;
-                            });
-                        }
-
-                        mutex.Close();
-                        mutex = null;
-                    };
-
-                    patcher.Start();
-                }
-            }
-            else
-            {
-                CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                Environment.Exit(0);
-            }
-        }
-
-        private void StartLogin(string otp, bool startGame)
-        {
-            Log.Information("StartLogin() called");
-
-            var gateStatus = false;
-            try
-            {
-                gateStatus = Task.Run(() => _launcher.GetGateStatus()).Result;
-            }
-            catch
-            {
-                // ignored
-            }
-
-            try
-            {
-                var username = LoginUsername.Text;
-                var password = LoginPassword.Password;
-                var isSteam = SteamCheckBox.IsChecked == true;
-                var uniqueIdCache = App.Settings.UniqueIdCacheEnabled;
-                var gamePath = App.Settings.GamePath;
-
-                var loginResult = Task.Run(() =>_launcher.Login(username, password, otp,
-                    isSteam, uniqueIdCache, gamePath)).Result;
-
-                Debug.Assert(loginResult != null, "ASSERTION FAILED loginResult != null!");
-
-                if (loginResult.State != Launcher.LoginState.Ok)
-                {
-                    Log.Verbose(
-                        $"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");
-
-                    if (loginResult.State == Launcher.LoginState.NoService)
-                    {
-                        CustomMessageBox.Show(
-                            Loc.Localize("LoginNoServiceMessage",
-                                "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
-                            "Error",
-                            MessageBoxButton.OK, MessageBoxImage.Error, false);
-
-                        _isLoggingIn = false;
-                        Show();
-                        Activate();
-                        return;
-                    }
-
-                    if (loginResult.State == Launcher.LoginState.NoTerms)
-                    {
-                        CustomMessageBox.Show(
-                            Loc.Localize("LoginAcceptTermsMessage",
-                                "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                        _isLoggingIn = false;
-                        Show();
-                        Activate();
-                        return;
-                    }
-
-                    /*
-                     * The server requested us to patch Boot, even though in order to get to this code, we just checked for boot patches.
-                     *
-                     * This means that something or someone modified boot binaries without our involvement.
-                     * We have no way to go back to a "known" good state other than to do a full reinstall.
-                     *
-                     * This has happened multiple times with users that have viruses that infect other EXEs and change their hashes, causing the update
-                     * server to reject our boot hashes.
-                     *
-                     * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
-                     * complexity and if boot is fucked game probably is too.
-                     */
-                    if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
-                    {
-                        CustomMessageBox.Show(
-                            Loc.Localize("EverythingIsFuckedMessage",
-                                "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord."),
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                        _isLoggingIn = false;
-                        Show();
-                        Activate();
-                        return;
-                    }
-
-                    if (App.Settings.AskBeforePatchInstall.HasValue && App.Settings.AskBeforePatchInstall.Value)
-                    {
-                        var selfPatchAsk = MessageBox.Show(
-                            Loc.Localize("PatchInstallDisclaimer",
-                                "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?"),
-                            "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-                        if (selfPatchAsk == MessageBoxResult.Yes)
-                        {
-                            InstallGamePatch(loginResult, gateStatus, startGame);
-                        }
-                        else
-                        {
-                            _isLoggingIn = false;
-                            Show();
-                            Activate();
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        InstallGamePatch(loginResult, gateStatus, startGame);
-                    }
-
-                    return;
-                }
-
-                if (startGame)
-                {
-                    StartGameAndAddon(loginResult, gateStatus);
-                }
-                else
-                {
-                    CustomMessageBox.Show(
-                        Loc.Localize("LoginNoStartOk",
-                            "An update check was executed and any pending updates were installed."), "XIVLauncher",
-                        MessageBoxButton.OK, MessageBoxImage.Information, false);
-
-                    _isLoggingIn = false;
-                    Show();
-                    Activate();
-                }
-
-            }
-            catch (OauthLoginException oauthLoginException)
-            {
-                var failedOauthMessage = oauthLoginException.Message.Replace("\\r\\n", "\n").Replace("\r\n", "\n");
-                if (App.Settings.AutologinEnabled)
-                {
-                    failedOauthMessage += Loc.Localize("LoginNoOauthAutologinHint", "\n\nAuto-Login has been disabled.");
-                    App.Settings.AutologinEnabled = false;
-                }
-
-                CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
-
-                _isLoggingIn = false;
-                Show();
-                Activate();
-                return;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "StartGame failed...");
-
-                if (!gateStatus)
-                {
-                    Log.Information("GateStatus is false.");
-                    CustomMessageBox.Show(
-                        Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false);
-
-                    _isLoggingIn = false;
-
-                    _ = Task.Run(SetupHeadlines);
-                    Show();
-                    Activate();
-                    return;
-                }
-
-                new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
-            }
-        }
-
-        private void StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus)
-        {
-            if (!gateStatus)
-            {
-                Log.Information("GateStatus is false.");
-                CustomMessageBox.Show(
-                    Loc.Localize("MaintenanceNotice",
-                        "Maintenance seems to be in progress. The game shouldn't be launched."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false);
-
-                _isLoggingIn = false;
-
-                _ = Task.Run(SetupHeadlines);
-                Show();
-                Activate();
-                return;
-            }
-
-            // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-
-            var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
-                    loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
-                    SteamCheckBox.IsChecked == true, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false));
-
-            if (gameProcess == null)
-            {
-                Log.Information("GameProcess was null...");
-                _isLoggingIn = false;
-                return;
-            }
-
-            CleanUp();
-
-            this.Hide();
-
-            var addonMgr = new AddonManager();
-
-            var addonMgrCancelTokenSource = new CancellationTokenSource();
-
-            try
-            {
-                if (App.Settings.AddonList == null)
-                    App.Settings.AddonList = new List<AddonEntry>();
-
-                var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
-
-                if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
-                {
-                    var overlay = new DalamudLoadingOverlay();
-                    overlay.Hide();
-                    addons.Add(new DalamudLauncher(overlay));
-                }
-                else
-                {
-                    Log.Warning("In-Game addon was not enabled.");
-                }
-
-                Task.Run(() => addonMgr.RunAddons(gameProcess, App.Settings, addons), addonMgrCancelTokenSource.Token);
-            }
-            catch (Exception ex)
-            {
-                new ErrorWindow(ex,
-                    "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-                    "Addons").ShowDialog();
-                _isLoggingIn = false;
-
-                addonMgr.StopAddons();
-            }
-
-            var watchThread = new Thread(() =>
-            {
-                while (!gameProcess.HasExited)
-                {
-                    gameProcess.Refresh();
-                    Thread.Sleep(100);
-                }
-
-                Log.Information("Game has exited.");
-                addonMgrCancelTokenSource.Cancel();
-
-                if (addonMgr.IsRunning)
-                    addonMgr.StopAddons();
-
-                CleanUp();
-
-                Environment.Exit(0);
-            });
-            watchThread.Start();
-
-            Log.Debug("Started WatchThread");
-        }
-
-        private void CleanUp()
-        {
-            Task.Run(PatchManager.UnInitializeAcquisition).Wait();
-            _installer.Stop();
-        }
-
         private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
             if (_headlines != null) Process.Start(_headlines.Banner[_currentBannerIndex].Link.ToString());
-        }
-
-        private void SaveLoginCheckBox_OnChecked(object sender, RoutedEventArgs e)
-        {
-            AutoLoginCheckBox.IsEnabled = true;
-        }
-
-        private void SaveLoginCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
-        {
-            AutoLoginCheckBox.IsChecked = false;
-            AutoLoginCheckBox.IsEnabled = false;
         }
 
         private void NewsListView_OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -949,10 +377,16 @@ namespace XIVLauncher.Windows
                     CustomMessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
                         "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher");
 
-                Dispatcher.BeginInvoke(new Action(() => {
+                Dispatcher.InvokeAsync(async () => {
                     QuitMaintenanceQueueButton_OnClick(null, null);
-                    LoginButton_Click(null, null);
-                }));
+
+                    if (Model.IsLoggingIn)
+                        return;
+
+                    Model.IsLoggingIn = true;
+                    await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true);
+                    Model.IsLoggingIn = false;
+                });
 
                 Console.Beep(523, 150);
                 Thread.Sleep(25);
@@ -980,19 +414,17 @@ namespace XIVLauncher.Windows
             DialogHost.CloseDialogCommand.Execute(null, MaintenanceQueueDialogHost);
         }
 
-        private void Card_KeyDown(object sender, KeyEventArgs e)
+        private async void Card_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Enter && e.Key != Key.Return || _isLoggingIn)
+            if (e.Key != Key.Enter && e.Key != Key.Return)
                 return;
 
-            this.Kickoff(false);
-            _isLoggingIn = true;
-        }
+            if (Model.IsLoggingIn)
+                return;
 
-        private void MainWindow_OnClosed(object sender, EventArgs e)
-        {
-            CleanUp();
-            Application.Current.Shutdown();
+            Model.IsLoggingIn = true;
+            await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true);
+            Model.IsLoggingIn = false;
         }
 
         private void AccountSwitcherButton_OnClick(object sender, RoutedEventArgs e)
@@ -1016,10 +448,10 @@ namespace XIVLauncher.Windows
 
         private void SwitchAccount(XivAccount account, bool saveAsCurrent)
         {
-            LoginUsername.Text = account.UserName;
-            OtpCheckBox.IsChecked = account.UseOtp;
-            SteamCheckBox.IsChecked = account.UseSteamServiceAccount;
-            AutoLoginCheckBox.IsChecked = App.Settings.AutologinEnabled;
+            Model.Username = account.UserName;
+            Model.IsOtp = account.UseOtp;
+            Model.IsSteam = account.UseSteamServiceAccount;
+            Model.IsAutoLogin = App.Settings.AutologinEnabled;
 
             if (account.SavePassword)
                 LoginPassword.Password = account.Password;
@@ -1037,7 +469,7 @@ namespace XIVLauncher.Windows
 
         private async void FakeStart_OnClick(object sender, RoutedEventArgs e)
         {
-            StartGameAndAddon(new Launcher.LoginResult
+            Model.StartGameAndAddon(new Launcher.LoginResult
             {
                 OauthLogin = new Launcher.OauthLoginResult
                 {
@@ -1049,7 +481,7 @@ namespace XIVLauncher.Windows
                 },
                 State = Launcher.LoginState.Ok,
                 UniqueId = "0"
-            }, true);
+            }, true, false);
         }
     }
 }

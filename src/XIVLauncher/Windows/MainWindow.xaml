@@ -9,6 +9,7 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:game="clr-namespace:XIVLauncher.Game"
     xmlns:windows="clr-namespace:XIVLauncher.Windows"
+    xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
     mc:Ignorable="d"
     Title="XIVLauncher"
     Width="845"
@@ -19,7 +20,7 @@
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-    Closed="MainWindow_OnClosed">
+    d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
 
     <Window.Resources>
         <system:Double x:Key="BannerCardWidth">544</system:Double>
@@ -174,6 +175,7 @@
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Stretch"
                                 KeyDown="Card_KeyDown">
+
                                 <DockPanel
                                     Margin="30,18,30,18">
                                     <TextBox
@@ -183,7 +185,8 @@
                                         Height="24"
                                         TextWrapping="Wrap"
                                         VerticalAlignment="Top"
-                                        materialDesign:HintAssist.Hint="{Binding LoginUsernameLoc}" />
+                                        materialDesign:HintAssist.Hint="{Binding LoginUsernameLoc}"
+                                        Text="{Binding Username}"/>
                                     <PasswordBox
                                         DockPanel.Dock="Top"
                                         x:Name="LoginPassword"
@@ -191,7 +194,7 @@
                                         Height="24"
                                         Margin="0,4,0,0"
                                         VerticalAlignment="Top"
-                                        materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}" />
+                                        materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}"/>
 
                                     <CheckBox
                                         DockPanel.Dock="Top"
@@ -199,34 +202,39 @@
                                         HorizontalAlignment="Left"
                                         Margin="0,14,0,0"
                                         VerticalAlignment="Top"
-                                        x:Name="AutoLoginCheckBox" />
+                                        x:Name="AutoLoginCheckBox"
+                                        IsChecked="{Binding IsAutoLogin}"/>
                                     <CheckBox
                                         DockPanel.Dock="Top"
                                         Content="{Binding OtpLoc}"
                                         HorizontalAlignment="Left"
                                         Margin="0,4,0,0"
                                         VerticalAlignment="Top"
-                                        x:Name="OtpCheckBox" />
+                                        x:Name="OtpCheckBox"
+                                        IsChecked="{Binding IsOtp}"/>
                                     <CheckBox
                                         DockPanel.Dock="Top"
                                         Content="{Binding SteamLoc}"
                                         HorizontalAlignment="Left"
                                         Margin="0,4,0,0"
                                         VerticalAlignment="Top"
-                                        x:Name="SteamCheckBox" />
+                                        x:Name="SteamCheckBox"
+                                        IsChecked="{Binding IsSteam}"/>
                                     <StackPanel Orientation="Horizontal"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Bottom"
                                                 Width="142" Margin="0,0,0,0" DockPanel.Dock="Bottom">
                                         <Button
-                                           
+
                                             Content="{Binding LoginLoc}"
-                                            Click="LoginButton_Click" Margin="0,0,7,0" Width="84"
+                                            Command="{Binding Path=StartLoginCommand}"
+                                            CommandParameter="{Binding ElementName=LoginPassword}"
+                                            Margin="0,0,7,0" Width="84"
                                             ToolTip="{Binding LoginTooltipLoc}">
 
                                             <Button.ContextMenu>
                                                 <ContextMenu x:Name="LoginContextMenu">
-                                                    <MenuItem Header="{Binding LoginNoStartLoc}" Click="LoginNoStart_Click"/>
+                                                    <MenuItem Header="{Binding LoginNoStartLoc}" Command="{Binding Path=LoginNoStartCommand}"/>
                                                 </ContextMenu>
                                             </Button.ContextMenu>
 
@@ -247,15 +255,16 @@
 
                         <materialDesign:DialogHost
                             Identifier="MaintenanceQueueDialogHost"
-                            x:Name="MaintenanceQueueDialogHost">
+                            x:Name="MaintenanceQueueDialogHost"
+                            IsOpen="{Binding IsLoadingDialogOpen}">
                             <materialDesign:DialogHost.DialogContent>
                                 <StackPanel Margin="16">
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <TextBlock x:Name="LoadingMessageTextBlock"
-                                                   Text="{Binding WaitingForMaintenanceLoc}" />
+                                                   Text="{Binding LoadingDialogMessage}" />
                                         <ProgressBar
-                                           
+
                                             Style="{StaticResource MaterialDesignCircularProgressBar}"
                                             Value="0"
                                             IsIndeterminate="True" Height="30" Width="30" Margin="0 8 0 0" />
@@ -264,7 +273,8 @@
                                             Style="{StaticResource MaterialDesignFlatButton}"
                                             IsCancel="True"
                                             Margin="0 8 0 0"
-                                            Click="QuitMaintenanceQueueButton_OnClick" Content="{Binding CancelLoc}" />
+                                            Click="QuitMaintenanceQueueButton_OnClick" Content="{Binding CancelLoc}"
+                                            Visibility="{Binding LoadingDialogCancelButtonVisibility}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </materialDesign:DialogHost.DialogContent>

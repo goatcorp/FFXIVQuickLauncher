@@ -40,8 +40,6 @@ namespace XIVLauncher.Game.Patch
 
     public class PatchManager
     {
-        public event EventHandler<bool> OnFinish;
-
         public const int MAX_DOWNLOADS_AT_ONCE = 4;
 
         private readonly CancellationTokenSource _cancelTokenSource = new();
@@ -51,6 +49,10 @@ namespace XIVLauncher.Game.Patch
         private readonly PatchInstaller _installer;
 
         public readonly IReadOnlyList<PatchDownload> Downloads;
+
+        public bool IsDone { get; private set; }
+
+        public bool IsSuccess { get; private set; }
 
         public int CurrentInstallIndex { get; private set; }
 
@@ -130,7 +132,8 @@ namespace XIVLauncher.Game.Patch
             {
                 CustomMessageBox.Show(Loc.Localize("PatchManNoInstaller", "The patch installer could not start correctly.\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                OnFinish?.Invoke(this, false);
+                IsSuccess = false;
+                IsDone = true;
                 return;
             }
             _installer.WaitOnHello();
@@ -406,7 +409,8 @@ namespace XIVLauncher.Game.Patch
             Log.Information("PATCHING finish");
             _installer.FinishInstall(_gamePath);
 
-            OnFinish?.Invoke(this, true);
+            IsSuccess = true;
+            IsDone = true;
         }
 
         private enum HashCheckResult
