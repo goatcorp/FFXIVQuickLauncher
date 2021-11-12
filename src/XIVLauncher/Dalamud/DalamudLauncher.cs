@@ -148,6 +148,9 @@ namespace XIVLauncher.Dalamud
             if (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
                 return false;
 
+            if (DalamudUpdater.RunnerOverride != null)
+                return true;
+
             var info = DalamudVersionInfo.Load(new FileInfo(Path.Combine(DalamudUpdater.Runner.DirectoryName,
                 "version.json")));
 

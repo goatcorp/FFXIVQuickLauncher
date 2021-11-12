@@ -8,7 +8,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using CheapLoc;
 using Config.Net;
-using MaterialDesignThemes.Wpf.Transitions;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Dalamud;
@@ -40,11 +39,20 @@ namespace XIVLauncher
         {
             RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
+            // TODO: Use a real command line parser
             foreach (var arg in Environment.GetCommandLineArgs())
             {
-                if (!arg.StartsWith("--roamingPath=")) continue;
-                Paths.RoamingPath = arg.Substring(14);
-                break;
+                if (arg.StartsWith("--roamingPath="))
+                {
+                    Paths.RoamingPath = arg.Substring(14);
+                    break;
+                }
+
+                if (arg.StartsWith("--dalamudRunner="))
+                {
+                    DalamudUpdater.RunnerOverride = new FileInfo(arg.Substring(16));
+                    break;
+                }
             }
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";

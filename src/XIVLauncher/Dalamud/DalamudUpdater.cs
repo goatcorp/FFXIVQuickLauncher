@@ -24,7 +24,21 @@ namespace XIVLauncher.Dalamud
     {
         public static DownloadState State { get; private set; } = DownloadState.Unknown;
 
-        public static FileInfo Runner { get; private set; }
+        private static FileInfo _runnerInternal;
+        public static FileInfo Runner
+        {
+            get
+            {
+                if (RunnerOverride != null)
+                    return RunnerOverride;
+
+                return _runnerInternal;
+            }
+            private set => _runnerInternal = value;
+        }
+
+        public static FileInfo RunnerOverride { get; set; }
+
         public static DirectoryInfo AssetDirectory { get; private set; }
 
         public static DalamudLoadingOverlay Overlay { get; set; }
@@ -105,6 +119,8 @@ namespace XIVLauncher.Dalamud
                 Log.Information("[DUPDATE] Not found, redownloading");
 
                 SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud);
+
+                Thread.Sleep(20000);
 
                 try
                 {
