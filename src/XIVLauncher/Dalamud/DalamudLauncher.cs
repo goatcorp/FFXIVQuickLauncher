@@ -73,6 +73,9 @@ namespace XIVLauncher.Dalamud
             if (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
                 DalamudUpdater.ShowOverlay();
 
+            var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
+                "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
+
             while (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
             {
                 if (DalamudUpdater.State == DalamudUpdater.DownloadState.Failed)
@@ -85,8 +88,8 @@ namespace XIVLauncher.Dalamud
                 {
                     DalamudUpdater.CloseOverlay();
 
-                    MessageBox.Show(Loc.Localize("DalamudAntivirusHint",
-                        "The in-game addon ran into an error.\n\nThis is most likely caused by your antivirus. Please whitelist the quarantined files or disable the in-game addon."));
+                    CustomMessageBox.Show(runnerErrorMessage,
+                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -95,8 +98,7 @@ namespace XIVLauncher.Dalamud
 
             if (!DalamudUpdater.Runner.Exists)
             {
-                CustomMessageBox.Show(
-                    "Could not launch the in-game addon successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+                CustomMessageBox.Show(runnerErrorMessage,
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -128,8 +130,7 @@ namespace XIVLauncher.Dalamud
                 SetDllDirectory(DalamudUpdater.Runner.DirectoryName);
                 if (0 != RewriteRemoteEntryPoint(gameProcess.Handle, Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"), JsonConvert.SerializeObject(startInfo)))
                 {
-                    CustomMessageBox.Show(
-                        "Could not launch the in-game addon successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+                    CustomMessageBox.Show(runnerErrorMessage,
                         "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
@@ -203,62 +204,19 @@ namespace XIVLauncher.Dalamud
         private static bool CheckVcRedist()
         {
             // we only need to run these once.
-            var checkForDotNet48 = CheckDotNet48();
             var checkForVc2019 = CheckVc2019(); // this also checks all the dll locations now
 
-            if (checkForDotNet48 && checkForVc2019)
-            {
+            if (checkForVc2019)
                 return true;
-            }
-            else if (!checkForDotNet48 && checkForVc2019)
-            {
-                Log.Error(".Net 4.8 or later not found");
 
-                CustomMessageBox.Show(
-                Loc.Localize("DalamudDotNet48RedistError",
-                    "The XIVLauncher in-game addon needs the .NET Framework 4.8 to be installed to continue. Please install it from the Microsoft homepage."),
-                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            Log.Error("VC 2015-2019 redistributable not found");
 
-                return false;
-            }
-            else if (checkForDotNet48 && !checkForVc2019)
-            {
-                Log.Error("VC 2015-2019 redistributable not found");
-
-                CustomMessageBox.Show(
+            CustomMessageBox.Show(
                 Loc.Localize("DalamudVc2019RedistError",
                     "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
-                return false;
-            }
-            else
-            {
-                Log.Error(".Net 4.8 or later not found");
-                Log.Error("VC 2015-2019 redistributable not found");
-
-                CustomMessageBox.Show(
-                Loc.Localize("DalamudVcRedistError",
-                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable and .NET Framework 4.8 to be installed to continue. Please install them from the Microsoft homepage."),
-                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-                return false;
-            }
-        }
-
-        private static bool CheckDotNet48()
-        {
-            // copied and adjusted from https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
-
-            const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
-
-            using var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey);
-
-            if (ndpKey?.GetValue("Release") != null && (int)ndpKey.GetValue("Release") >= 528040)
-            {
-                return true;
-            }
-            else return false;
+            return false;
         }
 
         [DllImport("kernel32", SetLastError = true)]
