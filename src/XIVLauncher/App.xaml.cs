@@ -170,6 +170,9 @@ namespace XIVLauncher
                 newWindowThread.IsBackground = true;
                 newWindowThread.Start();
 
+                while (DalamudUpdater.Overlay == null)
+                    Thread.Yield();
+
                 DalamudUpdater.Run();
             });
         }

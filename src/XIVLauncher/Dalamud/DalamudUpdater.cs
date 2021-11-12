@@ -39,17 +39,17 @@ namespace XIVLauncher.Dalamud
 
         public static void SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress progress)
         {
-            Overlay.Dispatcher.Invoke(() => Overlay.SetProgress(progress));
+            Overlay?.Dispatcher.Invoke(() => Overlay.SetProgress(progress));
         }
 
         public static void ShowOverlay()
         {
-            Overlay.Dispatcher.Invoke(() => Overlay.SetVisible());
+            Overlay?.Dispatcher.Invoke(() => Overlay.SetVisible());
         }
 
         public static void CloseOverlay()
         {
-            Overlay.Dispatcher.Invoke(() => Overlay.Close());
+            Overlay?.Dispatcher.Invoke(() => Overlay.Close());
         }
 
         public static void Run()
