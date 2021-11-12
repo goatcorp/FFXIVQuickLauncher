@@ -72,6 +72,11 @@ namespace XIVLauncher.Windows
 
             InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
 
+            if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
+                DllInjectDalamudLoadMethodRadioButton.IsChecked = true;
+            else
+                EntryPointDalamudLoadMethodRadioButton.IsChecked = true;
+
             // Prevent raising events...
             this.EnableHooksCheckBox.Checked -= this.EnableHooksCheckBox_OnChecked;
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
@@ -117,6 +122,11 @@ namespace XIVLauncher.Windows
 
             if (InjectionDelayUpDown.Value.HasValue)
                 App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
+            
+            if (DllInjectDalamudLoadMethodRadioButton.IsChecked == true)
+                App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.DllInject;
+            else
+                App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.EntryPoint;
 
             App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;

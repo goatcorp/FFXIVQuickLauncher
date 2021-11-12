@@ -13,6 +13,7 @@ namespace Dalamud
         public string DefaultPluginDirectory;
         public string AssetDirectory;
         public ClientLanguage Language;
+        public int DelayInitializeMs;
 
         public string GameVersion;
 

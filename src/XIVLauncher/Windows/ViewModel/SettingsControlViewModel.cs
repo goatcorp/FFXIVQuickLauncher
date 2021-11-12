@@ -115,6 +115,18 @@ namespace XIVLauncher.Windows.ViewModel
             InGameAddonInjectionDelayLoc = Loc.Localize("InGameAddonInjectionDelayLoc", "Addon Injection Delay");
             InGameAddonInjectionDelayDescriptionLoc = Loc.Localize("InGameAddonInjectionDelayDescriptionLoc",
                 "Delay the injection of the in-game addon. This allows you to hide it from e.g. OBS and Discord, since they will inject before it does.");
+
+            InGameAddonLoadMethodLoc = Loc.Localize("InGameAddonLoadMethodLoc",
+                "Choose how to load Dalamud.");
+            InGameAddonLoadMethodEntryPointLoc = Loc.Localize("InGameAddonLoadMethodEntryPointLoc",
+                "New: improves compatibility with antivirus softwares.");
+            InGameAddonLoadMethodEntryPointDescriptionLoc = Loc.Localize("InGameAddonLoadMethodEntryPointDescriptionLoc",
+                "Rewrite game process' entry point to load Dalamud.");
+            InGameAddonLoadMethodDllInjectLoc = Loc.Localize("InGameAddonLoadMethodDllInjectLoc",
+                "Legacy: try this if New doesn't work.");
+            InGameAddonLoadMethodDllInjectDescriptionLoc = Loc.Localize("InGameAddonLoadMethodDllInjectDescriptionLoc",
+                "Use DLL injection to load Dalamud.");
+
             UniversalisHintLoc = Loc.Localize("UniversalisHint",
                 "Market board data provided in cooperation with Universalis.");
             UniversalisOptOutLoc = Loc.Localize("UniversalisOptOut",
@@ -188,6 +200,11 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonChatDelayDescriptionLoc { get; private set; }
         public string InGameAddonInjectionDelayLoc { get; private set; }
         public string InGameAddonInjectionDelayDescriptionLoc { get; private set; }
+        public string InGameAddonLoadMethodLoc { get; private set; }
+        public string InGameAddonLoadMethodEntryPointLoc { get; private set; }
+        public string InGameAddonLoadMethodEntryPointDescriptionLoc { get; private set; }
+        public string InGameAddonLoadMethodDllInjectLoc { get; private set; }
+        public string InGameAddonLoadMethodDllInjectDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
 

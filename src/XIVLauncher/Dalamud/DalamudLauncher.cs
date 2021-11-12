@@ -21,17 +21,19 @@ using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
 {
-    class DalamudLauncher : IAddon
+    class DalamudLauncher : IRunnableAddon
     {
         private readonly DalamudLoadingOverlay _overlay;
+        private readonly DalamudLoadMethod _loadMethod;
         private Process _gameProcess;
         private DirectoryInfo _gamePath;
         private ClientLanguage _language;
         private bool _optOutMbCollection;
 
-        public DalamudLauncher(DalamudLoadingOverlay overlay)
+        public DalamudLauncher(DalamudLoadingOverlay overlay, DalamudLoadMethod loadMethod)
         {
             _overlay = overlay;
+            _loadMethod = loadMethod;
         }
 
         public void Setup(Process gameProcess, ILauncherSettingsV3 setting)
@@ -118,15 +120,39 @@ namespace XIVLauncher.Dalamud
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 OptOutMbCollection = _optOutMbCollection,
                 WorkingDirectory = DalamudUpdater.Runner.Directory?.FullName,
+                DelayInitializeMs = (int) App.Settings.DalamudInjectionDelayMs,
             };
 
-            SetDllDirectory(DalamudUpdater.Runner.DirectoryName);
-            if (0 != RewriteRemoteEntryPoint(gameProcess.Handle, Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"), JsonConvert.SerializeObject(startInfo)))
+            if (_loadMethod == DalamudLoadMethod.EntryPoint)
             {
-                CustomMessageBox.Show(
-                    "Could not launch the in-game addon successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                SetDllDirectory(DalamudUpdater.Runner.DirectoryName);
+                if (0 != RewriteRemoteEntryPoint(gameProcess.Handle, Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"), JsonConvert.SerializeObject(startInfo)))
+                {
+                    CustomMessageBox.Show(
+                        "Could not launch the in-game addon successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            else if (_loadMethod == DalamudLoadMethod.DllInject)
+            {
+                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
+
+                var process = new Process
+                {
+                    StartInfo =
+                    {
+                        FileName = DalamudUpdater.Runner.FullName, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
+                        Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = DalamudUpdater.Runner.DirectoryName
+                    }
+                };
+
+                process.Start();
+            }
+            else
+            {
+                // should not reach
+                throw new ArgumentOutOfRangeException();
             }
 
             _overlay.Dispatcher.Invoke(() =>

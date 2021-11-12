@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using XIVLauncher.Addon;
+using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch.Acquisition;
 
@@ -22,6 +23,7 @@ namespace XIVLauncher.Settings
         bool UniqueIdCacheEnabled { get; set; }
         string AdditionalLaunchArgs { get; set; }
         bool InGameAddonEnabled { get; set; }
+        DalamudLoadMethod InGameAddonLoadMethod { get; set; }
         bool OtpServerEnabled { get; set; }
         bool SteamIntegrationEnabled { get; set; }
         ClientLanguage? Language { get; set; }
