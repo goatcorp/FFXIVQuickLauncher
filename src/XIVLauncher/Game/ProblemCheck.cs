@@ -22,7 +22,7 @@ namespace XIVLauncher.Game
             var compatFlagKey = Registry.CurrentUser.OpenSubKey(
                 "Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", true);
 
-            if (compatFlagKey != null && !EnvironmentSettings.IsWine)
+            if (compatFlagKey != null && !EnvironmentSettings.IsWine && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false))
             {
                 var compatEntries = compatFlagKey.GetValueNames();
 
@@ -47,6 +47,8 @@ namespace XIVLauncher.Game
 
                     return;
                 }
+
+                App.Settings.HasComplainedAboutAdmin = true;
             }
 
             if (runningAsAdmin && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
