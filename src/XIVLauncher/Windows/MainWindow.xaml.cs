@@ -507,7 +507,7 @@ namespace XIVLauncher.Windows
             Task.Run(SetupHeadlines);
         }
 
-        private async void FakeStart_OnClick(object sender, RoutedEventArgs e)
+        private void FakeStart_OnClick(object sender, RoutedEventArgs e)
         {
             Model.StartGameAndAddon(new Launcher.LoginResult
             {

@@ -417,9 +417,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
                 {
-                    var overlay = new DalamudLoadingOverlay();
-                    overlay.Hide();
-                    addons.Add(new DalamudLauncher(overlay));
+                    addons.Add(new DalamudLauncher(DalamudUpdater.Overlay));
                 }
                 else
                 {

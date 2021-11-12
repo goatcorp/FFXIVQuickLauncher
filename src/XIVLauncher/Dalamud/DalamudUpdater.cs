@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using Newtonsoft.Json;
 using NuGet;
@@ -26,7 +27,7 @@ namespace XIVLauncher.Dalamud
         public static FileInfo Runner { get; private set; }
         public static DirectoryInfo AssetDirectory { get; private set; }
 
-        private static DalamudLoadingOverlay _overlay;
+        public static DalamudLoadingOverlay Overlay { get; set; }
 
         public enum DownloadState
         {
@@ -38,30 +39,28 @@ namespace XIVLauncher.Dalamud
 
         public static void SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress progress)
         {
-            _overlay.Dispatcher.Invoke(() => _overlay.SetProgress(progress));
+            Overlay.Dispatcher.Invoke(() => Overlay.SetProgress(progress));
         }
 
         public static void ShowOverlay()
         {
-            _overlay.Dispatcher.Invoke(() => _overlay.SetVisible());
+            Overlay.Dispatcher.Invoke(() => Overlay.SetVisible());
         }
 
         public static void CloseOverlay()
         {
-            _overlay.Dispatcher.Invoke(() => _overlay.Close());
+            Overlay.Dispatcher.Invoke(() => Overlay.Close());
         }
 
-        public static void Run(DirectoryInfo gamePath, DalamudLoadingOverlay overlay)
+        public static void Run()
         {
             Log.Information("[DUPDATE] Starting...");
-
-            _overlay = overlay;
 
             Task.Run(() =>
             {
                 try
                 {
-                    UpdateDalamud(gamePath, overlay);
+                    UpdateDalamud();
                 }
                 catch (Exception ex)
                 {
@@ -74,7 +73,7 @@ namespace XIVLauncher.Dalamud
         private static string GetBetaPath(DalamudSettings settings) =>
             string.IsNullOrEmpty(settings.DalamudBetaKind) ? "stg/" : $"{settings.DalamudBetaKind}/";
 
-        private static void UpdateDalamud(DirectoryInfo gamePath, DalamudLoadingOverlay overlay)
+        private static void UpdateDalamud()
         {
             using var client = new WebClient();
 

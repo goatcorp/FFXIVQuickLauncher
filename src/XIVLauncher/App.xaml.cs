@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using CheapLoc;
 using Config.Net;
+using MaterialDesignThemes.Wpf.Transitions;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Dalamud;
@@ -163,8 +165,22 @@ namespace XIVLauncher
                 _mainWindow = new MainWindow();
                 _mainWindow.Initialize();
 
-                DalamudUpdater.Run(App.Settings.GamePath, new DalamudLoadingOverlay());
+                var newWindowThread = new Thread(DalamudOverlayThreadStart);
+                newWindowThread.SetApartmentState(ApartmentState.STA);
+                newWindowThread.IsBackground = true;
+                newWindowThread.Start();
+
+                DalamudUpdater.Run();
             });
+        }
+
+        // We need this because the main dispatcher is blocked by the main window/login task.
+        private static void DalamudOverlayThreadStart()
+        {
+            DalamudUpdater.Overlay = new DalamudLoadingOverlay();
+            DalamudUpdater.Overlay.Hide();
+
+            System.Windows.Threading.Dispatcher.Run();
         }
 
         private bool _useFullExceptionHandler = false;
