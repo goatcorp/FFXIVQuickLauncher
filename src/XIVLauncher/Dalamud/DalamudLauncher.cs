@@ -118,6 +118,7 @@ namespace XIVLauncher.Dalamud
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 OptOutMbCollection = _optOutMbCollection,
                 WorkingDirectory = DalamudUpdater.Runner.Directory?.FullName,
+                DelayInitializeMs = (int) App.Settings.DalamudInjectionDelayMs,
             };
 
             SetDllDirectory(DalamudUpdater.Runner.DirectoryName);
