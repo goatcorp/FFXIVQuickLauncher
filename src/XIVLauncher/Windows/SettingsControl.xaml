@@ -142,34 +142,45 @@
             <TabItem Header="{Binding SettingsInGameLoc}">
                 <Grid>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="10,10,10,0">
+                        <StackPanel Margin="10,5,10,0">
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                                       Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10"
+                                       Foreground="{DynamicResource MaterialDesignBody}"
                                        Text="{Binding InGameAddonDescriptionLoc}" />
-                            <CheckBox x:Name="EnableHooksCheckBox"
-                                      Content="{Binding InGameAddonEnabledCheckBoxLoc}"
-                                      HorizontalAlignment="Left" Margin="0,0,0,0"
-                                      Foreground="{DynamicResource MaterialDesignBody}" />
+                            
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                                <CheckBox x:Name="EnableHooksCheckBox"
+                                          Content="{Binding InGameAddonEnabledCheckBoxLoc}"
+                                          HorizontalAlignment="Left" VerticalAlignment="Center"
+                                          Foreground="{DynamicResource MaterialDesignBody}" />
 
-                            <Label Foreground="DarkGray" Margin="0,10,0,5"
-                                   Content="{Binding InGameAddonCommandHintLoc}" />
+                                <TextBlock Foreground="DarkGray" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,2,0,0"
+                                           Text="{Binding InGameAddonCommandHintLoc}" />
+                            </StackPanel>
 
-                            <StackPanel
+                            <StackPanel Margin="22,0,0,0"
                                         IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
 
-                                <Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,10,0,0"
-                                       Content="{Binding InGameAddonInjectionDelayLoc}" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
+                                           Text="{Binding InGameAddonInjectionDelayLoc}" />
 
-                                <StackPanel Orientation="Horizontal">
-                                    <xctk:DecimalUpDown x:Name="InjectionDelayUpDown" Margin="10,0,0,10" Width="60" HorizontalAlignment="Left" Value="0"/>
-                                    <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <xctk:DecimalUpDown x:Name="InjectionDelayUpDown" Width="60" HorizontalAlignment="Left" Value="0"/>
+                                    <Label Foreground="{DynamicResource MaterialDesignBody}"
                                            Content="ms" ToolTip="{Binding InGameAddonInjectionDelayDescriptionLoc}"/>
                                 </StackPanel>
-
-                                <Separator />
                                 
-                                <Label Foreground="DarkGray" Margin="0,5,0,5"
-                                       Content="{Binding UniversalisHintLoc}" />
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,15,0,5"
+                                           Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding InGameAddonLoadMethodLoc}" />
+
+                                <RadioButton GroupName="dalamudLoadMethod" x:Name="EntryPointDalamudLoadMethodRadioButton"
+                                             Foreground="{DynamicResource MaterialDesignBody}" IsChecked="True"
+                                             Content="{Binding InGameAddonLoadMethodEntryPointLoc}" ToolTip="{Binding InGameAddonLoadMethodEntryPointDescriptionLoc}"/>
+                                <RadioButton GroupName="dalamudLoadMethod" x:Name="DllInjectDalamudLoadMethodRadioButton"
+                                             Foreground="{DynamicResource MaterialDesignBody}"
+                                             Content="{Binding InGameAddonLoadMethodDllInjectLoc}" ToolTip="{Binding InGameAddonLoadMethodDllInjectDescriptionLoc}" />
+                                
+                                <TextBlock Foreground="DarkGray" Margin="0,10,0,5"
+                                           Text="{Binding UniversalisHintLoc}" />
                                 <CheckBox x:Name="MbUploadOptOutCheckBox"
                                           Content="{Binding UniversalisOptOutLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,5" Foreground="DarkGray" />

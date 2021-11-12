@@ -499,6 +499,26 @@
     "message": "Enable in-game features",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "InGameAddonLoadMethodLoc": {
+    "message": "Choose how to load Dalamud.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodEntryPointLoc": {
+    "message": "New: improves compatibility with antivirus softwares.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodEntryPointDescriptionLoc": {
+    "message": "Rewrite game process' entry point to load Dalamud.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectLoc": {
+    "message": "Legacy: try this if New doesn't work.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectDescriptionLoc": {
+    "message": "Use DLL injection to load Dalamud.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "ChatSettings": {
     "message": "Chat settings",
     "description": "SettingsControlViewModel.SetupLoc"
