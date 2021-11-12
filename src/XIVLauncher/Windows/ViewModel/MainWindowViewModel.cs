@@ -59,7 +59,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 LoadingDialogCancelButtonVisibility = Visibility.Collapsed;
                 IsLoadingDialogOpen = true;
-                LoadingDialogMessage = Loc.Localize("LoadingDialogIsLoggingIn", "Logging in...");
+                LoadingDialogMessage = Loc.Localize("LoadingDialogIsLoggingIn", "Transmission in progress...");
 
                 IsLoggingIn = true;
 
@@ -405,7 +405,7 @@ namespace XIVLauncher.Windows.ViewModel
                             }
                             else
                             {
-                                Log.Warning("In-Game addon was not enabled (tried to load as entry point).");
+                                Log.Warning("In-Game addon was not enabled (tried to load as entry point)");
                             }
                         }
                     });
@@ -437,7 +437,7 @@ namespace XIVLauncher.Windows.ViewModel
                     }
                     else
                     {
-                        Log.Warning("In-Game addon was not enabled (tried to load via DLL injection).");
+                        Log.Warning("In-Game addon was not enabled (tried to load via DLL injection)");
                     }
                 }
                 addonMgr.RunAddons(gameProcess, App.Settings, addons);

@@ -96,12 +96,12 @@ namespace XIVLauncher.Windows.ViewModel
             AutoLaunchAddNewToolTipLoc =
                 Loc.Localize("AutoLaunchAddNewToolTip", "Add a new Auto-Start entry that allows you to launch any program.");
 
-            SettingsInGameLoc = Loc.Localize("SettingsInGame", "In-Game");
+            SettingsInGameLoc = Loc.Localize("SettingsInGame", "Dalamud");
             InGameAddonDescriptionLoc = Loc.Localize("InGameAddonDescription",
-                "These options affect the XIVLauncher in-game features. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.");
+                "These options affect the XIVLauncher in-game features, provided by Dalamud. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.");
             InGameAddonCommandHintLoc = Loc.Localize("InGameAddonCommandHint",
                 "When enabled, type \"/xlhelp\" in-game to see other available commands.");
-            InGameAddonEnabledCheckBoxLoc = Loc.Localize("InGameAddonEnabledCheckBox", "Enable in-game features");
+            InGameAddonEnabledCheckBoxLoc = Loc.Localize("InGameAddonEnabledCheckBox", "Enable Dalamud");
             InGameAddonChatSettingsLoc = Loc.Localize("ChatSettings", "Chat settings");
             InGameAddonDiscordBotTokenLoc = Loc.Localize("DiscordBotToken", "Discord Bot Token");
             InGameAddonHowLoc = Loc.Localize("HowToHint", "How do I set this up?");
@@ -119,13 +119,9 @@ namespace XIVLauncher.Windows.ViewModel
             InGameAddonLoadMethodLoc = Loc.Localize("InGameAddonLoadMethodLoc",
                 "Choose how to load Dalamud.");
             InGameAddonLoadMethodEntryPointLoc = Loc.Localize("InGameAddonLoadMethodEntryPointLoc",
-                "New: improves compatibility with antivirus softwares.");
-            InGameAddonLoadMethodEntryPointDescriptionLoc = Loc.Localize("InGameAddonLoadMethodEntryPointDescriptionLoc",
-                "Rewrite game process' entry point to load Dalamud.");
+                "New: improves compatibility with certain other software and plugins that need to load early.");
             InGameAddonLoadMethodDllInjectLoc = Loc.Localize("InGameAddonLoadMethodDllInjectLoc",
-                "Legacy: try this if New doesn't work.");
-            InGameAddonLoadMethodDllInjectDescriptionLoc = Loc.Localize("InGameAddonLoadMethodDllInjectDescriptionLoc",
-                "Use DLL injection to load Dalamud.");
+                "Legacy: old version of the Dalamud injection system that may be more stable.");
 
             UniversalisHintLoc = Loc.Localize("UniversalisHint",
                 "Market board data provided in cooperation with Universalis.");
@@ -202,9 +198,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonInjectionDelayDescriptionLoc { get; private set; }
         public string InGameAddonLoadMethodLoc { get; private set; }
         public string InGameAddonLoadMethodEntryPointLoc { get; private set; }
-        public string InGameAddonLoadMethodEntryPointDescriptionLoc { get; private set; }
         public string InGameAddonLoadMethodDllInjectLoc { get; private set; }
-        public string InGameAddonLoadMethodDllInjectDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
 

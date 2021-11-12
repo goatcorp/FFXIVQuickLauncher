@@ -16,7 +16,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         public void SetupLoc()
         {
-            DalamudUpdateLoc = Loc.Localize("DalamudUpdate", "Updating in-game addon...");
+            DalamudUpdateLoc = Loc.Localize("DalamudUpdate", "Updating Dalamud...");
         }
 
         public string DalamudUpdateLoc { get; private set; }

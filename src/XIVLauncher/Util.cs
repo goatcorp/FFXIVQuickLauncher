@@ -46,6 +46,17 @@ namespace XIVLauncher
         }
 
         /// <summary>
+        ///     Gets the build origin from the assembly
+        ///     or null if it cannot be found.
+        /// </summary>
+        public static string GetBuildOrigin()
+        {
+            var asm = typeof(Util).Assembly;
+            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
+            return attrs.FirstOrDefault(a => a.Key == "BuildOrigin")?.Value;
+        }
+
+        /// <summary>
         ///     Returns <see langword="true"/> if the current system region is set to North America.
         /// </summary>
         public static bool IsRegionNorthAmerica()

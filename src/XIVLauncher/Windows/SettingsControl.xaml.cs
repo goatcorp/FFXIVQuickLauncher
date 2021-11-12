@@ -38,7 +38,7 @@ namespace XIVLauncher.Windows
             DiscordButton.Click += Util.OpenDiscord;
             FaqButton.Click += Util.OpenFaq;
             DataContext = new SettingsControlViewModel();
-            
+
             ReloadSettings();
         }
 
@@ -122,7 +122,7 @@ namespace XIVLauncher.Windows
 
             if (InjectionDelayUpDown.Value.HasValue)
                 App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
-            
+
             if (DllInjectDalamudLoadMethodRadioButton.IsChecked == true)
                 App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.DllInject;
             else
@@ -298,13 +298,13 @@ namespace XIVLauncher.Windows
             {
                 if (!string.IsNullOrEmpty(ViewModel.GamePath) && Util.IsValidFfxivPath(ViewModel.GamePath) && !DalamudLauncher.CanRunDalamud(new DirectoryInfo(ViewModel.GamePath)))
                     CustomMessageBox.Show(
-                        Loc.Localize("DalamudIncompatible", "The XIVLauncher in-game addon was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
+                        Loc.Localize("DalamudIncompatible", "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             catch(Exception exc)
             {
                 CustomMessageBox.Show(Loc.Localize("DalamudCompatCheckFailed",
-                    "Could not contact the server to get the current compatible FFXIV version for the in-game addon. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Hand);
+                    "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Hand);
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }

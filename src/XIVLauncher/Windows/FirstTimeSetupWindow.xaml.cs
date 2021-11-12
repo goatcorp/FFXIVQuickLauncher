@@ -32,10 +32,15 @@ namespace XIVLauncher.Windows
 
             this.actPath = this.FindAct();
 
-#if XL_NOAUTOUPDATE
-            CustomMessageBox.Show(
-                $"You're running an unsupported version of XIVLauncher.\n\nThis can be unsafe and a danger to your SE account. If you have not gotten this unsupported version on purpose, please reinstall a clean version from {App.RepoUrl}/releases.",
-                "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+#if !XL_NOAUTOUPDATE
+            if (EnvironmentSettings.IsDisableUpdates || Util.GetBuildOrigin() != "goatcorp/FFXIVQuickLauncher")
+            {
+#endif
+                CustomMessageBox.Show(
+                    $"You're running an unsupported version of XIVLauncher.\n\nThis can be unsafe and a danger to your SE account. If you have not gotten this unsupported version on purpose, please reinstall a clean version from {App.RepoUrl}/releases and contact us.",
+                    "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+#if !XL_NOAUTOUPDATE
+            }
 #endif
         }
 
