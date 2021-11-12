@@ -318,7 +318,7 @@ namespace XIVLauncher.Game
             }
         }
 
-        public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars)
+        public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars, Action<Process> beforeResume)
         {
             Process process;
 
@@ -393,6 +393,9 @@ namespace XIVLauncher.Game
                 DisableSeDebug(lpProcessInformation.hProcess);
 
                 process = new ExistingProcess(lpProcessInformation.hProcess);
+
+                beforeResume?.Invoke(process);
+
                 PInvoke.ResumeThread(lpProcessInformation.hThread);
 
                 process.WaitForInputIdle();

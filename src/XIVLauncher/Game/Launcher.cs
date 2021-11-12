@@ -140,7 +140,7 @@ namespace XIVLauncher.Game
         }
 
         public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-            bool encryptArguments)
+            bool encryptArguments, Action<Process> beforeResume)
         {
             Log.Information($"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
 
@@ -209,7 +209,7 @@ namespace XIVLauncher.Game
                     var arguments = encryptArguments
                         ? argumentBuilder.BuildEncrypted()
                         : argumentBuilder.Build();
-                    game = NativeAclFix.LaunchGame(workingDir, exePath, arguments, environment);
+                    game = NativeAclFix.LaunchGame(workingDir, exePath, arguments, environment, beforeResume);
                 }
                 catch (Win32Exception ex)
                 {

@@ -21,7 +21,7 @@ using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
 {
-    class DalamudLauncher : IRunnableAddon
+    class DalamudLauncher : IAddon
     {
         private readonly DalamudLoadingOverlay _overlay;
         private Process _gameProcess;
@@ -49,6 +49,12 @@ namespace XIVLauncher.Dalamud
 
         public const string REMOTE_BASE = "https://goatcorp.github.io/dalamud-distrib/";
 
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern bool SetDllDirectory(string lpPathName);
+
+        [DllImport("Dalamud.Boot.dll")]
+        static extern int RewriteRemoteEntryPoint(IntPtr hProcess, [MarshalAs(UnmanagedType.LPWStr)] string gamePath, [MarshalAs(UnmanagedType.LPStr)] string loadInfoJson);
+
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
             Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language);
@@ -61,9 +67,6 @@ namespace XIVLauncher.Dalamud
 
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
-
-
-            Thread.Sleep((int) App.Settings.DalamudInjectionDelayMs);
 
             if (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
                 DalamudUpdater.ShowOverlay();
@@ -117,18 +120,14 @@ namespace XIVLauncher.Dalamud
                 WorkingDirectory = DalamudUpdater.Runner.Directory?.FullName,
             };
 
-            var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
-
-            var process = new Process
+            SetDllDirectory(DalamudUpdater.Runner.DirectoryName);
+            if (0 != RewriteRemoteEntryPoint(gameProcess.Handle, Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"), JsonConvert.SerializeObject(startInfo)))
             {
-                StartInfo =
-                {
-                    FileName = DalamudUpdater.Runner.FullName, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
-                    Arguments = gameProcess.Id.ToString() + " " + parameters, WorkingDirectory = DalamudUpdater.Runner.DirectoryName
-                }
-            };
-
-            process.Start();
+                CustomMessageBox.Show(
+                    "Could not launch the in-game addon successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             _overlay.Dispatcher.Invoke(() =>
             {
