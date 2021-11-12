@@ -1,1 +1,2 @@
-﻿• Fixes an issue wherein, in certain cases, the login button would not log you in
+﻿• Fixes an issue wherein, in certain cases, the in-game addon would not start
+• Fixes an issue wherein, in certain cases, the account switcher would take a long time to open
