@@ -35,6 +35,7 @@ namespace XIVLauncher.Windows.ViewModel
     {
         private readonly Window _window;
 
+        public bool PreviousLoginFailure = false;
         public bool IsLoggingIn;
 
         public Launcher Launcher { get; private set; }
