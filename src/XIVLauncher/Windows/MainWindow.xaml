@@ -234,7 +234,7 @@
 
                                             <Button.ContextMenu>
                                                 <ContextMenu x:Name="LoginContextMenu">
-                                                    <MenuItem Header="{Binding LoginNoStartLoc}" Command="{Binding Path=LoginNoStartCommand}"/>
+                                                    <MenuItem Header="{Binding LoginNoStartLoc}" Command="{Binding Path=LoginNoStartCommand}" CommandParameter="{Binding ElementName=LoginPassword}"/>
                                                 </ContextMenu>
                                             </Button.ContextMenu>
 
