@@ -417,7 +417,7 @@ namespace XIVLauncher.Windows
                     CustomMessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
                         "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher");
 
-                Dispatcher.InvokeAsync(async () => {
+                await Dispatcher.InvokeAsync(async () => {
                     QuitMaintenanceQueueButton_OnClick(null, null);
 
                     if (Model.IsLoggingIn)
