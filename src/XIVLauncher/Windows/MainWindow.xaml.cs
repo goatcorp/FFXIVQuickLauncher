@@ -397,9 +397,9 @@ namespace XIVLauncher.Windows
             _maintenanceQueueTimer.Elapsed += OnMaintenanceQueueTimerEvent;
         }
 
-        private void OnMaintenanceQueueTimerEvent(Object source, System.Timers.ElapsedEventArgs e)
+        private async void OnMaintenanceQueueTimerEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
-            var bootPatches = _launcher.CheckBootVersion(App.Settings.GamePath);
+            var bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);
 
             var gateStatus = false;
             try
