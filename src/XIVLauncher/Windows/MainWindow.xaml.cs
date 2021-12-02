@@ -135,7 +135,7 @@ namespace XIVLauncher.Windows
                 Title += " - Wine on Linux";
 
             if (EnvironmentSettings.IsPreRelease)
-                Title += " - PreRelease";
+                Title += " - Preview Version";
         }
 
         private async Task SetupHeadlines()
