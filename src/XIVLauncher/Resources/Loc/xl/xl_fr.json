@@ -1,6 +1,6 @@
 {
   "updatefailureerror": {
-    "message": "XIVLauncher n'a pas pu vérifier les mises à jour. Cela peut être dû à des problèmes de connectivité avec GitHub. Attendez quelques minutes et réessayez.\nDésactivez votre VPN, si vous en avez un.\nSi ces erreurs surviennent encore dans quelques minutes, merci de nous contacter sur notre serveur Discord.",
+    "message": "XIVLauncher n'a pas pu vérifier les mises à jour. Cela peut être dû à des problèmes de connectivité à GitHub. Attendez quelques minutes, puis réessayez.\nDésactivez votre VPN, si vous en avez un. Vous pourriez avoir à ajouter une exception pour XIVLauncher dans la configuration de votre antivirus.\nSi ces erreurs continuent de survenir dans les minutes qui suivent, veuillez consulter la FAQ.",
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
@@ -39,92 +39,24 @@
     "message": "De plus, veuillez vérifier vos identifiants ou réessayer.",
     "description": "MainWindow.Initialize"
   },
-  "AutoLoginIntro": {
-    "message": "Vous activez la connexion automatique.\nCela signifie que XIVLauncher vous connectera toujours avec le compte actuel et que vous ne verrez plus cette fenêtre.\n\nPour modifier les paramètres et les comptes, vous devez maintenir la touche Maj sur votre clavier en cliquant sur l'icône XIVLauncher.",
-    "description": "MainWindow.LoginButton_Click"
-  },
-  "CheckBootVersionError": {
-    "message": "XIVLauncher n’a pas pu vérifier la version du jeu sélectionné. Cela peut se produire en cas de maintenance ou d’absence de connexion internet. Veuillez signaler cette erreur si vous pouvez vous connecter avec le lanceur officiel, mais pas avec XIVLauncher.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "GameIsOpenError": {
-    "message": "Le jeu et/ou le lanceur officiel sont ouverts. XIVLauncher ne peut pas mettre à jour le jeu si c’est le cas.\nVeuillez fermer le jeu et le lanceur officiel et réessayer.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "PatcherAlreadyInProgress": {
-    "message": "XIVLauncher est déjà en train de mettre à jour votre jeu dans une autre instance. Veuillez vérifier que XIVLauncher est encore ouvert.",
-    "description": "MainWindow.HandleBootCheck"
-  },
-  "EmptyUsernameError": {
-    "message": "Veuillez entrer un identifiant.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "EmailUsernameError": {
-    "message": "Veuillez entrer votre nom de compte SE, et non votre adresse email.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "EmptyPasswordError": {
-    "message": "Veuillez entrer un mot de passe.",
-    "description": "MainWindow.PrepareLogin"
-  },
-  "UidCacheInstallError": {
-    "message": "Vous avez activé le cache UID dans les paramètres de l'outil de mise à jour.\nCe paramètre vous empêche de réinstaller FFXIV.\n\nSi vous voulez réinstaller FFXIV, veuillez vous assurer de le désactiver d'abord.",
-    "description": "MainWindow.PrepareLogin"
-  },
   "MaintenanceQueueBootPatch": {
     "message": "Une mise à jour du lanceur de FFXIV a été détectée.\nCela signifie généralement qu'il y a également une mise à jour du jeu.\n\nVous allez maintenant être identifié.",
     "description": "MainWindow.OnMaintenanceQueueTimerEvent"
   },
   "NewsDlFailed": {
     "message": "Le téléchargement des dernières nouvelles à échoué.",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
-  },
-  "LoginNoStartOk": {
-    "message": "Une vérification de mise à jour a été exécutée et toutes les mises à jour en attente ont été installées.",
-    "description": "<>c__DisplayClass18_0.<InstallGamePatch>b__3"
-  },
-  "LoginNoOauthMessage": {
-    "message": "Impossible de se connecter à votre compte Square Enix.\nCela pourrait être dû à des identifiants erronées ou à votre OTP.\n\nVérifiez aussi votre boîte mail pour d'éventuels messages de Square Enix - il se peut que vous deviez réinitialiser votre mot de passe pour cause d' \"activité suspecte\".\nCe n’est PAS causé par un problème de sécurité dans XIVLauncher, c’est une mesure de sécurité de Square Enix pour empêcher la connexion depuis de nouveaux emplacements, en cas de vol de votre compte.\nXIVLauncher et le lanceur officiel fonctionneront après la réinitialisation du mot de passe.",
-    "description": "<StartLogin>d__19.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\nConnexion automatique désactivée.",
-    "description": "<StartLogin>d__19.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "Problème de connexion",
-    "description": "<StartLogin>d__19.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "Ce compte Square Enix ne peut pas jouer FINAL FANTASY XIV.\n\nSi vous avez acheté FINAL FANTASY XIV sur Steam, veuillez activer l’option \"Compte de service Steam\" lors de la connexion.\nSi la connexion automatique est activée, maintenez la touche Maj enfoncée lors du démarrage pour modifier les paramètres.",
-    "description": "<StartLogin>d__19.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "Veuillez accepter les conditions d'utilisation de FINAL FANTASY XIV dans le lanceur officiel.",
-    "description": "<StartLogin>d__19.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "Certains fichiers essentiels du jeu ont été modifiés/cassés par un tiers et le jeu ne peut ni se mettre à jour ni démarrer.\nVous devez réinstaller le jeu pour continuer.\n\nSi cela se reproduit, veuillez nous contacter via Discord.",
-    "description": "<StartLogin>d__19.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "Un nouveau patch a été trouvé qui doit être installé avant de pouvoir jouer.\nVoulez-vous que XIVLauncher l'installe ?",
-    "description": "<StartLogin>d__19.MoveNext"
-  },
-  "MaintenanceNotice": {
-    "message": "La maintenance semble en cours. Le jeu ne devrait pas être lancé maintenant.",
-    "description": "<StartLogin>d__19.MoveNext"
+    "description": "MainWindow.<SetupHeadlines>b__11_3"
   },
   "LaunchAsSteam": {
     "message": "Démarrer en tant qu'utilisateur Steam ?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "L'addon en jeu XIVLauncher n’a pas encore été mis à jour pour la version actuelle de FFXIV.\nC’est normal après un patch, soyez patients ou vérifiez le Discord pour les dernières nouvelles !",
+    "message": "Dalamud n’a pas encore été mis à jour pour votre version actuelle de FFXIV.\nCela arrive souvent après une maintenance, ou un patch. Soyez patients ou consultez notre Discord pour les dernières mises à jour !",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Impossible de vérifier la dernière version de FFXIV compatible avec l'addon en jeu. Cela peut venir d'une version trop ancienne de .NET Framework.\nRéférez-vous au Discord pour plus d’informations.",
+    "message": "Impossible de vérifier la dernière version de FFXIV compatible avec Dalamud. Cela peut signifier que votre version de .NET Framework est trop ancienne.\nVeuillez consulter notre Discord pour plus d’informations.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -204,7 +136,7 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "DalamudUpdate": {
-    "message": "Mise à jour de l'addon en jeu...",
+    "message": "Mise à jour de Dalamud en cours...",
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
@@ -240,7 +172,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "Le mode DirectX 9 n'est plus supporté. Il démarrera encore, mais vous n'obtiendrez aucun support de SE pour tout problème technique, et toutes les fonctionnalités supplémentaires de XIVLauncher, telles que Rich Presence et l'addon en jeu, ne fonctionneront pas.",
+    "message": "Le mode DirectX 9 n'est plus supporté. Il continuera à fonctionner, mais vous n'obtiendrez aucune assistance de SE pour tout problème technique, et toutes les fonctionnalités supplémentaires de XIVLauncher, telles que la Rich Presence et Dalamud, ne fonctionneront pas.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
@@ -260,11 +192,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Voulez-vous activer les fonctionnalités en jeu de XIVLauncher ?\nCela ajoutera des fonctionnalités additionnelles à votre jeu, tel que le filtrage des messages de vendeurs de gils et notifications Discord pour les messages dans le chat ou les procs de l'Outil de Mission.\n\nPour configurer ces paramètres, veuillez utiliser le menu Paramètres de XIVLauncher et sélectionnez l'onglet En jeu.\nActiver cette option peut provoquer un faux positif au niveau de votre antivirus, merci de vérifier ses paramètres et d'ajouter une exception si besoin.",
+    "message": "Voulez-vous activer Dalamud ?\nCela ajoutera des fonctionnalités supplémentaires dans votre jeu, tel qu'un filtre anti-RMT dans votre chat et des notifications sur Discord des messages dans votre chat, ou lorsque la validation de l'outil de mission apparaît.\n\nAfin de configurer ces paramètres, veuillez utiliser le menu de paramètres de XIVLauncher et sélectionnez l'onglet \"Dalamud\". \nActiver cette option peut cependant causer un faux positif auprès de votre logiciel antivirus ; veuillez consulter la configuration de ce dernier et ajouter toute exception potentiellement nécessaire si vous rencontrez des problèmes.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Activer les fonctionnalités en jeu",
+    "message": "Activer Dalamud",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -294,6 +226,10 @@
   "IntegrityCheckRunning": {
     "message": "Vérification de l'intégrité en cours...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
+  },
+  "MaintenanceNotice": {
+    "message": "La maintenance semble en cours. Le jeu ne devrait pas être lancé maintenant.",
+    "description": "MainWindowViewModel.StartGameAndAddon"
   },
   "LoginBoxUsername": {
     "message": "Identifiant Square Enix",
@@ -350,6 +286,74 @@
   "MaintenanceQueue": {
     "message": "Attendre la fin de la maintenance",
     "description": "MainWindowViewModel.SetupLoc"
+  },
+  "AutoLoginIntro": {
+    "message": "Vous activez la connexion automatique.\nCela signifie que XIVLauncher vous connectera toujours avec le compte actuel et que vous ne verrez plus cette fenêtre.\n\nPour modifier les paramètres et les comptes, vous devez maintenir la touche Maj sur votre clavier en cliquant sur l'icône XIVLauncher.",
+    "description": "<<GetLoginFunc>b__0>d.MoveNext"
+  },
+  "LoadingDialogIsLoggingIn": {
+    "message": "Transmission en cours...",
+    "description": "<<GetLoginFunc>b__0>d.MoveNext"
+  },
+  "CheckBootVersionError": {
+    "message": "XIVLauncher n’a pas pu vérifier la version du jeu sélectionné. Cela peut se produire en cas de maintenance ou d’absence de connexion internet. Veuillez signaler cette erreur si vous pouvez vous connecter avec le lanceur officiel, mais pas avec XIVLauncher.",
+    "description": "<HandleBootCheck>d__30.MoveNext"
+  },
+  "GameIsOpenError": {
+    "message": "Le jeu et/ou le lanceur officiel sont ouverts. XIVLauncher ne peut pas mettre à jour le jeu si c’est le cas.\nVeuillez fermer le jeu et le lanceur officiel et réessayer.",
+    "description": "<HandleBootCheck>d__30.MoveNext"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher est déjà en train de mettre à jour votre jeu dans une autre instance. Veuillez vérifier que XIVLauncher est encore ouvert.",
+    "description": "<HandleBootCheck>d__30.MoveNext"
+  },
+  "EmptyUsernameError": {
+    "message": "Veuillez entrer un identifiant.",
+    "description": "<Login>d__20.MoveNext"
+  },
+  "EmailUsernameError": {
+    "message": "Veuillez entrer votre nom de compte SE, et non votre adresse email.",
+    "description": "<Login>d__20.MoveNext"
+  },
+  "EmptyPasswordError": {
+    "message": "Veuillez entrer un mot de passe.",
+    "description": "<Login>d__20.MoveNext"
+  },
+  "UidCacheInstallError": {
+    "message": "Vous avez activé le cache UID dans les paramètres de l'outil de mise à jour.\nCe paramètre vous empêche de réinstaller FFXIV.\n\nSi vous voulez réinstaller FFXIV, veuillez vous assurer de le désactiver d'abord.",
+    "description": "<Login>d__20.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Ce compte Square Enix ne peut pas jouer FINAL FANTASY XIV.\n\nSi vous avez acheté FINAL FANTASY XIV sur Steam, veuillez activer l’option \"Compte de service Steam\" lors de la connexion.\nSi la connexion automatique est activée, maintenez la touche Maj enfoncée lors du démarrage pour modifier les paramètres.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Veuillez accepter les conditions d'utilisation de FINAL FANTASY XIV dans le lanceur officiel.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Certains fichiers essentiels du jeu ont été modifiés/cassés par un tiers et le jeu ne peut ni se mettre à jour ni démarrer.\nVous devez réinstaller le jeu pour continuer.\n\nSi cela se reproduit, veuillez nous contacter via Discord.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "Un nouveau patch a été trouvé qui doit être installé avant de pouvoir jouer.\nVoulez-vous que XIVLauncher l'installe ?",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "Une vérification de mise à jour a été exécutée et toutes les mises à jour en attente ont été installées.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nConnexion automatique désactivée.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Problème de connexion",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginWebExceptionContent": {
+    "message": "XIVLauncher n'a pas pu établir de connexion avec les serveurs de jeu.\n\nCeci peut être un problème temporaire. Veuillez réessayer plus tard.",
+    "description": "<LoginToGame>d__21.MoveNext"
   },
   "OtpInputPrompt": {
     "message": "Veuillez entrer votre clé OTP.",
@@ -484,11 +488,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
-    "message": "En jeu",
+    "message": "Dalamud",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "Ces options concernent les fonctionnalités en jeu de XIVLauncher. Ces fonctions seront\nautomatiquement activées si vous utilisez la version DirectX 11 du jeu, si la version du jeu\nest compatible et que la case ci-dessous est cochée.",
+    "message": "Ces options affectent les fonctionnalités en jeu de XIVLauncher qu'octroie Dalamud. Ces fonctionnalités seront automatiquement activés si vous utilisez la version DirectX 11 du jeu, que la version du jeu est compatible, et que la case ci-dessous est cochée.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
@@ -496,7 +500,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "Activer les fonctionnalités en jeu",
+    "message": "Activer Dalamud",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
@@ -537,6 +541,18 @@
   },
   "InGameAddonInjectionDelayDescriptionLoc": {
     "message": "Retarde l’injection de l'addon en jeu, ce qui permet de le cacher de, par exemple, OBS et Discord puisqu'ils seront injectés avant.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodLoc": {
+    "message": "Choisissez la méthode de chargement de Dalamud.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodEntryPointLoc": {
+    "message": "Nouvelle : améliore la compatibilité avec certains logiciels et plugins qui nécessitent d'être chargés plus tôt.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectLoc": {
+    "message": "Legacy : ancienne version du système d'injection Dalamud qui peut être plus stable.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
@@ -643,6 +659,10 @@
     "message": "Vous ne pouvez pas lancer plus de deux instances du jeu par défaut.\n\nVeuillez vérifier s'il y a une instance du jeu qui ne se serait pas fermée correctement.",
     "description": "Launcher.LaunchGame"
   },
+  "LoginGenericError": {
+    "message": "Impossible de se connecter à votre compte SE.\nVeuillez vérifier votre nom d'utilisateur et votre mot de passe.",
+    "description": "OauthLoginException.GetErrorMessage"
+  },
   "AdminCheck": {
     "message": "XIVLauncher et/ou FFXIV sont configurés pour se lancer en tant qu'administrateur.\nCela peut créer des problèmes, notamment des plugins ou des raccourcis clavier ne fonctionnant pas.\n\nVoulez-vous régler ce problème automatiquement ?",
     "description": "ProblemCheck.RunCheck"
@@ -659,13 +679,13 @@
     "message": "Une installation défectueuse de GShade a été détéctée.\n\nLe jeu ne peut pas démarrer. Voulez-vous que XIVLauncher corrige cela ? Vous devrez réinstaller GShade.",
     "description": "ProblemCheck.RunCheck"
   },
+  "PatchInstallerInstallFailed": {
+    "message": "L'installateur de mise à jour a rencontré une erreur.\nVeuillez signaler cette erreur.\n\nVous pouvez réessayer ou utilisez le lanceur officiel.",
+    "description": "PatchInstaller.RemoteCallHandler"
+  },
   "PatchInstallerNotOpen": {
     "message": "Impossible de se connecter à l'installateur de mise à jour.\nVeuillez rapporter cette erreur.",
     "description": "PatchInstaller.WaitOnHello"
-  },
-  "PatchInstallerInstallFailed": {
-    "message": "L'installateur de mise à jour a rencontré une erreur.\nVeuillez signaler cette erreur.\n\nVous pouvez réessayer ou utilisez le lanceur officiel.",
-    "description": "PatchInstaller.ServerOnReceivedRequest"
   },
   "PatchManNoInstaller": {
     "message": "L'installateur de mise à jour n'a pas pu démarrer correctement.\n\nSi vous lui avez refusé l'accès, veuillez réessayer. Si le problème persiste, contactez nous via Discord.",
@@ -673,22 +693,14 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher n'a pas pu vérifier les fichiers de jeu téléchargés.\n\nCela indique généralement un problème avec votre connexion Internet.\nSi cette erreur se reproduit, essayez d'utiliser un VPN configuré au Japon.\n\nContexte : {0}\n{1}",
-    "description": "<>c__DisplayClass33_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass38_0.<DownloadPatchAsync>b__1"
   },
-  "DalamudAntivirusHint": {
-    "message": "L'addon en jeu a rencontré une erreur.\n\nCeci est probablement causé par votre antivirus. Veuillez mettre en liste blanche les fichiers en quarantaine ou désactiver les fonctionnalités en jeu.",
+  "DalamudRunnerError": {
+    "message": "Impossible de lancer Dalamud avec succès. Cela peut être dû à votre antivirus.\nAfin d'éviter cela, veuillez ajouter une exception dans votre antivirus pour le dossier \"%AppData%\\XIVLauncher\\addons\".",
     "description": "DalamudLauncher.Run"
-  },
-  "DalamudDotNet48RedistError": {
-    "message": "L'addon en jeu de XIVLauncher nécessite .NET Framework 4.8 d'installé pour continuer.\nVeuillez les installer depuis la page d’accueil Microsoft.",
-    "description": "DalamudLauncher.CheckVcRedist"
   },
   "DalamudVc2019RedistError": {
     "message": "L'addon en jeu de XIVLauncher nécessite Microsoft Visual C++ 2015 redistributable d'installé pour continuer.\nVeuillez les installer depuis la page d’accueil Microsoft.",
-    "description": "DalamudLauncher.CheckVcRedist"
-  },
-  "DalamudVcRedistError": {
-    "message": "L'addon en jeu de XIVLauncher nécessite Microsoft Visual C++ 2015-2019 redistributable et .NET Framework 4.8 d'installés pour continuer. Veuillez les installer depuis la page d'accueil Microsoft.",
     "description": "DalamudLauncher.CheckVcRedist"
   }
 }
