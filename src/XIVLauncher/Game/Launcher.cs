@@ -520,7 +520,7 @@ namespace XIVLauncher.Game
             var langCode = language.GetLangCode();
             var formattedTime = GetLauncherFormattedTime();
 
-            return $"https://launcher.finalfantasyxiv.com/v550/index.html?rc_lang={langCode}&time={formattedTime}";
+            return $"https://launcher.finalfantasyxiv.com/v600/index.html?rc_lang={langCode}&time={formattedTime}";
         }
 
         private static string GetLauncherFormattedTime() => DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
