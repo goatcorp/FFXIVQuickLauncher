@@ -345,9 +345,6 @@ namespace XIVLauncher.Game
 
             request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
             request.Headers.AddWithoutValidation("User-Agent", "FFXIV PATCH CLIENT");
-            //client.Headers.AddWithoutValidation("Referer",
-            //    $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={loginResult.Region}");
-            //request.Headers.AddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
 
             request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion));
 
@@ -375,7 +372,7 @@ namespace XIVLauncher.Game
         private async Task<string> GetStored(bool isSteam, int region)
         {
             // This is needed to be able to access the login site correctly
-            var request = new HttpRequestMessage(HttpMethod.Get, $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
+            var request = new HttpRequestMessage(HttpMethod.Get, GetOauthTopUrl(region, isSteam));
             request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
             request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)));
             request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
@@ -400,14 +397,24 @@ namespace XIVLauncher.Game
             public int MaxExpansion { get; set; }
         }
 
+        private static string GetOauthTopUrl(int region, bool isSteam)
+        {
+            var url =
+                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&launchver=3";
+
+            if (isSteam)
+                url += "&issteam=1";
+
+            return url;
+        }
+
         private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isSteam, int region)
         {
             var request = new HttpRequestMessage(HttpMethod.Post,
                 "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
 
             request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-            request.Headers.AddWithoutValidation("Referer",
-                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&issteam=" + (isSteam ? "1" : "0"));
+            request.Headers.AddWithoutValidation("Referer", GetOauthTopUrl(region, isSteam));
             request.Headers.AddWithoutValidation("Accept-Language", App.Settings.AcceptLanguage);
             request.Headers.AddWithoutValidation("User-Agent", _userAgent);
             //request.Headers.AddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
@@ -423,7 +430,8 @@ namespace XIVLauncher.Game
                     { "_STORED_", await GetStored(isSteam, region) },
                     { "sqexid", userName },
                     { "password", password },
-                    { "otppw", otp }
+                    { "otppw", otp },
+                    // { "saveid", "1" } // NOTE(goat): This adds a Set-Cookie with a filled-out _rsid value in the login response.
                 });
 
             var response = await _client.SendAsync(request);
@@ -520,7 +528,7 @@ namespace XIVLauncher.Game
             var langCode = language.GetLangCode();
             var formattedTime = GetLauncherFormattedTime();
 
-            return $"https://launcher.finalfantasyxiv.com/v550/index.html?rc_lang={langCode}&time={formattedTime}";
+            return $"https://launcher.finalfantasyxiv.com/v600/index.html?rc_lang={langCode}&time={formattedTime}";
         }
 
         private static string GetLauncherFormattedTime() => DateTime.UtcNow.ToString("yyyy-MM-dd-HH");

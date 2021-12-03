@@ -2,5 +2,6 @@
 • Adds a new, more compatible startup method for Dalamud, enabled by default
    => This can be toggled in the settings, in case it causes issues
 • Clarifies "In-Game Addon" naming to "Dalamud" in interface text
+• Further expansion compatibility changes
 
 We wish all of you a lot of fun with the new expansion!
