@@ -65,6 +65,9 @@ namespace XIVLauncher.Windows
 
         public void SetVisible()
         {
+            if (IsClosed)
+                return;
+
             if (_progress == DalamudLoadingProgress.Unavailable)
             {
                 var t = new Timer(15000) {AutoReset = false};
@@ -82,6 +85,14 @@ namespace XIVLauncher.Windows
         private void DalamudLoadingOverlay_OnLoaded(object sender, RoutedEventArgs e)
         {
             HideFromWindowSwitcher.Hide(this);
+        }
+
+        public bool IsClosed { get; private set; }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            IsClosed = true;
         }
     }
 }
