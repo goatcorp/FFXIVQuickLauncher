@@ -207,6 +207,10 @@ namespace XIVLauncher.Windows
             App.Settings.PatchAcquisitionMethod ??=
                 EnvironmentSettings.IsWine ? AcquisitionMethod.NetDownloader : AcquisitionMethod.Aria;
 
+            // Set the default Dalamud launcher method
+            App.Settings.InGameAddonLoadMethod =
+                EnvironmentSettings.IsWine ? DalamudLoadMethod.DllInject : DalamudLoadMethod.EntryPoint;
+
             // Clean up invalid addons
             if (App.Settings.AddonList != null)
                 App.Settings.AddonList = App.Settings.AddonList.Where(x => !string.IsNullOrEmpty(x.Addon.Path)).ToList();
