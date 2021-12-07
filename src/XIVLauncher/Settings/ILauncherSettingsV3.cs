@@ -23,7 +23,7 @@ namespace XIVLauncher.Settings
         bool UniqueIdCacheEnabled { get; set; }
         string AdditionalLaunchArgs { get; set; }
         bool InGameAddonEnabled { get; set; }
-        DalamudLoadMethod InGameAddonLoadMethod { get; set; }
+        DalamudLoadMethod? InGameAddonLoadMethod { get; set; }
         bool OtpServerEnabled { get; set; }
         bool SteamIntegrationEnabled { get; set; }
         ClientLanguage? Language { get; set; }

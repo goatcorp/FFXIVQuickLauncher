@@ -206,6 +206,10 @@ namespace XIVLauncher.Windows
             // Set the default patch acquisition method
             App.Settings.PatchAcquisitionMethod ??=
                 EnvironmentSettings.IsWine ? AcquisitionMethod.NetDownloader : AcquisitionMethod.Aria;
+            // Set the default Dalamud injection method
+            App.Settings.InGameAddonLoadMethod ??= EnvironmentSettings.IsWine
+                ? DalamudLoadMethod.DllInject
+                : DalamudLoadMethod.EntryPoint;
 
             // Clean up invalid addons
             if (App.Settings.AddonList != null)

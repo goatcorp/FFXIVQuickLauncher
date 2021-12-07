@@ -467,7 +467,7 @@ namespace XIVLauncher.Windows.ViewModel
                         {
                             if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
                             {
-                                var launcher = new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod);
+                                var launcher = new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
                                 launcher.Setup(process, App.Settings);
                                 launcher.Run();
                             }
@@ -499,7 +499,7 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
                     {
-                        addons.Add(new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod));
+                        addons.Add(new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject)));
                     }
                     else
                     {
