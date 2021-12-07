@@ -399,8 +399,6 @@ namespace XIVLauncher.Game
 
                 PInvoke.ResumeThread(lpProcessInformation.hThread);
 
-                throw new Exception("poop detected");
-
                 // Ensure that the game main window is prepared
                 try
                 {
