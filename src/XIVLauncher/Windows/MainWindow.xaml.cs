@@ -270,8 +270,9 @@ namespace XIVLauncher.Windows
                 }
                 catch (Exception ex)
                 {
-                    new ErrorWindow(ex, Loc.Localize("CheckLoginInfo", "Additionally, please check your login information or try again."), "AutoLogin")
-                        .ShowDialog();
+                    ErrorWindow.Show(ex,
+                        Loc.Localize("CheckLoginInfo",
+                            "Additionally, please check your login information or try again."), "AutoLogin");
                     App.Settings.AutologinEnabled = false;
                 }
             }

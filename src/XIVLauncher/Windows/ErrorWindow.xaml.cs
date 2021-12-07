@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Media;
+using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
 using XIVLauncher.Settings;
@@ -13,7 +14,7 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class ErrorWindow : Window
     {
-        public ErrorWindow(Exception exc, string message, string context)
+        private ErrorWindow(Exception exc, string message, string context)
         {
             InitializeComponent();
 
@@ -63,6 +64,26 @@ namespace XIVLauncher.Windows
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
         {
             Process.Start($"{App.RepoUrl}/issues/new");
+        }
+
+        public static void Show(Exception exc, string message, string context)
+        {
+            var signal = new ManualResetEvent(false);
+
+            var newWindowThread = new Thread(() =>
+            {
+                var emb = new ErrorWindow(exc, message, context);
+                emb.Topmost = true;
+                emb.ShowDialog();
+
+                signal.Set();
+            });
+
+            newWindowThread.SetApartmentState(ApartmentState.STA);
+            newWindowThread.IsBackground = true;
+            newWindowThread.Start();
+
+            signal.WaitOne();
         }
     }
 }

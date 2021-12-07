@@ -120,8 +120,6 @@ namespace XIVLauncher.Dalamud
 
                 SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud);
 
-                Thread.Sleep(20000);
-
                 try
                 {
                     Download(currentVersionPath, settings);
@@ -210,7 +208,6 @@ namespace XIVLauncher.Dalamud
             {
                 files.First(x => x.Name == "Dalamud.Injector.exe").OpenRead().ReadAllBytes();
                 files.First(x => x.Name == "Dalamud.dll").OpenRead().ReadAllBytes();
-                files.First(x => x.Name == "CheapLoc.dll").OpenRead().ReadAllBytes();
                 files.First(x => x.Name == "ImGuiScene.dll").OpenRead().ReadAllBytes();
             }
             catch (Exception ex)

@@ -255,7 +255,8 @@ namespace XIVLauncher.Windows.ViewModel
 
                 if (startGame)
                 {
-                    StartGameAndAddon(loginResult, gateStatus, isSteam);
+                    Hide();
+                    Task.Run(() => StartGameAndAddon(loginResult, gateStatus, isSteam)).Wait();
                 }
                 else
                 {
@@ -268,16 +269,79 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
             }
+            catch (AggregateException ex)
+            {
+                //NOTE(goat): This HAS to handle all possible exceptions from StartGameAndAddon!!!!!
+                foreach (var aggregate in ex.Flatten().InnerExceptions)
+                {
+                    switch (aggregate)
+                    {
+                        case Win32Exception win32Exception:
+                            CustomMessageBox.Show(
+                                string.Format(
+                                    Loc.Localize("NativeLauncherError",
+                                        "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}"),
+                                    win32Exception.HResult.ToString("X")), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                            Log.Error(ex, $"NativeLauncher error; {win32Exception.HResult}: {win32Exception.Message}");
+                            Reactivate();
+                            break;
+                        case GameExitedException:
+                        {
+                            Log.Error("Game exited prematurely!");
+
+                            if (Process.GetProcessesByName("ffxiv_dx11").Length +
+                                Process.GetProcessesByName("ffxiv").Length >= 2)
+                            {
+                                CustomMessageBox.Show(
+                                    Loc.Localize("MultiboxDeniedWarning",
+                                        "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly."),
+                                    "XIVLauncher Error", image: MessageBoxImage.Error);
+                            }
+                            else
+                            {
+                                CustomMessageBox.Show(
+                                    Loc.Localize("GameExitedPrematurelyError",
+                                        "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid."),
+                                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+
+                            Reactivate();
+                            break;
+                        }
+                        case BinaryNotPresentException binaryNotPresentException:
+                        {
+                            CustomMessageBox.Show(
+                                Loc.Localize("BinaryNotPresentError",
+                                    "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game."),
+                                "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                            Log.Error("Game binary at {0} wasn't present.", binaryNotPresentException.Path);
+                            break;
+                        }
+                        default:
+                        {
+                            Log.Error(aggregate, "Unhandled AggregateException Inner during StartGameAndAddon...");
+
+                            ErrorWindow.Show(aggregate, Loc.Localize("GenericLoginError", "Error occured during login, please report this error."), "StartGameAndAddon");
+                            Environment.Exit(1);
+                            break;
+                        }
+                    }
+                }
+            }
             catch (OauthLoginException oauthLoginException)
             {
                 var failedOauthMessage = oauthLoginException.Message.Replace("\\r\\n", "\n").Replace("\r\n", "\n");
                 if (App.Settings.AutologinEnabled)
                 {
-                    failedOauthMessage += Loc.Localize("LoginNoOauthAutologinHint", "\n\nAuto-Login has been disabled.");
+                    failedOauthMessage +=
+                        Loc.Localize("LoginNoOauthAutologinHint", "\n\nAuto-Login has been disabled.");
                     App.Settings.AutologinEnabled = false;
                 }
 
-                CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Reactivate();
             }
@@ -285,7 +349,10 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 Log.Error(webException, "WebException during login!");
 
-                CustomMessageBox.Show(Loc.Localize("LoginWebExceptionContent", "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later."), Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(
+                    Loc.Localize("LoginWebExceptionContent",
+                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later."),
+                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
                 Reactivate();
             }
             catch (Exception ex)
@@ -305,7 +372,8 @@ namespace XIVLauncher.Windows.ViewModel
                     return;
                 }
 
-                new ErrorWindow(ex, "Please also check your login information or try again.", "Login").ShowDialog();
+                ErrorWindow.Show(ex, "Please also check your login information or try again.", "Login");
+                Reactivate();
             }
         }
 
@@ -419,8 +487,6 @@ namespace XIVLauncher.Windows.ViewModel
 
             CleanUp();
 
-            Hide();
-
             var addonMgr = new AddonManager();
 
             try
@@ -444,9 +510,9 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (Exception ex)
             {
-                new ErrorWindow(ex,
+                ErrorWindow.Show(ex,
                     "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-                    "Addons").ShowDialog();
+                    "Addons");
                 IsLoggingIn = false;
 
                 addonMgr.StopAddons();
@@ -608,7 +674,7 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (Exception ex)
             {
-                new ErrorWindow(ex, "Could not patch boot.", nameof(HandleBootCheck)).ShowDialog();
+                ErrorWindow.Show(ex, "Could not patch boot.", nameof(HandleBootCheck));
                 Environment.Exit(0);
 
                 return false;

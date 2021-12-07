@@ -139,143 +139,81 @@ namespace XIVLauncher.Game
             };
         }
 
-        public static Process LaunchGame(string sessionId, int region, int expansionLevel, bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments, DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
+        public static Process LaunchGame(string sessionId, int region, int expansionLevel,
+            bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
+            DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
             bool encryptArguments, Action<Process> beforeResume)
         {
-            Log.Information($"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
+            Log.Information(
+                $"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
 
-            try
-            {
-                if (isSteamIntegrationEnabled)
-                {
-                    try
-                    {
-                        SteamNative.Initialize();
-
-                        if (SteamApi.IsSteamRunning() && SteamApi.Initialize(STEAM_APP_ID))
-                            Log.Information("Steam initialized.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Could not initialize Steam.");
-                    }
-                }
-
-                var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
-                if (!isDx11)
-                    exePath = Path.Combine(gamePath.FullName, "game", "ffxiv.exe");
-
-                var environment = new Dictionary<string, string>();
-
-                var argumentBuilder = new ArgumentBuilder()
-                    .Append("DEV.DataPathType", "1")
-                    .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
-                    .Append("DEV.TestSID", sessionId)
-                    .Append("DEV.UseSqPack", "1")
-                    .Append("SYS.Region", region.ToString())
-                    .Append("language", ((int)language).ToString())
-                    .Append("ver", Repository.Ffxiv.GetVer(gamePath));
-
-                if (isSteamServiceAccount)
-                {
-                    // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
-                    environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
-                    argumentBuilder.Append("IsSteam", "1");
-                }
-
-                // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
-                if (!string.IsNullOrEmpty(additionalArguments))
-                {
-                    var regex = new Regex(@"\s*(?<key>[^=]+)\s*=\s*(?<value>[^\s]+)\s*", RegexOptions.Compiled);
-                    foreach (Match match in regex.Matches(additionalArguments))
-                        argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value);
-                }
-
-                if (!File.Exists(exePath))
-                {
-                    CustomMessageBox.Show(
-                        Loc.Localize("BinaryNotPresentError", "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    Log.Error("Game binary at {0} wasn't present.", exePath);
-
-                    return null;
-                }
-
-                var workingDir = Path.Combine(gamePath.FullName, "game");
-
-                Process game;
+            if (isSteamIntegrationEnabled)
                 try
                 {
-                    var arguments = encryptArguments
-                        ? argumentBuilder.BuildEncrypted()
-                        : argumentBuilder.Build();
-                    game = NativeAclFix.LaunchGame(workingDir, exePath, arguments, environment, beforeResume);
+                    SteamNative.Initialize();
+
+                    if (SteamApi.IsSteamRunning() && SteamApi.Initialize(STEAM_APP_ID))
+                        Log.Information("Steam initialized.");
                 }
-                catch (Win32Exception ex)
+                catch (Exception ex)
                 {
-                    CustomMessageBox.Show(
-                        string.Format(Loc.Localize("NativeLauncherError", "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}"), ex.HResult.ToString("X")), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    Log.Error(ex, $"NativeLauncher error; {ex.HResult}: {ex.Message}");
-
-                    return null;
+                    Log.Error(ex, "Could not initialize Steam.");
                 }
 
-                if (isSteamIntegrationEnabled)
-                {
-                    try
-                    {
-                        SteamApi.Uninitialize();
-                        SteamNative.Uninitialize();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Could not uninitialize Steam.");
-                    }
-                }
+            var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
+            if (!isDx11)
+                exePath = Path.Combine(gamePath.FullName, "game", "ffxiv.exe");
 
-                for (var tries = 0; tries < 30; tries++)
-                {
-                    game.Refresh();
+            var environment = new Dictionary<string, string>();
 
-                    // Something went wrong here, why even bother
-                    if (game.HasExited)
-                    {
-                        if (Process.GetProcessesByName("ffxiv_dx11").Length +
-                            Process.GetProcessesByName("ffxiv").Length >= 2)
-                        {
-                            CustomMessageBox.Show(
-                                Loc.Localize("MultiboxDeniedWarning",
-                                    "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly."),
-                                "XIVLauncher Error", image: MessageBoxImage.Error);
+            var argumentBuilder = new ArgumentBuilder()
+                .Append("DEV.DataPathType", "1")
+                .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
+                .Append("DEV.TestSID", sessionId)
+                .Append("DEV.UseSqPack", "1")
+                .Append("SYS.Region", region.ToString())
+                .Append("language", ((int)language).ToString())
+                .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
-                            return null;
-                        }
-                        else
-                        {
-                            throw new Exception("Game exited prematurely");
-                        }
-                    }
-
-                    // Is the main window open? Let's wait so any addons won't run into nothing
-                    if (game.MainWindowHandle == IntPtr.Zero)
-                    {
-                        Thread.Sleep(1000);
-                        continue;
-                    }
-
-                    break;
-                }
-
-                return game;
-            }
-            catch (Exception ex)
+            if (isSteamServiceAccount)
             {
-                new ErrorWindow(ex, "Your game path might not be correct. Please check in the settings.",
-                    "XG LaunchGame").ShowDialog();
+                // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
+                environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
+                argumentBuilder.Append("IsSteam", "1");
             }
 
-            return null;
+            // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
+            if (!string.IsNullOrEmpty(additionalArguments))
+            {
+                var regex = new Regex(@"\s*(?<key>[^=]+)\s*=\s*(?<value>[^\s]+)\s*", RegexOptions.Compiled);
+                foreach (Match match in regex.Matches(additionalArguments))
+                    argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value);
+            }
+
+            if (!File.Exists(exePath))
+                throw new BinaryNotPresentException(exePath);
+
+            var workingDir = Path.Combine(gamePath.FullName, "game");
+
+            var arguments = encryptArguments
+                ? argumentBuilder.BuildEncrypted()
+                : argumentBuilder.Build();
+            var game = NativeAclFix.LaunchGame(workingDir, exePath, arguments, environment, beforeResume);
+
+            if (isSteamIntegrationEnabled)
+            {
+                try
+                {
+                    SteamApi.Uninitialize();
+                    SteamNative.Uninitialize();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not uninitialize Steam.");
+                }
+            }
+
+            return game;
         }
 
         private static string GetVersionReport(DirectoryInfo gamePath, int exLevel)

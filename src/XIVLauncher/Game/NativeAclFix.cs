@@ -399,19 +399,30 @@ namespace XIVLauncher.Game
 
                 PInvoke.ResumeThread(lpProcessInformation.hThread);
 
+                throw new Exception("poop detected");
+
                 // Ensure that the game main window is prepared
-                do {
-                    process.WaitForInputIdle();
-                    Thread.Sleep(100);
-                } while (IntPtr.Zero == TryFindGameWindow(process));
+                try
+                {
+                    do {
+                        process.WaitForInputIdle();
+                    
+                    
+                        Thread.Sleep(100);
+                    } while (IntPtr.Zero == TryFindGameWindow(process)); 
+                }
+                catch (InvalidOperationException)
+                {
+                    throw new GameExitedException();
+                }
 
                 if (PInvoke.GetSecurityInfo(
-                    PInvoke.GetCurrentProcess(),
-                    PInvoke.SE_OBJECT_TYPE.SE_KERNEL_OBJECT,
-                    PInvoke.SECURITY_INFORMATION.DACL_SECURITY_INFORMATION,
-                    IntPtr.Zero, IntPtr.Zero,
-                    out var pACL,
-                    IntPtr.Zero, IntPtr.Zero) != 0)
+                        PInvoke.GetCurrentProcess(),
+                        PInvoke.SE_OBJECT_TYPE.SE_KERNEL_OBJECT,
+                        PInvoke.SECURITY_INFORMATION.DACL_SECURITY_INFORMATION,
+                        IntPtr.Zero, IntPtr.Zero,
+                        out var pACL,
+                        IntPtr.Zero, IntPtr.Zero) != 0)
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }

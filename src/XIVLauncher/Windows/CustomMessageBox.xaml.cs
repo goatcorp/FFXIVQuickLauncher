@@ -17,8 +17,6 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class CustomMessageBox : Window
     {
-        public static App InvokableApp { get; set; } 
-
         private CustomMessageBox()
         {
             InitializeComponent();
@@ -37,7 +35,7 @@ namespace XIVLauncher.Windows
         {
             var signal = new ManualResetEvent(false);
 
-            InvokableApp.Dispatcher.Invoke(() =>
+            var newWindowThread = new Thread(() =>
             {
                 var box = new CustomMessageBox { MessageTextBlock = { Text = text }, Title = caption };
 
@@ -94,10 +92,16 @@ namespace XIVLauncher.Windows
                     box.IntegrityReportButton.Visibility = Visibility.Visible;
                 }
 
+                box.Topmost = true;
+
                 box.ShowDialog();
 
                 signal.Set();
             });
+
+            newWindowThread.SetApartmentState(ApartmentState.STA);
+            newWindowThread.IsBackground = true;
+            newWindowThread.Start();
 
             signal.WaitOne();
         }

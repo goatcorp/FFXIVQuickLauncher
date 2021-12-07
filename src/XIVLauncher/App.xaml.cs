@@ -73,8 +73,6 @@ namespace XIVLauncher
             TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
 
-            CustomMessageBox.InvokableApp = this;
-
             try
             {
                 SetupSettings();
@@ -209,8 +207,7 @@ namespace XIVLauncher
                 Log.Error((Exception) e.ExceptionObject, "Unhandled exception.");
 
                 if (_useFullExceptionHandler)
-                    new ErrorWindow((Exception) e.ExceptionObject, "An unhandled exception occured.", "Unhandled")
-                        .ShowDialog();
+                    ErrorWindow.Show((Exception) e.ExceptionObject, "An unhandled exception occured.", "Unhandled");
                 else
                     MessageBox.Show(
                         "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
