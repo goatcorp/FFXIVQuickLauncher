@@ -1,7 +1,4 @@
-﻿• Fixes an issue wherein the "Waiting for maintenance" feature would not function correctly
-• Adds a new, more compatible startup method for Dalamud, enabled by default
-   => This can be toggled in the settings, in case it causes issues
-• Clarifies "In-Game Addon" naming to "Dalamud" in interface text
-• Further expansion compatibility changes
+﻿• Fixes an issue wherein, in certain cases, the launcher would not show correct error messages
+• Fixes an issue wherein, in certain cases, the in-game addon would take a long time to start
 
 We wish all of you a lot of fun with the new expansion!
