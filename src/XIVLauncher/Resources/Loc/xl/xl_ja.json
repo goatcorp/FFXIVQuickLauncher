@@ -172,7 +172,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and Dalamud will not work.",
+    "message": "DirectX9モードはもうサポートされていません。起動はしますが、技術的な問題についてSEからのサポートは受けられません。また、Rich PresenceやDalamudのようなXIVLauncherの追加機能も動作しません。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
@@ -492,7 +492,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "These options affect the XIVLauncher in-game features, provided by Dalamud. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.",
+    "message": "XIVLauncherのゲーム内での機能に関するオプション設定です。以下のチェックボックスにチェックが入っていて、互換性のあるバージョンのゲームをDirectX 11モードで起動している場合に有効化されます。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {

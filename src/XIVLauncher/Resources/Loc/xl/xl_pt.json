@@ -1,6 +1,6 @@
 {
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "message": "XIVLauncher não conseguiu procurar por atualizações. Isso pode ser causado por problemas de conectividade ao GitHub. Aguarde alguns minutos e tente novamente.\nDesative sua VPN, se você tiver uma.\nVocê pode ainda ter que adicionar o XIVLauncher à lista de exclusões do seu antivirus.\nSe continuar apresentando falha depois de alguns minutos, por favor verifique a FAQ.",
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
@@ -52,11 +52,11 @@
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
+    "message": "Dalamud ainda não foi atualizado para a sua versão atual do FFXIV.\nIsto é comum após patches, então, por favor, seja paciente ou peça uma atualização de status no Discord!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
+    "message": "Não foi possível contatar o servidor para obter a versão do Dalamud atualmente compatível com o FFXIV . Isto pode significar que sua instalação do .NET é muito antiga.\nPor favor, verifique o Discord para mais informações.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -136,7 +136,7 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "DalamudUpdate": {
-    "message": "Updating Dalamud...",
+    "message": "Atualizando Dalamud...",
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
@@ -172,7 +172,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and Dalamud will not work.",
+    "message": "O modo DirectX 9 não é mais suportado. O jogo ainda vai iniciar, mas você não obterá suporte da Square Enix para quaisquer problemas técnicos. \nQuaisquer funções adicionais do XIVLauncher como Rich Presence e o Dalamud não funcionarão.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
@@ -192,11 +192,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Do you want to enable Dalamud?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
+    "message": "Deseja ativar as funções o Dalamud?\nIsso adicionará algumas funcionalidades extras em seu jogo, tais como filtragem de chat e notificações do Discord para mensagens recebidas ou do Duty Finder.\n\nPara configurar estas opções, use o Menu de Configurações do XIVLauncher e navegue até a Dalamud. \nAtivar isso, contudo, pode causar um falso-positivo em seu antivírus.\nFavor verificar as configurações do seu antivírus e adicionar as exclusões necessárias se você tiver problemas.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Habilitar Dalamud",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -292,7 +292,7 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "Transmission in progress...",
+    "message": "Transmissão em andamento...",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "CheckBootVersionError": {
@@ -352,7 +352,7 @@
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later.",
+    "message": "XIVLauncher não pode estabelecer uma conexão com os servidores do jogo.\n\nIsto pode ser um problema temporário. Por favor, tente novamente mais tarde.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "OtpInputPrompt": {
@@ -492,7 +492,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "These options affect the XIVLauncher in-game features, provided by Dalamud. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.",
+    "message": "Estas opções afetam os recursos do XIVLauncher dentro do jogo fornecidos pelo Dalamud.\nEstes recursos serão automaticamente ativados se você estiver executando a versão do jogo em DirectX 11, se a versão do jogo for\ncompatível e se a caixa de seleção abaixo estiver marcada.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
@@ -500,7 +500,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Habilitar Dalamud",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
@@ -544,15 +544,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodLoc": {
-    "message": "Choose how to load Dalamud.",
+    "message": "Escolha como carregar Dalamud.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodEntryPointLoc": {
-    "message": "New: improves compatibility with certain other software and plugins that need to load early.",
+    "message": "Novo: melhora a compatibilidade com outros softwares e plugins que precisam carregar mais cedo.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodDllInjectLoc": {
-    "message": "Legacy: old version of the Dalamud injection system that may be more stable.",
+    "message": "Legado: versão antiga do sistema de injeção Dalamud que pode ser mais estável.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
@@ -660,7 +660,7 @@
     "description": "Launcher.LaunchGame"
   },
   "LoginGenericError": {
-    "message": "Could not log into your SE account.\nPlease check your username and password.",
+    "message": "Não foi possível entrar em sua conta SE.\nPor favor, verifique seu nome de usuário e senha.",
     "description": "OauthLoginException.GetErrorMessage"
   },
   "AdminCheck": {
@@ -696,7 +696,7 @@
     "description": "<>c__DisplayClass38_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
-    "message": "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+    "message": "Não foi possível iniciar Dalamud com sucesso. Isso pode ser causado pelo seu antivírus.\nPara evitar isso, por favor, adicione uma exceção para a pasta \"%AppData%\\XIVLauncher\\addons\".",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {
