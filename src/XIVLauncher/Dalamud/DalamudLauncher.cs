@@ -55,7 +55,7 @@ namespace XIVLauncher.Dalamud
         static extern bool SetDllDirectory(string lpPathName);
 
         [DllImport("Dalamud.Boot.dll")]
-        static extern int RewriteRemoteEntryPoint(IntPtr hProcess, [MarshalAs(UnmanagedType.LPWStr)] string gamePath, [MarshalAs(UnmanagedType.LPStr)] string loadInfoJson);
+        static extern int RewriteRemoteEntryPointW(IntPtr hProcess, [MarshalAs(UnmanagedType.LPWStr)] string gamePath, [MarshalAs(UnmanagedType.LPWStr)] string loadInfoJson);
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
@@ -128,7 +128,7 @@ namespace XIVLauncher.Dalamud
             if (_loadMethod == DalamudLoadMethod.EntryPoint)
             {
                 SetDllDirectory(DalamudUpdater.Runner.DirectoryName);
-                if (0 != RewriteRemoteEntryPoint(gameProcess.Handle, Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"), JsonConvert.SerializeObject(startInfo)))
+                if (0 != RewriteRemoteEntryPointW(gameProcess.Handle, Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"), JsonConvert.SerializeObject(startInfo)))
                 {
                     CustomMessageBox.Show(runnerErrorMessage,
                         "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
