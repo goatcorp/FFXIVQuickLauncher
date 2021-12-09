@@ -376,6 +376,9 @@ namespace XIVLauncher.Game
                     cb = Marshal.SizeOf<PInvoke.STARTUPINFO>()
                 };
 
+                var compatLayerPrev = Environment.GetEnvironmentVariable("__COMPAT_LAYER");
+                Environment.SetEnvironmentVariable("__COMPAT_LAYER", "RunAsInvoker");
+
                 if (!PInvoke.CreateProcess(
                     null,
                     exePath + " " + arguments,
@@ -390,6 +393,8 @@ namespace XIVLauncher.Game
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
+
+                Environment.SetEnvironmentVariable("__COMPAT_LAYER", compatLayerPrev);
 
                 DisableSeDebug(lpProcessInformation.hProcess);
 
