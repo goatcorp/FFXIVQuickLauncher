@@ -39,13 +39,13 @@
     "message": "另外，請檢查您的賬號密碼是否正確無誤並再試一次。",
     "description": "MainWindow.Initialize"
   },
-  "MaintenanceQueueBootPatch": {
-    "message": "檢測到啟動器更新。\n這通常代表遊戲也有更新。\n\n即將為您啟動遊戲。",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
   "NewsDlFailed": {
     "message": "無法獲取公告信息",
     "description": "MainWindow.<SetupHeadlines>b__11_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "檢測到啟動器更新。\n這通常代表遊戲也有更新。\n\n即將為您啟動遊戲。",
+    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "您希望使用 Steam 啟動遊戲嗎？",
@@ -343,12 +343,36 @@
     "message": "執行了更新檢查，並安裝了所有可用更新。",
     "description": "<LoginToGame>d__21.MoveNext"
   },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\n自動登入已被禁用。",
+  "NativeLauncherError": {
+    "message": "無法正確啟動遊戲。請向我們回報此錯誤。\n\nHRESULT: 0x{0}",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "您無法啟動兩個以上的遊戲程式。\n\n請檢查是否存在沒有正確關閉的遊戲進程。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GameExitedPrematurelyError": {
+    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "登入問題",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "BinaryNotPresentError": {
+    "message": "無法找到遊戲可執行檔。\n這可能是您的防毒軟體造成的。您可能需要重新安裝遊戲。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GenericLoginError": {
+    "message": "Error occured during login, please report this error.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n自動登入已被禁用。",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginWebExceptionContent": {
@@ -646,18 +670,6 @@
   "ResetUidCacheHint": {
     "message": "按住 Ctrl 鍵以重置 UID 快取！",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
-  },
-  "BinaryNotPresentError": {
-    "message": "無法找到遊戲可執行檔。\n這可能是您的防毒軟體造成的。您可能需要重新安裝遊戲。",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "無法正確啟動遊戲。請向我們回報此錯誤。\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
-  },
-  "MultiboxDeniedWarning": {
-    "message": "您無法啟動兩個以上的遊戲程式。\n\n請檢查是否存在沒有正確關閉的遊戲進程。",
-    "description": "Launcher.LaunchGame"
   },
   "LoginGenericError": {
     "message": "Could not log into your SE account.\nPlease check your username and password.",

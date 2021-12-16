@@ -39,13 +39,13 @@
     "message": "另外，请检查您的账号密码是否正确无误并再试一次。",
     "description": "MainWindow.Initialize"
   },
-  "MaintenanceQueueBootPatch": {
-    "message": "检测到启动器更新。\n这通常意味着游戏也有更新。\n\n即将为您登录。",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
   "NewsDlFailed": {
     "message": "无法获取公告信息。",
     "description": "MainWindow.<SetupHeadlines>b__11_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "检测到启动器更新。\n这通常意味着游戏也有更新。\n\n即将为您登录。",
+    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "您希望使用 Steam 启动游戏吗？",
@@ -343,12 +343,36 @@
     "message": "执行了更新检查并安装了任何待处理的更新。",
     "description": "<LoginToGame>d__21.MoveNext"
   },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\n自动登录已被禁用。",
+  "NativeLauncherError": {
+    "message": "无法正确启动游戏。请向我们报告此错误。\n\nHRESULT: 0x{0}",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "您无法启动两个以上的游戏程序。\n\n请检查是否存在没有正确关闭的游戏进程。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GameExitedPrematurelyError": {
+    "message": "XIVLauncher 无法确认游戏是否正常启动。\n\n这可能是一个暂时的问题。请尝试重启您的电脑。也有可能是因为您的游戏安装无效。",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "登录问题",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "BinaryNotPresentError": {
+    "message": "无法找到游戏本体程序。\n这可能是您的杀毒软件造成的。您可能需要重装游戏。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GenericLoginError": {
+    "message": "登录时发生错误，请报告此错误。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "服务器发送了无效的响应。这通常会发生在服务器负载过高或服务中断的时候。\n请在一分钟后再试，或者尝试使用官方启动器。\n\n您可以从 Lodestone 了解到更多有关服务中断的信息。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n自动登录已被禁用。",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginWebExceptionContent": {
@@ -646,18 +670,6 @@
   "ResetUidCacheHint": {
     "message": "按住 Ctrl 键以重置 UID 缓存！",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
-  },
-  "BinaryNotPresentError": {
-    "message": "无法找到游戏本体程序。\n这可能是您的杀毒软件造成的。您可能需要重装游戏。",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "无法正确启动游戏。请向我们报告此错误。\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
-  },
-  "MultiboxDeniedWarning": {
-    "message": "您无法启动两个以上的游戏程序。\n\n请检查是否存在没有正确关闭的游戏进程。",
-    "description": "Launcher.LaunchGame"
   },
   "LoginGenericError": {
     "message": "无法登录到您的 SE 帐户。\n请检查您的用户名和密码。",

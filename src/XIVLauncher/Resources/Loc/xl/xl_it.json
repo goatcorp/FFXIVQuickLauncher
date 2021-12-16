@@ -39,13 +39,13 @@
     "message": "Inoltre, controlla le credenziali o riprova.",
     "description": "MainWindow.Initialize"
   },
-  "MaintenanceQueueBootPatch": {
-    "message": "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
   "NewsDlFailed": {
     "message": "Impossibile scaricare i dati sulle news.",
     "description": "MainWindow.<SetupHeadlines>b__11_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
+    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "Avviare come utente steam?",
@@ -343,12 +343,36 @@
     "message": "An update check was executed and any pending updates were installed.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\nIl login automatico è stato disabilitato.",
+  "NativeLauncherError": {
+    "message": "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GameExitedPrematurelyError": {
+    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "Problemi di accesso",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "BinaryNotPresentError": {
+    "message": "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GenericLoginError": {
+    "message": "Error occured during login, please report this error.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nIl login automatico è stato disabilitato.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginWebExceptionContent": {
@@ -646,18 +670,6 @@
   "ResetUidCacheHint": {
     "message": "Hold the control key to reset UID cache!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
-  },
-  "BinaryNotPresentError": {
-    "message": "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game.",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
-  },
-  "MultiboxDeniedWarning": {
-    "message": "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly.",
-    "description": "Launcher.LaunchGame"
   },
   "LoginGenericError": {
     "message": "Could not log into your SE account.\nPlease check your username and password.",

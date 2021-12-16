@@ -39,24 +39,24 @@
     "message": "Además, por favor revisa tu información de acceso o inténtalo otra vez.",
     "description": "MainWindow.Initialize"
   },
-  "MaintenanceQueueBootPatch": {
-    "message": "Se detectó un parche para el launcher de FFXIV.\nEsto suele significar que también hay un parche para el juego.\n\nAhora iniciarás sesión.",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
   "NewsDlFailed": {
     "message": "No se han podido descargar las noticias.",
     "description": "MainWindow.<SetupHeadlines>b__11_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "Se detectó un parche para el launcher de FFXIV.\nEsto suele significar que también hay un parche para el juego.\n\nAhora iniciarás sesión.",
+    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "¿Iniciar como usuario de Steam?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud aún no ha sido actualizado para tu versión de FFXIV actual.\nÉsto es común después de parches, así que por favor, sé paciente o pide información en nuestro Discord.",
+    "message": "Dalamud aún no ha sido actualizado para tu versión de FFXIV actual.\nEsto es común después de parches, así que por favor, sé paciente o pide información en nuestro Discord!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "No se ha podido contactar con el servidor para obtener la versión actual de Dalamud compatible con FFXIV. Ésto podría significar que tu instalación de .NET es demasiado antigua. Obtén más información en nuestro Discord.",
+    "message": "No se ha podido contactar con el servidor para obtener la versión actual de Dalamud compatible con FFXIV. Esto podría significar que tu instalación de .NET es demasiado antigua. Obtén más información en nuestro Discord.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -192,7 +192,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "¿Quieres habilitar Dalamud?\nÉsto añadirá algunas funciones extra al juego, como un filtro de RMT en el chat y notificaciones de Discord para mensajes de chat o avisos del Duty Finder.\n\nPara configurar estos ajustes, por favor utiliza el menú de ajustes de XIVLauncher y pasa a la pestaña \"Dalamud\".\nSin embargo, habilitar ésto podría causar un falso positivo en tu antivirus, así que comprueba sus ajustes y añade las exclusiones necesarias si te topas con algún problema.",
+    "message": "¿Quieres habilitar Dalamud?\nEsto añadirá algunas funciones extra al juego, como un filtro de RMT en el chat y notificaciones de Discord para mensajes de chat o avisos del Duty Finder.\n\nPara configurar estos ajustes, por favor utiliza el menú de ajustes de XIVLauncher y pasa a la pestaña \"Dalamud\".\nSin embargo, habilitar esto podría causar un falso positivo en tu antivirus, así que comprueba sus ajustes y añade las exclusiones necesarias si te topas con algún problema.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -343,12 +343,36 @@
     "message": "Se ha ejecutado una comprobación de actualizaciones y se han instalado las actualizaciones pendientes.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\nSe ha desactivado el inicio de sesión automático.",
+  "NativeLauncherError": {
+    "message": "No se pudo iniciar el juego correctamente. Por favor reporta este error.\n\nHRESULT: 0x{0}",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "No puedes lanzar más de dos instancias del juego por defecto.\n\nPor favor comprueba si hay una instancia del juego que no se cerró correctamente.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GameExitedPrematurelyError": {
+    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "Problema al iniciar sesión",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "BinaryNotPresentError": {
+    "message": "No se pudo encontrar el ejecutable del juego.\nEsto puede ser causado por tu antivirus. Es posible que tengas que reinstalar el juego.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GenericLoginError": {
+    "message": "Error occured during login, please report this error.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nSe ha desactivado el inicio de sesión automático.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginWebExceptionContent": {
@@ -647,18 +671,6 @@
     "message": "¡Mantén pulsada la tecla control para restablecer la caché UID!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
-  "BinaryNotPresentError": {
-    "message": "No se pudo encontrar el ejecutable del juego.\nEsto puede ser causado por tu antivirus. Es posible que tengas que reinstalar el juego.",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "No se pudo iniciar el juego correctamente. Por favor reporta este error.\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
-  },
-  "MultiboxDeniedWarning": {
-    "message": "No puedes lanzar más de dos instancias del juego por defecto.\n\nPor favor comprueba si hay una instancia del juego que no se cerró correctamente.",
-    "description": "Launcher.LaunchGame"
-  },
   "LoginGenericError": {
     "message": "No se ha podido iniciar sesión en tu cuenta de SE.\nPor favor, comprueba tu nombre de usuario y contraseña.",
     "description": "OauthLoginException.GetErrorMessage"
@@ -696,7 +708,7 @@
     "description": "<>c__DisplayClass38_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
-    "message": "No se ha podido iniciar Dalamud correctamente. Ésto podría ser causado por tu antivirus.\nPara evitar esto, por favor añade una excepción para la carpeta \"%AppData%\\XIVLauncher\\addons\".",
+    "message": "No se ha podido iniciar Dalamud correctamente. Esto podría ser causado por tu antivirus.\nPara evitar esto, por favor añade una excepción para la carpeta \"%AppData%\\XIVLauncher\\addons\".",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {

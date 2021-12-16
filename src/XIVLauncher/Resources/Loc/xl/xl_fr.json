@@ -39,13 +39,13 @@
     "message": "De plus, veuillez vérifier vos identifiants ou réessayer.",
     "description": "MainWindow.Initialize"
   },
-  "MaintenanceQueueBootPatch": {
-    "message": "Une mise à jour du lanceur de FFXIV a été détectée.\nCela signifie généralement qu'il y a également une mise à jour du jeu.\n\nVous allez maintenant être identifié.",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
   "NewsDlFailed": {
     "message": "Le téléchargement des dernières nouvelles à échoué.",
     "description": "MainWindow.<SetupHeadlines>b__11_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "Une mise à jour du lanceur de FFXIV a été détectée.\nCela signifie généralement qu'il y a également une mise à jour du jeu.\n\nVous allez maintenant être identifié.",
+    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "Démarrer en tant qu'utilisateur Steam ?",
@@ -343,12 +343,36 @@
     "message": "Une vérification de mise à jour a été exécutée et toutes les mises à jour en attente ont été installées.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\nConnexion automatique désactivée.",
+  "NativeLauncherError": {
+    "message": "Impossible de démarrer le jeu, veuillez signaler cette erreur.\n\nHRESULT : 0x{0}",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "Vous ne pouvez pas lancer plus de deux instances du jeu par défaut.\n\nVeuillez vérifier s'il y a une instance du jeu qui ne se serait pas fermée correctement.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GameExitedPrematurelyError": {
+    "message": "XIVLauncher n’a pas pu détecter le lancement du jeu.\n\nIl peut s'agir d'un problème temporaire. Essayez de redémarrer votre PC. Il est possible que votre installation du jeu ne soit pas valide.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "Problème de connexion",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "BinaryNotPresentError": {
+    "message": "Impossible de trouver le jeu.\nCela pourrait être dû à votre antivirus. Vous devrez peut-être réinstaller le jeu.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GenericLoginError": {
+    "message": "Une erreur s'est produite lors de la connexion, veuillez la signaler.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "Le serveur a envoyé une réponse invalide. Ceci arrive pendant les pannes ou lorsque les serveurs sont surchargés.\nVeuillez patienter une minute et essayer à nouveau, ou essayez d'utiliser le lanceur officiel.\n\nVous pouvez en savoir plus sur les pannes sur Lodestone.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nConnexion automatique désactivée.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginWebExceptionContent": {
@@ -646,18 +670,6 @@
   "ResetUidCacheHint": {
     "message": "Maintenez la touche contrôle pour réinitialiser le cache UID !",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
-  },
-  "BinaryNotPresentError": {
-    "message": "Impossible de trouver le jeu.\nCela pourrait être dû à votre antivirus. Vous devrez peut-être réinstaller le jeu.",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "Impossible de démarrer le jeu, veuillez signaler cette erreur.\n\nHRESULT : 0x{0}",
-    "description": "Launcher.LaunchGame"
-  },
-  "MultiboxDeniedWarning": {
-    "message": "Vous ne pouvez pas lancer plus de deux instances du jeu par défaut.\n\nVeuillez vérifier s'il y a une instance du jeu qui ne se serait pas fermée correctement.",
-    "description": "Launcher.LaunchGame"
   },
   "LoginGenericError": {
     "message": "Impossible de se connecter à votre compte SE.\nVeuillez vérifier votre nom d'utilisateur et votre mot de passe.",
