@@ -39,13 +39,13 @@
     "message": "ログイン情報をご確認の上、再度お試し下さい。",
     "description": "MainWindow.Initialize"
   },
-  "MaintenanceQueueBootPatch": {
-    "message": "FFXIVランチャーのパッチが検出されました。\nこれは通常、ゲームにパッチがあることを意味します。\n\nこれでログインします。",
-    "description": "MainWindow.OnMaintenanceQueueTimerEvent"
-  },
   "NewsDlFailed": {
     "message": "最新ニュースを取得できませんでした。",
     "description": "MainWindow.<SetupHeadlines>b__11_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "FFXIVランチャーのパッチが検出されました。\nこれは通常、ゲームにパッチがあることを意味します。\n\nこれでログインします。",
+    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "Steamのユーザーで起動しますか?",
@@ -343,12 +343,36 @@
     "message": "更新チェックが実行され、保留中のアップデートがインストールされました。",
     "description": "<LoginToGame>d__21.MoveNext"
   },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\n自動ログインは無効になっています。",
+  "NativeLauncherError": {
+    "message": "ゲームを正しく開始できませんでした。エラーを報告してください。\n\nHRESULT: 0x{0}",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "MultiboxDeniedWarning": {
+    "message": "デフォルトでは2つ以上のゲームインスタンスを起動することはできません。\n\n正しく終了できていないゲームのインスタンスがないかを確認してください。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GameExitedPrematurelyError": {
+    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
     "message": "ログインの問題",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "BinaryNotPresentError": {
+    "message": "ゲームの実行ファイルが見つかりませんでした。\nこれはウイルスソフトが原因な可能性があります。ゲームを再インストールする必要があるかもしれません。",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "GenericLoginError": {
+    "message": "Error occured during login, please report this error.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "description": "<LoginToGame>d__21.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\n自動ログインは無効になっています。",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginWebExceptionContent": {
@@ -646,18 +670,6 @@
   "ResetUidCacheHint": {
     "message": "UIDキャッシュをリセットする場合はControlキーを押しっぱなしにしてください！",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
-  },
-  "BinaryNotPresentError": {
-    "message": "ゲームの実行ファイルが見つかりませんでした。\nこれはウイルスソフトが原因な可能性があります。ゲームを再インストールする必要があるかもしれません。",
-    "description": "Launcher.LaunchGame"
-  },
-  "NativeLauncherError": {
-    "message": "ゲームを正しく開始できませんでした。エラーを報告してください。\n\nHRESULT: 0x{0}",
-    "description": "Launcher.LaunchGame"
-  },
-  "MultiboxDeniedWarning": {
-    "message": "デフォルトでは2つ以上のゲームインスタンスを起動することはできません。\n\n正しく終了できていないゲームのインスタンスがないかを確認してください。",
-    "description": "Launcher.LaunchGame"
   },
   "LoginGenericError": {
     "message": "Could not log into your SE account.\nPlease check your username and password.",
