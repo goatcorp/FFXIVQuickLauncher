@@ -294,7 +294,7 @@ namespace XIVLauncher.Game
                 return (null, LoginState.NeedsPatchBoot, null);
 
             if (!resp.Headers.TryGetValues("X-Patch-Unique-Id", out var uidVals))
-                throw new Exception("Could not validate game version.");
+                throw new InvalidResponseException("Could not get X-Patch-Unique-Id.");
 
             var uid = uidVals.First();
 
@@ -323,7 +323,12 @@ namespace XIVLauncher.Game
             var text = await reply.Content.ReadAsStringAsync();
 
             var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
-            return regex.Matches(text)[0].Groups["stored"].Value;
+            var matches = regex.Matches(text);
+
+            if (matches.Count == 0)
+                throw new InvalidResponseException("Could not get STORED.");
+
+            return matches[0].Groups["stored"].Value;
         }
 
         public class OauthLoginResult

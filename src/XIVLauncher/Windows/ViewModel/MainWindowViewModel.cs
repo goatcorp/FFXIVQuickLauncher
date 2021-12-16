@@ -281,7 +281,8 @@ namespace XIVLauncher.Windows.ViewModel
                                 string.Format(
                                     Loc.Localize("NativeLauncherError",
                                         "Could not start the game correctly. Please report this error.\n\nHRESULT: 0x{0}"),
-                                    win32Exception.HResult.ToString("X")), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    win32Exception.HResult.ToString("X")), "XIVLauncher Error", MessageBoxButton.OK,
+                                MessageBoxImage.Error);
 
                             Log.Error(ex, $"NativeLauncher error; {win32Exception.HResult}: {win32Exception.Message}");
                             Reactivate();
@@ -303,7 +304,8 @@ namespace XIVLauncher.Windows.ViewModel
                                 CustomMessageBox.Show(
                                     Loc.Localize("GameExitedPrematurelyError",
                                         "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid."),
-                                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+                                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
                             }
 
                             Reactivate();
@@ -323,12 +325,23 @@ namespace XIVLauncher.Windows.ViewModel
                         {
                             Log.Error(aggregate, "Unhandled AggregateException Inner during StartGameAndAddon...");
 
-                            ErrorWindow.Show(aggregate, Loc.Localize("GenericLoginError", "Error occured during login, please report this error."), "StartGameAndAddon");
+                            ErrorWindow.Show(aggregate,
+                                Loc.Localize("GenericLoginError",
+                                    "Error occured during login, please report this error."), "StartGameAndAddon");
                             Environment.Exit(1);
                             break;
                         }
                     }
                 }
+            }
+            catch (InvalidResponseException ex)
+            {
+                Log.Error(ex, "Received invalid server response");
+                
+                CustomMessageBox.Show(Loc.Localize("LoginGenericServerIssue", "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."), Loc.Localize("LoginNoOauthTitle", "Login issue"),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Reactivate();
             }
             catch (OauthLoginException oauthLoginException)
             {
