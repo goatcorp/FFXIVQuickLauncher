@@ -1,3 +1,3 @@
-﻿• Fixes an issue wherein, in certain cases, the game would not start correctly
+﻿• Fixes an issue wherein, during login server outages, XIVLauncher would show a cryptic error message
 
 We wish all of you a lot of fun with the new expansion!
