@@ -381,7 +381,7 @@ namespace XIVLauncher.Game
                     Environment.SetEnvironmentVariable("DALAMUD_IS_STAGING", "true");
 
                 var compatLayerPrev = Environment.GetEnvironmentVariable("__COMPAT_LAYER");
-                Environment.SetEnvironmentVariable("__COMPAT_LAYER", "RunAsInvoker");
+                Environment.SetEnvironmentVariable("__COMPAT_LAYER", "RunAsInvoker HighDPIAware");
 
                 if (!PInvoke.CreateProcess(
                     null,
@@ -413,10 +413,10 @@ namespace XIVLauncher.Game
                 {
                     do {
                         process.WaitForInputIdle();
-                    
-                    
+
+
                         Thread.Sleep(100);
-                    } while (IntPtr.Zero == TryFindGameWindow(process)); 
+                    } while (IntPtr.Zero == TryFindGameWindow(process));
                 }
                 catch (InvalidOperationException)
                 {
