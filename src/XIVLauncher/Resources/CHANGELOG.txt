@@ -1,3 +1,5 @@
-﻿• Fixes an issue wherein, during login server outages, XIVLauncher would show a cryptic error message
+﻿• Fixes an issue wherein the game would not respect custom DPI settings
+• Fixes an issue wherein, if the user's PC was running for a long time, the game would fail to decrypt settings
+• Fixes an issue wherein, if the in-game addon's configuration file was unreadable, the game would not start
 
 We wish all of you a lot of fun with the new expansion!
