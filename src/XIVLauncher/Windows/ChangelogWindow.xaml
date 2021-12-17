@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d"
-    Title="XIVLauncher Update" Height="Auto" MaxWidth="640" WindowStartupLocation="CenterScreen"
+    Title="XIVLauncher Update" Height="Auto" MaxWidth="800" WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
@@ -23,14 +23,14 @@
 
             <StackPanel
                 Orientation="Horizontal">
-                <TextBlock Margin="10" MaxWidth="550" Height="Auto" x:Name="ChangeLogText"></TextBlock>
+                <TextBlock Margin="10" MaxWidth="650" Height="Auto" x:Name="ChangeLogText" TextWrapping="Wrap"></TextBlock>
 
                 <materialDesign:PackIcon Kind="Globe" HorizontalAlignment="Stretch" Foreground="DodgerBlue"
                                          VerticalAlignment="Stretch" Width="30" Height="30" Margin="10,0,20,0" />
             </StackPanel>
         </StackPanel>
 
-        <TextBlock Margin="10 20 10 20" MaxWidth="640" Height="Auto" Text="{Binding ChangelogThanksLoc}" TextWrapping="Wrap"></TextBlock>
+        <TextBlock Margin="10 20 10 20" MaxWidth="800" Height="Auto" Text="{Binding ChangelogThanksLoc}" TextWrapping="Wrap"></TextBlock>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
                     VerticalAlignment="Bottom" Margin="0 15 10 10">
