@@ -1,6 +1,6 @@
 {
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "message": "XIVLauncher ha fallito a cercare nuovi aggiornamenti. Questo potrebbe essere causato da problemi di connessione a GitHub. Attendi un paio di minuti e riprova.\nDisabilita il tuo VPN, se ne hai uno. Dovresti anche escludere XIVLauncher dalla lista del tuo antivirus.\nSe continuasse a fallire dopo diversi minuti, si prega di unirsi al server Discord disponibile su GitHub per supporto.",
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
@@ -16,7 +16,7 @@
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUnavailable": {
-    "message": "Plugins are currently unavailable\ndue to a game update.",
+    "message": "I plugin non sono attualmente disponibili\na causa di un aggiornamento del gioco.",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "GamePathEmptyError": {
@@ -24,7 +24,7 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
-    "message": "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead.",
+    "message": "Non selezionare la cartella \"game\" o \"boot\" della propria installazione di FFXIV e scegliere la cartella che li contiene.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
@@ -44,7 +44,7 @@
     "description": "MainWindow.<SetupHeadlines>b__11_3"
   },
   "MaintenanceQueueBootPatch": {
-    "message": "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
+    "message": "È stata rilevata una patch per il launcher FFXIV.\nQuesto di solito significa che c'è una patch anche per il gioco.\n\nOra sarai loggato.",
     "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
   },
   "LaunchAsSteam": {
@@ -352,7 +352,7 @@
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "GameExitedPrematurelyError": {
-    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "XIVLauncher non ha rilevato l'avvio corretto del gioco.\n\nQuesto può essere un problema temporaneo. Prova a riavviare il PC. È possibile che la tua installazione del gioco non sia valida.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
@@ -364,11 +364,11 @@
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "GenericLoginError": {
-    "message": "Error occured during login, please report this error.",
+    "message": "Errore durante il login, si prega di segnalare questo errore.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginGenericServerIssue": {
-    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "message": "Il server ha inviato una risposta non valida. È noto che si verifica durante dei blackout o quando i server sono sotto carico pesante.\nAttendere un minuto e riprovare, o provare a utilizzare il launcher ufficiale.\n\nÈ possibile saperne di più sulle interruzioni sul Lodestone.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthAutologinHint": {

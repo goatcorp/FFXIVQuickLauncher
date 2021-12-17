@@ -352,7 +352,7 @@
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "GameExitedPrematurelyError": {
-    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "XIVLauncher no pudo detectar que el juego se iniciara correctamente.\n\nEste puede ser un problema temporal. Por favor, intenta reiniciar tu PC. Es posible que la instalación del juego no sea válida.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthTitle": {
@@ -364,11 +364,11 @@
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "GenericLoginError": {
-    "message": "Error occured during login, please report this error.",
+    "message": "Se ha producido un error durante el inicio de sesión, por favor reporta este error.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginGenericServerIssue": {
-    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "message": "El servidor ha enviado una respuesta inválida. Esto se sabe que ocurre durante cortes o cuando los servidores están bajo carga pesada.\nPor favor, espera un minuto y vuelve a intentarlo, o intenta usar el lanzador oficial.\n\nPuedes aprender más sobre los cortes en la Lodestone.",
     "description": "<LoginToGame>d__21.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
