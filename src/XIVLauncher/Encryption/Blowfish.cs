@@ -298,7 +298,7 @@ namespace XIVLauncher.Encryption
             {
                 var n = 0u;
                 for (var j = 0; j < 4 && enumerator.MoveNext(); j++)
-                    n = (n << 8) | enumerator.Current;
+                    n =  (uint) ((n << 8) | (sbyte)enumerator.Current); // NOTE(goat): THIS IS A BUG! SE's implementation wrongly uses signed numbers for this, so we need to as well.
                 yield return (i, n);
             }
         }
