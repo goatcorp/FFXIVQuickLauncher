@@ -15,7 +15,9 @@ namespace XIVLauncher.Settings
 
         public static DalamudSettings GetSettings()
         {
-            return File.Exists(ConfigPath) ? JsonConvert.DeserializeObject<DalamudSettings>(File.ReadAllText(ConfigPath)) : new DalamudSettings();
+            var deserialized = File.Exists(ConfigPath) ? JsonConvert.DeserializeObject<DalamudSettings>(File.ReadAllText(ConfigPath)) : new DalamudSettings();
+            deserialized ??= new DalamudSettings(); // In case the .json is corrupted
+            return deserialized;
         }
     }
 }
