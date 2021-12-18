@@ -1,5 +1,5 @@
-﻿• Fixes an issue wherein the game would not respect custom DPI settings
-• Fixes an issue wherein, if the user's PC was running for a long time, the game would fail to decrypt settings
-• Fixes an issue wherein, if the in-game addon's configuration file was unreadable, the game would not start
+﻿• Adds an option to the Settings => Game tab that allows you to configure whether or not XIVLauncher will start the game with DPI awareness enabled
+    => If the scaling of your game seems off, please try toggling this option
+    => If you have auto-login enabled, you can reach the settings by holding shift when clicking the XIVLauncher shortcut
 
 We wish all of you a lot of fun with the new expansion!
