@@ -74,6 +74,10 @@ namespace XIVLauncher.Windows.ViewModel
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
             OtpServerCheckBoxLoc = Loc.Localize("OtpServerCheckBox", "Enable XL Authenticator app/OTP macro support");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
+            ChooseDpiAwarenessLoc = Loc.Localize("ChooseDpiAwareness", "Game DPI Awareness");
+            DpiAwarenessAwareLoc = Loc.Localize("DpiAwarenessAware", "Aware");
+            DpiAwarenessUnawareLoc = Loc.Localize("DpiAwarenessUnaware", "Unaware");
+            ChooseDpiAwarenessHintLoc = Loc.Localize("ChooseDpiAwarenessHint", "If game scaling appears wrong when using XIVLauncher, please attempt changing this setting.");
             RunIntegrityCheckLoc = Loc.Localize("RunIntegrityCheck", "Run integrity check");
             RunIntegrityCheckTooltipLoc =
                 Loc.Localize("RunIntegrityCheckTooltip", "Run integrity check on game files.");
@@ -164,6 +168,10 @@ namespace XIVLauncher.Windows.ViewModel
         public string SteamCheckBoxLoc { get; private set; }
         public string OtpServerCheckBoxLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
+        public string ChooseDpiAwarenessLoc { get; private set; }
+        public string ChooseDpiAwarenessHintLoc { get; private set; }
+        public string DpiAwarenessAwareLoc { get; private set; }
+        public string DpiAwarenessUnawareLoc { get; private set; }
         public string RunIntegrityCheckLoc { get; private set; }
         public string RunIntegrityCheckTooltipLoc { get; private set; }
 

@@ -381,7 +381,15 @@ namespace XIVLauncher.Game
                     Environment.SetEnvironmentVariable("DALAMUD_IS_STAGING", "true");
 
                 var compatLayerPrev = Environment.GetEnvironmentVariable("__COMPAT_LAYER");
-                Environment.SetEnvironmentVariable("__COMPAT_LAYER", "RunAsInvoker HighDPIAware");
+
+                var compat = "RunAsInvoker ";
+                compat += App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware) switch
+                {
+                    DpiAwareness.Aware => "HighDPIAware",
+                    DpiAwareness.Unaware => "DPIUnaware",
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                Environment.SetEnvironmentVariable("__COMPAT_LAYER", compat);
 
                 if (!PInvoke.CreateProcess(
                     null,

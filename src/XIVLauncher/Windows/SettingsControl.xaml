@@ -26,11 +26,17 @@
                 <StackPanel Margin="10,10,0,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding GamePathLoc}" />
-                    <components:FolderEntry
-                                            Text="{Binding GamePath, UpdateSourceTrigger=PropertyChanged}"
-                                            Description="Select a folder" Width="500" VerticalAlignment="Center"
-                                            HorizontalAlignment="Left" TextChanged="GamePathEntry_OnTextChanged"
-                                            Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
+                    <StackPanel Orientation="Horizontal">
+                        <components:FolderEntry
+                            Text="{Binding GamePath, UpdateSourceTrigger=PropertyChanged}"
+                            Description="Select a folder" Width="500" VerticalAlignment="Center"
+                            HorizontalAlignment="Left" TextChanged="GamePathEntry_OnTextChanged"
+                            Foreground="{DynamicResource MaterialDesignBody}" Margin="0,5,0,0" />
+                        <Button HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick"
+                                IsEnabled="{Binding IsRunIntegrityCheckPossible}"
+                                ToolTip="{Binding RunIntegrityCheckTooltipLoc}" Margin="10,5,0,0"
+                                Content="{Binding RunIntegrityCheckLoc}" />
+                    </StackPanel>
 
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="Red" Text="{Binding GamePathSafeguardLoc}" x:Name="GamePathSafeguardText" Visibility="Collapsed"/>
@@ -43,10 +49,16 @@
                     <TextBox Width="500" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
                              Margin="0,10,0,0" x:Name="LaunchArgsTextBox" materialDesign:HintAssist.Hint="{Binding AdditionalArgumentsLoc}" materialDesign:HintAssist.IsFloating="True"/>
-                    <Button HorizontalAlignment="Left" Click="RunIntegrityCheck_OnClick"
-                            IsEnabled="{Binding IsRunIntegrityCheckPossible}"
-                            ToolTip="{Binding RunIntegrityCheckTooltipLoc}" Margin="10,20,0,0"
-                            Content="{Binding RunIntegrityCheckLoc}" />
+
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 20, 0, 0"
+                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseDpiAwarenessLoc}" />
+                    <ComboBox SelectedIndex="1" Margin="0, 5, 0, 0" Width="500" x:Name="DpiAwarenessComboBox"
+                              HorizontalAlignment="Left"  Foreground="{DynamicResource MaterialDesignBody}">
+                        <ComboBoxItem Content="{Binding DpiAwarenessAwareLoc}"/>
+                        <ComboBoxItem Content="{Binding DpiAwarenessUnawareLoc}"/>
+                    </ComboBox>
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 10, 0, 0"
+                               Foreground="DarkGray" Text="{Binding ChooseDpiAwarenessHintLoc}" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="{Binding SettingsGameSettingsLoc}">

@@ -92,6 +92,8 @@ namespace XIVLauncher.Windows
 
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
+            DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
+
             VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
 
             var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
@@ -134,6 +136,8 @@ namespace XIVLauncher.Windows
             App.Settings.OptOutMbCollection = MbUploadOptOutCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
+
+            App.Settings.DpiAwareness = (DpiAwareness) DpiAwarenessComboBox.SelectedIndex;
 
             SettingsDismissed?.Invoke(this, null);
 
