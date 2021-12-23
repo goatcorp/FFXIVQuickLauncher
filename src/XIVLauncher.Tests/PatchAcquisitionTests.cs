@@ -78,7 +78,7 @@ namespace XIVLauncher.Tests
                 Debug.WriteLine($"[{acquisition.GetType().FullName}] recv: {progress.Progress} - speed: {Util.BytesToString(progress.BytesPerSecondSpeed)}");
             };
 
-            await acquisition.StartDownloadAsync(testPatch, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));
+            await acquisition.StartDownloadAsync(testPatch.Url, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));
 
             completeSignal.WaitOne();
         }
