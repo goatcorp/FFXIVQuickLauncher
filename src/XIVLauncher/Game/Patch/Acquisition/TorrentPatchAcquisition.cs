@@ -58,10 +58,11 @@ namespace XIVLauncher.Game.Patch.Acquisition
             return true;
         }
 
-        public override async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
+        public override async Task StartDownloadAsync(string url, FileInfo outFile)
         {
             throw new NotImplementedException("WIP");
 
+            /*
             if (_torrentBytes == null)
             {
                 if (!IsApplicable(patch))
@@ -93,6 +94,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
             await _torrentManager.StartAsync();
             await _torrentManager.DhtAnnounceAsync();
+            */
         }
 
         public override async Task CancelAsync()

@@ -44,9 +44,12 @@ namespace XIVLauncher.Game.Patch
 
         private readonly CancellationTokenSource _cancelTokenSource = new();
 
+        private readonly Repository _repo;
         private readonly DirectoryInfo _gamePath;
         private readonly DirectoryInfo _patchStore;
         private readonly PatchInstaller _installer;
+        private readonly Launcher _launcher;
+        private readonly string _sid;
 
         public readonly IReadOnlyList<PatchDownload> Downloads;
 
@@ -75,13 +78,16 @@ namespace XIVLauncher.Game.Patch
 
         public long AllDownloadsLength => GetDownloadLength();
 
-        public PatchManager(IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer)
+        public PatchManager(Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, Launcher launcher, string sid)
         {
             Debug.Assert(patches != null, "patches != null ASSERTION FAILED");
 
+            _repo = repo;
             _gamePath = gamePath;
             _patchStore = patchStore;
             _installer = installer;
+            _launcher = launcher;
+            _sid = sid;
 
             if (!_patchStore.Exists)
                 _patchStore.Create();
@@ -187,7 +193,13 @@ namespace XIVLauncher.Game.Patch
         {
             var outFile = GetPatchFile(download.Patch);
 
-            Log.Information("Downloading patch {0} at {1} to {2}", download.Patch.VersionId, download.Patch.Url, outFile.FullName);
+            var realUrl = download.Patch.Url;
+            if (_repo != Repository.Boot)
+            {
+                realUrl = await _launcher.GenPatchToken(download.Patch.Url, _sid);
+            }
+
+            Log.Information("Downloading patch {0} at {1} to {2}", download.Patch.VersionId, realUrl, outFile.FullName);
 
             Actives[index] = download;
 
@@ -286,7 +298,7 @@ namespace XIVLauncher.Game.Patch
 
             DownloadServices[index] = acquisition;
 
-            await acquisition.StartDownloadAsync(download.Patch, outFile);
+            await acquisition.StartDownloadAsync(realUrl, outFile);
         }
 
         public void CancelAllDownloads()

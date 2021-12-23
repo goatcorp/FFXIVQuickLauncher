@@ -7,7 +7,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
 {
     public abstract class PatchAcquisition
     {
-        public abstract Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile);
+        public abstract Task StartDownloadAsync(string url, FileInfo outFile);
         public abstract Task CancelAsync();
 
         public event EventHandler<AcquisitionProgress> ProgressChanged;

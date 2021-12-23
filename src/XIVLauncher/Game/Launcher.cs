@@ -307,6 +307,23 @@ namespace XIVLauncher.Game
             return (uid, LoginState.NeedsPatchGame, pendingPatches);
         }
 
+        public async Task<string> GenPatchToken(string patchUrl, string uniqueId)
+        {
+            // Yes, Square does use HTTP for this and sends tokens in headers. IT'S NOT MY FAULT.
+            var request = new HttpRequestMessage(HttpMethod.Post, "http://patch-gamever.ffxiv.com/gen_token");
+
+            request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
+            request.Headers.AddWithoutValidation("X-Patch-Unique-Id", uniqueId);
+            request.Headers.AddWithoutValidation("User-Agent", "FFXIV PATCH CLIENT");
+
+            request.Content = new StringContent(patchUrl);
+
+            var resp = await _client.SendAsync(request);
+            resp.EnsureSuccessStatusCode();
+
+            return await resp.Content.ReadAsStringAsync();
+        }
+
         private async Task<string> GetStored(bool isSteam, int region)
         {
             // This is needed to be able to access the login site correctly

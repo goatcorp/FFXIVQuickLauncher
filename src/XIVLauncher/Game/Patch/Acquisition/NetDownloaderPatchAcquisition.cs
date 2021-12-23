@@ -44,7 +44,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             this._downloadOpt.TempDirectory = DownloadTempPath;
         }
 
-        public override async Task StartDownloadAsync(PatchListEntry patch, FileInfo outFile)
+        public override async Task StartDownloadAsync(string url, FileInfo outFile)
         {
             _dlService = new DownloadService(_downloadOpt);
 
@@ -61,7 +61,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             {
                 if (args.Error != null)
                 {
-                    Log.Error(args.Error, "[WEB] Download failed for {0} with reason {1}", patch.VersionId, args.Error);
+                    Log.Error(args.Error, "[WEB] Download failed for {0} with reason {1}", url, args.Error);
 
                     // If we cancel downloads, we don't want to see an error message
                     if (args.Error is OperationCanceledException)
@@ -76,7 +76,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
                 if (args.Cancelled)
                 {
-                    Log.Error("[WEB] Download cancelled for {0} with reason {1}", patch.VersionId, args.Error);
+                    Log.Error("[WEB] Download cancelled for {0} with reason {1}", url, args.Error);
 
                     /*
                     Cancellation should not produce an error message, since it is always triggered by another error or the user.
@@ -87,8 +87,8 @@ namespace XIVLauncher.Game.Patch.Acquisition
 
                 OnComplete(AcquisitionResult.Success);
             };
-            
-            await _dlService.DownloadFileTaskAsync(patch.Url, outFile.FullName);
+
+            await _dlService.DownloadFileTaskAsync(url, outFile.FullName);
         }
 
         public override async Task CancelAsync()

@@ -410,7 +410,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
 
-                var patcher = new PatchManager(loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer);
+                var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer, _launcher, loginResult.UniqueId);
 
                 IsEnabled = false;
                 Hide();
@@ -653,8 +653,8 @@ namespace XIVLauncher.Windows.ViewModel
                         return false;
                     }
 
-                    var patcher = new PatchManager(bootPatches, App.Settings.GamePath,
-                        App.Settings.PatchPath, _installer);
+                    var patcher = new PatchManager(Repository.Boot, bootPatches, App.Settings.GamePath,
+                        App.Settings.PatchPath, _installer, null, null);
 
                     IsEnabled = false;
 
