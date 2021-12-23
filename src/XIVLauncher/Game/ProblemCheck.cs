@@ -64,6 +64,10 @@ namespace XIVLauncher.Game
                 Environment.Exit(-1);
             }
 
+            if (!CheckMyGamesWriteAccess())
+            {
+                CustomMessageBox.Show(Loc.Localize("MyGamesWriteAccessNag", "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nPlease update your My Games folder permissions."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
 
             if (App.Settings.GamePath == null)
                 return;
@@ -111,6 +115,26 @@ namespace XIVLauncher.Game
                     }
                 }
             }
+        }
+
+        private static bool CheckMyGamesWriteAccess()
+        {
+            // Create a randomly-named file in the game's user data folder and make sure we don't
+            // get a permissions error.
+            var myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var tempFile = Path.Combine(myDocuments, "my games", "FINAL FANTASY XIV - A Realm Reborn", Guid.NewGuid().ToString());
+            try
+            {
+                var file = File.Create(tempFile);
+                file.Dispose();
+                File.Delete(tempFile);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool CheckSymlinkValid(FileInfo file)
