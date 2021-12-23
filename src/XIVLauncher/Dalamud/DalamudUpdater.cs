@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Documents;
 using Newtonsoft.Json;
 using NuGet;
 using Serilog;
 using XIVLauncher.Cache;
-using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 
@@ -209,10 +204,34 @@ namespace XIVLauncher.Dalamud
                 files.First(x => x.Name == "Dalamud.Injector.exe").OpenRead().ReadAllBytes();
                 files.First(x => x.Name == "Dalamud.dll").OpenRead().ReadAllBytes();
                 files.First(x => x.Name == "ImGuiScene.dll").OpenRead().ReadAllBytes();
+
+                var hashesPath = Path.Combine(addonPath.FullName, "hashes.json");
+                if (!File.Exists(hashesPath))
+                {
+                    Log.Error("[DUPDATE] No hashes.json");
+                    return false;
+                }
+
+                var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(hashesPath));
+                foreach (var hash in hashes)
+                {
+                    var file = Path.Combine(addonPath.FullName, hash.Key);
+                    using var fileStream = File.OpenRead(file);
+                    using var md5 = MD5.Create();
+
+                    var hashed = BitConverter.ToString(md5.ComputeHash(fileStream)).ToUpperInvariant().Replace("-", string.Empty);
+                    if (hashed != hash.Value)
+                    {
+                        Log.Error("[DUPDATE] Integrity check failed for {0} ({1} - {2})", file, hash.Value, hashed);
+                        return false;
+                    }
+
+                    Log.Verbose("[DUPDATE] Integrity check OK for {0} ({1})", file, hashed);
+                }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[DUPDATE] No dalamud integrity.");
+                Log.Error(ex, "[DUPDATE] No dalamud integrity");
                 return false;
             }
 
