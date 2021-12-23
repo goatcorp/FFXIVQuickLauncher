@@ -138,9 +138,20 @@ namespace XIVLauncher.Dalamud
             if (_loadMethod == DalamudLoadMethod.EntryPoint)
             {
                 SetDllDirectory(DalamudUpdater.Runner.DirectoryName);
-                if (0 != RewriteRemoteEntryPointW(gameProcess.Handle, Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"), JsonConvert.SerializeObject(startInfo)))
+                try
                 {
-                    CustomMessageBox.Show(runnerErrorMessage,
+                    if (0 != RewriteRemoteEntryPointW(gameProcess.Handle,
+                            Path.Combine(_gamePath.FullName, "game", gameProcess.ProcessName + ".exe"),
+                            JsonConvert.SerializeObject(startInfo)))
+                    {
+                        CustomMessageBox.Show(runnerErrorMessage,
+                            "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                }
+                catch (DllNotFoundException)
+                {
+                    CustomMessageBox.Show(Loc.Localize("AntivirusDeletedBoot", "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again."),
                         "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
