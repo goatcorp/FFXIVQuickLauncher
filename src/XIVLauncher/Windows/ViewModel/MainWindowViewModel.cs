@@ -337,7 +337,7 @@ namespace XIVLauncher.Windows.ViewModel
             catch (InvalidResponseException ex)
             {
                 Log.Error(ex, "Received invalid server response");
-                
+
                 CustomMessageBox.Show(Loc.Localize("LoginGenericServerIssue", "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."), Loc.Localize("LoginNoOauthTitle", "Login issue"),
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
@@ -470,23 +470,28 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
-            // We won't do any sanity checks here anymore, since that should be handled in StartLogin
+            var dalamudLauncher = new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
+            var inGameAddonOk = false;
+            if (App.Settings.InGameAddonEnabled)
+            {
+                inGameAddonOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
+            }
 
+            // We won't do any sanity checks here anymore, since that should be handled in StartLogin
             var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
                     isSteam, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false),
                     process => {
                         if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.EntryPoint)
                         {
-                            if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
+                            if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11 && inGameAddonOk)
                             {
-                                var launcher = new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
-                                launcher.Setup(process, App.Settings);
-                                launcher.Run();
+                                dalamudLauncher.Setup(process, App.Settings);
+                                dalamudLauncher.Run();
                             }
                             else
                             {
-                                Log.Warning("In-Game addon was not enabled (tried to load as entry point)");
+                                Log.Warning("In-Game addon was not enabled or failed to ensure (tried to load as entry point)");
                             }
                         }
                     });
@@ -510,13 +515,13 @@ namespace XIVLauncher.Windows.ViewModel
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
                 if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
                 {
-                    if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11)
+                    if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11 && inGameAddonOk)
                     {
-                        addons.Add(new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject)));
+                        addons.Add(dalamudLauncher);
                     }
                     else
                     {
-                        Log.Warning("In-Game addon was not enabled (tried to load via DLL injection)");
+                        Log.Warning("In-Game addon was not enabled or failed to ensure (tried to load via DLL injection)");
                     }
                 }
                 addonMgr.RunAddons(gameProcess, App.Settings, addons);

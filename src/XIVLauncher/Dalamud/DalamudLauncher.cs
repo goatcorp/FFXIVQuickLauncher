@@ -57,9 +57,58 @@ namespace XIVLauncher.Dalamud
         [DllImport("Dalamud.Boot.dll")]
         static extern int RewriteRemoteEntryPointW(IntPtr hProcess, [MarshalAs(UnmanagedType.LPWStr)] string gamePath, [MarshalAs(UnmanagedType.LPWStr)] string loadInfoJson);
 
+        public bool HoldForUpdate(DirectoryInfo gamePath)
+        {
+            Log.Information("[HOOKS] DalamudLauncher::HoldForUpdate(gp:{0})", gamePath.FullName);
+
+            var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
+                "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
+
+            if (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
+                DalamudUpdater.ShowOverlay();
+
+            while (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
+            {
+                if (DalamudUpdater.State == DalamudUpdater.DownloadState.Failed)
+                {
+                    DalamudUpdater.CloseOverlay();
+                    return false;
+                }
+
+                if (DalamudUpdater.State == DalamudUpdater.DownloadState.NoIntegrity)
+                {
+                    DalamudUpdater.CloseOverlay();
+
+                    CustomMessageBox.Show(runnerErrorMessage,
+                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+
+                Thread.Yield();
+            }
+
+            if (!DalamudUpdater.Runner.Exists)
+            {
+                CustomMessageBox.Show(runnerErrorMessage,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            if (!ReCheckVersion(gamePath))
+            {
+                DalamudUpdater.SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Unavailable);
+                DalamudUpdater.ShowOverlay();
+                Log.Error("[HOOKS] ReCheckVersion fail.");
+
+                return false;
+            }
+
+            return true;
+        }
+
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
-            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, d:{2}", gamePath.FullName, language);
+            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2}", gamePath.FullName, language, gameProcess.Id);
 
             if (!CheckVcRedist())
                 return;
@@ -70,47 +119,8 @@ namespace XIVLauncher.Dalamud
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
 
-            if (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
-                DalamudUpdater.ShowOverlay();
-
             var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
                 "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
-
-            while (DalamudUpdater.State != DalamudUpdater.DownloadState.Done)
-            {
-                if (DalamudUpdater.State == DalamudUpdater.DownloadState.Failed)
-                {
-                    DalamudUpdater.CloseOverlay();
-                    return;
-                }
-
-                if (DalamudUpdater.State == DalamudUpdater.DownloadState.NoIntegrity)
-                {
-                    DalamudUpdater.CloseOverlay();
-
-                    CustomMessageBox.Show(runnerErrorMessage,
-                        "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                Thread.Yield();
-            }
-
-            if (!DalamudUpdater.Runner.Exists)
-            {
-                CustomMessageBox.Show(runnerErrorMessage,
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (!ReCheckVersion(gamePath))
-            {
-                DalamudUpdater.SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Unavailable);
-                DalamudUpdater.ShowOverlay();
-                Log.Error("[HOOKS] ReCheckVersion fail.");
-
-                return;
-            }
 
             var startInfo = new DalamudStartInfo
             {

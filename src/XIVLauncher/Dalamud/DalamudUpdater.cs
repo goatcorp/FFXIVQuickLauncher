@@ -180,7 +180,7 @@ namespace XIVLauncher.Dalamud
 
             if (!IsIntegrity(currentVersionPath))
             {
-                Log.Error("[DUPDATE] Integrity check failed.");
+                Log.Error("[DUPDATE] Integrity check failed after ensurement.");
 
                 State = DownloadState.NoIntegrity;
                 return;
