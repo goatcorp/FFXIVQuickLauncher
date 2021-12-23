@@ -1,5 +1,3 @@
-﻿• Adds an option to the Settings => Game tab that allows you to configure whether or not XIVLauncher will start the game with DPI awareness enabled
-    => If the scaling of your game seems off, please try toggling this option
-    => If you have auto-login enabled, you can reach the settings by holding shift when clicking the XIVLauncher shortcut
+﻿• Various bugfixes
 
 We wish all of you a lot of fun with the new expansion!
