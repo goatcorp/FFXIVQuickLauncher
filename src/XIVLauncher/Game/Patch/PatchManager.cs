@@ -194,7 +194,7 @@ namespace XIVLauncher.Game.Patch
             var outFile = GetPatchFile(download.Patch);
 
             var realUrl = download.Patch.Url;
-            if (_repo != Repository.Boot)
+            if (_repo != Repository.Boot && false) // Disabled for now, waiting on SE to patch this
             {
                 realUrl = await _launcher.GenPatchToken(download.Patch.Url, _sid);
             }

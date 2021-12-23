@@ -1,3 +1,4 @@
-﻿• Various bugfixes
+﻿• Various bugfixes regarding the in-game addon not starting correctly
+• Better error messages
 
 We wish all of you a lot of fun with the new expansion!
