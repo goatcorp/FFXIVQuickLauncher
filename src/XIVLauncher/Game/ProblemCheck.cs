@@ -133,6 +133,10 @@ namespace XIVLauncher.Game
             {
                 return false;
             }
+            catch (Exception)
+            {
+                return true;
+            }
 
             return true;
         }
