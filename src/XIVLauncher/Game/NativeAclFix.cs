@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
+using Serilog;
 using XIVLauncher.Settings;
 
 namespace XIVLauncher.Game
@@ -322,7 +323,7 @@ namespace XIVLauncher.Game
 
         public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars, Action<Process> beforeResume)
         {
-            Process process;
+            Process process = null;
 
             var userName = Environment.UserName;
 
@@ -392,16 +393,16 @@ namespace XIVLauncher.Game
                 Environment.SetEnvironmentVariable("__COMPAT_LAYER", compat);
 
                 if (!PInvoke.CreateProcess(
-                    null,
-                    exePath + " " + arguments,
-                    ref lpProcessAttributes,
-                    IntPtr.Zero,
-                    false,
-                    PInvoke.CREATE_SUSPENDED,
-                    IntPtr.Zero,
-                    workingDir,
-                    ref lpStartupInfo,
-                    out lpProcessInformation))
+                        null,
+                        exePath + " " + arguments,
+                        ref lpProcessAttributes,
+                        IntPtr.Zero,
+                        false,
+                        PInvoke.CREATE_SUSPENDED,
+                        IntPtr.Zero,
+                        workingDir,
+                        ref lpStartupInfo,
+                        out lpProcessInformation))
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
@@ -419,7 +420,8 @@ namespace XIVLauncher.Game
                 // Ensure that the game main window is prepared
                 try
                 {
-                    do {
+                    do
+                    {
                         process.WaitForInputIdle();
 
 
@@ -443,13 +445,29 @@ namespace XIVLauncher.Game
                 }
 
                 if (PInvoke.SetSecurityInfo(
-                    lpProcessInformation.hProcess,
-                    PInvoke.SE_OBJECT_TYPE.SE_KERNEL_OBJECT,
-                    PInvoke.SECURITY_INFORMATION.DACL_SECURITY_INFORMATION | PInvoke.SECURITY_INFORMATION.UNPROTECTED_DACL_SECURITY_INFORMATION,
-                    IntPtr.Zero, IntPtr.Zero, pACL, IntPtr.Zero) != 0)
+                        lpProcessInformation.hProcess,
+                        PInvoke.SE_OBJECT_TYPE.SE_KERNEL_OBJECT,
+                        PInvoke.SECURITY_INFORMATION.DACL_SECURITY_INFORMATION |
+                        PInvoke.SECURITY_INFORMATION.UNPROTECTED_DACL_SECURITY_INFORMATION,
+                        IntPtr.Zero, IntPtr.Zero, pACL, IntPtr.Zero) != 0)
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "[NativeAclFix] Uncaught error during initialization, trying to kill process");
+
+                try
+                {
+                    process?.Kill();
+                }
+                catch (Exception killEx)
+                {
+                    Log.Error(killEx, "[NativeAclFix] Could not kill process");
+                }
+
+                throw;
             }
             finally
             {
