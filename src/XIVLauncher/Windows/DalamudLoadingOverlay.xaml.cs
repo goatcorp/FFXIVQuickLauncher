@@ -43,7 +43,7 @@ namespace XIVLauncher.Windows
             switch (progress)
             {
                 case DalamudLoadingProgress.Dalamud:
-                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateDalamud", "Updating Dalamud...");
+                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateDalamud", "Updating core...");
                     break;
                 case DalamudLoadingProgress.Assets:
                     ProgressTextBlock.Text = Loc.Localize("DalamudUpdateAssets", "Updating assets...");
