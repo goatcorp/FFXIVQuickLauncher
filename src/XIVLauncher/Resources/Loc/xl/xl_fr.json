@@ -459,6 +459,22 @@
     "message": "Paramètres de lancement additionnels",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ChooseDpiAwareness": {
+    "message": "Prise en charge des PPP (pixels par pouce) en jeu",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessAware": {
+    "message": "Avec",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessUnaware": {
+    "message": "Sans",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDpiAwarenessHint": {
+    "message": "Si la mise à l'échelle du jeu apparaît incorrecte lors de l'utilisation de XIVLauncher, veuillez essayer de modifier ce paramètre.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "RunIntegrityCheck": {
     "message": "Lancer un contrôle d'intégrité",
     "description": "SettingsControlViewModel.SetupLoc"

@@ -459,6 +459,22 @@
     "message": "Zusätzliche Parameter",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ChooseDpiAwareness": {
+    "message": "DPI-Scaling",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessAware": {
+    "message": "Aktiviert",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessUnaware": {
+    "message": "Deaktiviert",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDpiAwarenessHint": {
+    "message": "Wenn dir die Skalierung des Spiels bei der Verwendung von XIVLauncher falsch erscheint, versuchen bitte, diese Einstellung zu ändern.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "RunIntegrityCheck": {
     "message": "Integritätscheck",
     "description": "SettingsControlViewModel.SetupLoc"
