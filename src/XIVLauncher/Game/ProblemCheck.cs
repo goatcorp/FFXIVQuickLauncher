@@ -66,7 +66,7 @@ namespace XIVLauncher.Game
 
             if (!CheckMyGamesWriteAccess())
             {
-                CustomMessageBox.Show(Loc.Localize("MyGamesWriteAccessNag", "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nPlease update your My Games folder permissions."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                CustomMessageBox.Show(Loc.Localize("MyGamesWriteAccessNag", "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
             if (App.Settings.GamePath == null)
@@ -132,6 +132,10 @@ namespace XIVLauncher.Game
             catch (UnauthorizedAccessException)
             {
                 return false;
+            }
+            catch (Exception)
+            {
+                return true;
             }
 
             return true;
