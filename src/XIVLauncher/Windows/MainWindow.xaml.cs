@@ -131,7 +131,9 @@ namespace XIVLauncher.Windows
             Title += " - Debugging";
 #endif
 
-            if (EnvironmentSettings.IsWine)
+            if (EnvironmentSettings.IsMac)
+                Title += " - Wine on Mac";
+            else if (EnvironmentSettings.IsLinux)
                 Title += " - Wine on Linux";
         }
 

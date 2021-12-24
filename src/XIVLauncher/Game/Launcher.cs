@@ -36,9 +36,14 @@ namespace XIVLauncher.Game
             _client = new HttpClient(handler);
         }
 
+        // Authenticate as Mac if wine is detected in order to replicate native launcher behaviour
+        private static readonly bool MacAuth = EnvironmentSettings.FoundWineExports;
+
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
         private const string USER_AGENT_TEMPLATE = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
+        private const string USER_AGENT_MAC = "macSQEXAuthor/2.0.0(MacOSX; ja-jp)";
         private readonly string _userAgent = GenerateUserAgent();
+        private readonly string _userAgentPatch = MacAuth ? "FFXIV-MAC PATCH CLIENT" : "FFXIV PATCH CLIENT";
 
         private const int STEAM_APP_ID = 39210;
 
@@ -262,7 +267,7 @@ namespace XIVLauncher.Game
                 $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath)}/?time=" +
                 GetLauncherFormattedTimeLong());
 
-            request.Headers.AddWithoutValidation("User-Agent", "FFXIV PATCH CLIENT");
+            request.Headers.AddWithoutValidation("User-Agent", _userAgentPatch);
             request.Headers.AddWithoutValidation("Host", "patch-bootver.ffxiv.com");
 
             var resp = await _client.SendAsync(request);
@@ -282,7 +287,8 @@ namespace XIVLauncher.Game
                 $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{Repository.Ffxiv.GetVer(gamePath)}/{loginResult.SessionId}");
 
             request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
-            request.Headers.AddWithoutValidation("User-Agent", "FFXIV PATCH CLIENT");
+
+            request.Headers.AddWithoutValidation("User-Agent", _userAgentPatch);
 
             request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion));
 
@@ -292,11 +298,12 @@ namespace XIVLauncher.Game
             // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
             if (resp.StatusCode == HttpStatusCode.Conflict)
                 return (null, LoginState.NeedsPatchBoot, null);
+            IEnumerable<string> uidVals2 = null;
+            if (!resp.Headers.TryGetValues("X-Patch-Unique-Id", out var uidVals1))
+                if (!resp.Headers.TryGetValues("x-patch-unique-id", out uidVals2))
+                    throw new InvalidResponseException("Could not get X-Patch-Unique-Id.");
 
-            if (!resp.Headers.TryGetValues("X-Patch-Unique-Id", out var uidVals))
-                throw new InvalidResponseException("Could not get X-Patch-Unique-Id.");
-
-            var uid = uidVals.First();
+            var uid = (uidVals1 ?? Enumerable.Empty<string>()).Concat(uidVals2 ?? Enumerable.Empty<string>()).First();
 
             if (string.IsNullOrEmpty(text))
                 return (uid, LoginState.Ok, null);
@@ -497,7 +504,7 @@ namespace XIVLauncher.Game
 
         private static string GenerateUserAgent()
         {
-            return string.Format(USER_AGENT_TEMPLATE, MakeComputerId());
+            return MacAuth ? USER_AGENT_MAC : string.Format(USER_AGENT_TEMPLATE, MakeComputerId());
         }
     }
 }
