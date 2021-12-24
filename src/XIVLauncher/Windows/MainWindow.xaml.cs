@@ -191,6 +191,8 @@ namespace XIVLauncher.Windows
             }
         }
 
+        private const int CURRENT_VERSION_LEVEL = 1;
+
         public void Initialize()
         {
 #if DEBUG
@@ -219,6 +221,40 @@ namespace XIVLauncher.Windows
             App.Settings.AskBeforePatchInstall ??= true;
 
             App.Settings.DpiAwareness ??= DpiAwareness.Unaware;
+
+            var versionLevel = App.Settings.VersionUpgradeLevel.GetValueOrDefault(0);
+            while (versionLevel < CURRENT_VERSION_LEVEL)
+            {
+                switch (versionLevel)
+                {
+                    case 0:
+                        // Check for RTSS & Special K injectors
+                        try
+                        {
+                            var hasRtss = Process.GetProcesses().Any(x =>
+                                x.ProcessName.ToLowerInvariant().Contains("rtss") ||
+                                x.ProcessName.ToLowerInvariant().Contains("skifsvc64"));
+
+                            if (hasRtss)
+                            {
+                                App.Settings.DalamudInjectionDelayMs = 4000;
+                                Log.Information("RTSS/SpecialK detected, setting delay");
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            Log.Error(ex, "Could not check for RTSS/SpecialK");
+                        }
+
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                versionLevel++;
+            }
+
+            App.Settings.VersionUpgradeLevel = versionLevel;
 
             var gateStatus = false;
             try

@@ -42,6 +42,7 @@ namespace XIVLauncher.Settings
         bool? HasShownAutoLaunchDisclaimer { get; set; }
         string AcceptLanguage { get; set; }
         DpiAwareness? DpiAwareness { get; set; }
+        int? VersionUpgradeLevel { get; set; }
 
         #endregion
     }
