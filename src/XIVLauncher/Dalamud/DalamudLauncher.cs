@@ -108,7 +108,7 @@ namespace XIVLauncher.Dalamud
 
         private void Run(DirectoryInfo gamePath, ClientLanguage language, Process gameProcess)
         {
-            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2}", gamePath.FullName, language, gameProcess.Id);
+            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2})", gamePath.FullName, language, gameProcess.Id);
 
             if (!CheckVcRedist())
                 return;
@@ -134,6 +134,8 @@ namespace XIVLauncher.Dalamud
                 WorkingDirectory = DalamudUpdater.Runner.Directory?.FullName,
                 DelayInitializeMs = (int) App.Settings.DalamudInjectionDelayMs,
             };
+
+            Log.Information("[HOOKS] DelayInitializeMs: {0}", startInfo.DelayInitializeMs);
 
             if (_loadMethod == DalamudLoadMethod.EntryPoint)
             {
