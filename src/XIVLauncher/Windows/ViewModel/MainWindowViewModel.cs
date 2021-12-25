@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -147,6 +148,16 @@ namespace XIVLauncher.Windows.ViewModel
             if (!doingAutoLogin) App.Settings.AutologinEnabled = IsAutoLogin;
 
             await LoginToGame(username, password, otp, isSteam, startGame);
+        }
+
+        private void ShowInternetError()
+        {
+            CustomMessageBox.Show(
+                Loc.Localize("LoginWebExceptionContent",
+                    "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later."),
+                Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+
+            Reactivate();
         }
 
         private async Task LoginToGame(string username, string password, string otp, bool isSteam, bool startGame)
@@ -361,25 +372,23 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Reactivate();
             }
+            catch (HttpRequestException httpException)
+            {
+                Log.Error(httpException, "HttpRequestException during login!");
+
+                ShowInternetError();
+            }
             catch (TaskCanceledException tce) // This usually indicates a timeout
             {
                 Log.Error(tce, "TaskCanceledException during login!");
 
-                CustomMessageBox.Show(
-                    Loc.Localize("LoginWebExceptionContent",
-                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later."),
-                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
-                Reactivate();
+                ShowInternetError();
             }
             catch (WebException webException)
             {
                 Log.Error(webException, "WebException during login!");
 
-                CustomMessageBox.Show(
-                    Loc.Localize("LoginWebExceptionContent",
-                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later."),
-                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
-                Reactivate();
+                ShowInternetError();
             }
             catch (Exception ex)
             {
