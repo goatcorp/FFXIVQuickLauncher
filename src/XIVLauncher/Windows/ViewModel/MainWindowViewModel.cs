@@ -151,7 +151,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task LoginToGame(string username, string password, string otp, bool isSteam, bool startGame)
         {
-            Log.Information("StartLogin() called");
+            Log.Information("LoginToGame() called");
 
             var gateStatus = false;
             try
@@ -338,7 +338,10 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 Log.Error(ex, "Received invalid server response");
 
-                CustomMessageBox.Show(Loc.Localize("LoginGenericServerIssue", "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."), Loc.Localize("LoginNoOauthTitle", "Login issue"),
+                CustomMessageBox.Show(
+                    Loc.Localize("LoginGenericServerIssue",
+                        "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."),
+                    Loc.Localize("LoginNoOauthTitle", "Login issue"),
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Reactivate();
@@ -356,6 +359,16 @@ namespace XIVLauncher.Windows.ViewModel
                 CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"),
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
+                Reactivate();
+            }
+            catch (TaskCanceledException tce) // This usually indicates a timeout
+            {
+                Log.Error(tce, "TaskCanceledException during login!");
+
+                CustomMessageBox.Show(
+                    Loc.Localize("LoginWebExceptionContent",
+                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later."),
+                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
                 Reactivate();
             }
             catch (WebException webException)
