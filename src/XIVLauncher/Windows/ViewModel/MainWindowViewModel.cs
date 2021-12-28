@@ -154,7 +154,7 @@ namespace XIVLauncher.Windows.ViewModel
         {
             CustomMessageBox.Show(
                 Loc.Localize("LoginWebExceptionContent",
-                    "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later."),
+                    "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later."),
                 Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
 
             Reactivate();
@@ -169,9 +169,12 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 gateStatus = await _launcher.GetGateStatus();
             }
-            catch
+            catch (Exception ex)
             {
-                // ignored
+                Log.Error(ex, "Could not obtain gate status");
+                ShowInternetError();
+                
+                return;
             }
 
             try

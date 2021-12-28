@@ -434,7 +434,7 @@ namespace XIVLauncher.Windows
 
             _maintenanceQueueTimer = new Timer
             {
-                Interval = 15000
+                Interval = 20000
             };
 
             _maintenanceQueueTimer.Elapsed += OnMaintenanceQueueTimerEvent;
