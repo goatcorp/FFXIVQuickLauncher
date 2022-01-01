@@ -256,17 +256,22 @@ namespace XIVLauncher.Windows
 
             App.Settings.VersionUpgradeLevel = versionLevel;
 
-            var gateStatus = false;
-            try
-            {
-                gateStatus = Task.Run(() => _launcher.GetGateStatus()).Result;
-            }
-            catch
-            {
-                // ignored
-            }
+            var worldStatusBrushOk = WorldStatusPackIcon.Foreground;
+            // grey out world status icon while deferred check is running
+            WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(38, 38, 38));
 
-            if (!gateStatus) WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(242, 24, 24));
+            _launcher.GetGateStatus().ContinueWith((resultTask) =>
+            {
+                try
+                {
+                    var brushToSet = resultTask.Result ? worldStatusBrushOk : null;
+                    Dispatcher.InvokeAsync(() =>  WorldStatusPackIcon.Foreground = brushToSet ?? new SolidColorBrush(Color.FromRgb(242, 24, 24)));
+                }
+                catch
+                {
+                    // ignored
+                }
+            });
 
             var version = Util.GetAssemblyVersion();
             if (App.Settings.LastVersion != version)
