@@ -1,4 +1,5 @@
-﻿• Various bugfixes regarding the in-game addon not starting correctly
-• Better error messages
+﻿• Startup performance tweaks (by Styr1x)
+• Various bugfixes regarding the in-game addon not starting correctly
+• Even better error messages
 
-We wish all of you a lot of fun with the new expansion!
+Have a great new year 2022!
