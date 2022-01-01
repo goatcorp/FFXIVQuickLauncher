@@ -4,7 +4,7 @@
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "Dalamud 업데이트 중...",
+    "message": "Updating core...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -45,7 +45,7 @@
   },
   "MaintenanceQueueBootPatch": {
     "message": "FFXIV 공식 런처의 업데이트가 감지되었습니다.\n이럴 땐 대부분의 경우 게임 쪽에도 새로운 패치가 있음을 나타냅니다.\n\n로그인을 계속 진행합니다.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "Steam 계정으로 실행합니까?",
@@ -227,6 +227,14 @@
     "message": "파일에 문제가 없는지 검사하는 중...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
+  "LoginWebExceptionContent": {
+    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
+  "LoginNoOauthTitle": {
+    "message": "로그인 문제",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
   "MaintenanceNotice": {
     "message": "점검이 진행 중인 것 같습니다. 게임을 실행할 수 없습니다.",
     "description": "MainWindowViewModel.StartGameAndAddon"
@@ -297,15 +305,15 @@
   },
   "CheckBootVersionError": {
     "message": "XIVLauncher가 게임 설치에 대한 boot 버전 체크를 할 수 없습니다. 게임이 점검 중이거나 버전 체크 서버에 접속할 수 없을 수 있습니다. 공식 런처로 로그인이 성공했다면, 에러로 보고해주세요.",
-    "description": "<HandleBootCheck>d__30.MoveNext"
+    "description": "<HandleBootCheck>d__31.MoveNext"
   },
   "GameIsOpenError": {
     "message": "현재 게임 클라이언트나 공식 런처가 열려 있습니다. 이 상태에서는 게임을 패치할 수 없습니다.\n클라이언트와 런처를 닫고 다시 시도하십시오.",
-    "description": "<HandleBootCheck>d__30.MoveNext"
+    "description": "<HandleBootCheck>d__31.MoveNext"
   },
   "PatcherAlreadyInProgress": {
     "message": "다른 XIVLauncher가 실행 중이고, 패치를 진행하고 있습니다. 다른 XIVLauncher 창이 아직 열려 있는지 확인하십시오.",
-    "description": "<HandleBootCheck>d__30.MoveNext"
+    "description": "<HandleBootCheck>d__31.MoveNext"
   },
   "EmptyUsernameError": {
     "message": "ID를 입력하십시오.",
@@ -325,59 +333,51 @@
   },
   "LoginNoServiceMessage": {
     "message": "이 Square Enix 계정은 FINAL FANTASY XIV를 플레이 할 수 없습니다.\n\n만약 스팀판이라면 \"Steam 서비스 계정 사용\" 체크박스를 체크하십시오.\n만약 자동 로그인이 켜져 있다면 런처 실행시 Shift를 홀드하여 설정을 확인할 수 있습니다.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginAcceptTermsMessage": {
     "message": "공식 런처에서 FINAL FANTASY XIV의 사용자 계약에 동의하십시오.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "EverythingIsFuckedMessage": {
     "message": "몇개의 필수 게임 파일들이 외부 요인에 의해 수정되거나 손상되었기 때문에 업데이트나 실행을 할 수 없습니다.\n계속하려면 게임을 완전히 지웠다가 재설치 하십시오.\n\n계속 오류가 발생하면 디스코드를 통해 알려주십시오.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "PatchInstallDisclaimer": {
     "message": "새로운 패치가 발견되어 설치 해야 게임을 이용할 수 있습니다.\nXIVLauncher를 통해 설치하시겠습니까?",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginNoStartOk": {
     "message": "업데이트 체크가 이루어졌으며 모든 업데이트가 설치되었습니다.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "NativeLauncherError": {
     "message": "게임을 정상적으로 실행할 수 없습니다. 에러를 제보해 주십시오.\n\nHRESULT: 0x{0}",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "MultiboxDeniedWarning": {
     "message": "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "GameExitedPrematurelyError": {
     "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
-    "description": "<LoginToGame>d__21.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "로그인 문제",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "BinaryNotPresentError": {
     "message": "게임 실행 파일을 찾을 수 없습니다.\n백신 프로그램에 의한 것일 수도 있습니다. 게임을 재설치 해야 할 수도 있습니다.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "GenericLoginError": {
     "message": "Error occured during login, please report this error.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginGenericServerIssue": {
     "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
     "message": "\n\n자동 로그인이 비활성화 되었습니다.",
-    "description": "<LoginToGame>d__21.MoveNext"
-  },
-  "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue. Please try again later.",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "OtpInputPrompt": {
     "message": "OTP 키를 입력하십시오.",
@@ -703,6 +703,10 @@
     "message": "MacType이 설치되어 있음을 감지했습니다.\n이 프로그램은 공식 런처와 XIVLauncher 어느 쪽이든 문제를 일으킬 수 있습니다.\n\nMacType의 제외 목록에 XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater, ffxiv_dx11을 추가해주세요.",
     "description": "ProblemCheck.RunCheck"
   },
+  "MyGamesWriteAccessNag": {
+    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "description": "ProblemCheck.RunCheck"
+  },
   "GShadeError": {
     "message": "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
     "description": "ProblemCheck.RunCheck"
@@ -721,10 +725,14 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLancher가 다운로드 된 게임 파일을 검증할 수 없습니다.\n\n보통 사용자의 인터넷 연결에 문제가 있다는 것을 의미합니다.\n다시 이 에러가 발생한다면 일본 서버로 VPN을 사용하십시오.\n\nContext: {0}\n{1}",
-    "description": "<>c__DisplayClass38_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
     "message": "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+    "description": "DalamudLauncher.HoldForUpdate"
+  },
+  "AntivirusDeletedBoot": {
+    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {

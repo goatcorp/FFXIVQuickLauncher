@@ -4,7 +4,7 @@
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "正在更新 Dalamud 框架...",
+    "message": "Updating core...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -45,7 +45,7 @@
   },
   "MaintenanceQueueBootPatch": {
     "message": "检测到启动器更新。\n这通常意味着游戏也有更新。\n\n即将为您登录。",
-    "description": "<OnMaintenanceQueueTimerEvent>d__18.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
   },
   "LaunchAsSteam": {
     "message": "您希望使用 Steam 启动游戏吗？",
@@ -227,6 +227,14 @@
     "message": "正在检查游戏完整性...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
+  "LoginWebExceptionContent": {
+    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
+  "LoginNoOauthTitle": {
+    "message": "登录问题",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
   "MaintenanceNotice": {
     "message": "维护似乎正在进行中。游戏不应启动。",
     "description": "MainWindowViewModel.StartGameAndAddon"
@@ -297,15 +305,15 @@
   },
   "CheckBootVersionError": {
     "message": "XIVLauncher 无法获取可用的启动器版本。这可能是因为游戏服务器正在进行维护，或者您与版本服务器的连接不可用。如果您能够使用官方启动器登录，请向我们报告此问题。",
-    "description": "<HandleBootCheck>d__30.MoveNext"
+    "description": "<HandleBootCheck>d__31.MoveNext"
   },
   "GameIsOpenError": {
     "message": "游戏或官方启动器正在运行中，XIVLauncher 无法为您更新游戏。\n请关闭游戏或官方启动器后再试一遍。",
-    "description": "<HandleBootCheck>d__30.MoveNext"
+    "description": "<HandleBootCheck>d__31.MoveNext"
   },
   "PatcherAlreadyInProgress": {
     "message": "XIVLauncher 正在另一个进程中为您更新游戏。请检查您是否启动了两个 XIVLauncher。",
-    "description": "<HandleBootCheck>d__30.MoveNext"
+    "description": "<HandleBootCheck>d__31.MoveNext"
   },
   "EmptyUsernameError": {
     "message": "请输入您的账号。",
@@ -325,59 +333,51 @@
   },
   "LoginNoServiceMessage": {
     "message": "该账户无法游玩 FINAL FANTASY XIV。\n\n如果您的 FFXIV 在 Steam 上购买，请确保您在登入时勾选了「使用 Steam 账户」。\n如果您启用了自动登入，请在启动时按住 Shift 键以访问设置。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginAcceptTermsMessage": {
     "message": "请在官方启动器中接受 FINAL FANTASY XIV 的使用条款。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "EverythingIsFuckedMessage": {
     "message": "部分游戏文件已损坏或被第三方篡改，无法进行更新和启动。\n请重新安装游戏以修复此问题。\n\n如果该错误仍然持续，请通过 Discord 联系我们。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "PatchInstallDisclaimer": {
     "message": "发现新的补丁需要安装才能游玩。\n您想要 XIVLauncher 安装吗？",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginNoStartOk": {
     "message": "执行了更新检查并安装了任何待处理的更新。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "NativeLauncherError": {
     "message": "无法正确启动游戏。请向我们报告此错误。\n\nHRESULT: 0x{0}",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "MultiboxDeniedWarning": {
     "message": "您无法启动两个以上的游戏程序。\n\n请检查是否存在没有正确关闭的游戏进程。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "GameExitedPrematurelyError": {
     "message": "XIVLauncher 无法确认游戏是否正常启动。\n\n这可能是一个暂时的问题。请尝试重启您的电脑。也有可能是因为您的游戏安装无效。",
-    "description": "<LoginToGame>d__21.MoveNext"
-  },
-  "LoginNoOauthTitle": {
-    "message": "登录问题",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "BinaryNotPresentError": {
     "message": "无法找到游戏本体程序。\n这可能是您的杀毒软件造成的。您可能需要重装游戏。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "GenericLoginError": {
     "message": "登录时发生错误，请报告此错误。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginGenericServerIssue": {
     "message": "服务器发送了无效的响应。这通常会发生在服务器负载过高或服务中断的时候。\n请在一分钟后再试，或者尝试使用官方启动器。\n\n您可以从 Lodestone 了解到更多有关服务中断的信息。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
     "message": "\n\n自动登录已被禁用。",
-    "description": "<LoginToGame>d__21.MoveNext"
-  },
-  "LoginWebExceptionContent": {
-    "message": "XIVLauncher 无法建立与游戏服务器的连接。\n\n这可能是一个暂时的问题。请稍后再试。",
-    "description": "<LoginToGame>d__21.MoveNext"
+    "description": "<LoginToGame>d__22.MoveNext"
   },
   "OtpInputPrompt": {
     "message": "请输入您的动态密码（OTP）。",
@@ -703,6 +703,10 @@
     "message": "检测到您在电脑上安装了 MacType 。\n这可能会导致游戏出现问题，不管您使用的是官方启动器还是 XIVLauncher。\n\n请将 XIVLauncher、ffxivboot、ffxivlauncher、ffxivupdater 和 ffxiv_dx11 添加进 MacType 的白名单中。",
     "description": "ProblemCheck.RunCheck"
   },
+  "MyGamesWriteAccessNag": {
+    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "description": "ProblemCheck.RunCheck"
+  },
   "GShadeError": {
     "message": "检测到您的 GShade 已经损坏。\n\n游戏无法启动。您需要 XIVLauncher 为您解决此问题吗？您需要重新安装 GShade 。",
     "description": "ProblemCheck.RunCheck"
@@ -721,10 +725,14 @@
   },
   "PatchManDlFailure": {
     "message": "XIVLauncher无法验证已下载的游戏文件。\n\n这通常表明您的互联网连接存在问题。\n如果再次发生错误，请尝试使用 VPN 设置为日本。\n\n上下文： {0}\n{1}",
-    "description": "<>c__DisplayClass38_0.<DownloadPatchAsync>b__1"
+    "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
     "message": "无法启动 Dalamud。这可能是由您的杀毒软件导致的。\n为了防止这种情况，请将「%AppData%\\XIVLauncher\\addons」添加至杀毒软件的白名单。",
+    "description": "DalamudLauncher.HoldForUpdate"
+  },
+  "AntivirusDeletedBoot": {
+    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {
