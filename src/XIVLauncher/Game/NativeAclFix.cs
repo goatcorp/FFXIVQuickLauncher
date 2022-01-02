@@ -8,6 +8,7 @@ using System.Reflection;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using Serilog;
+using XIVLauncher.Dalamud;
 using XIVLauncher.Settings;
 
 namespace XIVLauncher.Game
@@ -378,7 +379,7 @@ namespace XIVLauncher.Game
                     cb = Marshal.SizeOf<PInvoke.STARTUPINFO>()
                 };
 
-                if (DalamudSettings.GetSettings().DoDalamudTest)
+                if (DalamudUpdater.IsStaging)
                     Environment.SetEnvironmentVariable("DALAMUD_IS_STAGING", "true");
 
                 var compatLayerPrev = Environment.GetEnvironmentVariable("__COMPAT_LAYER");
