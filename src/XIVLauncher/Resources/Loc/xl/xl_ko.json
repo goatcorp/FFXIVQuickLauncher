@@ -1,10 +1,10 @@
 {
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "message": "XIVLancher가 업데이트 확인에 실패했습니다. GitHub와의 연결 문제일 수 있습니다. 잠시 기다리고 다시 시도하세요.\n만약 VPN을 쓰고 계시다면 해제해 주세요.\n계속 실패한다면 GitHub에 있는 Discord 링크를 통해 지원을 받으세요.",
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "Updating core...",
+    "message": "코어 업데이트 중...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -52,11 +52,11 @@
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
+    "message": "XIVLauncher의 인게임 애드온이 아직 FFXIV의 현재 버전에 대응하지 않습니다.\n패치 이후 자주 일어나는 일이므로, Discord에 문의하기 전에 잠시만 기다려주세요.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
+    "message": "FFXIV의 현재 버전에 대응하는 인게임 애드온의 정보를 서버에서 가져오려 했으나 실패했습니다. 설치되어 있는 .NET Framework가 너무 오래되었을지도 모릅니다.\n자세한 사항은 Discord를 확인하세요.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -108,15 +108,15 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "SendEmail": {
-    "message": "Send Email",
+    "message": "이메일 보내기",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation and I won't ever contact you.\n\nThank you very much for using XIVLauncher!",
+    "message": "XIVLauncher는 무료, 오픈소스 소프트웨어입니다. 런처는 개인정보를 수집하기 위한 어떠한 원격감시나 분석 도구를 사용하지 않습니다. 하지만 당신의 운영체제, 왜 XIVLauncher를 사용하는지 그리고 필요하다면 개선사항이나 비판점을 메일로 보내주신다면 정말 큰 도움이 됩니다. 보내주신 메일은 평가 후 즉시 삭제되며 회신하지 않습니다.\n\nXIVLauncher를 사용해 주셔서 감사합니다!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogThanks": {
-    "message": "XIVLauncher is free, open-source software supported by a variety of people from all over the world.\nThank you for sticking around!",
+    "message": "XIVLancher는 전세계의 여러 사람들에 의해 지원되는 무료, 오픈소스 소프트웨어입니다.\n함께 해 주셔서 감사합니다!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -136,7 +136,7 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "DalamudUpdate": {
-    "message": "Updating Dalamud...",
+    "message": "Dalamud 업데이트 중...",
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
@@ -144,7 +144,7 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenIntegrityReport": {
-    "message": "Open Integrity Report",
+    "message": "무결성 리포트 열기",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -156,7 +156,7 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".",
+    "message": "게임이 설치되어 있는 폴더를 선택하십시오.\n\"game\"과 \"boot\" 폴더를 포함해야 합니다.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
@@ -168,15 +168,15 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectXFTS": {
-    "message": "Please select which DirectX version you want to use.",
+    "message": "사용하려는 DirectX 버전을 선택하십시오.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and Dalamud will not work.",
+    "message": "DirectX 9 모드는 더 이상 지원되지 않습니다. 아직 켜지긴 하지만, Discord 연동이나 인게임 애드온 같은 기능이 작동하지 않고 개발사로부터 어떠한 기술적 지원도 받을 수 없습니다.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
-    "message": "Please select which language you want to load the game with.",
+    "message": "게임을 실행할 언어를 선택하십시오.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
@@ -192,11 +192,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Do you want to enable Dalamud?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
+    "message": "XIVLauncher의 인게임 기능을 활성화 하시겠습니까?\nRMT 채팅 필터링과 채팅 메세지 또는 매칭 알림의 디스코드 알림같은\n추가 기능들을 게임에 추가합니다.\n\n설정하려면, XIVLauncher의 설정 메뉴에서 인게임 탭을 찾으세요.\n기능을 활성화 하면 백신 프로그램에서 오진의 가능성이 있습니다.\n기능의 설정을 확인하고 문제가 발생할 경우 백신에서 예외처리 하세요.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Dalamud 활성화",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -228,7 +228,7 @@
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "message": "XIVLauncher는 게임 서버와의 통신을 설정할 수 없습니다.\n\n일시적인 문제거나, 사용자의 인터넷 연결 문제일 수도 있습니다. 나중에 다시 시도해주세요.",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
@@ -296,11 +296,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "AutoLoginIntro": {
-    "message": "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon.",
+    "message": "자동 로그인이 활성화 되어 있습니다.\n이것은 XIVLauncher가 항상 현재 계정으로 로그인 한다는 것을 뜻하며, 이 창은 표시되지 않게 됩니다.\n\n설정과 계정을 바꾸려면, Shift키를 누른 상태에서 XIVLauncher를 실행해야 합니다.",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "Transmission in progress...",
+    "message": "전송 진행 중...",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "CheckBootVersionError": {
@@ -320,7 +320,7 @@
     "description": "<Login>d__20.MoveNext"
   },
   "EmailUsernameError": {
-    "message": "Please enter your SE account name, not your email address.",
+    "message": "이메일 주소가 아닌, SE 계정명을 입력해 주세요.",
     "description": "<Login>d__20.MoveNext"
   },
   "EmptyPasswordError": {
@@ -356,11 +356,11 @@
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "MultiboxDeniedWarning": {
-    "message": "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly.",
+    "message": "기본적으로 2개 이상의 클라이언트를 동시 실행할 수 없습니다.\n\n정상적으로 종료되지 않은 게임 프로세스가 있는지 확인해 주세요.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "GameExitedPrematurelyError": {
-    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "XIVLauncher가 게임의 정상적 실행을 감지할 수 없습니다.\n\n이것은 일시적인 문제일 수 있습니다. PC를 재부팅 해 보세요. 게임 설치가 정상적으로 이루어지지 않았을 수도 있습니다.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "BinaryNotPresentError": {
@@ -368,11 +368,11 @@
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "GenericLoginError": {
-    "message": "Error occured during login, please report this error.",
+    "message": "로그인 중 에러가 발생했습니다. 이 문제를 보고해 주세요.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginGenericServerIssue": {
-    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "message": "서버가 비정상적인 응답을 보냈습니다. 이 문제는 서버가 다운되어 있거나 과부하 상태에서 일어날 수 있습니다.\n몇 분 기다린 후 재시도 해보거나 공식 런처를 사용해 보세요.\n\n서버 다운에 관해선 로드스톤에서 확인할 수 있습니다.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
@@ -412,7 +412,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "Waiting for download...",
+    "message": "다운로드 대기 중...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -460,19 +460,19 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwareness": {
-    "message": "Game DPI Awareness",
+    "message": "게임 DPI 인식",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessAware": {
-    "message": "Aware",
+    "message": "인식",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessUnaware": {
-    "message": "Unaware",
+    "message": "비인식",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwarenessHint": {
-    "message": "If game scaling appears wrong when using XIVLauncher, please attempt changing this setting.",
+    "message": "XIVLauncher를 사용한 상태에서 게임 스케일링이 잘못되었다면, 설정을 변경해 보세요.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
@@ -532,7 +532,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "These options affect the XIVLauncher in-game features, provided by Dalamud. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.",
+    "message": "이 옵션들은 Dalamud에 의해 XIVLauncher의 인게임 기능에 영향을 미칩니다. 게임이 DirectX 11 모드로 실행되도록 설정되어 있고, \n게임의 버전이 호환되며, 아래 체크박스가 체크되어 있으면 자동으로 활성화됩니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
@@ -540,7 +540,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Dalamud 활성화",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
@@ -584,15 +584,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodLoc": {
-    "message": "Choose how to load Dalamud.",
+    "message": "Dalamud 로드 방법 선택",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodEntryPointLoc": {
-    "message": "New: improves compatibility with certain other software and plugins that need to load early.",
+    "message": "New: 조기 로드가 필요한 다른 소프트웨어나 플러그인과의 호환성이 높아졌습니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodDllInjectLoc": {
-    "message": "Legacy: old version of the Dalamud injection system that may be more stable.",
+    "message": "Legacy: 안정적인 구 Dalamud 인젝션 시스템입니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
@@ -640,7 +640,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchAcquisitionMethod": {
-    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "message": "패치를 받기 위한 방법을 선택하세요. ARIA(HTPP)를 추천합니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -648,11 +648,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!",
+    "message": "제작: goat. Special Thanks: Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, 그리고 Angry Paisa Artist에게도 감사를 보냅니다.\n\n문제가 있거나 이랬으면 좋겠다- 하는 사항들은, Discord 서버에 참여하거나 GitHub에 이슈로 남겨주세요!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "License": {
-    "message": "Licensed under GPLv3 or later. Click here for more.",
+    "message": "GPLv3나 그 이후의 것으로 라이센스 되어 있습니다. 자세한 정보는 여기를 클릭하세요.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
@@ -688,7 +688,7 @@
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "LoginGenericError": {
-    "message": "Could not log into your SE account.\nPlease check your username and password.",
+    "message": "SE 계정에 로그인 할 수 없습니다.\nID와 비밀번호를 확인하세요.",
     "description": "OauthLoginException.GetErrorMessage"
   },
   "AdminCheck": {
@@ -704,15 +704,15 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "FFXIV의 My Games 폴더에 대한 쓰기 권한이 없습니다.\n권한 부족은 스크린 샷이냐 일부 캐릭터 데이터의 저장을 막습니다.\n\n안티 바이러스나 권한에 관한 문제로 발생될 수 있습니다. 문서 - My Games 폴더의 권한을 확인하세요.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
-    "message": "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "message": "파손된 GShade 설치가 발견되었습니다.\n\n게임을 실행할 수 없습니다. XIVLauncher가 이 문제를 해결할 수 있도록 하겠습니까? GSahde 재설치가 필요합니다.",
     "description": "ProblemCheck.RunCheck"
   },
   "PatchInstallerInstallFailed": {
-    "message": "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher.",
+    "message": "패치 인스톨러에 에러가 발생했습니다.\n이 에러를 보고해주세요.\n\n재시도 하거나 공식 런처를 사용하세요.",
     "description": "PatchInstaller.RemoteCallHandler"
   },
   "PatchInstallerNotOpen": {
@@ -720,7 +720,7 @@
     "description": "PatchInstaller.WaitOnHello"
   },
   "PatchManNoInstaller": {
-    "message": "The patch installer could not start correctly.\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
+    "message": "패치 인스톨러를 정상적으로 실행할 수 없습니다.\n\n만약 엑세스를 차단했다면, 재시도 해보세요. 만약 에러가 계속되면 디스코드를 통해 알려주세요.",
     "description": "PatchManager.Start"
   },
   "PatchManDlFailure": {
@@ -728,11 +728,11 @@
     "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
-    "message": "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+    "message": "Dalamud를 성공적으로 실행할 수 없습니다. 안티 바이러스에 의해 일어났을 수도 있습니다.\n이를 예방하기 위해 다음 경로의 폴더를 검사 예외에 추가하세요. \"%AppData%\\XIVLauncher\\addons\"",
     "description": "DalamudLauncher.HoldForUpdate"
   },
   "AntivirusDeletedBoot": {
-    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
+    "message": "Dalamud boot DLL을 찾을 수 없습니다.\n\n안티 바이러스에 의해 삭제되었을 수 있습니다. XIVLauncher의 폴더를 예외에 추가하고 다시 시도해보세요.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {
