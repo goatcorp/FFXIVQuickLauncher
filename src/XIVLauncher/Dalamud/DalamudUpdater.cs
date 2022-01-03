@@ -110,6 +110,11 @@ namespace XIVLauncher.Dalamud
             {
                 remoteVersionInfo = versionInfoStaging;
                 IsStaging = true;
+                Log.Information("[DUPDATE] Using staging version {Kind} with key {Key} ({Hash})", settings.DalamudBetaKind, settings.DalamudBetaKey, remoteVersionInfo.AssemblyVersion);
+            }
+            else
+            {
+                Log.Information("[DUPDATE] Using release version ({Hash})", remoteVersionInfo.AssemblyVersion);
             }
 
             var versionInfoJson = JsonConvert.SerializeObject(remoteVersionInfo);
@@ -125,8 +130,6 @@ namespace XIVLauncher.Dalamud
             };
 
             AssetDirectory = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets"));
-
-            Log.Information("[DUPDATE] Now starting for Dalamud {0}", remoteVersionInfo.AssemblyVersion);
 
             if (!currentVersionPath.Exists || !IsIntegrity(currentVersionPath))
             {

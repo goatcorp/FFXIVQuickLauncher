@@ -358,9 +358,10 @@
                 Click="PluginsFolderButton_Click">
             <materialDesign:PackIcon Kind="FolderOpen" Height="24" Width="24" />
         </Button>
+
+        <!-- Used to have Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" but now invoked in AcceptButton_Click -->
         <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                 ToolTip="{Binding SaveSettingsLoc}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
-                Command="{x:Static materialDesign:Transitioner.MoveNextCommand}"
                 Click="AcceptButton_Click">
             <materialDesign:PackIcon Kind="Check" Height="24" Width="24" />
         </Button>

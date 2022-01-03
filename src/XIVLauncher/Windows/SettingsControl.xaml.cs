@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using CheapLoc;
+using MaterialDesignThemes.Wpf.Transitions;
 using Serilog;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
@@ -103,6 +104,13 @@ namespace XIVLauncher.Windows
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
         {
+            if (ViewModel.GamePath == ViewModel.PatchPath)
+            {
+                CustomMessageBox.Show(Loc.Localize("SettingsGamePatchPathError", "Game and patch download paths cannot be the same.\nPlease make sure to choose distinct game and patch download paths."), "XIVLauncher Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
             App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
             App.Settings.PatchPath = !string.IsNullOrEmpty(ViewModel.PatchPath) ? new DirectoryInfo(ViewModel.PatchPath) : null;
             App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
@@ -142,6 +150,8 @@ namespace XIVLauncher.Windows
             SettingsDismissed?.Invoke(this, null);
 
             App.Settings.SpeedLimitBytes = (long) (SpeedLimiterUpDown.Value * BYTES_TO_MB);
+
+            Transitioner.MoveNextCommand.Execute(null, null);
         }
 
         private void GitHubButton_OnClick(object sender, RoutedEventArgs e)
