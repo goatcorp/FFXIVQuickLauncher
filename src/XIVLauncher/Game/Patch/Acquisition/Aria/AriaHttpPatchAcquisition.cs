@@ -46,7 +46,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
 
                 var ariaPath = Path.Combine(Paths.ResourcesPath, "aria2c-xl.exe");
 
-                var ariaPort = Util.GetAvailablePort(DEFAULT_ARIA_SERVER_PORT);
+                var ariaPort = Util.GetAvailablePort();
                 var ariaHost = $"http://localhost:{ariaPort}/jsonrpc";
 
                 var ariaArgs =
