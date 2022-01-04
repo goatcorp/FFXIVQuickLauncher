@@ -5,13 +5,16 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
+using Serilog;
 
 namespace XIVLauncher
 {
@@ -167,6 +170,10 @@ namespace XIVLauncher
 
         public static bool CheckIsGameOpen()
         {
+#if DEBUG
+            return false;
+#endif
+
             var procs = Process.GetProcesses();
 
             if (procs.Any(x => x.ProcessName == "ffxiv"))
@@ -217,37 +224,14 @@ namespace XIVLauncher
             return reader.ReadToEnd();
         }
 
-        public static int GetAvailablePort(int startingPort)
+        private static readonly IPEndPoint DefaultLoopbackEndpoint = new(IPAddress.Loopback, port: 0);
+
+        public static int GetAvailablePort()
         {
-            var portArray = new List<int>();
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            var properties = IPGlobalProperties.GetIPGlobalProperties();
-
-            // Ignore active connections
-            var connections = properties.GetActiveTcpConnections();
-            portArray.AddRange(from n in connections
-                where n.LocalEndPoint.Port >= startingPort
-                select n.LocalEndPoint.Port);
-
-            // Ignore active tcp listeners
-            var endPoints = properties.GetActiveTcpListeners();
-            portArray.AddRange(from n in endPoints
-                where n.Port >= startingPort
-                select n.Port);
-
-            // Ignore active UDP listeners
-            endPoints = properties.GetActiveUdpListeners();
-            portArray.AddRange(from n in endPoints
-                where n.Port >= startingPort
-                select n.Port);
-
-            portArray.Sort();
-
-            for (var i = startingPort; i < UInt16.MaxValue; i++)
-                if (!portArray.Contains(i))
-                    return i;
-
-            return 0;
+            socket.Bind(DefaultLoopbackEndpoint);
+            return ((IPEndPoint)socket.LocalEndPoint).Port;
         }
 
         public static string GenerateAcceptLanguage(int asdf = 0)
