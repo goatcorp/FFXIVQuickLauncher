@@ -18,8 +18,6 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
         private static AriaManager manager;
         private static long maxDownloadSpeed;
 
-        public const int DEFAULT_ARIA_SERVER_PORT = 0xff45;
-
         public static async Task InitializeAsync(long maxDownloadSpeed)
         {
             AriaHttpPatchAcquisition.maxDownloadSpeed = maxDownloadSpeed;
