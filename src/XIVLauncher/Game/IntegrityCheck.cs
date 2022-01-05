@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -35,7 +34,7 @@ namespace XIVLauncher.Game
         }
 
         public static async Task<(CompareResult compareResult, string report, IntegrityCheckResult remoteIntegrity)>
-            CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress, DirectoryInfo gamePath)
+            CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress, DirectoryInfo gamePath, bool onlyIndex = false)
         {
             IntegrityCheckResult remoteIntegrity;
 
@@ -48,21 +47,30 @@ namespace XIVLauncher.Game
                 return (CompareResult.NoServer, null, null);
             }
 
-            var localIntegrity = await RunIntegrityCheckAsync(gamePath, progress);
+            var localIntegrity = await RunIntegrityCheckAsync(gamePath, progress, onlyIndex);
 
             var report = "";
+            var failed = false;
             foreach (var hashEntry in remoteIntegrity.Hashes)
+            {
+                if (onlyIndex && (!hashEntry.Key.EndsWith(".index") && !hashEntry.Key.EndsWith(".index2")))
+                    continue;
+
                 if (localIntegrity.Hashes.Any(h => h.Key == hashEntry.Key))
                 {
                     if (localIntegrity.Hashes.First(h => h.Key == hashEntry.Key).Value != hashEntry.Value)
+                    {
                         report += $"Mismatch: {hashEntry.Key}\n";
+                        failed = true;
+                    }
                 }
                 else
                 {
-                    Debug.WriteLine("File not found in local integrity: " + hashEntry.Key);
+                    report += $"Missing: {hashEntry.Key}\n";
                 }
+            }
 
-            return (string.IsNullOrEmpty(report) ? CompareResult.Valid : CompareResult.Invalid, report,
+            return (failed ? CompareResult.Invalid : CompareResult.Valid, report,
                 remoteIntegrity);
         }
 
@@ -76,13 +84,13 @@ namespace XIVLauncher.Game
         }
 
         public static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gamePath,
-            IProgress<IntegrityCheckProgress> progress)
+            IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
         {
             var hashes = new Dictionary<string, string>();
 
             using (var sha1 = new SHA1Managed())
             {
-                CheckDirectory(gamePath, sha1, gamePath.FullName, ref hashes, progress);
+                CheckDirectory(gamePath, sha1, gamePath.FullName, ref hashes, progress, onlyIndex);
             }
 
             return new IntegrityCheckResult
@@ -93,13 +101,16 @@ namespace XIVLauncher.Game
         }
 
         private static void CheckDirectory(DirectoryInfo directory, SHA1Managed sha1, string rootDirectory,
-            ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress> progress)
+            ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
         {
             foreach (var file in directory.GetFiles())
             {
                 var relativePath = file.FullName.Substring(rootDirectory.Length);
 
                 if (!relativePath.StartsWith("\\game"))
+                    continue;
+
+                if (onlyIndex && (!relativePath.EndsWith(".index") && !relativePath.EndsWith(".index2")))
                     continue;
 
                 try
@@ -124,7 +135,7 @@ namespace XIVLauncher.Game
             }
 
             foreach (var dir in directory.GetDirectories())
-                CheckDirectory(dir, sha1, rootDirectory, ref results, progress);
+                CheckDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
         }
     }
 }

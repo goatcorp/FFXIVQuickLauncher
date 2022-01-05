@@ -20,6 +20,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Game.Patch;
 using XIVLauncher.PatchInstaller;
+using XIVLauncher.Support;
 using XIVLauncher.Xaml;
 
 namespace XIVLauncher.Windows.ViewModel
@@ -173,7 +174,7 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 Log.Error(ex, "Could not obtain gate status");
                 ShowInternetError();
-                
+
                 return;
             }
 
@@ -520,6 +521,8 @@ namespace XIVLauncher.Windows.ViewModel
                             }
                         }
                     });
+
+            Troubleshooting.LogTroubleshooting();
 
             if (gameProcess == null)
             {

@@ -25,6 +25,7 @@ using XIVLauncher.Game.Patch.Acquisition;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.Settings;
+using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 using Timer = System.Timers.Timer;
 
@@ -344,7 +345,11 @@ namespace XIVLauncher.Windows
                 SettingsControl.ReloadSettings();
             }
 
-            Task.Run(SetupHeadlines);
+            Task.Run(async () =>
+            {
+                await SetupHeadlines();
+                Troubleshooting.LogTroubleshooting();
+            });
 
             Log.Information("MainWindow initialized.");
 
