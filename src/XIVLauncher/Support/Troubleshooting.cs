@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Dalamud;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Dalamud;
@@ -33,9 +31,11 @@ namespace XIVLauncher.Support
 
             try
             {
+                var fixedContext = context?.Split(new []{'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+
                 var payload = new ExceptionPayload
                 {
-                    Context = context,
+                    Context = fixedContext,
                     When = DateTime.Now,
                     Info = exception.ToString(),
                 };

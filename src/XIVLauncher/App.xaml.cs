@@ -10,10 +10,12 @@ using CheapLoc;
 using Config.Net;
 using Newtonsoft.Json;
 using Serilog;
+using Serilog.Events;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using XIVLauncher.Settings.Parsers;
+using XIVLauncher.Support;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher
@@ -66,21 +68,31 @@ namespace XIVLauncher
 
             var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
 
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Async(a =>
-                    a.File(Path.Combine(Paths.RoamingPath, "output.log")))
+            try
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.Async(a =>
+                        a.File(Path.Combine(Paths.RoamingPath, "output.log")))
+                    .WriteTo.Sink(SerilogEventSink.Instance)
 #if DEBUG
-                .WriteTo.Debug()
-                .MinimumLevel.Verbose()
+                    .WriteTo.Debug()
+                    .MinimumLevel.Verbose()
 #else
-                .MinimumLevel.Information()
+                    .MinimumLevel.Information()
 #endif
-                .CreateLogger();
+                    .CreateLogger();
 
 #if !DEBUG
-            AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
-            TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+                AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+                TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not set up logging. Please report this error.\n\n" + ex.Message, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            SerilogEventSink.Instance.LogLine += OnSerilogLogLine;
 
             try
             {
@@ -149,6 +161,14 @@ namespace XIVLauncher
                 }
             }
 #endif
+        }
+
+        private static void OnSerilogLogLine(object sender, (string Line, LogEventLevel Level, DateTimeOffset TimeStamp, Exception? Exception) e)
+        {
+            if (e.Exception == null)
+                return;
+
+            Troubleshooting.LogException(e.Exception, e.Line);
         }
 
         private void SetupSettings()
