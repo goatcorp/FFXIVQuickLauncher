@@ -120,6 +120,8 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
+            username = username.Replace(" ", string.Empty); // Remove whitespace
+
             if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == PatcherMain.BASE_GAME_VERSION &&
                 App.Settings.UniqueIdCacheEnabled)
             {
