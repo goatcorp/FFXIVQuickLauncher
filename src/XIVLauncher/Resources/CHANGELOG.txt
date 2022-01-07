@@ -1,3 +1,3 @@
-﻿• Prevent people from selecting the same path for the game and patch downloads
-• Changes to the in-game addon updating process
-• Update localization files - if you want to help out, please apply via Crowdin!
+﻿• Fixes a rare issue wherein patches may not have been downloaded properly
+• Now removes whitespace from SE account names, to prevent typos
+• Various improvements to error messages to aid in troubleshooting
