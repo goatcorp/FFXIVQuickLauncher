@@ -4,7 +4,7 @@
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "Updating core...",
+    "message": "Atualizando o núcleo...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -228,7 +228,7 @@
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "message": "XIVLauncher não pode estabelecer uma conexão com os servidores do jogo.\n\nIsto pode ser um problema temporário ou um problema com a sua conexão de internet. Por favor, tente novamente mais tarde.",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
@@ -360,7 +360,7 @@
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "GameExitedPrematurelyError": {
-    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "XIVLauncher não pôde detectar que o jogo foi corretamente inicializado.\n\nEste pode ser um problema temporário. Por favor, tente reiniciar seu PC. É possível que a instalação do seu jogo seja inválida.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "BinaryNotPresentError": {
@@ -368,11 +368,11 @@
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "GenericLoginError": {
-    "message": "Error occured during login, please report this error.",
+    "message": "Ocorreu um erro durante o login. Por favor, reporte este erro.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginGenericServerIssue": {
-    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "message": "O servidor enviou uma resposta inválida. Isto é pode ocorrer durante quedas no serviço ou quando os servidores estão sob carga pesada.\nAguarde um minuto e tente novamente ou tente usar o launcher oficial.\n\nVocê pode saber mais sobre falhas de serviço na Lodestone.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
@@ -460,19 +460,19 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwareness": {
-    "message": "Game DPI Awareness",
+    "message": "Detecção de DPI do jogo",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessAware": {
-    "message": "Aware",
+    "message": "Detectar",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessUnaware": {
-    "message": "Unaware",
+    "message": "Não detectar",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwarenessHint": {
-    "message": "If game scaling appears wrong when using XIVLauncher, please attempt changing this setting.",
+    "message": "Se o dimensionamento do jogo parecer errado ao usar XIVLauncher, por favor tente alterar esta configuração.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
@@ -704,7 +704,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "Você não tem permissão para escrever na pasta do FFXIV em My Games.\nIsto irá impedir o salvamento de capturas de tela e alguns dados de personagem.\n\nIsto pode ser causado por um erro no seu antivírus ou por um erro de permissões. Por favor, verifique suas permissões na pasta My Games.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
@@ -732,7 +732,7 @@
     "description": "DalamudLauncher.HoldForUpdate"
   },
   "AntivirusDeletedBoot": {
-    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
+    "message": "A DLL de inicialização Dalamud não foi encontrada.\n\nProvavelmente foi excluída pelo seu software de antivírus. Por favor, adicione uma exceção para a pasta XIVLauncher e tente novamente.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {

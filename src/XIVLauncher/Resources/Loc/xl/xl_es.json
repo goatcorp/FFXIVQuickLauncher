@@ -4,7 +4,7 @@
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "Updating core...",
+    "message": "Actualizando núcleo...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -228,7 +228,7 @@
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "message": "XIVLauncher no ha podido establecer una conexión con los servidores del juego.\n\nEsto podría ser un problema temporal, o un problema con tu conexión a internet. Por favor, prueba más tarde.",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
@@ -704,7 +704,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "No tienes permisos para escribir en la carpeta de FFXIV en My Games.\nEsto significa que no puedes guardar ciertos datos de personajes y capturas de pantalla.\n\nEsto puede deberse a tu antivirus o a un error de permisos. Por favor, comprueba los permisos de tu carpeta My Games.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
@@ -732,7 +732,7 @@
     "description": "DalamudLauncher.HoldForUpdate"
   },
   "AntivirusDeletedBoot": {
-    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
+    "message": "No se ha podido encontrar el DLL de arranque de Dalamud.\n\nProbablemente haya sido eliminado por tu antivirus. Por favor, añade una excepción a la carpeta de XIVLauncher y prueba de nuevo.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {
