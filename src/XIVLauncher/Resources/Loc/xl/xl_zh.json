@@ -4,7 +4,7 @@
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "Updating core...",
+    "message": "正在更新核心……",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -228,7 +228,7 @@
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "message": "XIVLauncher 无法建立与游戏服务器的连接。\n\n这可能是一个暂时的问题，或者您的互联网连接出现问题。请稍后再试。",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
@@ -460,19 +460,19 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwareness": {
-    "message": "Game DPI Awareness",
+    "message": "游戏DPI修正",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessAware": {
-    "message": "Aware",
+    "message": "修正",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessUnaware": {
-    "message": "Unaware",
+    "message": "不修正",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwarenessHint": {
-    "message": "If game scaling appears wrong when using XIVLauncher, please attempt changing this setting.",
+    "message": "如果使用 XIVLauncher 时游戏缩放不正常，请尝试切换此设置项。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
@@ -704,7 +704,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "您没有 FFXIV 的 My Games 文件夹的写入权限。\n这会导致屏幕截图与角色数据无法保存。\n\n这可能是由杀毒程序或错误权限配置造成的。请检查您的 My Games 文件夹权限。",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
@@ -732,7 +732,7 @@
     "description": "DalamudLauncher.HoldForUpdate"
   },
   "AntivirusDeletedBoot": {
-    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
+    "message": "无法找到 Dalamud 的启动 DLL。\n\n它可能被您的杀毒程序删除。请将 XIVLauncher 文件夹添加到白名单或排除项并重试。",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {

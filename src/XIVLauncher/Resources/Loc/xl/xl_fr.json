@@ -228,7 +228,7 @@
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "message": "XIVLauncher n'a pas pu établir de connexion avec les serveurs de jeu.\n\nCeci peut être un problème temporaire ou un problème avec votre connexion Internet. Veuillez réessayer plus tard.",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
@@ -704,7 +704,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "Vous n'avez pas la permission d'écrire dans le dossier My Games de FFXIV.\nCela empêchera l'enregistrement de captures d'écran et de certaines données de personnage.\n\nCeci peut être causé soit par votre antivirus soit par une erreur d'autorisation. Veuillez vérifier vos permissions de dossier My Games.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
@@ -732,7 +732,7 @@
     "description": "DalamudLauncher.HoldForUpdate"
   },
   "AntivirusDeletedBoot": {
-    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
+    "message": "La DLL de démarrage de Dalamud n'a pas pu être trouvée.\n\nElle a probablement été supprimée par votre logiciel antivirus. Veuillez ajouter une exception pour le dossier XIVLauncher et réessayez.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {
