@@ -17,6 +17,7 @@ using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
 using XIVLauncher.Game.Patch.Acquisition;
+using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -499,12 +500,25 @@ namespace XIVLauncher.Windows
         private void Logo_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
 #if DEBUG
-            var fts = new FirstTimeSetup();
-            fts.ShowDialog();
+            var result = MessageBox.Show("Yes: FTS\nNo: Save troubleshooting\nCancel: Cancel", "XIVLauncher Expert Debugging Interface", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            switch (result)
+            {
+                case MessageBoxResult.Yes:
+                    var fts = new FirstTimeSetup();
+                    fts.ShowDialog();
 
-            Log.Debug($"WasCompleted: {fts.WasCompleted}");
+                    Log.Debug($"WasCompleted: {fts.WasCompleted}");
 
-            this.ReloadSettings();
+                    this.ReloadSettings();
+                    break;
+                case MessageBoxResult.No:
+                    MessageBox.Show(PackGenerator.SavePack());
+                    break;
+                case MessageBoxResult.Cancel:
+                    return;
+            }
+#else
+            Process.Start("explorer.exe", $"/select, \"{PackGenerator.SavePack()}\"");
 #endif
         }
 
