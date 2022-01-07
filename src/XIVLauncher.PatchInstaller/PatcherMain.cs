@@ -86,7 +86,6 @@ namespace XIVLauncher.PatchInstaller
                 {
                     while (true)
                     {
-                        
                         if ((Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher") && _queuedInstalls.IsEmpty) || !RunInstallQueue())
                         {
                             Environment.Exit(0);
@@ -122,7 +121,7 @@ namespace XIVLauncher.PatchInstaller
                         Thread.Sleep(3000);
                         Environment.Exit(0);
                     });
-                    break;  
+                    break;
 
                 case PatcherIpcOpCode.StartInstall:
 
@@ -132,8 +131,19 @@ namespace XIVLauncher.PatchInstaller
 
                 case PatcherIpcOpCode.Finish:
                     var path = (DirectoryInfo) msg.Data;
-                    VerToBck(path);
-                    Log.Information("VerToBck done");
+                    try
+                    {
+                        VerToBck(path);
+                        Log.Information("VerToBck done");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "VerToBck failed");
+                        SendIpcMessage(new PatcherIpcEnvelope
+                        {
+                            OpCode = PatcherIpcOpCode.InstallFailed
+                        });
+                    }
                     break;
             }
         }
@@ -245,18 +255,22 @@ namespace XIVLauncher.PatchInstaller
 
         private static void VerToBck(DirectoryInfo gamePath)
         {
-            Thread.Sleep(200);
+            Thread.Sleep(500);
 
             foreach (var repository in Enum.GetValues(typeof(Repository)).Cast<Repository>())
             {
                 // Overwrite the old BCK with the new game version
+                var ver = repository.GetVer(gamePath);
                 try
                 {
-                    repository.GetVerFile(gamePath).CopyTo(repository.GetVerFile(gamePath, true).FullName, true);
+                    repository.SetVer(gamePath, ver, true);
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Could not copy to BCK");
+
+                    if (ver != BASE_GAME_VERSION)
+                        throw;
                 }
             }
         }

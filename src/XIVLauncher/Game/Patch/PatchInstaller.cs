@@ -27,7 +27,7 @@ namespace XIVLauncher.Game.Patch
         private RpcBuffer _rpc;
 
         public enum InstallerState
-        {   
+        {
             NotStarted,
             NotReady,
             Ready,

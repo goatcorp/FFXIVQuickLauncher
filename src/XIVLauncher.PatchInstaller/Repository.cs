@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
-using Serilog;
 
 namespace XIVLauncher.PatchInstaller
 {
