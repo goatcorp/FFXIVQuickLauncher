@@ -395,7 +395,7 @@ namespace XIVLauncher.Game
 
                 if (!PInvoke.CreateProcess(
                         null,
-                        exePath + " " + arguments,
+                        $"\"{exePath}\" {arguments}",
                         ref lpProcessAttributes,
                         IntPtr.Zero,
                         false,
