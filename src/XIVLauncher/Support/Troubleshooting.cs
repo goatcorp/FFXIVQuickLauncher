@@ -104,6 +104,7 @@ namespace XIVLauncher.Support
                 LauncherHash = Util.GetGitHash(),
                 Official = Util.GetBuildOrigin() == "goatcorp/FFXIVQuickLauncher",
                 DpiAwareness = App.Settings.DpiAwareness.GetValueOrDefault(),
+                Platform = Util.GetPlatform(),
 
                 ObservedGameVersion = ffxivVer,
                 ObservedEx1Version = ex1Ver,
@@ -172,6 +173,8 @@ namespace XIVLauncher.Support
             public bool Official { get; set; }
 
             public DpiAwareness DpiAwareness { get; set; }
+
+            public Platform Platform { get; set; }
 
             public string ObservedGameVersion { get; set; }
 

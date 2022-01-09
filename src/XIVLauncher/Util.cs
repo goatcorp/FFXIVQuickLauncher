@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using Serilog;
+using XIVLauncher.Game;
 
 namespace XIVLauncher
 {
@@ -267,6 +268,16 @@ namespace XIVLauncher
 
             if (!res)
                 throw new Exception($"Could not add header - {key}: {value}");
+        }
+
+        public static Platform GetPlatform()
+        {
+            if (EnvironmentSettings.IsWine)
+                return Platform.Win32OnLinux;
+
+            // TODO(goat): Add mac here, once it's merged
+
+            return Platform.Win32;
         }
     }
 }
