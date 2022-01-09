@@ -450,7 +450,7 @@ namespace XIVLauncher.Game.Patch
                 return HashCheckResult.BadLength;
             }
 
-            var parts = (int) Math.Round((double) patchListEntry.Length / patchListEntry.HashBlockSize);
+            var parts = (int) Math.Ceiling((double) patchListEntry.Length / patchListEntry.HashBlockSize);
             var block = new byte[patchListEntry.HashBlockSize];
 
             for (var i = 0; i < parts; i++)
