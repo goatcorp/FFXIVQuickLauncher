@@ -650,6 +650,11 @@ namespace XIVLauncher.Windows.ViewModel
         {
             try
             {
+                if (App.Settings.PatchPath is { Exists: false })
+                {
+                    App.Settings.PatchPath = null;
+                }
+                
                 App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
                 Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
