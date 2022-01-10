@@ -247,12 +247,15 @@ namespace XIVLauncher.Game.Patch
 
             acquisition.Complete += (sender, args) =>
             {
+                var dlFailureLoc = Loc.Localize("PatchManDlFailure",
+                    "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
+
                 if (args == AcquisitionResult.Error)
                 {
                     Log.Error("Download failed for {0}", download.Patch.VersionId);
 
                     CancelAllDownloads();
-                    CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Problem", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show(string.Format(dlFailureLoc, "Problem", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     Environment.Exit(0);
                     return;
                 }
@@ -280,7 +283,7 @@ namespace XIVLauncher.Game.Patch
                 {
                     CancelAllDownloads();
                     Log.Error("IsHashCheckPass failed for {0} after DL", download.Patch.VersionId);
-                    CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), $"IsHashCheckPass({checkResult})", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    CustomMessageBox.Show(string.Format(dlFailureLoc, $"IsHashCheckPass({checkResult})", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     outFile.Delete();
                     Environment.Exit(0);
                     return;
