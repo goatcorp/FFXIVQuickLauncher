@@ -17,6 +17,7 @@ using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
 using XIVLauncher.Game.Patch.Acquisition;
+using XIVLauncher.PatchInstaller;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 
@@ -254,6 +255,12 @@ namespace XIVLauncher.Windows
             progress.ProgressChanged += (sender, checkProgress) => window.UpdateProgress(checkProgress);
 
             var gamePath = new DirectoryInfo(ViewModel.GamePath);
+
+            if (Repository.Ffxiv.IsBaseVer(gamePath))
+            {
+                CustomMessageBox.Show(Loc.Localize("IntegrityCheckBase", "The game is not installed to the path you specified.\nPlease install the game before running an integrity check."), "XIVLauncher");
+                return;
+            }
 
             Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, gamePath)).ContinueWith(task =>
             {

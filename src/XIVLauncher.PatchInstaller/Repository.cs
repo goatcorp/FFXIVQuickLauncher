@@ -83,6 +83,11 @@ namespace XIVLauncher.PatchInstaller
             fileStream.Flush();
         }
 
+        public static bool IsBaseVer(this Repository repo, DirectoryInfo gamePath)
+        {
+            return repo.GetVer(gamePath) == PatcherMain.BASE_GAME_VERSION;
+        }
+
         // TODO
         public static string GetRepoHash(this Repository repo)
         {
