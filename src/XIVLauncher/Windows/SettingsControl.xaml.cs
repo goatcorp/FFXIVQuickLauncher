@@ -34,6 +34,8 @@ namespace XIVLauncher.Windows
 
         private const int BYTES_TO_MB = 1048576;
 
+        private bool _hasTriggeredLogo = false;
+
         public SettingsControl()
         {
             InitializeComponent();
@@ -525,7 +527,11 @@ namespace XIVLauncher.Windows
                     return;
             }
 #else
+            if (_hasTriggeredLogo)
+                return;
+
             Process.Start("explorer.exe", $"/select, \"{PackGenerator.SavePack()}\"");
+            _hasTriggeredLogo = true;
 #endif
         }
 
