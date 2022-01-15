@@ -498,7 +498,17 @@ namespace XIVLauncher.Windows
 
         private void GamePathEntry_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            GamePathSafeguardText.Visibility = !Util.LetChoosePath(ViewModel.GamePath) ? Visibility.Visible : Visibility.Collapsed;
+            var isLetChoose = false;
+            try
+            {
+                isLetChoose = Util.LetChoosePath(ViewModel.GamePath);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not check game path");
+            }
+
+            GamePathSafeguardText.Visibility = !isLetChoose ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LicenseText_OnMouseUp(object sender, MouseButtonEventArgs e)
