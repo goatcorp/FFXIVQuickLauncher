@@ -17,6 +17,7 @@ using System.Windows.Media;
 using Microsoft.Win32;
 using Serilog;
 using XIVLauncher.Game;
+using XIVLauncher.PatchInstaller;
 
 namespace XIVLauncher
 {
@@ -105,13 +106,37 @@ namespace XIVLauncher
 
         private static string DefaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn");
 
-        private static readonly string[] PathsToTry = DriveInfo.GetDrives().Select(drive => $"{drive.Name}SquareEnix\\FINAL FANTASY XIV - A Realm Reborn").Concat(new List<string>
+        private static string[] GetCommonPaths()
         {
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam\\steamapps\\common\\FINAL FANTASY XIV Online"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam\\steamapps\\common\\FINAL FANTASY XIV - A Realm Reborn"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "FINAL FANTASY XIV - A Realm Reborn"),
-            DefaultPath
-        }).ToArray();
+            var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            var paths = new List<string>();
+            var drives = DriveInfo.GetDrives().Select(info => info.Name);
+
+            var commonPaths = new string[]
+            {
+                "Steam\\steamapps\\common\\FINAL FANTASY XIV Online",
+                "Steam\\steamapps\\common\\FINAL FANTASY XIV - A Realm Reborn",
+                "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn",
+                "Square Enix\\FINAL FANTASY XIV - A Realm Reborn",
+                "Games\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn",
+                "Games\\Square Enix\\FINAL FANTASY XIV - A Realm Reborn",
+            };
+
+            foreach (var commonPath in commonPaths)
+            {
+                paths.Add(Path.Combine(programFiles, commonPath));
+
+                foreach (var drive in drives)
+                {
+                    paths.Add(Path.Combine(drive, commonPath));
+                    paths.Add(Path.Combine(drive, "Program Files (x86)", commonPath));
+                }
+            }
+
+            paths.Add(Path.Combine(programFiles, "FINAL FANTASY XIV - A Realm Reborn"));
+
+            return paths.ToArray();
+        }
 
         private static readonly int[] ValidSteamAppIds = new int[] {
             39210 /* Paid version */,
@@ -120,42 +145,66 @@ namespace XIVLauncher
 
         public static string TryGamePaths()
         {
-            foreach (var registryView in new RegistryView[] { RegistryView.Registry32, RegistryView.Registry64 })
+            try
             {
-                using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView)) 
-                {
-                    // Should return "C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\boot\ffxivboot.exe" if installed with default options.
-                    using (var subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2B41E132-07DF-4925-A3D3-F2D1765CCDFE}"))
-                    {
-                        if (subkey != null && subkey.GetValue("DisplayIcon", null) is string path)
-                        {
-                            path = Directory.GetParent(path).Parent.FullName;
-                            if (Directory.Exists(path) && IsValidFfxivPath(path))
-                                return path;
-                        }
-                    }
+                var foundVersions = new Dictionary<string, SeVersion>();
 
-                    // Should return "C:\Program Files (x86)\Steam\steamapps\common\FINAL FANTASY XIV Online" if installed with default options.
-                    foreach (var steamAppId in ValidSteamAppIds)
+                foreach (var path in GetCommonPaths())
+                {
+                    if (!Directory.Exists(path) || !IsValidFfxivPath(path))
+                        continue;
+
+                    var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
+                    foundVersions.Add(path, SeVersion.Parse(baseVersion));
+                }
+                
+                foreach (var registryView in new RegistryView[] { RegistryView.Registry32, RegistryView.Registry64 })
+                {
+                    using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView)) 
                     {
-                        using (var subkey = hklm.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {steamAppId}"))
+                        // Should return "C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\boot\ffxivboot.exe" if installed with default options.
+                        using (var subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2B41E132-07DF-4925-A3D3-F2D1765CCDFE}"))
                         {
-                            if (subkey != null && subkey.GetValue("InstallLocation", null) is string path)
+                            if (subkey != null && subkey.GetValue("DisplayIcon", null) is string path)
                             {
+                                // DisplayIcon includes "boot\ffxivboot.exe", need to remove it
+                                path = Directory.GetParent(path).Parent.FullName;
+
                                 if (Directory.Exists(path) && IsValidFfxivPath(path))
-                                    return path;
+                                {
+                                    var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
+                                    foundVersions.Add(path, SeVersion.Parse(baseVersion));
+                                }
                             }
                         }
+
+                        // Should return "C:\Program Files (x86)\Steam\steamapps\common\FINAL FANTASY XIV Online" if installed with default options.
+                        foreach (var steamAppId in ValidSteamAppIds)
+                        {
+                            using (var subkey = hklm.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {steamAppId}"))
+                            {
+                                if (subkey != null && subkey.GetValue("InstallLocation", null) is string path)
+                                {
+                                    if (Directory.Exists(path) && IsValidFfxivPath(path))
+                                    {
+                                        // InstallLocation is the root path of the game (the one containing boot and game) itself
+                                        var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
+                                        foundVersions.Add(path, SeVersion.Parse(baseVersion));
+                                    }
+                                }
+                            }
+                        }
+
                     }
-
                 }
+
+                return foundVersions.Count == 0 ? DefaultPath : foundVersions.OrderByDescending(x => x.Value).First().Key;
             }
-
-            foreach (var path in PathsToTry)
-                if (Directory.Exists(path) && IsValidFfxivPath(path))
-                    return path;
-
-            return DefaultPath;
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not search for game paths");
+                return DefaultPath;
+            }
         }
 
         public static long GetUnixMillis()
