@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Media;
 using Serilog;
 using XIVLauncher.Game;
+using XIVLauncher.PatchInstaller;
 
 namespace XIVLauncher
 {
@@ -104,21 +105,60 @@ namespace XIVLauncher
 
         private static string DefaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn");
 
-        private static readonly string[] PathsToTry = DriveInfo.GetDrives().Select(drive => $"{drive.Name}SquareEnix\\FINAL FANTASY XIV - A Realm Reborn").Concat(new List<string>
+        private static string[] GetCommonPaths()
         {
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam\\steamapps\\common\\FINAL FANTASY XIV Online"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam\\steamapps\\common\\FINAL FANTASY XIV - A Realm Reborn"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "FINAL FANTASY XIV - A Realm Reborn"),
-            DefaultPath
-        }).ToArray();
+            var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            var paths = new List<string>();
+            var drives = DriveInfo.GetDrives().Select(info => info.Name);
+
+            var commonPaths = new string[]
+            {
+                "Steam\\steamapps\\common\\FINAL FANTASY XIV Online",
+                "Steam\\steamapps\\common\\FINAL FANTASY XIV - A Realm Reborn",
+                "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn",
+                "Square Enix\\FINAL FANTASY XIV - A Realm Reborn",
+                "Games\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn",
+                "Games\\Square Enix\\FINAL FANTASY XIV - A Realm Reborn",
+            };
+
+            foreach (var commonPath in commonPaths)
+            {
+                paths.Add(Path.Combine(programFiles, commonPath));
+
+                foreach (var drive in drives)
+                {
+                    paths.Add(Path.Combine(drive, commonPath));
+                    paths.Add(Path.Combine(drive, "Program Files (x86)", commonPath));
+                }
+            }
+
+            paths.Add(Path.Combine(programFiles, "FINAL FANTASY XIV - A Realm Reborn"));
+
+            return paths.ToArray();
+        }
 
         public static string TryGamePaths()
         {
-            foreach (var path in PathsToTry)
-                if (Directory.Exists(path) && IsValidFfxivPath(path))
-                    return path;
+            try
+            {
+                var foundVersions = new Dictionary<string, SeVersion>();
 
-            return DefaultPath;
+                foreach (var path in GetCommonPaths())
+                {
+                    if (!Directory.Exists(path) || !IsValidFfxivPath(path))
+                        continue;
+
+                    var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
+                    foundVersions.Add(path, SeVersion.Parse(baseVersion));
+                }
+
+                return foundVersions.Count == 0 ? DefaultPath : foundVersions.OrderByDescending(x => x.Value).First().Key;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not search for game paths");
+                return DefaultPath;
+            }
         }
 
         public static long GetUnixMillis()
