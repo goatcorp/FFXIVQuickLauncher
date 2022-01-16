@@ -151,7 +151,7 @@ namespace XIVLauncher
 
                 foreach (var path in GetCommonPaths())
                 {
-                    if (!Directory.Exists(path) || !IsValidFfxivPath(path))
+                    if (!Directory.Exists(path) || !IsValidFfxivPath(path) || foundVersions.ContainsKey(path))
                         continue;
 
                     var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
@@ -170,7 +170,7 @@ namespace XIVLauncher
                                 // DisplayIcon includes "boot\ffxivboot.exe", need to remove it
                                 path = Directory.GetParent(path).Parent.FullName;
 
-                                if (Directory.Exists(path) && IsValidFfxivPath(path))
+                                if (Directory.Exists(path) && IsValidFfxivPath(path) && !foundVersions.ContainsKey(path))
                                 {
                                     var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
                                     foundVersions.Add(path, SeVersion.Parse(baseVersion));
@@ -185,7 +185,7 @@ namespace XIVLauncher
                             {
                                 if (subkey != null && subkey.GetValue("InstallLocation", null) is string path)
                                 {
-                                    if (Directory.Exists(path) && IsValidFfxivPath(path))
+                                    if (Directory.Exists(path) && IsValidFfxivPath(path) && !foundVersions.ContainsKey(path))
                                     {
                                         // InstallLocation is the root path of the game (the one containing boot and game) itself
                                         var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
