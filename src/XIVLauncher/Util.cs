@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
+using Microsoft.Win32;
 using Serilog;
 using XIVLauncher.Game;
 
@@ -112,8 +113,44 @@ namespace XIVLauncher
             DefaultPath
         }).ToArray();
 
+        private static readonly int[] ValidSteamAppIds = new int[] {
+            39210 /* Paid version */,
+            312060, /* Free trial version */ 
+        };
+
         public static string TryGamePaths()
         {
+            foreach (var registryView in new RegistryView[] { RegistryView.Registry32, RegistryView.Registry64 })
+            {
+                using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView)) 
+                {
+                    // Should return "C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\boot\ffxivboot.exe" if installed with default options.
+                    using (var subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2B41E132-07DF-4925-A3D3-F2D1765CCDFE}"))
+                    {
+                        if (subkey != null && subkey.GetValue("DisplayIcon", null) is string path)
+                        {
+                            path = Directory.GetParent(path).Parent.FullName;
+                            if (Directory.Exists(path) && IsValidFfxivPath(path))
+                                return path;
+                        }
+                    }
+
+                    // Should return "C:\Program Files (x86)\Steam\steamapps\common\FINAL FANTASY XIV Online" if installed with default options.
+                    foreach (var steamAppId in ValidSteamAppIds)
+                    {
+                        using (var subkey = hklm.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {steamAppId}"))
+                        {
+                            if (subkey != null && subkey.GetValue("InstallLocation", null) is string path)
+                            {
+                                if (Directory.Exists(path) && IsValidFfxivPath(path))
+                                    return path;
+                            }
+                        }
+                    }
+
+                }
+            }
+
             foreach (var path in PathsToTry)
                 if (Directory.Exists(path) && IsValidFfxivPath(path))
                     return path;
