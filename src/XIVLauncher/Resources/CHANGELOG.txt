@@ -1,5 +1,6 @@
-﻿• Fixes a rare issue wherein patches may not have been downloaded properly
-• Fixes an issue wherein the game may not have started correctly, after incorrect un/installation of certain other software
-• Fixes an issue wherein patching would fail if the XIVLauncher configuration was copied from another PC
-• XIVLauncher now removes whitespace from SE account names, to prevent typos
-• Various improvements to error messages to aid in troubleshooting
+﻿• Fixes an issue wherein, in certain cases, the path the game is installed to would not be detected correctly
+• Fixes an issue wherein, in certain cases, patch files would not be verified completely
+• Fixes an issue wherein, when an integrity check was performed without a game installation, the launcher would show a confusing error message
+• Fixes an issue wherein, when Dalamud updated after the game was already running, it would not be enabled for a second client
+• Fixes an issue wherein, on Linux systems, Americans may have seen European news
+• Various small improvements
