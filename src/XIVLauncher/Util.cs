@@ -68,6 +68,7 @@ namespace XIVLauncher
         public static bool IsRegionNorthAmerica()
         {
             return RegionInfo.CurrentRegion.ThreeLetterISORegionName is "USA" or "MEX" or "CAN";
+            return RegionInfo.CurrentRegion.TwoLetterISORegionName is "US" or "MX" or "CA";
         }
 
         public static string GetAssemblyVersion()
