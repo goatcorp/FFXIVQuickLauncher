@@ -129,8 +129,6 @@ namespace XIVLauncher.Dalamud
                 new(Path.Combine(runtimePath.FullName, "shared", "Microsoft.WindowsDesktop.App", remoteVersionInfo.RuntimeVersion)),
             };
 
-            AssetDirectory = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets"));
-
             if (!currentVersionPath.Exists || !IsIntegrity(currentVersionPath))
             {
                 Log.Information("[DUPDATE] Not found, redownloading");
@@ -186,12 +184,15 @@ namespace XIVLauncher.Dalamud
             {
                 SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Assets);
 
-                if (!AssetManager.EnsureAssets(AssetDirectory))
+                var assetBase = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets"));
+                if (!AssetManager.TryEnsureAssets(assetBase, out var assetsDir))
                 {
                     Log.Information("[DUPDATE] Assets not ensured, bailing out...");
                     State = DownloadState.Failed;
                     return;
                 }
+
+                AssetDirectory = assetsDir;
             }
             catch (Exception ex)
             {
