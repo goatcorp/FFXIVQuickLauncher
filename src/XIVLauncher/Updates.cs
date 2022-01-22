@@ -60,7 +60,14 @@ namespace XIVLauncher
                                 "XIVLauncher",
                                  MessageBoxButton.OK,
                                  MessageBoxImage.Error);
-                System.Environment.Exit(1);
+
+#if !XL_NOAUTOUPDATE
+                // Don't exit if the client was rate limited 
+                if (ex.Message?.Contains("403") == true)
+                    OnUpdateCheckFinished?.Invoke(this, null);
+                else
+#endif
+                    System.Environment.Exit(1);
             }
 
 
