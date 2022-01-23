@@ -2,7 +2,7 @@
 
 Read in: [日本語](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Japanese)) | [Français](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(French)) | [Deutsch](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(German)) | [Español](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Spanish)) | [简体中文](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Chinese-Simplified)) | [繁體中文](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Chinese-Traditional)) | [한국어](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Korean)) | [Italiano](https://github.com/goatcorp/FFXIVQuickLauncher/wiki/Info-(Italian))
 
-XIVLauncher (abbreviated as XL) is a faster launcher for Final Fantasy XIV, with various available addons and enhancements to the game!
+XIVLauncher (abbreviated as XL) is a faster launcher for FFXIV, with various available addons and enhancements to the game!
 
 <p align="center">
   <a href="https://github.com/goatcorp/FFXIVQuickLauncher/releases">
@@ -67,4 +67,4 @@ We feel like that this offers developers the __freedom to improve the game's fun
 ## Disclaimer
 XIVLauncher is not in-line with Square Enix ToS. We are doing our best to make it safe to use for everyone, and to our knowledge, no one ever got into trouble for using XIVLauncher, but please be aware that it is a possibility.<br>You can read through our [FAQ entry](https://goatcorp.github.io/faq/xl_troubleshooting#q-are-xivlauncher-dalamud-and-dalamud-plugins-safe-to-use) on this matter if you want to know more.
 
-##### Final Fantasy XIV © 2010-2021 SQUARE ENIX CO., LTD. All Rights Reserved. We are not affiliated with SQUARE ENIX CO., LTD. in any way.
+##### FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. FINAL FANTASY XIV © 2010-2022 SQUARE ENIX CO., LTD. All Rights Reserved. We are not affiliated with SQUARE ENIX CO., LTD. in any way.
