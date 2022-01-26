@@ -1,6 +1,2 @@
-﻿• Fixes an issue wherein, in certain cases, the path the game is installed to would not be detected correctly
-• Fixes an issue wherein, in certain cases, patch files would not be verified completely
-• Fixes an issue wherein, when an integrity check was performed without a game installation, the launcher would show a confusing error message
-• Fixes an issue wherein, when Dalamud updated after the game was already running, it would not be enabled for a second client
-• Fixes an issue wherein, on Linux systems, Americans may have seen European news
-• Various small improvements
+﻿• No longer uses GitHub for updates, to prevent common connection issues when starting XIVLauncher
+• Various small fixes and adjustments
