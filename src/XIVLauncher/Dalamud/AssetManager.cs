@@ -45,13 +45,27 @@ namespace XIVLauncher.Dalamud
                 assetsDir = null;
                 return false;
             }
+            
+            // NOTE(goat): We should use a junction instead of copying assets to a new folder. There is no C# API for junctions in .NET Framework.
 
+            var newAssetsDir = new DirectoryInfo(Path.Combine(baseDir.FullName, info.Version.ToString()));
+            var devDir = new DirectoryInfo(Path.Combine(baseDir.FullName, "dev"));
+            
             foreach (var entry in info.Assets)
             {
-                var filePath = Path.Combine(baseDir.FullName, info.Version.ToString(), entry.FileName);
+                var filePath = Path.Combine(newAssetsDir.FullName, entry.FileName);
+                var filePathDev = Path.Combine(devDir.FullName, entry.FileName);
 
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(filePathDev)!);
+                }
+                catch
+                {
+                    // ignored
+                }
+                
                 var refreshFile = false;
                 if (File.Exists(filePath) && !entry.Hash.IsNullOrEmpty())
                 {
@@ -75,6 +89,15 @@ namespace XIVLauncher.Dalamud
                     try
                     {
                         File.WriteAllBytes(filePath, client.DownloadData(entry.Url));
+
+                        try
+                        {
+                            File.Copy(filePath, filePathDev);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -88,7 +111,8 @@ namespace XIVLauncher.Dalamud
             if (isRefreshNeeded)
                 SetLocalAssetVer(baseDir, info.Version);
 
-            assetsDir = new DirectoryInfo(Path.Combine(baseDir.FullName, info.Version.ToString()));
+            assetsDir = newAssetsDir;
+
             Log.Verbose("[DASSET] Assets OK at {0}", assetsDir.FullName);
 
             CleanUpOld(baseDir, info.Version - 1);

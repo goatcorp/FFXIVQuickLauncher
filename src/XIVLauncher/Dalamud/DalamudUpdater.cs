@@ -189,6 +189,16 @@ namespace XIVLauncher.Dalamud
                 {
                     Log.Information("[DUPDATE] Assets not ensured, bailing out...");
                     State = DownloadState.Failed;
+
+                    // TODO(goat): We might want to try again here
+                    try
+                    {
+                        assetBase.Delete(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Tried to recover assets, didn't work");
+                    }
                     return;
                 }
 
