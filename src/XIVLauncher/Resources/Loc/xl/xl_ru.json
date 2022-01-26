@@ -1,10 +1,10 @@
 {
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "message": "XIVLauncher не удалось проверить обновления. Это может быть вызвано проблемами подключения к GitHub. Подождите несколько минут и повторите попытку.\nОтключите VPN, если он у Вас есть. Попробуйте добавить XIVLauncher в исключения антивируса.\nЕсли обновление не удаётся проверить после нескольких минут, пожалуйста, обратитесь к FAQ.",
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "Updating core...",
+    "message": "Обновление ядра...",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -40,7 +40,7 @@
     "description": "MainWindow.Initialize"
   },
   "NewsDlFailed": {
-    "message": "Не удалось загрузить данные новостей.",
+    "message": "Не удалось загрузить новости.",
     "description": "MainWindow.<SetupHeadlines>b__11_3"
   },
   "MaintenanceQueueBootPatch": {
@@ -52,11 +52,11 @@
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
+    "message": "Dalamud не был обновлен до актуальной версии FFXIV.\nЭто обычное явление после патчей, пожалуйста, будьте терпеливы или уточните на сервере Discord статус обновления!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
+    "message": "Не удалось связаться с сервером, чтобы получить актуальную версию Dalamud. Это может означать, что версия установленного .NET устарела.\nПожалуйста, обратитесь за информацией на сервер Discord.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -64,7 +64,7 @@
     "description": "SettingsControl.TogglePlugin_OnClick"
   },
   "GameIsOpenPluginLocked": {
-    "message": "Игра открыта, пожалуйста, закройте ее и повторите попытку.",
+    "message": "Игра запущена, пожалуйста, закройте ее и повторите попытку.",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "DisabledPlugin": {
@@ -80,7 +80,7 @@
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
-    "message": "Ваша игра, кажется, актуальна.",
+    "message": "Файлы успешно прошли проверку.",
     "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "AccountSwitcherSetProfilePic": {
@@ -108,15 +108,15 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "SendEmail": {
-    "message": "Send Email",
+    "message": "Отправить Email",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation and I won't ever contact you.\n\nThank you very much for using XIVLauncher!",
+    "message": "XIVLauncher — это бесплатное программное обеспечение с открытым исходным кодом. Оно не использует телеметрию или инструменты аналитики для сбора Ваших данных, но Вы можете оказать помощь проекту, отправим мне Email с информацией о Вашей операционной системе, почему вы используете XIVLauncher и Вашу критику и пожелания по улучшениям. Ваш Email будет немедленно удалён после рассмотрения.\n\nБольшое спасибо за использование XIVLauncher!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogThanks": {
-    "message": "XIVLauncher is free, open-source software supported by a variety of people from all over the world.\nThank you for sticking around!",
+    "message": "XIVLauncher — это бесплатное программное обеспечение с открытым исходным кодом, поддерживаемое людьми со всего мира.\nБлагодарим вас за то, что остаётесь с нами!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -136,7 +136,7 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "DalamudUpdate": {
-    "message": "Updating Dalamud...",
+    "message": "Обновление Dalamud...",
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
@@ -144,7 +144,7 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenIntegrityReport": {
-    "message": "Open Integrity Report",
+    "message": "Открыть отчёт",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -156,7 +156,7 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".",
+    "message": "Пожалуйста, выберите папку в которую Вы установили игру.\nВ ней должны находиться папки \"game\" и \"boot\".",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
@@ -168,15 +168,15 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectXFTS": {
-    "message": "Please select which DirectX version you want to use.",
+    "message": "Пожалуйста, выберите версию DirectX, которую вы хотите использовать.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and Dalamud will not work.",
+    "message": "DirectX 9 больше не поддерживается. Игра запустится, но Вы не получите технической поддержки от SE, а некоторые функции XIVLauncher, такие как Rich Presence и Dalamud не будут работать.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
-    "message": "Please select which language you want to load the game with.",
+    "message": "Пожалуйста, выберите язык игры.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
@@ -192,11 +192,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Do you want to enable Dalamud?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
+    "message": "Хотите включить Dalamud?\nЭто добавит в игру дополнительные функции, такие как фильтрация RMT в чате, оповещения Discord и уведомления Duty Finder в чате.\n\nЧтобы настроить эти параметры, пожалуйста, используйте вкладку Dalamud в XIVLauncher.\nВключение этой настройки может привести к ложному срабатыванию антивирус. Пожалуйста, проверьте настройки антивируса и добавьте лаунчер в исключения, если возникнут проблемы.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Включить Dalamud",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -228,7 +228,7 @@
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "message": "XIVLauncher не может установить соединение с игровыми серверами.\n\nВозможно это временная неисправность или у Вас проблема с соединением. Пожалуйста, повторите попытку позже.",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
@@ -248,7 +248,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxAutoLogin": {
-    "message": "Авторизоваться автоматически",
+    "message": "Автоматический вход",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxOtp": {
@@ -260,7 +260,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLogin": {
-    "message": "Авторизоваться",
+    "message": "Войти",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoStartLogin": {
@@ -296,11 +296,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "AutoLoginIntro": {
-    "message": "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon.",
+    "message": "Вы включаете автоматический вход.\nXIVLauncher всегда будет входить в систему с текущей учетной записью, и вы не увидите это окно.\n\nЧтобы изменить настройки, удерживайте клавишу Shift после включения XIVLauncher.",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "Transmission in progress...",
+    "message": "Загрузка...",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "CheckBootVersionError": {
@@ -320,7 +320,7 @@
     "description": "<Login>d__20.MoveNext"
   },
   "EmailUsernameError": {
-    "message": "Please enter your SE account name, not your email address.",
+    "message": "Пожалуйста, введите имя учётной записи Square Enix, не email.",
     "description": "<Login>d__20.MoveNext"
   },
   "EmptyPasswordError": {
@@ -356,11 +356,11 @@
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "MultiboxDeniedWarning": {
-    "message": "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly.",
+    "message": "Нельзя запускать более двух процессов игры.\n\nПожалуйста, проверьте, нет ли уже запущенного процесса игры или она была закрыта неправильно.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "GameExitedPrematurelyError": {
-    "message": "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "XIVLauncher определил, что игра была запущена неправильно.\n\nВозможно это временная неисправность. Попробуйте перезагрузить Ваш ПК. Возможно, игра установлена некорректно.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "BinaryNotPresentError": {
@@ -368,11 +368,11 @@
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "GenericLoginError": {
-    "message": "Error occured during login, please report this error.",
+    "message": "Произошла ошибка при входе в систему. Пожалуйста, сообщите об этом.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginGenericServerIssue": {
-    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
+    "message": "Сервер не отвечает. Это обычное явление во время сбоев или повышенной нагрузки.\nПожалуйста, подождите минуту и повторите вход снова или попробуйте использовать официальный лаунчер.\n\nИнформация о сбоях публикуется на Lodestone.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
@@ -412,7 +412,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "Waiting for download...",
+    "message": "Ожидание загрузки...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -424,7 +424,7 @@
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "ProfilePictureInputDescription": {
-    "message": "Пожалуйста, введите имя персонажа и его мир.",
+    "message": "Пожалуйста, введите имя персонажа и название мира.",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "CharacterName": {
@@ -452,7 +452,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpServerCheckBox": {
-    "message": "Enable XL Authenticator app/OTP macro support",
+    "message": "Включить поддержку XL Authenticator app/OTP",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
@@ -460,19 +460,19 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwareness": {
-    "message": "Game DPI Awareness",
+    "message": "Учитывать DPI",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessAware": {
-    "message": "Aware",
+    "message": "Учитывать",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessUnaware": {
-    "message": "Unaware",
+    "message": "Не учитывать",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwarenessHint": {
-    "message": "If game scaling appears wrong when using XIVLauncher, please attempt changing this setting.",
+    "message": "Если масштабирование в игре ведёт себя неправильно при использовании XIVLauncher, пожалуйста, попробуйте изменить эту настройку.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
@@ -532,7 +532,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "These options affect the XIVLauncher in-game features, provided by Dalamud. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.",
+    "message": "Эти настройки влияют на внутриигровые функции XIVLauncher. Они будут автоматически включены, если Вы используете DirectX 11 версию игры, версия игры совместима и чекбокс ниже включён.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
@@ -540,7 +540,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Включить Dalamud",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
@@ -576,7 +576,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayLoc": {
-    "message": "Задержка введения дополнения",
+    "message": "Задержка запуска дополнения",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayDescriptionLoc": {
@@ -584,15 +584,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodLoc": {
-    "message": "Choose how to load Dalamud.",
+    "message": "Выберите способ загрузки Dalamud.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodEntryPointLoc": {
-    "message": "New: improves compatibility with certain other software and plugins that need to load early.",
+    "message": "Новый: улучшенная совместимость с другим ПО и плагинами, которые необходимо загружать раньше.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodDllInjectLoc": {
-    "message": "Legacy: old version of the Dalamud injection system that may be more stable.",
+    "message": "Старый: устаревшая версия системы Dalamud, может быть более стабильной.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
@@ -640,7 +640,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchAcquisitionMethod": {
-    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "message": "Выберите метод получения патчей. Мы рекомендуем использовать \"ARIA(HTTP)\".",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -688,7 +688,7 @@
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "LoginGenericError": {
-    "message": "Could not log into your SE account.\nPlease check your username and password.",
+    "message": "Не удалось войти в аккаунт Square Enix.\nПроверьте правильность ввода логина и пароля.",
     "description": "OauthLoginException.GetErrorMessage"
   },
   "AdminCheck": {
@@ -704,15 +704,15 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "У Вас нет разрешения на запись в папку FFXIV.\nИз-за этот не получится сохранять скриншоты и некоторые данные персонажей.\n\nЭто может быть вызвано работой антивируса или отсутствует разрешение на запись к папке. Проверьте разрешения во вкладке \"Безопасность\" в Проводнике.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
-    "message": "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "message": "Обнаружена некорректно установленный GShade.\n\nИгра не может быть запущена. Хотите, чтобы XIVLauncher исправил эту проблему? Потребуется переустановка GShade.",
     "description": "ProblemCheck.RunCheck"
   },
   "PatchInstallerInstallFailed": {
-    "message": "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher.",
+    "message": "Во время установки возникла проблема.\nПожалуйста, сообщите об этой ошибке.\n\nПопробуйте ещё раз или воспользуйтесь официальным лаунчером.",
     "description": "PatchInstaller.RemoteCallHandler"
   },
   "PatchInstallerNotOpen": {
@@ -720,7 +720,7 @@
     "description": "PatchInstaller.WaitOnHello"
   },
   "PatchManNoInstaller": {
-    "message": "The patch installer could not start correctly.\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
+    "message": "Установщик не был запущен.\n\nЕсли Вы сами его работу или антивирус заблокировали его работу, внесите его в исключения и попробуйте ещё раз. Если проблему не получается решить самостоятельно, свяжитесь с нами в Discord.",
     "description": "PatchManager.Start"
   },
   "PatchManDlFailure": {
@@ -728,11 +728,11 @@
     "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
-    "message": "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+    "message": "Не удалось запустить Dalamud. Этому может препятствовать Ваш антивирус.\nЧтобы предотвратить эту проблему, добавьте в исключения антивируса папку \"%AppData%\\XIVLauncher\\addons\".",
     "description": "DalamudLauncher.HoldForUpdate"
   },
   "AntivirusDeletedBoot": {
-    "message": "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again.",
+    "message": "Загрузочный DLL Dalamud не найден.\n\nСкорее всего, он был удалён Вашим антивирусом. Пожалуйста, добавьте папку XIVLauncher в исключения и повторите попытку.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {

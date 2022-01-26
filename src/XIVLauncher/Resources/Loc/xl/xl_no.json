@@ -24,7 +24,7 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
-    "message": "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead.",
+    "message": "Vennligst ikke velg \"game\" eller \"boot\" mappen til FFXIV-installasjonen, men velg heller mappen som inneholder disse i stedet.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidError": {
@@ -52,11 +52,11 @@
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
+    "message": "Dalamud ble foreløpig ikke oppdatert til din nåværende FFXIV-versjon.\nDetter vanlig etter patcher, så vennligst vær tålmodig eller spør på Discord etter en statusoppdatering.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
+    "message": "Kunne ikke kontakte tjeneren for å hente kompatible versjonen av Dalamud til gjeldende versjon av FFXIV. Dette kan bety at din .NET installasjon er for gammel.\nVennligst sjekk Discord for mer informasjon.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -64,11 +64,11 @@
     "description": "SettingsControl.TogglePlugin_OnClick"
   },
   "GameIsOpenPluginLocked": {
-    "message": "The game is open, please close it and try again.",
+    "message": "Spillet er åpent, vennligst lukk spillet og prøv igjen.",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "DisabledPlugin": {
-    "message": " (disabled)",
+    "message": " (deaktivert)",
     "description": "SettingsControl.ReloadPluginList"
   },
   "IntegrityCheckImpossible": {
@@ -108,7 +108,7 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "SendEmail": {
-    "message": "Send Email",
+    "message": "Send e-post",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
@@ -196,7 +196,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Aktiver Dalamud",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -216,7 +216,7 @@
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "RunOnCloseLoc": {
-    "message": "Run on game close",
+    "message": "Kjør når spillet lukkes",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "KillAfterCloseLoc": {
@@ -232,7 +232,7 @@
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
-    "message": "Login issue",
+    "message": "Problem med pålogging",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "MaintenanceNotice": {
@@ -412,7 +412,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "Waiting for download...",
+    "message": "Venter på nedlasting...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -440,7 +440,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SaveSettings": {
-    "message": "Save Settings",
+    "message": "Lagre innstillinger",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGame": {
