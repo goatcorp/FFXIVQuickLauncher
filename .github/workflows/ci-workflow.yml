@@ -8,6 +8,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: windows-2019
     steps:
+      - uses: nadock/verified_commits_check@f9b330e987c2e7121dfc0230e65cb5751ee5fac9
       - uses: actions/checkout@v1
       - name: Initialize Submodules
         run: git submodule update --init --recursive
