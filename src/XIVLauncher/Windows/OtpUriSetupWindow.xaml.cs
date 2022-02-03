@@ -21,7 +21,7 @@ namespace XIVLauncher.Windows
 
         CancellationTokenSource _cancellationToken = null;
         Task _otpCodeUpdateTask = null;
-        private OtpNet.Totp _totp;
+        private PureOtp.Totp _totp;
 
         public OtpUriSetupWindow(string uri = null)
         {
@@ -133,18 +133,18 @@ namespace XIVLauncher.Windows
                         digits = 6;
                         await ChangeCheckBox(LengthCheckBox, unknownValue, false);
                     }
-                    if (query.AllKeys.Contains("algorithm") && Enum.TryParse(query["algorithm"], true, out OtpNet.OtpHashMode algorithm))
+                    if (query.AllKeys.Contains("algorithm") && Enum.TryParse(query["algorithm"], true, out PureOtp.Types.OtpHashMode algorithm))
                     {
                         await ChangeCheckBox(AlgorithmCheckBox, algorithm.ToString().ToUpperInvariant(), true);
                     }
                     else
                     {
-                        algorithm = OtpNet.OtpHashMode.Sha1;
+                        algorithm = PureOtp.Types.OtpHashMode.Sha1;
                         await ChangeCheckBox(AlgorithmCheckBox, unknownValue, false);
                     }
 
-                    var secretKey = OtpNet.Base32Encoding.ToBytes(secret);
-                    _totp = new OtpNet.Totp(secretKey, step: period, mode: algorithm, totpSize: digits);
+                    var secretKey = Wiry.Base32.Base32Encoding.Standard.ToBytes(secret);
+                    _totp = new PureOtp.Totp(secretKey, step: period, mode: algorithm, totpSize: digits);
                 }
                 else
                 {
@@ -154,8 +154,8 @@ namespace XIVLauncher.Windows
                     await ChangeCheckBox(LengthCheckBox, unknownValue, false);
                     await ChangeCheckBox(AlgorithmCheckBox, unknownValue, false);
 
-                    var secretKey = OtpNet.Base32Encoding.ToBytes(secret);
-                    _totp = new OtpNet.Totp(secretKey);
+                    var secretKey = Wiry.Base32.Base32Encoding.Standard.ToBytes(secret);
+                    _totp = new PureOtp.Totp(secretKey);
                 }
 
                 _cancellationToken = new CancellationTokenSource();
