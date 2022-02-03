@@ -6,6 +6,7 @@ using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using NuGet;
 using XIVLauncher.Addon;
 using XIVLauncher.Windows.ViewModel;
 using CheckBox = System.Windows.Controls.CheckBox;
@@ -21,7 +22,7 @@ namespace XIVLauncher.Windows
 
         CancellationTokenSource _cancellationToken = null;
         Task _otpCodeUpdateTask = null;
-        private PureOtp.Totp _totp;
+        private TokenInfo? _tokenInfo;
 
         public OtpUriSetupWindow(string uri = null)
         {
@@ -133,18 +134,26 @@ namespace XIVLauncher.Windows
                         digits = 6;
                         await ChangeCheckBox(LengthCheckBox, unknownValue, false);
                     }
-                    if (query.AllKeys.Contains("algorithm") && Enum.TryParse(query["algorithm"], true, out PureOtp.Types.OtpHashMode algorithm))
+
+                    var algorithm = "sha1";
+                    if (query.AllKeys.Contains("algorithm") && new[] { "sha1", "sha256", "sha512" }.Any(a => a.Equals(query["algorithm"], StringComparison.OrdinalIgnoreCase)))
                     {
+                        algorithm = query["algorithm"];
                         await ChangeCheckBox(AlgorithmCheckBox, algorithm.ToString().ToUpperInvariant(), true);
                     }
                     else
                     {
-                        algorithm = PureOtp.Types.OtpHashMode.Sha1;
+                        algorithm = "sha1";
                         await ChangeCheckBox(AlgorithmCheckBox, unknownValue, false);
                     }
 
-                    var secretKey = Wiry.Base32.Base32Encoding.Standard.ToBytes(secret);
-                    _totp = new PureOtp.Totp(secretKey, step: period, mode: algorithm, totpSize: digits);
+                    _tokenInfo = new TokenInfo()
+                    {
+                        Secret = secret,
+                        Algorithm = algorithm,
+                        Digits = digits,
+                        Period = period
+                    };
                 }
                 else
                 {
@@ -154,8 +163,13 @@ namespace XIVLauncher.Windows
                     await ChangeCheckBox(LengthCheckBox, unknownValue, false);
                     await ChangeCheckBox(AlgorithmCheckBox, unknownValue, false);
 
-                    var secretKey = Wiry.Base32.Base32Encoding.Standard.ToBytes(secret);
-                    _totp = new PureOtp.Totp(secretKey);
+                    _tokenInfo = new TokenInfo()
+                    {
+                        Secret = secret,
+                        Algorithm = "sha1",
+                        Digits = 6,
+                        Period = 30
+                    };
                 }
 
                 _cancellationToken = new CancellationTokenSource();
@@ -189,12 +203,12 @@ namespace XIVLauncher.Windows
             while (!token.IsCancellationRequested)
             {
                 // No generator exit
-                if (_totp == null)
+                if (_tokenInfo == null)
                     return;
 
                 try
                 {
-                    await ChangeCheckBox(OtpCodeCheckBox, _totp.ComputeTotp(), true);
+                    await ChangeCheckBox(OtpCodeCheckBox, Util.GetTotpToken(_tokenInfo.Value.Secret, _tokenInfo.Value.Algorithm, _tokenInfo.Value.Digits, _tokenInfo.Value.Period), true);
                 }
                 catch (Exception)
                 {
@@ -203,7 +217,8 @@ namespace XIVLauncher.Windows
 
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(_totp.RemainingSeconds()), token);
+                    var remaining = (DateTimeOffset.Now - DateTimeOffset.FromUnixTimeSeconds(0)).TotalSeconds % Convert.ToDouble(_tokenInfo?.Period ?? 30);
+                    await Task.Delay(TimeSpan.FromSeconds(remaining), token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -222,6 +237,14 @@ namespace XIVLauncher.Windows
 
             _cancellationToken = null;
             _otpCodeUpdateTask = null;
+        }
+
+        private struct TokenInfo
+        {
+            public string Secret;
+            public string Algorithm;
+            public int Digits;
+            public int Period;
         }
     }
 }
