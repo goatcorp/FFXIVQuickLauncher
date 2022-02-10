@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using MaterialDesignThemes.Wpf;
+using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows.ViewModel;
 
@@ -21,6 +22,18 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
+            this.OfficialLauncherButton.Click += (_, _) =>
+            {
+                if (MessageBox.Show("Steam account?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Process.Start($"steam://rungameid/{Launcher.STEAM_APP_ID}");
+                }
+                else
+                {
+                    Util.StartOfficialLauncher(App.Settings.GamePath, false);
+                }
+            };
+
             DiscordButton.Click += Util.OpenDiscord;
             FaqButton.Click += Util.OpenFaq;
             DataContext = new ErrorWindowViewModel();
@@ -31,7 +44,7 @@ namespace XIVLauncher.Windows
             Focus();
         }
 
-        public static void Show(string text, string caption, MessageBoxButton buttons = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Asterisk, bool showHelpLinks = true, bool showReportLinks = false)
+        public static void Show(string text, string caption, MessageBoxButton buttons = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Asterisk, bool showHelpLinks = true, bool showDiscordLink = true, bool showReportLinks = false, bool showOfficialLauncher = false)
         {
             var signal = new ManualResetEvent(false);
 
@@ -72,14 +85,30 @@ namespace XIVLauncher.Windows
                         throw new ArgumentOutOfRangeException(nameof(image), image, null);
                 }
 
-                if (!showHelpLinks)
+                if (!showOfficialLauncher)
+                {
+                    box.OfficialLauncherButton.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    box.OfficialLauncherButton.Visibility = Visibility.Visible;
+                }
+
+                if (!showDiscordLink)
                 {
                     box.DiscordButton.Visibility = Visibility.Collapsed;
-                    box.FaqButton.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     box.DiscordButton.Visibility = Visibility.Visible;
+                }
+
+                if (!showHelpLinks)
+                {
+                    box.FaqButton.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
                     box.FaqButton.Visibility = Visibility.Visible;
                 }
 
@@ -115,6 +144,5 @@ namespace XIVLauncher.Windows
         {
             Process.Start(Path.Combine(Paths.RoamingPath, "integrityreport.txt"));
         }
-
     }
 }

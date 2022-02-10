@@ -40,7 +40,7 @@ namespace XIVLauncher.Game
         private const string USER_AGENT_TEMPLATE = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
         private readonly string _userAgent = GenerateUserAgent();
 
-        private const int STEAM_APP_ID = 39210;
+        public const int STEAM_APP_ID = 39210;
 
         private readonly HttpClient _client;
 

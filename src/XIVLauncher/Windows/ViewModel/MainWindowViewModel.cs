@@ -53,6 +53,20 @@ namespace XIVLauncher.Windows.ViewModel
         {
             return async p =>
             {
+                /* ============= MARCH 2022 STEAM UPDATE ============= */
+                var bootver = Repository.Boot.GetVer(App.Settings.GamePath);
+                if (bootver != "2021.11.16.0000.0001" && bootver != PatcherMain.BASE_GAME_VERSION)
+                {
+                    CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
+                                                                         "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
+                                                                         "\n\nWe apologize for these circumstances.\n\nYou can use the \"Start Official Launcher\" button below to start the official launcher." +
+                                                                         "\n" + Loc.Localize("SteamLinkingText", "You may be prompted to link your Steam account to your Square Enix account."))
+                        , "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
+
+                    return;
+                }
+                /* =================================================== */
+
                 if (IsAutoLogin && App.Settings.HasShownAutoLaunchDisclaimer.GetValueOrDefault(false) == false)
                 {
                     CustomMessageBox.Show(Loc.Localize("AutoLoginIntro", "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon."), "XIVLauncher");
@@ -200,7 +214,7 @@ namespace XIVLauncher.Windows.ViewModel
                             Loc.Localize("LoginNoServiceMessage",
                                 "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
                             "Error",
-                            MessageBoxButton.OK, MessageBoxImage.Error, false);
+                            MessageBoxButton.OK, MessageBoxImage.Error, showHelpLinks: false, showDiscordLink: false);
 
                         Reactivate();
                         return;
@@ -280,7 +294,7 @@ namespace XIVLauncher.Windows.ViewModel
                     CustomMessageBox.Show(
                         Loc.Localize("LoginNoStartOk",
                             "An update check was executed and any pending updates were installed."), "XIVLauncher",
-                        MessageBoxButton.OK, MessageBoxImage.Information, false);
+                        MessageBoxButton.OK, MessageBoxImage.Information, showHelpLinks: false, showDiscordLink: false);
 
                     Reactivate();
                 }
@@ -405,7 +419,7 @@ namespace XIVLauncher.Windows.ViewModel
                     Log.Information("GateStatus is false.");
                     CustomMessageBox.Show(
                         Loc.Localize("MaintenanceNotice", "Maintenance seems to be in progress. The game shouldn't be launched."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false);
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false, false);
 
                     IsLoggingIn = false;
 
@@ -492,7 +506,7 @@ namespace XIVLauncher.Windows.ViewModel
                 CustomMessageBox.Show(
                     Loc.Localize("MaintenanceNotice",
                         "Maintenance seems to be in progress. The game shouldn't be launched."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false);
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, false, false);
 
                 Reactivate();
                 return;
@@ -654,7 +668,7 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     App.Settings.PatchPath = null;
                 }
-                
+
                 App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
                 Game.Patch.PatchList.PatchListEntry[] bootPatches = null;

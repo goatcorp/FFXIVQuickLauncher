@@ -76,7 +76,7 @@ namespace XIVLauncher.Windows
                 if (string.IsNullOrEmpty(GamePathEntry.Text))
                 {
                     CustomMessageBox.Show(Loc.Localize("GamePathEmptyError", "Please select a game path."), "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error, false);
+                        MessageBoxButton.OK, MessageBoxImage.Error, false, false);
                     return;
                 }
 

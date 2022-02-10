@@ -16,13 +16,20 @@
     <Grid>
         <StackPanel
             Orientation="Horizontal" Margin="10 10 10 50">
-            <TextBlock MaxWidth="400" MinHeight="100" TextWrapping="Wrap" x:Name="MessageTextBlock">On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue;
+            <TextBlock MaxWidth="500" MinHeight="100" TextWrapping="Wrap" x:Name="MessageTextBlock">On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue;
                 <LineBreak></LineBreak> <LineBreak></LineBreak>equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.</TextBlock>
             <materialDesign:PackIcon Kind="AlertOctagon" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="30"
                                      Height="30" Foreground="Red" Margin="10,0,0,0" x:Name="ErrorPackIcon"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 10">
+            <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                    x:Name="OfficialLauncherButton" Margin="0,0,5,0">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Launch" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OfficialLauncherLoc}"/>
+                </StackPanel>
+            </Button>
             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                     x:Name="DiscordButton" Margin="0,0,5,0">
                 <StackPanel Orientation="Horizontal">
