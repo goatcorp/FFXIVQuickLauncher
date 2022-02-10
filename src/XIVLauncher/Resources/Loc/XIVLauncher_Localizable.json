@@ -47,9 +47,17 @@
     "message": "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
     "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
   },
+  "SettingsGamePatchPathError": {
+    "message": "Game and patch download paths cannot be the same.\nPlease make sure to choose distinct game and patch download paths.",
+    "description": "SettingsControl.AcceptButton_Click"
+  },
   "LaunchAsSteam": {
     "message": "Launch as a steam user?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "IntegrityCheckBase": {
+    "message": "The game is not installed to the path you specified.\nPlease install the game before running an integrity check.",
+    "description": "SettingsControl.RunIntegrityCheck_OnClick"
   },
   "DalamudIncompatible": {
     "message": "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
@@ -73,15 +81,15 @@
   },
   "IntegrityCheckImpossible": {
     "message": "There is no reference report yet for this game version. Please try again later.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
     "message": "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, please reinstall your game.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "Your game install seems to be valid.",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "Set profile picture",
@@ -141,6 +149,10 @@
   },
   "ErrorExplanation": {
     "message": "An error in XIVLauncher occured. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "StartOfficialLauncher": {
+    "message": "Official Launcher",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenIntegrityReport": {
@@ -294,6 +306,14 @@
   "MaintenanceQueue": {
     "message": "Wait for maintenance to be over",
     "description": "MainWindowViewModel.SetupLoc"
+  },
+  "KillswitchText": {
+    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "description": "<<GetLoginFunc>b__0>d.MoveNext"
+  },
+  "SteamLinkingText": {
+    "message": "You may be prompted to link your Steam account to your Square Enix account.",
+    "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "AutoLoginIntro": {
     "message": "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon.",
@@ -724,7 +744,7 @@
     "description": "PatchManager.Start"
   },
   "PatchManDlFailure": {
-    "message": "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
+    "message": "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
     "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {

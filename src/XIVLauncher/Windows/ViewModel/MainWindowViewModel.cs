@@ -59,8 +59,8 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
                                                                          "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
-                                                                         "\n\nWe apologize for these circumstances.\n\nYou can use the \"Start Official Launcher\" button below to start the official launcher." +
-                                                                         "\n" + Loc.Localize("SteamLinkingText", "You may be prompted to link your Steam account to your Square Enix account."))
+                                                                         "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
+                                                                         "\n") + Loc.Localize("SteamLinkingText", "You may be prompted to link your Steam account to your Square Enix account.")
                         , "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
 
                     return;

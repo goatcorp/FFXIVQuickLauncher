@@ -18,7 +18,7 @@ namespace XIVLauncher.Windows.ViewModel
         {
             ErrorExplanationMsgLoc = Loc.Localize("ErrorExplanation",
                 "An error in XIVLauncher occured. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.");
-            OfficialLauncherLoc = Loc.Localize("StartOfficialLauncher", "Start Official Launcher");
+            OfficialLauncherLoc = Loc.Localize("StartOfficialLauncher", "Official Launcher");
             JoinDiscordLoc = Loc.Localize("JoinDiscord", "Join Discord");
             OpenIntegrityReportLoc = Loc.Localize("OpenIntegrityReport", "Open Integrity Report");
             OpenFaqLoc = Loc.Localize("OpenFaq", "Open FAQ");
