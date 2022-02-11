@@ -53,22 +53,6 @@ namespace XIVLauncher.Windows.ViewModel
         {
             return async p =>
             {
-                /* ============= MARCH 2022 STEAM UPDATE ============= */
-
-                var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
-                var ver600 = SeVersion.Parse("2021.11.16.0000.0001");
-                if (bootver > ver600)
-                {
-                    CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
-                                                                         "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
-                                                                         "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
-                                                                         "\n") + Loc.Localize("SteamLinkingText", "You may be prompted to link your Steam account to your Square Enix account.")
-                        , "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
-
-                    return;
-                }
-                /* =================================================== */
-
                 if (IsAutoLogin && App.Settings.HasShownAutoLaunchDisclaimer.GetValueOrDefault(false) == false)
                 {
                     CustomMessageBox.Show(Loc.Localize("AutoLoginIntro", "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon."), "XIVLauncher");
@@ -94,6 +78,21 @@ namespace XIVLauncher.Windows.ViewModel
         public async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, bool startGame)
         {
             ProblemCheck.RunCheck();
+
+            /* ============= MARCH 2022 STEAM UPDATE ============= */
+            var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
+            var ver600 = SeVersion.Parse("2021.11.16.0000.0001");
+            if (bootver > ver600)
+            {
+                CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
+                                                                     "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
+                                                                     "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
+                                                                     "\n") + Loc.Localize("SteamLinkingText", "You may be prompted to link your Steam account to your Square Enix account.")
+                    , "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
+
+                return;
+            }
+            /* =================================================== */
 
             var bootRes = await HandleBootCheck();
 
