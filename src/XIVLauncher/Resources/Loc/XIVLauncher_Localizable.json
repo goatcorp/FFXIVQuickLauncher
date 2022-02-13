@@ -148,7 +148,7 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
-    "message": "An error in XIVLauncher occured. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.",
+    "message": "An error in XIVLauncher occurred. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "StartOfficialLauncher": {
@@ -307,14 +307,6 @@
     "message": "Wait for maintenance to be over",
     "description": "MainWindowViewModel.SetupLoc"
   },
-  "KillswitchText": {
-    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
-    "description": "<<GetLoginFunc>b__0>d.MoveNext"
-  },
-  "SteamLinkingText": {
-    "message": "You may be prompted to link your Steam account to your Square Enix account.",
-    "description": "<<GetLoginFunc>b__0>d.MoveNext"
-  },
   "AutoLoginIntro": {
     "message": "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon.",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
@@ -334,6 +326,14 @@
   "PatcherAlreadyInProgress": {
     "message": "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open.",
     "description": "<HandleBootCheck>d__31.MoveNext"
+  },
+  "KillswitchText": {
+    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "description": "<Login>d__20.MoveNext"
+  },
+  "SteamLinkingText": {
+    "message": "You may be prompted to link your Steam account to your Square Enix account.",
+    "description": "<Login>d__20.MoveNext"
   },
   "EmptyUsernameError": {
     "message": "Please enter an username.",
@@ -388,7 +388,7 @@
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "GenericLoginError": {
-    "message": "Error occured during login, please report this error.",
+    "message": "Error occurred during login, please report this error.",
     "description": "<LoginToGame>d__22.MoveNext"
   },
   "LoginGenericServerIssue": {
