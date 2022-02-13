@@ -233,7 +233,7 @@ namespace XIVLauncher
                 Log.Error((Exception) e.ExceptionObject, "Unhandled exception.");
 
                 if (_useFullExceptionHandler)
-                    ErrorWindow.Show((Exception) e.ExceptionObject, "An unhandled exception occured.", "Unhandled");
+                    ErrorWindow.Show((Exception) e.ExceptionObject, "An unhandled exception occurred.", "Unhandled");
                 else
                     MessageBox.Show(
                         "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
