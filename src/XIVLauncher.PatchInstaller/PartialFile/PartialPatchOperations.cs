@@ -80,6 +80,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 {
                     Log.Information("Checking file {0}...", file);
                     var parts = def.GetFile(file);
+                    int warnOutCount = 0;
                     try
                     {
                         using var local = new FileStream(Path.Combine(gameRootPath, file), FileMode.Open, FileAccess.Read);
@@ -94,7 +95,13 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                                 if (part.VerifyData(buf, 0, part.TargetSize))
                                     continue;
 
-                                Log.Warning("{0}:{1}:{2}: Corrupt data", file, part.TargetOffset, part.TargetEnd);
+                                if (warnOutCount < 8)
+                                {
+                                    Log.Warning("{0}:{1}:{2}: Corrupt data", file, part.TargetOffset, part.TargetEnd);
+                                    warnOutCount++;
+                                    if (warnOutCount == 8)
+                                        Log.Warning("Suppressing further corruption warnings for this file.");
+                                }
                             }
                             else if (!prematureEof)
                             {
@@ -148,6 +155,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     using var local = new FileStream(Path.Combine(gameRootPath, file), FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
                     var prematureEof = false;
+                    int warnOutCount = 0;
                     foreach (var part in parts)
                     {
                         local.Seek(part.TargetOffset, SeekOrigin.Begin);
@@ -158,7 +166,13 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                             if (part.VerifyData(buf, 0, part.TargetSize))
                                 continue;
 
-                            Log.Warning("{0}:{1}:{2}: Corrupt data; repairing", file, part.TargetOffset, part.TargetEnd);
+                            if (warnOutCount < 8)
+                            {
+                                Log.Warning("{0}:{1}:{2}: Corrupt data", file, part.TargetOffset, part.TargetEnd);
+                                warnOutCount++;
+                                if (warnOutCount == 8)
+                                    Log.Warning("Suppressing further corruption warnings for this file.");
+                            }
                         }
                         else if (!prematureEof)
                         {
