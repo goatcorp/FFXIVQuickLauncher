@@ -155,7 +155,7 @@ namespace XIVLauncher.Windows
 
         private void CreateDesktopShortcut_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+            if (AccountListView.SelectedItem is not AccountSwitcherEntry selectedEntry)
                 return;
 
             var thumbnailPath = System.Reflection.Assembly.GetEntryAssembly().Location;
@@ -185,7 +185,7 @@ namespace XIVLauncher.Windows
 
         private void RemoveAccount_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+            if (AccountListView.SelectedItem is not AccountSwitcherEntry selectedEntry)
                 return;
 
             _accountManager.RemoveAccount(selectedEntry.Account);
@@ -195,7 +195,7 @@ namespace XIVLauncher.Windows
 
         private void SetProfilePicture_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+            if (AccountListView.SelectedItem is not AccountSwitcherEntry selectedEntry)
                 return;
 
             var inputDialog = new ProfilePictureInputWindow(selectedEntry.Account);
@@ -211,7 +211,7 @@ namespace XIVLauncher.Windows
 
         private void DontSavePassword_OnChecked(object sender, RoutedEventArgs e)
         {
-            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+            if (AccountListView.SelectedItem is not AccountSwitcherEntry selectedEntry)
                 return;
 
             var account = _accountManager.Accounts.First(a => a.Id == selectedEntry.Account.Id);
@@ -222,7 +222,7 @@ namespace XIVLauncher.Windows
 
         private void DontSavePassword_OnUnchecked(object sender, RoutedEventArgs e)
         {
-            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+            if (AccountListView.SelectedItem is not AccountSwitcherEntry selectedEntry)
                 return;
 
             var account = _accountManager.Accounts.First(a => a.Id == selectedEntry.Account.Id);
