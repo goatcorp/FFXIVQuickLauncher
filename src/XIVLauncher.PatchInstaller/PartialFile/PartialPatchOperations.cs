@@ -152,6 +152,8 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     Log.Information("Checking file {0}...", file);
                     var reconstructed = def.GetFileStream(file, sources);
                     var parts = def.GetFile(file);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(gameRootPath, file)));
                     using var local = new FileStream(Path.Combine(gameRootPath, file), FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
                     var prematureEof = false;
