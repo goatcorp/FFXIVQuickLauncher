@@ -23,8 +23,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 
         public bool OptionValue { get; protected set; }
 
-        public ApplyOptionChunk(ChecksumBinaryReader reader, int size) : base(reader, size)
-        {}
+        public ApplyOptionChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {

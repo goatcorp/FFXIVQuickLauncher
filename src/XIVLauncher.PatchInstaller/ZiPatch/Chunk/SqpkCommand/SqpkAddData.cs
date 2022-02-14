@@ -22,9 +22,10 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         public int BlockDeleteNumber { get; protected set; }
 
         public byte[] BlockData { get; protected set; }
+        public long BlockDataSourceOffset { get; protected set; }
 
 
-        public SqpkAddData(ChecksumBinaryReader reader, int size) : base(reader, size) {}
+        public SqpkAddData(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
@@ -38,6 +39,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
             BlockNumber = reader.ReadInt32BE() << 7;
             BlockDeleteNumber = reader.ReadInt32BE() << 7;
 
+            BlockDataSourceOffset = Offset + reader.BaseStream.Position;
             BlockData = reader.ReadBytes((int)BlockNumber);
 
             reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));

@@ -29,9 +29,10 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         public ushort ExpansionId { get; protected set; }
         public SqexFile TargetFile { get; protected set; }
 
+        public List<long> CompressedDataSourceOffsets { get; protected set; }
         public List<SqpkCompressedBlock> CompressedData { get; protected set; }
 
-        public SqpkFile(ChecksumBinaryReader reader, int size) : base(reader, size) {}
+        public SqpkFile(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
@@ -52,10 +53,15 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
             if (Operation == OperationKind.AddFile)
             {
+                CompressedDataSourceOffsets = new();
                 CompressedData = new List<SqpkCompressedBlock>();
 
                 while (Size - reader.BaseStream.Position + start > 0)
+                {
+                    CompressedDataSourceOffsets.Add(Offset + reader.BaseStream.Position);
                     CompressedData.Add(new SqpkCompressedBlock(reader));
+                    CompressedDataSourceOffsets[CompressedDataSourceOffsets.Count - 1] += CompressedData[CompressedData.Count - 1].HeaderSize;
+                }
             }
 
             reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));

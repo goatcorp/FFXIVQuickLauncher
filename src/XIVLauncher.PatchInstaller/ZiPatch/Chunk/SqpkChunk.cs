@@ -16,19 +16,19 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         public static string Command { get; protected set; }
 
 
-        private static readonly Dictionary<string, Func<ChecksumBinaryReader, int, SqpkChunk>> CommandTypes =
-            new Dictionary<string, Func<ChecksumBinaryReader, int, SqpkChunk>> {
-                { SqpkAddData.Command, (reader, size) => new SqpkAddData(reader, size) },
-                { SqpkDeleteData.Command, (reader, size) => new SqpkDeleteData(reader, size) },
-                { SqpkHeader.Command, (reader, size) => new SqpkHeader(reader, size) },
-                { SqpkTargetInfo.Command, (reader, size) => new SqpkTargetInfo(reader, size) },
-                { SqpkExpandData.Command, (reader, size) => new SqpkExpandData(reader, size) },
-                { SqpkIndex.Command, (reader, size) => new SqpkIndex(reader, size) },
-                { SqpkFile.Command, (reader, size) => new SqpkFile(reader, size) },
-                { SqpkPatchInfo.Command, (reader, size) => new SqpkPatchInfo(reader, size) }
+        private static readonly Dictionary<string, Func<ChecksumBinaryReader, int, int, SqpkChunk>> CommandTypes =
+            new Dictionary<string, Func<ChecksumBinaryReader, int, int, SqpkChunk>> {
+                { SqpkAddData.Command, (reader, offset, size) => new SqpkAddData(reader, offset, size) },
+                { SqpkDeleteData.Command, (reader, offset, size) => new SqpkDeleteData(reader, offset, size) },
+                { SqpkHeader.Command, (reader, offset, size) => new SqpkHeader(reader, offset, size) },
+                { SqpkTargetInfo.Command, (reader, offset, size) => new SqpkTargetInfo(reader, offset, size) },
+                { SqpkExpandData.Command, (reader, offset, size) => new SqpkExpandData(reader, offset, size) },
+                { SqpkIndex.Command, (reader, offset, size) => new SqpkIndex(reader, offset, size) },
+                { SqpkFile.Command, (reader, offset, size) => new SqpkFile(reader, offset, size) },
+                { SqpkPatchInfo.Command, (reader, offset, size) => new SqpkPatchInfo(reader, offset, size) }
             };
 
-        public static ZiPatchChunk GetCommand(ChecksumBinaryReader reader, int size)
+        public static ZiPatchChunk GetCommand(ChecksumBinaryReader reader, int offset, int size)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
                 if (!CommandTypes.TryGetValue(command, out var constructor))
                     throw new ZiPatchException();
 
-                var chunk = constructor(reader, innerSize - 5);
+                var chunk = constructor(reader, offset, innerSize - 5);
 
                 return chunk;
             }
@@ -59,7 +59,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
         }
 
-        protected SqpkChunk(ChecksumBinaryReader reader, int size) : base(reader, size) {}
+        protected SqpkChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size)
+        { }
 
         public override string ToString()
         {

@@ -47,6 +47,12 @@ namespace XIVLauncher.PatchInstaller.Util
                 Update(b);
         }
 
+        public void Update(byte[] data, int offset, int length)
+        {
+            for (int i = offset, i_ = offset + length; i < i_; i++)
+                Update(data[i]);
+        }
+
         public void Update(byte b)
         {
             _crc32 = CrcArray[(_crc32 ^ b) & 0xFF] ^

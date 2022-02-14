@@ -16,6 +16,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             .GetField("Type", BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public)
             ?.GetValue(null);
 
+        public int Offset { get; protected set; }
         public int Size { get; protected set; }
         public uint Checksum { get; protected set; }
         public uint CalculatedChecksum { get; protected set; }
@@ -29,16 +30,16 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         // Only FileHeader, ApplyOption, Sqpk, and EOF have been observed in XIVARR+ patches
         // AddDirectory and DeleteDirectory can theoretically happen, so they're implemented
         // ApplyFreeSpace doesn't seem to show up anymore, and EntryFile will just error out
-        private static readonly Dictionary<string, Func<ChecksumBinaryReader, int, ZiPatchChunk>> ChunkTypes =
-            new Dictionary<string, Func<ChecksumBinaryReader, int, ZiPatchChunk>> {
-                { FileHeaderChunk.Type, (reader, size) => new FileHeaderChunk(reader, size) },
-                { ApplyOptionChunk.Type, (reader, size) => new ApplyOptionChunk(reader, size) },
-                { ApplyFreeSpaceChunk.Type, (reader, size) => new ApplyFreeSpaceChunk(reader, size) },
-                { AddDirectoryChunk.Type, (reader, size) => new AddDirectoryChunk(reader, size) },
-                { DeleteDirectoryChunk.Type, (reader, size) => new DeleteDirectoryChunk(reader, size) },
+        private static readonly Dictionary<string, Func<ChecksumBinaryReader, int, int, ZiPatchChunk>> ChunkTypes =
+            new Dictionary<string, Func<ChecksumBinaryReader, int, int, ZiPatchChunk>> {
+                { FileHeaderChunk.Type, (reader, offset, size) => new FileHeaderChunk(reader, offset, size) },
+                { ApplyOptionChunk.Type, (reader, offset, size) => new ApplyOptionChunk(reader, offset, size) },
+                { ApplyFreeSpaceChunk.Type, (reader, offset, size) => new ApplyFreeSpaceChunk(reader, offset, size) },
+                { AddDirectoryChunk.Type, (reader, offset, size) => new AddDirectoryChunk(reader, offset, size) },
+                { DeleteDirectoryChunk.Type, (reader, offset, size) => new DeleteDirectoryChunk(reader, offset, size) },
                 { SqpkChunk.Type, SqpkChunk.GetCommand },
-                { EndOfFileChunk.Type, (reader, size) => new EndOfFileChunk(reader, size) },
-                { XXXXChunk.Type, (reader, size) => new XXXXChunk(reader, size) }
+                { EndOfFileChunk.Type, (reader, offset, size) => new EndOfFileChunk(reader, offset, size) },
+                { XXXXChunk.Type, (reader, offset, size) => new XXXXChunk(reader, offset, size) }
         };
 
 
@@ -50,8 +51,8 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             try
             {
                 var reader = new BinaryReader(stream);
-
                 var size = reader.ReadInt32BE();
+                var baseOffset = (int)stream.Position;
 
                 // size of chunk + header + checksum
                 var readSize = size + 4 + 4;
@@ -72,7 +73,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
                     throw new ZiPatchException();
 
 
-                var chunk = constructor(binaryReader, size);
+                var chunk = constructor(binaryReader, baseOffset, size);
 
                 chunk.ReadChunk();
                 chunk.ReadChecksum();
@@ -88,10 +89,11 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             }
         }
 
-        protected ZiPatchChunk(ChecksumBinaryReader reader, int size)
+        protected ZiPatchChunk(ChecksumBinaryReader reader, int offset, int size)
         {
             this.reader = reader;
-            
+
+            Offset = offset;
             Size = size;
         }
 

@@ -17,8 +17,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         public string DirName { get; protected set; }
 
 
-        public DeleteDirectoryChunk(ChecksumBinaryReader reader, int size) : base(reader, size)
-        {}
+        public DeleteDirectoryChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
