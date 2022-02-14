@@ -96,15 +96,14 @@ namespace XIVLauncher.Windows
 
         private Bitmap BitmapImage2Bitmap(BitmapImage bitmapImage)
         {
-            using(MemoryStream outStream = new())
-            {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                enc.Save(outStream);
-                System.Drawing.Bitmap bitmap = new(outStream);
+            using MemoryStream outStream = new();
 
-                return new Bitmap(bitmap);
-            }
+            BitmapEncoder enc = new BmpBitmapEncoder();
+            enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+            enc.Save(outStream);
+            System.Drawing.Bitmap bitmap = new(outStream);
+
+            return new Bitmap(bitmap);
         }
 
         // https://stackoverflow.com/questions/11434673/bitmap-save-to-save-an-icon-actually-saves-a-png

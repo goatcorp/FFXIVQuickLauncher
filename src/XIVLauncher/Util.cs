@@ -160,41 +160,38 @@ namespace XIVLauncher
                 
                 foreach (var registryView in new RegistryView[] { RegistryView.Registry32, RegistryView.Registry64 })
                 {
-                    using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView)) 
+                    using var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
+
+                    // Should return "C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\boot\ffxivboot.exe" if installed with default options.
+                    using (var subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2B41E132-07DF-4925-A3D3-F2D1765CCDFE}"))
                     {
-                        // Should return "C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\boot\ffxivboot.exe" if installed with default options.
-                        using (var subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2B41E132-07DF-4925-A3D3-F2D1765CCDFE}"))
+                        if (subkey != null && subkey.GetValue("DisplayIcon", null) is string path)
                         {
-                            if (subkey != null && subkey.GetValue("DisplayIcon", null) is string path)
-                            {
-                                // DisplayIcon includes "boot\ffxivboot.exe", need to remove it
-                                path = Directory.GetParent(path).Parent.FullName;
+                            // DisplayIcon includes "boot\ffxivboot.exe", need to remove it
+                            path = Directory.GetParent(path).Parent.FullName;
 
-                                if (Directory.Exists(path) && IsValidFfxivPath(path) && !foundVersions.ContainsKey(path))
-                                {
-                                    var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
-                                    foundVersions.Add(path, SeVersion.Parse(baseVersion));
-                                }
+                            if (Directory.Exists(path) && IsValidFfxivPath(path) && !foundVersions.ContainsKey(path))
+                            {
+                                var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
+                                foundVersions.Add(path, SeVersion.Parse(baseVersion));
                             }
                         }
+                    }
 
-                        // Should return "C:\Program Files (x86)\Steam\steamapps\common\FINAL FANTASY XIV Online" if installed with default options.
-                        foreach (var steamAppId in ValidSteamAppIds)
+                    // Should return "C:\Program Files (x86)\Steam\steamapps\common\FINAL FANTASY XIV Online" if installed with default options.
+                    foreach (var steamAppId in ValidSteamAppIds)
+                    {
+                        using var subkey = hklm.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {steamAppId}");
+
+                        if (subkey != null && subkey.GetValue("InstallLocation", null) is string path)
                         {
-                            using (var subkey = hklm.OpenSubKey($@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {steamAppId}"))
+                            if (Directory.Exists(path) && IsValidFfxivPath(path) && !foundVersions.ContainsKey(path))
                             {
-                                if (subkey != null && subkey.GetValue("InstallLocation", null) is string path)
-                                {
-                                    if (Directory.Exists(path) && IsValidFfxivPath(path) && !foundVersions.ContainsKey(path))
-                                    {
-                                        // InstallLocation is the root path of the game (the one containing boot and game) itself
-                                        var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
-                                        foundVersions.Add(path, SeVersion.Parse(baseVersion));
-                                    }
-                                }
+                                // InstallLocation is the root path of the game (the one containing boot and game) itself
+                                var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
+                                foundVersions.Add(path, SeVersion.Parse(baseVersion));
                             }
                         }
-
                     }
                 }
 

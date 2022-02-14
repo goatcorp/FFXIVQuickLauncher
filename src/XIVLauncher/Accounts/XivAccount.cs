@@ -101,15 +101,13 @@ namespace XIVLauncher.Accounts
 
         public static async Task<dynamic> Get(string endpoint)
         {
+            using var client = new WebClient();
 
-            using (var client = new WebClient())
-            {
-                var result = client.DownloadString(URL + endpoint);
+            var result = client.DownloadString(URL + endpoint);
 
-                var parsedObject = JObject.Parse(result);
+            var parsedObject = JObject.Parse(result);
 
-                return parsedObject;
-            }
+            return parsedObject;
         }
     }
 }
