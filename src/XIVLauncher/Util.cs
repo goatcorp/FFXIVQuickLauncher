@@ -289,9 +289,7 @@ namespace XIVLauncher
                 throw new ArgumentNullException("path");
             }
 
-            ulong dummy = 0;
-
-            if (!GetDiskFreeSpaceEx(path, out ulong freeSpace, out dummy, out dummy))
+            if (!GetDiskFreeSpaceEx(path, out ulong freeSpace, out _, out _))
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
