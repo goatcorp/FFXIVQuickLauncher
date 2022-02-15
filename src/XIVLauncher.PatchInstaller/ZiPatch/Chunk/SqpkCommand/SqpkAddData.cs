@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serilog;
+
 using XIVLauncher.PatchInstaller.Util;
 using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
