@@ -18,7 +18,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
         private class PendingFile : IDisposable
         {
             internal readonly string TargetPath;
-            internal readonly short TargetIndex;
+            internal readonly int TargetIndex;
             internal readonly PartialFilePartList PartList;
             internal readonly HashSet<int> PendingPartIndices = new();
 
@@ -38,7 +38,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
 
             public long FileSize => PartList.FileSize;
 
-            internal PendingFile(short targetIndex, string targetPath, PartialFilePartList partList)
+            internal PendingFile(int targetIndex, string targetPath, PartialFilePartList partList)
             {
                 TargetIndex = targetIndex;
                 TargetPath = targetPath;
@@ -138,7 +138,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
         {
             var rootPath = reader.ReadString();  // "C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\boot"
             var versionFileName = reader.ReadString();  // "ffxivboot", "ffxivgame", "ex1", etc.
-            using var indexStream = new BinaryReader(new DeflateStream(reader.BaseStream, CompressionMode.Decompress));
+            using var indexStream = new BinaryReader(reader.BaseStream);
 
             var definition = new PartialFileDef();
             definition.ReadFrom(indexStream);
@@ -169,11 +169,11 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
                 }
 
                 long fileSizeSum = 0;
-                for (short i = 0; i < patchSet.Definition.GetFileCount(); i++)
+                for (int i = 0; i < patchSet.Definition.GetFileCount(); i++)
                     fileSizeSum += patchSet.Definition.GetFile(i).FileSize;
 
                 long fileSizeProgress = 0;
-                for (short i = 0; i < patchSet.Definition.GetFileCount(); i++)
+                for (int i = 0; i < patchSet.Definition.GetFileCount(); i++)
                 {
                     var relativePath = patchSet.Definition.GetFileRelativePath(i);
                     var targetFile = new PendingFile(i, Path.Combine(patchSet.RootPath, patchSet.Definition.GetFileRelativePath(i)), patchSet.Definition.GetFile(relativePath));
@@ -229,7 +229,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
                     fileSizeProgress += targetFile.FileSize;
                 }
 
-                for (short i = 0; i < patchSet.Verification.MissingPartIndicesPerPatch.Count; i++)
+                for (int i = 0; i < patchSet.Verification.MissingPartIndicesPerPatch.Count; i++)
                 {
                     if (patchSet.Verification.MissingPartIndicesPerPatch[i].Count == 0)
                         continue;
@@ -248,7 +248,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
                         writer.Write(targetFileIndex);
                         writer.Write(partIndex);
                         writer.Write(patchSet.Definition.GetFile(targetFileIndex)[partIndex].SourceOffset);
-                        writer.Write(patchSet.Definition.GetFile(targetFileIndex)[partIndex].SourceSize);
+                        writer.Write(patchSet.Definition.GetFile(targetFileIndex)[partIndex].MaxSourceSize);
                     }
 
                     Rpc.RemoteRequest(stream.ToArray());
@@ -264,7 +264,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
             var patchSetIndex = reader.ReadInt32();
             var patchSet = PatchSets[patchSetIndex];
 
-            var patchFileIndex = reader.ReadInt16();
+            var patchFileIndex = reader.ReadInt32();
             var patchFilePath = reader.ReadString();
             var patchFile = new FileStream(patchFilePath, FileMode.Open, FileAccess.Read);
             Log.Information("Writing from file: {0}", patchFilePath);

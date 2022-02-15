@@ -25,7 +25,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
             base.Run();
         }
 
-        protected override void OnRequestPartialFile(int patchSetIndex, short patchFileIndex, string patchFileName, List<RequestedPartInfo> parts)
+        protected override void OnRequestPartialFile(int patchSetIndex, int patchFileIndex, string patchFileName, List<RequestedPartInfo> parts)
         {
             // TODO: download `patchFileName` for the parts specified in `parts`
             throw new NotImplementedException();
@@ -39,7 +39,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
             throw new NotImplementedException();
         }
 
-        protected override void OnFinishPartialFile(int patchSetIndex, short patchFileIndex, string patchFileName)
+        protected override void OnFinishPartialFile(int patchSetIndex, int patchFileIndex, string patchFileName)
         {
             // TODO: maybe delete temporary patch file
             throw new NotImplementedException();

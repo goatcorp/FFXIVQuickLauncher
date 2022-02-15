@@ -11,14 +11,14 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
     {
         public class RequestedPartInfo
         {
-            public short targetFileIndex;
+            public int targetFileIndex;
             public int partIndex;
             public long sourceOffset;
             public int sourceSize;
 
             public RequestedPartInfo(BinaryReader reader)
             {
-                targetFileIndex = reader.ReadInt16();
+                targetFileIndex = reader.ReadInt32();
                 partIndex = reader.ReadInt32();
                 sourceOffset = reader.ReadInt64();
                 sourceSize = reader.ReadInt32();
@@ -79,7 +79,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
                     case PartialPatchRpcOpcode.RequestPartialFile:
                         {
                             var patchSetIndex = reader.ReadInt32();
-                            var patchFileIndex = reader.ReadInt16();
+                            var patchFileIndex = reader.ReadInt32();
                             var patchFileName = reader.ReadString();
                             var partCount = reader.ReadInt32();
                             var parts = new List<RequestedPartInfo>();
@@ -92,7 +92,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
                     case PartialPatchRpcOpcode.FinishPartialFile:
                         {
                             var patchSetIndex = reader.ReadInt32();
-                            var patchFileIndex = reader.ReadInt16();
+                            var patchFileIndex = reader.ReadInt32();
                             var patchFileName = reader.ReadString();
                             OnFinishPartialFile(patchSetIndex, patchFileIndex, patchFileName);
                             break;
@@ -120,7 +120,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
             Rpc.RemoteRequest(stream.ToArray());
         }
 
-        protected void ProvidePartialFile(int patchSetIndex, short patchFileIndex, string patchFilePath)
+        protected void ProvidePartialFile(int patchSetIndex, int patchFileIndex, string patchFilePath)
         {
             var stream = new MemoryStream();
             var writer = new BinaryWriter(stream);
@@ -136,9 +136,9 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
             Log.Information("Progress report: {0:00.00}% ({1}MB/{2}MB)", 100 * progress, applyProgress / 1048576, applyProgressMax / 1048576);
         }
 
-        protected abstract void OnRequestPartialFile(int patchSetIndex, short patchFileIndex, string patchFileName, List<RequestedPartInfo> parts);
+        protected abstract void OnRequestPartialFile(int patchSetIndex, int patchFileIndex, string patchFileName, List<RequestedPartInfo> parts);
 
-        protected virtual void OnFinishPartialFile(int patchSetIndex, short patchFileIndex, string patchFileName)
+        protected virtual void OnFinishPartialFile(int patchSetIndex, int patchFileIndex, string patchFileName)
         {
             Log.Information("Finish response: {0}/{1}/{2}", patchSetIndex, patchFileIndex, patchFileName);
         }

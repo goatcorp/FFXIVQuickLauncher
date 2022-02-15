@@ -10,36 +10,73 @@ namespace XIVLauncher.PatchInstaller.PartialFile
     [StructLayout(LayoutKind.Sequential)]
     public struct PartialFilePart : IComparable<PartialFilePart>
     {
-        public static short SourceIndex_Zeros = -1;
-        public static short SourceIndex_EmptyBlock = -2;
-        public static short SourceIndex_Unavailable = -3;
+        public const byte SourceIndex_Zeros = byte.MaxValue - 0;
+        public const byte SourceIndex_EmptyBlock = byte.MaxValue - 1;
+        public const byte SourceIndex_Unavailable = byte.MaxValue - 2;
+        public const byte SourceIndex_MaxValid = byte.MaxValue - 3;
 
-        public long TargetOffset;
-        public long SourceOffset;
+        private const uint TargetSizeAndFlagMask_IsDeflatedBlockData = 0x80000000;
+        private const uint TargetSizeAndFlagMask_IsValidCrc32Value = 0x40000000;
+        private const uint TargetSizeAndFlagMask_TargetSize = 0x3FFFFFFF;
 
-        public int TargetSize;
-        public int SourceSize;
+        private uint TargetOffsetUint;  // up to 35 bits, using only 32 bits (28 bits for locator + lsh 7; odd values exist), but currently .dat# files are delimited at 1.9GB
+        private uint SourceOffsetUint;  // up to 31 bits (patch files were delimited at 1.5GB-ish; odd values exist)
+        private uint TargetSizeAndFlags;  // 2 flag bits + up to 31 size bits, using only 30 bits (same with above)
+        public uint Crc32OrPlaceholderEntryDataUnits;  // fixed 32 bits
+        private ushort SplitDecodedSourceFromUshort;  // up to 14 bits (max value 15999)
+        private byte TargetIndexByte;  // using only 8 bits for now
+        private byte SourceIndexByte;  // using only 8 bits for now
 
-        public short TargetIndex;
-        public short SourceIndex;
+        public long TargetOffset
+        {
+            get => TargetOffsetUint;
+            set => TargetOffsetUint = CheckedCastToUint(value);
+        }
 
-        public int SplitDecodedSourceFrom;
+        public long SourceOffset
+        {
+            get => SourceOffsetUint;
+            set => SourceOffsetUint = CheckedCastToUint(value);
+        }
 
-        public uint Crc32;
-        public int Flags;
+        public long TargetSize
+        {
+            get => TargetSizeAndFlags & TargetSizeAndFlagMask_TargetSize;
+            set => TargetSizeAndFlags = CheckedCastToUint((TargetSizeAndFlags & ~TargetSizeAndFlagMask_TargetSize) | value, TargetSizeAndFlagMask_TargetSize);
+        }
+
+        public long SplitDecodedSourceFrom
+        {
+            get => SplitDecodedSourceFromUshort;
+            set => SplitDecodedSourceFromUshort = CheckedCastToUshort(value);
+        }
+        
+        public int TargetIndex
+        {
+            get => TargetIndexByte;
+            set => TargetIndexByte = CheckedCastToByte(value);
+        }
+
+        public int SourceIndex
+        {
+            get => SourceIndexByte;
+            set => SourceIndexByte = CheckedCastToByte(value);
+        }
+
+        public long MaxSourceSize => IsDeflatedBlockData ? 16384 : TargetSize;
 
         public long TargetEnd => TargetOffset + TargetSize;
 
-        public bool SourceIsDeflated
+        public bool IsDeflatedBlockData
         {
-            get => 0 != (Flags & 1);
-            set => Flags = (Flags & ~1) | (value ? 1 : 0);
+            get => 0 != (TargetSizeAndFlags & TargetSizeAndFlagMask_IsDeflatedBlockData);
+            set => TargetSizeAndFlags = (TargetSizeAndFlags & ~TargetSizeAndFlagMask_IsDeflatedBlockData) | (value ? TargetSizeAndFlagMask_IsDeflatedBlockData : 0u);
         }
 
-        public bool Crc32Available
+        public bool IsValidCrc32Value
         {
-            get => 0 != (Flags & 2);
-            set => Flags = (Flags & ~2) | (value ? 2 : 0);
+            get => 0 != (TargetSizeAndFlags & TargetSizeAndFlagMask_IsValidCrc32Value);
+            set => TargetSizeAndFlags = (TargetSizeAndFlags & ~TargetSizeAndFlagMask_IsValidCrc32Value) | (value ? TargetSizeAndFlagMask_IsValidCrc32Value : 0u);
         }
 
         public bool IsAllZeros => SourceIndex == SourceIndex_Zeros;
@@ -66,12 +103,12 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             if (length != TargetSize)
                 return VerifyDataResult.FailNotEnoughData;
 
-            if (Crc32Available)
+            if (IsValidCrc32Value)
             {
                 Util.Crc32 crc32 = new();
                 crc32.Init();
                 crc32.Update(buf, 0, length);
-                return crc32.Checksum == Crc32 ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+                return crc32.Checksum == Crc32OrPlaceholderEntryDataUnits ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
             }
             else if (IsAllZeros)
             {
@@ -82,7 +119,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 return BitConverter.ToInt32(buf, offset + 0) == 1 << 7
                     && BitConverter.ToInt32(buf, offset + 4) == 0
                     && BitConverter.ToInt32(buf, offset + 8) == 0
-                    && BitConverter.ToInt32(buf, offset + 12) == (SourceSize >> 7) - 1
+                    && BitConverter.ToInt32(buf, offset + 12) == Crc32OrPlaceholderEntryDataUnits
                     && buf.Skip(offset + 16).Take(length - 16).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
             }
             return VerifyDataResult.FailUnverifiable;
@@ -94,24 +131,26 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             if (seek)
                 stream.Seek(TargetOffset, SeekOrigin.Begin);
 
-            if (Crc32Available)
+            if (IsValidCrc32Value)
             {
                 Util.Crc32 crc32 = new();
                 crc32.Init();
                 for (var remaining = TargetSize; remaining > 0; remaining -= buffer.Buffer.Length)
                 {
-                    var readSize = Math.Min(remaining, buffer.Buffer.Length);
+                    var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
                     if (readSize != stream.Read(buffer.Buffer, 0, readSize))
                         return VerifyDataResult.FailNotEnoughData;
                     crc32.Update(buffer.Buffer, 0, readSize);
                 }
-                return crc32.Checksum == Crc32 ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+                if (crc32.Checksum != Crc32OrPlaceholderEntryDataUnits)
+                    return VerifyDataResult.FailBadData;
+                return VerifyDataResult.Pass;
             }
             else if (IsAllZeros)
             {
                 for (var remaining = TargetSize; remaining > 0; remaining -= buffer.Buffer.Length)
                 {
-                    var readSize = Math.Min(remaining, buffer.Buffer.Length);
+                    var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
                     if (readSize != stream.Read(buffer.Buffer, 0, readSize))
                         return VerifyDataResult.FailNotEnoughData;
                     if (!buffer.Buffer.Take(readSize).All(x => x == 0))
@@ -121,9 +160,9 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             }
             else if (IsEmptyBlock)
             {
-                for (int remaining = TargetSize - buffer.Buffer.Length, i = 0; remaining > 0; remaining -= buffer.Buffer.Length, i++)
+                for (long remaining = TargetSize - buffer.Buffer.Length, i = 0; remaining > 0; remaining -= buffer.Buffer.Length, i++)
                 {
-                    var readSize = Math.Min(remaining, buffer.Buffer.Length);
+                    var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
                     if (readSize != stream.Read(buffer.Buffer, 0, readSize))
                         return VerifyDataResult.FailNotEnoughData;
                     if (i == 0)
@@ -132,7 +171,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                         if (BitConverter.ToInt32(buffer.Buffer, 0) != 1 << 7
                             || BitConverter.ToInt32(buffer.Buffer, 4) != 0
                             || BitConverter.ToInt32(buffer.Buffer, 8) != 0
-                            || BitConverter.ToInt32(buffer.Buffer, 12) != (SourceSize >> 7) - 1
+                            || BitConverter.ToInt32(buffer.Buffer, 12) != Crc32OrPlaceholderEntryDataUnits
                             || !buffer.Buffer.Skip(16).Take(readSize - 16).All(x => x == 0))
                             return VerifyDataResult.FailBadData;
                     }
@@ -159,9 +198,9 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         public int Reconstruct(byte[] sourceSegment, int sourceSegmentOffset, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
         {
             if (bufferSize == -1)
-                bufferSize = Math.Max(0, Math.Min(TargetSize - relativeOffset, buffer.Length));
+                bufferSize = (int)Math.Max(0, Math.Min(TargetSize - relativeOffset, buffer.Length));
             else if (bufferSize > TargetSize - relativeOffset)
-                bufferSize = Math.Max(0, TargetSize - relativeOffset);
+                bufferSize = (int)Math.Max(0, TargetSize - relativeOffset);
             else if (bufferSize < 0)
                 throw new ArgumentException("Length cannot be less than zero.");
 
@@ -186,11 +225,11 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     buffer2.Writer.Write(1 << 7);
                     buffer2.Writer.Write(0);
                     buffer2.Writer.Write(0);
-                    buffer2.Writer.Write((SourceSize >> 7) - 1);
+                    buffer2.Writer.Write((int)Crc32OrPlaceholderEntryDataUnits);
                     Array.Copy(buffer2.Buffer, relativeOffset, buffer, bufferOffset, Math.Min(bufferSize, 16 - relativeOffset));
                 }
             }
-            else if (SourceIsDeflated)
+            else if (IsDeflatedBlockData)
             {
                 using var inflatedBuffer = Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
                 using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegment.Length - sourceSegmentOffset), CompressionMode.Decompress, true))
@@ -210,18 +249,17 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 return Reconstruct(null, 0, buffer, bufferOffset, bufferSize, relativeOffset);
 
             if (bufferSize == -1)
-                bufferSize = Math.Max(0, Math.Min(TargetSize - relativeOffset, buffer.Length));
+                bufferSize = (int)Math.Max(0, Math.Min(TargetSize - relativeOffset, buffer.Length));
             else if (bufferSize > TargetSize - relativeOffset)
-                bufferSize = Math.Max(0, TargetSize - relativeOffset);
+                bufferSize = (int)Math.Max(0, TargetSize - relativeOffset);
             else if (bufferSize < 0)
                 throw new ArgumentException("Length cannot be less than zero.");
 
-            if (SourceIsDeflated)
+            if (IsDeflatedBlockData)
             {
                 using var deflatedBuffer = Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
                 source.Seek(SourceOffset, SeekOrigin.Begin);
-                if (SourceSize != source.Read(deflatedBuffer.Buffer, 0, SourceSize))
-                    throw new IOException("Failed to read full part of source file");
+                source.Read(deflatedBuffer.Buffer, 0, deflatedBuffer.Buffer.Length);
 
                 using var inflatedBuffer = Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
                 using (var stream = new DeflateStream(deflatedBuffer.Stream, CompressionMode.Decompress, true))
@@ -245,7 +283,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             target.Seek(TargetOffset, SeekOrigin.Begin);
             for (int relativeOffset = 0; relativeOffset < TargetSize; relativeOffset += buffer.Buffer.Length)
             {
-                var readSize = Math.Min(TargetSize - relativeOffset, buffer.Buffer.Length);
+                var readSize = (int)Math.Min(TargetSize - relativeOffset, buffer.Buffer.Length);
                 if (readSize != Reconstruct(source, buffer.Buffer, 0, readSize, relativeOffset))
                     throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
                 target.Write(buffer.Buffer, 0, readSize);
@@ -259,7 +297,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
         public static void CalculateCrc32(ref PartialFilePart part, Stream source)
         {
-            if (part.Crc32Available)
+            if (part.IsValidCrc32Value)
                 return;
 
             using var buffer = Util.ReusableByteBufferManager.GetBuffer(22);  // 4MB
@@ -267,13 +305,34 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             crc32.Init();
             for (int relativeOffset = 0; relativeOffset < part.TargetSize; relativeOffset += buffer.Buffer.Length)
             {
-                var readSize = Math.Min(part.TargetSize - relativeOffset, buffer.Buffer.Length);
+                var readSize = (int)Math.Min(part.TargetSize - relativeOffset, buffer.Buffer.Length);
                 if (readSize != part.Reconstruct(source, buffer.Buffer, 0, readSize, relativeOffset))
                     throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
                 crc32.Update(buffer.Buffer, 0, readSize);
             }
-            part.Crc32 = crc32.Checksum;
-            part.Crc32Available = true;
+            part.Crc32OrPlaceholderEntryDataUnits = crc32.Checksum;
+            part.IsValidCrc32Value = true;
+        }
+
+        private static uint CheckedCastToUint(long v, long maxValue = uint.MaxValue)
+        {
+            if (v > maxValue)
+                throw new ArgumentException("Value too big");
+            return (uint)v;
+        }
+
+        private static ushort CheckedCastToUshort(long v, long maxValue = ushort.MaxValue)
+        {
+            if (v > maxValue)
+                throw new ArgumentException("Value too big");
+            return (ushort)v;
+        }
+
+        private static byte CheckedCastToByte(long v, long maxValue = byte.MaxValue)
+        {
+            if (v > maxValue)
+                throw new ArgumentException("Value too big");
+            return (byte)v;
         }
     }
 }

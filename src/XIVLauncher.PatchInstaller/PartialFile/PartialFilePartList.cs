@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -44,7 +45,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             return Underlying.BinarySearch(new PartialFilePart { TargetOffset = targetOffset }); ;
         }
 
-        public void SplitAt(long offset, short targetFileIndex)
+        public void SplitAt(long offset, int targetFileIndex)
         {
             var i = BinarySearchByTargetOffset(offset);
             if (i >= 0)
@@ -62,7 +63,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             {
                 Underlying.Add(new PartialFilePart
                 {
-                    TargetSize = (int)offset,
+                    TargetSize = offset,
                     TargetIndex = targetFileIndex,
                     SourceIndex = PartialFilePart.SourceIndex_Zeros,
                 });
@@ -76,7 +77,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 Underlying.Add(new PartialFilePart
                 {
                     TargetOffset = Underlying[i - 1].TargetEnd,
-                    TargetSize = (int)(offset - Underlying[i - 1].TargetEnd),
+                    TargetSize = offset - Underlying[i - 1].TargetEnd,
                     TargetIndex = targetFileIndex,
                     SourceIndex = PartialFilePart.SourceIndex_Zeros,
                 });
@@ -85,28 +86,56 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             {
                 i -= 1;
                 var part = Underlying[i];
-                Underlying[i] = new PartialFilePart
+
+                if (part.IsDeflatedBlockData || part.IsEmptyBlock)
                 {
-                    TargetOffset = part.TargetOffset,
-                    TargetSize = (int)(offset - part.TargetOffset),
-                    TargetIndex = targetFileIndex,
-                    SourceIndex = part.SourceIndex,
-                    SourceOffset = part.SourceOffset,
-                    SourceSize = part.SourceSize,
-                    SplitDecodedSourceFrom = part.SplitDecodedSourceFrom,
-                    SourceIsDeflated = part.SourceIsDeflated,
-                };
-                Underlying.Insert(i + 1, new PartialFilePart
+                    Underlying[i] = new PartialFilePart
+                    {
+                        TargetOffset = part.TargetOffset,
+                        TargetSize = offset - part.TargetOffset,
+                        TargetIndex = targetFileIndex,
+                        SourceIndex = part.SourceIndex,
+                        SourceOffset = part.SourceOffset,
+                        SplitDecodedSourceFrom = part.SplitDecodedSourceFrom,
+                        Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
+                        IsDeflatedBlockData = part.IsDeflatedBlockData,
+                    };
+                    Underlying.Insert(i + 1, new PartialFilePart
+                    {
+                        TargetOffset = offset,
+                        TargetSize = part.TargetEnd - offset,
+                        TargetIndex = targetFileIndex,
+                        SourceIndex = part.SourceIndex,
+                        SourceOffset = part.SourceOffset,
+                        SplitDecodedSourceFrom = part.SplitDecodedSourceFrom + offset - part.TargetOffset,
+                        Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
+                        IsDeflatedBlockData = part.IsDeflatedBlockData,
+                    });
+                }
+                else
                 {
-                    TargetOffset = offset,
-                    TargetSize = (int)(part.TargetEnd - offset),
-                    TargetIndex = targetFileIndex,
-                    SourceIndex = part.SourceIndex,
-                    SourceOffset = part.SourceOffset,
-                    SourceSize = part.SourceSize,
-                    SplitDecodedSourceFrom = (int)(part.SplitDecodedSourceFrom + offset - part.TargetOffset),
-                    SourceIsDeflated = part.SourceIsDeflated,
-                });
+                    if (part.SplitDecodedSourceFrom != 0)
+                        throw new ArgumentException("Not deflated but SplitDecodeSourceFrom is given");
+
+                    Underlying[i] = new PartialFilePart
+                    {
+                        TargetOffset = part.TargetOffset,
+                        TargetSize = offset - part.TargetOffset,
+                        TargetIndex = targetFileIndex,
+                        SourceIndex = part.SourceIndex,
+                        SourceOffset = part.SourceOffset,
+                        Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
+                    };
+                    Underlying.Insert(i + 1, new PartialFilePart
+                    {
+                        TargetOffset = offset,
+                        TargetSize = part.TargetEnd - offset,
+                        TargetIndex = targetFileIndex,
+                        SourceIndex = part.SourceIndex,
+                        SourceOffset = part.SourceOffset + offset - part.TargetOffset,
+                        Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
+                    });
+                }
             }
         }
 

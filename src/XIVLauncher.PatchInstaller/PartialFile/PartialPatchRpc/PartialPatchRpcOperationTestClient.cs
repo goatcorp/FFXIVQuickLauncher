@@ -36,7 +36,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
             base.Run();
         }
 
-        protected override void OnRequestPartialFile(int patchSetIndex, short patchFileIndex, string patchFileName, List<RequestedPartInfo> parts)
+        protected override void OnRequestPartialFile(int patchSetIndex, int patchFileIndex, string patchFileName, List<RequestedPartInfo> parts)
         {
             var patchFilePath = PatchFiles[patchSetIndex].First(x => x.EndsWith(patchFileName));
             ProvidePartialFile(patchSetIndex, patchFileIndex, patchFilePath);
@@ -47,7 +47,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc
             base.OnStatusUpdate(progress, applyProgress, applyProgressMax);
         }
 
-        protected override void OnFinishPartialFile(int patchSetIndex, short patchFileIndex, string patchFileName)
+        protected override void OnFinishPartialFile(int patchSetIndex, int patchFileIndex, string patchFileName)
         {
             base.OnFinishPartialFile(patchSetIndex, patchFileIndex, patchFileName);
         }

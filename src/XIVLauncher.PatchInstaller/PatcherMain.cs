@@ -34,6 +34,13 @@ namespace XIVLauncher.PatchInstaller
 
         static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.Debug()
+                .MinimumLevel.Verbose()
+                .CreateLogger();
+            PartialPatchOperations.RpcTest(args.Skip(1).ToList());
+            return;
             try
             {
                 Log.Logger = new LoggerConfiguration()

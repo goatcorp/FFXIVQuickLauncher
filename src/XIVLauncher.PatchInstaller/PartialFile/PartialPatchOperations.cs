@@ -38,7 +38,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     if (File.Exists(patchFilePath + ".index"))
                     {
                         Log.Information("Reading patch index file {0}...", patchFilePath);
-                        using var reader = new BinaryReader(new DeflateStream(new FileStream(patchFilePath + ".index", FileMode.Open, FileAccess.Read), CompressionMode.Decompress));
+                        using var reader = new BinaryReader(new FileStream(patchFilePath + ".index", FileMode.Open, FileAccess.Read));
                         fileDef.ReadFrom(reader);
                         continue;
                     }
@@ -49,7 +49,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     Log.Information("Calculating CRC32 for files resulted from patch file {0}...", patchFilePath);
                     fileDef.CalculateCrc32(sources);
 
-                    using (var writer = new BinaryWriter(new DeflateStream(new FileStream(patchFilePath + ".index.tmp", FileMode.Create), CompressionLevel.Optimal)))
+                    using (var writer = new BinaryWriter(new FileStream(patchFilePath + ".index.tmp", FileMode.Create)))
                         fileDef.WriteTo(writer);
 
                     File.Move(patchFilePath + ".index.tmp", patchFilePath + ".index");

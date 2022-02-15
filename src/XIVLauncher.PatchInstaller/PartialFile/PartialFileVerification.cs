@@ -11,7 +11,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
     public class PartialFileVerification
     {
         public readonly PartialFileDef Definition;
-        public readonly List<HashSet<Tuple<short, int>>> MissingPartIndicesPerPatch = new();
+        public readonly List<HashSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
         public readonly List<HashSet<int>> MissingPartIndicesPerTargetFile = new();
         public readonly HashSet<int> TooLongTargetFiles = new();
 

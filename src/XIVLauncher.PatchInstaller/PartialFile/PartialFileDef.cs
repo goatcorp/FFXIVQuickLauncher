@@ -42,7 +42,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
         private void ReassignTargetIndices()
         {
-            for (short i = 0; i < TargetFiles.Count; i++)
+            for (int i = 0; i < TargetFiles.Count; i++)
             {
                 for (var j = 0; j < TargetFileParts[i].Count; j++)
                 {
@@ -56,7 +56,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         private void DeleteFile(string path, bool reassignTargetIndex = true)
         {
             path = NormalizePath(path);
-            var targetFileIndex = (short)TargetFiles.IndexOf(path);
+            var targetFileIndex = TargetFiles.IndexOf(path);
             if (targetFileIndex == -1)
                 return;
 
@@ -72,15 +72,15 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             return TargetFiles.Count;
         }
 
-        public short GetFileIndex(string targetFileName)
+        public int GetFileIndex(string targetFileName)
         {
             targetFileName = NormalizePath(targetFileName);
-            var targetFileIndex = (short)TargetFiles.IndexOf(targetFileName);
+            var targetFileIndex = TargetFiles.IndexOf(targetFileName);
             if (targetFileIndex == -1)
             {
                 TargetFiles.Add(targetFileName);
                 TargetFileParts.Add(new());
-                targetFileIndex = (short)(TargetFiles.Count - 1);
+                targetFileIndex = TargetFiles.Count - 1;
             }
             return targetFileIndex;
         }
@@ -102,7 +102,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
         public void ApplyZiPatch(string patchFileName, ZiPatchFile patchFile)
         {
-            var SourceIndex = (short)SourceFiles.Count;
+            var SourceIndex = SourceFiles.Count;
             SourceFiles.Add(patchFileName);
             var platform = ZiPatchConfig.PlatformId.Win32;
             foreach (var patchChunk in patchFile.GetChunks())
@@ -145,8 +145,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                                         TargetIndex = fileIndex,
                                         SourceIndex = SourceIndex,
                                         SourceOffset = dataOffset,
-                                        SourceSize = block.CompressedSize,
-                                        SourceIsDeflated = true,
+                                        IsDeflatedBlockData = true,
                                     });
                                 }
                                 else
@@ -158,7 +157,6 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                                         TargetIndex = fileIndex,
                                         SourceIndex = SourceIndex,
                                         SourceOffset = dataOffset,
-                                        SourceSize = block.DecompressedSize,
                                     });
                                 }
                                 offset += block.DecompressedSize;
@@ -196,7 +194,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                         TargetIndex = fileIndex,
                         SourceIndex = SourceIndex,
                         SourceOffset = sqpkAddData.BlockDataSourceOffset,
-                        SourceSize = sqpkAddData.BlockNumber,
+                        Crc32OrPlaceholderEntryDataUnits = (uint)(sqpkAddData.BlockNumber >> 7) - 1,
                     });
                     file.Update(new PartialFilePart
                     {
@@ -204,7 +202,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                         TargetSize = sqpkAddData.BlockDeleteNumber,
                         TargetIndex = fileIndex,
                         SourceIndex = PartialFilePart.SourceIndex_Zeros,
-                        SourceSize = sqpkAddData.BlockDeleteNumber,
+                        Crc32OrPlaceholderEntryDataUnits = (uint)(sqpkAddData.BlockDeleteNumber >> 7) - 1,
                     });
                 }
                 else if (patchChunk is SqpkDeleteData sqpkDeleteData)
@@ -212,28 +210,54 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     sqpkDeleteData.TargetFile.ResolvePath(platform);
                     var fileIndex = GetFileIndex(sqpkDeleteData.TargetFile.RelativePath);
                     var file = TargetFileParts[fileIndex];
-                    file.Update(new PartialFilePart
+                    if (sqpkDeleteData.BlockNumber > 0)
                     {
-                        TargetOffset = sqpkDeleteData.BlockOffset,
-                        TargetSize = sqpkDeleteData.BlockNumber << 7,
-                        TargetIndex = fileIndex,
-                        SourceIndex = PartialFilePart.SourceIndex_EmptyBlock,
-                        SourceSize = sqpkDeleteData.BlockNumber << 7,
-                    });
+                        file.Update(new PartialFilePart
+                        {
+                            TargetOffset = sqpkDeleteData.BlockOffset,
+                            TargetSize = 1 << 7,
+                            TargetIndex = fileIndex,
+                            SourceIndex = PartialFilePart.SourceIndex_EmptyBlock,
+                            Crc32OrPlaceholderEntryDataUnits = (uint)sqpkDeleteData.BlockNumber - 1,
+                        });
+                        if (sqpkDeleteData.BlockNumber > 1)
+                        {
+                            file.Update(new PartialFilePart
+                            {
+                                TargetOffset = sqpkDeleteData.BlockOffset + (1 << 7),
+                                TargetSize = (sqpkDeleteData.BlockNumber - 1) << 7,
+                                TargetIndex = fileIndex,
+                                SourceIndex = PartialFilePart.SourceIndex_Zeros,
+                            });
+                        }
+                    }
                 }
                 else if (patchChunk is SqpkExpandData sqpkExpandData)
                 {
                     sqpkExpandData.TargetFile.ResolvePath(platform);
                     var fileIndex = GetFileIndex(sqpkExpandData.TargetFile.RelativePath);
                     var file = TargetFileParts[fileIndex];
-                    file.Update(new PartialFilePart
+                    if (sqpkExpandData.BlockNumber > 0)
                     {
-                        TargetOffset = sqpkExpandData.BlockOffset,
-                        TargetSize = sqpkExpandData.BlockNumber << 7,
-                        TargetIndex = fileIndex,
-                        SourceIndex = PartialFilePart.SourceIndex_EmptyBlock,
-                        SourceSize = sqpkExpandData.BlockNumber << 7,
-                    });
+                        file.Update(new PartialFilePart
+                        {
+                            TargetOffset = sqpkExpandData.BlockOffset,
+                            TargetSize = 1 << 7,
+                            TargetIndex = fileIndex,
+                            SourceIndex = PartialFilePart.SourceIndex_EmptyBlock,
+                            Crc32OrPlaceholderEntryDataUnits = (uint)sqpkExpandData.BlockNumber - 1,
+                        });
+                        if (sqpkExpandData.BlockNumber > 1)
+                        {
+                            file.Update(new PartialFilePart
+                            {
+                                TargetOffset = sqpkExpandData.BlockOffset + (1 << 7),
+                                TargetSize = (sqpkExpandData.BlockNumber - 1) << 7,
+                                TargetIndex = fileIndex,
+                                SourceIndex = PartialFilePart.SourceIndex_Zeros,
+                            });
+                        }
+                    }
                 }
                 else if (patchChunk is SqpkHeader sqpkHeader)
                 {
@@ -247,7 +271,6 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                         TargetIndex = fileIndex,
                         SourceIndex = SourceIndex,
                         SourceOffset = sqpkHeader.HeaderDataSourceOffset,
-                        SourceSize = SqpkHeader.HEADER_SIZE,
                     });
                 }
             }
