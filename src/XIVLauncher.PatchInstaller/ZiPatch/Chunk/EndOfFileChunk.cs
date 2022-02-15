@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,8 +8,14 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// An "EOF_" (End of File) chunk.
+    /// </summary>
     public class EndOfFileChunk : ZiPatchChunk
     {
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public new static string Type = "EOF_";
 
         protected override void ReadChunk()

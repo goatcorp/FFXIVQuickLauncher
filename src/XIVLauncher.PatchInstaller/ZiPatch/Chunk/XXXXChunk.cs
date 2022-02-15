@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,9 +8,14 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// A chunk that should never happen.
+    /// </summary>
     public class XXXXChunk : ZiPatchChunk
     {
-        // TODO: This... Never happens.
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public new static string Type = "XXXX";
 
 

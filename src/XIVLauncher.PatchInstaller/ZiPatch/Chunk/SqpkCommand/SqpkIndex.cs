@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,15 +8,31 @@ using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 {
+    /// <summary>
+    /// An "I" (Index) command chunk.
+    /// </summary>
     class SqpkIndex : SqpkChunk
     {
+        /// <summary>
+        /// Gets the command type.
+        /// </summary>
         // This is a NOP on recent patcher versions.
         public new static string Command = "I";
 
+        /// <summary>
+        /// Index command kinds.
+        /// </summary>
         public enum IndexCommandKind : byte
         {
+            /// <summary>
+            /// Add index command.
+            /// </summary>
             Add = (byte)'A',
-            Delete = (byte)'D'
+
+            /// <summary>
+            /// Delete index command.
+            /// </summary>
+            Delete = (byte)'D',
         }
 
         public IndexCommandKind IndexCommand { get; protected set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,17 +10,42 @@ using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 {
+    /// <summary>
+    /// An "F" (File) command chunk.
+    /// </summary>
     class SqpkFile : SqpkChunk
     {
+        /// <summary>
+        /// Gets the command type.
+        /// </summary>
         public new static string Command = "F";
 
+        /// <summary>
+        /// File operation kinds.
+        /// </summary>
         public enum OperationKind : byte
         {
+            /// <summary>
+            /// Add file.
+            /// </summary>
             AddFile = (byte)'A',
+
+            /// <summary>
+            /// Remove all.
+            /// </summary>
             RemoveAll = (byte)'R',
+
             // I've seen no cases in the wild of these two
+
+            /// <summary>
+            /// Delete file.
+            /// </summary>
             DeleteFile = (byte)'D',
-            MakeDirTree = (byte)'M'
+
+            /// <summary>
+            /// Make directory tree.
+            /// </summary>
+            MakeDirTree = (byte)'M',
         }
 
         public OperationKind Operation { get; protected set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +8,9 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// Base chunk abstraction.
+    /// </summary>
     public abstract class ZiPatchChunk
     {
         public static string Type { get; protected set; }
@@ -95,6 +98,9 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             Size = size;
         }
 
+        /// <summary>
+        /// Read a chunk.
+        /// </summary>
         protected virtual void ReadChunk()
         {
             reader.ReadBytes(Size);

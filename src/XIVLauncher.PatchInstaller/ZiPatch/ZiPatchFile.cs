@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,6 +12,9 @@ using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch
 {
+    /// <summary>
+    /// A ZiPatch file.
+    /// </summary>
     public class ZiPatchFile : IDisposable
     {
         private static readonly uint[] ZIPATCH_MAGIC = {
@@ -22,9 +25,10 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
 
 
         /// <summary>
-        /// Instantiates a ZiPatchFile from a Stream 
+        /// Initializes a new instance of the <see cref="ZiPatchFile"/> class.
+        /// Instantiates a ZiPatchFile from a stream.
         /// </summary>
-        /// <param name="stream">Stream to a ZiPatch</param>
+        /// <param name="stream">Stream to a ZiPatch.</param>
         private ZiPatchFile(Stream stream)
         {
             this._stream = stream;
@@ -35,20 +39,23 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
         }
 
         /// <summary>
-        /// Instantiates a ZiPatchFile from a file path
+        /// Instantiates a ZiPatchFile from a file path.
         /// </summary>
-        /// <param name="filepath">Path to patch file</param>
+        /// <param name="filepath">Path to patch file.</param>
+        /// <returns>ZiPatch file.</returns>
         public static ZiPatchFile FromFileName(string filepath)
         {
             var stream = SqexFileStream.WaitForStream(filepath, FileMode.Open);
-           
+
             Log.Verbose($"Patch at {filepath} opened");
 
             return new ZiPatchFile(stream);
         }
 
-
-
+        /// <summary>
+        /// Get the ZiPatch chunks.
+        /// </summary>
+        /// <returns>ZiPatch chunks.</returns>
         public IEnumerable<ZiPatchChunk> GetChunks()
         {
             ZiPatchChunk chunk;
@@ -60,6 +67,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
             } while (chunk.ChunkType != EndOfFileChunk.Type);
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             _stream?.Dispose();

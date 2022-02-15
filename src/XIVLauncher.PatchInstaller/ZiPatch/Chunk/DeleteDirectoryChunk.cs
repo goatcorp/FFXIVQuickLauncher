@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,8 +10,14 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// A "DELD" (Delete Directory) chunk.
+    /// </summary>
     public class DeleteDirectoryChunk : ZiPatchChunk
     {
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public new static string Type = "DELD";
 
         public string DirName { get; protected set; }
@@ -31,6 +37,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
         }
 
+        /// <inheritdoc/>
         public override void ApplyChunk(ZiPatchConfig config)
         {
             try
@@ -44,6 +51,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             }
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"{Type}:{DirName}";

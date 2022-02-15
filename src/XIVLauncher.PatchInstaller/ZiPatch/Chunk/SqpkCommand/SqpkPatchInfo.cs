@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +7,14 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 {
+    /// <summary>
+    /// An "X" (Patch Info) command chunk.
+    /// </summary>
     class SqpkPatchInfo : SqpkChunk
     {
+        /// <summary>
+        /// Gets the command type.
+        /// </summary>
         // This is a NOP on recent patcher versions
         public new static string Command = "X";
 

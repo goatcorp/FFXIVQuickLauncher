@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,9 +8,15 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// An "APFS" (Apply Free Space) chunk.
+    /// </summary>
+    // This is a NOP on recent patcher versions, so I don't think we'll be seeing it.
     public class ApplyFreeSpaceChunk : ZiPatchChunk
     {
-        // This is a NOP on recent patcher versions, so I don't think we'll be seeing it.
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public new static string Type = "APFS";
 
         // TODO: No samples of this were found, so these fields are theoretical

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
@@ -10,8 +10,14 @@ using XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// An "SQPK" (SQEX Pack) chunk.
+    /// </summary>
     public abstract class SqpkChunk : ZiPatchChunk
     {
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public new static string Type = "SQPK";
         public static string Command { get; protected set; }
 
@@ -52,6 +58,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         }
 
 
+        /// <inheritdoc/>
         protected override void ReadChunk()
         {
             var start = reader.BaseStream.Position;

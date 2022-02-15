@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +8,9 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Util
 {
+    /// <summary>
+    /// An SQPack file abstraction.
+    /// </summary>
     public abstract class SqpackFile : SqexFile
     {
         protected ushort MainId { get; }

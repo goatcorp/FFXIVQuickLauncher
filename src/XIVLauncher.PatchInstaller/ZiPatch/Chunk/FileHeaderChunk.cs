@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,8 +8,14 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// An "FHDR" (File Header) chunk.
+    /// </summary>
     public class FileHeaderChunk : ZiPatchChunk
     {
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public new static string Type = "FHDR";
 
         // V1?/2

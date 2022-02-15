@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace XIVLauncher.PatchInstaller.Util
 {
     /// <summary>
-    /// Performs the 32-bit reversed variant of the cyclic redundancy check algorithm
+    /// Performs the 32-bit reversed variant of the cyclic redundancy check algorithm.
     /// </summary>
     public class Crc32
     {
@@ -25,12 +25,15 @@ namespace XIVLauncher.PatchInstaller.Util
                 return k;
             }).ToArray();
 
+        /// <summary>
+        /// Gets the checksum.
+        /// </summary>
         public uint Checksum => ~_crc32;
 
         private uint _crc32 = 0xFFFFFFFF;
 
         /// <summary>
-        /// Initializes Crc32's state
+        /// Initializes the CRC32's state.
         /// </summary>
         public void Init()
         {
@@ -38,15 +41,19 @@ namespace XIVLauncher.PatchInstaller.Util
         }
 
         /// <summary>
-        /// Updates Crc32's state with new data
+        /// Updates the CRC32 with new data.
         /// </summary>
-        /// <param name="data">Data to calculate the new CRC from</param>
+        /// <param name="data">Data to calculate the new CRC from.</param>
         public void Update(byte[] data)
         {
             foreach (var b in data)
                 Update(b);
         }
 
+        /// <summary>
+        /// Updates the CRC32 with new data.
+        /// </summary>
+        /// <param name="b">Data to calculate the new CRC from.</param>
         public void Update(byte b)
         {
             _crc32 = CrcArray[(_crc32 ^ b) & 0xFF] ^

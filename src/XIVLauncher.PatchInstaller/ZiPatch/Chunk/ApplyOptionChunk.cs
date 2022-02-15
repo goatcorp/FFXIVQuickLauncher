@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,19 +8,41 @@ using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
 {
+    /// <summary>
+    /// An "APLY" (Apply Option) chunk.
+    /// </summary>
     public class ApplyOptionChunk : ZiPatchChunk
     {
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public new static string Type = "APLY";
 
+        /// <summary>
+        /// ApplyOption kinds.
+        /// </summary>
         public enum ApplyOptionKind : uint
         {
+            /// <summary>
+            /// Ignore missing.
+            /// </summary>
             IgnoreMissing = 1,
-            IgnoreOldMismatch = 2
+
+            /// <summary>
+            /// Ignore old mismatch.
+            /// </summary>
+            IgnoreOldMismatch = 2,
         }
 
+        /// <summary>
+        /// Gets the option kind.
+        /// </summary>
         // These are both false on all files seen
         public ApplyOptionKind OptionKind { get; protected set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the option should be enabled.
+        /// </summary>
         public bool OptionValue { get; protected set; }
 
         public ApplyOptionChunk(ChecksumBinaryReader reader, int size) : base(reader, size)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,8 +11,14 @@ using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 {
+    /// <summary>
+    /// An "A" (Add Data) command chunk.
+    /// </summary>
     class SqpkAddData : SqpkChunk
     {
+        /// <summary>
+        /// Gets the command type.
+        /// </summary>
         public new static string Command = "A";
 
 

@@ -1,8 +1,11 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Util
 {
+    /// <summary>
+    /// An SQPack dat file.
+    /// </summary>
     class SqpackDatFile : SqpackFile
     {
         public SqpackDatFile(BinaryReader reader) : base(reader) {}

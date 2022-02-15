@@ -1,8 +1,11 @@
-﻿using System.IO;
+using System.IO;
 using System.IO.Compression;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Util
 {
+    /// <summary>
+    /// An SQPack compressed block.
+    /// </summary>
     class SqpkCompressedBlock
     {
         public int HeaderSize { get; protected set; }

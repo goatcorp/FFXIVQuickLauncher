@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,20 +9,51 @@ using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 {
+    /// <summary>
+    /// An "H" (Header) command chunk.
+    /// </summary>
     class SqpkHeader : SqpkChunk
     {
+        /// <summary>
+        /// Gets the command type.
+        /// </summary>
         public new static string Command = "H";
 
+        /// <summary>
+        /// Target file kinds.
+        /// </summary>
         public enum TargetFileKind : byte
         {
+            /// <summary>
+            /// Dat file.
+            /// </summary>
             Dat = (byte)'D',
-            Index = (byte)'I'
+
+            /// <summary>
+            /// Index file.
+            /// </summary>
+            Index = (byte)'I',
         }
+
+        /// <summary>
+        /// Target header kinds.
+        /// </summary>
         public enum TargetHeaderKind : byte
         {
+            /// <summary>
+            /// Version header.
+            /// </summary>
             Version = (byte)'V',
+
+            /// <summary>
+            /// Index header.
+            /// </summary>
             Index = (byte)'I',
-            Data = (byte)'D'
+
+            /// <summary>
+            /// Data header.
+            /// </summary>
+            Data = (byte)'D',
         }
 
         private const int HEADER_SIZE = 1024;
