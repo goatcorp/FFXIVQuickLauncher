@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XIVLauncher.PatchInstaller.Util;
 using XIVLauncher.PatchInstaller.ZiPatch;
 using XIVLauncher.PatchInstaller.ZiPatch.Chunk;
 using XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand;
@@ -15,25 +14,20 @@ namespace XIVLauncher.PatchInstaller.PartialFile
     public partial class PartialFileDef
     {
         private List<string> SourceFiles = new();
-        private Dictionary<string, PartialFilePartList> FileParts = new();
+        private List<string> TargetFiles = new();
+        private List<PartialFilePartList> TargetFileParts = new();
 
         public IList<string> GetSourceFiles() => SourceFiles.AsReadOnly();
 
         public IList<string> GetFiles()
         {
-            return FileParts.Keys.ToList();
-        }
-
-        public PartialFileViewStream GetFileStream(string file, List<Stream> sources)
-        {
-            return new PartialFileViewStream(sources, FileParts[file]);
+            return TargetFiles.ToList();
         }
 
         public long GetFileSize(string file)
         {
-            if (FileParts[file].Count == 0)
-                return 0;
-            return FileParts[file][FileParts[file].Count - 1].TargetEnd;
+            var targetFileIndex = TargetFiles.IndexOf(file);
+            return TargetFileParts[targetFileIndex].FileSize;
         }
 
         private string NormalizePath(string path)
@@ -46,31 +40,82 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             return path;
         }
 
-        public PartialFilePartList GetFile(string targetFileName)
+        private void ReassignTargetIndices()
+        {
+            for (short i = 0; i < TargetFiles.Count; i++)
+            {
+                for (var j = 0; j < TargetFileParts[i].Count; j++)
+                {
+                    var obj = TargetFileParts[i][j];
+                    obj.TargetIndex = i;
+                    TargetFileParts[i][j] = obj;
+                }
+            }
+        }
+
+        private void DeleteFile(string path, bool reassignTargetIndex = true)
+        {
+            path = NormalizePath(path);
+            var targetFileIndex = (short)TargetFiles.IndexOf(path);
+            if (targetFileIndex == -1)
+                return;
+
+            TargetFiles.RemoveAt(targetFileIndex);
+            TargetFileParts.RemoveAt(targetFileIndex);
+
+            if (reassignTargetIndex)
+                ReassignTargetIndices();
+        }
+
+        public int GetFileCount()
+        {
+            return TargetFiles.Count;
+        }
+
+        public short GetFileIndex(string targetFileName)
         {
             targetFileName = NormalizePath(targetFileName);
-            try
+            var targetFileIndex = (short)TargetFiles.IndexOf(targetFileName);
+            if (targetFileIndex == -1)
             {
-                return FileParts[targetFileName];
+                TargetFiles.Add(targetFileName);
+                TargetFileParts.Add(new());
+                targetFileIndex = (short)(TargetFiles.Count - 1);
             }
-            catch (KeyNotFoundException)
-            {
-                return FileParts[targetFileName] = new PartialFilePartList();
-            }
+            return targetFileIndex;
+        }
+
+        public PartialFilePartList GetFile(string targetFileName)
+        {
+            return TargetFileParts[GetFileIndex(targetFileName)];
+        }
+
+        public PartialFilePartList GetFile(int targetFileIndex)
+        {
+            return TargetFileParts[targetFileIndex];
+        }
+
+        public string GetFileRelativePath(int targetFileIndex)
+        {
+            return TargetFiles[targetFileIndex];
         }
 
         public void ApplyZiPatch(string patchFileName, ZiPatchFile patchFile)
         {
-            var SourceIndex = SourceFiles.Count;
+            var SourceIndex = (short)SourceFiles.Count;
             SourceFiles.Add(patchFileName);
             var platform = ZiPatchConfig.PlatformId.Win32;
             foreach (var patchChunk in patchFile.GetChunks())
             {
                 if (patchChunk is DeleteDirectoryChunk deleteDirectoryChunk)
                 {
-                    FileParts = FileParts
-                        .Where(x => !x.Key.ToLowerInvariant().StartsWith(deleteDirectoryChunk.DirName.ToLowerInvariant()))
-                        .ToDictionary(x => x.Key, x => x.Value);
+                    var prefix = deleteDirectoryChunk.DirName.ToLowerInvariant();
+                    foreach (var fn in new List<string>(TargetFiles))
+                    {
+                        if (fn.ToLowerInvariant().StartsWith(prefix))
+                            DeleteFile(fn, false);
+                    }
+                    ReassignTargetIndices();
                 }
                 else if (patchChunk is SqpkTargetInfo sqpkTargetInfo)
                 {
@@ -81,7 +126,8 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     switch (sqpkFile.Operation)
                     {
                         case SqpkFile.OperationKind.AddFile:
-                            var file = GetFile(sqpkFile.TargetFile.RelativePath);
+                            var fileIndex = GetFileIndex(sqpkFile.TargetFile.RelativePath);
+                            var file = TargetFileParts[fileIndex];
                             if (sqpkFile.FileOffset == 0)
                                 file.Clear();
 
@@ -96,6 +142,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                                     {
                                         TargetOffset = offset,
                                         TargetSize = block.DecompressedSize,
+                                        TargetIndex = fileIndex,
                                         SourceIndex = SourceIndex,
                                         SourceOffset = dataOffset,
                                         SourceSize = block.CompressedSize,
@@ -108,6 +155,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                                     {
                                         TargetOffset = offset,
                                         TargetSize = block.DecompressedSize,
+                                        TargetIndex = fileIndex,
                                         SourceIndex = SourceIndex,
                                         SourceOffset = dataOffset,
                                         SourceSize = block.DecompressedSize,
@@ -121,32 +169,40 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                         case SqpkFile.OperationKind.RemoveAll:
                             var xpacPath = SqexFile.GetExpansionFolder((byte)sqpkFile.ExpansionId);
 
-                            FileParts = FileParts
-                                .Where(x => !x.Key.ToLowerInvariant().StartsWith($"sqpack/{xpacPath}"))
-                                .Where(x => !x.Key.ToLowerInvariant().StartsWith($"movie/{xpacPath}"))
-                                .ToDictionary(x => x.Key, x => x.Value);
+                            foreach (var fn in new List<string>(TargetFiles))
+                            {
+                                if (fn.ToLowerInvariant().StartsWith($"sqpack/{xpacPath}"))
+                                    DeleteFile(fn, false);
+                                else if (fn.ToLowerInvariant().StartsWith($"movie/{xpacPath}"))
+                                    DeleteFile(fn, false);
+                            }
+                            ReassignTargetIndices();
                             break;
 
                         case SqpkFile.OperationKind.DeleteFile:
-                            FileParts.Remove(NormalizePath(sqpkFile.TargetFile.RelativePath));
+                            DeleteFile(sqpkFile.TargetFile.RelativePath);
                             break;
                     }
                 }
                 else if (patchChunk is SqpkAddData sqpkAddData)
                 {
                     sqpkAddData.TargetFile.ResolvePath(platform);
-                    GetFile(sqpkAddData.TargetFile.RelativePath).Update(new PartialFilePart
+                    var fileIndex = GetFileIndex(sqpkAddData.TargetFile.RelativePath);
+                    var file = TargetFileParts[fileIndex];
+                    file.Update(new PartialFilePart
                     {
                         TargetOffset = sqpkAddData.BlockOffset,
                         TargetSize = sqpkAddData.BlockNumber,
+                        TargetIndex = fileIndex,
                         SourceIndex = SourceIndex,
                         SourceOffset = sqpkAddData.BlockDataSourceOffset,
                         SourceSize = sqpkAddData.BlockNumber,
                     });
-                    GetFile(sqpkAddData.TargetFile.RelativePath).Update(new PartialFilePart
+                    file.Update(new PartialFilePart
                     {
                         TargetOffset = sqpkAddData.BlockOffset + sqpkAddData.BlockNumber,
                         TargetSize = sqpkAddData.BlockDeleteNumber,
+                        TargetIndex = fileIndex,
                         SourceIndex = PartialFilePart.SourceIndex_Zeros,
                         SourceSize = sqpkAddData.BlockDeleteNumber,
                     });
@@ -154,10 +210,13 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 else if (patchChunk is SqpkDeleteData sqpkDeleteData)
                 {
                     sqpkDeleteData.TargetFile.ResolvePath(platform);
-                    GetFile(sqpkDeleteData.TargetFile.RelativePath).Update(new PartialFilePart
+                    var fileIndex = GetFileIndex(sqpkDeleteData.TargetFile.RelativePath);
+                    var file = TargetFileParts[fileIndex];
+                    file.Update(new PartialFilePart
                     {
                         TargetOffset = sqpkDeleteData.BlockOffset,
                         TargetSize = sqpkDeleteData.BlockNumber << 7,
+                        TargetIndex = fileIndex,
                         SourceIndex = PartialFilePart.SourceIndex_EmptyBlock,
                         SourceSize = sqpkDeleteData.BlockNumber << 7,
                     });
@@ -165,10 +224,13 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 else if (patchChunk is SqpkExpandData sqpkExpandData)
                 {
                     sqpkExpandData.TargetFile.ResolvePath(platform);
-                    GetFile(sqpkExpandData.TargetFile.RelativePath).Update(new PartialFilePart
+                    var fileIndex = GetFileIndex(sqpkExpandData.TargetFile.RelativePath);
+                    var file = TargetFileParts[fileIndex];
+                    file.Update(new PartialFilePart
                     {
                         TargetOffset = sqpkExpandData.BlockOffset,
                         TargetSize = sqpkExpandData.BlockNumber << 7,
+                        TargetIndex = fileIndex,
                         SourceIndex = PartialFilePart.SourceIndex_EmptyBlock,
                         SourceSize = sqpkExpandData.BlockNumber << 7,
                     });
@@ -176,10 +238,13 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 else if (patchChunk is SqpkHeader sqpkHeader)
                 {
                     sqpkHeader.TargetFile.ResolvePath(platform);
-                    GetFile(sqpkHeader.TargetFile.RelativePath).Update(new PartialFilePart
+                    var fileIndex = GetFileIndex(sqpkHeader.TargetFile.RelativePath);
+                    var file = TargetFileParts[fileIndex];
+                    file.Update(new PartialFilePart
                     {
                         TargetOffset = sqpkHeader.HeaderKind == SqpkHeader.TargetHeaderKind.Version ? 0 : SqpkHeader.HEADER_SIZE,
                         TargetSize = SqpkHeader.HEADER_SIZE,
+                        TargetIndex = fileIndex,
                         SourceIndex = SourceIndex,
                         SourceOffset = sqpkHeader.HeaderDataSourceOffset,
                         SourceSize = SqpkHeader.HEADER_SIZE,
@@ -190,8 +255,8 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
         public void CalculateCrc32(List<Stream> sources)
         {
-            foreach (var file in FileParts)
-                file.Value.CalculateCrc32(new PartialFileViewStream(sources, file.Value));
+            foreach (var file in TargetFileParts)
+                file.CalculateCrc32(sources);
         }
 
         public void WriteTo(BinaryWriter writer)
@@ -199,11 +264,11 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             writer.Write(SourceFiles.Count);
             foreach (var file in SourceFiles)
                 writer.Write(file);
-            writer.Write(FileParts.Count);
-            foreach(var file in FileParts)
+            writer.Write(TargetFiles.Count);
+            for (var i = 0; i < TargetFiles.Count; i++)
             {
-                writer.Write(file.Key);
-                var data = file.Value.ToBytes();
+                writer.Write(TargetFiles[i]);
+                var data = TargetFileParts[i].ToBytes();
                 writer.Write(data.Length);
                 writer.Write(data);
             }
@@ -215,15 +280,18 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
                 SourceFiles.Add(reader.ReadString());
 
-            FileParts.Clear();
+            TargetFiles.Clear();
+            TargetFileParts.Clear();
             for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
             {
-                var key = reader.ReadString();
+                TargetFiles.Add(reader.ReadString());
+
                 var dataLength = reader.ReadInt32();
                 var data = new byte[dataLength];
                 reader.Read(data, 0, dataLength);
-                FileParts[key] = new PartialFilePartList();
-                FileParts[key].FromBytes(data);
+                var parts = new PartialFilePartList();
+                parts.FromBytes(data);
+                TargetFileParts.Add(parts);
             }
         }
     }

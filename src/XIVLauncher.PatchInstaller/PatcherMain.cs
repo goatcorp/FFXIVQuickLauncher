@@ -110,6 +110,22 @@ namespace XIVLauncher.PatchInstaller
                     return;
                 }
 
+                if (args.Length > 2 && args[0] == "index-rpc-test")
+                {
+                    try
+                    {
+                        PartialPatchOperations.RpcTest(args.Skip(1).ToList());
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Failed to repair from patch index file.");
+                        Environment.Exit(-1);
+                    }
+
+                    Environment.Exit(0);
+                    return;
+                }
+
                 if (args.Length == 0 || args[0] != "rpc")
                 {
                     Log.Information("usage:\n" +

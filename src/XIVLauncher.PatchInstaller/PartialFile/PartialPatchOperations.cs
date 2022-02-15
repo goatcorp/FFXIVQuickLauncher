@@ -1,11 +1,11 @@
 ﻿using Serilog;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XIVLauncher.PatchInstaller.PartialFile.PartialPatchRpc;
 using XIVLauncher.PatchInstaller.ZiPatch;
 
 namespace XIVLauncher.PatchInstaller.PartialFile
@@ -64,137 +64,110 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             }
         }
 
-        public static Dictionary<string, List<Tuple<long, int>>> VerifyFromPatchFileIndex(IList<string> patchFilePaths, string gameRootPath)
+        public static PartialFileVerification VerifyFromPatchFileIndex(IList<string> patchFilePaths, string gameRootPath)
         {
-            Dictionary<string, List<Tuple<long, int>>> corruptedParts = new();
-
             var def = CreatePatchFileIndices(patchFilePaths);
-            var sources = new List<Stream>();
-            try
+            var verifier = new PartialFileVerification(def)
             {
-                foreach (var patchFilePath in patchFilePaths)
-                    sources.Add(new FileStream(patchFilePath, FileMode.Open, FileAccess.Read));
+                ProgressReportInterval = 1000
+            };
 
-                byte[] buf = new byte[16000];
-                foreach (var file in def.GetFiles())
+            for (var i = 0; i < def.GetFileCount(); i++)
+            {
+                var relativePath = def.GetFileRelativePath(i);
+                var file = def.GetFile(relativePath);
+                verifier.OnProgress.Clear();
+                verifier.OnCorruptionFound.Clear();
+                var remainingErrorMessagesToShow = 8;
+                verifier.OnProgress.Add((long progress, long max) => Log.Information("[{0}/{1}] Checking file {2}... {3:00.00}", i + 1, def.GetFileCount(), relativePath, 100.0 * progress / max));
+                verifier.OnCorruptionFound.Add((string relativePath, PartialFilePart part, PartialFilePart.VerifyDataResult result) =>
                 {
-                    Log.Information("Checking file {0}...", file);
-                    var parts = def.GetFile(file);
-                    int warnOutCount = 0;
-                    try
+                    switch (result)
                     {
-                        using var local = new FileStream(Path.Combine(gameRootPath, file), FileMode.Open, FileAccess.Read);
-                        var prematureEof = false;
-                        foreach (var part in parts)
-                        {
-                            local.Seek(part.TargetOffset, SeekOrigin.Begin);
-                            if (buf.Length < part.TargetSize)
-                                buf = new byte[part.TargetSize];
-                            if (local.Read(buf, 0, part.TargetSize) == part.TargetSize)
+                        case PartialFilePart.VerifyDataResult.FailNotEnoughData:
+                            if (remainingErrorMessagesToShow > 0)
                             {
-                                if (part.VerifyData(buf, 0, part.TargetSize))
-                                    continue;
-
-                                if (warnOutCount < 8)
-                                {
-                                    Log.Warning("{0}:{1}:{2}: Corrupt data", file, part.TargetOffset, part.TargetEnd);
-                                    warnOutCount++;
-                                    if (warnOutCount == 8)
-                                        Log.Warning("Suppressing further corruption warnings for this file.");
-                                }
+                                Log.Error("{0}:{1}:{2}: Premature EOF detected", relativePath, part.TargetOffset, file.FileSize);
+                                remainingErrorMessagesToShow = 0;
                             }
-                            else if (!prematureEof)
+                            break;
+
+                        case PartialFilePart.VerifyDataResult.FailBadData:
+                            if (remainingErrorMessagesToShow > 0)
                             {
-                                prematureEof = true;
-                                Log.Warning("{0}:{1}:{2}: Premature EOF", file, part.TargetOffset, def.GetFileSize(file));
+                                if (--remainingErrorMessagesToShow == 0)
+                                    Log.Warning("{0}:{1}:{2}: Corrupt data; suppressing further corruption warnings for this file.", relativePath, part.TargetOffset, part.TargetEnd);
+                                else
+                                    Log.Warning("{0}:{1}:{2}: Corrupt data", relativePath, part.TargetOffset, part.TargetEnd);
                             }
-
-                            if (!corruptedParts.ContainsKey(file))
-                                corruptedParts[file] = new();
-                            corruptedParts[file].Add(Tuple.Create(part.TargetOffset, part.TargetSize));
-                        }
-                        if (local.Length > def.GetFileSize(file) && !prematureEof)
-                        {
-                            Log.Warning("{0}:{1}:{2}: File too long", file, def.GetFileSize(file), local.Length);
-                            if (!corruptedParts.ContainsKey(file))
-                                corruptedParts[file] = new();
-                        }
+                            break;
                     }
-                    catch (FileNotFoundException)
-                    {
-                        Log.Warning("{0}:{1}:{2}: File does not exist", file, 0, def.GetFileSize(file));
-                        if (!corruptedParts.ContainsKey(file))
-                            corruptedParts[file] = new();
-                    }
+                });
+                try
+                {
+                    using var local = new FileStream(Path.Combine(gameRootPath, relativePath), FileMode.Open, FileAccess.Read);
+                    verifier.VerifyFile(relativePath, local);
+                }
+                catch (FileNotFoundException)
+                {
+                    verifier.MarkFileAsMissing(relativePath);
+                    Log.Warning("{0}:{1}:{2}: File does not exist", relativePath, 0, file.FileSize);
                 }
             }
-            finally
-            {
-                foreach (var source in sources)
-                    source.Dispose();
-            }
 
-            return corruptedParts;
+            return verifier;
         }
 
         public static void RepairFromPatchFileIndex(IList<string> patchFilePaths, string gameRootPath)
         {
-            var def = CreatePatchFileIndices(patchFilePaths);
+            var verifyResult = VerifyFromPatchFileIndex(patchFilePaths, gameRootPath);
             var sources = new List<Stream>();
+            using var disposer = new Util.MultiDisposable();
             foreach (var patchFilePath in patchFilePaths)
-                sources.Add(new FileStream(patchFilePath, FileMode.Open, FileAccess.Read));
-            
-            try
+                sources.Add(disposer.With(new FileStream(patchFilePath, FileMode.Open, FileAccess.Read)));
+            for (short targetFileIndex = 0; targetFileIndex < verifyResult.MissingPartIndicesPerTargetFile.Count; targetFileIndex++)
             {
-                var buf = new byte[16000];
-                foreach (var file in def.GetFiles())
-                {
-                    Log.Information("Checking file {0}...", file);
-                    var reconstructed = def.GetFileStream(file, sources);
-                    var parts = def.GetFile(file);
+                var partIndices = verifyResult.MissingPartIndicesPerTargetFile[targetFileIndex];
+                if (partIndices.Count == 0 && !verifyResult.TooLongTargetFiles.Contains(targetFileIndex))
+                    continue;
 
-                    Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(gameRootPath, file)));
-                    using var local = new FileStream(Path.Combine(gameRootPath, file), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                var relativePath = verifyResult.Definition.GetFileRelativePath(targetFileIndex);
+                var file = verifyResult.Definition.GetFile(targetFileIndex);
 
-                    var prematureEof = false;
-                    int warnOutCount = 0;
-                    foreach (var part in parts)
-                    {
-                        local.Seek(part.TargetOffset, SeekOrigin.Begin);
-                        if (buf.Length < part.TargetSize)
-                            buf = new byte[part.TargetSize];
-                        if (local.Read(buf, 0, part.TargetSize) == part.TargetSize)
-                        {
-                            if (part.VerifyData(buf, 0, part.TargetSize))
-                                continue;
+                Log.Information("[{0}/{1}] Repairing file {2}... ({} segments)", targetFileIndex + 1, verifyResult.MissingPartIndicesPerTargetFile.Count, relativePath, partIndices.Count);
 
-                            if (warnOutCount < 8)
-                            {
-                                Log.Warning("{0}:{1}:{2}: Corrupt data", file, part.TargetOffset, part.TargetEnd);
-                                warnOutCount++;
-                                if (warnOutCount == 8)
-                                    Log.Warning("Suppressing further corruption warnings for this file.");
-                            }
-                        }
-                        else if (!prematureEof)
-                        {
-                            prematureEof = true;
-                            Log.Warning("{0}:{1}:{2}: Premature EOF; repairing", file, part.TargetOffset, reconstructed.Length);
-                        }
-
-                        reconstructed.Seek(part.TargetOffset, SeekOrigin.Begin);
-                        reconstructed.Read(buf, 0, part.TargetSize);
-                        local.Seek(part.TargetOffset, SeekOrigin.Begin);
-                        local.Write(buf, 0, part.TargetSize);
-                    }
-                    local.SetLength(reconstructed.Length);
-                }
+                Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(gameRootPath, relativePath)));
+                using var local = new FileStream(Path.Combine(gameRootPath, relativePath), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                foreach (var partIndex in partIndices)
+                    file[partIndex].Repair(local, sources);
+                local.SetLength(file.FileSize);
             }
-            finally
+        }
+
+        public static void RepairRpcMode(string channelName)
+        {
+            using var operations = new PartialPatchRpcOperationServer(channelName);
+            operations.Run();
+        }
+
+        public static void RpcTest(List<string> args)
+        {
+            List<List<string>> multiargs = new();
+            multiargs.Add(new());
+            foreach (var s in args)
             {
-                foreach (var source in sources)
-                    source.Dispose();
+                if (s == "--")
+                    multiargs.Add(new());
+                else
+                    multiargs.Last().Add(s);
             }
+            var tester = new PartialPatchRpcOperationTestClient();
+            foreach (var s in multiargs)
+            {
+                CreatePatchFileIndices(s.Take(s.Count - 2).ToList());
+                tester.AddFiles(s.Take(s.Count - 2).ToList(), s[s.Count - 2], s[s.Count - 1]);
+            }
+            tester.Run();
         }
     }
 }

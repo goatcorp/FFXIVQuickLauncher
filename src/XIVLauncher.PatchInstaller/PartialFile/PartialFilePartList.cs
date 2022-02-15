@@ -1,6 +1,4 @@
-﻿using Serilog;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,9 +7,9 @@ using System.Runtime.InteropServices;
 
 namespace XIVLauncher.PatchInstaller.PartialFile
 {
-    public class PartialFilePartList : IList<PartialFilePart>
+    public partial class PartialFilePartList : IList<PartialFilePart>
     {
-        internal readonly List<PartialFilePart> Underlying = new();
+        private readonly List<PartialFilePart> Underlying = new();
 
         public PartialFilePart this[int index] { get => Underlying[index]; set => Underlying[index] = value; }
 
@@ -39,12 +37,14 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
         public void RemoveAt(int index) => Underlying.RemoveAt(index);
 
+        public long FileSize => Underlying.Count > 0 ? Underlying.Last().TargetEnd : 0;
+
         public int BinarySearchByTargetOffset(long targetOffset)
         {
             return Underlying.BinarySearch(new PartialFilePart { TargetOffset = targetOffset }); ;
         }
 
-        public void SplitAt(long offset)
+        public void SplitAt(long offset, short targetFileIndex)
         {
             var i = BinarySearchByTargetOffset(offset);
             if (i >= 0)
@@ -63,6 +63,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 Underlying.Add(new PartialFilePart
                 {
                     TargetSize = (int)offset,
+                    TargetIndex = targetFileIndex,
                     SourceIndex = PartialFilePart.SourceIndex_Zeros,
                 });
             }
@@ -76,6 +77,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 {
                     TargetOffset = Underlying[i - 1].TargetEnd,
                     TargetSize = (int)(offset - Underlying[i - 1].TargetEnd),
+                    TargetIndex = targetFileIndex,
                     SourceIndex = PartialFilePart.SourceIndex_Zeros,
                 });
             }
@@ -87,6 +89,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 {
                     TargetOffset = part.TargetOffset,
                     TargetSize = (int)(offset - part.TargetOffset),
+                    TargetIndex = targetFileIndex,
                     SourceIndex = part.SourceIndex,
                     SourceOffset = part.SourceOffset,
                     SourceSize = part.SourceSize,
@@ -97,6 +100,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 {
                     TargetOffset = offset,
                     TargetSize = (int)(part.TargetEnd - offset),
+                    TargetIndex = targetFileIndex,
                     SourceIndex = part.SourceIndex,
                     SourceOffset = part.SourceOffset,
                     SourceSize = part.SourceSize,
@@ -111,8 +115,8 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             if (part.TargetSize == 0)
                 return;
 
-            SplitAt(part.TargetOffset);
-            SplitAt(part.TargetEnd);
+            SplitAt(part.TargetOffset, part.TargetIndex);
+            SplitAt(part.TargetEnd, part.TargetIndex);
 
             var left = BinarySearchByTargetOffset(part.TargetOffset);
             if (left < 0)
@@ -135,28 +139,19 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             Underlying.RemoveRange(left + 1, right - left - 1);
         }
 
-        public void CalculateCrc32(PartialFileViewStream stream)
+        public void CalculateCrc32(List<Stream> sources)
         {
-            Util.Crc32 crc32 = new();
             var list = Underlying.ToArray();
-            byte[] buf = new byte[16000];
             for (var i = 0; i < list.Length; ++i)
-            {
-                if (list[i].Crc32Available || list[i].IsAllZeros || list[i].IsEmptyBlock)
-                    continue;
-
-                if (buf.Length < list[i].TargetSize)
-                    buf = new byte[list[i].TargetSize];
-                stream.Seek(list[i].TargetOffset, SeekOrigin.Begin);
-                stream.Read(buf, 0, list[i].TargetSize);
-
-                crc32.Init();
-                crc32.Update(buf, 0, list[i].TargetSize);
-                list[i].Crc32 = crc32.Checksum;
-                list[i].Crc32Available = true;
-            }
+                if (list[i].IsFromSourceFile)
+                PartialFilePart.CalculateCrc32(ref list[i], sources[list[i].SourceIndex]);
             Underlying.Clear();
             Underlying.AddRange(list);
+        }
+
+        public Stream ToStream(List<Stream> sources)
+        {
+            return new PartialFileViewStream(sources, this);
         }
 
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
