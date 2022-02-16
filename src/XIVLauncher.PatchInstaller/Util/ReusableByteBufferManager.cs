@@ -27,6 +27,12 @@ namespace XIVLauncher.PatchInstaller.Util
                 Writer = new BinaryWriter(Stream);
             }
 
+            public void ResetState()
+            {
+                Stream.SetLength(0);
+                Stream.Seek(0, SeekOrigin.Begin);
+            }
+
             public void Clear() => Array.Clear(Buffer, 0, Buffer.Length);
 
             public void Dispose() => BufferManager.Return(this);
@@ -67,7 +73,7 @@ namespace XIVLauncher.PatchInstaller.Util
                 res = new Allocation(this);
             else if (clear)
                 res.Clear();
-            res.Stream.Seek(0, SeekOrigin.Begin);
+            res.ResetState();
             return res;
         }
 

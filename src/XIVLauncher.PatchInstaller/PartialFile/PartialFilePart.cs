@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 namespace XIVLauncher.PatchInstaller.PartialFile
 {
     [StructLayout(LayoutKind.Sequential)]
+    [Serializable]
     public struct PartialFilePart : IComparable<PartialFilePart>
     {
         public const byte SourceIndex_Zeros = byte.MaxValue - 0;
@@ -50,7 +51,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             get => SplitDecodedSourceFromUshort;
             set => SplitDecodedSourceFromUshort = CheckedCastToUshort(value);
         }
-        
+
         public int TargetIndex
         {
             get => TargetIndexByte;
@@ -64,7 +65,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         }
 
         public long MaxSourceSize => IsDeflatedBlockData ? 16384 : TargetSize;
-
+        public long MaxSourceEnd => SourceOffset + MaxSourceSize;
         public long TargetEnd => TargetOffset + TargetSize;
 
         public bool IsDeflatedBlockData
@@ -243,6 +244,11 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             return bufferSize;
         }
 
+        public class InsufficientReconstructionDataException : IOException
+        {
+            public InsufficientReconstructionDataException(string msg) : base(msg) { }
+        }
+
         public int Reconstruct(Stream source, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
         {
             if (!IsFromSourceFile)
@@ -257,20 +263,26 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
             if (IsDeflatedBlockData)
             {
-                using var deflatedBuffer = Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
                 source.Seek(SourceOffset, SeekOrigin.Begin);
-                source.Read(deflatedBuffer.Buffer, 0, deflatedBuffer.Buffer.Length);
-
                 using var inflatedBuffer = Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
-                using (var stream = new DeflateStream(deflatedBuffer.Stream, CompressionMode.Decompress, true))
-                    stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
+                try
+                {
+                    using var stream = new DeflateStream(source, CompressionMode.Decompress, true);
+                    var read = stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
+                    if (read < SplitDecodedSourceFrom + bufferSize)
+                        throw new InsufficientReconstructionDataException("Not enough inflated data read");
+                }
+                catch (InvalidDataException)
+                {
+                    throw new InsufficientReconstructionDataException("Not enough inflated data read, or corrupt zlib data");
+                }
                 Array.Copy(inflatedBuffer.Buffer, SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             else
             {
                 source.Seek(SourceOffset + SplitDecodedSourceFrom + relativeOffset, SeekOrigin.Begin);
                 if (bufferSize != source.Read(buffer, bufferOffset, bufferSize))
-                    throw new IOException("Failed to read full part of source file");
+                    throw new InsufficientReconstructionDataException("Not enough source data read");
             }
             return bufferSize;
         }
@@ -288,6 +300,8 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
                 target.Write(buffer.Buffer, 0, readSize);
             }
+            if (Verify(target) != VerifyDataResult.Pass)
+                throw new IOException("Repair failure");
         }
 
         public void Repair(Stream target, IList<Stream> sources)

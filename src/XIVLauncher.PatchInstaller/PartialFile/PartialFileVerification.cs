@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.PartialFile
 {
@@ -17,6 +19,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
         public int ProgressReportInterval = 250;
         private int LastProgressUpdateReport = 0;
+        private List<Stream> TargetStreams = new();
 
         public delegate void OnCorruptionFoundDelegate(string relativePath, PartialFilePart part, PartialFilePart.VerifyDataResult result);
         public delegate void OnProgressDelegate(long progress, long max);
@@ -28,7 +31,10 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         {
             Definition = def;
             foreach (var _ in def.GetFiles())
+            {
                 MissingPartIndicesPerTargetFile.Add(new());
+                TargetStreams.Add(null);
+            }
             foreach (var _ in def.GetSourceFiles())
                 MissingPartIndicesPerPatch.Add(new());
         }
@@ -64,7 +70,8 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             var file = Definition.GetFile(relativePath);
 
             TriggerOnProgress(0, file.FileSize, true);
-            for (var i = 0; i < file.Count; ++i) {
+            for (var i = 0; i < file.Count; ++i)
+            {
                 TriggerOnProgress(file[i].TargetOffset, file.FileSize, false);
                 var verifyResult = file[i].Verify(local);
                 switch (verifyResult)
@@ -99,6 +106,204 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                     MissingPartIndicesPerPatch[file[i].SourceIndex].Add(Tuple.Create(targetFileIndex, i));
                 MissingPartIndicesPerTargetFile[targetFileIndex].Add(i);
             }
+        }
+
+        public void SetTargetStream(int targetIndex, Stream targetStream)
+        {
+            TargetStreams[targetIndex] = targetStream;
+        }
+
+        public async Task<List<PartialFilePart>> RepairFrom(HttpClient client, int patchFileIndex, string uri)
+        {
+            var result = new List<PartialFilePart>();
+            var offsets = new List<Tuple<long, long>>();
+            foreach (var partIndices in MissingPartIndicesPerPatch[patchFileIndex])
+            {
+                var part = Definition.GetFile(partIndices.Item1)[partIndices.Item2];
+                offsets.Add(Tuple.Create(part.SourceOffset, part.MaxSourceEnd));
+            }
+            offsets.Sort();
+
+            for (int j = 1; j < offsets.Count;)
+            {
+                if (offsets[j].Item1 - offsets[j - 1].Item2 < 4096)
+                {
+                    offsets[j - 1] = Tuple.Create(offsets[j - 1].Item1, offsets[j].Item2);
+                    offsets.RemoveAt(j);
+                }
+                else
+                    j += 1;
+            }
+
+            long totalTargetSize = 0;
+            long currentTargetSize = 0;
+            foreach (var partIndices in MissingPartIndicesPerPatch[patchFileIndex])
+                totalTargetSize += Definition.GetFile(partIndices.Item1)[partIndices.Item2].TargetSize;
+            TriggerOnProgress(0, totalTargetSize, true);
+
+            var parts = Definition.GetUsedSourceFileParts(patchFileIndex);
+            var sourceOffsets = parts.Select(x => Definition.GetFile(x.Item1)[x.Item2].SourceOffset).ToList();
+
+            for (int j = 0; j < offsets.Count; j += 1024)
+            {
+                var rangeHeader = "bytes=" + string.Join(",", offsets.Skip(j).Take(Math.Min(1024, offsets.Count - j)).Select(x => $"{x.Item1}-{x.Item2 + 1}"));
+                using HttpRequestMessage req = new(HttpMethod.Get, uri);
+                req.Headers.Add("Range", rangeHeader);
+                using var resp = new MultipartRequestHandler(await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead));
+                while (true)
+                {
+                    using var n = await resp.NextPart();
+                    if (n == null)
+                        break;
+
+                    for (var i = 0; i < parts.Count; i++)
+                    {
+                        var partFragment = parts[i];
+                        if (!MissingPartIndicesPerTargetFile[partFragment.Item1].Contains(partFragment.Item2))
+                            continue;
+
+                        var part = Definition.GetFile(partFragment.Item1)[partFragment.Item2];
+                        if (part.SourceOffset < n.AvailableFromOffset)
+                            continue;
+                        if (part.SourceOffset > n.AvailableToOffset)
+                            break;
+
+                        var target = TargetStreams[part.TargetIndex];
+                        if (target != null)
+                        {
+                            lock (target)
+                            {
+                                try
+                                {
+                                    part.Repair(target, n);
+                                }
+                                catch (PartialFilePart.InsufficientReconstructionDataException)
+                                {
+                                    break;
+                                }
+                            }
+                            result.Add(part);
+                            currentTargetSize += part.TargetSize;
+                            TriggerOnProgress(currentTargetSize, totalTargetSize, false);
+                        }
+                    }
+                }
+            }
+            TriggerOnProgress(totalTargetSize, totalTargetSize, true);
+            return result;
+        }
+
+        public void RepairNonPatchData()
+        {
+            for (int i = 0, i_ = Definition.GetFileCount(); i < i_; i++)
+            {
+                var target = TargetStreams[i];
+                if (target == null)
+                    continue;
+
+                var file = Definition.GetFile(i);
+                lock (target)
+                {
+                    foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
+                    {
+                        var part = file[partIndex];
+                        if (part.IsFromSourceFile)
+                            continue;
+
+                        part.Repair(target, (Stream)null);
+                    }
+                    target.SetLength(file.FileSize);
+                }
+            }
+        }
+
+        public static void Test()
+        {
+            HttpClient client = new();
+            TestSingle(client, "http://localhost/boot/2b5cbc63/", @"boot.index", @"Z:\tgame3\boot", "ffxivboot");
+            TestSingle(client, "http://localhost/game/4e9a232b/", @"game.index", @"Z:\tgame3\game", "ffxivgame");
+            TestSingle(client, "http://localhost/gex1/6b936f08/", @"ex1.index", @"Z:\tgame3\game", "sqpack/ex1/ex1");
+            TestSingle(client, "http://localhost/gex2/f29a3eb2/", @"ex2.index", @"Z:\tgame3\game", "sqpack/ex2/ex2");
+            TestSingle(client, "http://localhost/gex3/859d0e24/", @"ex3.index", @"Z:\tgame3\game", "sqpack/ex3/ex3");
+            TestSingle(client, "http://localhost/gex4/1bf99b87/", @"ex4.index", @"Z:\tgame3\game", "sqpack/ex4/ex4");
+        }
+
+        public static void TestSingle(HttpClient client, string baseUri, string indexFilePath, string localRootPath, string versionFileName)
+        {
+            PartialFileDef def = new();
+            using var reader = new BinaryReader(new FileStream(indexFilePath, FileMode.Open, FileAccess.Read));
+            def.ReadFrom(reader);
+
+            var versionName = def.GetSourceFiles().Last().Substring(1);
+            versionName = versionName.Substring(0, versionName.Length - 6);
+            var versionNameBytes = Encoding.UTF8.GetBytes(versionName);
+            var versionFilePath1 = Path.Combine(localRootPath, versionFileName + ".ver");
+            var versionFilePath2 = Path.Combine(localRootPath, versionFileName + ".bck");
+            Directory.CreateDirectory(Path.GetDirectoryName(versionFilePath1));
+            using (var writer = new FileStream(versionFilePath1, FileMode.Create, FileAccess.Write))
+                writer.Write(versionNameBytes, 0, versionNameBytes.Length);
+            using (var writer = new FileStream(versionFilePath2, FileMode.Create, FileAccess.Write))
+                writer.Write(versionNameBytes, 0, versionNameBytes.Length);
+
+            PartialFileVerification verify = new(def);
+            for (int i = 0; i < def.GetFileCount(); i++)
+            {
+                var relativePath = def.GetFileRelativePath(i);
+                var targetPath = Path.Combine(localRootPath, relativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                var file = new FileStream(targetPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                var remainingErrorMessagesToShow = 8;
+                verify.OnCorruptionFound.Add((string relativePath, PartialFilePart part, PartialFilePart.VerifyDataResult result) =>
+                {
+                    switch (result)
+                    {
+                        case PartialFilePart.VerifyDataResult.FailNotEnoughData:
+                            if (remainingErrorMessagesToShow > 0)
+                            {
+                                Log.Error("{0}:{1}:{2}: Premature EOF detected", relativePath, part.TargetOffset, def.GetFile(i).FileSize);
+                                remainingErrorMessagesToShow = 0;
+                            }
+                            break;
+
+                        case PartialFilePart.VerifyDataResult.FailBadData:
+                            if (remainingErrorMessagesToShow > 0)
+                            {
+                                if (--remainingErrorMessagesToShow == 0)
+                                    Log.Warning("{0}:{1}:{2}: Corrupt data; suppressing further corruption warnings for this file.", relativePath, part.TargetOffset, part.TargetEnd);
+                                else
+                                    Log.Warning("{0}:{1}:{2}: Corrupt data", relativePath, part.TargetOffset, part.TargetEnd);
+                            }
+                            break;
+                    }
+                });
+                verify.OnProgress.Add((long progress, long max) =>
+                {
+                    if (progress == 0)
+                        Log.Information("[{0}/{1}] Checking file {2}... {3:00.00}", i + 1, verify.Definition.GetFileCount(), relativePath, 100.0 * progress / max);
+                });
+                verify.VerifyFile(def.GetFileRelativePath(i), file);
+                verify.OnProgress.Clear();
+                verify.OnCorruptionFound.Clear();
+                verify.SetTargetStream(i, file);
+            }
+
+            for (int i = 0, i_ = def.GetSourceFiles().Count; i < i_; i++)
+            {
+                if (verify.MissingPartIndicesPerPatch[i].Count == 0)
+                    continue;
+                var uri = $"{baseUri}{def.GetSourceFiles()[i]}";
+                verify.OnProgress.Clear();
+                verify.OnProgress.Add((long progress, long max) =>
+                {
+                    Log.Information("[{0}/{1}] Writing {2:0.00}/{3:0.00}MB ({4:00.00}%) from {5}",
+                        i + 1, def.GetSourceFiles().Count,
+                        progress / 1048576.0, max / 1048576.0, 100.0 * progress / max, uri
+                        );
+                });
+                verify.RepairFrom(client, i, uri).Wait();
+            }
+
+            verify.RepairNonPatchData();
         }
     }
 }

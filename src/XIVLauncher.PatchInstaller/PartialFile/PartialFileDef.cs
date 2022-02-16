@@ -11,13 +11,31 @@ using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller.PartialFile
 {
-    public partial class PartialFileDef
+    public class PartialFileDef
     {
-        private List<string> SourceFiles = new();
-        private List<string> TargetFiles = new();
-        private List<PartialFilePartList> TargetFileParts = new();
+        private readonly List<string> SourceFiles = new();
+        private readonly List<string> TargetFiles = new();
+        private readonly List<PartialFilePartList> TargetFileParts = new();
 
         public IList<string> GetSourceFiles() => SourceFiles.AsReadOnly();
+
+        private readonly List<WeakReference<List<Tuple<int, int>>>> UsedSourceFileParts = new();
+
+        public List<Tuple<int, int>> GetUsedSourceFileParts(int sourceFileIndex)
+        {
+            if (UsedSourceFileParts[sourceFileIndex].TryGetTarget(out var list))
+                return list;
+
+            UsedSourceFileParts[sourceFileIndex].SetTarget(list = new());
+            for (var i = 0; i < TargetFileParts.Count; i++)
+                for (var j = 0; j < TargetFileParts[i].Count; j++)
+                    if (TargetFileParts[i][j].SourceIndex == sourceFileIndex)
+                        list.Add(Tuple.Create(i, j));
+            list.Sort((x, y) => { 
+                return TargetFileParts[x.Item1][x.Item2].SourceOffset.CompareTo(TargetFileParts[y.Item1][y.Item2].SourceOffset);
+            });
+            return list;
+        }
 
         public IList<string> GetFiles()
         {
@@ -104,6 +122,10 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         {
             var SourceIndex = SourceFiles.Count;
             SourceFiles.Add(patchFileName);
+            UsedSourceFileParts.Add(new(null));
+            foreach (var p in UsedSourceFileParts)
+                p.SetTarget(null);
+
             var platform = ZiPatchConfig.PlatformId.Win32;
             foreach (var patchChunk in patchFile.GetChunks())
             {
@@ -300,8 +322,12 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         public void ReadFrom(BinaryReader reader)
         {
             SourceFiles.Clear();
+            UsedSourceFileParts.Clear();
             for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
+            {
                 SourceFiles.Add(reader.ReadString());
+                UsedSourceFileParts.Add(new(null));
+            }
 
             TargetFiles.Clear();
             TargetFileParts.Clear();

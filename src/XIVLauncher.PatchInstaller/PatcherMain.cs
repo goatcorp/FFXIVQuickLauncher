@@ -39,8 +39,10 @@ namespace XIVLauncher.PatchInstaller
                 .WriteTo.Debug()
                 .MinimumLevel.Verbose()
                 .CreateLogger();
-            PartialPatchOperations.RpcTest(args.Skip(1).ToList());
+            PartialFileVerification.Test();
+            // PartialPatchOperations.RpcTest(args.Skip(1).ToList());
             return;
+
             try
             {
                 Log.Logger = new LoggerConfiguration()
