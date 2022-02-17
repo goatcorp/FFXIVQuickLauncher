@@ -18,7 +18,7 @@ namespace XIVLauncher.PatchInstaller.Util
         private bool NoMoreParts = false;
         private Stream BaseStream;
         private string MultipartBoundary;
-        private MemoryStream MultipartBufferStream;
+        private CircularMemoryStream MultipartBufferStream;
         private List<string> MultipartHeaderLines;
         private ForwardSeekStream LastPartialStream;
 
@@ -86,22 +86,25 @@ namespace XIVLauncher.PatchInstaller.Util
                     if (readSize == 0)
                         eof = true;
                     else
-                        MultipartBufferStream.Write(buffer.Buffer, 0, readSize);
+                        MultipartBufferStream.Feed(buffer.Buffer, 0, readSize);
                 }
 
-                var memoryStreamBuffer = MultipartBufferStream.GetBuffer();
-                for (long i = 0; i < MultipartBufferStream.Length - 1; ++i)
+                for (int i = 0, i_ = (int)MultipartBufferStream.Length - 1; i < i_; ++i)
                 {
-                    if (memoryStreamBuffer[i + 0] != '\r' || memoryStreamBuffer[i + 1] != '\n')
+                    if (MultipartBufferStream[i + 0] != '\r' || MultipartBufferStream[i + 1] != '\n')
                         continue;
 
                     var IsEmptyLine = i == 0;
-                    if (!IsEmptyLine)
-                        MultipartHeaderLines.Add(Encoding.UTF8.GetString(memoryStreamBuffer, 0, (int)i));
+                    if (IsEmptyLine)
+                        MultipartBufferStream.Consume(null, 0, 2);
+                    else {
+                        using var lineBuffer = ReusableByteBufferManager.GetBuffer();
+                        if (i > lineBuffer.Buffer.Length)
+                            throw new IOException($"Multipart header line is too long ({i} bytes)");
 
-                    for (long j = i + 2, j_ = 0; j < MultipartBufferStream.Length; j++, j_++)
-                        memoryStreamBuffer[j_] = memoryStreamBuffer[j];
-                    MultipartBufferStream.SetLength(MultipartBufferStream.Length - i - 2);
+                        MultipartBufferStream.Consume(lineBuffer.Buffer, 0, i + 2);
+                        MultipartHeaderLines.Add(Encoding.UTF8.GetString(lineBuffer.Buffer, 0, (int)i));
+                    }
                     i = -1;
 
                     if (MultipartHeaderLines.Count == 0)
@@ -133,10 +136,7 @@ namespace XIVLauncher.PatchInstaller.Util
                     var rangeLength = (long)rangeHeader.To - rangeFrom + 1;
 
                     var dataBuffer = new byte[Math.Min(MultipartBufferStream.Length, rangeLength)];
-                    Array.Copy(memoryStreamBuffer, dataBuffer, dataBuffer.Length);
-                    for (long j = dataBuffer.Length, j_ = 0; j < MultipartBufferStream.Length; j++, j_++)
-                        memoryStreamBuffer[j_] = memoryStreamBuffer[j];
-                    MultipartBufferStream.SetLength(MultipartBufferStream.Length - dataBuffer.Length);
+                    MultipartBufferStream.Consume(dataBuffer, 0, dataBuffer.Length);
 
                     if (rangeLength == dataBuffer.Length)
                         return LastPartialStream = new ForwardSeekStream(new List<Tuple<Stream, long>>() { Tuple.Create<Stream, long>(new MemoryStream(dataBuffer), dataBuffer.Length) }, (long)rangeHeader.Length, rangeFrom, rangeFrom + rangeLength);
@@ -185,7 +185,7 @@ namespace XIVLauncher.PatchInstaller.Util
             private long CurrentPosition;
             private int CurrentStreamIndex = 0;
 
-            private readonly ReusableByteBufferManager.Allocation BackwardSeekBuffer;
+            private readonly CircularMemoryStream BackwardSeekBuffer = new(CircularMemoryStream.FeedOverflowMode.DiscardOldest);
             private int BackwardDistance = 0;
 
             public ForwardSeekStream(List<Tuple<Stream, long>> baseStreams, long totalLength, long availableFromOffset, long availableToOffset)
@@ -194,7 +194,6 @@ namespace XIVLauncher.PatchInstaller.Util
                 TotalLength = totalLength;
                 CurrentPosition = AvailableFromOffset = availableFromOffset;
                 AvailableToOffset = availableToOffset;
-                BackwardSeekBuffer = ReusableByteBufferManager.GetBuffer(14);  // 16K
             }
 
             protected override void Dispose(bool disposing)
@@ -228,7 +227,8 @@ namespace XIVLauncher.PatchInstaller.Util
                 if (BackwardDistance > 0)
                 {
                     var read = Math.Min(count, BackwardDistance);
-                    Array.Copy(BackwardSeekBuffer.Buffer, BackwardSeekBuffer.Stream.Length - BackwardDistance, buffer, offset, read);
+                    BackwardSeekBuffer.Seek(BackwardSeekBuffer.Length - BackwardDistance, SeekOrigin.Begin);
+                    BackwardSeekBuffer.Read(buffer, offset, read);
                     count -= read;
                     BackwardDistance -= read;
                     offset += read;
@@ -243,22 +243,7 @@ namespace XIVLauncher.PatchInstaller.Util
                     if (read == 0)
                         throw new IOException("Read failure");
 
-                    if (read >= BackwardSeekBuffer.Stream.Capacity)
-                    {
-                        BackwardSeekBuffer.Stream.SetLength(0);
-                        BackwardSeekBuffer.Stream.Write(buffer, offset + read - BackwardSeekBuffer.Stream.Capacity, BackwardSeekBuffer.Stream.Capacity);
-                    }
-                    else
-                    {
-                        if (BackwardSeekBuffer.Stream.Length + read > BackwardSeekBuffer.Stream.Capacity)
-                        {
-                            var toRemove = BackwardSeekBuffer.Stream.Length + read - BackwardSeekBuffer.Stream.Capacity;
-                            for (long i = toRemove; i < BackwardSeekBuffer.Stream.Length; i++)
-                                BackwardSeekBuffer.Buffer[i - toRemove] = BackwardSeekBuffer.Buffer[i];
-                            BackwardSeekBuffer.Stream.SetLength(BackwardSeekBuffer.Stream.Length - toRemove);
-                        }
-                        BackwardSeekBuffer.Stream.Write(buffer, offset, read);
-                    }
+                    BackwardSeekBuffer.Feed(buffer, offset, read);
 
                     streamSet.Position += read;
                     CurrentPosition += read;
@@ -281,8 +266,8 @@ namespace XIVLauncher.PatchInstaller.Util
 
                 if (offset < 0)
                 {
-                    if (BackwardDistance - offset > BackwardSeekBuffer.Stream.Capacity)
-                        throw new ArgumentException($"Cannot seek backwards past {BackwardSeekBuffer.Stream.Capacity} bytes; tried to seek {-offset} bytes behind");
+                    if (BackwardDistance - offset > BackwardSeekBuffer.Capacity)
+                        throw new ArgumentException($"Cannot seek backwards past {BackwardSeekBuffer.Capacity} bytes; tried to seek {-offset} bytes behind");
                     BackwardDistance -= (int)offset;
                     CurrentPosition += offset;
                     offset = 0;

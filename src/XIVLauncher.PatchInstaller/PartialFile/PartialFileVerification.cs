@@ -13,9 +13,9 @@ namespace XIVLauncher.PatchInstaller.PartialFile
     public class PartialFileVerification
     {
         public readonly PartialFileDef Definition;
-        public readonly List<HashSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
-        public readonly List<HashSet<int>> MissingPartIndicesPerTargetFile = new();
-        public readonly HashSet<int> TooLongTargetFiles = new();
+        public readonly List<SortedSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
+        public readonly List<SortedSet<int>> MissingPartIndicesPerTargetFile = new();
+        public readonly SortedSet<int> TooLongTargetFiles = new();
 
         public int ProgressReportInterval = 250;
         private int LastProgressUpdateReport = 0;
@@ -113,11 +113,11 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             TargetStreams[targetIndex] = targetStream;
         }
 
-        public async Task<List<PartialFilePart>> RepairFrom(HttpClient client, int patchFileIndex, string uri)
+        public async Task<List<PartialFilePart>> RepairFrom(HttpClient client, int patchFileIndex, string uri, ISet<Tuple<int, int>> indicesToRepair)
         {
             var result = new List<PartialFilePart>();
             var offsets = new List<Tuple<long, long>>();
-            foreach (var partIndices in MissingPartIndicesPerPatch[patchFileIndex])
+            foreach (var partIndices in indicesToRepair)
             {
                 var part = Definition.GetFile(partIndices.Item1)[partIndices.Item2];
                 offsets.Add(Tuple.Create(part.SourceOffset, part.MaxSourceEnd));
@@ -126,7 +126,7 @@ namespace XIVLauncher.PatchInstaller.PartialFile
 
             for (int j = 1; j < offsets.Count;)
             {
-                if (offsets[j].Item1 - offsets[j - 1].Item2 < 4096)
+                if (offsets[j].Item1 - offsets[j - 1].Item2 < 128)
                 {
                     offsets[j - 1] = Tuple.Create(offsets[j - 1].Item1, offsets[j].Item2);
                     offsets.RemoveAt(j);
@@ -220,12 +220,6 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         public static void Test()
         {
             HttpClient client = new();
-            TestSingle(client, "http://localhost/boot/2b5cbc63/", @"boot.index", @"Z:\tgame3\boot", "ffxivboot");
-            TestSingle(client, "http://localhost/game/4e9a232b/", @"game.index", @"Z:\tgame3\game", "ffxivgame");
-            TestSingle(client, "http://localhost/gex1/6b936f08/", @"ex1.index", @"Z:\tgame3\game", "sqpack/ex1/ex1");
-            TestSingle(client, "http://localhost/gex2/f29a3eb2/", @"ex2.index", @"Z:\tgame3\game", "sqpack/ex2/ex2");
-            TestSingle(client, "http://localhost/gex3/859d0e24/", @"ex3.index", @"Z:\tgame3\game", "sqpack/ex3/ex3");
-            TestSingle(client, "http://localhost/gex4/1bf99b87/", @"ex4.index", @"Z:\tgame3\game", "sqpack/ex4/ex4");
         }
 
         public static void TestSingle(HttpClient client, string baseUri, string indexFilePath, string localRootPath, string versionFileName)
@@ -287,21 +281,30 @@ namespace XIVLauncher.PatchInstaller.PartialFile
                 verify.SetTargetStream(i, file);
             }
 
+            verify.OnProgress.Clear();
+            verify.OnProgress.Add((long progress, long max) => Log.Information("Writing {0:0.00}/{1:0.00}MB ({2:00.00}%)", progress / 1048576.0, max / 1048576.0, 100.0 * progress / max));
+            List<Task<List<PartialFilePart>>> tasks = new();
+
+            const int concCount = 8;
             for (int i = 0, i_ = def.GetSourceFiles().Count; i < i_; i++)
             {
                 if (verify.MissingPartIndicesPerPatch[i].Count == 0)
                     continue;
+
                 var uri = $"{baseUri}{def.GetSourceFiles()[i]}";
-                verify.OnProgress.Clear();
-                verify.OnProgress.Add((long progress, long max) =>
+                var indices = verify.MissingPartIndicesPerPatch[i];
+                var indicesPerRequest = Math.Min((int)Math.Ceiling(1.0 * indices.Count / concCount), 1024);
+                for (int j = 0; j < indices.Count; j += indicesPerRequest)
                 {
-                    Log.Information("[{0}/{1}] Writing {2:0.00}/{3:0.00}MB ({4:00.00}%) from {5}",
-                        i + 1, def.GetSourceFiles().Count,
-                        progress / 1048576.0, max / 1048576.0, 100.0 * progress / max, uri
-                        );
-                });
-                verify.RepairFrom(client, i, uri).Wait();
+                    if (tasks.Count >= concCount)
+                    {
+                        Task.WaitAny(tasks.ToArray());
+                        tasks = tasks.Where(x => !x.IsCompleted).ToList();
+                    }
+                    tasks.Add(verify.RepairFrom(client, i, uri, indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)).ToHashSet()));
+                }
             }
+            Task.WaitAll(tasks.ToArray());
 
             verify.RepairNonPatchData();
         }
