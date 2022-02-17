@@ -145,7 +145,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
             var patchIndexFilePath = "boot.index";
             var availableSourceUrls = new Dictionary<string, string>() {
                 {"D2013.06.18.0000.0000.patch", "http://example.com/D2013.06.18.0000.0000.patch" },
-                {"D2021.11.16.0000.0001.patch", "http://example.com/D2013.06.18.0000.0000.patch" },
+                {"D2021.11.16.0000.0001.patch", "http://example.com/D2021.11.16.0000.0001.patch" },
             };
             var maxConcurrentConnectionsForPatchSet = 8;
 

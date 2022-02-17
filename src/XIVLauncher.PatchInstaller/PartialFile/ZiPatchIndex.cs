@@ -76,7 +76,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
         public ZiPatchTargetFile this[string name] => TargetFiles[IndexOf(name)];
         public int IndexOf(string name) => TargetFiles.FindIndex(x => x.RelativePath == NormalizePath(name));
         public int Length => TargetFiles.Count;
-        public string VersionName => TargetFiles.Last().RelativePath.Substring(1, TargetFiles.Last().RelativePath.Length - 7);
+        public string VersionName => SourceFiles.Last().Substring(1, SourceFiles.Last().Length - 7);
         public string VersionFileBase => ExpacVersion == EXPAC_VERSION_BOOT ? "ffxivboot" : ExpacVersion == EXPAC_VERSION_BASE_GAME ? "ffxivgame" : $"sqpack/ex{ExpacVersion}/ex{ExpacVersion}";
         public string VersionFileVer => VersionFileBase + ".ver";
         public string VersionFileBck => VersionFileBase + ".bck";
