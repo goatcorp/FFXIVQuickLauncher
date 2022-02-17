@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace XIVLauncher.PatchInstaller.PartialFile
+namespace XIVLauncher.PatchInstaller.IndexedPatch
 {
     [StructLayout(LayoutKind.Sequential)]
     [Serializable]

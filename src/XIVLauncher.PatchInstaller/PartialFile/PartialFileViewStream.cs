@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace XIVLauncher.PatchInstaller.PartialFile
+namespace XIVLauncher.PatchInstaller.IndexedPatch
 {
     public class PartialFileViewStream : Stream
     {
         private readonly List<Stream> Sources;
-        private readonly PartialFilePartList PartList;
+        private readonly ZiPatchTargetFile PartList;
 
-        internal PartialFileViewStream(List<Stream> sources, PartialFilePartList partList)
+        internal PartialFileViewStream(List<Stream> sources, ZiPatchTargetFile partList)
         {
             Sources = sources;
             PartList = partList;

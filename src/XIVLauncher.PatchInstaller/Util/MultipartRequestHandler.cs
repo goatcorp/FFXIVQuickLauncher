@@ -27,7 +27,7 @@ namespace XIVLauncher.PatchInstaller.Util
             Response = responseMessage;
         }
 
-        public async Task<ForwardSeekStream> NextPart()
+        public async Task<ForwardSeekStream> NextPart(CancellationToken? cancellationToken = null)
         {
             if (NoMoreParts)
                 return null;
@@ -79,10 +79,18 @@ namespace XIVLauncher.PatchInstaller.Util
 
             while (true)
             {
+                if (cancellationToken.HasValue)
+                    cancellationToken.Value.ThrowIfCancellationRequested();
+
                 var eof = false;
                 using (var buffer = ReusableByteBufferManager.GetBuffer())
                 {
-                    var readSize = await BaseStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length);
+                    int readSize;
+                    if (cancellationToken == null)
+                        readSize = await BaseStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length);
+                    else
+                        readSize = await BaseStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length, (CancellationToken)cancellationToken);
+
                     if (readSize == 0)
                         eof = true;
                     else
@@ -139,11 +147,13 @@ namespace XIVLauncher.PatchInstaller.Util
                     MultipartBufferStream.Consume(dataBuffer, 0, dataBuffer.Length);
 
                     if (rangeLength == dataBuffer.Length)
-                        return LastPartialStream = new ForwardSeekStream(new List<Tuple<Stream, long>>() { Tuple.Create<Stream, long>(new MemoryStream(dataBuffer), dataBuffer.Length) }, (long)rangeHeader.Length, rangeFrom, rangeFrom + rangeLength);
+                        return LastPartialStream = new ForwardSeekStream(new List<Tuple<Stream, long>>() {
+                            Tuple.Create<Stream, long>(new MemoryStream(dataBuffer), dataBuffer.Length),
+                        }, (long)rangeHeader.Length, rangeFrom, rangeFrom + rangeLength);
                     else
                         return LastPartialStream = new ForwardSeekStream(new List<Tuple<Stream, long>>() {
                             Tuple.Create<Stream, long>(new MemoryStream(dataBuffer), dataBuffer.Length),
-                            Tuple.Create(BaseStream, rangeLength - dataBuffer.Length)
+                            Tuple.Create(BaseStream, rangeLength - dataBuffer.Length),
                         }, (long)rangeHeader.Length, rangeFrom, rangeFrom + rangeLength);
                 }
 
@@ -220,9 +230,6 @@ namespace XIVLauncher.PatchInstaller.Util
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                if (CurrentStreamIndex >= BaseStreams.Count)
-                    return 0;
-
                 var totalRead = 0;
                 if (BackwardDistance > 0)
                 {
@@ -235,6 +242,9 @@ namespace XIVLauncher.PatchInstaller.Util
                     totalRead += read;
                     CurrentPosition += read;
                 }
+
+                if (CurrentStreamIndex >= BaseStreams.Count)
+                    return totalRead;
 
                 while (count > 0 && CurrentStreamIndex < BaseStreams.Count)
                 {
@@ -266,8 +276,8 @@ namespace XIVLauncher.PatchInstaller.Util
 
                 if (offset < 0)
                 {
-                    if (BackwardDistance - offset > BackwardSeekBuffer.Capacity)
-                        throw new ArgumentException($"Cannot seek backwards past {BackwardSeekBuffer.Capacity} bytes; tried to seek {-offset} bytes behind");
+                    if (BackwardDistance - offset > BackwardSeekBuffer.Length)
+                        throw new ArgumentException($"Cannot seek backwards past {BackwardSeekBuffer.Length} bytes; tried to seek {-offset} bytes behind");
                     BackwardDistance -= (int)offset;
                     CurrentPosition += offset;
                     offset = 0;

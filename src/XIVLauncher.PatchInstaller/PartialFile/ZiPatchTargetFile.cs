@@ -5,12 +5,35 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using XIVLauncher.PatchInstaller.Util;
 
-namespace XIVLauncher.PatchInstaller.PartialFile
+namespace XIVLauncher.PatchInstaller.IndexedPatch
 {
-    public partial class PartialFilePartList : IList<PartialFilePart>
+    public partial class ZiPatchTargetFile : IList<PartialFilePart>
     {
+        public string RelativePath = "";
         private readonly List<PartialFilePart> Underlying = new();
+
+        public ZiPatchTargetFile() : base() { }
+
+        public ZiPatchTargetFile(string fileName) : base() {
+            RelativePath = fileName;
+        }
+
+        public ZiPatchTargetFile(BinaryReader reader, bool disposeReader = true) : base()
+        {
+            try
+            {
+                ReadFrom(reader);
+            }
+            finally
+            {
+                if (disposeReader)
+                    reader.Dispose();
+            }
+        }
 
         public PartialFilePart this[int index] { get => Underlying[index]; set => Underlying[index] = value; }
 
@@ -168,14 +191,21 @@ namespace XIVLauncher.PatchInstaller.PartialFile
             Underlying.RemoveRange(left + 1, right - left - 1);
         }
 
-        public void CalculateCrc32(List<Stream> sources)
+        public async Task CalculateCrc32(List<Stream> sources, CancellationToken? cancellationToken = null)
         {
-            var list = Underlying.ToArray();
-            for (var i = 0; i < list.Length; ++i)
-                if (list[i].IsFromSourceFile)
-                PartialFilePart.CalculateCrc32(ref list[i], sources[list[i].SourceIndex]);
-            Underlying.Clear();
-            Underlying.AddRange(list);
+            await Task.Run(() =>
+            {
+                var list = Underlying.ToArray();
+                for (var i = 0; i < list.Length; ++i)
+                {
+                    if (cancellationToken.HasValue)
+                        cancellationToken.Value.ThrowIfCancellationRequested();
+                    if (list[i].IsFromSourceFile)
+                        PartialFilePart.CalculateCrc32(ref list[i], sources[list[i].SourceIndex]);
+                }
+                Underlying.Clear();
+                Underlying.AddRange(list);
+            });
         }
 
         public Stream ToStream(List<Stream> sources)
@@ -184,22 +214,37 @@ namespace XIVLauncher.PatchInstaller.PartialFile
         }
 
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory([Out] byte[] dest, [In] PartialFilePart[] src, int cb);
+        private static extern void CopyMemory([Out] byte[] dest, ref PartialFilePart src, int cb);
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory([Out] PartialFilePart[] dest, [In] byte[] src, int cb);
+        private static extern void CopyMemory(out PartialFilePart dest, [In] byte[] src, int cb);
 
-        public byte[] ToBytes()
+        public void WriteTo(BinaryWriter writer)
         {
+            using var buf = ReusableByteBufferManager.GetBuffer();
+            int unitSize = Marshal.SizeOf<PartialFilePart>();
             var src = Underlying.ToArray();
-            var dst = new byte[Marshal.SizeOf<PartialFilePart>() * src.Length];
-            CopyMemory(dst, src, dst.Length);
-            return dst;
+
+            writer.Write(RelativePath);
+            writer.Write(Underlying.Count);
+            for (var i = 0; i < src.Length; ++i)
+            {
+                CopyMemory(buf.Buffer, ref src[i], unitSize);
+                writer.Write(buf.Buffer, 0, unitSize);
+            }
         }
 
-        public void FromBytes(byte[] src)
+        public void ReadFrom(BinaryReader reader)
         {
-            var dest = new PartialFilePart[src.Length / Marshal.SizeOf<PartialFilePart>()];
-            CopyMemory(dest, src, src.Length);
+            using var buf = ReusableByteBufferManager.GetBuffer();
+            int unitSize = Marshal.SizeOf<PartialFilePart>();
+
+            RelativePath = reader.ReadString();
+            var dest = new PartialFilePart[reader.ReadInt32()];
+            for (var i = 0; i < dest.Length; ++i)
+            {
+                reader.Read(buf.Buffer, 0, unitSize);
+                CopyMemory(out dest[i], buf.Buffer, unitSize);
+            }
             Underlying.Clear();
             Underlying.AddRange(dest);
         }
