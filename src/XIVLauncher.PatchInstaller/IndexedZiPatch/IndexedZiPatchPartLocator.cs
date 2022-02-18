@@ -183,7 +183,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             }
             else if (IsEmptyBlock)
             {
-                for (long remaining = TargetSize - buffer.Buffer.Length, i = 0; remaining > 0; remaining -= buffer.Buffer.Length, i++)
+                for (long remaining = TargetSize, i = 0; remaining > 0; remaining -= buffer.Buffer.Length, i++)
                 {
                     var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
                     if (readSize != stream.Read(buffer.Buffer, 0, readSize))

@@ -313,7 +313,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
                 for (int j = 1; j < offsets.Count;)
                 {
-                    if (offsets[j].Item1 - offsets[j - 1].Item2 < 128)
+                    if (offsets[j].Item1 - offsets[j - 1].Item2 < 4096)
                     {
                         offsets[j - 1] = Tuple.Create(offsets[j - 1].Item1, offsets[j].Item2);
                         offsets.RemoveAt(j);
