@@ -255,3 +255,8 @@ paket-files/
 src/XIVLauncher/XIVLauncher/app-*
 src/XIVLauncher/XIVLauncher
 src/Update.exe
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride 
