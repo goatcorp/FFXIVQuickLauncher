@@ -7,22 +7,21 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using XIVLauncher.PatchInstaller.Util;
 
-namespace XIVLauncher.PatchInstaller.IndexedPatch
+namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 {
-    public partial class ZiPatchTargetFile : IList<PartialFilePart>
+    public partial class IndexedZiPatchTargetFile : IList<IndexedZiPatchPartLocator>
     {
         public string RelativePath = "";
-        private readonly List<PartialFilePart> Underlying = new();
+        private readonly List<IndexedZiPatchPartLocator> Underlying = new();
 
-        public ZiPatchTargetFile() : base() { }
+        public IndexedZiPatchTargetFile() : base() { }
 
-        public ZiPatchTargetFile(string fileName) : base() {
+        public IndexedZiPatchTargetFile(string fileName) : base() {
             RelativePath = fileName;
         }
 
-        public ZiPatchTargetFile(BinaryReader reader, bool disposeReader = true) : base()
+        public IndexedZiPatchTargetFile(BinaryReader reader, bool disposeReader = true) : base()
         {
             try
             {
@@ -35,29 +34,29 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
             }
         }
 
-        public PartialFilePart this[int index] { get => Underlying[index]; set => Underlying[index] = value; }
+        public IndexedZiPatchPartLocator this[int index] { get => Underlying[index]; set => Underlying[index] = value; }
 
         public int Count => Underlying.Count;
 
         public bool IsReadOnly => false;
 
-        public void Add(PartialFilePart item) => Underlying.Add(item);
+        public void Add(IndexedZiPatchPartLocator item) => Underlying.Add(item);
 
         public void Clear() => Underlying.Clear();
 
-        public bool Contains(PartialFilePart item) => Underlying.Contains(item);
+        public bool Contains(IndexedZiPatchPartLocator item) => Underlying.Contains(item);
 
-        public void CopyTo(PartialFilePart[] array, int arrayIndex) => Underlying.CopyTo(array, arrayIndex);
+        public void CopyTo(IndexedZiPatchPartLocator[] array, int arrayIndex) => Underlying.CopyTo(array, arrayIndex);
 
-        public IEnumerator<PartialFilePart> GetEnumerator() => Underlying.GetEnumerator();
+        public IEnumerator<IndexedZiPatchPartLocator> GetEnumerator() => Underlying.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => Underlying.GetEnumerator();
 
-        public int IndexOf(PartialFilePart item) => Underlying.IndexOf(item);
+        public int IndexOf(IndexedZiPatchPartLocator item) => Underlying.IndexOf(item);
 
-        public void Insert(int index, PartialFilePart item) => Underlying.Insert(index, item);
+        public void Insert(int index, IndexedZiPatchPartLocator item) => Underlying.Insert(index, item);
 
-        public bool Remove(PartialFilePart item) => Underlying.Remove(item);
+        public bool Remove(IndexedZiPatchPartLocator item) => Underlying.Remove(item);
 
         public void RemoveAt(int index) => Underlying.RemoveAt(index);
 
@@ -65,7 +64,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
 
         public int BinarySearchByTargetOffset(long targetOffset)
         {
-            return Underlying.BinarySearch(new PartialFilePart { TargetOffset = targetOffset }); ;
+            return Underlying.BinarySearch(new IndexedZiPatchPartLocator { TargetOffset = targetOffset }); ;
         }
 
         public void SplitAt(long offset, int targetFileIndex)
@@ -84,11 +83,11 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
             }
             else if (i == 0 && Underlying.Count == 0)
             {
-                Underlying.Add(new PartialFilePart
+                Underlying.Add(new IndexedZiPatchPartLocator
                 {
                     TargetSize = offset,
                     TargetIndex = targetFileIndex,
-                    SourceIndex = PartialFilePart.SourceIndex_Zeros,
+                    SourceIndex = IndexedZiPatchPartLocator.SourceIndex_Zeros,
                 });
             }
             else if (i == Underlying.Count && Underlying[i - 1].TargetEnd == offset)
@@ -97,12 +96,12 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
             }
             else if (i == Underlying.Count && Underlying[i - 1].TargetEnd < offset)
             {
-                Underlying.Add(new PartialFilePart
+                Underlying.Add(new IndexedZiPatchPartLocator
                 {
                     TargetOffset = Underlying[i - 1].TargetEnd,
                     TargetSize = offset - Underlying[i - 1].TargetEnd,
                     TargetIndex = targetFileIndex,
-                    SourceIndex = PartialFilePart.SourceIndex_Zeros,
+                    SourceIndex = IndexedZiPatchPartLocator.SourceIndex_Zeros,
                 });
             }
             else
@@ -112,7 +111,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
 
                 if (part.IsDeflatedBlockData || part.IsEmptyBlock)
                 {
-                    Underlying[i] = new PartialFilePart
+                    Underlying[i] = new IndexedZiPatchPartLocator
                     {
                         TargetOffset = part.TargetOffset,
                         TargetSize = offset - part.TargetOffset,
@@ -123,7 +122,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
                         Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
                         IsDeflatedBlockData = part.IsDeflatedBlockData,
                     };
-                    Underlying.Insert(i + 1, new PartialFilePart
+                    Underlying.Insert(i + 1, new IndexedZiPatchPartLocator
                     {
                         TargetOffset = offset,
                         TargetSize = part.TargetEnd - offset,
@@ -140,7 +139,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
                     if (part.SplitDecodedSourceFrom != 0)
                         throw new ArgumentException("Not deflated but SplitDecodeSourceFrom is given");
 
-                    Underlying[i] = new PartialFilePart
+                    Underlying[i] = new IndexedZiPatchPartLocator
                     {
                         TargetOffset = part.TargetOffset,
                         TargetSize = offset - part.TargetOffset,
@@ -149,7 +148,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
                         SourceOffset = part.SourceOffset,
                         Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
                     };
-                    Underlying.Insert(i + 1, new PartialFilePart
+                    Underlying.Insert(i + 1, new IndexedZiPatchPartLocator
                     {
                         TargetOffset = offset,
                         TargetSize = part.TargetEnd - offset,
@@ -162,7 +161,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
             }
         }
 
-        public void Update(PartialFilePart part)
+        public void Update(IndexedZiPatchPartLocator part)
         {
             if (part.TargetSize == 0)
                 return;
@@ -201,7 +200,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
                     if (cancellationToken.HasValue)
                         cancellationToken.Value.ThrowIfCancellationRequested();
                     if (list[i].IsFromSourceFile)
-                        PartialFilePart.CalculateCrc32(ref list[i], sources[list[i].SourceIndex]);
+                        IndexedZiPatchPartLocator.CalculateCrc32(ref list[i], sources[list[i].SourceIndex]);
                 }
                 Underlying.Clear();
                 Underlying.AddRange(list);
@@ -210,41 +209,28 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
 
         public Stream ToStream(List<Stream> sources)
         {
-            return new PartialFileViewStream(sources, this);
+            return new IndexedZiPatchTargetViewStream(sources, this);
         }
 
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory([Out] byte[] dest, ref PartialFilePart src, int cb);
+        private static extern void CopyMemory([Out] byte[] dest, ref IndexedZiPatchPartLocator src, int cb);
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory(out PartialFilePart dest, [In] byte[] src, int cb);
+        private static extern void CopyMemory(out IndexedZiPatchPartLocator dest, [In] byte[] src, int cb);
 
         public void WriteTo(BinaryWriter writer)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer();
-            int unitSize = Marshal.SizeOf<PartialFilePart>();
-            var src = Underlying.ToArray();
-
             writer.Write(RelativePath);
             writer.Write(Underlying.Count);
-            for (var i = 0; i < src.Length; ++i)
-            {
-                CopyMemory(buf.Buffer, ref src[i], unitSize);
-                writer.Write(buf.Buffer, 0, unitSize);
-            }
+            foreach (var item in Underlying) 
+                item.WriteTo(writer);
         }
 
         public void ReadFrom(BinaryReader reader)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer();
-            int unitSize = Marshal.SizeOf<PartialFilePart>();
-
             RelativePath = reader.ReadString();
-            var dest = new PartialFilePart[reader.ReadInt32()];
+            var dest = new IndexedZiPatchPartLocator[reader.ReadInt32()];
             for (var i = 0; i < dest.Length; ++i)
-            {
-                reader.Read(buf.Buffer, 0, unitSize);
-                CopyMemory(out dest[i], buf.Buffer, unitSize);
-            }
+                dest[i].ReadFrom(reader);
             Underlying.Clear();
             Underlying.AddRange(dest);
         }

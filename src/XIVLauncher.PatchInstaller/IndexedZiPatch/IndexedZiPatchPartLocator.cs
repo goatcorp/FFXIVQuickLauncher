@@ -4,12 +4,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
+using XIVLauncher.PatchInstaller.Util;
 
-namespace XIVLauncher.PatchInstaller.IndexedPatch
+namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 {
     [StructLayout(LayoutKind.Sequential)]
     [Serializable]
-    public struct PartialFilePart : IComparable<PartialFilePart>
+    public struct IndexedZiPatchPartLocator : IComparable<IndexedZiPatchPartLocator>
     {
         public const byte SourceIndex_Zeros = byte.MaxValue - 0;
         public const byte SourceIndex_EmptyBlock = byte.MaxValue - 1;
@@ -85,7 +86,28 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
         public bool IsUnavailable => SourceIndex == SourceIndex_Unavailable;
         public bool IsFromSourceFile => !IsAllZeros && !IsEmptyBlock && !IsUnavailable;
 
-        public int CompareTo(PartialFilePart other)
+        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
+        private static extern void CopyMemory([Out] byte[] dest, ref IndexedZiPatchPartLocator src, int cb);
+        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
+        private static extern void CopyMemory(out IndexedZiPatchPartLocator dest, [In] byte[] src, int cb);
+
+        public void WriteTo(BinaryWriter writer)
+        {
+            using var buf = ReusableByteBufferManager.GetBuffer();
+            int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
+            CopyMemory(buf.Buffer, ref this, unitSize);
+            writer.Write(buf.Buffer, 0, unitSize);
+        }
+
+        public void ReadFrom(BinaryReader reader)
+        {
+            using var buf = ReusableByteBufferManager.GetBuffer();
+            int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
+            reader.Read(buf.Buffer, 0, unitSize);
+            CopyMemory(out this, buf.Buffer, unitSize);
+        }
+
+        public int CompareTo(IndexedZiPatchPartLocator other)
         {
             var x = TargetOffset - other.TargetOffset;
             return x < 0 ? -1 : x > 0 ? 1 : 0;
@@ -309,7 +331,7 @@ namespace XIVLauncher.PatchInstaller.IndexedPatch
             Repair(target, IsFromSourceFile ? sources[SourceIndex] : null);
         }
 
-        public static void CalculateCrc32(ref PartialFilePart part, Stream source)
+        public static void CalculateCrc32(ref IndexedZiPatchPartLocator part, Stream source)
         {
             if (part.IsValidCrc32Value)
                 return;

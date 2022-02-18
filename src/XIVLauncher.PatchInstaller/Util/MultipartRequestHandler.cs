@@ -105,7 +105,8 @@ namespace XIVLauncher.PatchInstaller.Util
                     var IsEmptyLine = i == 0;
                     if (IsEmptyLine)
                         MultipartBufferStream.Consume(null, 0, 2);
-                    else {
+                    else
+                    {
                         using var lineBuffer = ReusableByteBufferManager.GetBuffer();
                         if (i > lineBuffer.Buffer.Length)
                             throw new IOException($"Multipart header line is too long ({i} bytes)");
@@ -300,18 +301,20 @@ namespace XIVLauncher.PatchInstaller.Util
                     streamSet.Position += advanceOffset;
                     offset -= advanceOffset;
 
-                    if (streamSet.Stream.CanSeek)
-                        streamSet.Stream.Seek(advanceOffset, SeekOrigin.Current);
-                    else
+                    if (streamSet.Stream.CanSeek && advanceOffset > BackwardSeekBuffer.Capacity)
                     {
-                        using var buffer = ReusableByteBufferManager.GetBuffer();
-                        for (var i = 0; i < advanceOffset;)
-                        {
-                            var read = streamSet.Stream.Read(buffer.Buffer, 0, (int)Math.Min(advanceOffset - i, buffer.Buffer.Length));
-                            i += read;
-                            if (read == 0)
-                                throw new EndOfStreamException("Reached premature EOF");
-                        }
+                        streamSet.Stream.Seek(advanceOffset - BackwardSeekBuffer.Capacity, SeekOrigin.Current);
+                        advanceOffset -= BackwardSeekBuffer.Capacity;
+                    }
+
+                    using var buffer = ReusableByteBufferManager.GetBuffer();
+                    for (var i = 0; i < advanceOffset;)
+                    {
+                        var read = streamSet.Stream.Read(buffer.Buffer, 0, (int)Math.Min(advanceOffset - i, buffer.Buffer.Length));
+                        if (read == 0)
+                            throw new EndOfStreamException("Reached premature EOF");
+                        i += read;
+                        BackwardSeekBuffer.Feed(buffer.Buffer, 0, read);
                     }
 
                     if (streamSet.Remaining == 0)

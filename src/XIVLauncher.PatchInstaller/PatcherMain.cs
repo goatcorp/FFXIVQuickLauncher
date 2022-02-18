@@ -11,7 +11,7 @@ using System.Windows;
 using Newtonsoft.Json;
 using Serilog;
 using SharedMemory;
-using XIVLauncher.PatchInstaller.IndexedPatch;
+using XIVLauncher.PatchInstaller.IndexedZiPatch;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.PatchInstaller.ZiPatch;
 using XIVLauncher.PatchInstaller.ZiPatch.Util;
@@ -34,14 +34,6 @@ namespace XIVLauncher.PatchInstaller
 
         static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.Debug()
-                .MinimumLevel.Verbose()
-                .CreateLogger();
-            PartialPatchOperations.Test();
-            return;
-
             try
             {
                 Log.Logger = new LoggerConfiguration()
@@ -74,7 +66,7 @@ namespace XIVLauncher.PatchInstaller
                 {
                     try
                     {
-                        PartialPatchOperations.CreateZiPatchIndices(int.Parse(args[1]), args.Skip(2).ToList());
+                        IndexedZiPatchOperations.CreateZiPatchIndices(int.Parse(args[1]), args.Skip(2).ToList()).Wait();
                     }
                     catch (Exception ex)
                     {
@@ -90,7 +82,7 @@ namespace XIVLauncher.PatchInstaller
                 {
                     try
                     {
-                        PartialPatchOperations.VerifyFromZiPatchIndex(args[1], args[2]).Wait();
+                        IndexedZiPatchOperations.VerifyFromZiPatchIndex(args[1], args[2]).Wait();
                     }
                     catch (Exception ex)
                     {
@@ -106,7 +98,7 @@ namespace XIVLauncher.PatchInstaller
                 {
                     try
                     {
-                        PartialPatchOperations.RepairFromPatchFileIndexFromFile(args[1], args[2], args[3], 8).Wait();
+                        IndexedZiPatchOperations.RepairFromPatchFileIndexFromFile(args[1], args[2], args[3], 8).Wait();
                     }
                     catch (Exception ex)
                     {
@@ -115,6 +107,18 @@ namespace XIVLauncher.PatchInstaller
                     }
 
                     Environment.Exit(0);
+                    return;
+                }
+
+                if (args.Length > 2 && args[0] == "index-rpc")
+                {
+                    new IndexedZiPatchIndexRemoteInstaller.WorkerSubprocessBody(int.Parse(args[1]), args[2]).RunToDisposeSelf();
+                    return;
+                }
+
+                if (args.Length > 0 && args[0] == "index-rpc-test")
+                {
+                    IndexedZiPatchIndexRemoteInstaller.Test();
                     return;
                 }
 
