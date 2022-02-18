@@ -103,7 +103,7 @@ namespace XIVLauncher.Game.Patch.Acquisition.Aria
                 url
             }, new Dictionary<string, string>()
             {
-                {"user-agent", "FFXIV PATCH CLIENT"},
+                {"user-agent", Constants.PatcherUserAgent},
                 {"out", outFile.Name},
                 {"dir", outFile.Directory.FullName},
                 {"max-connection-per-server", "8"},

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XIVLauncher.Common;
 using XIVLauncher.PatchInstaller.Util;
 
 namespace XIVLauncher.PatchInstaller.IndexedZiPatch
@@ -326,7 +327,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 req.Headers.Add("Range", "bytes=" + string.Join(",", offsets.Select(x => $"{x.Item1}-{x.Item2 - 1}")));
                 if (Sid != null)
                     req.Headers.Add("X-Patch-Unique-Id", Sid);
-                req.Headers.Add("User-Agent", "FFXIV PATCH CLIENT");
+                req.Headers.Add("User-Agent", Constants.PatcherUserAgent);
                 req.Headers.Add("Connection", "Keep-Alive");
                 using var resp = new MultipartRequestHandler(await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead));
 

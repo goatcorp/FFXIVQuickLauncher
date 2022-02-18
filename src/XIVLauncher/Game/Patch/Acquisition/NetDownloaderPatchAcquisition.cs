@@ -8,6 +8,7 @@ using System.Windows;
 using CheapLoc;
 using Downloader;
 using Serilog;
+using XIVLauncher.Common;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.Windows;
 
@@ -31,7 +32,7 @@ namespace XIVLauncher.Game.Patch.Acquisition
             TempDirectory = Path.GetTempPath(), // this is the library default
             RequestConfiguration = new RequestConfiguration
             {
-                UserAgent = "FFXIV PATCH CLIENT",
+                UserAgent = Constants.PatcherUserAgent,
                 Accept = "*/*"
             },
             MaximumBytesPerSecond = App.Settings.SpeedLimitBytes / PatchManager.MAX_DOWNLOADS_AT_ONCE,

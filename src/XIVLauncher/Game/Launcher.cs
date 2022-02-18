@@ -263,7 +263,7 @@ namespace XIVLauncher.Game
                 $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath)}/?time=" +
                 GetLauncherFormattedTimeLong());
 
-            request.Headers.AddWithoutValidation("User-Agent", "FFXIV PATCH CLIENT");
+            request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
             request.Headers.AddWithoutValidation("Host", "patch-bootver.ffxiv.com");
 
             var resp = await _client.SendAsync(request);
@@ -283,7 +283,7 @@ namespace XIVLauncher.Game
                 $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{Repository.Ffxiv.GetVer(gamePath)}/{loginResult.SessionId}");
 
             request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
-            request.Headers.AddWithoutValidation("User-Agent", "FFXIV PATCH CLIENT");
+            request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
 
             request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion));
 
@@ -315,7 +315,7 @@ namespace XIVLauncher.Game
 
             request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
             request.Headers.AddWithoutValidation("X-Patch-Unique-Id", uniqueId);
-            request.Headers.AddWithoutValidation("User-Agent", "FFXIV PATCH CLIENT");
+            request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
 
             request.Content = new StringContent(patchUrl);
 
