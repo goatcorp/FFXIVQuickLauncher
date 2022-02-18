@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reflection;
-using System.Runtime.Remoting;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using CheapLoc;
 using Newtonsoft.Json;
 using Serilog;
 using SharedMemory;
+using XIVLauncher.Common;
+using XIVLauncher.Common.PatcherIpc;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.PatchInstaller;
-using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game.Patch

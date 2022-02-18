@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace XIVLauncher.PatchInstaller
+namespace XIVLauncher.Common
 {
     public enum Repository
     {
@@ -64,10 +64,10 @@ namespace XIVLauncher.PatchInstaller
             var verFile = repo.GetVerFile(gamePath, isBck);
 
             if (!verFile.Exists)
-                return PatcherMain.BASE_GAME_VERSION;
+                return Constants.BASE_GAME_VERSION;
 
             var ver =  File.ReadAllText(verFile.FullName);
-            return string.IsNullOrWhiteSpace(ver) ? PatcherMain.BASE_GAME_VERSION : ver;
+            return string.IsNullOrWhiteSpace(ver) ? Constants.BASE_GAME_VERSION : ver;
         }
 
         public static void SetVer(this Repository repo, DirectoryInfo gamePath, string newVer, bool isBck = false)
@@ -85,7 +85,7 @@ namespace XIVLauncher.PatchInstaller
 
         public static bool IsBaseVer(this Repository repo, DirectoryInfo gamePath)
         {
-            return repo.GetVer(gamePath) == PatcherMain.BASE_GAME_VERSION;
+            return repo.GetVer(gamePath) == Constants.BASE_GAME_VERSION;
         }
 
         // TODO

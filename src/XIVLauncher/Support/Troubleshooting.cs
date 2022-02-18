@@ -3,9 +3,9 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
-using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;
 
 namespace XIVLauncher.Support

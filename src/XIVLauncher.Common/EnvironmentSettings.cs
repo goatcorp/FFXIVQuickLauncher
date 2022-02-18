@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XIVLauncher
+namespace XIVLauncher.Common
 {
-    internal static class EnvironmentSettings
+    public static class EnvironmentSettings
     {
         public static bool IsWine => CheckEnvBool("XL_WINEONLINUX");
         public static bool IsDisableUpdates => CheckEnvBool("XL_NOAUTOUPDATE");

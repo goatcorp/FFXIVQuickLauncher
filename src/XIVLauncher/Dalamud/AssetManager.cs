@@ -11,6 +11,7 @@ using XIVLauncher.Windows;
 using System.Security.Cryptography;
 using Castle.Core.Internal;
 using NuGet;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Dalamud
 {
@@ -45,12 +46,12 @@ namespace XIVLauncher.Dalamud
                 assetsDir = null;
                 return false;
             }
-            
+
             // NOTE(goat): We should use a junction instead of copying assets to a new folder. There is no C# API for junctions in .NET Framework.
 
             var newAssetsDir = new DirectoryInfo(Path.Combine(baseDir.FullName, info.Version.ToString()));
             var devDir = new DirectoryInfo(Path.Combine(baseDir.FullName, "dev"));
-            
+
             foreach (var entry in info.Assets)
             {
                 var filePath = Path.Combine(newAssetsDir.FullName, entry.FileName);
@@ -65,7 +66,7 @@ namespace XIVLauncher.Dalamud
                 {
                     // ignored
                 }
-                
+
                 var refreshFile = false;
                 if (File.Exists(filePath) && !entry.Hash.IsNullOrEmpty())
                 {

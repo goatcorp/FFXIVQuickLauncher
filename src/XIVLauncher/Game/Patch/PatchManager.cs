@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using CheapLoc;
-using Downloader;
 using Serilog;
+using XIVLauncher.Common;
 using XIVLauncher.Game.Patch.Acquisition;
 using XIVLauncher.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Game.Patch.PatchList;
-using XIVLauncher.PatchInstaller;
-using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game.Patch

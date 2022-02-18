@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using XIVLauncher.Common;
 using XIVLauncher.Game.Patch.Acquisition;
 using XIVLauncher.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Game.Patch.PatchList;

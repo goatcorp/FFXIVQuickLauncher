@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using NuGet;
 using Serilog;
 using XIVLauncher.Cache;
+using XIVLauncher.Common;
 using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 

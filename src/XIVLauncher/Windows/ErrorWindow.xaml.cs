@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Media;
 using System.Threading;
 using System.Windows;
-using System.Windows.Documents;
-using XIVLauncher.Settings;
+using XIVLauncher.Common;
+using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -18,8 +18,8 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            DiscordButton.Click += Util.OpenDiscord;
-            FaqButton.Click += Util.OpenFaq;
+            DiscordButton.Click += SupportLinks.OpenDiscord;
+            FaqButton.Click += SupportLinks.OpenFaq;
             DataContext = new ErrorWindowViewModel();
 
             ExceptionTextBox.AppendText(exc.ToString());

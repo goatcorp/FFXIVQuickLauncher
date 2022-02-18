@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using CheapLoc;
 using IWshRuntimeLibrary;
 using XIVLauncher.Addon;
-using XIVLauncher.Game;
+using XIVLauncher.Common;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows

@@ -7,19 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Media;
 using Microsoft.Win32;
-using Serilog;
-using XIVLauncher.Game;
-using XIVLauncher.PatchInstaller;
 
-namespace XIVLauncher
+namespace XIVLauncher.Common
 {
     public static class Util
     {
@@ -31,13 +24,6 @@ namespace XIVLauncher
         {
             // https://stackoverflow.com/a/50413126
             return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        }
-
-        public static void ShowError(string message, string caption, [CallerMemberName] string callerName = "",
-            [CallerLineNumber] int callerLineNumber = 0)
-        {
-            MessageBox.Show($"{message}\n\n{callerName} L{callerLineNumber}", caption, MessageBoxButton.OK,
-                MessageBoxImage.Error);
         }
 
         /// <summary>
@@ -140,7 +126,7 @@ namespace XIVLauncher
 
         private static readonly int[] ValidSteamAppIds = new int[] {
             39210 /* Paid version */,
-            312060, /* Free trial version */ 
+            312060, /* Free trial version */
         };
 
         public static string TryGamePaths()
@@ -157,10 +143,10 @@ namespace XIVLauncher
                     var baseVersion = Repository.Ffxiv.GetVer(new DirectoryInfo(path));
                     foundVersions.Add(path, SeVersion.Parse(baseVersion));
                 }
-                
+
                 foreach (var registryView in new RegistryView[] { RegistryView.Registry32, RegistryView.Registry64 })
                 {
-                    using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView)) 
+                    using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
                     {
                         // Should return "C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn\boot\ffxivboot.exe" if installed with default options.
                         using (var subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{2B41E132-07DF-4925-A3D3-F2D1765CCDFE}"))
@@ -200,9 +186,8 @@ namespace XIVLauncher
 
                 return foundVersions.Count == 0 ? DefaultPath : foundVersions.OrderByDescending(x => x.Value).First().Key;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Log.Error(ex, "Could not search for game paths");
                 return DefaultPath;
             }
         }
@@ -212,34 +197,9 @@ namespace XIVLauncher
             return (long) DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
-        public static Color ColorFromArgb(int argb)
-        {
-            return Color.FromArgb((byte) (argb >> 24), (byte) (argb >> 16), (byte) (argb >> 8), (byte) argb);
-        }
-
-        public static int ColorToArgb(Color color)
-        {
-            return (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
-        }
-
-        public static SolidColorBrush SolidColorBrushFromArgb(int argb)
-        {
-            return new SolidColorBrush(ColorFromArgb(argb));
-        }
-
         public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam)
         {
             Process.Start(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
-        }
-
-        public static void OpenDiscord(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://discord.gg/3NMcUV5");
-        }
-
-        public static void OpenFaq(object sender, RoutedEventArgs e)
-        {
-            Process.Start("https://goatcorp.github.io/faq/");
         }
 
         public static string BytesToString(double byteCount) => BytesToString(Convert.ToInt64(Math.Floor(byteCount)));

@@ -1,4 +1,4 @@
-﻿namespace XIVLauncher.Game
+﻿namespace XIVLauncher.Common
 {
     public enum ClientLanguage
     {

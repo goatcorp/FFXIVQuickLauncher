@@ -1,6 +1,6 @@
 using System;
 
-namespace XIVLauncher.Game
+namespace XIVLauncher.Common
 {
     public class SeVersion : IComparable
     {

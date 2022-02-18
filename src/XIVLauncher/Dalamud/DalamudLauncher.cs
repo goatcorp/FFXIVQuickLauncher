@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Addon;
+using XIVLauncher.Common;
 using XIVLauncher.Game;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.Settings;

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AriaNet;
 using Serilog;
+using XIVLauncher.Common;
 using XIVLauncher.Game.Patch.PatchList;
 
 namespace XIVLauncher.Game.Patch.Acquisition.Aria

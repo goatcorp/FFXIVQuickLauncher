@@ -4,11 +4,11 @@ using System.IO;
 using System.Media;
 using System.Threading;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Media;
 using MaterialDesignThemes.Wpf;
+using XIVLauncher.Common;
 using XIVLauncher.Game;
-using XIVLauncher.Settings;
+using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -34,8 +34,8 @@ namespace XIVLauncher.Windows
                 }
             };
 
-            DiscordButton.Click += Util.OpenDiscord;
-            FaqButton.Click += Util.OpenFaq;
+            DiscordButton.Click += SupportLinks.OpenDiscord;
+            FaqButton.Click += SupportLinks.OpenFaq;
             DataContext = new ErrorWindowViewModel();
 
             Activate();

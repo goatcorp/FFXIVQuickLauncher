@@ -7,7 +7,9 @@ using System.Windows;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common;
 using XIVLauncher.Settings;
+using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 using HttpUtility = System.Web.HttpUtility;
 
@@ -48,7 +50,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            DiscordButton.Click += Util.OpenDiscord;
+            DiscordButton.Click += SupportLinks.OpenDiscord;
 
             var vm = new ChangeLogWindowViewModel();
             DataContext = vm;

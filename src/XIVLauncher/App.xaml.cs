@@ -11,6 +11,7 @@ using Config.Net;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
+using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
@@ -42,7 +43,7 @@ namespace XIVLauncher
             // wine does not support WPF with HW rendering, so switch to software only mode
             try
             {
-                if ( EnvironmentSettings.IsWine )
+                if (EnvironmentSettings.IsWine)
                     RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             }
             catch

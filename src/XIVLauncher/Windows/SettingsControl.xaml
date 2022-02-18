@@ -6,7 +6,6 @@
              xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:addon="clr-namespace:XIVLauncher.Addon"
-             xmlns:xaml="clr-namespace:XIVLauncher.Xaml"
              xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
              xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
@@ -16,9 +15,6 @@
              TextElement.FontWeight="Medium"
              FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
              d:DataContext="{d:DesignInstance viewModel:SettingsControlViewModel}">
-    <UserControl.Resources>
-        <xaml:StringToColorConverter x:Key="StringToColorConverter" />
-    </UserControl.Resources>
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl"
                                  Style="{StaticResource MaterialDesignTabablzControlStyle}">

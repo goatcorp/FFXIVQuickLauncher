@@ -9,6 +9,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using Serilog;
+using XIVLauncher.Common;
 using XIVLauncher.Game.Patch;
 using XIVLauncher.Game.Patch.Acquisition;
 using XIVLauncher.Http;

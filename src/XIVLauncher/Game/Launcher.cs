@@ -17,6 +17,7 @@ using Serilog;
 using SteamworksSharp;
 using SteamworksSharp.Native;
 using XIVLauncher.Cache;
+using XIVLauncher.Common;
 using XIVLauncher.Encryption;
 using XIVLauncher.Game.Patch.PatchList;
 using XIVLauncher.PatchInstaller;

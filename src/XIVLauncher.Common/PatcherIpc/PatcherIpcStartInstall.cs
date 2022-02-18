@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
-namespace XIVLauncher.PatchInstaller.PatcherIpcMessages
+namespace XIVLauncher.Common.PatcherIpc
 {
     public class PatcherIpcStartInstall
     {

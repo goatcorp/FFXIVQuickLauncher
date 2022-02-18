@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,8 +10,9 @@ using System.Windows;
 using Newtonsoft.Json;
 using Serilog;
 using SharedMemory;
+using XIVLauncher.Common;
+using XIVLauncher.Common.PatcherIpc;
 using XIVLauncher.PatchInstaller.IndexedZiPatch;
-using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.PatchInstaller.ZiPatch;
 using XIVLauncher.PatchInstaller.ZiPatch.Util;
 
@@ -126,7 +126,7 @@ namespace XIVLauncher.PatchInstaller
                 {
                     Log.Information("usage:\n" +
                                     "* XIVLauncher.PatchInstaller.exe install <oldest>.patch <oldest2>.patch ... <newest>.patch <game dir>\n" +
-                                    "  * Install patch files in the given order.\n" + 
+                                    "  * Install patch files in the given order.\n" +
                                     "* XIVLauncher.PatchInstaller.exe index-create <expac version; -1 for boot> <oldest>.patch <oldest2>.patch ... <newest>.patch\n" +
                                     "  * Index game patch files in the given order.\n" +
                                     "* XIVLauncher.PatchInstaller.exe index-verify <patch index file> <game dir>\n" +
@@ -217,7 +217,7 @@ namespace XIVLauncher.PatchInstaller
             }
         }
 
-        private static void SendIpcMessage(PatcherIpcMessages.PatcherIpcEnvelope envelope)
+        private static void SendIpcMessage(PatcherIpcEnvelope envelope)
         {
             try
             {

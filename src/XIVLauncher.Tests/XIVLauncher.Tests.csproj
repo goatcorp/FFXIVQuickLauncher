@@ -56,6 +56,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj">
+      <Project>{24916430-532c-4d4d-93ff-861076e8f63c}</Project>
+      <Name>XIVLauncher.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XIVLauncher\XIVLauncher.csproj">
       <Project>{beb33308-6e15-41f7-acc8-86bb786e2e56}</Project>
       <Name>XIVLauncher</Name>

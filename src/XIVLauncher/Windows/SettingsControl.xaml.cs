@@ -16,8 +16,8 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Game;
 using XIVLauncher.Settings;
 using Newtonsoft.Json.Linq;
+using XIVLauncher.Common;
 using XIVLauncher.Game.Patch.Acquisition;
-using XIVLauncher.PatchInstaller;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 
@@ -40,8 +40,8 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            DiscordButton.Click += Util.OpenDiscord;
-            FaqButton.Click += Util.OpenFaq;
+            DiscordButton.Click += SupportLinks.OpenDiscord;
+            FaqButton.Click += SupportLinks.OpenFaq;
             DataContext = new SettingsControlViewModel();
 
             ReloadSettings();
