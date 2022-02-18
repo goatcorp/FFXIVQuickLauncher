@@ -15,7 +15,6 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 {
     public class IndexedZiPatchIndexRemoteInstaller : IDisposable
     {
-        public readonly IndexedZiPatchIndex Index;
         private readonly Process WorkerProcess;
         private readonly RpcBuffer SubprocessBuffer;
         private int CancellationTokenCounter = 1;
@@ -24,10 +23,8 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public readonly List<IndexedZiPatchInstaller.OnProgressDelegate> OnProgress = new();
 
-        public IndexedZiPatchIndexRemoteInstaller(IndexedZiPatchIndex patchIndex, string workerExecutablePath, bool asAdmin)
+        public IndexedZiPatchIndexRemoteInstaller(string workerExecutablePath, bool asAdmin)
         {
-            Index = patchIndex;
-
             var rpcChannelName = "RemoteZiPatchIndexInstaller" + Guid.NewGuid().ToString();
             SubprocessBuffer = new RpcBuffer(rpcChannelName, RpcResponseHandler);
 
@@ -45,10 +42,6 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 WorkerProcess = null;
                 Task.Run(() => new WorkerSubprocessBody(Process.GetCurrentProcess().Id, rpcChannelName).RunToDisposeSelf());
             }
-
-            var writer = GetRequestCreator(WorkerInboundOpcode.Construct, null);
-            Index.WriteTo(writer);
-            WaitForResult(writer).Wait();
         }
 
         public void Dispose()
@@ -99,16 +92,6 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 d(index, progress, max);
         }
 
-        private async Task CancelRemoteTask(int tokenId)
-        {
-            if (IsDisposed)
-                return;
-
-            var writer = GetRequestCreator(WorkerInboundOpcode.CancelTask, null);
-            writer.Write(tokenId);
-            await WaitForResult(writer);
-        }
-
         private BinaryWriter GetRequestCreator(WorkerInboundOpcode opcode, CancellationToken? cancellationToken)
         {
             var ms = new MemoryStream();
@@ -143,6 +126,23 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 if (autoDispose)
                     reader.Dispose();
             }
+        }
+
+        private async Task CancelRemoteTask(int tokenId)
+        {
+            if (IsDisposed)
+                return;
+
+            var writer = GetRequestCreator(WorkerInboundOpcode.CancelTask, null);
+            writer.Write(tokenId);
+            await WaitForResult(writer);
+        }
+
+        public async Task ConstructFromPatchFile(IndexedZiPatchIndex patchIndex)
+        {
+            var writer = GetRequestCreator(WorkerInboundOpcode.Construct, null);
+            patchIndex.WriteTo(writer);
+            await WaitForResult(writer);
         }
 
         public async Task VerifyFiles(int concurrentCount = 8, CancellationToken? cancellationToken = null)
@@ -294,6 +294,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                                 break;
 
                             case WorkerInboundOpcode.Construct:
+                                Instance?.Dispose();
                                 Instance = new(new IndexedZiPatchIndex(reader, false));
                                 Instance.OnProgress.Add(OnProgressUpdate);
                                 break;
@@ -494,14 +495,16 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                     Tuple.Create(@"Z:\tgame\boot", @"Z:\patch-dl.ffxiv.com\boot\2b5cbc63\D2021.11.16.0000.0001.patch.index"),
                 };
 
+                // Run verifier as subprocess
+                using var verifier = new IndexedZiPatchIndexRemoteInstaller(System.Reflection.Assembly.GetExecutingAssembly().Location, true);
+                // Run verifier as another thread
+                // using var verifier = new IndexedZiPatchIndexRemoteInstaller(null, true);
+
                 foreach (var (gameRootPath, patchIndexFilePath) in rootAndPatchPairs)
                 {
                     var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
 
-                    // Run verifier as subprocess
-                    using var verifier = new IndexedZiPatchIndexRemoteInstaller(patchIndex, System.Reflection.Assembly.GetExecutingAssembly().Location, true);
-                    // Run verifier as another thread
-                    // using var verifier = new IndexedZiPatchIndexRemoteInstaller(patchIndex, null, true);
+                    await verifier.ConstructFromPatchFile(patchIndex);
 
                     verifier.OnProgress.Add((int index, long progress, long max) => Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max));
                     await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
@@ -523,6 +526,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                     }
                     await verifier.Install(maxConcurrentConnectionsForPatchSet, cancellationToken);
                     await verifier.WriteVersionFiles(gameRootPath);
+                    verifier.OnProgress.Clear();
                 }
             }).Wait();
         }
