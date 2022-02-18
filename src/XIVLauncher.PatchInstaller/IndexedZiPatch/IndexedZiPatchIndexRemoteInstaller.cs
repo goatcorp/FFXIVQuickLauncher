@@ -21,7 +21,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
         private long LastProgressUpdateCounter = 0;
         private bool IsDisposed = false;
 
-        public readonly List<IndexedZiPatchInstaller.OnProgressDelegate> OnProgress = new();
+        public event IndexedZiPatchInstaller.OnProgressDelegate OnProgress;
 
         public IndexedZiPatchIndexRemoteInstaller(string workerExecutablePath, bool asAdmin)
         {
@@ -88,8 +88,8 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             var index = reader.ReadInt32();
             var progress = reader.ReadInt64();
             var max = reader.ReadInt64();
-            foreach (var d in OnProgress)
-                d(index, progress, max);
+
+            OnProgress?.Invoke(index, progress, max);
         }
 
         private BinaryWriter GetRequestCreator(WorkerInboundOpcode opcode, CancellationToken? cancellationToken)
@@ -506,15 +506,25 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
                     await verifier.ConstructFromPatchFile(patchIndex);
 
-                    verifier.OnProgress.Add((int index, long progress, long max) => Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max));
+                    void ReportCheckProgress(int index, long progress, long max)
+                    {
+                        Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                    }
+
+                    verifier.OnProgress += ReportCheckProgress;
                     await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
                     // TODO: check one at a time if random access is slow?
                     await verifier.VerifyFiles(Environment.ProcessorCount, cancellationToken);
-                    verifier.OnProgress.Clear();
+                    verifier.OnProgress -= ReportCheckProgress;
 
                     var missing = await verifier.GetMissingPartIndicesPerPatch();
 
-                    verifier.OnProgress.Add((int index, long progress, long max) => Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max));
+                    void ReportInstallProgress(int index, long progress, long max)
+                    {
+                        Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                    }
+
+                    verifier.OnProgress += ReportInstallProgress;
                     await verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
                     var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                     for (var i = 0; i < patchIndex.Sources.Count; i++)
@@ -526,7 +536,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                     }
                     await verifier.Install(maxConcurrentConnectionsForPatchSet, cancellationToken);
                     await verifier.WriteVersionFiles(gameRootPath);
-                    verifier.OnProgress.Clear();
+                    verifier.OnProgress -= ReportInstallProgress;
                 }
             }).Wait();
         }
