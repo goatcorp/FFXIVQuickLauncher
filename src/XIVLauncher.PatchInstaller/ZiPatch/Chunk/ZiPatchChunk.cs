@@ -81,7 +81,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
             }
             catch (EndOfStreamException e)
             {
-                throw new ZiPatchException();
+                throw new ZiPatchException("Could not get chunk", e);
             }
             finally
             {
