@@ -451,6 +451,9 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public async Task Install(int concurrentCount, CancellationToken? cancellationToken = null)
         {
+            if (!InstallTaskConfigs.Any())
+                return;
+
             long progressMax = InstallTaskConfigs.Select(x => x.ProgressMax).Sum();
 
             Task progressReportTask = null;
@@ -474,7 +477,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 }
 
                 var taskIndex = InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count;
-                var sourceIndexForProgressDisplay = taskIndex == InstallTaskConfigs.Count ? Index.Sources.Count : InstallTaskConfigs[taskIndex].SourceIndex;
+                var sourceIndexForProgressDisplay = InstallTaskConfigs[Math.Min(taskIndex, InstallTaskConfigs.Count - 1)].SourceIndex;
                 TriggerOnProgress(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
 
                 if (progressReportTask == null || progressReportTask.IsCompleted)
