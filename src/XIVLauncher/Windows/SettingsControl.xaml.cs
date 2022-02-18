@@ -547,7 +547,7 @@ namespace XIVLauncher.Windows
 
         private void VersionLabel_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            new ChangelogWindow().ShowDialog();
+            new ChangelogWindow(EnvironmentSettings.IsPreRelease, Util.GetAssemblyVersion()).ShowDialog();
         }
     }
 }

@@ -267,14 +267,6 @@ namespace XIVLauncher.Windows
                 }
             });
 
-            var version = Util.GetAssemblyVersion();
-            if (App.Settings.LastVersion != version)
-            {
-                new ChangelogWindow().ShowDialog();
-
-                App.Settings.LastVersion = version;
-            }
-
             _accountManager = new AccountManager(App.Settings);
 
             var savedAccount = _accountManager.CurrentAccount;

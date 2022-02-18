@@ -14,16 +14,17 @@
     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
     <StackPanel>
         <StackPanel>
-            <TextBlock
-                Margin="10,10,10,0"
-                TextWrapping="Wrap"
-                Text="{Binding UpdateNoticeLoc}"
-                Foreground="{DynamicResource MaterialDesignBody}">
-            </TextBlock>
-
             <StackPanel
                 Orientation="Horizontal">
-                <TextBlock Margin="10" MaxWidth="650" Height="Auto" x:Name="ChangeLogText" TextWrapping="Wrap"></TextBlock>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        x:Name="UpdateNotice"
+                        Margin="10,10,10,0"
+                        TextWrapping="Wrap"
+                        Foreground="{DynamicResource MaterialDesignBody}">
+                    </TextBlock>
+                    <TextBlock Margin="10" MaxWidth="650" Height="Auto" x:Name="ChangeLogText" TextWrapping="Wrap"></TextBlock>
+                </StackPanel>
 
                 <materialDesign:PackIcon Kind="Globe" HorizontalAlignment="Stretch" Foreground="DodgerBlue"
                                          VerticalAlignment="Stretch" Width="30" Height="30" Margin="10,0,20,0" />

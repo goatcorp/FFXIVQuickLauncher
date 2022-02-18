@@ -16,7 +16,9 @@ namespace XIVLauncher.Windows.ViewModel
 
         public void SetupLoc()
         {
-            UpdateNoticeLoc = string.Format(Loc.Localize("UpdateNotice", "XIVLauncher was updated to version {0}."), Util.GetAssemblyVersion());
+            UpdateNoticeLoc = Loc.Localize("UpdateNotice", "XIVLauncher has been updated to version {0}.");
+            ChangelogLoadingLoc = Loc.Localize("ChangelogLoading", "Loading changelog...");
+            ChangelogLoadingErrorLoc = Loc.Localize("ChangelogLoadingError", "Could not load changelog. Please check GitHub or Discord instead!");
             JoinDiscordLoc = Loc.Localize("JoinDiscord", "Join Discord");
             SendEmailLoc = Loc.Localize("SendEmail", "Send Email");
             EmailInfoLoc = Loc.Localize("EmailInfo", "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation and I won't ever contact you.\n\nThank you very much for using XIVLauncher!");
@@ -25,6 +27,8 @@ namespace XIVLauncher.Windows.ViewModel
         }
 
         public string UpdateNoticeLoc { get; private set; }
+        public string ChangelogLoadingLoc { get; set; }
+        public string ChangelogLoadingErrorLoc { get; set; }
         public string JoinDiscordLoc { get; private set; }
         public string SendEmailLoc { get; private set; }
         public string EmailInfoLoc { get; private set; }
