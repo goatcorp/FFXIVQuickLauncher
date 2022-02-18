@@ -11,6 +11,7 @@ using System.Windows;
 using Newtonsoft.Json;
 using Serilog;
 using SharedMemory;
+using XIVLauncher.PatchInstaller.IndexedZiPatch;
 using XIVLauncher.PatchInstaller.PatcherIpcMessages;
 using XIVLauncher.PatchInstaller.ZiPatch;
 using XIVLauncher.PatchInstaller.ZiPatch.Util;
@@ -47,7 +48,8 @@ namespace XIVLauncher.PatchInstaller
                 {
                     try
                     {
-                        InstallPatch(args[1], args[2]);
+                        foreach (var file in args.Skip(1).Take(args.Length - 2).ToList())
+                            InstallPatch(file, args[args.Length - 1]);
                         Log.Information("OK");
                     }
                     catch (Exception ex)
@@ -60,11 +62,78 @@ namespace XIVLauncher.PatchInstaller
                     return;
                 }
 
+                if (args.Length > 1 && args[0] == "index-create")
+                {
+                    try
+                    {
+                        IndexedZiPatchOperations.CreateZiPatchIndices(int.Parse(args[1]), args.Skip(2).ToList()).Wait();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Failed to create patch index files.");
+                        Environment.Exit(-1);
+                    }
+
+                    Environment.Exit(0);
+                    return;
+                }
+
+                if (args.Length > 2 && args[0] == "index-verify")
+                {
+                    try
+                    {
+                        IndexedZiPatchOperations.VerifyFromZiPatchIndex(args[1], args[2]).Wait();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Failed to verify from patch index file.");
+                        Environment.Exit(-1);
+                    }
+
+                    Environment.Exit(0);
+                    return;
+                }
+
+                if (args.Length > 2 && args[0] == "index-repair")
+                {
+                    try
+                    {
+                        IndexedZiPatchOperations.RepairFromPatchFileIndexFromFile(args[1], args[2], args[3], 8).Wait();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, $"Failed to repair from patch index file.");
+                        Environment.Exit(-1);
+                    }
+
+                    Environment.Exit(0);
+                    return;
+                }
+
+                if (args.Length > 2 && args[0] == "index-rpc")
+                {
+                    new IndexedZiPatchIndexRemoteInstaller.WorkerSubprocessBody(int.Parse(args[1]), args[2]).RunToDisposeSelf();
+                    return;
+                }
+
+                if (args.Length > 0 && args[0] == "index-rpc-test")
+                {
+                    IndexedZiPatchIndexRemoteInstaller.Test();
+                    return;
+                }
+
                 if (args.Length == 0 || args[0] != "rpc")
                 {
-                    Log.Information("usage: XIVLauncher.PatchInstaller.exe install <patch> <game dir>\n" +
-                                    "OR\n" +
-                                    "usage: XIVLauncher.PatchInstaller.exe <server port> <client port>");
+                    Log.Information("usage:\n" +
+                                    "* XIVLauncher.PatchInstaller.exe install <oldest>.patch <oldest2>.patch ... <newest>.patch <game dir>\n" +
+                                    "  * Install patch files in the given order.\n" + 
+                                    "* XIVLauncher.PatchInstaller.exe index-create <expac version; -1 for boot> <oldest>.patch <oldest2>.patch ... <newest>.patch\n" +
+                                    "  * Index game patch files in the given order.\n" +
+                                    "* XIVLauncher.PatchInstaller.exe index-verify <patch index file> <game dir>\n" +
+                                    "  * Verify game installation from patch file index.\n" +
+                                    "* XIVLauncher.PatchInstaller.exe index-repair <patch index file> <game dir> <patch file directory>\n" +
+                                    "  * Verify and repair game installation from patch file index, looking for patch files in given patch file directory.\n" +
+                                    "* XIVLauncher.PatchInstaller.exe <server port> <client port>");
 
                     Environment.Exit(-1);
                     return;

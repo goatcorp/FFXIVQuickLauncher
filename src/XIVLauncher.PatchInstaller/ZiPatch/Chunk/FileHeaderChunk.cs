@@ -31,8 +31,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         public uint SqpkFileCommands { get; protected set; }
 
 
-        public FileHeaderChunk(ChecksumBinaryReader reader, int size) : base(reader, size)
-        {}
+        public FileHeaderChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {

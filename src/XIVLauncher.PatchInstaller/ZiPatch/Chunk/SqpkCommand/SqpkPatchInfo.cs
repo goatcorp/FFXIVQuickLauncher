@@ -19,7 +19,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         public ulong InstallSize { get; protected set; }
 
 
-        public SqpkPatchInfo(ChecksumBinaryReader reader, int size) : base(reader, size) {}
+        public SqpkPatchInfo(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {

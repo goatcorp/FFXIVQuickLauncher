@@ -25,7 +25,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch
         /// Instantiates a ZiPatchFile from a Stream 
         /// </summary>
         /// <param name="stream">Stream to a ZiPatch</param>
-        private ZiPatchFile(Stream stream)
+        public ZiPatchFile(Stream stream)
         {
             this._stream = stream;
 

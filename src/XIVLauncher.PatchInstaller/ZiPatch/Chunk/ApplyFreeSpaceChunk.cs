@@ -28,8 +28,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         }
 
 
-        public ApplyFreeSpaceChunk(ChecksumBinaryReader reader, int size) : base(reader, size)
-        {}
+        public ApplyFreeSpaceChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         public override string ToString()
         {

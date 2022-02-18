@@ -30,7 +30,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
 
 
 
-        public SqpkIndex(ChecksumBinaryReader reader, int size) : base(reader, size) {}
+        public SqpkIndex(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {

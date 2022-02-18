@@ -25,15 +25,16 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
             Data = (byte)'D'
         }
 
-        private const int HEADER_SIZE = 1024;
+        public const int HEADER_SIZE = 1024;
 
         public TargetFileKind FileKind { get; protected set; }
         public TargetHeaderKind HeaderKind { get; protected set; }
         public SqpackFile TargetFile { get; protected set; }
 
         public byte[] HeaderData { get; protected set; }
+        public long HeaderDataSourceOffset { get; protected set; }
 
-        public SqpkHeader(ChecksumBinaryReader reader, int size) : base(reader, size) {}
+        public SqpkHeader(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
@@ -48,6 +49,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
             else
                 TargetFile = new SqpackIndexFile(reader);
 
+            HeaderDataSourceOffset = Offset + reader.BaseStream.Position;
             HeaderData = reader.ReadBytes(HEADER_SIZE);
 
             reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));

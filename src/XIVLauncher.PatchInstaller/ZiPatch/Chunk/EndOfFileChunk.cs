@@ -20,8 +20,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         }
 
 
-        public EndOfFileChunk(ChecksumBinaryReader reader, int size) : base(reader, size)
-        {}
+        public EndOfFileChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         public override string ToString()
         {

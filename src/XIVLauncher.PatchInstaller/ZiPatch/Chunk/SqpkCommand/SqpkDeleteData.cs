@@ -19,7 +19,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk.SqpkCommand
         public int BlockNumber { get; protected set; }
 
 
-        public SqpkDeleteData(ChecksumBinaryReader reader, int size) : base(reader, size) {}
+        public SqpkDeleteData(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {

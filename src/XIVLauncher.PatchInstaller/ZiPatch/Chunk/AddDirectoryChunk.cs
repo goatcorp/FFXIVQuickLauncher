@@ -26,8 +26,7 @@ namespace XIVLauncher.PatchInstaller.ZiPatch.Chunk
         }
 
 
-        public AddDirectoryChunk(ChecksumBinaryReader reader, int size) : base(reader, size)
-        {}
+        public AddDirectoryChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         public override void ApplyChunk(ZiPatchConfig config)
         {
