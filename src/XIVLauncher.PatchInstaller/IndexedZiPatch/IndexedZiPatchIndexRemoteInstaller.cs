@@ -149,7 +149,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
         {
             var writer = GetRequestCreator(WorkerInboundOpcode.VerifyFiles, cancellationToken);
             writer.Write(concurrentCount);
-            await WaitForResult(writer);
+            await WaitForResult(writer, 864000000);
         }
 
         public async Task MarkFileAsMissing(int targetIndex, CancellationToken? cancellationToken = null)
