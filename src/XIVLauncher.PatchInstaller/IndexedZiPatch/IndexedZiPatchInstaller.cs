@@ -473,7 +473,9 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                     runningTasks[config.Repair(cancellationToken)] = config;
                 }
 
-                TriggerOnProgress(InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
+                var taskIndex = InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count;
+                var sourceIndexForProgressDisplay = taskIndex == InstallTaskConfigs.Count ? Index.Sources.Count : InstallTaskConfigs[taskIndex].SourceIndex;
+                TriggerOnProgress(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
 
                 if (progressReportTask == null || progressReportTask.IsCompleted)
                     progressReportTask = cancellationToken.HasValue ? Task.Delay(ProgressReportInterval, cancellationToken.Value) : Task.Delay(250);
