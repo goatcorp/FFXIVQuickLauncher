@@ -41,6 +41,7 @@ jobs:
           echo "::set-output name=version::$refver"
           nuget pack .\XIVLauncher.nuspec -properties version=$refver
           mkdir Releases
+          cp .\XIVLauncher\Resources\CHANGELOG.txt .\Releases\
           $release_file = $current.assets | Where-Object -Property name -Value RELEASES -EQ
           Invoke-WebRequest -Uri $release_file.browser_download_url -OutFile .\Releases\RELEASES
           $delta_file = $current.assets | Where-Object -Property name -Value "*delta.nupkg" -Like

@@ -359,7 +359,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                             ErrorWindow.Show(aggregate,
                                 Loc.Localize("GenericLoginError",
-                                    "Error occured during login, please report this error."), "StartGameAndAddon");
+                                    "Error occurred during login, please report this error."), "StartGameAndAddon");
                             Environment.Exit(1);
                             break;
                         }
