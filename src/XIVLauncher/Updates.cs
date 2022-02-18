@@ -48,8 +48,16 @@ namespace XIVLauncher
 
                 if (newRelease != null)
                 {
-                    var changelogWindow = new ChangelogWindow(downloadPrerelease, newRelease.Version.ToString());
-                    changelogWindow.ShowDialog();
+                    try
+                    {
+                        var changelogWindow = new ChangelogWindow(downloadPrerelease, newRelease.Version.ToString());
+                        changelogWindow.ShowDialog();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not show changelog");
+                    }
+
 
                     UpdateManager.RestartApp();
                 }
