@@ -20,6 +20,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
         private readonly RpcBuffer SubprocessBuffer;
         private int CancellationTokenCounter = 1;
         private long LastProgressUpdateCounter = 0;
+        private bool IsDisposed = false;
 
         public readonly List<IndexedZiPatchInstaller.OnProgressDelegate> OnProgress = new();
 
@@ -45,14 +46,17 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 Task.Run(() => new WorkerSubprocessBody(Process.GetCurrentProcess().Id, rpcChannelName).RunToDisposeSelf());
             }
 
-            var writer = GetRequestCreator(0, null);
+            var writer = GetRequestCreator(WorkerInboundOpcode.Construct, null);
             Index.WriteTo(writer);
             WaitForResult(writer).Wait();
         }
 
         public void Dispose()
         {
-            WaitForResult(GetRequestCreator(1, null)).Wait();
+            if (IsDisposed)
+                throw new ObjectDisposedException(GetType().FullName);
+
+            WaitForResult(GetRequestCreator(WorkerInboundOpcode.Dispose, null)).Wait();
 
             if (WorkerProcess != null)
             {
@@ -63,15 +67,16 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 }
             }
             SubprocessBuffer.Dispose();
+            IsDisposed = true;
         }
 
         private void RpcResponseHandler(ulong _, byte[] data)
         {
             using var reader = new BinaryReader(new MemoryStream(data));
-            var type = reader.ReadInt32();
+            var type = (WorkerOutboundOpcode)reader.ReadInt32();
             switch (type)
             {
-                case 1:  // OnProgress:
+                case WorkerOutboundOpcode.UpdateProgress:
                     OnReceiveProgressUpdate(reader);
                     break;
 
@@ -94,9 +99,17 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 d(index, progress, max);
         }
 
-        private async Task CancelRemoteTask(int tokenId) => await WaitForResult(GetRequestCreator(-1, null));
+        private async Task CancelRemoteTask(int tokenId)
+        {
+            if (IsDisposed)
+                return;
 
-        private BinaryWriter GetRequestCreator(int methodId, CancellationToken? cancellationToken)
+            var writer = GetRequestCreator(WorkerInboundOpcode.CancelTask, null);
+            writer.Write(tokenId);
+            await WaitForResult(writer);
+        }
+
+        private BinaryWriter GetRequestCreator(WorkerInboundOpcode opcode, CancellationToken? cancellationToken)
         {
             var ms = new MemoryStream();
             var writer = new BinaryWriter(ms);
@@ -107,7 +120,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 cancellationToken.Value.Register(async () => await CancelRemoteTask(tokenId));
             }
             writer.Write(tokenId);
-            writer.Write(methodId);
+            writer.Write((int)opcode);
             return writer;
         }
 
@@ -116,13 +129,13 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             var reader = new BinaryReader(new MemoryStream((await SubprocessBuffer.RemoteRequestAsync(((MemoryStream)req.BaseStream).ToArray(), timeoutMs)).Data));
             try
             {
-                var result = reader.ReadInt32();
+                var result = (WorkerResultCode)reader.ReadInt32();
                 return result switch
                 {
-                    -1 => reader,// OK
-                    -2 => throw new TaskCanceledException(),
-                    -3 => throw new Exception(reader.ReadString()),
-                    _ => throw new ArgumentException("unknown response code"),
+                    WorkerResultCode.Pass => reader,
+                    WorkerResultCode.Cancelled => throw new TaskCanceledException(),
+                    WorkerResultCode.Error => throw new Exception(reader.ReadString()),
+                    _ => throw new InvalidOperationException("Invalid WorkerResultCodes"),
                 };
             }
             finally
@@ -134,21 +147,21 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public async Task VerifyFiles(int concurrentCount = 8, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(2, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.VerifyFiles, cancellationToken);
             writer.Write(concurrentCount);
             await WaitForResult(writer);
         }
 
         public async Task MarkFileAsMissing(int targetIndex, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(3, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.MarkFileAsMissing, cancellationToken);
             writer.Write(targetIndex);
             await WaitForResult(writer);
         }
 
         public async Task SetTargetStreamFromPathReadOnly(int targetIndex, string path, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(4, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamFromPathReadOnly, cancellationToken);
             writer.Write(targetIndex);
             writer.Write(path);
             await WaitForResult(writer);
@@ -156,7 +169,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public async Task SetTargetStreamFromPathReadWrite(int targetIndex, string path, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(5, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamFromPathReadWrite, cancellationToken);
             writer.Write(targetIndex);
             writer.Write(path);
             await WaitForResult(writer);
@@ -164,30 +177,30 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public async Task SetTargetStreamsFromPathReadOnly(string rootPath, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(6, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamsFromPathReadOnly, cancellationToken);
             writer.Write(rootPath);
             await WaitForResult(writer);
         }
 
         public async Task SetTargetStreamsFromPathReadWriteForMissingFiles(string rootPath, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(7, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamsFromPathReadWriteForMissingFiles, cancellationToken);
             writer.Write(rootPath);
             await WaitForResult(writer);
         }
 
-        public async Task RepairNonPatchData(CancellationToken? cancellationToken = null) => await WaitForResult(GetRequestCreator(8, cancellationToken));
+        public async Task RepairNonPatchData(CancellationToken? cancellationToken = null) => await WaitForResult(GetRequestCreator(WorkerInboundOpcode.RepairNonPatchData, cancellationToken));
 
         public async Task WriteVersionFiles(string rootPath, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(9, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.WriteVersionFiles, cancellationToken);
             writer.Write(rootPath);
             await WaitForResult(writer);
         }
 
         public async Task QueueInstall(int sourceIndex, string sourceUrl, string sid, int splitBy = 8, int maxPartsPerRequest = 1024, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(10, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.QueueInstall, cancellationToken);
             writer.Write(sourceIndex);
             writer.Write(sourceUrl);
             writer.Write(sid ?? "");
@@ -198,14 +211,14 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public async Task Install(int concurrentCount, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(11, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.Install, cancellationToken);
             writer.Write(concurrentCount);
             await WaitForResult(writer, 864000000);
         }
 
         public async Task<List<SortedSet<Tuple<int, int>>>> GetMissingPartIndicesPerPatch()
         {
-            using var reader = await WaitForResult(GetRequestCreator(12, null), 30000, false);
+            using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetMissingPartIndicesPerPatch, null), 30000, false);
             List<SortedSet<Tuple<int, int>>> result = new();
             for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
             {
@@ -219,7 +232,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public async Task<List<SortedSet<int>>> GetMissingPartIndicesPerTargetFile()
         {
-            using var reader = await WaitForResult(GetRequestCreator(13, null), 30000, false);
+            using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetMissingPartIndicesPerTargetFile, null), 30000, false);
             List<SortedSet<int>> result = new();
             for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
             {
@@ -233,7 +246,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         public async Task<SortedSet<int>> GetTooLongTargetFiles()
         {
-            using var reader = await WaitForResult(GetRequestCreator(14, null), 30000, false);
+            using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetTooLongTargetFiles, null), 30000, false);
             SortedSet<int> result = new();
             for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
                 result.Add(reader.ReadInt32());
@@ -262,7 +275,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                         CancellationTokenSources[cancelSourceId] = new CancellationTokenSource();
                         cancelToken = CancellationTokenSources[cancelSourceId].Token;
                     }
-                    int method = reader.ReadInt32();
+                    var method = (WorkerInboundOpcode)reader.ReadInt32();
 
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
@@ -272,7 +285,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                     {
                         switch (method)
                         {
-                            case -1:  // Cancel
+                            case WorkerInboundOpcode.CancelTask:
                                 lock (CancellationTokenSources)
                                 {
                                     if (CancellationTokenSources.TryGetValue(reader.ReadInt32(), out var cts))
@@ -280,57 +293,57 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                                 }
                                 break;
 
-                            case 0:  // construct
+                            case WorkerInboundOpcode.Construct:
                                 Instance = new(new IndexedZiPatchIndex(reader, false));
                                 Instance.OnProgress.Add(OnProgressUpdate);
                                 break;
 
-                            case 1:  // dispose
+                            case WorkerInboundOpcode.Dispose:
                                 Instance?.Dispose();
                                 Instance = null;
                                 break;
 
-                            case 2:  // VerifyFiles
+                            case WorkerInboundOpcode.VerifyFiles:
                                 await Instance.VerifyFiles(reader.ReadInt32(), cancelToken);
                                 break;
 
-                            case 3:  // MarkFileAsMissing
+                            case WorkerInboundOpcode.MarkFileAsMissing:
                                 Instance.MarkFileAsMissing(reader.ReadInt32());
                                 break;
 
-                            case 4:  // SetTargetStreamFromPathReadOnly
+                            case WorkerInboundOpcode.SetTargetStreamFromPathReadOnly:
                                 Instance.SetTargetStream(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.Open, FileAccess.Read));
                                 break;
 
-                            case 5:  // SetTargetStreamFromPathReadWrite
+                            case WorkerInboundOpcode.SetTargetStreamFromPathReadWrite:
                                 Instance.SetTargetStream(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.OpenOrCreate, FileAccess.ReadWrite));
                                 break;
 
-                            case 6:  // SetTargetStreamsFromPathReadOnly
+                            case WorkerInboundOpcode.SetTargetStreamsFromPathReadOnly:
                                 Instance.SetTargetStreamsFromPathReadOnly(reader.ReadString());
                                 break;
 
-                            case 7:  // SetTargetStreamsFromPathReadWriteForMissingFiles
+                            case WorkerInboundOpcode.SetTargetStreamsFromPathReadWriteForMissingFiles:
                                 Instance.SetTargetStreamsFromPathReadWriteForMissingFiles(reader.ReadString());
                                 break;
 
-                            case 8:  // RepairNonPatchData
+                            case WorkerInboundOpcode.RepairNonPatchData:
                                 await Instance.RepairNonPatchData(cancelToken);
                                 break;
 
-                            case 9:  // WriteVersionFiles
+                            case WorkerInboundOpcode.WriteVersionFiles:
                                 Instance.WriteVersionFiles(reader.ReadString());
                                 break;
 
-                            case 10:  // QueueInstall
+                            case WorkerInboundOpcode.QueueInstall:
                                 Instance.QueueInstall(reader.ReadInt32(), Client, reader.ReadString(), reader.ReadString(), reader.ReadInt32(), reader.ReadInt32());
                                 break;
 
-                            case 11:  // Install
+                            case WorkerInboundOpcode.Install:
                                 await Instance.Install(reader.ReadInt32(), cancelToken);
                                 break;
 
-                            case 12:
+                            case WorkerInboundOpcode.GetMissingPartIndicesPerPatch:
                                 writer.Write(Instance.MissingPartIndicesPerPatch.Count);
                                 foreach (var e1 in Instance.MissingPartIndicesPerPatch)
                                 {
@@ -343,7 +356,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                                 }
                                 break;
 
-                            case 13:
+                            case WorkerInboundOpcode.GetMissingPartIndicesPerTargetFile:
                                 writer.Write(Instance.MissingPartIndicesPerTargetFile.Count);
                                 foreach (var e1 in Instance.MissingPartIndicesPerTargetFile)
                                 {
@@ -353,27 +366,27 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                                 }
                                 break;
 
-                            case 14:
+                            case WorkerInboundOpcode.GetTooLongTargetFiles:
                                 writer.Write(Instance.TooLongTargetFiles.Count);
                                 foreach (var e1 in Instance.TooLongTargetFiles)
                                     writer.Write(e1);
                                 break;
 
                             default:
-                                throw new ArgumentException("Bad command");
+                                throw new InvalidOperationException("Invalid WorkerInboundOpcode");
                         }
 
                         writer.Seek(0, SeekOrigin.Begin);
-                        writer.Write(-1);
+                        writer.Write((int)WorkerResultCode.Pass);
                     }
                     catch (Exception ex)
                     {
                         writer.Seek(0, SeekOrigin.Begin);
-                        if (ex is TaskCanceledException)
-                            writer.Write(-2);
+                        if (ex is OperationCanceledException)
+                            writer.Write((int)WorkerResultCode.Cancelled);
                         else
                         {
-                            writer.Write(-3);
+                            writer.Write((int)WorkerResultCode.Error);
                             writer.Write(ex.ToString());
                         }
                     }
@@ -392,7 +405,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
-                    writer.Write(1);
+                    writer.Write((int)WorkerOutboundOpcode.UpdateProgress);
                     writer.Write(ProgressUpdateCounter);
                     writer.Write(index);
                     writer.Write(progress);
@@ -420,6 +433,10 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 {
                     Run();
                 }
+                catch (OperationCanceledException)
+                {
+                    // pass
+                }
                 finally
                 {
                     Dispose();
@@ -427,11 +444,44 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             }
         }
 
+        private enum WorkerResultCode : int
+        {
+            Pass,
+            Cancelled,
+            Error,
+        }
+
+        private enum WorkerOutboundOpcode : int
+        {
+            UpdateProgress,
+        }
+
+        private enum WorkerInboundOpcode : int
+        {
+            CancelTask,
+            Construct,
+            Dispose,
+            VerifyFiles,
+            MarkFileAsMissing,
+            SetTargetStreamFromPathReadOnly,
+            SetTargetStreamFromPathReadWrite,
+            SetTargetStreamsFromPathReadOnly,
+            SetTargetStreamsFromPathReadWriteForMissingFiles,
+            RepairNonPatchData,
+            WriteVersionFiles,
+            QueueInstall,
+            Install,
+            GetMissingPartIndicesPerPatch,
+            GetMissingPartIndicesPerTargetFile,
+            GetTooLongTargetFiles,
+        }
+
         public static void Test()
         {
             Task.Run(async () =>
             {
-                var cancellationTokenSource = new CancellationTokenSource();
+                // Cancel in 15 secs
+                var cancellationTokenSource = new CancellationTokenSource(15000);
                 var cancellationToken = cancellationTokenSource.Token;
 
                 var availableSourceUrls = new Dictionary<string, string>() {
@@ -447,11 +497,11 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 foreach (var (gameRootPath, patchIndexFilePath) in rootAndPatchPairs)
                 {
                     var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
-                    
+
                     // Run verifier as subprocess
                     using var verifier = new IndexedZiPatchIndexRemoteInstaller(patchIndex, System.Reflection.Assembly.GetExecutingAssembly().Location, true);
                     // Run verifier as another thread
-                    // using var verifier = new RemoteZiPatchIndexInstaller(patchIndex, null, true);
+                    // using var verifier = new IndexedZiPatchIndexRemoteInstaller(patchIndex, null, true);
 
                     verifier.OnProgress.Add((int index, long progress, long max) => Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max));
                     await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
