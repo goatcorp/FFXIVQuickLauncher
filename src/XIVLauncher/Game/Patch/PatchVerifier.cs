@@ -102,7 +102,7 @@ namespace XIVLauncher.Game.Patch
                         case VerifyState.Verify:
                             const int maxConcurrentConnectionsForPatchSet = 8;
 
-                            foreach (var metaPath in this._repoMetaPaths)
+                            foreach (var metaPath in _repoMetaPaths)
                             {
                                 var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
 
@@ -115,7 +115,7 @@ namespace XIVLauncher.Game.Patch
                                     Progress = Math.Min(progress, max);
                                     Total = max;
 
-                                    Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", targetIndex + 1, TaskCount, "Checking", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                                    Log.Verbose("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", targetIndex + 1, TaskCount, "Checking", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                                 }
 
                                 void UpdateInstallProgress(int sourceIndex, long progress, long max)
@@ -125,7 +125,7 @@ namespace XIVLauncher.Game.Patch
                                     Progress = Math.Min(progress, max);
                                     Total = max;
 
-                                    Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", sourceIndex + 1, TaskCount, "Installing", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                                    Log.Verbose("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", sourceIndex + 1, TaskCount, "Installing", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                                 }
 
                                 try
@@ -140,7 +140,7 @@ namespace XIVLauncher.Game.Patch
 
                                     await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
                                     // TODO: check one at a time if random access is slow?
-                                    await remote.VerifyFiles(Environment.ProcessorCount, this._cancellationTokenSource.Token);
+                                    await remote.VerifyFiles(Environment.ProcessorCount, _cancellationTokenSource.Token);
 
                                     TaskCount = patchIndex.Sources.Count;
                                     var missing = await remote.GetMissingPartIndicesPerPatch();
@@ -158,7 +158,7 @@ namespace XIVLauncher.Game.Patch
 
                                     IsInstalling = true;
 
-                                    await remote.Install(maxConcurrentConnectionsForPatchSet, this._cancellationTokenSource.Token);
+                                    await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);
                                     await remote.WriteVersionFiles(adjustedGamePath);
                                 }
                                 finally
@@ -184,7 +184,7 @@ namespace XIVLauncher.Game.Patch
                     State = VerifyState.Cancelled;
                     return;
                 }
-                Log.Error(ex, "Unexpected error occurred in RunVerifier.");
+                Log.Error(ex, "Unexpected error occurred in RunVerifier");
                 LastException = ex;
                 State = VerifyState.Error;
             }

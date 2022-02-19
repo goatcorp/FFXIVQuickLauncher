@@ -237,6 +237,8 @@ namespace XIVLauncher.Windows.ViewModel
                     if (isRepair && loginResult.State == Launcher.LoginState.NeedsPatchGame)
                     {
                         await RepairGame(loginResult);
+
+                        Reactivate();
                         return;
                     }
 
@@ -476,6 +478,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 using var verify = new PatchVerifier(loginResult);
 
+                Hide();
                 IsEnabled = false;
 
                 try
@@ -511,22 +514,21 @@ namespace XIVLauncher.Windows.ViewModel
                     progressDialog.Close();
                 });
 
-                if (verify.State == PatchVerifier.VerifyState.Done)
+                switch (verify.State)
                 {
-                    var successMsgTemplate = Loc.Localize("GameRepairSuccess",
-                        "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.");
+                    case PatchVerifier.VerifyState.Done:
+                    {
+                        var successMsgTemplate = Loc.Localize("GameRepairSuccess",
+                            "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.");
 
-                    CustomMessageBox.Show(string.Format(successMsgTemplate, verify.NumBrokenFiles, verify.NumBrokenFiles == 1 ? Loc.Localize("GameRepairSuccessFileWas", "file was") : Loc.Localize("GameRepairSuccessFilesWere", "files were")),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    Reactivate();
-                    return true;
-                }
-                else if (verify.State == PatchVerifier.VerifyState.Error)
-                {
-                    // TODO: Display error
-                    CustomMessageBox.Show($"Last exception: {verify.LastException}",
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                        CustomMessageBox.Show(string.Format(successMsgTemplate, verify.NumBrokenFiles, verify.NumBrokenFiles == 1 ? Loc.Localize("GameRepairSuccessFileWas", "file was") : Loc.Localize("GameRepairSuccessFilesWere", "files were")),
+                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
+                        break;
+                    }
+                    case PatchVerifier.VerifyState.Error:
+                        CustomMessageBox.Show(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\n\nYou may have to reinstall the game."),
+                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
                 }
 
                 mutex.Close();
