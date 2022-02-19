@@ -11,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using XIVLauncher.Common;
-using XIVLauncher.PatchInstaller.IndexedZiPatch;
+using XIVLauncher.Common.Patching.IndexedZiPatch;
 
 namespace XIVLauncher.Game.Patch
 {

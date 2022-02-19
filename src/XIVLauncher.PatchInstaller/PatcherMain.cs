@@ -12,9 +12,9 @@ using Serilog;
 using SharedMemory;
 using XIVLauncher.Common;
 using XIVLauncher.Common.PatcherIpc;
-using XIVLauncher.PatchInstaller.IndexedZiPatch;
-using XIVLauncher.PatchInstaller.ZiPatch;
-using XIVLauncher.PatchInstaller.ZiPatch.Util;
+using XIVLauncher.Common.Patching.IndexedZiPatch;
+using XIVLauncher.Common.Patching.ZiPatch;
+using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller
 {
