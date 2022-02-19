@@ -577,7 +577,7 @@ namespace XIVLauncher.Windows
                 },
                 State = Launcher.LoginState.Ok,
                 UniqueId = "0"
-            }, true, false);
+            }, true, false, false);
         }
 
         private void LoginPassword_OnPasswordChanged(object sender, RoutedEventArgs e)
