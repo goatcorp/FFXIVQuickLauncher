@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Timers;
 using System.Windows;
 using XIVLauncher.Common;
@@ -28,6 +29,11 @@ namespace XIVLauncher.Windows
             viewUpdateTimer.Interval = 200;
             viewUpdateTimer.Enabled = true;
             viewUpdateTimer.Start();
+        }
+
+        private void GameRepairProgressWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = true; // We can't cancel patching yet, big TODO
         }
 
         private void ViewUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
