@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -16,20 +17,22 @@ namespace XIVLauncher.Game.Patch
 {
     public class PatchVerifier : IDisposable
     {
-        private IndexedZiPatchIndexRemoteInstaller _remote;
         private HttpClient _client;
         private CancellationTokenSource _cancellationTokenSource = new();
 
         private Dictionary<Repository, string> _repoMetaPaths = new();
         private Dictionary<string, string> _patchSources = new();
 
+        private Task _verificationTask;
+
         public int NumBrokenFiles { get; private set; } = 0;
         public bool IsInstalling { get; private set; } = false;
-        public int Index { get; private set; }
+        public int TaskIndex { get; private set; }
         public long Progress { get; private set; }
         public long Total { get; private set; }
-        public int PatchIndexLength { get; private set; }
+        public int TaskCount { get; private set; }
         public string CurrentFile { get; private set; }
+        public Exception LastException { get; private set; }
 
         private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/main/";
 
@@ -38,16 +41,14 @@ namespace XIVLauncher.Game.Patch
             Unknown,
             Verify,
             Done,
-            Cancelled
+            Cancelled,
+            Error
         }
 
         public VerifyState State { get; private set; } = VerifyState.Unknown;
 
         public PatchVerifier(Launcher.LoginResult loginResult)
         {
-            var assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            _remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
-                true);
             _client = new HttpClient();
 
             SetLoginState(loginResult);
@@ -57,7 +58,7 @@ namespace XIVLauncher.Game.Patch
         {
             Debug.Assert(_repoMetaPaths.Count != 0 && _patchSources.Count != 0);
 
-            Task.Run(this.RunVerifier, _cancellationTokenSource.Token);
+            _verificationTask = Task.Run(this.RunVerifier, _cancellationTokenSource.Token);
         }
 
         public void Cancel()
@@ -81,73 +82,111 @@ namespace XIVLauncher.Game.Patch
 
         private async Task RunVerifier()
         {
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            State = VerifyState.Unknown;
+            LastException = null;
+            try
             {
-                switch (State)
+                var assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                using var remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
+                    true);
+                await remote.SetWorkerProcessPriority(ProcessPriorityClass.Idle);
+
+                while (!_cancellationTokenSource.IsCancellationRequested && State != VerifyState.Done)
                 {
+                    switch (State)
+                    {
 
-                    case VerifyState.Unknown:
-                        State = VerifyState.Verify;
-                        break;
-                    case VerifyState.Verify:
-                        const int maxConcurrentConnectionsForPatchSet = 8;
+                        case VerifyState.Unknown:
+                            State = VerifyState.Verify;
+                            break;
+                        case VerifyState.Verify:
+                            const int maxConcurrentConnectionsForPatchSet = 8;
 
-                        foreach (var metaPath in this._repoMetaPaths)
-                        {
-                            var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
-
-                            IsInstalling = false;
-
-                            void UpdateFileName(int index, long progress, long max)
+                            foreach (var metaPath in this._repoMetaPaths)
                             {
-                                CurrentFile = patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath;
-                                Index = index;
-                                Progress = progress;
-                                Total = max;
+                                var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
 
-                                Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", index + 1, PatchIndexLength, IsInstalling ? "Checking" : "Installing", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                                IsInstalling = false;
+
+                                void UpdateVerifyProgress(int targetIndex, long progress, long max)
+                                {
+                                    CurrentFile = patchIndex[Math.Min(targetIndex, patchIndex.Length - 1)].RelativePath;
+                                    TaskIndex = targetIndex;
+                                    Progress = Math.Min(progress, max);
+                                    Total = max;
+
+                                    Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", targetIndex + 1, TaskCount, "Checking", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                                }
+
+                                void UpdateInstallProgress(int sourceIndex, long progress, long max)
+                                {
+                                    CurrentFile = patchIndex.Sources[Math.Min(sourceIndex, patchIndex.Sources.Count - 1)];
+                                    TaskIndex = sourceIndex;
+                                    Progress = Math.Min(progress, max);
+                                    Total = max;
+
+                                    Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", sourceIndex + 1, TaskCount, "Installing", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                                }
+
+                                try
+                                {
+                                    remote.OnVerifyProgress += UpdateVerifyProgress;
+                                    remote.OnInstallProgress += UpdateInstallProgress;
+                                    TaskCount = patchIndex.Length;
+
+                                    await remote.ConstructFromPatchFile(patchIndex);
+
+                                    var adjustedGamePath = Path.Combine(App.Settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
+
+                                    await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
+                                    // TODO: check one at a time if random access is slow?
+                                    await remote.VerifyFiles(Environment.ProcessorCount, this._cancellationTokenSource.Token);
+
+                                    TaskCount = patchIndex.Sources.Count;
+                                    var missing = await remote.GetMissingPartIndicesPerPatch();
+                                    NumBrokenFiles += (await remote.GetMissingPartIndicesPerTargetFile()).Count(x => x.Any());
+
+                                    await remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath);
+                                    var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
+                                    for (var i = 0; i < patchIndex.Sources.Count; i++)
+                                    {
+                                        if (!missing[i].Any())
+                                            continue;
+
+                                        await remote.QueueInstall(i, _patchSources[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
+                                    }
+
+                                    IsInstalling = true;
+
+                                    await remote.Install(maxConcurrentConnectionsForPatchSet, this._cancellationTokenSource.Token);
+                                    await remote.WriteVersionFiles(adjustedGamePath);
+                                }
+                                finally
+                                {
+                                    remote.OnVerifyProgress -= UpdateVerifyProgress;
+                                    remote.OnInstallProgress -= UpdateInstallProgress;
+                                }
                             }
 
-                            _remote.OnProgress += UpdateFileName;
-
-                            PatchIndexLength = patchIndex.Length;
-
-                            await _remote.ConstructFromPatchFile(patchIndex);
-
-                            var adjustedGamePath = Path.Combine(App.Settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
-
-                            await _remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
-                            // TODO: check one at a time if random access is slow?
-                            await _remote.VerifyFiles(Environment.ProcessorCount, this._cancellationTokenSource.Token);
-
-                            var missing = await _remote.GetMissingPartIndicesPerPatch();
-                            NumBrokenFiles += (await this._remote.GetMissingPartIndicesPerTargetFile()).Count(x => x.Any());
-
-                            await _remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath);
-                            var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
-                            for (var i = 0; i < patchIndex.Sources.Count; i++)
-                            {
-                                if (!missing[i].Any())
-                                    continue;
-
-                                await _remote.QueueInstall(i, _patchSources[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
-                            }
-
-                            IsInstalling = true;
-
-                            await _remote.Install(maxConcurrentConnectionsForPatchSet, this._cancellationTokenSource.Token);
-                            await _remote.WriteVersionFiles(adjustedGamePath);
-
-                            _remote.OnProgress -= UpdateFileName;
-                        }
-
-                        State = VerifyState.Done;
-                        break;
-                    case VerifyState.Done:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                            State = VerifyState.Done;
+                            break;
+                        case VerifyState.Done:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                if (ex is Win32Exception winex && (uint)winex.HResult == 0x80004005u)  // The operation was canceled by the user (UAC dialog cancellation)
+                {
+                    State = VerifyState.Cancelled;
+                    return;
+                }
+                Log.Error(ex, "Unexpected error occurred in RunVerifier.");
+                LastException = ex;
+                State = VerifyState.Error;
             }
         }
 
@@ -195,7 +234,11 @@ namespace XIVLauncher.Game.Patch
 
         public void Dispose()
         {
-            this._remote?.Dispose();
+            if (_verificationTask != null && !_verificationTask.IsCompleted)
+            {
+                _cancellationTokenSource.Cancel();
+                _verificationTask.Wait();
+            }
         }
     }
 }

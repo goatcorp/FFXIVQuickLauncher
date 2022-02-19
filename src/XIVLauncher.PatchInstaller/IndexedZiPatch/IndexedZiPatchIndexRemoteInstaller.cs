@@ -21,7 +21,8 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
         private long LastProgressUpdateCounter = 0;
         private bool IsDisposed = false;
 
-        public event IndexedZiPatchInstaller.OnProgressDelegate OnProgress;
+        public event IndexedZiPatchInstaller.OnInstallProgressDelegate OnInstallProgress;
+        public event IndexedZiPatchInstaller.OnVerifyProgressDelegate OnVerifyProgress;
 
         public IndexedZiPatchIndexRemoteInstaller(string workerExecutablePath, bool asAdmin)
         {
@@ -69,8 +70,12 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             var type = (WorkerOutboundOpcode)reader.ReadInt32();
             switch (type)
             {
-                case WorkerOutboundOpcode.UpdateProgress:
-                    OnReceiveProgressUpdate(reader);
+                case WorkerOutboundOpcode.UpdateInstallProgress:
+                    OnReceiveInstallProgressUpdate(reader);
+                    break;
+
+                case WorkerOutboundOpcode.UpdateVerifyProgress:
+                    OnReceiveVerifyProgressUpdate(reader);
                     break;
 
                 default:
@@ -78,7 +83,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             }
         }
 
-        private void OnReceiveProgressUpdate(BinaryReader reader)
+        private void OnReceiveInstallProgressUpdate(BinaryReader reader)
         {
             var progressUpdateCounter = reader.ReadInt64();
             if (progressUpdateCounter < LastProgressUpdateCounter)
@@ -89,7 +94,21 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             var progress = reader.ReadInt64();
             var max = reader.ReadInt64();
 
-            OnProgress?.Invoke(index, progress, max);
+            OnInstallProgress?.Invoke(index, progress, max);
+        }
+
+        private void OnReceiveVerifyProgressUpdate(BinaryReader reader)
+        {
+            var progressUpdateCounter = reader.ReadInt64();
+            if (progressUpdateCounter < LastProgressUpdateCounter)
+                return;
+
+            LastProgressUpdateCounter = progressUpdateCounter;
+            var index = reader.ReadInt32();
+            var progress = reader.ReadInt64();
+            var max = reader.ReadInt64();
+
+            OnVerifyProgress?.Invoke(index, progress, max);
         }
 
         private BinaryWriter GetRequestCreator(WorkerInboundOpcode opcode, CancellationToken? cancellationToken)
@@ -253,6 +272,13 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             return result;
         }
 
+        public async Task SetWorkerProcessPriority(ProcessPriorityClass subprocessPriority, CancellationToken? cancellationToken = null)
+        {
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetWorkerProcessPriority, cancellationToken);
+            writer.Write((int)subprocessPriority);
+            await WaitForResult(writer, 864000000);
+        }
+
         public class WorkerSubprocessBody : IDisposable
         {
             private readonly Process ParentProcess;
@@ -296,7 +322,8 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                             case WorkerInboundOpcode.Construct:
                                 Instance?.Dispose();
                                 Instance = new(new IndexedZiPatchIndex(reader, false));
-                                Instance.OnProgress.Add(OnProgressUpdate);
+                                Instance.OnInstallProgress += OnInstallProgressUpdate;
+                                Instance.OnVerifyProgress += OnVerifyProgressUpdate;
                                 break;
 
                             case WorkerInboundOpcode.Dispose:
@@ -373,6 +400,10 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                                     writer.Write(e1);
                                 break;
 
+                            case WorkerInboundOpcode.SetWorkerProcessPriority:
+                                Process.GetCurrentProcess().PriorityClass = (ProcessPriorityClass)reader.ReadInt32();
+                                break;
+
                             default:
                                 throw new InvalidOperationException("Invalid WorkerInboundOpcode");
                         }
@@ -400,19 +431,35 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 });
             }
 
-            private void OnProgressUpdate(int index, long progress, long max)
+            private void OnInstallProgressUpdate(int index, long progress, long max)
             {
                 lock (this)
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
-                    writer.Write((int)WorkerOutboundOpcode.UpdateProgress);
+                    writer.Write((int)WorkerOutboundOpcode.UpdateInstallProgress);
                     writer.Write(ProgressUpdateCounter);
                     writer.Write(index);
                     writer.Write(progress);
                     writer.Write(max);
                     ProgressUpdateCounter += 1;
-                    SubprocessBuffer.RemoteRequestAsync(ms.ToArray());
+                    SubprocessBuffer.RemoteRequest(ms.ToArray());
+                }
+            }
+
+            private void OnVerifyProgressUpdate(int index, long progress, long max)
+            {
+                lock (this)
+                {
+                    var ms = new MemoryStream();
+                    var writer = new BinaryWriter(ms);
+                    writer.Write((int)WorkerOutboundOpcode.UpdateVerifyProgress);
+                    writer.Write(ProgressUpdateCounter);
+                    writer.Write(index);
+                    writer.Write(progress);
+                    writer.Write(max);
+                    ProgressUpdateCounter += 1;
+                    SubprocessBuffer.RemoteRequest(ms.ToArray());
                 }
             }
 
@@ -454,7 +501,8 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
         private enum WorkerOutboundOpcode : int
         {
-            UpdateProgress,
+            UpdateInstallProgress,
+            UpdateVerifyProgress,
         }
 
         private enum WorkerInboundOpcode : int
@@ -475,6 +523,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             GetMissingPartIndicesPerPatch,
             GetMissingPartIndicesPerTargetFile,
             GetTooLongTargetFiles,
+            SetWorkerProcessPriority,
         }
 
         public static void Test()
@@ -511,20 +560,21 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                         Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                     }
 
-                    verifier.OnProgress += ReportCheckProgress;
-                    await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
-                    // TODO: check one at a time if random access is slow?
-                    await verifier.VerifyFiles(Environment.ProcessorCount, cancellationToken);
-                    verifier.OnProgress -= ReportCheckProgress;
-
-                    var missing = await verifier.GetMissingPartIndicesPerPatch();
-
                     void ReportInstallProgress(int index, long progress, long max)
                     {
                         Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                     }
 
-                    verifier.OnProgress += ReportInstallProgress;
+                    verifier.OnVerifyProgress += ReportCheckProgress;
+                    verifier.OnInstallProgress += ReportInstallProgress;
+
+                    await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
+                    // TODO: check one at a time if random access is slow?
+                    await verifier.VerifyFiles(Environment.ProcessorCount, cancellationToken);
+                    verifier.OnVerifyProgress -= ReportCheckProgress;
+
+                    var missing = await verifier.GetMissingPartIndicesPerPatch();
+
                     await verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
                     var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                     for (var i = 0; i < patchIndex.Sources.Count; i++)
@@ -536,7 +586,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                     }
                     await verifier.Install(maxConcurrentConnectionsForPatchSet, cancellationToken);
                     await verifier.WriteVersionFiles(gameRootPath);
-                    verifier.OnProgress -= ReportInstallProgress;
+                    verifier.OnInstallProgress -= ReportInstallProgress;
                 }
             }).Wait();
         }
