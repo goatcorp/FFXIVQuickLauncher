@@ -24,6 +24,7 @@ namespace XIVLauncher.Windows
     public partial class PatchDownloadDialog : Window
     {
         private readonly PatchManager _manager;
+        private readonly Timer _timer;
 
         public PatchDownloadDialogViewModel ViewModel => DataContext as PatchDownloadDialogViewModel;
 
@@ -33,12 +34,12 @@ namespace XIVLauncher.Windows
             InitializeComponent();
             this.DataContext = new PatchDownloadDialogViewModel();
 
-            var viewUpdateTimer = new Timer();
-            viewUpdateTimer.Elapsed += ViewUpdateTimerOnElapsed;
-            viewUpdateTimer.AutoReset = true;
-            viewUpdateTimer.Interval = 200;
-            viewUpdateTimer.Enabled = true;
-            viewUpdateTimer.Start();
+            _timer = new Timer();
+            _timer.Elapsed += ViewUpdateTimerOnElapsed;
+            _timer.AutoReset = true;
+            _timer.Interval = 200;
+            _timer.Enabled = true;
+            _timer.Start();
         }
 
         private void ViewUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
@@ -220,6 +221,11 @@ namespace XIVLauncher.Windows
 #if DEBUG
             _manager.CancelAllDownloads();
 #endif
+        }
+
+        public void StopTimer()
+        {
+            _timer.Stop();
         }
     }
 }

@@ -510,6 +510,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 progressDialog.Dispatcher.Invoke(() =>
                 {
+                    progressDialog.StopTimer();
                     progressDialog.Hide();
                     progressDialog.Close();
                 });
@@ -582,6 +583,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 progressDialog.Dispatcher.Invoke(() =>
                 {
+                    progressDialog.StopTimer();
                     progressDialog.Hide();
                     progressDialog.Close();
                 });
