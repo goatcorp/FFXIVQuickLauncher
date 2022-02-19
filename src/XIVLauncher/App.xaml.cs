@@ -56,7 +56,7 @@ namespace XIVLauncher
             {
                 if (arg.StartsWith("--roamingPath="))
                 {
-                    Paths.RoamingPath = arg.Substring(14);
+                    Paths.OverrideRoamingPath(arg.Substring(14));
                 }
                 else if (arg.StartsWith("--dalamudRunner="))
                 {

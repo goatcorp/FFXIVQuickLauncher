@@ -1,5 +1,6 @@
 using System.IO;
 using Newtonsoft.Json;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Settings
 {

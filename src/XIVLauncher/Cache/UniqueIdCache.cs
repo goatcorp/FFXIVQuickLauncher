@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Newtonsoft.Json;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Cache
 {
@@ -54,7 +53,7 @@ namespace XIVLauncher.Cache
             _cache.Clear();
             Save();
         }
-        
+
         #endregion
 
         private void DeleteOldCaches()

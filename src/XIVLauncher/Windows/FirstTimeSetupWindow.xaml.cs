@@ -32,7 +32,7 @@ namespace XIVLauncher.Windows
             this.actPath = this.FindAct();
 
 #if !XL_NOAUTOUPDATE
-            if (EnvironmentSettings.IsDisableUpdates || Util.GetBuildOrigin() != "goatcorp/FFXIVQuickLauncher")
+            if (EnvironmentSettings.IsDisableUpdates || AppUtil.GetBuildOrigin() != "goatcorp/FFXIVQuickLauncher")
             {
 #endif
                 CustomMessageBox.Show(

@@ -19,7 +19,7 @@ namespace XIVLauncher.Http
             "\n"+
             "{app:\"XIVLauncher\", version: \"" +
 #if !XL_NOAUTOUPDATE
-            Util.GetAssemblyVersion() +
+            AppUtil.GetAssemblyVersion() +
 #else
             AppUtil.GetGitHash() +
 #endif
