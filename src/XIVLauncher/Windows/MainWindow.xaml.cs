@@ -298,7 +298,7 @@ namespace XIVLauncher.Windows
                     Model.IsLoggingIn = true;
                     Dispatcher.InvokeAsync(() => Model.Login(savedAccount.UserName, savedAccount.Password,
                         savedAccount.UseOtp,
-                        savedAccount.UseSteamServiceAccount, true, true));
+                        savedAccount.UseSteamServiceAccount, true, true, false, false));
 
                     return;
                 }
@@ -463,7 +463,7 @@ namespace XIVLauncher.Windows
                         return;
 
                     Model.IsLoggingIn = true;
-                    await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true);
+                    await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true, false, false);
                     Model.IsLoggingIn = false;
                 });
 
@@ -502,7 +502,7 @@ namespace XIVLauncher.Windows
                 return;
 
             Model.IsLoggingIn = true;
-            await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true);
+            await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true, false, false);
             Model.IsLoggingIn = false;
         }
 
@@ -561,6 +561,12 @@ namespace XIVLauncher.Windows
                 State = Launcher.LoginState.Ok,
                 UniqueId = "0"
             }, true, false);
+        }
+
+        private void LoginPassword_OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (this.DataContext != null)
+                ((MainWindowViewModel)this.DataContext).Password = ((PasswordBox)sender).Password;
         }
     }
 }

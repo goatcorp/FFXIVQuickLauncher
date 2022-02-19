@@ -74,7 +74,7 @@ namespace XIVLauncher.Game
             public string UniqueId { get; set; }
         }
 
-        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath)
+        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion)
         {
             string uid;
             PatchListEntry[] pendingPatches = null;
@@ -109,7 +109,7 @@ namespace XIVLauncher.Game
                     };
                 }
 
-                (uid, loginState, pendingPatches) = await RegisterSession(oauthLoginResult, gamePath);
+                (uid, loginState, pendingPatches) = await RegisterSession(oauthLoginResult, gamePath, forceBaseVersion);
 
                 if (useCache)
                     Task.Run(() => UniqueIdCache.Instance.AddCachedUid(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion))
@@ -217,21 +217,21 @@ namespace XIVLauncher.Game
             return game;
         }
 
-        private static string GetVersionReport(DirectoryInfo gamePath, int exLevel)
+        private static string GetVersionReport(DirectoryInfo gamePath, int exLevel, bool forceBaseVersion)
         {
             var verReport = $"{GetBootVersionHash(gamePath)}";
 
             if (exLevel >= 1)
-                verReport += $"\nex1\t{Repository.Ex1.GetVer(gamePath)}";
+                verReport += $"\nex1\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex1.GetVer(gamePath))}";
 
             if (exLevel >= 2)
-                verReport += $"\nex2\t{Repository.Ex2.GetVer(gamePath)}";
+                verReport += $"\nex2\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex2.GetVer(gamePath))}";
 
             if (exLevel >= 3)
-                verReport += $"\nex3\t{Repository.Ex3.GetVer(gamePath)}";
+                verReport += $"\nex3\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex3.GetVer(gamePath))}";
 
             if (exLevel >= 4)
-                verReport += $"\nex4\t{Repository.Ex4.GetVer(gamePath)}";
+                verReport += $"\nex4\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex4.GetVer(gamePath))}";
 
             return verReport;
         }
@@ -277,15 +277,15 @@ namespace XIVLauncher.Game
             return PatchListParser.Parse(text);
         }
 
-        private async Task<(string Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath)
+        private async Task<(string Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
         {
             var request = new HttpRequestMessage(HttpMethod.Post,
-                $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{Repository.Ffxiv.GetVer(gamePath)}/{loginResult.SessionId}");
+                $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{loginResult.SessionId}");
 
             request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
             request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
 
-            request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion));
+            request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion, forceBaseVersion));
 
             var resp = await _client.SendAsync(request);
             var text = await resp.Content.ReadAsStringAsync();
