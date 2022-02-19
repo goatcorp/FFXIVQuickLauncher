@@ -23,6 +23,8 @@ namespace XIVLauncher.Game.Patch
         private Dictionary<Repository, string> _repoMetaPaths = new();
         private Dictionary<string, string> _patchSources = new();
 
+        public int NumBrokenFiles { get; private set; } = 0;
+
         private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/main/";
 
         public enum VerifyState
@@ -116,6 +118,8 @@ namespace XIVLauncher.Game.Patch
                             {
                                 if (!missing[i].Any())
                                     continue;
+
+                                NumBrokenFiles++;
 
                                 await _remote.QueueInstall(i, _patchSources[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
                             }

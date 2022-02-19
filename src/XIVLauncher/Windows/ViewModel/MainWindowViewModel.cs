@@ -227,7 +227,7 @@ namespace XIVLauncher.Windows.ViewModel
                     {
                         Log.Information("STARTING REPAIR");
 
-                        var verify = new PatchVerifier();
+                        using var verify = new PatchVerifier();
 
                         verify.SetLoginState(loginResult);
 
@@ -249,6 +249,18 @@ namespace XIVLauncher.Windows.ViewModel
                         }
 
                         verify.Start();
+
+                        if (verify.State == PatchVerifier.VerifyState.Done)
+                        {
+                            var successMsgTemplate = Loc.Localize("GameRepairSuccess",
+                                "Game files were verified by XIVLauncher. {0} were repaired.\n\nPlease log in normally.");
+
+                            CustomMessageBox.Show(string.Format(successMsgTemplate, verify.NumBrokenFiles),
+                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                            Reactivate();
+                            return;
+                        }
 
                         return;
                     }
