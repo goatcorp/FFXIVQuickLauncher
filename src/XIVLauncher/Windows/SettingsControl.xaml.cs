@@ -99,7 +99,7 @@ namespace XIVLauncher.Windows
 
             DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
 
-            VersionLabel.Text += " - v" + Util.GetAssemblyVersion() + " - " + Util.GetGitHash() + " - " + Environment.Version;
+            VersionLabel.Text += " - v" + AppUtil.GetAssemblyVersion() + " - " + AppUtil.GetGitHash() + " - " + Environment.Version;
 
             var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
 
@@ -547,7 +547,7 @@ namespace XIVLauncher.Windows
 
         private void VersionLabel_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            new ChangelogWindow(EnvironmentSettings.IsPreRelease, Util.GetAssemblyVersion()).ShowDialog();
+            new ChangelogWindow(EnvironmentSettings.IsPreRelease, AppUtil.GetAssemblyVersion()).ShowDialog();
         }
     }
 }

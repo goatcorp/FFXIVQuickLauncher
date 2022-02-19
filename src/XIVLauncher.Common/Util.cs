@@ -27,40 +27,11 @@ namespace XIVLauncher.Common
         }
 
         /// <summary>
-        ///     Gets the git hash value from the assembly
-        ///     or null if it cannot be found.
-        /// </summary>
-        public static string GetGitHash()
-        {
-            var asm = typeof(Util).Assembly;
-            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
-            return attrs.FirstOrDefault(a => a.Key == "GitHash")?.Value;
-        }
-
-        /// <summary>
-        ///     Gets the build origin from the assembly
-        ///     or null if it cannot be found.
-        /// </summary>
-        public static string GetBuildOrigin()
-        {
-            var asm = typeof(Util).Assembly;
-            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
-            return attrs.FirstOrDefault(a => a.Key == "BuildOrigin")?.Value;
-        }
-
-        /// <summary>
         ///     Returns <see langword="true"/> if the current system region is set to North America.
         /// </summary>
         public static bool IsRegionNorthAmerica()
         {
             return RegionInfo.CurrentRegion.TwoLetterISORegionName is "US" or "MX" or "CA";
-        }
-
-        public static string GetAssemblyVersion()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fvi.FileVersion;
         }
 
         public static bool IsValidFfxivPath(string path)
@@ -260,15 +231,6 @@ namespace XIVLauncher.Common
             }
 
             return freeSpace;
-        }
-
-        public static string GetFromResources(string resourceName)
-        {
-            var asm = typeof(Util).Assembly;
-            using var stream = asm.GetManifestResourceStream(resourceName);
-            using var reader = new StreamReader(stream);
-
-            return reader.ReadToEnd();
         }
 
         private static readonly IPEndPoint DefaultLoopbackEndpoint = new(IPAddress.Loopback, port: 0);

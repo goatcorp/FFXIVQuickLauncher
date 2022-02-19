@@ -100,9 +100,9 @@ namespace XIVLauncher.Support
                 DalamudInjectionDelay = App.Settings.DalamudInjectionDelayMs,
                 SteamIntegration = App.Settings.SteamIntegrationEnabled,
                 EncryptArguments = App.Settings.EncryptArguments.GetValueOrDefault(true),
-                LauncherVersion = Util.GetAssemblyVersion(),
-                LauncherHash = Util.GetGitHash(),
-                Official = Util.GetBuildOrigin() == "goatcorp/FFXIVQuickLauncher",
+                LauncherVersion = AppUtil.GetAssemblyVersion(),
+                LauncherHash = AppUtil.GetGitHash(),
+                Official = AppUtil.GetBuildOrigin() == "goatcorp/FFXIVQuickLauncher",
                 DpiAwareness = App.Settings.DpiAwareness.GetValueOrDefault(),
                 Platform = Util.GetPlatform(),
 

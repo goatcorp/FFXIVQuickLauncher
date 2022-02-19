@@ -21,7 +21,7 @@ namespace XIVLauncher.Http
 #if !XL_NOAUTOUPDATE
             Util.GetAssemblyVersion() +
 #else
-            Util.GetGitHash() +
+            AppUtil.GetGitHash() +
 #endif
             "\"}"
         );

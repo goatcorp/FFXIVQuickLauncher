@@ -4,6 +4,7 @@ using System.Media;
 using System.Threading;
 using System.Windows;
 using XIVLauncher.Common;
+using XIVLauncher.Game;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 
@@ -23,8 +24,8 @@ namespace XIVLauncher.Windows
             DataContext = new ErrorWindowViewModel();
 
             ExceptionTextBox.AppendText(exc.ToString());
-            ExceptionTextBox.AppendText("\nVersion: " + Util.GetAssemblyVersion());
-            ExceptionTextBox.AppendText("\nGit Hash: " + Util.GetGitHash());
+            ExceptionTextBox.AppendText("\nVersion: " + AppUtil.GetAssemblyVersion());
+            ExceptionTextBox.AppendText("\nGit Hash: " + AppUtil.GetGitHash());
             ExceptionTextBox.AppendText("\nContext: " + context);
             ExceptionTextBox.AppendText("\nOS: " + Environment.OSVersion);
             ExceptionTextBox.AppendText("\n64bit? " + Environment.Is64BitProcess);

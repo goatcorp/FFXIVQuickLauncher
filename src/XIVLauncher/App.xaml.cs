@@ -64,7 +64,7 @@ namespace XIVLauncher
                 }
             }
 
-            var release = $"xivlauncher-{Util.GetAssemblyVersion()}-{Util.GetGitHash()}";
+            var release = $"xivlauncher-{AppUtil.GetAssemblyVersion()}-{AppUtil.GetGitHash()}";
 
             try
             {
@@ -115,7 +115,7 @@ namespace XIVLauncher
                 Log.Information("Trying to set up Loc for language code {0}", App.Settings.LauncherLanguage.GetLocalizationCode());
                 if (!App.Settings.LauncherLanguage.IsDefault())
                 {
-                    Loc.Setup(Util.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{App.Settings.LauncherLanguage.GetLocalizationCode()}.json"));
+                    Loc.Setup(AppUtil.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{App.Settings.LauncherLanguage.GetLocalizationCode()}.json"));
                 }
                 else
                 {
