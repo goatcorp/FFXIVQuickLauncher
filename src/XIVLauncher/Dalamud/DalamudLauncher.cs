@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -220,6 +221,24 @@ namespace XIVLauncher.Dalamud
             if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                 return false;
 
+            var arch = RuntimeInformation.ProcessArchitecture;
+
+            switch (arch)
+            {
+                case Architecture.X86:
+                    Log.Error("Dalamud doesn't run on x86.");
+                    return false;
+                case Architecture.X64:
+                    break;
+                case Architecture.Arm:
+                    Log.Error("Dalamud doesn't run on arm32.");
+                    return false;
+                case Architecture.Arm64:
+                    Log.Error("Please make sure you have x64 emulation turned on!");
+                    return false;
+
+            }
+
             return true;
         }
 
@@ -254,10 +273,35 @@ namespace XIVLauncher.Dalamud
             // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
             // and https://github.com/bitbeans/RedistributableChecker
 
-            var vcreg = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum", false);
-            if (vcreg == null) return false;
-            var vcVersion = vcreg.GetValue("Version");
-            if (((string)vcVersion).StartsWith("14"))
+            var VC2022Paths = new List<string>
+                        {
+                            @"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum",
+                            @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64",
+                            @"Installer\Dependencies\Microsoft.VS.VC_RuntimeMinimumVSU_amd64,v14",
+                            @"Installer\Dependencies\VC,redist.x64,amd64,14.31,bundle",
+                            @"Installer\Dependencies\VC,redist.x64,amd64,14.30,bundle",
+                            @"Installer\Dependencies\VC,redist.x64,amd64,14.29,bundle",
+                            @"Installer\Dependencies\VC,redist.x64,amd64,14.28,bundle"
+                            // technically, this was introduced in VCrun2017 with 14.16
+                            // but we shouldn't go that far
+                        };
+
+            bool passedRegistry = false;
+            foreach (var path in VC2022Paths)
+            {
+                Log.Debug("Checking Registry with: " + path);
+                var vcregcheck = Registry.ClassesRoot.OpenSubKey(path, false);
+                if (vcregcheck == null) continue;
+                var vcVersioncheck = vcregcheck.GetValue("Version") ?? "";
+                if (((string)vcVersioncheck).StartsWith("14"))
+                {
+                    passedRegistry = true;
+                    Log.Debug("Passed Registry Check with: " + path);
+                    break;
+                }
+            }
+
+            if (passedRegistry)
             {
                 if (!EnvironmentSettings.IsWine)
                 {
@@ -265,9 +309,16 @@ namespace XIVLauncher.Dalamud
                         CheckLibrary("vcruntime140_clr0400") &&
                         CheckLibrary("vcruntime140"))
                         return true;
+
+                    Log.Error("Missing DLL files required by Dalamud.");
                 }
                 else return true;
             }
+            else
+            {
+                Log.Error("Failed all registry checks to find Visual C++ 2019 Runtime.");
+            }
+            
             return false;
         }
 
