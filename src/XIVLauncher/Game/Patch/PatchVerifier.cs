@@ -29,7 +29,6 @@ namespace XIVLauncher.Game.Patch
         {
             Unknown,
             Verify,
-            Repair,
             Done,
             Cancelled
         }
@@ -122,10 +121,8 @@ namespace XIVLauncher.Game.Patch
                             }
                             await _remote.Install(maxConcurrentConnectionsForPatchSet, this._cancellationTokenSource.Token);
                             await _remote.WriteVersionFiles(adjustedGamePath);
-                            //_remote.OnProgress -= ReportInstallProgress;
+                            _remote.OnProgress -= ReportInstallProgress;
                         }
-                        break;
-                    case VerifyState.Repair:
                         break;
                     case VerifyState.Done:
                         break;
