@@ -22,11 +22,13 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
         public int ProgressReportInterval = 250;
         private readonly List<Stream> TargetStreams = new();
 
-        public delegate void OnCorruptionFoundDelegate(ref IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result);
-        public delegate void OnProgressDelegate(int index, long progress, long max);
+        public delegate void OnCorruptionFoundDelegate(IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result);
+        public delegate void OnVerifyProgressDelegate(int targetIndex, long progress, long max);
+        public delegate void OnInstallProgressDelegate(int sourceIndex, long progress, long max);
 
-        public readonly List<OnCorruptionFoundDelegate> OnCorruptionFound = new();
-        public readonly List<OnProgressDelegate> OnProgress = new();
+        public event OnCorruptionFoundDelegate OnCorruptionFound;
+        public event OnVerifyProgressDelegate OnVerifyProgress;
+        public event OnInstallProgressDelegate OnInstallProgress;
 
         public IndexedZiPatchInstaller(IndexedZiPatchIndex def)
         {
@@ -38,18 +40,6 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             }
             foreach (var _ in def.Sources)
                 MissingPartIndicesPerPatch.Add(new());
-        }
-
-        private void TriggerOnProgress(int index, long progress, long max)
-        {
-            foreach (var d in OnProgress)
-                d(index, progress, max);
-        }
-
-        private void TriggerOnCorruptionFound(IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result)
-        {
-            foreach (var d in OnCorruptionFound)
-                d(ref part, result);
         }
 
         public async Task VerifyFiles(int concurrentCount = 8, CancellationToken? cancellationToken = null)
@@ -65,18 +55,18 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 long progressCounter = 0;
                 long progressMax = Index.Targets.Select(x => x.FileSize).Sum();
 
-                Queue<int> pendingSourceIndices = new();
+                Queue<int> pendingTargetIndices = new();
                 for (int i = 0; i < Index.Length; i++)
-                    pendingSourceIndices.Enqueue(i);
+                    pendingTargetIndices.Enqueue(i);
 
                 Task progressReportTask = null;
-                while (verifyTasks.Any() || pendingSourceIndices.Any())
+                while (verifyTasks.Any() || pendingTargetIndices.Any())
                 {
                     localCancelSource.Token.ThrowIfCancellationRequested();
 
-                    while (pendingSourceIndices.Any() && verifyTasks.Count < concurrentCount)
+                    while (pendingTargetIndices.Any() && verifyTasks.Count < concurrentCount)
                     {
-                        var targetIndex = pendingSourceIndices.Dequeue();
+                        var targetIndex = pendingTargetIndices.Dequeue();
                         var stream = TargetStreams[targetIndex];
                         if (stream == null)
                             continue;
@@ -108,7 +98,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                                             if (file[j].IsFromSourceFile)
                                                 MissingPartIndicesPerPatch[file[j].SourceIndex].Add(Tuple.Create(file[j].TargetIndex, j));
                                             MissingPartIndicesPerTargetFile[file[j].TargetIndex].Add(j);
-                                            TriggerOnCorruptionFound(file[j], verifyResult);
+                                            OnCorruptionFound?.Invoke(file[j], verifyResult);
                                             break;
                                     }
                                 }
@@ -119,7 +109,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                     if (progressReportTask == null || progressReportTask.IsCompleted)
                     {
                         progressReportTask = Task.Delay(ProgressReportInterval, localCancelSource.Token);
-                        TriggerOnProgress(Math.Max(0, Index.Length - pendingSourceIndices.Count - verifyTasks.Count - 1), progressCounter, progressMax);
+                        OnVerifyProgress?.Invoke(Math.Max(0, Index.Length - pendingTargetIndices.Count - verifyTasks.Count - 1), progressCounter, progressMax);
                     }
 
                     verifyTasks.Add(progressReportTask);
@@ -479,7 +469,7 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
 
                 var taskIndex = Math.Max(0, InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count - 1);
                 var sourceIndexForProgressDisplay = InstallTaskConfigs[Math.Min(taskIndex, InstallTaskConfigs.Count - 1)].SourceIndex;
-                TriggerOnProgress(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
+                OnInstallProgress?.Invoke(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
 
                 if (progressReportTask == null || progressReportTask.IsCompleted)
                     progressReportTask = cancellationToken.HasValue ? Task.Delay(ProgressReportInterval, cancellationToken.Value) : Task.Delay(250);

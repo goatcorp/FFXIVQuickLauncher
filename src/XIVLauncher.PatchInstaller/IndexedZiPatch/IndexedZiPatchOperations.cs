@@ -77,12 +77,9 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                 ProgressReportInterval = 1000
             };
 
-            verifier.OnProgress.Clear();
-            verifier.OnProgress.Add((int index, long progress, long max) => Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max));
-
             var remainingErrorMessagesToShow = 8;
-            verifier.OnCorruptionFound.Clear();
-            verifier.OnCorruptionFound.Add((ref IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result) =>
+            void OnVerifyProgressCallback(int index, long progress, long max) => Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max); ;
+            void OnCorruptionFoundCallback(IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result)
             {
                 switch (result)
                 {
@@ -104,10 +101,21 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
                         }
                         break;
                 }
-            });
+            };
 
-            verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
-            await verifier.VerifyFiles(8, cancellationToken);
+            verifier.OnVerifyProgress += OnVerifyProgressCallback;
+            verifier.OnCorruptionFound += OnCorruptionFoundCallback;
+
+            try
+            {
+                verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
+                await verifier.VerifyFiles(8, cancellationToken);
+            }
+            finally
+            {
+                verifier.OnVerifyProgress -= OnVerifyProgressCallback;
+                verifier.OnCorruptionFound -= OnCorruptionFoundCallback;
+            }
 
             return verifier;
         }
@@ -130,11 +138,17 @@ namespace XIVLauncher.PatchInstaller.IndexedZiPatch
             for (var i = 0; i < patchIndex.Sources.Count; i++)
                 verifier.QueueInstall(i, client, baseUri + patchIndex.Sources[i], null, concurrentCount);
 
-            verifier.OnProgress.Clear();
-            verifier.OnProgress.Add((int index, long progress, long max) => Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max));
-
-            await verifier.Install(concurrentCount, cancellationToken);
-            verifier.WriteVersionFiles(gameRootPath);
+            void OnInstallProgressCallback(int index, long progress, long max) => Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+            verifier.OnInstallProgress += OnInstallProgressCallback;
+            try
+            {
+                await verifier.Install(concurrentCount, cancellationToken);
+                verifier.WriteVersionFiles(gameRootPath);
+            }
+            finally
+            {
+                verifier.OnInstallProgress -= OnInstallProgressCallback;
+            }
         }
 
         public static async Task RepairFromPatchFileIndexFromUri(string patchIndexFilePath, string gameRootPath, HttpClient client, string baseUri, int concurrentCount, CancellationToken? cancellationToken = null) => await RepairFromPatchFileIndexFromUri(new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress))), gameRootPath, client, baseUri, concurrentCount, cancellationToken);

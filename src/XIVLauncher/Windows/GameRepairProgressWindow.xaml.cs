@@ -1,4 +1,5 @@
-﻿using System.Timers;
+﻿using System;
+using System.Timers;
 using System.Windows;
 using XIVLauncher.Common;
 using XIVLauncher.Game;
@@ -43,7 +44,7 @@ namespace XIVLauncher.Windows
                 }
 
                 InfoTextBlock.Text = $"{_verify.CurrentFile}";
-                StatusTextBlock.Text = $"{this._verify.Index + 1}/{_verify.PatchIndexLength} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
+                StatusTextBlock.Text = $"{Math.Min(_verify.TaskIndex + 1, _verify.TaskCount)}/{_verify.TaskCount} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
                 this.Progress.Value = _verify.Total != 0 ? 100.0 * _verify.Progress / _verify.Total : 0;
             });
         }

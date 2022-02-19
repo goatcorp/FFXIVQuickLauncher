@@ -500,7 +500,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 verify.Start();
 
-                while (verify.State != PatchVerifier.VerifyState.Done && verify.State != PatchVerifier.VerifyState.Cancelled)
+                while (verify.State != PatchVerifier.VerifyState.Done && verify.State != PatchVerifier.VerifyState.Cancelled && verify.State != PatchVerifier.VerifyState.Error)
                 {
                     await Task.Delay(1000);
                 }
@@ -521,6 +521,12 @@ namespace XIVLauncher.Windows.ViewModel
 
                     Reactivate();
                     return true;
+                }
+                else if (verify.State == PatchVerifier.VerifyState.Error)
+                {
+                    // TODO: Display error
+                    CustomMessageBox.Show($"Last exception: {verify.LastException}",
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
                 mutex.Close();
