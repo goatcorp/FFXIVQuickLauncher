@@ -123,6 +123,8 @@ namespace XIVLauncher.Game.Patch
                             await _remote.WriteVersionFiles(adjustedGamePath);
                             _remote.OnProgress -= ReportInstallProgress;
                         }
+
+                        State = VerifyState.Done;
                         break;
                     case VerifyState.Done:
                         break;
