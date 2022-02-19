@@ -321,7 +321,7 @@ namespace XIVLauncher.Windows.ViewModel
                 if (startGame)
                 {
                     Hide();
-                    Task.Run(() => StartGameAndAddon(loginResult, gateStatus, isSteam)).Wait();
+                    Task.Run(() => StartGameAndAddon(loginResult, gateStatus, isSteam, forceNoDalamud)).Wait();
                 }
                 else
                 {
@@ -613,7 +613,7 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
-        public void StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus, bool isSteam)
+        public void StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus, bool isSteam, bool forceNoDalamud)
         {
             if (!gateStatus)
             {
@@ -628,10 +628,11 @@ namespace XIVLauncher.Windows.ViewModel
             }
 
             var dalamudLauncher = new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
-            var inGameAddonOk = false;
-            if (App.Settings.InGameAddonEnabled)
+            var dalamudOk = false;
+            var isDalamudEnabled = App.Settings.InGameAddonEnabled && !forceNoDalamud;
+            if (isDalamudEnabled)
             {
-                inGameAddonOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
+                dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
             }
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
@@ -641,7 +642,7 @@ namespace XIVLauncher.Windows.ViewModel
                     process => {
                         if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.EntryPoint)
                         {
-                            if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11 && inGameAddonOk)
+                            if (isDalamudEnabled && App.Settings.IsDx11 && dalamudOk)
                             {
                                 dalamudLauncher.Setup(process, App.Settings);
                                 dalamudLauncher.Run();
@@ -674,7 +675,7 @@ namespace XIVLauncher.Windows.ViewModel
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
                 if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
                 {
-                    if (App.Settings.InGameAddonEnabled && App.Settings.IsDx11 && inGameAddonOk)
+                    if (isDalamudEnabled && App.Settings.IsDx11 && dalamudOk)
                     {
                         addons.Add(dalamudLauncher);
                     }
