@@ -39,6 +39,7 @@ namespace XIVLauncher.Windows.ViewModel
         public Action ReloadHeadlines;
 
         public Func<PatchManager, PatchDownloadDialog> PatchDownloadDialogFactory { get; set; }
+        public Func<PatchVerifier, GameRepairProgressWindow> GameRepairProgressWindowFactory { get; set; }
         public Func<OtpInputDialog> OtpInputDialogFactory { get; set; }
 
         public string Password { get; set; }
@@ -235,43 +236,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                     if (isRepair && loginResult.State == Launcher.LoginState.NeedsPatchGame)
                     {
-                        Log.Information("STARTING REPAIR");
-
-                        using var verify = new PatchVerifier();
-
-                        verify.SetLoginState(loginResult);
-
-                        try
-                        {
-                            await verify.GetPatchMeta();
-                        }
-                        catch (NoVersionReferenceException ex)
-                        {
-                            Log.Error(ex, "No version reference found");
-
-                            CustomMessageBox.Show(
-                                Loc.Localize("NoVersionReferenceError",
-                                    "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later."),
-                                Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
-
-                            Reactivate();
-                            return;
-                        }
-
-                        verify.Start();
-
-                        if (verify.State == PatchVerifier.VerifyState.Done)
-                        {
-                            var successMsgTemplate = Loc.Localize("GameRepairSuccess",
-                                "Game files were verified by XIVLauncher. {0} were repaired.\n\nPlease log in normally.");
-
-                            CustomMessageBox.Show(string.Format(successMsgTemplate, verify.NumBrokenFiles),
-                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                            Reactivate();
-                            return;
-                        }
-
+                        await RepairGame(loginResult);
                         return;
                     }
 
@@ -496,6 +461,79 @@ namespace XIVLauncher.Windows.ViewModel
 
                 ErrorWindow.Show(ex, "Please also check your login information or try again.", "Login");
                 Reactivate();
+            }
+        }
+
+        private async Task<bool> RepairGame(Launcher.LoginResult loginResult)
+        {
+            var mutex = new Mutex(false, "XivLauncherIsPatching");
+            if (mutex.WaitOne(0, false))
+            {
+                Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
+                Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0 ASSERTION FAILED");
+
+                Log.Information("STARTING REPAIR");
+
+                using var verify = new PatchVerifier(loginResult);
+
+                IsEnabled = false;
+
+                try
+                {
+                    await verify.GetPatchMeta();
+                }
+                catch (NoVersionReferenceException ex)
+                {
+                    Log.Error(ex, "No version reference found");
+
+                    CustomMessageBox.Show(
+                        Loc.Localize("NoVersionReferenceError",
+                            "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later."),
+                        Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    Reactivate();
+                    return false;
+                }
+
+                var progressDialog = GameRepairProgressWindowFactory(verify);
+                progressDialog.Show();
+
+                verify.Start();
+
+                while (verify.State != PatchVerifier.VerifyState.Done && verify.State != PatchVerifier.VerifyState.Cancelled)
+                {
+                    await Task.Delay(1000);
+                }
+
+                progressDialog.Dispatcher.Invoke(() =>
+                {
+                    progressDialog.Hide();
+                    progressDialog.Close();
+                });
+
+                if (verify.State == PatchVerifier.VerifyState.Done)
+                {
+                    var successMsgTemplate = Loc.Localize("GameRepairSuccess",
+                        "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.");
+
+                    CustomMessageBox.Show(string.Format(successMsgTemplate, verify.NumBrokenFiles, verify.NumBrokenFiles == 1 ? Loc.Localize("GameRepairSuccessFileWas", "file was") : Loc.Localize("GameRepairSuccessFilesWere", "files were")),
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    Reactivate();
+                    return true;
+                }
+
+                mutex.Close();
+                mutex = null;
+
+                return verify.State == PatchVerifier.VerifyState.Done;
+            }
+            else
+            {
+                CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(0);
+
+                return false;
             }
         }
 

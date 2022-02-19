@@ -24,6 +24,12 @@ namespace XIVLauncher.Game.Patch
         private Dictionary<string, string> _patchSources = new();
 
         public int NumBrokenFiles { get; private set; } = 0;
+        public bool IsInstalling { get; private set; } = false;
+        public int Index { get; private set; }
+        public long Progress { get; private set; }
+        public long Total { get; private set; }
+        public int PatchIndexLength { get; private set; }
+        public string CurrentFile { get; private set; }
 
         private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/main/";
 
@@ -37,12 +43,14 @@ namespace XIVLauncher.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.Unknown;
 
-        public PatchVerifier()
+        public PatchVerifier(Launcher.LoginResult loginResult)
         {
             var assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             _remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
                 true);
             _client = new HttpClient();
+
+            SetLoginState(loginResult);
         }
 
         public void Start()
@@ -57,10 +65,9 @@ namespace XIVLauncher.Game.Patch
             _cancellationTokenSource.Cancel();
         }
 
-        public void SetLoginState(Launcher.LoginResult result)
+        private void SetLoginState(Launcher.LoginResult result)
         {
             _patchSources.Clear();
-            Debug.Assert(result.PendingPatches.Length != 0);
 
             foreach (var patch in result.PendingPatches)
             {
@@ -89,29 +96,33 @@ namespace XIVLauncher.Game.Patch
                         {
                             var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
 
+                            IsInstalling = false;
+
+                            void UpdateFileName(int index, long progress, long max)
+                            {
+                                CurrentFile = patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath;
+                                Index = index;
+                                Progress = progress;
+                                Total = max;
+
+                                Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", index + 1, PatchIndexLength, IsInstalling ? "Checking" : "Installing", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                            }
+
+                            _remote.OnProgress += UpdateFileName;
+
+                            PatchIndexLength = patchIndex.Length;
+
                             await _remote.ConstructFromPatchFile(patchIndex);
 
                             var adjustedGamePath = Path.Combine(App.Settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
 
-                            void ReportCheckProgress(int index, long progress, long max)
-                            {
-                                Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
-                            }
-
-                            _remote.OnProgress += ReportCheckProgress;
                             await _remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
                             // TODO: check one at a time if random access is slow?
                             await _remote.VerifyFiles(Environment.ProcessorCount, this._cancellationTokenSource.Token);
-                            _remote.OnProgress -= ReportCheckProgress;
 
                             var missing = await _remote.GetMissingPartIndicesPerPatch();
+                            NumBrokenFiles += (await this._remote.GetMissingPartIndicesPerTargetFile()).Count(x => x.Any());
 
-                            void ReportInstallProgress(int index, long progress, long max)
-                            {
-                                Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
-                            }
-
-                            _remote.OnProgress += ReportInstallProgress;
                             await _remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath);
                             var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                             for (var i = 0; i < patchIndex.Sources.Count; i++)
@@ -119,14 +130,15 @@ namespace XIVLauncher.Game.Patch
                                 if (!missing[i].Any())
                                     continue;
 
-                                NumBrokenFiles++;
-
                                 await _remote.QueueInstall(i, _patchSources[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
                             }
 
+                            IsInstalling = true;
+
                             await _remote.Install(maxConcurrentConnectionsForPatchSet, this._cancellationTokenSource.Token);
                             await _remote.WriteVersionFiles(adjustedGamePath);
-                            _remote.OnProgress -= ReportInstallProgress;
+
+                            _remote.OnProgress -= UpdateFileName;
                         }
 
                         State = VerifyState.Done;

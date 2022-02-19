@@ -100,6 +100,23 @@ namespace XIVLauncher.Windows
                 return dialog;
             };
 
+            Model.GameRepairProgressWindowFactory = verify =>
+            {
+                var dialog = new GameRepairProgressWindow(verify);
+
+                if (this.IsVisible)
+                {
+                    dialog.Owner = this;
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+                else
+                {
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                }
+
+                return dialog;
+            };
+
             NewsListView.ItemsSource = new List<News>
             {
                 new News
