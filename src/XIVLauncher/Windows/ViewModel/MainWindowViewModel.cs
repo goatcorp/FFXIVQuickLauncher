@@ -174,7 +174,7 @@ namespace XIVLauncher.Windows.ViewModel
             var hasValidCache = UniqueIdCache.Instance.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
 
             var otp = string.Empty;
-            if (IsOtp && !hasValidCache)
+            if (IsOtp && (!hasValidCache || isRepair))
                 otp = AskForOtp();
 
             if (otp == null)
