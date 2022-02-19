@@ -159,7 +159,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             username = username.Replace(" ", string.Empty); // Remove whitespace
 
-            if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == PatcherMain.BASE_GAME_VERSION &&
+            if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == Constants.BASE_GAME_VERSION &&
                 App.Settings.UniqueIdCacheEnabled)
             {
                 CustomMessageBox.Show(

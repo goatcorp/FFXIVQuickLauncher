@@ -18,17 +18,9 @@ using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.PatchInstaller
 {
-    public class PatcherMain
+    public class Program
     {
-        public const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
-
         private static RpcBuffer _rpc;
-
-        public static JsonSerializerSettings JsonSettings = new()
-        {
-            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
-            TypeNameHandling = TypeNameHandling.All
-        };
 
         private static readonly ConcurrentQueue<PatcherIpcStartInstall> _queuedInstalls = new();
 
@@ -177,10 +169,10 @@ namespace XIVLauncher.PatchInstaller
 
         private static void RemoteCallHandler(ulong msgId, byte[] payload)
         {
-            var json = Base64Decode(Encoding.ASCII.GetString(payload));
+            var json = IpcHelpers.Base64Decode(Encoding.ASCII.GetString(payload));
             Log.Information("[PATCHER] IPC({0}): {1}", msgId, json);
 
-            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, JsonSettings);
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, IpcHelpers.JsonSettings);
 
             switch (msg.OpCode)
             {
@@ -221,7 +213,7 @@ namespace XIVLauncher.PatchInstaller
         {
             try
             {
-                var json = PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, PatcherMain.JsonSettings));
+                var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
 
                 Log.Information("[PATCHERIPC] SEND: " + json);
                 _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
@@ -230,18 +222,6 @@ namespace XIVLauncher.PatchInstaller
             {
                 Log.Error(e, "[PATCHERIPC] Failed to send message.");
             }
-        }
-
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
-        }
-
-        public static string Base64Decode(string base64EncodedData)
-        {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
         private static bool RunInstallQueue()
@@ -338,7 +318,7 @@ namespace XIVLauncher.PatchInstaller
                 {
                     Log.Error(ex, "Could not copy to BCK");
 
-                    if (ver != BASE_GAME_VERSION)
+                    if (ver != Constants.BASE_GAME_VERSION)
                         throw;
                 }
             }

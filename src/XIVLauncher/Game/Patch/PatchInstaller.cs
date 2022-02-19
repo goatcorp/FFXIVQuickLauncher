@@ -72,10 +72,10 @@ namespace XIVLauncher.Game.Patch
 
         private void RemoteCallHandler(ulong msgId, byte[] payload)
         {
-            var json = PatcherMain.Base64Decode(Encoding.ASCII.GetString(payload));
+            var json = IpcHelpers.Base64Decode(Encoding.ASCII.GetString(payload));
             Log.Information("[PATCHERIPC] IPC({0}): {1}", msgId, json);
 
-            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, PatcherMain.JsonSettings);
+            var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, IpcHelpers.JsonSettings);
 
             switch (msg.OpCode)
             {
@@ -160,7 +160,7 @@ namespace XIVLauncher.Game.Patch
         {
             try
             {
-                var json = PatcherMain.Base64Encode(JsonConvert.SerializeObject(envelope, PatcherMain.JsonSettings));
+                var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
 
                 Log.Information("[PATCHERIPC] SEND: " + json);
                 _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
