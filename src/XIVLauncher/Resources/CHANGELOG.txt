@@ -1,2 +1,10 @@
-﻿• No longer uses GitHub for updates, to prevent common connection issues when starting XIVLauncher
-• Various small fixes and adjustments
+﻿• Adds real game file verification & repair (thanks to kizer)
+    => Right click the login button and select "Repair game"
+    => XIVLauncher will check each file and repair the broken parts
+    => If you are using TexTools, this will restore the game to the original state
+    => Depending on how many files need to be replaced, this can take 1-10 minutes - way faster than reinstalling the entire game
+• Preparations for the march Steam update
+• XIVLauncher now offers to open the official launcher when there are update server problems
+• Fixes an issue wherein, on certain configurations, Visual C++ redistributables weren't detected
+• Updated localization files
+    => If you want to help with localization, please check out the GitHub repository and register on Crowdin!
