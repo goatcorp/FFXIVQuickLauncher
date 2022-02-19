@@ -284,8 +284,8 @@ namespace XIVLauncher.Windows
 
                     case IntegrityCheck.CompareResult.Invalid:
                         CustomMessageBox.Show(Loc.Localize("IntegrityCheckFailed",
-                            "Some game files seem to be modified or corrupted. Please check the \"integrityreport.txt\" file in the XIVLauncher folder for more information.\n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, please reinstall your game."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                            "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\"."),
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, showReportLinks: true);
                     break;
 
                     case IntegrityCheck.CompareResult.Valid:

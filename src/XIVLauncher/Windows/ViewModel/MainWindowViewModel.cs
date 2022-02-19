@@ -73,6 +73,16 @@ namespace XIVLauncher.Windows.ViewModel
                     return;
                 }
 
+                if (isRepair)
+                {
+                    if (MessageBox.Show(Loc.Localize("GameRepairDisclaimer", "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?"),
+                            "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                    {
+                        Reactivate();
+                        return;
+                    }
+                }
+
                 LoadingDialogCancelButtonVisibility = Visibility.Collapsed;
                 IsLoadingDialogOpen = true;
                 LoadingDialogMessage = Loc.Localize("LoadingDialogIsLoggingIn", "Transmission in progress...");

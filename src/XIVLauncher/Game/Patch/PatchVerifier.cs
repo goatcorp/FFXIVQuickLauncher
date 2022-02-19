@@ -123,6 +123,7 @@ namespace XIVLauncher.Game.Patch
 
                                 await _remote.QueueInstall(i, _patchSources[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
                             }
+
                             await _remote.Install(maxConcurrentConnectionsForPatchSet, this._cancellationTokenSource.Token);
                             await _remote.WriteVersionFiles(adjustedGamePath);
                             _remote.OnProgress -= ReportInstallProgress;
