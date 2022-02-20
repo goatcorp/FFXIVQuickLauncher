@@ -85,14 +85,19 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 LoadingDialogCancelButtonVisibility = Visibility.Collapsed;
-                IsLoadingDialogOpen = true;
-                LoadingDialogMessage = Loc.Localize("LoadingDialogIsLoggingIn", "Transmission in progress...");
+                //IsLoadingDialogOpen = true;
+                //LoadingDialogMessage = Loc.Localize("LoadingDialogIsLoggingIn", "Transmission in progress...");
+
+                IsEnabled = false;
+                LoginCardTransitionerIndex = 0;
 
                 IsLoggingIn = true;
 
                 await Login(Username, Password, IsOtp, IsSteam, false, startGame, isRepair, forceNoDalamud);
 
-                IsLoadingDialogOpen = false;
+                //IsLoadingDialogOpen = false;
+                LoginCardTransitionerIndex = 1;
+                IsEnabled = true;
                 IsLoggingIn = false;
             };
         }
@@ -771,6 +776,8 @@ namespace XIVLauncher.Windows.ViewModel
         private void Reactivate()
         {
             IsLoggingIn = false;
+            IsEnabled = true;
+            LoginCardTransitionerIndex = 1;
 
             ReloadHeadlines();
             Activate();
@@ -933,6 +940,17 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
+        private int _loginCardTransitionerIndex;
+        public int LoginCardTransitionerIndex
+        {
+            get => _loginCardTransitionerIndex;
+            set
+            {
+                _loginCardTransitionerIndex = value;
+                OnPropertyChanged(nameof(LoginCardTransitionerIndex));
+            }
+        }
+
         private bool _isLoadingDialogOpen;
         public bool IsLoadingDialogOpen
         {
@@ -988,6 +1006,7 @@ namespace XIVLauncher.Windows.ViewModel
             SettingsLoc = Loc.Localize("Settings", "Settings");
             WorldStatusLoc = Loc.Localize("WorldStatus", "World Status");
             MaintenanceQueue = Loc.Localize("MaintenanceQueue", "Wait for maintenance to be over");
+            IsLoggingInLoc = Loc.Localize("LoadingDialogIsLoggingIn", "Logging in...");
         }
 
         public string LoginUsernameLoc { get; private set; }
@@ -1006,6 +1025,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string SettingsLoc { get; private set; }
         public string WorldStatusLoc { get; private set; }
         public string MaintenanceQueue { get; private set; }
+        public string IsLoggingInLoc { get; private set; }
 
         #endregion
 

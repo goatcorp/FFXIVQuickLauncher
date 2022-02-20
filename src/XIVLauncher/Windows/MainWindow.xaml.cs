@@ -52,6 +52,8 @@ namespace XIVLauncher.Windows
             Closed += Model.OnWindowClosed;
             Closing += Model.OnWindowClosing;
 
+            Model.LoginCardTransitionerIndex = 1;
+
             Model.Activate += () => this.Dispatcher.Invoke(() =>
             {
                 this.Show();
