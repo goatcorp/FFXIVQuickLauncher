@@ -49,15 +49,19 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (IsDisposed)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            WaitForResult(GetRequestCreator(WorkerInboundOpcode.Dispose, null)).Wait();
-
-            if (WorkerProcess != null)
+            try
             {
-                if (!WorkerProcess.HasExited)
-                {
-                    WorkerProcess.Kill();
-                    WorkerProcess.WaitForExit();
-                }
+                WaitForResult(GetRequestCreator(WorkerInboundOpcode.DisposeAndExit, null), 0).Wait();
+            }
+            catch (Exception)
+            {
+                // ignore any exception
+            }
+
+            if (WorkerProcess != null && !WorkerProcess.HasExited)
+            {
+                WorkerProcess.WaitForExit(1000);
+                WorkerProcess.Kill();
             }
             SubprocessBuffer.Dispose();
             IsDisposed = true;
@@ -325,9 +329,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 Instance.OnVerifyProgress += OnVerifyProgressUpdate;
                                 break;
 
-                            case WorkerInboundOpcode.Dispose:
+                            case WorkerInboundOpcode.DisposeAndExit:
                                 Instance?.Dispose();
                                 Instance = null;
+                                Environment.Exit(0);
                                 break;
 
                             case WorkerInboundOpcode.VerifyFiles:
@@ -508,7 +513,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             CancelTask,
             Construct,
-            Dispose,
+            DisposeAndExit,
             VerifyFiles,
             MarkFileAsMissing,
             SetTargetStreamFromPathReadOnly,
