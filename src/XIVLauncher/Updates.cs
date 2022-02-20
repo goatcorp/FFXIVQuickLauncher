@@ -52,7 +52,7 @@ namespace XIVLauncher
                     {
                         changelogWindow.Dispatcher.Invoke(() =>
                         {
-                            changelogWindow.UpdateVersion("1.0.0.0");
+                            changelogWindow.UpdateVersion(newRelease.Version.ToString());
                             changelogWindow.Show();
                             changelogWindow.Closed += (_, _) =>
                             {
