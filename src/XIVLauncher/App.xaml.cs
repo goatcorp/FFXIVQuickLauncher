@@ -148,7 +148,27 @@ namespace XIVLauncher
                     var updateMgr = new Updates();
                     updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
 
-                    updateMgr.Run(EnvironmentSettings.IsPreRelease);
+                    var signal = new ManualResetEvent(false);
+
+                    var _ = updateMgr.Run(EnvironmentSettings.IsPreRelease, newVersion =>
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            try
+                            {
+                                var changelogWindow = new ChangelogWindow(EnvironmentSettings.IsPreRelease, newVersion);
+                                changelogWindow.ShowDialog();
+
+                                signal.Set();
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, "Could not show changelog");
+                            }
+                        });
+
+                        signal.WaitOne();
+                    });
                 }
                 catch (Exception ex)
                 {

@@ -19,7 +19,7 @@ namespace XIVLauncher
         public EventHandler OnUpdateCheckFinished;
 #endif
 
-        public async Task Run(bool downloadPrerelease = false)
+        public async Task Run(bool downloadPrerelease, Action<string> showChangelogWindow)
         {
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -48,16 +48,7 @@ namespace XIVLauncher
 
                 if (newRelease != null)
                 {
-                    try
-                    {
-                        var changelogWindow = new ChangelogWindow(downloadPrerelease, newRelease.Version.ToString());
-                        changelogWindow.ShowDialog();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Could not show changelog");
-                    }
-
+                    showChangelogWindow.Invoke(newRelease.Version.ToString());
 
                     UpdateManager.RestartApp();
                 }
