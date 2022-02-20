@@ -75,8 +75,6 @@ namespace XIVLauncher.Windows
 
             this.ChangeLogText.Text = vm.ChangelogLoadingLoc;
 
-            SystemSounds.Asterisk.Play();
-
             Activate();
             Topmost = true;
             Topmost = false;
@@ -91,6 +89,12 @@ namespace XIVLauncher.Windows
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        public new void Show()
+        {
+            SystemSounds.Asterisk.Play();
+            base.Show();
         }
 
         private void EmailButton_OnClick(object sender, RoutedEventArgs e)
