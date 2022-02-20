@@ -108,7 +108,7 @@ namespace XIVLauncher.Game
             {
                 var relativePath = file.FullName.Substring(rootDirectory.Length);
 
-                if (!relativePath.StartsWith("\\game"))
+                if (!relativePath.StartsWith("\\game") && !relativePath.StartsWith("game"))
                     continue;
 
                 if (onlyIndex && (!relativePath.EndsWith(".index") && !relativePath.EndsWith(".index2")))

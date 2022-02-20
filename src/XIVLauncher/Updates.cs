@@ -15,9 +15,7 @@ namespace XIVLauncher
 {
     class Updates
     {
-#if !XL_NOAUTOUPDATE
         public event Action<bool> OnUpdateCheckFinished;
-#endif
 
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {

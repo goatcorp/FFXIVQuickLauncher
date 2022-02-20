@@ -318,7 +318,7 @@ namespace XIVLauncher
             }
 
 #if XL_NOAUTOUPDATE
-            OnUpdateCheckFinished(null, null);
+            OnUpdateCheckFinished(true);
 #endif
         }
     }
