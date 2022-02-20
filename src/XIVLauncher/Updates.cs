@@ -16,10 +16,10 @@ namespace XIVLauncher
     class Updates
     {
 #if !XL_NOAUTOUPDATE
-        public EventHandler OnUpdateCheckFinished;
+        public event Action<bool> OnUpdateCheckFinished;
 #endif
 
-        public async Task Run(bool downloadPrerelease, Action<string> showChangelogWindow)
+        public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -48,13 +48,29 @@ namespace XIVLauncher
 
                 if (newRelease != null)
                 {
-                    showChangelogWindow.Invoke(newRelease.Version.ToString());
+                    try
+                    {
+                        changelogWindow.Dispatcher.Invoke(() =>
+                        {
+                            changelogWindow.UpdateVersion("1.0.0.0");
+                            changelogWindow.Show();
+                            changelogWindow.Closed += (_, _) =>
+                            {
+                                UpdateManager.RestartApp();
+                            };
+                        });
 
-                    UpdateManager.RestartApp();
+                        OnUpdateCheckFinished?.Invoke(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not show changelog window");
+                        UpdateManager.RestartApp();
+                    }
                 }
 #if !XL_NOAUTOUPDATE
                 else
-                    OnUpdateCheckFinished?.Invoke(this, null);
+                    OnUpdateCheckFinished?.Invoke(true);
 #endif
             }
             catch (Exception ex)

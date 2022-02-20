@@ -46,7 +46,9 @@ namespace XIVLauncher.Windows
             public VersionMeta PrereleaseVersion { get; set; }
         }
 
-        public ChangelogWindow(bool prerelease, string version)
+        private ChangeLogWindowViewModel Model => this.DataContext as ChangeLogWindowViewModel;
+
+        public ChangelogWindow(bool prerelease)
         {
             InitializeComponent();
 
@@ -54,8 +56,6 @@ namespace XIVLauncher.Windows
 
             var vm = new ChangeLogWindowViewModel();
             DataContext = vm;
-
-            UpdateNotice.Text = string.Format(vm.UpdateNoticeLoc, version);
 
             var _ = Task.Run(async () =>
             {
@@ -81,6 +81,11 @@ namespace XIVLauncher.Windows
             Topmost = true;
             Topmost = false;
             Focus();
+        }
+
+        public void UpdateVersion(string version)
+        {
+            UpdateNotice.Text = string.Format(Model.UpdateNoticeLoc, version);
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

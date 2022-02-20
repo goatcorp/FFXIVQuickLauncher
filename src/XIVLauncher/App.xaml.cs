@@ -148,27 +148,8 @@ namespace XIVLauncher
                     var updateMgr = new Updates();
                     updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
 
-                    var signal = new ManualResetEvent(false);
-
-                    var _ = updateMgr.Run(EnvironmentSettings.IsPreRelease, newVersion =>
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            try
-                            {
-                                var changelogWindow = new ChangelogWindow(EnvironmentSettings.IsPreRelease, newVersion);
-                                changelogWindow.ShowDialog();
-
-                                signal.Set();
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error(ex, "Could not show changelog");
-                            }
-                        });
-
-                        signal.WaitOne();
-                    });
+                    var changelogWindow = new ChangelogWindow(EnvironmentSettings.IsPreRelease);
+                    var _ = updateMgr.Run(EnvironmentSettings.IsPreRelease, changelogWindow);
                 }
                 catch (Exception ex)
                 {
@@ -204,7 +185,7 @@ namespace XIVLauncher
             }
         }
 
-        private void OnUpdateCheckFinished(object sender, EventArgs e)
+        private void OnUpdateCheckFinished(bool finishUp)
         {
             Dispatcher.Invoke(() =>
             {
@@ -214,6 +195,9 @@ namespace XIVLauncher
                 if (_updateWindow != null)
                     _updateWindow.Hide();
 #endif
+
+                if (!finishUp)
+                    return;
 
                 _mainWindow = new MainWindow();
                 _mainWindow.Initialize();
@@ -330,7 +314,7 @@ namespace XIVLauncher
 
             if (EnvironmentSettings.IsDisableUpdates)
             {
-                OnUpdateCheckFinished(null, null);
+                OnUpdateCheckFinished(true);
             }
 
 #if XL_NOAUTOUPDATE
