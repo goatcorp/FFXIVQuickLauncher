@@ -47,9 +47,17 @@
     "message": "检测到启动器更新。\n这通常意味着游戏也有更新。\n\n即将为您登录。",
     "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
   },
+  "SettingsGamePatchPathError": {
+    "message": "游戏和补丁的下载路径不能相同。\n请选择不同的游戏和补丁下载路径。",
+    "description": "SettingsControl.AcceptButton_Click"
+  },
   "LaunchAsSteam": {
     "message": "您希望使用 Steam 启动游戏吗？",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "IntegrityCheckBase": {
+    "message": "游戏没有安装到您指定的路径。\n请在检查游戏完整性之前安装游戏。",
+    "description": "SettingsControl.RunIntegrityCheck_OnClick"
   },
   "DalamudIncompatible": {
     "message": "Dalamud 尚未支持您的游戏版本。\n这可能由于游戏更新导致，请耐心等待。您可以在 Discord 上获取到最新的消息。",
@@ -73,15 +81,15 @@
   },
   "IntegrityCheckImpossible": {
     "message": "此游戏版本尚无参考报告。我们无法为您运行完整性检查，请稍后再试。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "一些游戏文件似乎已被修改或损坏。您可以从 XIVLauncher 文件夹中的「integrityreport.txt」文件中获取更多信息。\n\n如果您正在使用 TexTools 或其他模组，则这是必然的结果。\n\n如果您没有使用任何模组，请重新安装您的游戏。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+    "message": "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".",
+    "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
     "message": "您的游戏安装完整。",
-    "description": "<>c__DisplayClass17_0.<RunIntegrityCheck_OnClick>b__2"
+    "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "更改头像",
@@ -100,7 +108,15 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "XIVLauncher 已更新至 {0} 版本。",
+    "message": "XIVLauncher has been updated to version {0}.",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoading": {
+    "message": "Loading changelog...",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoadingError": {
+    "message": "Could not load changelog. Please check GitHub or Discord instead!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
@@ -140,7 +156,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
-    "message": "XIVLauncher 发生了未知错误。请先尝试查阅常见问题以找到解决方案。如果问题仍然存在，请点击下方按钮前往 GitHub 报告此问题。请简单描述您的问题并附上方框内的文本。",
+    "message": "XIVLauncher发生错误。请咨询常见问题。 如果这个问题仍然存在，请点击下面的按钮，在GitHub 上报告，描述问题并在方框中复制文本。",
+    "description": "ErrorWindowViewModel.SetupLoc"
+  },
+  "StartOfficialLauncher": {
+    "message": "官方启动器",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenIntegrityReport": {
@@ -198,6 +218,14 @@
   "FirstTimeDalamudCheckBox": {
     "message": "启用 Dalamud",
     "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "NowVerifying": {
+    "message": "Verifying game files...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairing": {
+    "message": "Repairing game files...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
     "message": "配置自动启动项",
@@ -267,6 +295,14 @@
     "message": "更新",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxRepairLogin": {
+    "message": "Repair game files",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoDalamudLogin": {
+    "message": "Start without Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxLoginTooltip": {
     "message": "使用提供的账号密码登录",
     "description": "MainWindowViewModel.SetupLoc"
@@ -299,85 +335,121 @@
     "message": "您正在启用自动登录功能。\nXIVLauncher 此后将使用当前账户登录，并不再弹出主窗口。\n\n如果您需要更改设置和账户，请在登录时按住 SHIFT 键。",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
+  "GameIsOpenRepairError": {
+    "message": "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.",
+    "description": "<<GetLoginFunc>b__0>d.MoveNext"
+  },
+  "GameRepairDisclaimer": {
+    "message": "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?",
+    "description": "<<GetLoginFunc>b__0>d.MoveNext"
+  },
   "LoadingDialogIsLoggingIn": {
     "message": "正在传输...",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "CheckBootVersionError": {
     "message": "XIVLauncher 无法获取可用的启动器版本。这可能是因为游戏服务器正在进行维护，或者您与版本服务器的连接不可用。如果您能够使用官方启动器登录，请向我们报告此问题。",
-    "description": "<HandleBootCheck>d__31.MoveNext"
+    "description": "<HandleBootCheck>d__40.MoveNext"
   },
   "GameIsOpenError": {
     "message": "游戏或官方启动器正在运行中，XIVLauncher 无法为您更新游戏。\n请关闭游戏或官方启动器后再试一遍。",
-    "description": "<HandleBootCheck>d__31.MoveNext"
+    "description": "<HandleBootCheck>d__40.MoveNext"
   },
   "PatcherAlreadyInProgress": {
     "message": "XIVLauncher 正在另一个进程中为您更新游戏。请检查您是否启动了两个 XIVLauncher。",
-    "description": "<HandleBootCheck>d__31.MoveNext"
+    "description": "<HandleBootCheck>d__40.MoveNext"
+  },
+  "KillswitchText": {
+    "message": "XIVLauncher 目前无法启动游戏，因为 Square Enix 修改了登录程序。\n我们需要根据这些变化进行调整，并验证我们的调整是否安全，然后才能重新启用启动器。请稍后再试。\n\n我们对这些情况表示歉意。\n\n你可以使用下面的「官方启动器」按钮来启动官方启动器。\n",
+    "description": "<Login>d__28.MoveNext"
+  },
+  "SteamLinkingText": {
+    "message": "你可能会被提示将你的 Steam 账户与连接到你的 Square Enix 账户。",
+    "description": "<Login>d__28.MoveNext"
   },
   "EmptyUsernameError": {
     "message": "请输入您的账号。",
-    "description": "<Login>d__20.MoveNext"
+    "description": "<Login>d__28.MoveNext"
   },
   "EmailUsernameError": {
     "message": "请输入您的 SE 账号，而不是您的邮箱。",
-    "description": "<Login>d__20.MoveNext"
+    "description": "<Login>d__28.MoveNext"
   },
   "EmptyPasswordError": {
     "message": "请输入您的密码。",
-    "description": "<Login>d__20.MoveNext"
+    "description": "<Login>d__28.MoveNext"
   },
   "UidCacheInstallError": {
     "message": "您在更新设置中启用了 UID 缓存。\n我们无法在此情况下为您重新安装游戏。\n\n如果您希望重新安装游戏，请先禁用 UID 缓存。",
-    "description": "<Login>d__20.MoveNext"
+    "description": "<Login>d__28.MoveNext"
   },
   "LoginNoServiceMessage": {
     "message": "该账户无法游玩 FINAL FANTASY XIV。\n\n如果您的 FFXIV 在 Steam 上购买，请确保您在登入时勾选了「使用 Steam 账户」。\n如果您启用了自动登入，请在启动时按住 Shift 键以访问设置。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "LoginAcceptTermsMessage": {
     "message": "请在官方启动器中接受 FINAL FANTASY XIV 的使用条款。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "EverythingIsFuckedMessage": {
     "message": "部分游戏文件已损坏或被第三方篡改，无法进行更新和启动。\n请重新安装游戏以修复此问题。\n\n如果该错误仍然持续，请通过 Discord 联系我们。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "PatchInstallDisclaimer": {
     "message": "发现新的补丁需要安装才能游玩。\n您想要 XIVLauncher 安装吗？",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "LoginNoStartOk": {
     "message": "执行了更新检查并安装了任何待处理的更新。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "NativeLauncherError": {
     "message": "无法正确启动游戏。请向我们报告此错误。\n\nHRESULT: 0x{0}",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "MultiboxDeniedWarning": {
     "message": "您无法启动两个以上的游戏程序。\n\n请检查是否存在没有正确关闭的游戏进程。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "GameExitedPrematurelyError": {
     "message": "XIVLauncher 无法确认游戏是否正常启动。\n\n这可能是一个暂时的问题。请尝试重启您的电脑。也有可能是因为您的游戏安装无效。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "BinaryNotPresentError": {
     "message": "无法找到游戏本体程序。\n这可能是您的杀毒软件造成的。您可能需要重装游戏。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "GenericLoginError": {
-    "message": "登录时发生错误，请报告此错误。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "message": "登录过程中发生错误，请报告此错误。",
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "LoginGenericServerIssue": {
     "message": "服务器发送了无效的响应。这通常会发生在服务器负载过高或服务中断的时候。\n请在一分钟后再试，或者尝试使用官方启动器。\n\n您可以从 Lodestone 了解到更多有关服务中断的信息。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
     "message": "\n\n自动登录已被禁用。",
-    "description": "<LoginToGame>d__22.MoveNext"
+    "description": "<LoginToGame>d__30.MoveNext"
+  },
+  "NoVersionReferenceError": {
+    "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
+    "description": "<RepairGame>d__31.MoveNext"
+  },
+  "GameRepairSuccess": {
+    "message": "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.",
+    "description": "<RepairGame>d__31.MoveNext"
+  },
+  "GameRepairSuccessFilesWere": {
+    "message": "files were",
+    "description": "<RepairGame>d__31.MoveNext"
+  },
+  "GameRepairSuccessFileWas": {
+    "message": "file was",
+    "description": "<RepairGame>d__31.MoveNext"
+  },
+  "GameRepairError": {
+    "message": "An error occurred while repairing the game files.\n\nYou may have to reinstall the game.",
+    "description": "<RepairGame>d__31.MoveNext"
   },
   "OtpInputPrompt": {
     "message": "请输入您的动态密码（OTP）。",
@@ -724,7 +796,7 @@
     "description": "PatchManager.Start"
   },
   "PatchManDlFailure": {
-    "message": "XIVLauncher无法验证已下载的游戏文件。\n\n这通常表明您的互联网连接存在问题。\n如果再次发生错误，请尝试使用 VPN 设置为日本。\n\n上下文： {0}\n{1}",
+    "message": "XIVLauncher 无法验证已下载的游戏文件。请重新启动并再试一次。\n\n这通常代表您的互联网连接发生问题。\n如果此错误仍然存在，请尝试使用日本 VPN。\n\n相关资讯： {0}\n{1}",
     "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
