@@ -7,8 +7,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
@@ -43,6 +45,27 @@ namespace XIVLauncher.Game.Patch
             Done,
             Cancelled,
             Error
+        }
+
+        private class VerifyVersions
+        {
+            [JsonPropertyName("boot")]
+            public string Boot { get; set; }
+
+            [JsonPropertyName("game")]
+            public string Game { get; set; }
+
+            [JsonPropertyName("ex1")]
+            public string Ex1 { get; set; }
+
+            [JsonPropertyName("ex2")]
+            public string Ex2 { get; set; }
+
+            [JsonPropertyName("ex3")]
+            public string Ex3 { get; set; }
+
+            [JsonPropertyName("ex4")]
+            public string Ex4 { get; set; }
         }
 
         public VerifyState State { get; private set; } = VerifyState.Unknown;
@@ -197,14 +220,17 @@ namespace XIVLauncher.Game.Patch
             var metaFolder = Path.Combine(Paths.RoamingPath, "patchMeta");
             Directory.CreateDirectory(metaFolder);
 
-            await this.GetRepoMeta(Repository.Ffxiv, metaFolder);
-            await this.GetRepoMeta(Repository.Ex1, metaFolder);
-            await this.GetRepoMeta(Repository.Ex2, metaFolder);
-            await this.GetRepoMeta(Repository.Ex3, metaFolder);
-            await this.GetRepoMeta(Repository.Ex4, metaFolder);
+            var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json");
+            var latestVersion = JsonConvert.DeserializeObject<VerifyVersions>(latestVersionJson);
+
+            await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder);
+            await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder);
+            await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder);
+            await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder);
+            await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder);
         }
 
-        private async Task GetRepoMeta(Repository repo, string baseDir)
+        private async Task GetRepoMeta(Repository repo, string latestVersion, string baseDir)
         {
             var version = repo.GetVer(App.Settings.GamePath);
             if (version == Constants.BASE_GAME_VERSION)
@@ -212,7 +238,7 @@ namespace XIVLauncher.Game.Patch
 
             // TODO: We should not assume that this always has a "D". We should just store them by the patchlist VersionId instead.
             var repoShorthand = repo == Repository.Ffxiv ? "game" : repo.ToString().ToLower();
-            var fileName = $"D{version}.patch.index";
+            var fileName = $"{latestVersion}.patch.index";
 
             var metaPath = Path.Combine(baseDir, repoShorthand);
             var filePath = Path.Combine(metaPath, fileName);
