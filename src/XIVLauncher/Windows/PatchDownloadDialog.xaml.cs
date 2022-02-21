@@ -34,12 +34,20 @@ namespace XIVLauncher.Windows
             InitializeComponent();
             this.DataContext = new PatchDownloadDialogViewModel();
 
+            MouseMove += PatchDownloadDialog_OnMouseMove;
+
             _timer = new Timer();
             _timer.Elapsed += ViewUpdateTimerOnElapsed;
             _timer.AutoReset = true;
             _timer.Interval = 200;
             _timer.Enabled = true;
             _timer.Start();
+        }
+
+        private void PatchDownloadDialog_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
         }
 
         private void ViewUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)

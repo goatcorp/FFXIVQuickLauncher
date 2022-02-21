@@ -26,6 +26,8 @@ namespace XIVLauncher.Windows
 
             this.DataContext = new OtpInputDialogViewModel();
 
+            MouseMove += OtpInputDialog_OnMouseMove;
+
             OtpTextBox.Focus();
 
             if (App.Settings.OtpServerEnabled)
@@ -52,6 +54,12 @@ namespace XIVLauncher.Windows
                     Log.Error(ex, "Could not start OTP HTTP listener.");
                 }
             }
+        }
+
+        private void OtpInputDialog_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
         }
 
         private void OtpTextBox_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
