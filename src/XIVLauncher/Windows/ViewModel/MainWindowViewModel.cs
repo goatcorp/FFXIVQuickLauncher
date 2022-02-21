@@ -540,6 +540,11 @@ namespace XIVLauncher.Windows.ViewModel
                 mutex.Close();
                 mutex = null;
 
+#if DEBUG
+                if (Keyboard.IsKeyDown(Key.LeftAlt))
+                    return await RepairGame(loginResult);
+#endif
+
                 return verify.State == PatchVerifier.VerifyState.Done;
             }
             else

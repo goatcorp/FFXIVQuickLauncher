@@ -103,6 +103,25 @@ namespace XIVLauncher.Game.Patch
             }
         }
 
+        private bool AdminAccessRequired(string gameRootPath)
+        {
+            string tempFn;
+            do
+            {
+                tempFn = Path.Combine(gameRootPath, Guid.NewGuid().ToString());
+            } while (File.Exists(tempFn));
+            try
+            {
+                File.WriteAllText(tempFn, "");
+                File.Delete(tempFn);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async Task RunVerifier()
         {
             State = VerifyState.Unknown;
@@ -111,7 +130,7 @@ namespace XIVLauncher.Game.Patch
             {
                 var assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 using var remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
-                    true);
+                    AdminAccessRequired(App.Settings.GamePath.FullName));
                 await remote.SetWorkerProcessPriority(ProcessPriorityClass.Idle);
 
                 while (!_cancellationTokenSource.IsCancellationRequested && State != VerifyState.Done)
