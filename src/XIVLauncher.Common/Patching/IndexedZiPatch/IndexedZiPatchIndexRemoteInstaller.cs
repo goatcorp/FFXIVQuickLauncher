@@ -246,14 +246,23 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             await WaitForResult(writer, cancellationToken);
         }
 
-        public async Task QueueInstall(int sourceIndex, string sourceUrl, string sid, int splitBy = 8, int maxPartsPerRequest = 1024, CancellationToken? cancellationToken = null)
+        public async Task QueueInstall(int sourceIndex, Uri sourceUrl, string sid, int splitBy = 8, int maxPartsPerRequest = 1024, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(WorkerInboundOpcode.QueueInstall, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.QueueInstallFromUrl, cancellationToken);
             writer.Write(sourceIndex);
-            writer.Write(sourceUrl);
+            writer.Write(sourceUrl.OriginalString);
             writer.Write(sid ?? "");
             writer.Write(splitBy);
             writer.Write(maxPartsPerRequest);
+            await WaitForResult(writer, cancellationToken);
+        }
+
+        public async Task QueueInstall(int sourceIndex, FileInfo sourceFile, int splitBy = 8, CancellationToken? cancellationToken = null)
+        {
+            var writer = GetRequestCreator(WorkerInboundOpcode.QueueInstallFromLocalFile, cancellationToken);
+            writer.Write(sourceIndex);
+            writer.Write(sourceFile.FullName);
+            writer.Write(splitBy);
             await WaitForResult(writer, cancellationToken);
         }
 
@@ -393,8 +402,12 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 Instance.WriteVersionFiles(reader.ReadString());
                                 break;
 
-                            case WorkerInboundOpcode.QueueInstall:
+                            case WorkerInboundOpcode.QueueInstallFromUrl:
                                 Instance.QueueInstall(reader.ReadInt32(), Client, reader.ReadString(), reader.ReadString(), reader.ReadInt32(), reader.ReadInt32());
+                                break;
+
+                            case WorkerInboundOpcode.QueueInstallFromLocalFile:
+                                Instance.QueueInstall(reader.ReadInt32(), new FileInfo(reader.ReadString()), reader.ReadInt32());
                                 break;
 
                             case WorkerInboundOpcode.Install:
@@ -548,7 +561,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             SetTargetStreamsFromPathReadWriteForMissingFiles,
             RepairNonPatchData,
             WriteVersionFiles,
-            QueueInstall,
+            QueueInstallFromUrl,
+            QueueInstallFromLocalFile,
             Install,
             GetMissingPartIndicesPerPatch,
             GetMissingPartIndicesPerTargetFile,
@@ -612,7 +626,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         if (!missing[i].Any())
                             continue;
 
-                        await verifier.QueueInstall(i, availableSourceUrls[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
+                        await verifier.QueueInstall(i, new Uri(availableSourceUrls[prefix + patchIndex.Sources[i]]), null, maxConcurrentConnectionsForPatchSet);
                     }
                     await verifier.Install(maxConcurrentConnectionsForPatchSet, cancellationToken);
                     await verifier.WriteVersionFiles(gameRootPath);

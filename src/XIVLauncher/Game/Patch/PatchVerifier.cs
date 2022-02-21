@@ -23,7 +23,7 @@ namespace XIVLauncher.Game.Patch
         private CancellationTokenSource _cancellationTokenSource = new();
 
         private Dictionary<Repository, string> _repoMetaPaths = new();
-        private Dictionary<string, string> _patchSources = new();
+        private Dictionary<string, object> _patchSources = new();
 
         private Task _verificationTask;
         private List<Tuple<long, long>> _reportedProgresses = new();
@@ -104,7 +104,11 @@ namespace XIVLauncher.Game.Patch
                 if (repoName == "ffxiv")
                     repoName = "ex0";
 
-                _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", patch.Url);
+                var file = new FileInfo(Path.Combine(App.Settings.PatchPath.FullName, patch.GetFilePath()));
+                if (file.Exists && file.Length == patch.Length)
+                    _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", file);
+                else
+                    _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", new Uri(patch.Url));
             }
         }
 
@@ -216,7 +220,13 @@ namespace XIVLauncher.Game.Patch
                                         if (!missing[i].Any())
                                             continue;
 
-                                        await remote.QueueInstall(i, _patchSources[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
+                                        var source = _patchSources[prefix + patchIndex.Sources[i]];
+                                        if (source is Uri uri)
+                                            await remote.QueueInstall(i, uri, null, maxConcurrentConnectionsForPatchSet);
+                                        else if (source is FileInfo file)
+                                            await remote.QueueInstall(i, file, maxConcurrentConnectionsForPatchSet);
+                                        else
+                                            throw new InvalidOperationException("_patchSources contains non-Uri/FileInfo");
                                     }
 
                                     IsInstalling = true;
