@@ -140,7 +140,14 @@ namespace XIVLauncher.Game.Patch
             while ((now - _reportedProgresses.First().Item1) > 10 * 1000 * 8000)
                 _reportedProgresses.RemoveAt(0);
 
-            Speed = (_reportedProgresses.Last().Item2 - _reportedProgresses.First().Item2) * 10 * 1000 * 1000 / (_reportedProgresses.Last().Item1 - _reportedProgresses.First().Item1);
+            try
+            {
+                Speed = (_reportedProgresses.Last().Item2 - _reportedProgresses.First().Item2) * 10 * 1000 * 1000 / (_reportedProgresses.Last().Item1 - _reportedProgresses.First().Item1);
+            }
+            catch (DivideByZeroException)
+            {
+                Speed = 0;
+            }
         }
 
         private async Task RunVerifier()
@@ -180,8 +187,6 @@ namespace XIVLauncher.Game.Patch
                                     Progress = Math.Min(progress, max);
                                     Total = max;
                                     RecordProgressForEstimation();
-
-                                    Log.Verbose("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", targetIndex + 1, TaskCount, "Checking", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                                 }
 
                                 void UpdateInstallProgress(int sourceIndex, long progress, long max)
@@ -191,8 +196,6 @@ namespace XIVLauncher.Game.Patch
                                     Progress = Math.Min(progress, max);
                                     Total = max;
                                     RecordProgressForEstimation();
-
-                                    Log.Verbose("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", sourceIndex + 1, TaskCount, "Installing", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                                 }
 
                                 try
