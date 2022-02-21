@@ -492,7 +492,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 OnInstallProgress?.Invoke(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
 
                 if (progressReportTask == null || progressReportTask.IsCompleted)
-                    progressReportTask = cancellationToken.HasValue ? Task.Delay(ProgressReportInterval, cancellationToken.Value) : Task.Delay(250);
+                    progressReportTask = cancellationToken.HasValue ? Task.Delay(ProgressReportInterval, cancellationToken.Value) : Task.Delay(ProgressReportInterval);
                 runningTasks[progressReportTask] = null;
                 await Task.WhenAny(runningTasks.Keys);
                 foreach (var kvp in runningTasks)
