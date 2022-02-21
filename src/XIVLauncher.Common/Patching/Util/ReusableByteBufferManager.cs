@@ -19,12 +19,24 @@ namespace XIVLauncher.Common.Patching.Util
             public readonly MemoryStream Stream;
             public readonly BinaryWriter Writer;
 
+            private bool Used = false;
+
             internal Allocation(ReusableByteBufferManager b)
             {
                 BufferManager = b;
                 Buffer = new byte[b.ArraySize];
                 Stream = new MemoryStream(Buffer);
                 Writer = new BinaryWriter(Stream);
+            }
+
+            internal void ClaimAndResetState()
+            {
+                if (Used)
+                    throw new InvalidOperationException("This allocation is already being used.");
+
+                Used = true;
+
+                ResetState();
             }
 
             public void ResetState()
@@ -35,7 +47,11 @@ namespace XIVLauncher.Common.Patching.Util
 
             public void Clear() => Array.Clear(Buffer, 0, Buffer.Length);
 
-            public void Dispose() => BufferManager.Return(this);
+            public void Dispose()
+            {
+                Used = false;
+                BufferManager.Return(this);
+            }
         }
 
         private readonly int ArraySize;
@@ -59,7 +75,7 @@ namespace XIVLauncher.Common.Patching.Util
                 if (Buffers[i] == null)
                     continue;
 
-                lock (Buffers)
+                lock (Buffers.SyncRoot)
                 {
                     if (Buffers[i] == null)
                         continue;
@@ -73,7 +89,7 @@ namespace XIVLauncher.Common.Patching.Util
                 res = new Allocation(this);
             else if (clear)
                 res.Clear();
-            res.ResetState();
+            res.ClaimAndResetState();
             return res;
         }
 
@@ -84,7 +100,7 @@ namespace XIVLauncher.Common.Patching.Util
                 if (Buffers[i] != null)
                     continue;
 
-                lock (Buffers)
+                lock (Buffers.SyncRoot)
                 {
                     if (Buffers[i] != null)
                         continue;
@@ -101,7 +117,7 @@ namespace XIVLauncher.Common.Patching.Util
                 exponentialArraySize = DEFAULT_EXPONENTIAL_BUFFER_SIZE;
             if (Instances[exponentialArraySize] == null)
             {
-                lock (Instances)
+                lock (Instances.SyncRoot)
                 {
                     if (Instances[exponentialArraySize] == null)
                     {

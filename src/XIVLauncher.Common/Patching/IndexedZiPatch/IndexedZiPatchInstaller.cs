@@ -13,13 +13,14 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 {
     public class IndexedZiPatchInstaller : IDisposable
     {
+        private readonly object SyncRoot = new();
         public readonly IndexedZiPatchIndex Index;
         public readonly List<SortedSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
         public readonly List<SortedSet<int>> MissingPartIndicesPerTargetFile = new();
         public readonly SortedSet<int> TooLongTargetFiles = new();
 
         public int ProgressReportInterval = 250;
-        private readonly List<Stream> TargetStreams = new();
+        private readonly List<FileInfo> TargetFiles = new();
 
         public delegate void OnCorruptionFoundDelegate(IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result);
         public delegate void OnVerifyProgressDelegate(int targetIndex, long progress, long max);
@@ -35,7 +36,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             foreach (var _ in def.Targets)
             {
                 MissingPartIndicesPerTargetFile.Add(new());
-                TargetStreams.Add(null);
+                TargetFiles.Add(null);
             }
             foreach (var _ in def.Sources)
                 MissingPartIndicesPerPatch.Add(new());
@@ -66,40 +67,51 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     while (pendingTargetIndices.Any() && verifyTasks.Count < concurrentCount)
                     {
                         var targetIndex = pendingTargetIndices.Dequeue();
-                        var stream = TargetStreams[targetIndex];
-                        if (stream == null)
+                        var fileInfo = TargetFiles[targetIndex];
+                        if (fileInfo == null)
                             continue;
-
-                        var file = Index[targetIndex];
-                        if (stream.Length > file.FileSize)
-                            TooLongTargetFiles.Add(targetIndex);
 
                         verifyTasks.Add(Task.Run(() =>
                         {
-                            for (var j = 0; j < file.Count; ++j)
+                            try
                             {
-                                localCancelSource.Token.ThrowIfCancellationRequested();
+                                var file = Index[targetIndex];
+                                if (fileInfo.Length > file.FileSize)
+                                    TooLongTargetFiles.Add(targetIndex);
 
-                                var verifyResult = file[j].Verify(stream);
-                                lock (verifyTasks)
+                                using var stream = fileInfo.OpenRead();
+                                for (var j = 0; j < file.Count; ++j)
                                 {
-                                    progressCounter += file[j].TargetSize;
-                                    switch (verifyResult)
+                                    localCancelSource.Token.ThrowIfCancellationRequested();
+
+                                    var verifyResult = file[j].Verify(stream);
+                                    lock (SyncRoot)
                                     {
-                                        case IndexedZiPatchPartLocator.VerifyDataResult.Pass:
-                                            break;
+                                        progressCounter += file[j].TargetSize;
+                                        switch (verifyResult)
+                                        {
+                                            case IndexedZiPatchPartLocator.VerifyDataResult.Pass:
+                                                break;
 
-                                        case IndexedZiPatchPartLocator.VerifyDataResult.FailUnverifiable:
-                                            throw new Exception($"{file.RelativePath}:{file[j].TargetOffset}:{file[j].TargetEnd}: Should not happen; unverifiable due to insufficient source data");
+                                            case IndexedZiPatchPartLocator.VerifyDataResult.FailUnverifiable:
+                                                throw new Exception($"{file.RelativePath}:{file[j].TargetOffset}:{file[j].TargetEnd}: Should not happen; unverifiable due to insufficient source data");
 
-                                        case IndexedZiPatchPartLocator.VerifyDataResult.FailNotEnoughData:
-                                        case IndexedZiPatchPartLocator.VerifyDataResult.FailBadData:
-                                            if (file[j].IsFromSourceFile)
-                                                MissingPartIndicesPerPatch[file[j].SourceIndex].Add(Tuple.Create(file[j].TargetIndex, j));
-                                            MissingPartIndicesPerTargetFile[file[j].TargetIndex].Add(j);
-                                            OnCorruptionFound?.Invoke(file[j], verifyResult);
-                                            break;
+                                            case IndexedZiPatchPartLocator.VerifyDataResult.FailNotEnoughData:
+                                            case IndexedZiPatchPartLocator.VerifyDataResult.FailBadData:
+                                                if (file[j].IsFromSourceFile)
+                                                    MissingPartIndicesPerPatch[file[j].SourceIndex].Add(Tuple.Create(file[j].TargetIndex, j));
+                                                MissingPartIndicesPerTargetFile[file[j].TargetIndex].Add(j);
+                                                OnCorruptionFound?.Invoke(file[j], verifyResult);
+                                                break;
+                                        }
                                     }
+                                }
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                lock (SyncRoot)
+                                {
+                                    MarkFileAsMissing(targetIndex);
                                 }
                             }
                         }));
@@ -151,20 +163,19 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public void SetTargetStream(int targetIndex, Stream targetStream)
+        public void SetTargetFile(int targetIndex, FileInfo fileInfo)
         {
-            TargetStreams[targetIndex] = targetStream;
+            TargetFiles[targetIndex] = fileInfo;
         }
 
-        public void SetTargetStreamsFromPathReadOnly(string rootPath)
+        public void SetTargetFilesFromAllInRootPath(string rootPath)
         {
             Dispose();
             for (var i = 0; i < Index.Length; i++)
             {
-                var file = Index[i];
                 try
                 {
-                    TargetStreams[i] = new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.Open, FileAccess.Read);
+                    SetTargetFile(i, new FileInfo(Path.Combine(rootPath, Index[i].RelativePath)));
                 }
                 catch (FileNotFoundException)
                 {
@@ -177,7 +188,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public void SetTargetStreamsFromPathReadWriteForMissingFiles(string rootPath)
+        public void SetTargetFilesFromMissingFilesInRootPath(string rootPath)
         {
             Dispose();
             for (var i = 0; i < Index.Length; i++)
@@ -186,7 +197,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     continue;
                 var file = Index[i];
                 Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(rootPath, file.RelativePath)));
-                TargetStreams[i] = new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                SetTargetFile(i, new FileInfo(Path.Combine(rootPath, file.RelativePath)));
             }
         }
 
@@ -198,27 +209,25 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 {
                     if (cancellationToken.HasValue)
                         cancellationToken.Value.ThrowIfCancellationRequested();
-
-                    var target = TargetStreams[i];
-                    if (target == null)
+                    if (TargetFiles[i] == null)
                         continue;
 
+                    Directory.CreateDirectory(Path.GetDirectoryName(TargetFiles[i].FullName));
+                    using var stream = TargetFiles[i].Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+
                     var file = Index[i];
-                    lock (target)
+                    foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
                     {
-                        foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
-                        {
-                            if (cancellationToken.HasValue)
-                                cancellationToken.Value.ThrowIfCancellationRequested();
+                        if (cancellationToken.HasValue)
+                            cancellationToken.Value.ThrowIfCancellationRequested();
 
-                            var part = file[partIndex];
-                            if (part.IsFromSourceFile)
-                                continue;
+                        var part = file[partIndex];
+                        if (part.IsFromSourceFile)
+                            continue;
 
-                            part.Repair(target, (Stream)null);
-                        }
-                        target.SetLength(file.FileSize);
+                        part.Repair(stream, (Stream)null);
                     }
+                    stream.SetLength(file.FileSize);
                 }
             });
         }
@@ -240,18 +249,40 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             public readonly IndexedZiPatchInstaller Installer;
             public readonly int SourceIndex;
 
+            private readonly FileStream[] TargetStreams;
+
             public InstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex)
             {
                 Index = installer.Index;
                 Installer = installer;
                 SourceIndex = sourceIndex;
+                TargetStreams = new FileStream[installer.TargetFiles.Count];
             }
 
             public abstract bool ShouldReattempt { get; }
 
             public abstract Task Repair(CancellationToken? cancellationToken = null);
 
-            public virtual void Dispose() { }
+            protected FileStream GetFile(int targetIndex)
+            {
+                if (Installer.TargetFiles[targetIndex] == null)
+                    return null;
+                if (TargetStreams[targetIndex] == null)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(Installer.TargetFiles[targetIndex].FullName));
+                    return TargetStreams[targetIndex] = Installer.TargetFiles[targetIndex].Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                }
+                return TargetStreams[targetIndex];
+            }
+
+            public virtual void Dispose()
+            {
+                for (var i = 0; i < TargetStreams.Length; i++)
+                {
+                    TargetStreams[i]?.Dispose();
+                    TargetStreams[i] = null;
+                }
+            }
         }
 
         public class HttpInstallTaskConfig : InstallTaskConfig
@@ -344,21 +375,22 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                         var (targetIndex, partIndex) = TargetPartIndices[i];
                         var part = Index[targetIndex][partIndex];
+                        if (part.SourceIndex != SourceIndex)
+                            throw new InvalidOperationException("part.SourceIndex != SourceIndex");
+                        if (part.TargetIndex != targetIndex)
+                            throw new InvalidOperationException("part.TargetIndex != targetIndex");
                         ProgressValue += part.TargetSize;
 
-                        var target = Installer.TargetStreams[part.TargetIndex];
-                        if (target != null)
+                        var targetStream = GetFile(part.TargetIndex);
+                        if (targetStream != null)
                         {
-                            lock (target)
+                            try
                             {
-                                try
-                                {
-                                    part.Repair(target, n);
-                                }
-                                catch (IndexedZiPatchPartLocator.InsufficientReconstructionDataException)
-                                {
-                                    break;
-                                }
+                                part.Repair(targetStream, n);
+                            }
+                            catch (IndexedZiPatchPartLocator.InsufficientReconstructionDataException)
+                            {
+                                break;
                             }
                         }
 
@@ -401,16 +433,15 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         if (cancellationToken.HasValue)
                             cancellationToken.Value.ThrowIfCancellationRequested();
                         var part = Index[targetIndex][partIndex];
+                        if (part.SourceIndex != SourceIndex)
+                            throw new InvalidOperationException("part.SourceIndex != SourceIndex");
+                        if (part.TargetIndex != targetIndex)
+                            throw new InvalidOperationException("part.TargetIndex != targetIndex");
                         ProgressValue += part.TargetSize;
 
-                        var target = Installer.TargetStreams[part.TargetIndex];
-                        if (target != null)
-                        {
-                            lock (target)
-                            {
-                                part.Repair(target, SourceStream);
-                            }
-                        }
+                        var targetStream = GetFile(part.TargetIndex);
+                        if (targetStream != null)
+                            part.Repair(targetStream, SourceStream);
                         TargetPartIndices.RemoveAt(0);
                         i--;
                     }
@@ -510,7 +541,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         exceptions.Add(kvp.Key.Exception);
                     }
                 }
-                runningTasks.Keys.Where(p => p.IsCompleted || p.IsCanceled || p.IsFaulted || p == progressReportTask).ToList().ForEach(p => runningTasks.Remove(p));
+                runningTasks.Keys.Where(p => p.IsCompleted || p.IsCanceled || p.IsFaulted || p == progressReportTask).ToList().ForEach(p => {
+                    runningTasks[p]?.Dispose();
+                    runningTasks.Remove(p);
+                });
             }
             await RepairNonPatchData();
 
@@ -522,14 +556,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public void Dispose()
         {
-            for (var i = 0; i < TargetStreams.Count; i++)
-            {
-                if (TargetStreams[i] != null)
-                {
-                    TargetStreams[i].Dispose();
-                    TargetStreams[i] = null;
-                }
-            }
             foreach (var item in InstallTaskConfigs)
                 item.Dispose();
             InstallTaskConfigs.Clear();

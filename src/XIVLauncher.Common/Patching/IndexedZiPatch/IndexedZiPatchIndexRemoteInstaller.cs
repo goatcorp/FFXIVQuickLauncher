@@ -208,32 +208,24 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             await WaitForResult(writer, cancellationToken);
         }
 
-        public async Task SetTargetStreamFromPathReadOnly(int targetIndex, string path, CancellationToken? cancellationToken = null)
+        public async Task SetTargetStream(int targetIndex, string path, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamFromPathReadOnly, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStream, cancellationToken);
             writer.Write(targetIndex);
             writer.Write(path);
             await WaitForResult(writer, cancellationToken);
         }
 
-        public async Task SetTargetStreamFromPathReadWrite(int targetIndex, string path, CancellationToken? cancellationToken = null)
+        public async Task SetTargetFilesFromAllInRootPath(string rootPath, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamFromPathReadWrite, cancellationToken);
-            writer.Write(targetIndex);
-            writer.Write(path);
-            await WaitForResult(writer, cancellationToken);
-        }
-
-        public async Task SetTargetStreamsFromPathReadOnly(string rootPath, CancellationToken? cancellationToken = null)
-        {
-            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamsFromPathReadOnly, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetFilesFromAllInRootPath, cancellationToken);
             writer.Write(rootPath);
             await WaitForResult(writer, cancellationToken);
         }
 
-        public async Task SetTargetStreamsFromPathReadWriteForMissingFiles(string rootPath, CancellationToken? cancellationToken = null)
+        public async Task SetTargetFilesFromMissingFilesInRootPath(string rootPath, CancellationToken? cancellationToken = null)
         {
-            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetStreamsFromPathReadWriteForMissingFiles, cancellationToken);
+            var writer = GetRequestCreator(WorkerInboundOpcode.SetTargetFilesFromMissingFilesInRootPath, cancellationToken);
             writer.Write(rootPath);
             await WaitForResult(writer, cancellationToken);
         }
@@ -320,6 +312,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public class WorkerSubprocessBody : IDisposable
         {
+            private readonly object SyncRoot = new();
             private readonly Process ParentProcess;
             private readonly RpcBuffer SubprocessBuffer;
             private readonly HttpClient Client = new();
@@ -351,7 +344,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         switch (method)
                         {
                             case WorkerInboundOpcode.CancelTask:
-                                lock (CancellationTokenSources)
+                                lock (SyncRoot)
                                 {
                                     if (CancellationTokenSources.TryGetValue(reader.ReadInt32(), out var cts))
                                         cts.Cancel();
@@ -382,20 +375,16 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 Instance.MarkFileAsMissing(reader.ReadInt32());
                                 break;
 
-                            case WorkerInboundOpcode.SetTargetStreamFromPathReadOnly:
-                                Instance.SetTargetStream(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.Open, FileAccess.Read));
+                            case WorkerInboundOpcode.SetTargetStream:
+                                Instance.SetTargetFile(reader.ReadInt32(), new FileInfo(reader.ReadString()));
                                 break;
 
-                            case WorkerInboundOpcode.SetTargetStreamFromPathReadWrite:
-                                Instance.SetTargetStream(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.OpenOrCreate, FileAccess.ReadWrite));
+                            case WorkerInboundOpcode.SetTargetFilesFromAllInRootPath:
+                                Instance.SetTargetFilesFromAllInRootPath(reader.ReadString());
                                 break;
 
-                            case WorkerInboundOpcode.SetTargetStreamsFromPathReadOnly:
-                                Instance.SetTargetStreamsFromPathReadOnly(reader.ReadString());
-                                break;
-
-                            case WorkerInboundOpcode.SetTargetStreamsFromPathReadWriteForMissingFiles:
-                                Instance.SetTargetStreamsFromPathReadWriteForMissingFiles(reader.ReadString());
+                            case WorkerInboundOpcode.SetTargetFilesFromMissingFilesInRootPath:
+                                Instance.SetTargetFilesFromMissingFilesInRootPath(reader.ReadString());
                                 break;
 
                             case WorkerInboundOpcode.RepairNonPatchData:
@@ -480,7 +469,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             private void OnInstallProgressUpdate(int index, long progress, long max)
             {
-                lock (this)
+                lock (SyncRoot)
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
@@ -496,7 +485,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             private void OnVerifyProgressUpdate(int index, long progress, long max)
             {
-                lock (this)
+                lock (SyncRoot)
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
@@ -559,10 +548,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             DisposeAndExit,
             VerifyFiles,
             MarkFileAsMissing,
-            SetTargetStreamFromPathReadOnly,
-            SetTargetStreamFromPathReadWrite,
-            SetTargetStreamsFromPathReadOnly,
-            SetTargetStreamsFromPathReadWriteForMissingFiles,
+            SetTargetStream,
+            SetTargetFilesFromAllInRootPath,
+            SetTargetFilesFromMissingFilesInRootPath,
             RepairNonPatchData,
             WriteVersionFiles,
             QueueInstallFromUrl,
@@ -616,14 +604,14 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     verifier.OnVerifyProgress += ReportCheckProgress;
                     verifier.OnInstallProgress += ReportInstallProgress;
 
-                    await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
+                    await verifier.SetTargetFilesFromAllInRootPath(gameRootPath);
                     // TODO: check one at a time if random access is slow?
                     await verifier.VerifyFiles(Environment.ProcessorCount, cancellationToken);
                     verifier.OnVerifyProgress -= ReportCheckProgress;
 
                     var missing = await verifier.GetMissingPartIndicesPerPatch();
 
-                    await verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
+                    await verifier.SetTargetFilesFromMissingFilesInRootPath(gameRootPath);
                     var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                     for (var i = 0; i < patchIndex.Sources.Count; i++)
                     {
