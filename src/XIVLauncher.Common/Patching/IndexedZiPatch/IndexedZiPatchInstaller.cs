@@ -13,6 +13,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 {
     public class IndexedZiPatchInstaller : IDisposable
     {
+        private readonly object WriteSync = new();
         public readonly IndexedZiPatchIndex Index;
         public readonly List<SortedSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
         public readonly List<SortedSet<int>> MissingPartIndicesPerTargetFile = new();
@@ -196,8 +197,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (target == null)
                 return;
 
-            lock (target)
+            lock (WriteSync)
             {
+                if (target.Length < targetOffset)
+                    target.SetLength(targetOffset);
                 target.Seek(targetOffset, SeekOrigin.Begin);
                 target.Write(buffer, offset, count);
             }
@@ -233,6 +236,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     }
                     target.SetLength(file.FileSize);
                 }
+
+                foreach (var stream in TargetStreams)
+                    stream?.Flush();
             });
         }
 
@@ -509,10 +515,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 }
                 runningTasks.Keys.Where(p => p.IsCompleted || p.IsCanceled || p.IsFaulted || p == progressReportTask).ToList().ForEach(p => runningTasks.Remove(p));
             }
-            await RepairNonPatchData();
-
             foreach (var stream in TargetStreams)
                 stream?.Flush();
+
+            await RepairNonPatchData();
 
             if (exceptions.Count == 1)
                 throw exceptions[0];
