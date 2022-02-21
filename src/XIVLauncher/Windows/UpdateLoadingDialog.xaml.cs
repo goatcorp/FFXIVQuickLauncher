@@ -28,6 +28,14 @@ namespace XIVLauncher.Windows
             }
 
             this.DataContext = new UpdateLoadingDialogViewModel();
+
+            MouseMove += UpdateLoadingDialog_OnMouseMove;
+        }
+
+        private void UpdateLoadingDialog_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
         }
     }
 }

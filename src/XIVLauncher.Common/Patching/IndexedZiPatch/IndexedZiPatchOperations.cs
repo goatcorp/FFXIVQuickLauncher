@@ -124,7 +124,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             using var verifier = await VerifyFromZiPatchIndex(patchIndex, gameRootPath, cancellationToken);
             verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
             for (var i = 0; i < patchIndex.Sources.Count; i++)
-                verifier.QueueInstall(i, new FileStream(Path.Combine(patchFileRootDir, patchIndex.Sources[i]), FileMode.Open, FileAccess.Read));
+                verifier.QueueInstall(i, new FileInfo(Path.Combine(patchFileRootDir, patchIndex.Sources[i])));
             await verifier.Install(concurrentCount, cancellationToken);
         }
 

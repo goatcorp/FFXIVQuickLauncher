@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using XIVLauncher.Game;
 using XIVLauncher.Windows.ViewModel;
 
@@ -14,6 +15,14 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             this.DataContext = new IntegrityCheckProgressWindowViewModel();
+
+            MouseMove += IntegrityCheckProgressWindow_OnMouseMove;
+        }
+
+        private void IntegrityCheckProgressWindow_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
         }
 
         public void UpdateProgress(IntegrityCheck.IntegrityCheckProgress progress)

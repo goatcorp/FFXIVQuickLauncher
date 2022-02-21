@@ -23,17 +23,21 @@ namespace XIVLauncher.Game.Patch
         private CancellationTokenSource _cancellationTokenSource = new();
 
         private Dictionary<Repository, string> _repoMetaPaths = new();
-        private Dictionary<string, string> _patchSources = new();
+        private Dictionary<string, object> _patchSources = new();
 
         private Task _verificationTask;
+        private List<Tuple<long, long>> _reportedProgresses = new();
 
         public int NumBrokenFiles { get; private set; } = 0;
         public bool IsInstalling { get; private set; } = false;
+        public int PatchSetIndex { get; private set; }
+        public int PatchSetCount { get; private set; }
         public int TaskIndex { get; private set; }
         public long Progress { get; private set; }
         public long Total { get; private set; }
         public int TaskCount { get; private set; }
         public string CurrentFile { get; private set; }
+        public long Speed { get; private set; }
         public Exception LastException { get; private set; }
 
         private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/main/";
@@ -84,9 +88,10 @@ namespace XIVLauncher.Game.Patch
             _verificationTask = Task.Run(this.RunVerifier, _cancellationTokenSource.Token);
         }
 
-        public void Cancel()
+        public async Task Cancel()
         {
             _cancellationTokenSource.Cancel();
+            await _verificationTask;
         }
 
         private void SetLoginState(Launcher.LoginResult result)
@@ -99,7 +104,11 @@ namespace XIVLauncher.Game.Patch
                 if (repoName == "ffxiv")
                     repoName = "ex0";
 
-                _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", patch.Url);
+                var file = new FileInfo(Path.Combine(App.Settings.PatchPath.FullName, patch.GetFilePath()));
+                if (file.Exists && file.Length == patch.Length)
+                    _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", file);
+                else
+                    _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", new Uri(patch.Url));
             }
         }
 
@@ -120,6 +129,16 @@ namespace XIVLauncher.Game.Patch
                 return true;
             }
             return false;
+        }
+
+        private void RecordProgressForEstimation()
+        {
+            var now = DateTime.Now.Ticks;
+            _reportedProgresses.Add(Tuple.Create(now, Progress));
+            while ((now - _reportedProgresses.First().Item1) > 10 * 1000 * 8000)
+                _reportedProgresses.RemoveAt(0);
+
+            Speed = (_reportedProgresses.Last().Item2 - _reportedProgresses.First().Item2) * 10 * 1000 * 1000 / (_reportedProgresses.Last().Item1 - _reportedProgresses.First().Item1);
         }
 
         private async Task RunVerifier()
@@ -144,6 +163,8 @@ namespace XIVLauncher.Game.Patch
                         case VerifyState.Verify:
                             const int maxConcurrentConnectionsForPatchSet = 8;
 
+                            PatchSetIndex = 0;
+                            PatchSetCount = _repoMetaPaths.Count;
                             foreach (var metaPath in _repoMetaPaths)
                             {
                                 var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
@@ -156,6 +177,7 @@ namespace XIVLauncher.Game.Patch
                                     TaskIndex = targetIndex;
                                     Progress = Math.Min(progress, max);
                                     Total = max;
+                                    RecordProgressForEstimation();
 
                                     Log.Verbose("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", targetIndex + 1, TaskCount, "Checking", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                                 }
@@ -166,6 +188,7 @@ namespace XIVLauncher.Game.Patch
                                     TaskIndex = sourceIndex;
                                     Progress = Math.Min(progress, max);
                                     Total = max;
+                                    RecordProgressForEstimation();
 
                                     Log.Verbose("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", sourceIndex + 1, TaskCount, "Installing", CurrentFile, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                                 }
@@ -175,6 +198,7 @@ namespace XIVLauncher.Game.Patch
                                     remote.OnVerifyProgress += UpdateVerifyProgress;
                                     remote.OnInstallProgress += UpdateInstallProgress;
                                     TaskCount = patchIndex.Length;
+                                    _reportedProgresses.Clear();
 
                                     await remote.ConstructFromPatchFile(patchIndex);
 
@@ -185,6 +209,7 @@ namespace XIVLauncher.Game.Patch
                                     await remote.VerifyFiles(Environment.ProcessorCount, _cancellationTokenSource.Token);
 
                                     TaskCount = patchIndex.Sources.Count;
+                                    _reportedProgresses.Clear();
                                     var missing = await remote.GetMissingPartIndicesPerPatch();
                                     NumBrokenFiles += (await remote.GetMissingPartIndicesPerTargetFile()).Count(x => x.Any());
 
@@ -195,13 +220,21 @@ namespace XIVLauncher.Game.Patch
                                         if (!missing[i].Any())
                                             continue;
 
-                                        await remote.QueueInstall(i, _patchSources[prefix + patchIndex.Sources[i]], null, maxConcurrentConnectionsForPatchSet);
+                                        var source = _patchSources[prefix + patchIndex.Sources[i]];
+                                        if (source is Uri uri)
+                                            await remote.QueueInstall(i, uri, null, maxConcurrentConnectionsForPatchSet);
+                                        else if (source is FileInfo file)
+                                            await remote.QueueInstall(i, file, maxConcurrentConnectionsForPatchSet);
+                                        else
+                                            throw new InvalidOperationException("_patchSources contains non-Uri/FileInfo");
                                     }
 
                                     IsInstalling = true;
 
                                     await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);
                                     await remote.WriteVersionFiles(adjustedGamePath);
+
+                                    PatchSetIndex++;
                                 }
                                 finally
                                 {
@@ -221,14 +254,18 @@ namespace XIVLauncher.Game.Patch
             }
             catch (Exception ex)
             {
-                if (ex is Win32Exception winex && (uint)winex.HResult == 0x80004005u)  // The operation was canceled by the user (UAC dialog cancellation)
-                {
+                if (ex is OperationCanceledException)
                     State = VerifyState.Cancelled;
-                    return;
+                else if (_cancellationTokenSource.IsCancellationRequested)
+                    State = VerifyState.Cancelled;
+                else if (ex is Win32Exception winex && (uint)winex.HResult == 0x80004005u)  // The operation was canceled by the user (UAC dialog cancellation)
+                    State = VerifyState.Cancelled;
+                else
+                {
+                    Log.Error(ex, "Unexpected error occurred in RunVerifier");
+                    LastException = ex;
+                    State = VerifyState.Error;
                 }
-                Log.Error(ex, "Unexpected error occurred in RunVerifier");
-                LastException = ex;
-                State = VerifyState.Error;
             }
         }
 

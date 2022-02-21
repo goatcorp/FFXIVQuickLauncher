@@ -12,14 +12,17 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="130.401" Width="263.516" Closing="GameRepairProgressWindow_OnClosing">
+        WindowStyle="None" Height="186" Width="263.516" Closing="GameRepairProgressWindow_OnClosing">
     <Grid>
-        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="114" Margin="0,0,10,0">
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="186" Margin="0,0,10,0">
             <StackPanel Margin="16,16,10,10">
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Margin="0,0,0,17" x:Name="CurrentStepText" Text="Title"/>
                 <ProgressBar Value="0" IsIndeterminate="False" Height="5"  Margin="0,0,0,17" x:Name="Progress"/>
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" x:Name="InfoTextBlock">FileName</TextBlock>
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" x:Name="StatusTextBlock" Margin="0,2,0,0">Status</TextBlock>
+                <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" x:Name="SpeedTextBlock" Margin="0,2,0,0">Speed</TextBlock>
+                <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" x:Name="EstimatedTimeTextBlock" Margin="0,2,0,0">Estimated duration</TextBlock>
+                <Button Content="{Binding CancelLoc}" Command="{Binding Path=CancelCommand}" x:Name="CancelButton" Margin="0,7,0,0" Width="84" />
             </StackPanel>
         </materialDesign:Card>
     </Grid>

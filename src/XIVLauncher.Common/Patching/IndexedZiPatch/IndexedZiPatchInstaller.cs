@@ -376,13 +376,15 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             public readonly Stream SourceStream;
             public readonly IList<Tuple<long, long>> SourceOffsets;
+            public readonly List<Tuple<int, int>> TargetPartIndices;
 
-            public StreamInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, Stream sourceStream)
+            public StreamInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, Stream sourceStream, IEnumerable<Tuple<int, int>> targetPartIndices)
                 : base(installer, sourceIndex)
             {
                 SourceStream = sourceStream;
+                TargetPartIndices = targetPartIndices.ToList();
                 long totalTargetSize = 0;
-                foreach (var (targetIndex, partIndex) in Installer.MissingPartIndicesPerPatch[sourceIndex])
+                foreach (var (targetIndex, partIndex) in TargetPartIndices)
                     totalTargetSize += Index[targetIndex][partIndex].TargetSize;
                 ProgressMax = totalTargetSize;
             }
@@ -393,20 +395,24 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 await Task.Run(() =>
                 {
-                    foreach (var (targetIndex, partIndex) in Installer.MissingPartIndicesPerPatch[SourceIndex])
+                    for (var i = 0; i < TargetPartIndices.Count; i++)
                     {
+                        var (targetIndex, partIndex) = TargetPartIndices[i];
                         if (cancellationToken.HasValue)
                             cancellationToken.Value.ThrowIfCancellationRequested();
                         var part = Index[targetIndex][partIndex];
                         ProgressValue += part.TargetSize;
 
                         var target = Installer.TargetStreams[part.TargetIndex];
-                        if (target == null)
-                            continue;
-                        lock (target)
+                        if (target != null)
                         {
-                            part.Repair(target, SourceStream);
+                            lock (target)
+                            {
+                                part.Repair(target, SourceStream);
+                            }
                         }
+                        TargetPartIndices.RemoveAt(0);
+                        i--;
                     }
                 });
             }
@@ -434,9 +440,24 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 QueueInstall(sourceIndex, client, sourceUrl, sid, indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)).ToHashSet());
         }
 
-        public void QueueInstall(int sourceIndex, Stream stream)
+        public void QueueInstall(int sourceIndex, Stream stream, ISet<Tuple<int, int>> targetPartIndices)
         {
-            InstallTaskConfigs.Add(new StreamInstallTaskConfig(this, sourceIndex, stream));
+            if (targetPartIndices.Any())
+                InstallTaskConfigs.Add(new StreamInstallTaskConfig(this, sourceIndex, stream, targetPartIndices));
+        }
+
+        public void QueueInstall(int sourceIndex, FileInfo file, ISet<Tuple<int, int>> targetPartIndices)
+        {
+            if (targetPartIndices.Any())
+                QueueInstall(sourceIndex, file.OpenRead(), targetPartIndices);
+        }
+
+        public void QueueInstall(int sourceIndex, FileInfo file, int splitBy = 8)
+        {
+            var indices = MissingPartIndicesPerPatch[sourceIndex];
+            var indicesPerRequest = (int)Math.Ceiling(1.0 * indices.Count / splitBy);
+            for (int j = 0; j < indices.Count; j += indicesPerRequest)
+                QueueInstall(sourceIndex, file, indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)).ToHashSet());
         }
 
         public async Task Install(int concurrentCount, CancellationToken? cancellationToken = null)
