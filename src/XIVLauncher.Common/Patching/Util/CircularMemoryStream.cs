@@ -47,6 +47,8 @@ namespace XIVLauncher.Common.Patching.Util
                 }
                 return;
             }
+            if (capacity == Capacity)
+                return;
 
             capacity = (capacity + CapacityGrowthUnit - 1) / CapacityGrowthUnit * CapacityGrowthUnit;
             var length = (int)Length;
@@ -89,7 +91,7 @@ namespace XIVLauncher.Common.Patching.Util
                         if (count >= Capacity)
                         {
                             BufferValidFrom = 0;
-                            BufferValidTo = Capacity;
+                            BufferValidTo = 0;
                             Array.Copy(buffer, offset + count - Capacity, Buffer, 0, Capacity);
                             ExternalPosition = 0;
                             Empty = false;
@@ -115,7 +117,7 @@ namespace XIVLauncher.Common.Patching.Util
                 var feedLength2 = count - feedLength1;
                 Array.Copy(buffer, offset, Buffer, BufferValidTo, feedLength1);
                 Array.Copy(buffer, offset + feedLength1, Buffer, 0, feedLength2);
-                BufferValidTo = feedLength2;
+                BufferValidTo = feedLength2 % Capacity;
             }
             Empty = false;
         }

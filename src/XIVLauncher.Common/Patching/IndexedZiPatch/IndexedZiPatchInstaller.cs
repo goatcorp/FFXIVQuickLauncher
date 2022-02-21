@@ -6,14 +6,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using XIVLauncher.Common;
 using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.IndexedZiPatch
 {
     public class IndexedZiPatchInstaller : IDisposable
     {
-        private readonly object WriteSync = new();
         public readonly IndexedZiPatchIndex Index;
         public readonly List<SortedSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
         public readonly List<SortedSet<int>> MissingPartIndicesPerTargetFile = new();
@@ -193,14 +191,16 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         private void WriteToTarget(int targetIndex, long targetOffset, byte[] buffer, int offset, int count)
         {
-            var target = TargetStreams[targetIndex];
+            WriteToTarget(TargetStreams[targetIndex], targetOffset, buffer, offset, count);
+        }
+
+        private void WriteToTarget(Stream target, long targetOffset, byte[] buffer, int offset, int count)
+        {
             if (target == null)
                 return;
 
-            lock (WriteSync)
+            lock (target)
             {
-                if (target.Length < targetOffset)
-                    target.SetLength(targetOffset);
                 target.Seek(targetOffset, SeekOrigin.Begin);
                 target.Write(buffer, offset, count);
             }
@@ -230,9 +230,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             continue;
 
                         using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
-                        part.Reconstruct(null, 0, buffer.Buffer);
-                        target.Seek(part.TargetOffset, SeekOrigin.Begin);
-                        target.Write(buffer.Buffer, 0, (int)part.TargetSize);
+                        part.ReconstructWithoutSourceData(buffer.Buffer);
+                        WriteToTarget(target, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
                     }
                     target.SetLength(file.FileSize);
                 }
@@ -410,7 +409,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         var part = Index[targetIndex][partIndex];
 
                         using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
-                        part.Reconstruct(null, 0, buffer.Buffer);
+                        part.Reconstruct(SourceStream, buffer.Buffer);
                         Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
 
                         ProgressValue += part.TargetSize;
