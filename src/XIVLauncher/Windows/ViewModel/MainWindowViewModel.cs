@@ -481,7 +481,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Log.Information("STARTING REPAIR");
 
-                using var verify = new PatchVerifier(loginResult);
+                using var verify = new PatchVerifier(loginResult, 20);
 
                 Hide();
                 IsEnabled = false;

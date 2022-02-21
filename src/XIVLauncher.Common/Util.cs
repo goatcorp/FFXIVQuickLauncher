@@ -96,8 +96,8 @@ namespace XIVLauncher.Common
         }
 
         private static readonly int[] ValidSteamAppIds = new int[] {
-            39210 /* Paid version */,
-            312060, /* Free trial version */
+            39210, // Paid version
+            312060, // Free trial version
         };
 
         public static string TryGamePaths()
