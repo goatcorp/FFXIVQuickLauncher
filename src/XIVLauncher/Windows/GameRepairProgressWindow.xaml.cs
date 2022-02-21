@@ -37,7 +37,7 @@ namespace XIVLauncher.Windows
             _timer = new Timer();
             _timer.Elapsed += ViewUpdateTimerOnElapsed;
             _timer.AutoReset = true;
-            _timer.Interval = 250;
+            _timer.Interval = verify.ProgressUpdateInterval;
             _timer.Enabled = true;
             _timer.Start();
         }

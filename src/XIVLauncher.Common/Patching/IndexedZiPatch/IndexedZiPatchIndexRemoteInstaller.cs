@@ -186,10 +186,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public async Task ConstructFromPatchFile(IndexedZiPatchIndex patchIndex)
+        public async Task ConstructFromPatchFile(IndexedZiPatchIndex patchIndex, int progressReportInterval = 250)
         {
             var writer = GetRequestCreator(WorkerInboundOpcode.Construct, null);
             patchIndex.WriteTo(writer);
+            writer.Write(progressReportInterval);
             await WaitForResult(writer, null);
         }
 
@@ -359,7 +360,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                             case WorkerInboundOpcode.Construct:
                                 Instance?.Dispose();
-                                Instance = new(new IndexedZiPatchIndex(reader, false));
+                                Instance = new(new IndexedZiPatchIndex(reader, false))
+                                {
+                                    ProgressReportInterval = reader.ReadInt32(),
+                                };
                                 Instance.OnInstallProgress += OnInstallProgressUpdate;
                                 Instance.OnVerifyProgress += OnVerifyProgressUpdate;
                                 break;

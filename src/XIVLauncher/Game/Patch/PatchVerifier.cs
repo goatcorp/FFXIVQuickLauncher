@@ -28,6 +28,7 @@ namespace XIVLauncher.Game.Patch
         private Task _verificationTask;
         private List<Tuple<long, long>> _reportedProgresses = new();
 
+        public int ProgressUpdateInterval { get; private set; }
         public int NumBrokenFiles { get; private set; } = 0;
         public bool IsInstalling { get; private set; } = false;
         public int PatchSetIndex { get; private set; }
@@ -74,9 +75,10 @@ namespace XIVLauncher.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.Unknown;
 
-        public PatchVerifier(Launcher.LoginResult loginResult)
+        public PatchVerifier(Launcher.LoginResult loginResult, int progressUpdateInterval)
         {
             _client = new HttpClient();
+            ProgressUpdateInterval = progressUpdateInterval;
 
             SetLoginState(loginResult);
         }
@@ -200,7 +202,7 @@ namespace XIVLauncher.Game.Patch
                                     TaskCount = patchIndex.Length;
                                     _reportedProgresses.Clear();
 
-                                    await remote.ConstructFromPatchFile(patchIndex);
+                                    await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval);
 
                                     var adjustedGamePath = Path.Combine(App.Settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
 
