@@ -140,14 +140,11 @@ namespace XIVLauncher.Game.Patch
             while ((now - _reportedProgresses.First().Item1) > 10 * 1000 * 8000)
                 _reportedProgresses.RemoveAt(0);
 
-            try
-            {
-                Speed = (_reportedProgresses.Last().Item2 - _reportedProgresses.First().Item2) * 10 * 1000 * 1000 / (_reportedProgresses.Last().Item1 - _reportedProgresses.First().Item1);
-            }
-            catch (DivideByZeroException)
-            {
+            var elapsedMs = _reportedProgresses.Last().Item1 - _reportedProgresses.First().Item1;
+            if (elapsedMs == 0)
                 Speed = 0;
-            }
+            else
+                Speed = (_reportedProgresses.Last().Item2 - _reportedProgresses.First().Item2) * 10 * 1000 * 1000 / elapsedMs;
         }
 
         private async Task RunVerifier()

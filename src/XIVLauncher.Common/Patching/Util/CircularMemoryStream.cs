@@ -37,17 +37,9 @@ namespace XIVLauncher.Common.Patching.Util
             ReusableBuffer?.Dispose();
         }
 
-        public void Reserve(long capacity, bool truncate = false)
+        public void Reserve(long capacity)
         {
-            if (capacity < Capacity)
-            {
-                if (truncate)
-                {
-                    throw new NotImplementedException();
-                }
-                return;
-            }
-            if (capacity == Capacity)
+            if (capacity <= Capacity)
                 return;
 
             capacity = (capacity + CapacityGrowthUnit - 1) / CapacityGrowthUnit * CapacityGrowthUnit;
