@@ -61,7 +61,15 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (WorkerProcess != null && !WorkerProcess.HasExited)
             {
                 WorkerProcess.WaitForExit(1000);
-                WorkerProcess.Kill();
+                try
+                {
+                    WorkerProcess.Kill();
+                }
+                catch (Exception)
+                {
+                    if (!WorkerProcess.HasExited)
+                        throw;
+                }
             }
             SubprocessBuffer.Dispose();
             IsDisposed = true;
