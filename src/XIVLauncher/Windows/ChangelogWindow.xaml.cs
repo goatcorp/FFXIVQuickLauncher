@@ -20,6 +20,7 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class ChangelogWindow : Window
     {
+        private readonly bool _prerelease;
         private const string META_URL = "https://kamori.goats.dev/Proxy/Meta";
 
         public class VersionMeta
@@ -50,28 +51,13 @@ namespace XIVLauncher.Windows
 
         public ChangelogWindow(bool prerelease)
         {
+            _prerelease = prerelease;
             InitializeComponent();
 
             DiscordButton.Click += SupportLinks.OpenDiscord;
 
             var vm = new ChangeLogWindowViewModel();
             DataContext = vm;
-
-            var _ = Task.Run(async () =>
-            {
-                try
-                {
-                    using var client = new HttpClient();
-                    var response = JsonConvert.DeserializeObject<ReleaseMeta>(await client.GetStringAsync(META_URL));
-
-                    Dispatcher.Invoke(() => this.ChangeLogText.Text = prerelease ? response.PrereleaseVersion.Changelog : response.ReleaseVersion.Changelog);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Could not get changelog");
-                    Dispatcher.Invoke(() => this.ChangeLogText.Text = vm.ChangelogLoadingErrorLoc);
-                }
-            });
 
             this.ChangeLogText.Text = vm.ChangelogLoadingLoc;
 
@@ -95,6 +81,22 @@ namespace XIVLauncher.Windows
         {
             SystemSounds.Asterisk.Play();
             base.Show();
+
+            var _ = Task.Run(async () =>
+            {
+                try
+                {
+                    using var client = new HttpClient();
+                    var response = JsonConvert.DeserializeObject<ReleaseMeta>(await client.GetStringAsync(META_URL));
+
+                    Dispatcher.Invoke(() => this.ChangeLogText.Text = _prerelease ? response.PrereleaseVersion.Changelog : response.ReleaseVersion.Changelog);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not get changelog");
+                    Dispatcher.Invoke(() => this.ChangeLogText.Text = Model.ChangelogLoadingErrorLoc);
+                }
+            });
         }
 
         private void EmailButton_OnClick(object sender, RoutedEventArgs e)

@@ -6,5 +6,6 @@
 • Preparations for the march Steam update
 • XIVLauncher now offers to open the official launcher when there are update server problems
 • Fixes an issue wherein, on certain configurations, Visual C++ redistributables weren't detected
+• Changelogs are now shown before updating, instead of after updating
 • Updated localization files
     => If you want to help with localization, please check out the GitHub repository and register on Crowdin!

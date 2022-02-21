@@ -148,7 +148,16 @@ namespace XIVLauncher
                     var updateMgr = new Updates();
                     updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
 
-                    var changelogWindow = new ChangelogWindow(EnvironmentSettings.IsPreRelease);
+                    ChangelogWindow changelogWindow = null;
+                    try
+                    {
+                        changelogWindow = new ChangelogWindow(EnvironmentSettings.IsPreRelease);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not load changelog window");
+                    }
+
                     var _ = updateMgr.Run(EnvironmentSettings.IsPreRelease, changelogWindow);
                 }
                 catch (Exception ex)

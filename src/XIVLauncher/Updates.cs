@@ -46,6 +46,13 @@ namespace XIVLauncher
 
                 if (newRelease != null)
                 {
+                    if (changelogWindow == null)
+                    {
+                        Log.Error("changelogWindow was null");
+                        UpdateManager.RestartApp();
+                        return;
+                    }
+
                     try
                     {
                         changelogWindow.Dispatcher.Invoke(() =>
