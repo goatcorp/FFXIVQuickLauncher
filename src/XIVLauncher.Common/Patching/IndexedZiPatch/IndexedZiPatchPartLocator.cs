@@ -257,10 +257,14 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 using var inflatedBuffer = Common.Patching.Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
                 using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegment.Length - sourceSegmentOffset), CompressionMode.Decompress, true))
                     stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
+                if (VerifyDataResult.Pass != Verify(inflatedBuffer.Buffer, (int)SplitDecodedSourceFrom, (int)TargetSize))
+                    throw new IOException("Verify failed on reconstruct");
                 Array.Copy(inflatedBuffer.Buffer, SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             else
             {
+                if (VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)TargetSize))
+                    throw new IOException("Verify failed on reconstruct");
                 Array.Copy(sourceSegment, sourceSegmentOffset + SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             return bufferSize;
@@ -307,28 +311,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     throw new InsufficientReconstructionDataException("Not enough source data read");
             }
             return bufferSize;
-        }
-
-        public void Repair(Stream target, Stream source)
-        {
-            using var buffer = Common.Patching.Util.ReusableByteBufferManager.GetBuffer(22);  // 4MB
-            if (target.Length < TargetOffset)
-                target.SetLength(target.Length);
-            target.Seek(TargetOffset, SeekOrigin.Begin);
-            for (int relativeOffset = 0; relativeOffset < TargetSize; relativeOffset += buffer.Buffer.Length)
-            {
-                var readSize = (int)Math.Min(TargetSize - relativeOffset, buffer.Buffer.Length);
-                if (readSize != Reconstruct(source, buffer.Buffer, 0, readSize, relativeOffset))
-                    throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
-                target.Write(buffer.Buffer, 0, readSize);
-            }
-            if (Verify(target) != VerifyDataResult.Pass)
-                throw new IOException("Repair failure");
-        }
-
-        public void Repair(Stream target, IList<Stream> sources)
-        {
-            Repair(target, IsFromSourceFile ? sources[SourceIndex] : null);
         }
 
         public static void CalculateCrc32(ref IndexedZiPatchPartLocator part, Stream source)

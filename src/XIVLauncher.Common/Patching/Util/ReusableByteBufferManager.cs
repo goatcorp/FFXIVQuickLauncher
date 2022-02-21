@@ -59,7 +59,7 @@ namespace XIVLauncher.Common.Patching.Util
                 if (Buffers[i] == null)
                     continue;
 
-                lock (Buffers)
+                lock (Buffers.SyncRoot)
                 {
                     if (Buffers[i] == null)
                         continue;
@@ -84,7 +84,7 @@ namespace XIVLauncher.Common.Patching.Util
                 if (Buffers[i] != null)
                     continue;
 
-                lock (Buffers)
+                lock (Buffers.SyncRoot)
                 {
                     if (Buffers[i] != null)
                         continue;
@@ -101,7 +101,7 @@ namespace XIVLauncher.Common.Patching.Util
                 exponentialArraySize = DEFAULT_EXPONENTIAL_BUFFER_SIZE;
             if (Instances[exponentialArraySize] == null)
             {
-                lock (Instances)
+                lock (Instances.SyncRoot)
                 {
                     if (Instances[exponentialArraySize] == null)
                     {
@@ -115,6 +115,16 @@ namespace XIVLauncher.Common.Patching.Util
         public static Allocation GetBuffer(int exponentialArraySize = -1, bool clear = false)
         {
             return GetInstance(exponentialArraySize).Allocate(clear);
+        }
+
+        public static Allocation GetBufferHolding(long size, bool clear = false)
+        {
+            for (int i = DEFAULT_EXPONENTIAL_BUFFER_SIZE; i < 32; i++)
+            {
+                if (size < (1 << i))
+                    return GetInstance(i).Allocate(clear);
+            }
+            throw new ArgumentOutOfRangeException("Requested size too big");
         }
     }
 }

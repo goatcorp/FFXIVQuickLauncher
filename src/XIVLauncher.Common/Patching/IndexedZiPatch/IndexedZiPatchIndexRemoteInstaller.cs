@@ -320,6 +320,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public class WorkerSubprocessBody : IDisposable
         {
+            private readonly object ProgressUpdateSync = new();
             private readonly Process ParentProcess;
             private readonly RpcBuffer SubprocessBuffer;
             private readonly HttpClient Client = new();
@@ -480,7 +481,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             private void OnInstallProgressUpdate(int index, long progress, long max)
             {
-                lock (this)
+                lock (ProgressUpdateSync)
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
@@ -496,7 +497,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             private void OnVerifyProgressUpdate(int index, long progress, long max)
             {
-                lock (this)
+                lock (ProgressUpdateSync)
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);

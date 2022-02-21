@@ -190,6 +190,19 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
+        private void WriteToTarget(int targetIndex, long targetOffset, byte[] buffer, int offset, int count)
+        {
+            var target = TargetStreams[targetIndex];
+            if (target == null)
+                return;
+
+            lock (target)
+            {
+                target.Seek(targetOffset, SeekOrigin.Begin);
+                target.Write(buffer, offset, count);
+            }
+        }
+
         public async Task RepairNonPatchData(CancellationToken? cancellationToken = null)
         {
             await Task.Run(() =>
@@ -204,21 +217,21 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         continue;
 
                     var file = Index[i];
-                    lock (target)
+                    foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
                     {
-                        foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
-                        {
-                            if (cancellationToken.HasValue)
-                                cancellationToken.Value.ThrowIfCancellationRequested();
+                        if (cancellationToken.HasValue)
+                            cancellationToken.Value.ThrowIfCancellationRequested();
 
-                            var part = file[partIndex];
-                            if (part.IsFromSourceFile)
-                                continue;
+                        var part = file[partIndex];
+                        if (part.IsFromSourceFile)
+                            continue;
 
-                            part.Repair(target, (Stream)null);
-                        }
-                        target.SetLength(file.FileSize);
+                        using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
+                        part.Reconstruct(null, 0, buffer.Buffer);
+                        target.Seek(part.TargetOffset, SeekOrigin.Begin);
+                        target.Write(buffer.Buffer, 0, (int)part.TargetSize);
                     }
+                    target.SetLength(file.FileSize);
                 }
             });
         }
@@ -344,24 +357,12 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                         var (targetIndex, partIndex) = TargetPartIndices[i];
                         var part = Index[targetIndex][partIndex];
+
+                        using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
+                        part.Reconstruct(n, buffer.Buffer);
+                        Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+
                         ProgressValue += part.TargetSize;
-
-                        var target = Installer.TargetStreams[part.TargetIndex];
-                        if (target != null)
-                        {
-                            lock (target)
-                            {
-                                try
-                                {
-                                    part.Repair(target, n);
-                                }
-                                catch (IndexedZiPatchPartLocator.InsufficientReconstructionDataException)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-
                         TargetPartIndices.RemoveAt(i);
                         TargetPartOffsets.RemoveAt(i);
                         i--;
@@ -401,16 +402,12 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         if (cancellationToken.HasValue)
                             cancellationToken.Value.ThrowIfCancellationRequested();
                         var part = Index[targetIndex][partIndex];
-                        ProgressValue += part.TargetSize;
 
-                        var target = Installer.TargetStreams[part.TargetIndex];
-                        if (target != null)
-                        {
-                            lock (target)
-                            {
-                                part.Repair(target, SourceStream);
-                            }
-                        }
+                        using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
+                        part.Reconstruct(null, 0, buffer.Buffer);
+                        Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+
+                        ProgressValue += part.TargetSize;
                         TargetPartIndices.RemoveAt(0);
                         i--;
                     }
@@ -513,6 +510,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 runningTasks.Keys.Where(p => p.IsCompleted || p.IsCanceled || p.IsFaulted || p == progressReportTask).ToList().ForEach(p => runningTasks.Remove(p));
             }
             await RepairNonPatchData();
+
+            foreach (var stream in TargetStreams)
+                stream?.Flush();
 
             if (exceptions.Count == 1)
                 throw exceptions[0];
