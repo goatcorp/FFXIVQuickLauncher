@@ -150,8 +150,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             if (IsDisposed)
                 throw new OperationCanceledException();
-            if (response.Data == null)
-                Debugger.Break();
             var reader = new BinaryReader(new MemoryStream(response.Data));
             try
             {
