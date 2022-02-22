@@ -32,8 +32,4 @@
         <Reference Include="System.Net.Http.WebRequest" />
         <Reference Include="System.Web" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Patching" />
-    </ItemGroup>
 </Project>

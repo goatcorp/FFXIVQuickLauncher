@@ -93,7 +93,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public void WriteTo(BinaryWriter writer)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer();
+            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
             int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
             CopyMemory(buf.Buffer, ref this, unitSize);
             writer.Write(buf.Buffer, 0, unitSize);
@@ -101,7 +101,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public void ReadFrom(BinaryReader reader)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer();
+            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
             int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
             reader.Read(buf.Buffer, 0, unitSize);
             CopyMemory(out this, buf.Buffer, unitSize);
@@ -127,37 +127,32 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 return VerifyDataResult.FailNotEnoughData;
 
             if (IsValidCrc32Value)
-            {
-                Common.Patching.Util.Crc32 crc32 = new();
-                crc32.Init();
-                crc32.Update(buf, 0, length);
-                return crc32.Checksum == Crc32OrPlaceholderEntryDataUnits ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
-            }
-            else if (IsAllZeros)
-            {
+                return Crc32.Calculate(buf, offset, length) == Crc32OrPlaceholderEntryDataUnits ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+
+            if (IsAllZeros)
                 return buf.Skip(offset).Take(length).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
-            }
-            else if (IsEmptyBlock)
-            {
+
+            if (IsEmptyBlock)
                 return BitConverter.ToInt32(buf, offset + 0) == 1 << 7
                     && BitConverter.ToInt32(buf, offset + 4) == 0
                     && BitConverter.ToInt32(buf, offset + 8) == 0
                     && BitConverter.ToInt32(buf, offset + 12) == Crc32OrPlaceholderEntryDataUnits
-                    && buf.Skip(offset + 16).Take(length - 16).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
-            }
+                    && BitConverter.ToInt32(buf, offset + 16) == 0
+                    && BitConverter.ToInt32(buf, offset + 20) == 0
+                    && buf.Skip(offset + 24).Take(length - 24).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+
             return VerifyDataResult.FailUnverifiable;
         }
 
         public VerifyDataResult Verify(Stream stream, bool seek = true)
         {
-            using var buffer = Common.Patching.Util.ReusableByteBufferManager.GetBuffer();
+            using var buffer = ReusableByteBufferManager.GetBuffer();
             if (seek)
                 stream.Seek(TargetOffset, SeekOrigin.Begin);
 
             if (IsValidCrc32Value)
             {
-                Common.Patching.Util.Crc32 crc32 = new();
-                crc32.Init();
+                Crc32 crc32 = new();
                 for (var remaining = TargetSize; remaining > 0; remaining -= buffer.Buffer.Length)
                 {
                     var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
@@ -183,28 +178,20 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
             else if (IsEmptyBlock)
             {
-                for (long remaining = TargetSize, i = 0; remaining > 0; remaining -= buffer.Buffer.Length, i++)
-                {
-                    var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
-                    if (readSize != stream.Read(buffer.Buffer, 0, readSize))
-                        return VerifyDataResult.FailNotEnoughData;
-                    if (i == 0)
-                    {
-                        // File entry header for placeholder
-                        if (BitConverter.ToInt32(buffer.Buffer, 0) != 1 << 7
-                            || BitConverter.ToInt32(buffer.Buffer, 4) != 0
-                            || BitConverter.ToInt32(buffer.Buffer, 8) != 0
-                            || BitConverter.ToInt32(buffer.Buffer, 12) != Crc32OrPlaceholderEntryDataUnits
-                            || !buffer.Buffer.Skip(16).Take(readSize - 16).All(x => x == 0))
-                            return VerifyDataResult.FailBadData;
-                    }
-                    else
-                    {
-                        // Remainder of the entry which should be all zeros
-                        if (!buffer.Buffer.Take(readSize).All(x => x == 0))
-                            return VerifyDataResult.FailBadData;
-                    }
-                }
+                var readSize = Math.Min(1 << 7, buffer.Buffer.Length);
+                if (readSize != stream.Read(buffer.Buffer, 0, readSize))
+                    return VerifyDataResult.FailNotEnoughData;
+                
+                // File entry header for placeholder
+                if (BitConverter.ToInt32(buffer.Buffer, 0) != 1 << 7
+                    || BitConverter.ToInt32(buffer.Buffer, 4) != 0
+                    || BitConverter.ToInt32(buffer.Buffer, 8) != 0
+                    || BitConverter.ToInt32(buffer.Buffer, 12) != Crc32OrPlaceholderEntryDataUnits
+                    || BitConverter.ToInt32(buffer.Buffer, 16) != 0
+                    || BitConverter.ToInt32(buffer.Buffer, 20) != 0
+                    || !buffer.Buffer.Skip(24).Take(readSize - 24).All(x => x == 0))
+                    return VerifyDataResult.FailBadData;
+
                 return VerifyDataResult.Pass;
             }
 
@@ -215,120 +202,96 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             if (IsFromSourceFile)
                 return Reconstruct(sources[SourceIndex], buffer, bufferOffset, bufferSize, relativeOffset);
-            return Reconstruct(null, 0, buffer, bufferOffset, bufferSize, relativeOffset);
+            return Reconstruct(null, 0, 0, buffer, bufferOffset, bufferSize, relativeOffset);
         }
 
-        public int Reconstruct(byte[] sourceSegment, int sourceSegmentOffset, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
+        private int FilterBufferSize(byte[] buffer, int bufferOffset, int bufferSize, int relativeOffset)
         {
             if (bufferSize == -1)
-                bufferSize = (int)Math.Max(0, Math.Min(TargetSize - relativeOffset, buffer.Length));
+                return (int)Math.Max(0, Math.Min(TargetSize - relativeOffset, buffer.Length - bufferOffset));
             else if (bufferSize > TargetSize - relativeOffset)
-                bufferSize = (int)Math.Max(0, TargetSize - relativeOffset);
+                return (int)Math.Max(0, TargetSize - relativeOffset);
             else if (bufferSize < 0)
                 throw new ArgumentException("Length cannot be less than zero.");
+            else
+                return bufferSize;
+        }
 
+        public int ReconstructWithoutSourceData(byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
+        {
+            bufferSize = FilterBufferSize(buffer, bufferOffset, bufferSize, relativeOffset);
             if (bufferSize == 0)
                 return 0;
 
             if (IsUnavailable)
-            {
                 throw new InvalidOperationException("Unavailable part read attempt");
-            }
             else if (IsAllZeros)
-            {
                 Array.Clear(buffer, bufferOffset, bufferSize);
-            }
             else if (IsEmptyBlock)
             {
                 Array.Clear(buffer, bufferOffset, bufferSize);
 
                 if (relativeOffset < 16)
                 {
-                    using var buffer2 = Common.Patching.Util.ReusableByteBufferManager.GetBuffer();
+                    using var buffer2 = ReusableByteBufferManager.GetBuffer();
                     buffer2.Writer.Write(1 << 7);
                     buffer2.Writer.Write(0);
                     buffer2.Writer.Write(0);
                     buffer2.Writer.Write((int)Crc32OrPlaceholderEntryDataUnits);
-                    Array.Copy(buffer2.Buffer, relativeOffset, buffer, bufferOffset, Math.Min(bufferSize, 16 - relativeOffset));
+                    buffer2.Writer.Write(0);
+                    buffer2.Writer.Write(0);
+                    Array.Copy(buffer2.Buffer, relativeOffset, buffer, bufferOffset, Math.Min(bufferSize, 24 - relativeOffset));
                 }
             }
-            else if (IsDeflatedBlockData)
+            else
+                throw new InvalidOperationException("This part requires source data.");
+            return bufferSize;
+        }
+
+        public int Reconstruct(byte[] sourceSegment, int sourceSegmentOffset, int sourceSegmentLength, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
+        {
+            if (!IsFromSourceFile)
+                return ReconstructWithoutSourceData(buffer, bufferOffset, bufferSize, relativeOffset);
+
+            bufferSize = FilterBufferSize(buffer, bufferOffset, bufferSize, relativeOffset);
+            if (bufferSize == 0)
+                return 0;
+
+            if (IsDeflatedBlockData)
             {
-                using var inflatedBuffer = Common.Patching.Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
-                using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegment.Length - sourceSegmentOffset), CompressionMode.Decompress, true))
-                    stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
+                using var inflatedBuffer = ReusableByteBufferManager.GetBuffer(MaxSourceSize);
+                var inflatedLength = 0;
+                using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegmentLength - sourceSegmentOffset), CompressionMode.Decompress, true))
+                    inflatedLength = stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
+                if (VerifyDataResult.Pass != Verify(inflatedBuffer.Buffer, (int)SplitDecodedSourceFrom, (int)TargetSize))
+                    throw new IOException("Verify failed on reconstruct (inflate)");
                 Array.Copy(inflatedBuffer.Buffer, SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             else
             {
+                if (sourceSegmentLength - sourceSegmentOffset < TargetSize)
+                    throw new IOException("Insufficient source data");
+                if (VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)TargetSize))
+                    throw new IOException("Verify failed on reconstruct");
                 Array.Copy(sourceSegment, sourceSegmentOffset + SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             return bufferSize;
         }
 
-        public class InsufficientReconstructionDataException : IOException
-        {
-            public InsufficientReconstructionDataException(string msg) : base(msg) { }
-        }
-
         public int Reconstruct(Stream source, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
         {
             if (!IsFromSourceFile)
-                return Reconstruct(null, 0, buffer, bufferOffset, bufferSize, relativeOffset);
+                return ReconstructWithoutSourceData(buffer, bufferOffset, bufferSize, relativeOffset);
 
-            if (bufferSize == -1)
-                bufferSize = (int)Math.Max(0, Math.Min(TargetSize - relativeOffset, buffer.Length));
-            else if (bufferSize > TargetSize - relativeOffset)
-                bufferSize = (int)Math.Max(0, TargetSize - relativeOffset);
-            else if (bufferSize < 0)
-                throw new ArgumentException("Length cannot be less than zero.");
+            bufferSize = FilterBufferSize(buffer, bufferOffset, bufferSize, relativeOffset);
+            if (bufferSize == 0)
+                return 0;
 
-            if (IsDeflatedBlockData)
-            {
-                source.Seek(SourceOffset, SeekOrigin.Begin);
-                using var inflatedBuffer = Common.Patching.Util.ReusableByteBufferManager.GetBuffer(14);  // 16384
-                try
-                {
-                    using var stream = new DeflateStream(source, CompressionMode.Decompress, true);
-                    var read = stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
-                    if (read < SplitDecodedSourceFrom + bufferSize)
-                        throw new InsufficientReconstructionDataException("Not enough inflated data read");
-                }
-                catch (InvalidDataException)
-                {
-                    throw new InsufficientReconstructionDataException("Not enough inflated data read, or corrupt zlib data");
-                }
-                Array.Copy(inflatedBuffer.Buffer, SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
-            }
-            else
-            {
-                source.Seek(SourceOffset + SplitDecodedSourceFrom + relativeOffset, SeekOrigin.Begin);
-                if (bufferSize != source.Read(buffer, bufferOffset, bufferSize))
-                    throw new InsufficientReconstructionDataException("Not enough source data read");
-            }
-            return bufferSize;
-        }
-
-        public void Repair(Stream target, Stream source)
-        {
-            using var buffer = Common.Patching.Util.ReusableByteBufferManager.GetBuffer(22);  // 4MB
-            if (target.Length < TargetOffset)
-                target.SetLength(target.Length);
-            target.Seek(TargetOffset, SeekOrigin.Begin);
-            for (int relativeOffset = 0; relativeOffset < TargetSize; relativeOffset += buffer.Buffer.Length)
-            {
-                var readSize = (int)Math.Min(TargetSize - relativeOffset, buffer.Buffer.Length);
-                if (readSize != Reconstruct(source, buffer.Buffer, 0, readSize, relativeOffset))
-                    throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
-                target.Write(buffer.Buffer, 0, readSize);
-            }
-            if (Verify(target) != VerifyDataResult.Pass)
-                throw new IOException("Repair failure");
-        }
-
-        public void Repair(Stream target, IList<Stream> sources)
-        {
-            Repair(target, IsFromSourceFile ? sources[SourceIndex] : null);
+            source.Seek(SourceOffset, SeekOrigin.Begin);
+            var readSize = (int)(IsDeflatedBlockData ? 16384 : TargetSize);
+            using var readBuffer = ReusableByteBufferManager.GetBuffer(readSize);
+            var read = source.Read(readBuffer.Buffer, 0, readSize);
+            return Reconstruct(readBuffer.Buffer, 0, read, buffer, bufferOffset, bufferSize, relativeOffset);
         }
 
         public static void CalculateCrc32(ref IndexedZiPatchPartLocator part, Stream source)
@@ -336,17 +299,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (part.IsValidCrc32Value)
                 return;
 
-            using var buffer = Common.Patching.Util.ReusableByteBufferManager.GetBuffer(22);  // 4MB
-            Common.Patching.Util.Crc32 crc32 = new();
-            crc32.Init();
-            for (int relativeOffset = 0; relativeOffset < part.TargetSize; relativeOffset += buffer.Buffer.Length)
-            {
-                var readSize = (int)Math.Min(part.TargetSize - relativeOffset, buffer.Buffer.Length);
-                if (readSize != part.Reconstruct(source, buffer.Buffer, 0, readSize, relativeOffset))
-                    throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
-                crc32.Update(buffer.Buffer, 0, readSize);
-            }
-            part.Crc32OrPlaceholderEntryDataUnits = crc32.Checksum;
+            using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+            if (part.TargetSize != part.Reconstruct(source, buffer.Buffer, 0, (int)part.TargetSize))
+                throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
+
+            part.Crc32OrPlaceholderEntryDataUnits = Crc32.Calculate(buffer.Buffer, 0, (int)part.TargetSize);
             part.IsValidCrc32Value = true;
         }
 
