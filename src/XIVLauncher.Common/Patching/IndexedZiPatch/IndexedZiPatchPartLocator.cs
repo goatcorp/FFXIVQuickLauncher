@@ -271,7 +271,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 if (sourceSegmentLength - sourceSegmentOffset < TargetSize)
                     throw new IOException("Insufficient source data");
-                if (VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)Math.Min(TargetSize, sourceSegmentLength)))
+                if (VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)TargetSize))
                     throw new IOException("Verify failed on reconstruct");
                 Array.Copy(sourceSegment, sourceSegmentOffset + SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }

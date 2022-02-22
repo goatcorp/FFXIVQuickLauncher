@@ -151,18 +151,22 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 MissingPartIndicesPerPatch.Add(new());
         }
 
-        public async Task VerifyFiles(int concurrentCount = 8, CancellationToken? cancellationToken = null)
+        public async Task VerifyFiles(bool refine = false, int concurrentCount = 8, CancellationToken? cancellationToken = null)
         {
             CancellationTokenSource localCancelSource = new();
 
             if (cancellationToken.HasValue)
                 cancellationToken.Value.Register(() => localCancelSource?.Cancel());
 
+            SizeMismatchTargetFileIndices.Clear();
+            foreach (var l in MissingPartIndicesPerPatch)
+                l.Clear();
+
             List<Task> verifyTasks = new();
             try
             {
                 long progressCounter = 0;
-                long progressMax = Index.Targets.Select(x => x.FileSize).Sum();
+                long progressMax = refine ? MissingPartIndicesPerTargetFile.Select((x, i) => x.Select(y => Index[i][y].TargetSize).Sum()).Sum() : Index.Targets.Select((x, i) => TargetStreams[i] == null ? 0 : x.FileSize).Sum();
 
                 Queue<int> pendingTargetIndices = new();
                 for (int i = 0; i < Index.Length; i++)
@@ -186,28 +190,38 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                         verifyTasks.Add(Task.Run(() =>
                         {
-                            for (var j = 0; j < file.Count; ++j)
+                            List<int> targetPartIndicesToCheck;
+                            if (refine)
+                            {
+                                targetPartIndicesToCheck = MissingPartIndicesPerTargetFile[targetIndex].ToList();
+                                MissingPartIndicesPerTargetFile[targetIndex].Clear();
+                            }
+                            else
+                            {
+                                targetPartIndicesToCheck = new();
+                                for (var partIndex = 0; partIndex < file.Count; ++partIndex)
+                                    targetPartIndicesToCheck.Add(partIndex);
+                            }
+                            foreach (var partIndex in targetPartIndicesToCheck)
                             {
                                 localCancelSource.Token.ThrowIfCancellationRequested();
 
-                                var verifyResult = file[j].Verify(stream);
+                                var verifyResult = file[partIndex].Verify(stream);
                                 lock (verifyTasks)
                                 {
-                                    progressCounter += file[j].TargetSize;
+                                    progressCounter += file[partIndex].TargetSize;
                                     switch (verifyResult)
                                     {
                                         case IndexedZiPatchPartLocator.VerifyDataResult.Pass:
                                             break;
 
                                         case IndexedZiPatchPartLocator.VerifyDataResult.FailUnverifiable:
-                                            throw new Exception($"{file.RelativePath}:{file[j].TargetOffset}:{file[j].TargetEnd}: Should not happen; unverifiable due to insufficient source data");
+                                            throw new Exception($"{file.RelativePath}:{file[partIndex].TargetOffset}:{file[partIndex].TargetEnd}: Should not happen; unverifiable due to insufficient source data");
 
                                         case IndexedZiPatchPartLocator.VerifyDataResult.FailNotEnoughData:
                                         case IndexedZiPatchPartLocator.VerifyDataResult.FailBadData:
-                                            if (file[j].IsFromSourceFile)
-                                                MissingPartIndicesPerPatch[file[j].SourceIndex].Add(Tuple.Create(file[j].TargetIndex, j));
-                                            MissingPartIndicesPerTargetFile[file[j].TargetIndex].Add(j);
-                                            OnCorruptionFound?.Invoke(file[j], verifyResult);
+                                            MissingPartIndicesPerTargetFile[file[partIndex].TargetIndex].Add(partIndex);
+                                            OnCorruptionFound?.Invoke(file[partIndex], verifyResult);
                                             break;
                                     }
                                 }
@@ -227,6 +241,16 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     if (verifyTasks.FirstOrDefault(x => x.IsFaulted) is Task x)
                         throw x.Exception;
                     verifyTasks.RemoveAll(x => x.IsCompleted);
+                }
+
+                for (var targetIndex = 0; targetIndex < Index.Length; targetIndex++)
+                {
+                    foreach (var partIndex in MissingPartIndicesPerTargetFile[targetIndex])
+                    {
+                        var part = Index[targetIndex][partIndex];
+                        if (part.IsFromSourceFile)
+                            MissingPartIndicesPerPatch[part.SourceIndex].Add(Tuple.Create(targetIndex, partIndex));
+                    }
                 }
             }
             finally
@@ -254,11 +278,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             var file = Index[targetIndex];
             for (var i = 0; i < file.Count; ++i)
-            {
-                if (file[i].IsFromSourceFile)
-                    MissingPartIndicesPerPatch[file[i].SourceIndex].Add(Tuple.Create(targetIndex, i));
                 MissingPartIndicesPerTargetFile[targetIndex].Add(i);
-            }
         }
 
         public void SetTargetStreamForRead(int targetIndex, Stream targetStream)
@@ -432,9 +452,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     ProgressMax += Index[targetIndex][partIndex].TargetSize;
             }
 
-            private MultipartRequestHandler multipartResponse = null;
+            private MultipartResponseHandler multipartResponse = null;
 
-            private async Task<MultipartRequestHandler.ForwardSeekStream> GetNextStream(CancellationToken cancellationToken)
+            private async Task<MultipartResponseHandler.MultipartPartStream> GetNextStream(CancellationToken cancellationToken)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -455,14 +475,12 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                 for (int i = 1; i < offsets.Count; i++)
                 {
-                    if (offsets[i].Item1 - offsets[i - 1].Item2 >= 1024)
+                    if (offsets[i].Item1 - offsets[i - 1].Item2 >= 16384)
                         continue;
                     offsets[i - 1] = Tuple.Create(offsets[i - 1].Item1, Math.Max(offsets[i - 1].Item2, offsets[i].Item2));
                     offsets.RemoveAt(i);
                     i -= 1;
                 }
-                if (offsets.Count > 1024)
-                    offsets.RemoveRange(1024, offsets.Count - 1024);
 
                 using HttpRequestMessage req = new(HttpMethod.Get, SourceUrl);
                 req.Headers.Range = new();
@@ -475,7 +493,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 req.Headers.Add("Connection", "Keep-Alive");
 
                 var resp = await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-                multipartResponse = new MultipartRequestHandler(resp);
+                multipartResponse = new MultipartResponseHandler(resp);
 
                 var stream2 = await multipartResponse.NextPart(cancellationToken);
                 if (stream2 == null)
@@ -494,18 +512,18 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                     try
                     {
-                        using var stream = await GetNextStream(cancellationToken);
+                        var stream = await GetNextStream(cancellationToken);
 
-                        while (TargetPartOffsets.Any() && TargetPartOffsets.First() < stream.AvailableToOffset)
+                        while (TargetPartOffsets.Any() && TargetPartOffsets.First() < stream.OriginEnd)
                         {
                             cancellationToken.ThrowIfCancellationRequested();
 
                             var (targetIndex, partIndex) = TargetPartIndices.First();
                             var part = Index[targetIndex][partIndex];
 
-                            using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
-                            part.Reconstruct(stream, buffer.Buffer);
-                            Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+                            using var targetBuffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+                            part.Reconstruct(stream, targetBuffer.Buffer);
+                            Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, targetBuffer.Buffer, 0, (int)part.TargetSize);
                             failedCount = 0;
 
                             ProgressValue += part.TargetSize;
@@ -595,10 +613,21 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public void QueueInstall(int sourceIndex, string sourceUrl, string sid, int splitBy = 8)
         {
-            var indices = MissingPartIndicesPerPatch[sourceIndex];
+            const int MaxDownloadPerRequest = 64 * 1024 * 1024;
+
+            var indices = MissingPartIndicesPerPatch[sourceIndex].ToList();
             var indicesPerRequest = (int)Math.Ceiling(1.0 * indices.Count / splitBy);
-            for (int j = 0; j < indices.Count; j += indicesPerRequest)
-                QueueInstall(sourceIndex, sourceUrl, sid, indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)).ToHashSet());
+            for (int j = 0; j < indices.Count;)
+            {
+                SortedSet<Tuple<int, int>> targetPartIndices = new();
+                long size = 0;
+                for (; j < indices.Count && targetPartIndices.Count < indicesPerRequest && size < MaxDownloadPerRequest; ++j)
+                {
+                    targetPartIndices.Add(indices[j]);
+                    size += Index[indices[j].Item1][indices[j].Item2].MaxSourceSize;
+                }
+                QueueInstall(sourceIndex, sourceUrl, sid, targetPartIndices);
+            }
         }
 
         public void QueueInstall(int sourceIndex, Stream stream, ISet<Tuple<int, int>> targetPartIndices)

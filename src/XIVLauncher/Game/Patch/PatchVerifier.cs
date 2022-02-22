@@ -197,6 +197,7 @@ namespace XIVLauncher.Game.Patch
                                 {
                                     remote.OnVerifyProgress += UpdateVerifyProgress;
                                     remote.OnInstallProgress += UpdateInstallProgress;
+                                    await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval);
 
                                     var fileBroken = new bool[patchIndex.Length].ToList();
                                     var repaired = false;
@@ -205,15 +206,14 @@ namespace XIVLauncher.Game.Patch
                                         IsInstalling = false;
 
                                         TaskCount = patchIndex.Length;
+                                        Progress = Total = TaskIndex = 0;
                                         _reportedProgresses.Clear();
-
-                                        await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval);
 
                                         var adjustedGamePath = Path.Combine(App.Settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
 
                                         await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
                                         // TODO: check one at a time if random access is slow?
-                                        await remote.VerifyFiles(Environment.ProcessorCount, _cancellationTokenSource.Token);
+                                        await remote.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, _cancellationTokenSource.Token);
 
                                         var missingPartIndicesPerTargetFile = await remote.GetMissingPartIndicesPerTargetFile();
                                         if ((repaired = missingPartIndicesPerTargetFile.All(x => !x.Any())))
@@ -224,6 +224,7 @@ namespace XIVLauncher.Game.Patch
                                                 fileBroken[i] = true;
 
                                         TaskCount = patchIndex.Sources.Count;
+                                        Progress = Total = TaskIndex = 0;
                                         _reportedProgresses.Clear();
                                         var missing = await remote.GetMissingPartIndicesPerPatch();
 

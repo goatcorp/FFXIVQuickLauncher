@@ -194,9 +194,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             await WaitForResult(writer, null);
         }
 
-        public async Task VerifyFiles(int concurrentCount = 8, CancellationToken? cancellationToken = null)
+        public async Task VerifyFiles(bool refine = false, int concurrentCount = 8, CancellationToken? cancellationToken = null)
         {
             var writer = GetRequestCreator(WorkerInboundOpcode.VerifyFiles, cancellationToken);
+            writer.Write(refine);
             writer.Write(concurrentCount);
             await WaitForResult(writer, cancellationToken, 864000000);
         }
@@ -374,7 +375,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 break;
 
                             case WorkerInboundOpcode.VerifyFiles:
-                                await Instance.VerifyFiles(reader.ReadInt32(), cancelToken);
+                                await Instance.VerifyFiles(reader.ReadBoolean(), reader.ReadInt32(), cancelToken);
                                 break;
 
                             case WorkerInboundOpcode.MarkFileAsMissing:
@@ -586,8 +587,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 };
                 var maxConcurrentConnectionsForPatchSet = 1;
 
-                var baseDir = @"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn";
-                // var baseDir = @"Z:\tgame";
+                // var baseDir = @"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn";
+                var baseDir = @"Z:\tgame";
                 var rootAndPatchPairs = new List<Tuple<string, string>>() {
                     Tuple.Create(@$"{baseDir}\boot", @"Z:\patch-dl.ffxiv.com\boot\2b5cbc63\D2021.11.16.0000.0001.patch.index"),
                 };
@@ -601,7 +602,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 {
                     var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
 
-                    await verifier.ConstructFromPatchFile(patchIndex, 5000);
+                    await verifier.ConstructFromPatchFile(patchIndex, 1000);
 
                     void ReportCheckProgress(int index, long progress, long max)
                     {
@@ -616,25 +617,31 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     verifier.OnVerifyProgress += ReportCheckProgress;
                     verifier.OnInstallProgress += ReportInstallProgress;
 
-                    await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
-                    // TODO: check one at a time if random access is slow?
-                    await verifier.VerifyFiles(Environment.ProcessorCount, cancellationToken);
-                    verifier.OnVerifyProgress -= ReportCheckProgress;
-
-                    var missing = await verifier.GetMissingPartIndicesPerPatch();
-
-                    await verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
-                    var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
-                    for (var i = 0; i < patchIndex.Sources.Count; i++)
+                    for (var attemptIndex = 0; attemptIndex < 5; attemptIndex++)
                     {
-                        if (!missing[i].Any())
-                            continue;
+                        await verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
+                        // TODO: check one at a time if random access is slow?
+                        await verifier.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, cancellationToken);
 
-                        await verifier.QueueInstall(i, new Uri(availableSourceUrls[prefix + patchIndex.Sources[i]]), null, maxConcurrentConnectionsForPatchSet);
-                        // await verifier.QueueInstall(i, new FileInfo(availableSourceUrls[prefix + patchIndex.Sources[i]].Replace("http:/", "Z:")));
+                        var missingPartIndicesPerTargetFile = await verifier.GetMissingPartIndicesPerTargetFile();
+                        if (missingPartIndicesPerTargetFile.All(x => !x.Any()))
+                            break;
+
+                        var missingPartIndicesPerPatch = await verifier.GetMissingPartIndicesPerPatch();
+                        await verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
+                        var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
+                        for (var i = 0; i < patchIndex.Sources.Count; i++)
+                        {
+                            if (!missingPartIndicesPerPatch[i].Any())
+                                continue;
+
+                            await verifier.QueueInstall(i, new Uri(availableSourceUrls[prefix + patchIndex.Sources[i]]), null, maxConcurrentConnectionsForPatchSet);
+                            // await verifier.QueueInstall(i, new FileInfo(availableSourceUrls[prefix + patchIndex.Sources[i]].Replace("http:/", "Z:")));
+                        }
+                        await verifier.Install(maxConcurrentConnectionsForPatchSet, cancellationToken);
+                        await verifier.WriteVersionFiles(gameRootPath);
                     }
-                    await verifier.Install(maxConcurrentConnectionsForPatchSet, cancellationToken);
-                    await verifier.WriteVersionFiles(gameRootPath);
+                    verifier.OnVerifyProgress -= ReportCheckProgress;
                     verifier.OnInstallProgress -= ReportInstallProgress;
                 }
             }).Wait();

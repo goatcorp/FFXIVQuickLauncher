@@ -108,7 +108,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             try
             {
                 verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
-                await verifier.VerifyFiles(8, cancellationToken);
+                await verifier.VerifyFiles(false, 8, cancellationToken);
             }
             finally
             {

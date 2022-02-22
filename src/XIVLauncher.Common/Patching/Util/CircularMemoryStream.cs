@@ -20,7 +20,7 @@ namespace XIVLauncher.Common.Patching.Util
         private ReusableByteBufferManager.Allocation ReusableBuffer;
         private int BufferValidTo = 0;
         private int BufferValidFrom = 0;
-        private bool Empty = true;
+        private int _Length = 0;
         private int ExternalPosition = 0;
 
         public CircularMemoryStream(int baseCapacity = 0, FeedOverflowMode feedOverflowMode = FeedOverflowMode.ExtendCapacity)
@@ -43,12 +43,11 @@ namespace XIVLauncher.Common.Patching.Util
             if (capacity <= Capacity)
                 return;
 
-            var length = (int)Length;
             var newBuffer = ReusableByteBufferManager.GetBuffer(capacity);
-            if (!Empty)
+            if (_Length > 0)
             {
                 if (BufferValidFrom < BufferValidTo)
-                    Array.Copy(ReusableBuffer.Buffer, BufferValidFrom, newBuffer.Buffer, 0, length);
+                    Array.Copy(ReusableBuffer.Buffer, BufferValidFrom, newBuffer.Buffer, 0, _Length);
                 else
                 {
                     Array.Copy(ReusableBuffer.Buffer, BufferValidFrom, newBuffer.Buffer, 0, Capacity - BufferValidFrom);
@@ -60,14 +59,15 @@ namespace XIVLauncher.Common.Patching.Util
             ReusableBuffer = newBuffer;
 
             BufferValidFrom = 0;
-            BufferValidTo = length;
+            BufferValidTo = _Length;
         }
 
         public void Feed(byte[] buffer, int offset, int count)
         {
             if (count == 0)
                 return;
-            if (Length + count > Capacity)
+
+            if (_Length + count > Capacity)
             {
                 switch (OverflowMode)
                 {
@@ -82,60 +82,61 @@ namespace XIVLauncher.Common.Patching.Util
                             BufferValidTo = 0;
                             Array.Copy(buffer, offset + count - Capacity, ReusableBuffer.Buffer, 0, Capacity);
                             ExternalPosition = 0;
-                            Empty = false;
+                            _Length = Capacity;
                             return;
                         }
-                        else
-                        {
-                            var keepCount = Capacity - count;
-                            ExternalPosition = (int)Math.Max(0, ExternalPosition - (Length - keepCount));
-                            BufferValidFrom = (BufferValidTo - keepCount + Capacity) % Capacity;
-                        }
+                        Consume(null, 0, _Length + count - Capacity);
                         break;
 
                     case FeedOverflowMode.Throw:
                         throw new InvalidOperationException($"Cannot feed {count} bytes (length={Length}, capacity={Capacity})");
                 }
             }
-            if (BufferValidTo + count < Capacity)
+
+            if (BufferValidFrom < BufferValidTo)
             {
-                Array.Copy(buffer, offset, ReusableBuffer.Buffer, BufferValidTo, count);
-                BufferValidTo = (BufferValidTo + count) % Capacity;
+                var rightLength = Capacity - BufferValidTo;
+                if (rightLength >= count)
+                    Buffer.BlockCopy(buffer, offset, ReusableBuffer.Buffer, BufferValidTo, count);
+                else
+                {
+                    Buffer.BlockCopy(buffer, offset, ReusableBuffer.Buffer, BufferValidTo, rightLength);
+                    Buffer.BlockCopy(buffer, offset + rightLength, ReusableBuffer.Buffer, 0, count - rightLength);
+                }
             }
             else
-            {
-                var feedLength1 = Capacity - BufferValidTo;
-                var feedLength2 = count - feedLength1;
-                Array.Copy(buffer, offset, ReusableBuffer.Buffer, BufferValidTo, feedLength1);
-                Array.Copy(buffer, offset + feedLength1, ReusableBuffer.Buffer, 0, feedLength2);
-                BufferValidTo = feedLength2 % Capacity;
-            }
-            Empty = false;
+                Buffer.BlockCopy(buffer, offset, ReusableBuffer.Buffer, BufferValidTo, count);
+
+            BufferValidTo = (BufferValidTo + count) % Capacity;
+            _Length += count;
         }
 
         public int Consume(byte[] buffer, int offset, int count, bool peek = false)
         {
-            count = Math.Min(count, (int)Length);
+            count = Math.Min(count, _Length);
             if (buffer != null && count > 0)
             {
                 if (BufferValidFrom < BufferValidTo)
-                    Array.Copy(ReusableBuffer.Buffer, BufferValidFrom, buffer, offset, count);
+                    Buffer.BlockCopy(ReusableBuffer.Buffer, BufferValidFrom, buffer, offset, count);
                 else
                 {
-                    var consumeCount1 = Math.Min(count, Capacity - BufferValidFrom);
-                    var consumeCount2 = count - consumeCount1;
-                    Array.Copy(ReusableBuffer.Buffer, BufferValidFrom, buffer, offset, consumeCount1);
-                    Array.Copy(ReusableBuffer.Buffer, 0, buffer, offset + consumeCount1, consumeCount2);
+                    int rightLength = Capacity - BufferValidFrom;
+                    if (rightLength >= count)
+                        Buffer.BlockCopy(ReusableBuffer.Buffer, BufferValidFrom, buffer, offset, count);
+                    else
+                    {
+                        Buffer.BlockCopy(ReusableBuffer.Buffer, BufferValidFrom, buffer, offset, rightLength);
+                        Buffer.BlockCopy(ReusableBuffer.Buffer, 0, buffer, offset + rightLength, count - rightLength);
+                    }
                 }
             }
             if (!peek)
             {
-                BufferValidFrom = (BufferValidFrom + count) % Capacity;
-                if (count > 0 && BufferValidFrom == BufferValidTo)
-                {
+                _Length -= count;
+                if (_Length == 0)
                     BufferValidFrom = BufferValidTo = 0;
-                    Empty = true;
-                }
+                else
+                    BufferValidFrom = (BufferValidFrom + count) % Capacity;
                 ExternalPosition = Math.Max(0, ExternalPosition - count);
             }
             return count;
@@ -162,11 +163,11 @@ namespace XIVLauncher.Common.Patching.Util
         public override bool CanRead => true;
         public override bool CanSeek => true;
         public override bool CanWrite => true;
-        public override long Length => (BufferValidTo == BufferValidFrom && !Empty) ? Capacity : ((BufferValidTo - BufferValidFrom + Capacity) % Capacity);
+        public override long Length => _Length;
         public override long Position
         {
             get => ExternalPosition;
-            set => ExternalPosition = (int)value;
+            set => Seek(value, SeekOrigin.Begin);
         }
 
         public override void Flush() { }
@@ -175,10 +176,9 @@ namespace XIVLauncher.Common.Patching.Util
         {
             if (value > int.MaxValue)
                 throw new ArgumentOutOfRangeException("Length can be up to int.MaxValue");
-            Empty = value == 0;
-            if (Empty)
+            if (value == 0)
             {
-                BufferValidFrom = BufferValidTo = 0;
+                BufferValidFrom = BufferValidTo = _Length = 0;
                 return;
             }
 
@@ -202,22 +202,28 @@ namespace XIVLauncher.Common.Patching.Util
             }
             else if (intValue < Length)
                 BufferValidTo = (BufferValidFrom + intValue) % Capacity;
+            _Length = (int)value;
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            count = Math.Min(count, (int)Length - ExternalPosition);
+            count = Math.Min(count, _Length - ExternalPosition);
 
-            var readOffset = (BufferValidFrom + ExternalPosition) % Capacity;
-            if (readOffset + count <= Capacity)
-                Array.Copy(ReusableBuffer.Buffer, readOffset, buffer, offset, count);
+            var adjValidFrom = (BufferValidFrom + ExternalPosition) % Capacity;
+            if (adjValidFrom < BufferValidTo)
+                Buffer.BlockCopy(ReusableBuffer.Buffer, adjValidFrom, buffer, offset, count);
             else
             {
-                var readCount1 = Capacity - readOffset;
-                var readCount2 = count - readCount1;
-                Array.Copy(ReusableBuffer.Buffer, readOffset, buffer, offset, readCount1);
-                Array.Copy(ReusableBuffer.Buffer, 0, buffer, offset + readCount1, readCount2);
+                int rightLength = Capacity - adjValidFrom;
+                if (rightLength >= count)
+                    Buffer.BlockCopy(ReusableBuffer.Buffer, adjValidFrom, buffer, offset, count);
+                else
+                {
+                    Buffer.BlockCopy(ReusableBuffer.Buffer, adjValidFrom, buffer, offset, rightLength);
+                    Buffer.BlockCopy(ReusableBuffer.Buffer, 0, buffer, offset + rightLength, count - rightLength);
+                }
             }
+
             ExternalPosition += count;
             return count;
         }
@@ -239,8 +245,8 @@ namespace XIVLauncher.Common.Patching.Util
             }
             if (newPosition < 0)
                 throw new ArgumentException("Seeking is attempted before the beginning of the stream.");
-            if (newPosition > Length)
-                newPosition = Length;
+            if (newPosition > _Length)
+                newPosition = _Length;
             ExternalPosition = (int)newPosition;
             return newPosition;
         }
