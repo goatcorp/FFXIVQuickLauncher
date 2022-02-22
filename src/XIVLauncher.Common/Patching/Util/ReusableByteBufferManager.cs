@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,8 +8,8 @@ namespace XIVLauncher.Common.Patching.Util
 {
     public class ReusableByteBufferManager
     {
-        private const int DEFAULT_EXPONENTIAL_BUFFER_SIZE = 12;  // 4096
-        private static readonly ReusableByteBufferManager[] Instances = new ReusableByteBufferManager[32];
+        private static readonly int[] ArraySizes = new int[] { 1 << 14, 1 << 16, 1 << 18, 1 << 20, 1 << 22 };
+        private static readonly ReusableByteBufferManager[] Instances = ArraySizes.Select(x => new ReusableByteBufferManager(x, 2 * Environment.ProcessorCount)).ToArray();
 
         public class Allocation : IDisposable
         {
@@ -19,10 +18,10 @@ namespace XIVLauncher.Common.Patching.Util
             public readonly MemoryStream Stream;
             public readonly BinaryWriter Writer;
 
-            internal Allocation(ReusableByteBufferManager b)
+            internal Allocation(ReusableByteBufferManager b, long size)
             {
                 BufferManager = b;
-                Buffer = new byte[b.ArraySize];
+                Buffer = new byte[size];
                 Stream = new MemoryStream(Buffer);
                 Writer = new BinaryWriter(Stream);
             }
@@ -35,17 +34,14 @@ namespace XIVLauncher.Common.Patching.Util
 
             public void Clear() => Array.Clear(Buffer, 0, Buffer.Length);
 
-            public void Dispose() => BufferManager.Return(this);
+            public void Dispose() => BufferManager?.Return(this);
         }
 
         private readonly int ArraySize;
         private readonly Allocation[] Buffers;
 
-        public ReusableByteBufferManager(int arraySize, int maxBuffers = 0)
+        public ReusableByteBufferManager(int arraySize, int maxBuffers)
         {
-            if (maxBuffers == 0)
-                maxBuffers = Environment.ProcessorCount;
-
             ArraySize = arraySize;
             Buffers = new Allocation[maxBuffers];
         }
@@ -70,7 +66,7 @@ namespace XIVLauncher.Common.Patching.Util
                 }
             }
             if (res == null)
-                res = new Allocation(this);
+                res = new Allocation(this, ArraySize);
             else if (clear)
                 res.Clear();
             res.ResetState();
@@ -95,36 +91,18 @@ namespace XIVLauncher.Common.Patching.Util
             }
         }
 
-        public static ReusableByteBufferManager GetInstance(int exponentialArraySize = -1)
+        public static Allocation GetBuffer(bool clear = false)
         {
-            if (exponentialArraySize == -1)
-                exponentialArraySize = DEFAULT_EXPONENTIAL_BUFFER_SIZE;
-            if (Instances[exponentialArraySize] == null)
-            {
-                lock (Instances.SyncRoot)
-                {
-                    if (Instances[exponentialArraySize] == null)
-                    {
-                        Instances[exponentialArraySize] = new ReusableByteBufferManager(1 << exponentialArraySize);
-                    }
-                }
-            }
-            return Instances[exponentialArraySize];
+            return Instances[0].Allocate(clear);
         }
 
-        public static Allocation GetBuffer(int exponentialArraySize = -1, bool clear = false)
+        public static Allocation GetBuffer(long minSize, bool clear = false)
         {
-            return GetInstance(exponentialArraySize).Allocate(clear);
-        }
+            for (int i = 0; i < ArraySizes.Length; i++)
+                if (ArraySizes[i] >= minSize)
+                    return Instances[i].Allocate(clear);
 
-        public static Allocation GetBufferHolding(long size, bool clear = false)
-        {
-            for (int i = DEFAULT_EXPONENTIAL_BUFFER_SIZE; i < 32; i++)
-            {
-                if (size < (1 << i))
-                    return GetInstance(i).Allocate(clear);
-            }
-            throw new ArgumentOutOfRangeException("Requested size too big");
+            return new Allocation(null, minSize);
         }
     }
 }

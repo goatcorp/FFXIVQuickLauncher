@@ -1,9 +1,12 @@
 ﻿using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using XIVLauncher.Common.Patching.Util;
@@ -15,10 +18,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public readonly IndexedZiPatchIndex Index;
         public readonly List<SortedSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
         public readonly List<SortedSet<int>> MissingPartIndicesPerTargetFile = new();
-        public readonly SortedSet<int> TooLongTargetFiles = new();
+        public readonly SortedSet<int> SizeMismatchTargetFileIndices = new();
 
         public int ProgressReportInterval = 250;
         private readonly List<Stream> TargetStreams = new();
+        private readonly List<object> TargetLocks = new();
 
         public delegate void OnCorruptionFoundDelegate(IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result);
         public delegate void OnVerifyProgressDelegate(int targetIndex, long progress, long max);
@@ -28,6 +32,112 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public event OnVerifyProgressDelegate OnVerifyProgress;
         public event OnInstallProgressDelegate OnInstallProgress;
 
+        // Definitions taken from PInvoke.net (with some changes)
+        private static class PInvoke
+        {
+            #region Constants
+            public const UInt32 TOKEN_QUERY = 0x0008;
+            public const UInt32 TOKEN_ADJUST_PRIVILEGES = 0x0020;
+
+            public const UInt32 SE_PRIVILEGE_ENABLED = 0x00000002;
+
+            public const UInt32 ERROR_NOT_ALL_ASSIGNED = 0x514;
+            #endregion
+
+
+            #region Structures
+            [StructLayout(LayoutKind.Sequential)]
+            public struct LUID
+            {
+                public UInt32 LowPart;
+                public Int32 HighPart;
+            }
+
+            public struct LUID_AND_ATTRIBUTES
+            {
+                public LUID Luid;
+                public UInt32 Attributes;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct TOKEN_PRIVILEGES
+            {
+                public UInt32 PrivilegeCount;
+                [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+                public LUID_AND_ATTRIBUTES[] Privileges;
+            }
+            #endregion
+
+
+            #region Methods
+            [DllImport("kernel32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool SetFileValidData(IntPtr hFile, long ValidDataLength);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool CloseHandle(IntPtr hObject);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            public static extern bool OpenProcessToken(
+                IntPtr ProcessHandle,
+                UInt32 DesiredAccess,
+                out IntPtr TokenHandle);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            public static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref LUID lpLuid);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            public static extern bool AdjustTokenPrivileges(
+                IntPtr TokenHandle,
+                bool DisableAllPrivileges,
+                ref TOKEN_PRIVILEGES NewState,
+                int BufferLengthInBytes,
+                IntPtr PreviousState,
+                IntPtr ReturnLengthInBytes);
+            #endregion
+
+
+            #region Utilities
+            // https://docs.microsoft.com/en-us/windows/win32/secauthz/enabling-and-disabling-privileges-in-c--
+            public static void SetPrivilege(IntPtr hToken, string lpszPrivilege, bool bEnablePrivilege)
+            {
+                LUID luid = new();
+                if (!LookupPrivilegeValue(null, lpszPrivilege, ref luid))
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "LookupPrivilegeValue failed.");
+
+                TOKEN_PRIVILEGES tp = new()
+                {
+                    PrivilegeCount = 1,
+                    Privileges = new LUID_AND_ATTRIBUTES[] {
+                        new LUID_AND_ATTRIBUTES{
+                            Luid = luid,
+                            Attributes = bEnablePrivilege ? SE_PRIVILEGE_ENABLED : 0,
+                        }
+                    },
+                };
+                if (!AdjustTokenPrivileges(hToken, false, ref tp, Marshal.SizeOf(tp), IntPtr.Zero, IntPtr.Zero))
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "AdjustTokenPrivileges failed.");
+
+                if (Marshal.GetLastWin32Error() == ERROR_NOT_ALL_ASSIGNED)
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "The token does not have the specified privilege.");
+            }
+
+            public static void SetCurrentPrivilege(string lpszPrivilege, bool bEnablePrivilege)
+            {
+                if (!OpenProcessToken(Process.GetCurrentProcess().SafeHandle.DangerousGetHandle(), TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, out var hToken))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                try
+                {
+                    SetPrivilege(hToken, lpszPrivilege, bEnablePrivilege);
+                }
+                finally
+                {
+                    CloseHandle(hToken);
+                }
+            }
+            #endregion
+        }
+
         public IndexedZiPatchInstaller(IndexedZiPatchIndex def)
         {
             Index = def;
@@ -35,6 +145,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 MissingPartIndicesPerTargetFile.Add(new());
                 TargetStreams.Add(null);
+                TargetLocks.Add(new());
             }
             foreach (var _ in def.Sources)
                 MissingPartIndicesPerPatch.Add(new());
@@ -70,8 +181,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             continue;
 
                         var file = Index[targetIndex];
-                        if (stream.Length > file.FileSize)
-                            TooLongTargetFiles.Add(targetIndex);
+                        if (stream.Length != file.FileSize)
+                            SizeMismatchTargetFileIndices.Add(targetIndex);
 
                         verifyTasks.Add(Task.Run(() =>
                         {
@@ -150,9 +261,27 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public void SetTargetStream(int targetIndex, Stream targetStream)
+        public void SetTargetStreamForRead(int targetIndex, Stream targetStream)
         {
+            if (!targetStream.CanRead || !targetStream.CanSeek)
+                throw new ArgumentException("Target stream must be readable and seekable.");
+
             TargetStreams[targetIndex] = targetStream;
+        }
+
+        public void SetTargetStreamForWriteFromFile(int targetIndex, FileInfo fileInfo, bool useSetFileValidData = false)
+        {
+            var file = Index[targetIndex];
+            fileInfo.Directory.Create();
+            var stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            if (stream.Length != file.FileSize)
+            {
+                stream.Seek(file.FileSize, SeekOrigin.Begin);
+                stream.SetLength(file.FileSize);
+                if (useSetFileValidData && !PInvoke.SetFileValidData(stream.SafeFileHandle.DangerousGetHandle(), file.FileSize))
+                    Log.Information($"Unable to apply SetFileValidData on file {fileInfo.FullName} (error code {Marshal.GetLastWin32Error()})");
+            }
+            TargetStreams[targetIndex] = stream;
         }
 
         public void SetTargetStreamsFromPathReadOnly(string rootPath)
@@ -161,48 +290,51 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             for (var i = 0; i < Index.Length; i++)
             {
                 var file = Index[i];
-                try
-                {
-                    TargetStreams[i] = new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.Open, FileAccess.Read);
-                }
-                catch (FileNotFoundException)
-                {
+                var fileInfo = new FileInfo(Path.Combine(rootPath, file.RelativePath));
+                if (fileInfo.Exists)
+                    SetTargetStreamForRead(i, new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.Open, FileAccess.Read));
+                else
                     MarkFileAsMissing(i);
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    MarkFileAsMissing(i);
-                }
             }
         }
 
         public void SetTargetStreamsFromPathReadWriteForMissingFiles(string rootPath)
         {
             Dispose();
+
+            var useSetFileValidData = false;
+            try
+            {
+                PInvoke.SetCurrentPrivilege("SeManageVolumePrivilege", true);
+            }
+            catch (Win32Exception e)
+            {
+                Log.Information(e, "Unable to obtain SeManageVolumePrivilege; not using SetFileValidData.");
+                useSetFileValidData = false;
+            }
+
             for (var i = 0; i < Index.Length; i++)
             {
-                if (MissingPartIndicesPerTargetFile[i].Count == 0 && !TooLongTargetFiles.Contains(i))
+                if (MissingPartIndicesPerTargetFile[i].Count == 0 && !SizeMismatchTargetFileIndices.Contains(i))
                     continue;
+
                 var file = Index[i];
-                Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(rootPath, file.RelativePath)));
-                TargetStreams[i] = new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                var fileInfo = new FileInfo(Path.Combine(rootPath, file.RelativePath));
+                SetTargetStreamForWriteFromFile(i, fileInfo, useSetFileValidData);
             }
         }
 
         private void WriteToTarget(int targetIndex, long targetOffset, byte[] buffer, int offset, int count)
         {
-            WriteToTarget(TargetStreams[targetIndex], targetOffset, buffer, offset, count);
-        }
-
-        private void WriteToTarget(Stream target, long targetOffset, byte[] buffer, int offset, int count)
-        {
+            var target = TargetStreams[targetIndex];
             if (target == null)
                 return;
 
-            lock (target)
+            lock (TargetLocks[targetIndex])
             {
                 target.Seek(targetOffset, SeekOrigin.Begin);
                 target.Write(buffer, offset, count);
+                target.Flush();
             }
         }
 
@@ -215,10 +347,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     if (cancellationToken.HasValue)
                         cancellationToken.Value.ThrowIfCancellationRequested();
 
-                    var target = TargetStreams[i];
-                    if (target == null)
-                        continue;
-
                     var file = Index[i];
                     foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
                     {
@@ -229,15 +357,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         if (part.IsFromSourceFile)
                             continue;
 
-                        using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
+                        using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
                         part.ReconstructWithoutSourceData(buffer.Buffer);
-                        WriteToTarget(target, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+                        WriteToTarget(i, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
                     }
-                    target.SetLength(file.FileSize);
                 }
-
-                foreach (var stream in TargetStreams)
-                    stream?.Flush();
             });
         }
 
@@ -257,12 +381,21 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             public readonly IndexedZiPatchIndex Index;
             public readonly IndexedZiPatchInstaller Installer;
             public readonly int SourceIndex;
+            public readonly List<Tuple<int, int>> TargetPartIndices;
+            public readonly List<Tuple<int, int>> CompletedTargetPartIndices = new();
 
-            public InstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex)
+            public InstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, IEnumerable<Tuple<int, int>> targetPartIndices)
             {
                 Index = installer.Index;
                 Installer = installer;
                 SourceIndex = sourceIndex;
+                TargetPartIndices = targetPartIndices.ToList();
+            }
+
+            public virtual void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
+            {
+                TargetPartIndices.Clear();
+                TargetPartIndices.AddRange(targetPartIndices);
             }
 
             public abstract bool ShouldReattempt { get; }
@@ -276,25 +409,31 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             public readonly HttpClient Client;
             public readonly string SourceUrl;
-            public readonly List<Tuple<int, int>> TargetPartIndices;
             private readonly List<long> TargetPartOffsets;
             private readonly string Sid;
             private int AttemptIndex = 0;
 
-            public HttpInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, HttpClient client, string sourceUrl, string sid, IEnumerable<Tuple<int, int>> targetPartIndices)
-                : base(installer, sourceIndex)
+            public HttpInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, IEnumerable<Tuple<int, int>> targetPartIndices, HttpClient client, string sourceUrl, string sid)
+                : base(installer, sourceIndex, targetPartIndices)
             {
                 Client = client;
                 SourceUrl = sourceUrl;
                 Sid = sid;
-                TargetPartIndices = targetPartIndices.ToList();
                 TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
                 TargetPartOffsets = TargetPartIndices.Select(x => Index[x.Item1][x.Item2].SourceOffset).ToList();
 
-                long totalTargetSize = 0;
                 foreach (var (targetIndex, partIndex) in TargetPartIndices)
-                    totalTargetSize += Index[targetIndex][partIndex].TargetSize;
-                ProgressMax = totalTargetSize;
+                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
+            }
+
+            public override void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
+            {
+                base.Again(targetPartIndices);
+                TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
+                TargetPartOffsets.Clear();
+                TargetPartOffsets.AddRange(TargetPartIndices.Select(x => Index[x.Item1][x.Item2].SourceOffset));
+                foreach (var (targetIndex, partIndex) in TargetPartIndices)
+                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
             }
 
             public override bool ShouldReattempt => AttemptIndex < 8;
@@ -319,58 +458,61 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 if (!offsets.Any())
                     return;
 
-                for (int j = 1; j < offsets.Count;)
+                for (int i = 1; i < offsets.Count;)
                 {
-                    if (offsets[j].Item1 - offsets[j - 1].Item2 < 4096)
+                    if (offsets[i].Item1 - offsets[i - 1].Item2 < 1024)
                     {
-                        offsets[j - 1] = Tuple.Create(offsets[j - 1].Item1, Math.Max(offsets[j - 1].Item2, offsets[j].Item2));
-                        offsets.RemoveAt(j);
+                        offsets[i - 1] = Tuple.Create(offsets[i - 1].Item1, Math.Max(offsets[i - 1].Item2, offsets[i].Item2));
+                        offsets.RemoveAt(i);
                     }
                     else
-                        j += 1;
+                        i += 1;
                 }
 
-                using HttpRequestMessage req = new(HttpMethod.Get, SourceUrl);
-                req.Headers.Add("Range", "bytes=" + string.Join(",", offsets.Select(x => $"{x.Item1}-{x.Item2 - 1}")));
-                if (Sid != null)
-                    req.Headers.Add("X-Patch-Unique-Id", Sid);
-                req.Headers.Add("User-Agent", Constants.PatcherUserAgent);
-                req.Headers.Add("Connection", "Keep-Alive");
-                using var resp = new MultipartRequestHandler(await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead));
-
-                List<Stream> ss = new();
-                while (true)
+                for (int i = 0; i < offsets.Count; i += 1024)
                 {
-                    if (cancellationToken.HasValue)
-                        cancellationToken.Value.ThrowIfCancellationRequested();
+                    using HttpRequestMessage req = new(HttpMethod.Get, SourceUrl);
+                    req.Headers.Add("Range", "bytes=" + string.Join(",", offsets.Skip(i).Take(Math.Min(offsets.Count - i, 1024)).Select(x => $"{x.Item1}-{x.Item2 - 1}")));
+                    if (Sid != null)
+                        req.Headers.Add("X-Patch-Unique-Id", Sid);
+                    req.Headers.Add("User-Agent", Constants.PatcherUserAgent);
+                    req.Headers.Add("Connection", "Keep-Alive");
+                    using var resp = new MultipartRequestHandler(await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead));
 
-                    using var n = await resp.NextPart(cancellationToken);
-                    ss.Add(n);
-                    if (n == null)
-                        break;
-
-                    var fromTupleIndex = TargetPartOffsets.BinarySearch(n.AvailableFromOffset);
-                    if (fromTupleIndex < 0)
-                        fromTupleIndex = ~fromTupleIndex;
-                    while (fromTupleIndex > 0 && TargetPartOffsets[fromTupleIndex - 1] >= n.AvailableFromOffset)
-                        fromTupleIndex--;
-
-                    for (var i = fromTupleIndex; i < TargetPartOffsets.Count && TargetPartOffsets[i] < n.AvailableToOffset; i++)
+                    List<Stream> ss = new();
+                    while (true)
                     {
                         if (cancellationToken.HasValue)
                             cancellationToken.Value.ThrowIfCancellationRequested();
 
-                        var (targetIndex, partIndex) = TargetPartIndices[i];
-                        var part = Index[targetIndex][partIndex];
+                        using var n = await resp.NextPart(cancellationToken);
+                        ss.Add(n);
+                        if (n == null)
+                            break;
 
-                        using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
-                        part.Reconstruct(n, buffer.Buffer);
-                        Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+                        var fromTupleIndex = TargetPartOffsets.BinarySearch(n.AvailableFromOffset);
+                        if (fromTupleIndex < 0)
+                            fromTupleIndex = ~fromTupleIndex;
+                        while (fromTupleIndex > 0 && TargetPartOffsets[fromTupleIndex - 1] >= n.AvailableFromOffset)
+                            fromTupleIndex--;
 
-                        ProgressValue += part.TargetSize;
-                        TargetPartIndices.RemoveAt(i);
-                        TargetPartOffsets.RemoveAt(i);
-                        i--;
+                        while (fromTupleIndex < TargetPartOffsets.Count && TargetPartOffsets[fromTupleIndex] < n.AvailableToOffset)
+                        {
+                            if (cancellationToken.HasValue)
+                                cancellationToken.Value.ThrowIfCancellationRequested();
+
+                            var (targetIndex, partIndex) = TargetPartIndices[fromTupleIndex];
+                            var part = Index[targetIndex][partIndex];
+
+                            using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+                            part.Reconstruct(n, buffer.Buffer);
+                            Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+
+                            ProgressValue += part.TargetSize;
+                            CompletedTargetPartIndices.Add(TargetPartIndices[fromTupleIndex]);
+                            TargetPartIndices.RemoveAt(fromTupleIndex);
+                            TargetPartOffsets.RemoveAt(fromTupleIndex);
+                        }
                     }
                 }
                 if (TargetPartIndices.Any())
@@ -382,17 +524,23 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             public readonly Stream SourceStream;
             public readonly IList<Tuple<long, long>> SourceOffsets;
-            public readonly List<Tuple<int, int>> TargetPartIndices;
 
-            public StreamInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, Stream sourceStream, IEnumerable<Tuple<int, int>> targetPartIndices)
-                : base(installer, sourceIndex)
+            public StreamInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, IEnumerable<Tuple<int, int>> targetPartIndices, Stream sourceStream)
+                : base(installer, sourceIndex, targetPartIndices)
             {
                 SourceStream = sourceStream;
-                TargetPartIndices = targetPartIndices.ToList();
                 long totalTargetSize = 0;
                 foreach (var (targetIndex, partIndex) in TargetPartIndices)
                     totalTargetSize += Index[targetIndex][partIndex].TargetSize;
                 ProgressMax = totalTargetSize;
+            }
+
+            public override void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
+            {
+                base.Again(targetPartIndices);
+                TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
+                foreach (var (targetIndex, partIndex) in TargetPartIndices)
+                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
             }
 
             public override bool ShouldReattempt => false;
@@ -401,21 +549,24 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 await Task.Run(() =>
                 {
-                    for (var i = 0; i < TargetPartIndices.Count; i++)
+                    while (TargetPartIndices.Any())
                     {
-                        var (targetIndex, partIndex) = TargetPartIndices[i];
                         if (cancellationToken.HasValue)
                             cancellationToken.Value.ThrowIfCancellationRequested();
+
+                        var (targetIndex, partIndex) = TargetPartIndices[0];
                         var part = Index[targetIndex][partIndex];
 
-                        using var buffer = ReusableByteBufferManager.GetBufferHolding(part.TargetSize);
+                        using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
                         part.Reconstruct(SourceStream, buffer.Buffer);
                         Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
 
                         ProgressValue += part.TargetSize;
+                        CompletedTargetPartIndices.Add(TargetPartIndices[0]);
                         TargetPartIndices.RemoveAt(0);
-                        i--;
                     }
+                    if (TargetPartIndices.Any())
+                        throw new IOException("Missing target part remains");
                 });
             }
 
@@ -431,13 +582,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public void QueueInstall(int sourceIndex, HttpClient client, string sourceUrl, string sid, ISet<Tuple<int, int>> targetPartIndices)
         {
             if (targetPartIndices.Any())
-                InstallTaskConfigs.Add(new HttpInstallTaskConfig(this, sourceIndex, client, sourceUrl, sid == "" ? null : sid, targetPartIndices));
+                InstallTaskConfigs.Add(new HttpInstallTaskConfig(this, sourceIndex, targetPartIndices, client, sourceUrl, sid == "" ? null : sid));
         }
 
-        public void QueueInstall(int sourceIndex, HttpClient client, string sourceUrl, string sid, int splitBy = 8, int maxPartsPerRequest = 1024)
+        public void QueueInstall(int sourceIndex, HttpClient client, string sourceUrl, string sid, int splitBy = 8)
         {
             var indices = MissingPartIndicesPerPatch[sourceIndex];
-            var indicesPerRequest = Math.Min((int)Math.Ceiling(1.0 * indices.Count / splitBy), maxPartsPerRequest);
+            var indicesPerRequest = (int)Math.Ceiling(1.0 * indices.Count / splitBy);
             for (int j = 0; j < indices.Count; j += indicesPerRequest)
                 QueueInstall(sourceIndex, client, sourceUrl, sid, indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)).ToHashSet());
         }
@@ -445,7 +596,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public void QueueInstall(int sourceIndex, Stream stream, ISet<Tuple<int, int>> targetPartIndices)
         {
             if (targetPartIndices.Any())
-                InstallTaskConfigs.Add(new StreamInstallTaskConfig(this, sourceIndex, stream, targetPartIndices));
+                InstallTaskConfigs.Add(new StreamInstallTaskConfig(this, sourceIndex, targetPartIndices, stream));
         }
 
         public void QueueInstall(int sourceIndex, FileInfo file, ISet<Tuple<int, int>> targetPartIndices)
@@ -499,24 +650,49 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 await Task.WhenAny(runningTasks.Keys);
                 foreach (var kvp in runningTasks)
                 {
-                    if (!kvp.Key.IsFaulted || kvp.Value == null)
+                    if (kvp.Value == null || !kvp.Key.IsCompleted)
                         continue;
 
-                    if (kvp.Value.ShouldReattempt)
+                    if (kvp.Key.IsFaulted)
                     {
-                        Log.Warning(kvp.Key.Exception, "Exception occurred while loading part; trying again");
-                        pendingTaskConfigs.Enqueue(kvp.Value);
+                        if (kvp.Value.ShouldReattempt)
+                        {
+                            Log.Warning(kvp.Key.Exception, "Exception occurred while loading part; trying again");
+                            pendingTaskConfigs.Enqueue(kvp.Value);
+                        }
+                        else
+                            exceptions.Add(kvp.Key.Exception);
                     }
-                    else
+                    else if (!kvp.Key.IsCanceled)
                     {
-                        exceptions.Add(kvp.Key.Exception);
+                        List<Tuple<int, int>> again = new();
+                        foreach (var (targetIndex, partIndex) in kvp.Value.CompletedTargetPartIndices)
+                        {
+                            var part = Index[targetIndex][partIndex];
+                            lock (TargetLocks[targetIndex])
+                            {
+                                if (part.Verify(TargetStreams[targetIndex]) == IndexedZiPatchPartLocator.VerifyDataResult.Pass)
+                                    continue;
+
+                                Log.Warning($"Bad part: source={kvp.Value.SourceIndex}:{part.SourceOffset}:{part.MaxSourceSize}, target={part.TargetIndex}:{partIndex}:{part.TargetOffset}:{part.TargetSize}");
+                                again.Add(Tuple.Create(targetIndex, partIndex));
+                            }
+                        }
+                        if (again.Any())
+                        {
+                            if (kvp.Value.ShouldReattempt)
+                            {
+                                Log.Warning("Some of downloaded parts came out wrong; trying again");
+                                kvp.Value.Again(again);
+                                pendingTaskConfigs.Enqueue(kvp.Value);
+                            }
+                            else
+                                throw new IOException("Some of downloaded parts came out wrong");
+                        }
                     }
                 }
                 runningTasks.Keys.Where(p => p.IsCompleted || p.IsCanceled || p.IsFaulted || p == progressReportTask).ToList().ForEach(p => runningTasks.Remove(p));
             }
-            foreach (var stream in TargetStreams)
-                stream?.Flush();
-
             await RepairNonPatchData();
 
             if (exceptions.Count == 1)

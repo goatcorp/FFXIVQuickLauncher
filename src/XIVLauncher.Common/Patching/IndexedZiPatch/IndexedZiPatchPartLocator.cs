@@ -93,7 +93,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public void WriteTo(BinaryWriter writer)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer();
+            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
             int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
             CopyMemory(buf.Buffer, ref this, unitSize);
             writer.Write(buf.Buffer, 0, unitSize);
@@ -101,7 +101,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public void ReadFrom(BinaryReader reader)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer();
+            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
             int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
             reader.Read(buf.Buffer, 0, unitSize);
             CopyMemory(out this, buf.Buffer, unitSize);
@@ -127,24 +127,18 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 return VerifyDataResult.FailNotEnoughData;
 
             if (IsValidCrc32Value)
-            {
-                Crc32 crc32 = new();
-                crc32.Init();
-                crc32.Update(buf, offset, length);
-                return crc32.Checksum == Crc32OrPlaceholderEntryDataUnits ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
-            }
-            else if (IsAllZeros)
-            {
+                return Crc32.Calculate(buf, offset, length) == Crc32OrPlaceholderEntryDataUnits ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+
+            if (IsAllZeros)
                 return buf.Skip(offset).Take(length).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
-            }
-            else if (IsEmptyBlock)
-            {
+
+            if (IsEmptyBlock)
                 return BitConverter.ToInt32(buf, offset + 0) == 1 << 7
                     && BitConverter.ToInt32(buf, offset + 4) == 0
                     && BitConverter.ToInt32(buf, offset + 8) == 0
                     && BitConverter.ToInt32(buf, offset + 12) == Crc32OrPlaceholderEntryDataUnits
                     && buf.Skip(offset + 16).Take(length - 16).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
-            }
+            
             return VerifyDataResult.FailUnverifiable;
         }
 
@@ -157,7 +151,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (IsValidCrc32Value)
             {
                 Crc32 crc32 = new();
-                crc32.Init();
                 for (var remaining = TargetSize; remaining > 0; remaining -= buffer.Buffer.Length)
                 {
                     var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
@@ -270,7 +263,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             if (IsDeflatedBlockData)
             {
-                using var inflatedBuffer = ReusableByteBufferManager.GetBuffer(14);  // 16384
+                using var inflatedBuffer = ReusableByteBufferManager.GetBuffer(MaxSourceSize);
                 var inflatedLength = 0;
                 using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegmentLength - sourceSegmentOffset), CompressionMode.Decompress, true))
                     inflatedLength = stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
@@ -300,7 +293,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             source.Seek(SourceOffset, SeekOrigin.Begin);
             var readSize = (int)(IsDeflatedBlockData ? 16384 : TargetSize);
-            using var readBuffer = ReusableByteBufferManager.GetBufferHolding(readSize);
+            using var readBuffer = ReusableByteBufferManager.GetBuffer(readSize);
             var read = source.Read(readBuffer.Buffer, 0, readSize);
             return Reconstruct(readBuffer.Buffer, 0, read, buffer, bufferOffset, bufferSize, relativeOffset);
         }
@@ -310,17 +303,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (part.IsValidCrc32Value)
                 return;
 
-            using var buffer = ReusableByteBufferManager.GetBuffer(22);  // 4MB
-            Crc32 crc32 = new();
-            crc32.Init();
-            for (int relativeOffset = 0; relativeOffset < part.TargetSize; relativeOffset += buffer.Buffer.Length)
-            {
-                var readSize = (int)Math.Min(part.TargetSize - relativeOffset, buffer.Buffer.Length);
-                if (readSize != part.Reconstruct(source, buffer.Buffer, 0, readSize, relativeOffset))
-                    throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
-                crc32.Update(buffer.Buffer, 0, readSize);
-            }
-            part.Crc32OrPlaceholderEntryDataUnits = crc32.Checksum;
+            using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+            if (part.TargetSize != part.Reconstruct(source, buffer.Buffer, 0, (int)part.TargetSize))
+                throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
+
+            part.Crc32OrPlaceholderEntryDataUnits = Crc32.Calculate(buffer.Buffer, 0, (int)part.TargetSize);
             part.IsValidCrc32Value = true;
         }
 

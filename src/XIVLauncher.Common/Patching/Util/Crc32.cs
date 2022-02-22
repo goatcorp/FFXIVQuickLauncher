@@ -59,5 +59,13 @@ namespace XIVLauncher.Common.Patching.Util
                      ((_crc32 >> 8) & 0x00FFFFFF);
         }
 
+        public static uint Calculate(byte[] data, int offset, int length)
+        {
+            uint v = 0xFFFFFFFF;
+            for (int i = offset, i_ = offset + length; i < i_; i++)
+                v = CrcArray[(v ^ data[i]) & 0xFF] ^
+                         ((v >> 8) & 0x00FFFFFF);
+            return ~v;
+        }
     }
 }

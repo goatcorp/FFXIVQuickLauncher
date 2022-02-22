@@ -247,14 +247,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             await WaitForResult(writer, cancellationToken);
         }
 
-        public async Task QueueInstall(int sourceIndex, Uri sourceUrl, string sid, int splitBy = 8, int maxPartsPerRequest = 1024, CancellationToken? cancellationToken = null)
+        public async Task QueueInstall(int sourceIndex, Uri sourceUrl, string sid, int splitBy = 8, CancellationToken? cancellationToken = null)
         {
             var writer = GetRequestCreator(WorkerInboundOpcode.QueueInstallFromUrl, cancellationToken);
             writer.Write(sourceIndex);
             writer.Write(sourceUrl.OriginalString);
             writer.Write(sid ?? "");
             writer.Write(splitBy);
-            writer.Write(maxPartsPerRequest);
             await WaitForResult(writer, cancellationToken);
         }
 
@@ -302,9 +301,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             return result;
         }
 
-        public async Task<SortedSet<int>> GetTooLongTargetFiles(CancellationToken? cancellationToken = null)
+        public async Task<SortedSet<int>> GetSizeMismatchTargetFileIndices(CancellationToken? cancellationToken = null)
         {
-            using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetTooLongTargetFiles, cancellationToken), cancellationToken, 30000, false);
+            using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetSizeMismatchTargetFileIndices, cancellationToken), cancellationToken, 30000, false);
             SortedSet<int> result = new();
             for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
                 result.Add(reader.ReadInt32());
@@ -384,11 +383,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 break;
 
                             case WorkerInboundOpcode.SetTargetStreamFromPathReadOnly:
-                                Instance.SetTargetStream(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.Open, FileAccess.Read));
+                                Instance.SetTargetStreamForRead(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.Open, FileAccess.Read));
                                 break;
 
                             case WorkerInboundOpcode.SetTargetStreamFromPathReadWrite:
-                                Instance.SetTargetStream(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.OpenOrCreate, FileAccess.ReadWrite));
+                                Instance.SetTargetStreamForWriteFromFile(reader.ReadInt32(), new FileInfo(reader.ReadString()));
                                 break;
 
                             case WorkerInboundOpcode.SetTargetStreamsFromPathReadOnly:
@@ -408,7 +407,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 break;
 
                             case WorkerInboundOpcode.QueueInstallFromUrl:
-                                Instance.QueueInstall(reader.ReadInt32(), Client, reader.ReadString(), reader.ReadString(), reader.ReadInt32(), reader.ReadInt32());
+                                Instance.QueueInstall(reader.ReadInt32(), Client, reader.ReadString(), reader.ReadString(), reader.ReadInt32());
                                 break;
 
                             case WorkerInboundOpcode.QueueInstallFromLocalFile:
@@ -442,9 +441,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 }
                                 break;
 
-                            case WorkerInboundOpcode.GetTooLongTargetFiles:
-                                writer.Write(Instance.TooLongTargetFiles.Count);
-                                foreach (var e1 in Instance.TooLongTargetFiles)
+                            case WorkerInboundOpcode.GetSizeMismatchTargetFileIndices:
+                                writer.Write(Instance.SizeMismatchTargetFileIndices.Count);
+                                foreach (var e1 in Instance.SizeMismatchTargetFileIndices)
                                     writer.Write(e1);
                                 break;
 
@@ -571,7 +570,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             Install,
             GetMissingPartIndicesPerPatch,
             GetMissingPartIndicesPerTargetFile,
-            GetTooLongTargetFiles,
+            GetSizeMismatchTargetFileIndices,
             SetWorkerProcessPriority,
         }
 

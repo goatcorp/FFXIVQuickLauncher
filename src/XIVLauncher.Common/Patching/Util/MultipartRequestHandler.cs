@@ -19,6 +19,7 @@ namespace XIVLauncher.Common.Patching.Util
         private CircularMemoryStream MultipartBufferStream;
         private List<string> MultipartHeaderLines;
         private ForwardSeekStream LastPartialStream;
+        private ReusableByteBufferManager.Allocation PartStreamBeginningBuffer = null;
 
         public MultipartRequestHandler(HttpResponseMessage responseMessage)
         {
@@ -33,7 +34,6 @@ namespace XIVLauncher.Common.Patching.Util
             if (BaseStream == null)
             {
                 BaseStream = await Response.Content.ReadAsStreamAsync();
-                BaseStream = new BufferedStream(BaseStream, 1 << 22); // 4MB
             }
 
             if (MultipartBoundary == null)
@@ -42,18 +42,16 @@ namespace XIVLauncher.Common.Patching.Util
                 {
                     case System.Net.HttpStatusCode.OK:
                         NoMoreParts = true;
-                        return new ForwardSeekStream(new List<Tuple<Stream, long>>() {
-                            Tuple.Create(BaseStream, (long)Response.Content.Headers.ContentLength)
-                        }, (long)Response.Content.Headers.ContentLength, 0, (long)Response.Content.Headers.ContentLength);
+                        return new ForwardSeekStream(Response.Content.Headers.ContentLength.Value, 0, Response.Content.Headers.ContentLength.Value)
+                            .WithAppendStream(BaseStream, Response.Content.Headers.ContentLength.Value);
 
                     case System.Net.HttpStatusCode.PartialContent:
                         if (Response.Content.Headers.ContentType.MediaType.ToLowerInvariant() != "multipart/byteranges")
                         {
                             NoMoreParts = true;
                             var rangeHeader = Response.Content.Headers.ContentRange;
-                            return new ForwardSeekStream(new List<Tuple<Stream, long>>() {
-                                Tuple.Create(BaseStream, (long)rangeHeader.To + 1 - (long)rangeHeader.From)
-                            }, (long)rangeHeader.Length, (long)rangeHeader.From, (long)rangeHeader.To + 1);
+                            return new ForwardSeekStream(rangeHeader.Length.Value, rangeHeader.From.Value, rangeHeader.To.Value + 1)
+                                .WithAppendStream(BaseStream, rangeHeader.To.Value + 1 - rangeHeader.From.Value);
                         }
                         else
                         {
@@ -95,7 +93,7 @@ namespace XIVLauncher.Common.Patching.Util
                         MultipartBufferStream.Feed(buffer.Buffer, 0, readSize);
                 }
 
-                for (int i = 0, i_ = (int)MultipartBufferStream.Length - 1; i < i_; ++i)
+                for (int i = 0; i < MultipartBufferStream.Length - 1; ++i)
                 {
                     if (MultipartBufferStream[i + 0] != '\r' || MultipartBufferStream[i + 1] != '\n')
                         continue;
@@ -139,21 +137,27 @@ namespace XIVLauncher.Common.Patching.Util
                         throw new IOException("Content-Range not found in multipart part");
 
                     MultipartHeaderLines.Clear();
-                    var rangeFrom = (long)rangeHeader.From;
-                    var rangeLength = (long)rangeHeader.To - rangeFrom + 1;
+                    var rangeFrom = rangeHeader.From.Value;
+                    var rangeLength = rangeHeader.To.Value - rangeFrom + 1;
+                    
+                    LastPartialStream = new ForwardSeekStream(rangeHeader.Length.Value, rangeFrom, rangeFrom + rangeLength);
 
-                    var dataBuffer = new byte[Math.Min(MultipartBufferStream.Length, rangeLength)];
-                    MultipartBufferStream.Consume(dataBuffer, 0, dataBuffer.Length);
+                    var immediatelyAvailable = (int)Math.Min(MultipartBufferStream.Length, rangeLength);
+                    if (immediatelyAvailable > 0)
+                    {
+                        if (PartStreamBeginningBuffer == null || PartStreamBeginningBuffer.Buffer.Length < immediatelyAvailable)
+                        {
+                            PartStreamBeginningBuffer?.Dispose();
+                            PartStreamBeginningBuffer = ReusableByteBufferManager.GetBuffer(immediatelyAvailable);
+                        }
+                        MultipartBufferStream.Consume(PartStreamBeginningBuffer.Buffer, 0, immediatelyAvailable);
+                        LastPartialStream.WithAppendStream(new MemoryStream(PartStreamBeginningBuffer.Buffer, 0, immediatelyAvailable));
+                    }
 
-                    if (rangeLength == dataBuffer.Length)
-                        return LastPartialStream = new ForwardSeekStream(new List<Tuple<Stream, long>>() {
-                            Tuple.Create<Stream, long>(new MemoryStream(dataBuffer), dataBuffer.Length),
-                        }, (long)rangeHeader.Length, rangeFrom, rangeFrom + rangeLength);
-                    else
-                        return LastPartialStream = new ForwardSeekStream(new List<Tuple<Stream, long>>() {
-                            Tuple.Create<Stream, long>(new MemoryStream(dataBuffer), dataBuffer.Length),
-                            Tuple.Create(BaseStream, rangeLength - dataBuffer.Length),
-                        }, (long)rangeHeader.Length, rangeFrom, rangeFrom + rangeLength);
+                    if (immediatelyAvailable < rangeLength)
+                        LastPartialStream.WithAppendStream(BaseStream, rangeLength - immediatelyAvailable);
+
+                    return LastPartialStream;
                 }
 
                 if (eof && !NoMoreParts)
@@ -163,6 +167,7 @@ namespace XIVLauncher.Common.Patching.Util
 
         public void Dispose()
         {
+            PartStreamBeginningBuffer?.Dispose();
             MultipartBufferStream?.Dispose();
             BaseStream?.Dispose();
             Response?.Dispose();
@@ -186,7 +191,7 @@ namespace XIVLauncher.Common.Patching.Util
                 public long Remaining => Length - Position;
             }
 
-            private readonly List<StreamInfo> BaseStreams;  // <stream, use size>
+            private readonly List<StreamInfo> BaseStreams = new();
             public readonly long TotalLength;
             public readonly long AvailableFromOffset;
             public readonly long AvailableToOffset;
@@ -194,16 +199,30 @@ namespace XIVLauncher.Common.Patching.Util
             private long CurrentPosition;
             private int CurrentStreamIndex = 0;
 
-            private readonly CircularMemoryStream BackwardSeekBuffer = new(CircularMemoryStream.FeedOverflowMode.DiscardOldest);
-            private int BackwardDistance = 0;
+            private const int BufferSize = 65536;
+            private readonly CircularMemoryStream BackwardSeekBuffer = new(BufferSize, CircularMemoryStream.FeedOverflowMode.DiscardOldest);
+            private readonly CircularMemoryStream ForwardBuffer = new(BufferSize, CircularMemoryStream.FeedOverflowMode.Throw);
 
-            public ForwardSeekStream(List<Tuple<Stream, long>> baseStreams, long totalLength, long availableFromOffset, long availableToOffset)
+            public ForwardSeekStream(long totalLength, long availableFromOffset, long availableToOffset)
             {
-                BaseStreams = baseStreams.Select(x => new StreamInfo(x.Item1, x.Item2)).ToList();
                 TotalLength = totalLength;
                 CurrentPosition = AvailableFromOffset = availableFromOffset;
                 AvailableToOffset = availableToOffset;
             }
+
+            public ForwardSeekStream WithAppendStream(Stream stream)
+            {
+                return WithAppendStream(stream, stream.Length);
+            }
+
+            public ForwardSeekStream WithAppendStream(Stream stream, long length)
+            {
+                if (length > 0)
+                    BaseStreams.Add(new StreamInfo(stream, length));
+                return this;
+            }
+
+            public long Remaining => BaseStreams.Select(x => x.Remaining).Sum();
 
             protected override void Dispose(bool disposing)
             {
@@ -229,38 +248,56 @@ namespace XIVLauncher.Common.Patching.Util
 
             public override int Read(byte[] buffer, int offset, int count)
             {
+                if (count == 0)
+                    return 0;
+
                 var totalRead = 0;
-                if (BackwardDistance > 0)
+                if (BackwardSeekBuffer.Position < BackwardSeekBuffer.Length)
                 {
-                    var read = Math.Min(count, BackwardDistance);
-                    BackwardSeekBuffer.Seek(BackwardSeekBuffer.Length - BackwardDistance, SeekOrigin.Begin);
-                    BackwardSeekBuffer.Read(buffer, offset, read);
+                    var read = (int)Math.Min(count, BackwardSeekBuffer.Length - BackwardSeekBuffer.Position);
+                    if (buffer == null)
+                        BackwardSeekBuffer.Position += read;
+                    else
+                        BackwardSeekBuffer.Read(buffer, offset, read);
                     count -= read;
-                    BackwardDistance -= read;
                     offset += read;
                     totalRead += read;
                     CurrentPosition += read;
                 }
 
-                if (CurrentStreamIndex >= BaseStreams.Count)
+                if (count == 0)
                     return totalRead;
 
-                while (count > 0 && CurrentStreamIndex < BaseStreams.Count)
+                using var buf2 = ReusableByteBufferManager.GetBuffer(BufferSize);
+                while (count > 0)
                 {
-                    var streamSet = BaseStreams[CurrentStreamIndex];
-                    var read = streamSet.Stream.Read(buffer, offset, (int)Math.Min(count, streamSet.Remaining));
+                    int read;
+                    while (ForwardBuffer.Length == 0 && CurrentStreamIndex < BaseStreams.Count)
+                    {
+                        var streamSet = BaseStreams[CurrentStreamIndex];
+                        read = streamSet.Stream.Read(buf2.Buffer, 0, (int)Math.Min(buf2.Buffer.Length, streamSet.Remaining));
+                        if (read == 0)
+                            throw new IOException("Read failure");
+
+                        streamSet.Position += read;
+                        ForwardBuffer.Feed(buf2.Buffer, 0, read);
+
+                        if (streamSet.Remaining == 0)
+                            CurrentStreamIndex++;
+                    }
+
+                    read = ForwardBuffer.Consume(buf2.Buffer, 0, Math.Min(buf2.Buffer.Length, count));
                     if (read == 0)
-                        throw new IOException("Read failure");
+                        break;
 
-                    BackwardSeekBuffer.Feed(buffer, offset, read);
-
-                    streamSet.Position += read;
+                    BackwardSeekBuffer.Feed(buf2.Buffer, 0, read);
+                    BackwardSeekBuffer.Position = BackwardSeekBuffer.Length;
+                    if (buffer != null)
+                        Array.Copy(buf2.Buffer, 0, buffer, offset, read);
                     CurrentPosition += read;
                     offset += read;
                     totalRead += read;
                     count -= read;
-                    if (streamSet.Remaining == 0)
-                        CurrentStreamIndex++;
                 }
 
                 return totalRead;
@@ -275,49 +312,25 @@ namespace XIVLauncher.Common.Patching.Util
 
                 if (offset < 0)
                 {
-                    if (BackwardDistance - offset > BackwardSeekBuffer.Length)
-                        throw new ArgumentException($"Cannot seek backwards past {BackwardSeekBuffer.Length} bytes; tried to seek {-offset} bytes behind");
-                    BackwardDistance -= (int)offset;
+                    if (BackwardSeekBuffer.Position + offset < 0)
+                        throw new ArgumentException($"Cannot seek backwards past {BackwardSeekBuffer.Position} bytes; tried to seek {-offset} bytes behind");
+                    BackwardSeekBuffer.Position += offset;
                     CurrentPosition += offset;
                     offset = 0;
                 }
-                if (BackwardDistance > 0 && offset > 0)
+                if (BackwardSeekBuffer.Position < BackwardSeekBuffer.Length && offset > 0)
                 {
-                    var backwardCancelDistance = (int)Math.Min(BackwardDistance, offset);
-                    BackwardDistance -= backwardCancelDistance;
+                    var backwardCancelDistance = (int)Math.Min(BackwardSeekBuffer.Length - BackwardSeekBuffer.Position, offset);
+                    BackwardSeekBuffer.Position += offset;
                     CurrentPosition += backwardCancelDistance;
                     offset -= backwardCancelDistance;
                 }
-                if (offset == 0 || CurrentStreamIndex == BaseStreams.Count)
+                if (offset == 0)
                     return CurrentPosition;
 
-                while (CurrentStreamIndex < BaseStreams.Count && offset > 0)
-                {
-                    var streamSet = BaseStreams[CurrentStreamIndex];
-                    var advanceOffset = Math.Min(offset, streamSet.Remaining);
-                    CurrentPosition += advanceOffset;
-                    streamSet.Position += advanceOffset;
-                    offset -= advanceOffset;
-
-                    if (streamSet.Stream.CanSeek && advanceOffset > BackwardSeekBuffer.Capacity)
-                    {
-                        streamSet.Stream.Seek(advanceOffset - BackwardSeekBuffer.Capacity, SeekOrigin.Current);
-                        advanceOffset -= BackwardSeekBuffer.Capacity;
-                    }
-
-                    using var buffer = ReusableByteBufferManager.GetBuffer();
-                    for (var i = 0; i < advanceOffset;)
-                    {
-                        var read = streamSet.Stream.Read(buffer.Buffer, 0, (int)Math.Min(advanceOffset - i, buffer.Buffer.Length));
-                        if (read == 0)
-                            throw new EndOfStreamException("Reached premature EOF");
-                        i += read;
-                        BackwardSeekBuffer.Feed(buffer.Buffer, 0, read);
-                    }
-
-                    if (streamSet.Remaining == 0)
-                        CurrentStreamIndex++;
-                }
+                var read = Read(null, 0, (int)offset);
+                if (read < offset)
+                    throw new EndOfStreamException($"Reached premature EOF (wanted {offset} bytes, read {read} bytes)");
 
                 return CurrentPosition;
             }
