@@ -175,8 +175,6 @@ namespace XIVLauncher.Game.Patch
                             {
                                 var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
 
-                                IsInstalling = false;
-
                                 void UpdateVerifyProgress(int targetIndex, long progress, long max)
                                 {
                                     CurrentFile = patchIndex[Math.Min(targetIndex, patchIndex.Length - 1)].RelativePath;
@@ -199,43 +197,57 @@ namespace XIVLauncher.Game.Patch
                                 {
                                     remote.OnVerifyProgress += UpdateVerifyProgress;
                                     remote.OnInstallProgress += UpdateInstallProgress;
-                                    TaskCount = patchIndex.Length;
-                                    _reportedProgresses.Clear();
 
-                                    await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval);
-
-                                    var adjustedGamePath = Path.Combine(App.Settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
-
-                                    await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
-                                    // TODO: check one at a time if random access is slow?
-                                    await remote.VerifyFiles(Environment.ProcessorCount, _cancellationTokenSource.Token);
-
-                                    TaskCount = patchIndex.Sources.Count;
-                                    _reportedProgresses.Clear();
-                                    var missing = await remote.GetMissingPartIndicesPerPatch();
-                                    NumBrokenFiles += (await remote.GetMissingPartIndicesPerTargetFile()).Count(x => x.Any());
-
-                                    await remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath);
-                                    var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
-                                    for (var i = 0; i < patchIndex.Sources.Count; i++)
+                                    var fileBroken = new bool[patchIndex.Length].ToList();
+                                    while (true)
                                     {
-                                        if (!missing[i].Any())
-                                            continue;
+                                        IsInstalling = false;
 
-                                        var source = _patchSources[prefix + patchIndex.Sources[i]];
-                                        if (source is Uri uri)
-                                            await remote.QueueInstall(i, uri, null, maxConcurrentConnectionsForPatchSet);
-                                        else if (source is FileInfo file)
-                                            await remote.QueueInstall(i, file, maxConcurrentConnectionsForPatchSet);
-                                        else
-                                            throw new InvalidOperationException("_patchSources contains non-Uri/FileInfo");
+                                        TaskCount = patchIndex.Length;
+                                        _reportedProgresses.Clear();
+
+                                        await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval);
+
+                                        var adjustedGamePath = Path.Combine(App.Settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
+
+                                        await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
+                                        // TODO: check one at a time if random access is slow?
+                                        await remote.VerifyFiles(Environment.ProcessorCount, _cancellationTokenSource.Token);
+
+                                        var missingPartIndicesPerTargetFile = await remote.GetMissingPartIndicesPerTargetFile();
+                                        if (missingPartIndicesPerTargetFile.All(x => !x.Any()))
+                                            break;
+
+                                        for (var i = 0; i < missingPartIndicesPerTargetFile.Count; i++)
+                                            if (missingPartIndicesPerTargetFile[i].Any())
+                                                fileBroken[i] = true;
+
+                                        TaskCount = patchIndex.Sources.Count;
+                                        _reportedProgresses.Clear();
+                                        var missing = await remote.GetMissingPartIndicesPerPatch();
+
+                                        await remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath);
+                                        var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
+                                        for (var i = 0; i < patchIndex.Sources.Count; i++)
+                                        {
+                                            if (!missing[i].Any())
+                                                continue;
+
+                                            var source = _patchSources[prefix + patchIndex.Sources[i]];
+                                            if (source is Uri uri)
+                                                await remote.QueueInstall(i, uri, null, maxConcurrentConnectionsForPatchSet);
+                                            else if (source is FileInfo file)
+                                                await remote.QueueInstall(i, file, maxConcurrentConnectionsForPatchSet);
+                                            else
+                                                throw new InvalidOperationException("_patchSources contains non-Uri/FileInfo");
+                                        }
+
+                                        IsInstalling = true;
+
+                                        await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);
+                                        await remote.WriteVersionFiles(adjustedGamePath);
                                     }
-
-                                    IsInstalling = true;
-
-                                    await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);
-                                    await remote.WriteVersionFiles(adjustedGamePath);
-
+                                    NumBrokenFiles += fileBroken.Where(x => x).Count();
                                     PatchSetIndex++;
                                 }
                                 finally

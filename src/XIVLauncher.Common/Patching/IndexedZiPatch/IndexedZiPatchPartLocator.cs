@@ -17,9 +17,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public const byte SourceIndex_Unavailable = byte.MaxValue - 2;
         public const byte SourceIndex_MaxValid = byte.MaxValue - 3;
 
-        private const byte Zeros_ByteValue = 0xC1;
-        private const byte EmptyBlock_EmptyByteValue = 0xC2;
-
         private const uint TargetSizeAndFlagMask_IsDeflatedBlockData = 0x80000000;
         private const uint TargetSizeAndFlagMask_IsValidCrc32Value = 0x40000000;
         private const uint TargetSizeAndFlagMask_TargetSize = 0x3FFFFFFF;
@@ -133,7 +130,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 return Crc32.Calculate(buf, offset, length) == Crc32OrPlaceholderEntryDataUnits ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
 
             if (IsAllZeros)
-                return buf.Skip(offset).Take(length).All(x => x == Zeros_ByteValue) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+                return buf.Skip(offset).Take(length).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
 
             if (IsEmptyBlock)
                 return BitConverter.ToInt32(buf, offset + 0) == 1 << 7
@@ -142,7 +139,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     && BitConverter.ToInt32(buf, offset + 12) == Crc32OrPlaceholderEntryDataUnits
                     && BitConverter.ToInt32(buf, offset + 16) == 0
                     && BitConverter.ToInt32(buf, offset + 20) == 0
-                    && buf.Skip(offset + 24).Take(length - 24).All(x => x == EmptyBlock_EmptyByteValue) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+                    && buf.Skip(offset + 24).Take(length - 24).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
 
             return VerifyDataResult.FailUnverifiable;
         }
@@ -174,7 +171,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
                     if (readSize != stream.Read(buffer.Buffer, 0, readSize))
                         return VerifyDataResult.FailNotEnoughData;
-                    if (!buffer.Buffer.Take(readSize).All(x => x == Zeros_ByteValue))
+                    if (!buffer.Buffer.Take(readSize).All(x => x == 0))
                         return VerifyDataResult.FailBadData;
                 }
                 return VerifyDataResult.Pass;
@@ -192,7 +189,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     || BitConverter.ToInt32(buffer.Buffer, 12) != Crc32OrPlaceholderEntryDataUnits
                     || BitConverter.ToInt32(buffer.Buffer, 16) != 0
                     || BitConverter.ToInt32(buffer.Buffer, 20) != 0
-                    || !buffer.Buffer.Skip(24).Take(readSize - 24).All(x => x == EmptyBlock_EmptyByteValue))
+                    || !buffer.Buffer.Skip(24).Take(readSize - 24).All(x => x == 0))
                     return VerifyDataResult.FailBadData;
 
                 return VerifyDataResult.Pass;
@@ -229,16 +226,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (IsUnavailable)
                 throw new InvalidOperationException("Unavailable part read attempt");
             else if (IsAllZeros)
-            {
-                // Array.Clear(buffer, bufferOffset, bufferSize);
-                for (var i = bufferOffset; i < bufferOffset + bufferSize; i++)
-                    buffer[i] = Zeros_ByteValue;
-            }
+                Array.Clear(buffer, bufferOffset, bufferSize);
             else if (IsEmptyBlock)
             {
-                // Array.Clear(buffer, bufferOffset, bufferSize);
-                for (var i = bufferOffset; i < bufferOffset + bufferSize; i++)
-                    buffer[i] = EmptyBlock_EmptyByteValue;
+                Array.Clear(buffer, bufferOffset, bufferSize);
 
                 if (relativeOffset < 16)
                 {
@@ -273,15 +264,15 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegmentLength - sourceSegmentOffset), CompressionMode.Decompress, true))
                     inflatedLength = stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
                 if (VerifyDataResult.Pass != Verify(inflatedBuffer.Buffer, (int)SplitDecodedSourceFrom, (int)TargetSize))
-                    throw new InvalidOperationException("Verify failed on reconstruct");
+                    throw new IOException("Verify failed on reconstruct (inflate)");
                 Array.Copy(inflatedBuffer.Buffer, SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             else
             {
                 if (sourceSegmentLength - sourceSegmentOffset < TargetSize)
-                    throw new InvalidOperationException("Insufficient source data");
+                    throw new IOException("Insufficient source data");
                 if (VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)Math.Min(TargetSize, sourceSegmentLength)))
-                    throw new InvalidOperationException("Verify failed on reconstruct");
+                    throw new IOException("Verify failed on reconstruct");
                 Array.Copy(sourceSegment, sourceSegmentOffset + SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             return bufferSize;

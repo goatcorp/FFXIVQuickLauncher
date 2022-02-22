@@ -322,7 +322,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             private readonly object ProgressUpdateSync = new();
             private readonly Process ParentProcess;
             private readonly RpcBuffer SubprocessBuffer;
-            private readonly HttpClient Client = new();
             private readonly Dictionary<int, CancellationTokenSource> CancellationTokenSources = new();
             private IndexedZiPatchInstaller Instance = null;
             private long ProgressUpdateCounter = 0;
@@ -407,7 +406,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 break;
 
                             case WorkerInboundOpcode.QueueInstallFromUrl:
-                                Instance.QueueInstall(reader.ReadInt32(), Client, reader.ReadString(), reader.ReadString(), reader.ReadInt32());
+                                Instance.QueueInstall(reader.ReadInt32(), reader.ReadString(), reader.ReadString(), reader.ReadInt32());
                                 break;
 
                             case WorkerInboundOpcode.QueueInstallFromLocalFile:
@@ -513,7 +512,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             public void Dispose()
             {
                 SubprocessBuffer.Dispose();
-                Client.Dispose();
                 Instance?.Dispose();
             }
 
@@ -579,29 +577,31 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             Task.Run(async () =>
             {
                 // Cancel in 15 secs
-                var cancellationTokenSource = new CancellationTokenSource(15000);
+                var cancellationTokenSource = new CancellationTokenSource();
                 var cancellationToken = cancellationTokenSource.Token;
 
                 var availableSourceUrls = new Dictionary<string, string>() {
                     {"boot:D2013.06.18.0000.0000.patch", "http://patch-dl.ffxiv.com/boot/2b5cbc63/D2013.06.18.0000.0000.patch"},
                     {"boot:D2021.11.16.0000.0001.patch", "http://patch-dl.ffxiv.com/boot/2b5cbc63/D2021.11.16.0000.0001.patch"},
                 };
-                var maxConcurrentConnectionsForPatchSet = 8;
+                var maxConcurrentConnectionsForPatchSet = 1;
 
+                var baseDir = @"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn";
+                // var baseDir = @"Z:\tgame";
                 var rootAndPatchPairs = new List<Tuple<string, string>>() {
-                    Tuple.Create(@"Z:\tgame\boot", @"Z:\patch-dl.ffxiv.com\boot\2b5cbc63\D2021.11.16.0000.0001.patch.index"),
+                    Tuple.Create(@$"{baseDir}\boot", @"Z:\patch-dl.ffxiv.com\boot\2b5cbc63\D2021.11.16.0000.0001.patch.index"),
                 };
 
                 // Run verifier as subprocess
-                using var verifier = new IndexedZiPatchIndexRemoteInstaller(System.Reflection.Assembly.GetExecutingAssembly().Location, true);
+                // using var verifier = new IndexedZiPatchIndexRemoteInstaller(System.Reflection.Assembly.GetExecutingAssembly().Location, true);
                 // Run verifier as another thread
-                // using var verifier = new IndexedZiPatchIndexRemoteInstaller(null, true);
+                using var verifier = new IndexedZiPatchIndexRemoteInstaller(null, true);
 
                 foreach (var (gameRootPath, patchIndexFilePath) in rootAndPatchPairs)
                 {
                     var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
 
-                    await verifier.ConstructFromPatchFile(patchIndex);
+                    await verifier.ConstructFromPatchFile(patchIndex, 5000);
 
                     void ReportCheckProgress(int index, long progress, long max)
                     {
@@ -631,6 +631,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             continue;
 
                         await verifier.QueueInstall(i, new Uri(availableSourceUrls[prefix + patchIndex.Sources[i]]), null, maxConcurrentConnectionsForPatchSet);
+                        // await verifier.QueueInstall(i, new FileInfo(availableSourceUrls[prefix + patchIndex.Sources[i]].Replace("http:/", "Z:")));
                     }
                     await verifier.Install(maxConcurrentConnectionsForPatchSet, cancellationToken);
                     await verifier.WriteVersionFiles(gameRootPath);

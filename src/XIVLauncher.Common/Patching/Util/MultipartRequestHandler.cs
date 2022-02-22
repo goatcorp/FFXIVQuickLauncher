@@ -32,9 +32,7 @@ namespace XIVLauncher.Common.Patching.Util
                 return null;
 
             if (BaseStream == null)
-            {
                 BaseStream = await Response.Content.ReadAsStreamAsync();
-            }
 
             if (MultipartBoundary == null)
             {
@@ -199,7 +197,7 @@ namespace XIVLauncher.Common.Patching.Util
             private long CurrentPosition;
             private int CurrentStreamIndex = 0;
 
-            private const int BufferSize = 65536;
+            private const int BufferSize = 1 << 22;
             private readonly CircularMemoryStream BackwardSeekBuffer = new(BufferSize, CircularMemoryStream.FeedOverflowMode.DiscardOldest);
             private readonly CircularMemoryStream ForwardBuffer = new(BufferSize, CircularMemoryStream.FeedOverflowMode.Throw);
 
