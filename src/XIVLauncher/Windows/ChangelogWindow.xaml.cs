@@ -76,12 +76,24 @@ namespace XIVLauncher.Windows
         {
             Close();
         }
-
+        
         public new void Show()
         {
             SystemSounds.Asterisk.Play();
             base.Show();
 
+            LoadChangelog();
+        }
+
+        public new void ShowDialog()
+        {
+            base.ShowDialog();
+            
+            LoadChangelog();
+        }
+        
+        private void LoadChangelog()
+        {
             var _ = Task.Run(async () =>
             {
                 try
@@ -98,7 +110,7 @@ namespace XIVLauncher.Windows
                 }
             });
         }
-
+        
         private void EmailButton_OnClick(object sender, RoutedEventArgs e)
         {
             // Try getting the Windows 10 "build", e.g. 1909
