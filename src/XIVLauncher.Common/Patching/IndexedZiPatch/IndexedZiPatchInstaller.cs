@@ -1,12 +1,14 @@
 ﻿using Serilog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using XIVLauncher.Common;
 using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.IndexedZiPatch
@@ -16,10 +18,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public readonly IndexedZiPatchIndex Index;
         public readonly List<SortedSet<Tuple<int, int>>> MissingPartIndicesPerPatch = new();
         public readonly List<SortedSet<int>> MissingPartIndicesPerTargetFile = new();
-        public readonly SortedSet<int> TooLongTargetFiles = new();
+        public readonly SortedSet<int> SizeMismatchTargetFileIndices = new();
 
         public int ProgressReportInterval = 250;
         private readonly List<Stream> TargetStreams = new();
+        private readonly List<object> TargetLocks = new();
 
         public delegate void OnCorruptionFoundDelegate(IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result);
         public delegate void OnVerifyProgressDelegate(int targetIndex, long progress, long max);
@@ -29,6 +32,112 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public event OnVerifyProgressDelegate OnVerifyProgress;
         public event OnInstallProgressDelegate OnInstallProgress;
 
+        // Definitions taken from PInvoke.net (with some changes)
+        private static class PInvoke
+        {
+            #region Constants
+            public const UInt32 TOKEN_QUERY = 0x0008;
+            public const UInt32 TOKEN_ADJUST_PRIVILEGES = 0x0020;
+
+            public const UInt32 SE_PRIVILEGE_ENABLED = 0x00000002;
+
+            public const UInt32 ERROR_NOT_ALL_ASSIGNED = 0x514;
+            #endregion
+
+
+            #region Structures
+            [StructLayout(LayoutKind.Sequential)]
+            public struct LUID
+            {
+                public UInt32 LowPart;
+                public Int32 HighPart;
+            }
+
+            public struct LUID_AND_ATTRIBUTES
+            {
+                public LUID Luid;
+                public UInt32 Attributes;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct TOKEN_PRIVILEGES
+            {
+                public UInt32 PrivilegeCount;
+                [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
+                public LUID_AND_ATTRIBUTES[] Privileges;
+            }
+            #endregion
+
+
+            #region Methods
+            [DllImport("kernel32.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool SetFileValidData(IntPtr hFile, long ValidDataLength);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern bool CloseHandle(IntPtr hObject);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            public static extern bool OpenProcessToken(
+                IntPtr ProcessHandle,
+                UInt32 DesiredAccess,
+                out IntPtr TokenHandle);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            public static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref LUID lpLuid);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            public static extern bool AdjustTokenPrivileges(
+                IntPtr TokenHandle,
+                bool DisableAllPrivileges,
+                ref TOKEN_PRIVILEGES NewState,
+                int BufferLengthInBytes,
+                IntPtr PreviousState,
+                IntPtr ReturnLengthInBytes);
+            #endregion
+
+
+            #region Utilities
+            // https://docs.microsoft.com/en-us/windows/win32/secauthz/enabling-and-disabling-privileges-in-c--
+            public static void SetPrivilege(IntPtr hToken, string lpszPrivilege, bool bEnablePrivilege)
+            {
+                LUID luid = new();
+                if (!LookupPrivilegeValue(null, lpszPrivilege, ref luid))
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "LookupPrivilegeValue failed.");
+
+                TOKEN_PRIVILEGES tp = new()
+                {
+                    PrivilegeCount = 1,
+                    Privileges = new LUID_AND_ATTRIBUTES[] {
+                        new LUID_AND_ATTRIBUTES{
+                            Luid = luid,
+                            Attributes = bEnablePrivilege ? SE_PRIVILEGE_ENABLED : 0,
+                        }
+                    },
+                };
+                if (!AdjustTokenPrivileges(hToken, false, ref tp, Marshal.SizeOf(tp), IntPtr.Zero, IntPtr.Zero))
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "AdjustTokenPrivileges failed.");
+
+                if (Marshal.GetLastWin32Error() == ERROR_NOT_ALL_ASSIGNED)
+                    throw new Win32Exception(Marshal.GetLastWin32Error(), "The token does not have the specified privilege.");
+            }
+
+            public static void SetCurrentPrivilege(string lpszPrivilege, bool bEnablePrivilege)
+            {
+                if (!OpenProcessToken(Process.GetCurrentProcess().SafeHandle.DangerousGetHandle(), TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, out var hToken))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                try
+                {
+                    SetPrivilege(hToken, lpszPrivilege, bEnablePrivilege);
+                }
+                finally
+                {
+                    CloseHandle(hToken);
+                }
+            }
+            #endregion
+        }
+
         public IndexedZiPatchInstaller(IndexedZiPatchIndex def)
         {
             Index = def;
@@ -36,23 +145,28 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 MissingPartIndicesPerTargetFile.Add(new());
                 TargetStreams.Add(null);
+                TargetLocks.Add(new());
             }
             foreach (var _ in def.Sources)
                 MissingPartIndicesPerPatch.Add(new());
         }
 
-        public async Task VerifyFiles(int concurrentCount = 8, CancellationToken? cancellationToken = null)
+        public async Task VerifyFiles(bool refine = false, int concurrentCount = 8, CancellationToken? cancellationToken = null)
         {
             CancellationTokenSource localCancelSource = new();
 
             if (cancellationToken.HasValue)
                 cancellationToken.Value.Register(() => localCancelSource?.Cancel());
 
+            SizeMismatchTargetFileIndices.Clear();
+            foreach (var l in MissingPartIndicesPerPatch)
+                l.Clear();
+
             List<Task> verifyTasks = new();
             try
             {
                 long progressCounter = 0;
-                long progressMax = Index.Targets.Select(x => x.FileSize).Sum();
+                long progressMax = refine ? MissingPartIndicesPerTargetFile.Select((x, i) => x.Select(y => Index[i][y].TargetSize).Sum()).Sum() : Index.Targets.Select((x, i) => TargetStreams[i] == null ? 0 : x.FileSize).Sum();
 
                 Queue<int> pendingTargetIndices = new();
                 for (int i = 0; i < Index.Length; i++)
@@ -71,33 +185,43 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             continue;
 
                         var file = Index[targetIndex];
-                        if (stream.Length > file.FileSize)
-                            TooLongTargetFiles.Add(targetIndex);
+                        if (stream.Length != file.FileSize)
+                            SizeMismatchTargetFileIndices.Add(targetIndex);
 
                         verifyTasks.Add(Task.Run(() =>
                         {
-                            for (var j = 0; j < file.Count; ++j)
+                            List<int> targetPartIndicesToCheck;
+                            if (refine)
+                            {
+                                targetPartIndicesToCheck = MissingPartIndicesPerTargetFile[targetIndex].ToList();
+                                MissingPartIndicesPerTargetFile[targetIndex].Clear();
+                            }
+                            else
+                            {
+                                targetPartIndicesToCheck = new();
+                                for (var partIndex = 0; partIndex < file.Count; ++partIndex)
+                                    targetPartIndicesToCheck.Add(partIndex);
+                            }
+                            foreach (var partIndex in targetPartIndicesToCheck)
                             {
                                 localCancelSource.Token.ThrowIfCancellationRequested();
 
-                                var verifyResult = file[j].Verify(stream);
+                                var verifyResult = file[partIndex].Verify(stream);
                                 lock (verifyTasks)
                                 {
-                                    progressCounter += file[j].TargetSize;
+                                    progressCounter += file[partIndex].TargetSize;
                                     switch (verifyResult)
                                     {
                                         case IndexedZiPatchPartLocator.VerifyDataResult.Pass:
                                             break;
 
                                         case IndexedZiPatchPartLocator.VerifyDataResult.FailUnverifiable:
-                                            throw new Exception($"{file.RelativePath}:{file[j].TargetOffset}:{file[j].TargetEnd}: Should not happen; unverifiable due to insufficient source data");
+                                            throw new Exception($"{file.RelativePath}:{file[partIndex].TargetOffset}:{file[partIndex].TargetEnd}: Should not happen; unverifiable due to insufficient source data");
 
                                         case IndexedZiPatchPartLocator.VerifyDataResult.FailNotEnoughData:
                                         case IndexedZiPatchPartLocator.VerifyDataResult.FailBadData:
-                                            if (file[j].IsFromSourceFile)
-                                                MissingPartIndicesPerPatch[file[j].SourceIndex].Add(Tuple.Create(file[j].TargetIndex, j));
-                                            MissingPartIndicesPerTargetFile[file[j].TargetIndex].Add(j);
-                                            OnCorruptionFound?.Invoke(file[j], verifyResult);
+                                            MissingPartIndicesPerTargetFile[file[partIndex].TargetIndex].Add(partIndex);
+                                            OnCorruptionFound?.Invoke(file[partIndex], verifyResult);
                                             break;
                                     }
                                 }
@@ -118,9 +242,20 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         throw x.Exception;
                     verifyTasks.RemoveAll(x => x.IsCompleted);
                 }
+
+                for (var targetIndex = 0; targetIndex < Index.Length; targetIndex++)
+                {
+                    foreach (var partIndex in MissingPartIndicesPerTargetFile[targetIndex])
+                    {
+                        var part = Index[targetIndex][partIndex];
+                        if (part.IsFromSourceFile)
+                            MissingPartIndicesPerPatch[part.SourceIndex].Add(Tuple.Create(targetIndex, partIndex));
+                    }
+                }
             }
             finally
             {
+                localCancelSource.Cancel();
                 foreach (var task in verifyTasks)
                 {
                     if (task.IsCompleted)
@@ -134,7 +269,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         // ignore
                     }
                 }
-                localCancelSource.Cancel();
                 localCancelSource.Dispose();
                 localCancelSource = null;
             }
@@ -144,16 +278,30 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             var file = Index[targetIndex];
             for (var i = 0; i < file.Count; ++i)
-            {
-                if (file[i].IsFromSourceFile)
-                    MissingPartIndicesPerPatch[file[i].SourceIndex].Add(Tuple.Create(targetIndex, i));
                 MissingPartIndicesPerTargetFile[targetIndex].Add(i);
-            }
         }
 
-        public void SetTargetStream(int targetIndex, Stream targetStream)
+        public void SetTargetStreamForRead(int targetIndex, Stream targetStream)
         {
+            if (!targetStream.CanRead || !targetStream.CanSeek)
+                throw new ArgumentException("Target stream must be readable and seekable.");
+
             TargetStreams[targetIndex] = targetStream;
+        }
+
+        public void SetTargetStreamForWriteFromFile(int targetIndex, FileInfo fileInfo, bool useSetFileValidData = false)
+        {
+            var file = Index[targetIndex];
+            fileInfo.Directory.Create();
+            var stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            if (stream.Length != file.FileSize)
+            {
+                stream.Seek(file.FileSize, SeekOrigin.Begin);
+                stream.SetLength(file.FileSize);
+                if (useSetFileValidData && !PInvoke.SetFileValidData(stream.SafeFileHandle.DangerousGetHandle(), file.FileSize))
+                    Log.Information($"Unable to apply SetFileValidData on file {fileInfo.FullName} (error code {Marshal.GetLastWin32Error()})");
+            }
+            TargetStreams[targetIndex] = stream;
         }
 
         public void SetTargetStreamsFromPathReadOnly(string rootPath)
@@ -162,31 +310,51 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             for (var i = 0; i < Index.Length; i++)
             {
                 var file = Index[i];
-                try
-                {
-                    TargetStreams[i] = new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.Open, FileAccess.Read);
-                }
-                catch (FileNotFoundException)
-                {
+                var fileInfo = new FileInfo(Path.Combine(rootPath, file.RelativePath));
+                if (fileInfo.Exists)
+                    SetTargetStreamForRead(i, new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.Open, FileAccess.Read));
+                else
                     MarkFileAsMissing(i);
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    MarkFileAsMissing(i);
-                }
             }
         }
 
         public void SetTargetStreamsFromPathReadWriteForMissingFiles(string rootPath)
         {
             Dispose();
+
+            var useSetFileValidData = false;
+            try
+            {
+                PInvoke.SetCurrentPrivilege("SeManageVolumePrivilege", true);
+            }
+            catch (Win32Exception e)
+            {
+                Log.Information(e, "Unable to obtain SeManageVolumePrivilege; not using SetFileValidData.");
+                useSetFileValidData = false;
+            }
+
             for (var i = 0; i < Index.Length; i++)
             {
-                if (MissingPartIndicesPerTargetFile[i].Count == 0 && !TooLongTargetFiles.Contains(i))
+                if (MissingPartIndicesPerTargetFile[i].Count == 0 && !SizeMismatchTargetFileIndices.Contains(i))
                     continue;
+
                 var file = Index[i];
-                Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(rootPath, file.RelativePath)));
-                TargetStreams[i] = new FileStream(Path.Combine(rootPath, file.RelativePath), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                var fileInfo = new FileInfo(Path.Combine(rootPath, file.RelativePath));
+                SetTargetStreamForWriteFromFile(i, fileInfo, useSetFileValidData);
+            }
+        }
+
+        private void WriteToTarget(int targetIndex, long targetOffset, byte[] buffer, int offset, int count)
+        {
+            var target = TargetStreams[targetIndex];
+            if (target == null)
+                return;
+
+            lock (TargetLocks[targetIndex])
+            {
+                target.Seek(targetOffset, SeekOrigin.Begin);
+                target.Write(buffer, offset, count);
+                target.Flush();
             }
         }
 
@@ -199,25 +367,19 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     if (cancellationToken.HasValue)
                         cancellationToken.Value.ThrowIfCancellationRequested();
 
-                    var target = TargetStreams[i];
-                    if (target == null)
-                        continue;
-
                     var file = Index[i];
-                    lock (target)
+                    foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
                     {
-                        foreach (var partIndex in MissingPartIndicesPerTargetFile[i])
-                        {
-                            if (cancellationToken.HasValue)
-                                cancellationToken.Value.ThrowIfCancellationRequested();
+                        if (cancellationToken.HasValue)
+                            cancellationToken.Value.ThrowIfCancellationRequested();
 
-                            var part = file[partIndex];
-                            if (part.IsFromSourceFile)
-                                continue;
+                        var part = file[partIndex];
+                        if (part.IsFromSourceFile)
+                            continue;
 
-                            part.Repair(target, (Stream)null);
-                        }
-                        target.SetLength(file.FileSize);
+                        using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+                        part.ReconstructWithoutSourceData(buffer.Buffer);
+                        WriteToTarget(i, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
                     }
                 }
             });
@@ -239,136 +401,153 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             public readonly IndexedZiPatchIndex Index;
             public readonly IndexedZiPatchInstaller Installer;
             public readonly int SourceIndex;
+            public readonly List<Tuple<int, int>> TargetPartIndices;
+            public readonly List<Tuple<int, int>> CompletedTargetPartIndices = new();
 
-            public InstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex)
+            public InstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, IEnumerable<Tuple<int, int>> targetPartIndices)
             {
                 Index = installer.Index;
                 Installer = installer;
                 SourceIndex = sourceIndex;
+                TargetPartIndices = targetPartIndices.ToList();
             }
 
-            public abstract bool ShouldReattempt { get; }
+            public virtual void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
+            {
+                TargetPartIndices.Clear();
+                TargetPartIndices.AddRange(targetPartIndices);
+            }
 
-            public abstract Task Repair(CancellationToken? cancellationToken = null);
+            public abstract Task Repair(CancellationToken cancellationToken);
 
             public virtual void Dispose() { }
         }
 
         public class HttpInstallTaskConfig : InstallTaskConfig
         {
-            public readonly HttpClient Client;
             public readonly string SourceUrl;
-            public readonly List<Tuple<int, int>> TargetPartIndices;
+            private readonly HttpClient Client = new();
             private readonly List<long> TargetPartOffsets;
             private readonly string Sid;
-            private int AttemptIndex = 0;
 
-            public HttpInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, HttpClient client, string sourceUrl, string sid, IEnumerable<Tuple<int, int>> targetPartIndices)
-                : base(installer, sourceIndex)
+            public HttpInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, IEnumerable<Tuple<int, int>> targetPartIndices, string sourceUrl, string sid)
+                : base(installer, sourceIndex, targetPartIndices)
             {
-                Client = client;
                 SourceUrl = sourceUrl;
                 Sid = sid;
-                TargetPartIndices = targetPartIndices.ToList();
                 TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
                 TargetPartOffsets = TargetPartIndices.Select(x => Index[x.Item1][x.Item2].SourceOffset).ToList();
 
-                long totalTargetSize = 0;
                 foreach (var (targetIndex, partIndex) in TargetPartIndices)
-                    totalTargetSize += Index[targetIndex][partIndex].TargetSize;
-                ProgressMax = totalTargetSize;
+                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
             }
 
-            public override bool ShouldReattempt => AttemptIndex < 8;
-
-            public override async Task Repair(CancellationToken? cancellationToken = null)
+            public override void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
             {
-                if (AttemptIndex >= 2)
+                base.Again(targetPartIndices);
+                TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
+                TargetPartOffsets.Clear();
+                TargetPartOffsets.AddRange(TargetPartIndices.Select(x => Index[x.Item1][x.Item2].SourceOffset));
+                foreach (var (targetIndex, partIndex) in TargetPartIndices)
+                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
+            }
+
+            private MultipartResponseHandler multipartResponse = null;
+
+            private async Task<MultipartResponseHandler.MultipartPartStream> GetNextStream(CancellationToken cancellationToken)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (multipartResponse != null)
                 {
-                    // Exponential backoff
-                    if (cancellationToken.HasValue)
-                        await Task.Delay(1000 * (1 << Math.Min(5, AttemptIndex - 2)), cancellationToken.Value);
-                    else
-                        await Task.Delay(1000 * (1 << Math.Min(5, AttemptIndex - 2)));
+                    var stream1 = await multipartResponse.NextPart(cancellationToken);
+                    if (stream1 != null)
+                        return stream1;
+                    multipartResponse?.Dispose();
+                    multipartResponse = null;
                 }
-                AttemptIndex++;
+
                 var offsets = new List<Tuple<long, long>>();
                 offsets.Clear();
                 foreach (var (targetIndex, partIndex) in TargetPartIndices)
                     offsets.Add(Tuple.Create(Index[targetIndex][partIndex].SourceOffset, Math.Min(Index.GetSourceLastPtr(SourceIndex), Index[targetIndex][partIndex].MaxSourceEnd)));
                 offsets.Sort();
 
-                if (!offsets.Any())
-                    return;
-
-                for (int j = 1; j < offsets.Count;)
+                for (int i = 1; i < offsets.Count; i++)
                 {
-                    if (offsets[j].Item1 - offsets[j - 1].Item2 < 4096)
-                    {
-                        offsets[j - 1] = Tuple.Create(offsets[j - 1].Item1, offsets[j].Item2);
-                        offsets.RemoveAt(j);
-                    }
-                    else
-                        j += 1;
+                    if (offsets[i].Item1 - offsets[i - 1].Item2 >= 16384)
+                        continue;
+                    offsets[i - 1] = Tuple.Create(offsets[i - 1].Item1, Math.Max(offsets[i - 1].Item2, offsets[i].Item2));
+                    offsets.RemoveAt(i);
+                    i -= 1;
                 }
 
                 using HttpRequestMessage req = new(HttpMethod.Get, SourceUrl);
-                req.Headers.Add("Range", "bytes=" + string.Join(",", offsets.Select(x => $"{x.Item1}-{x.Item2 - 1}")));
+                req.Headers.Range = new();
+                req.Headers.Range.Unit = "bytes";
+                foreach (var (rangeFrom, rangeToExclusive) in offsets)
+                    req.Headers.Range.Ranges.Add(new(rangeFrom, rangeToExclusive + 1));
                 if (Sid != null)
                     req.Headers.Add("X-Patch-Unique-Id", Sid);
                 req.Headers.Add("User-Agent", Constants.PatcherUserAgent);
                 req.Headers.Add("Connection", "Keep-Alive");
-                using var resp = new MultipartRequestHandler(await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead));
 
-                List<Stream> ss = new();
-                while (true)
+                var resp = await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                multipartResponse = new MultipartResponseHandler(resp);
+
+                var stream2 = await multipartResponse.NextPart(cancellationToken);
+                if (stream2 == null)
+                    throw new EndOfStreamException("Encountered premature end of stream");
+                return stream2;
+            }
+
+            public override async Task Repair(CancellationToken cancellationToken)
+            {
+                for (int failedCount = 0; TargetPartIndices.Any() && failedCount < 8;)
                 {
-                    if (cancellationToken.HasValue)
-                        cancellationToken.Value.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    using var n = await resp.NextPart(cancellationToken);
-                    ss.Add(n);
-                    if (n == null)
-                        break;
+                    if (failedCount >= 2)
+                        await Task.Delay(1000 * (1 << Math.Min(5, failedCount - 2)), cancellationToken);
 
-                    var fromTupleIndex = TargetPartOffsets.BinarySearch(n.AvailableFromOffset);
-                    if (fromTupleIndex < 0)
-                        fromTupleIndex = ~fromTupleIndex;
-                    while (fromTupleIndex > 0 && TargetPartOffsets[fromTupleIndex - 1] >= n.AvailableFromOffset)
-                        fromTupleIndex--;
-
-                    for (var i = fromTupleIndex; i < TargetPartOffsets.Count && TargetPartOffsets[i] < n.AvailableToOffset; i++)
+                    try
                     {
-                        if (cancellationToken.HasValue)
-                            cancellationToken.Value.ThrowIfCancellationRequested();
+                        var stream = await GetNextStream(cancellationToken);
 
-                        var (targetIndex, partIndex) = TargetPartIndices[i];
-                        var part = Index[targetIndex][partIndex];
-                        ProgressValue += part.TargetSize;
-
-                        var target = Installer.TargetStreams[part.TargetIndex];
-                        if (target != null)
+                        while (TargetPartOffsets.Any() && TargetPartOffsets.First() < stream.OriginEnd)
                         {
-                            lock (target)
-                            {
-                                try
-                                {
-                                    part.Repair(target, n);
-                                }
-                                catch (IndexedZiPatchPartLocator.InsufficientReconstructionDataException)
-                                {
-                                    break;
-                                }
-                            }
-                        }
+                            cancellationToken.ThrowIfCancellationRequested();
 
-                        TargetPartIndices.RemoveAt(i);
-                        TargetPartOffsets.RemoveAt(i);
-                        i--;
+                            var (targetIndex, partIndex) = TargetPartIndices.First();
+                            var part = Index[targetIndex][partIndex];
+
+                            using var targetBuffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+                            part.Reconstruct(stream, targetBuffer.Buffer);
+                            Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, targetBuffer.Buffer, 0, (int)part.TargetSize);
+                            failedCount = 0;
+
+                            ProgressValue += part.TargetSize;
+                            CompletedTargetPartIndices.Add(TargetPartIndices.First());
+                            TargetPartIndices.RemoveAt(0);
+                            TargetPartOffsets.RemoveAt(0);
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        if (failedCount >= 8)
+                            Log.Error(ex, "HttpInstallTask failed");
+                        else
+                            Log.Warning(ex, "HttpInstallTask reattempting");
+                        failedCount++;
                     }
                 }
-                if (TargetPartIndices.Any())
-                    throw new IOException("Missing target part remains");
+            }
+
+            public override void Dispose()
+            {
+                multipartResponse?.Dispose();
+                Client.Dispose();
+                base.Dispose();
             }
         }
 
@@ -376,43 +555,43 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             public readonly Stream SourceStream;
             public readonly IList<Tuple<long, long>> SourceOffsets;
-            public readonly List<Tuple<int, int>> TargetPartIndices;
 
-            public StreamInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, Stream sourceStream, IEnumerable<Tuple<int, int>> targetPartIndices)
-                : base(installer, sourceIndex)
+            public StreamInstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, IEnumerable<Tuple<int, int>> targetPartIndices, Stream sourceStream)
+                : base(installer, sourceIndex, targetPartIndices)
             {
                 SourceStream = sourceStream;
-                TargetPartIndices = targetPartIndices.ToList();
                 long totalTargetSize = 0;
                 foreach (var (targetIndex, partIndex) in TargetPartIndices)
                     totalTargetSize += Index[targetIndex][partIndex].TargetSize;
                 ProgressMax = totalTargetSize;
             }
 
-            public override bool ShouldReattempt => false;
+            public override void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
+            {
+                base.Again(targetPartIndices);
+                TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
+                foreach (var (targetIndex, partIndex) in TargetPartIndices)
+                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
+            }
 
-            public override async Task Repair(CancellationToken? cancellationToken)
+            public override async Task Repair(CancellationToken cancellationToken)
             {
                 await Task.Run(() =>
                 {
-                    for (var i = 0; i < TargetPartIndices.Count; i++)
+                    while (TargetPartIndices.Any())
                     {
-                        var (targetIndex, partIndex) = TargetPartIndices[i];
-                        if (cancellationToken.HasValue)
-                            cancellationToken.Value.ThrowIfCancellationRequested();
-                        var part = Index[targetIndex][partIndex];
-                        ProgressValue += part.TargetSize;
+                        cancellationToken.ThrowIfCancellationRequested();
 
-                        var target = Installer.TargetStreams[part.TargetIndex];
-                        if (target != null)
-                        {
-                            lock (target)
-                            {
-                                part.Repair(target, SourceStream);
-                            }
-                        }
+                        var (targetIndex, partIndex) = TargetPartIndices.First();
+                        var part = Index[targetIndex][partIndex];
+
+                        using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+                        part.Reconstruct(SourceStream, buffer.Buffer);
+                        Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+
+                        ProgressValue += part.TargetSize;
+                        CompletedTargetPartIndices.Add(TargetPartIndices.First());
                         TargetPartIndices.RemoveAt(0);
-                        i--;
                     }
                 });
             }
@@ -426,24 +605,35 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         private readonly List<InstallTaskConfig> InstallTaskConfigs = new();
 
-        public void QueueInstall(int sourceIndex, HttpClient client, string sourceUrl, string sid, ISet<Tuple<int, int>> targetPartIndices)
+        public void QueueInstall(int sourceIndex, string sourceUrl, string sid, ISet<Tuple<int, int>> targetPartIndices)
         {
             if (targetPartIndices.Any())
-                InstallTaskConfigs.Add(new HttpInstallTaskConfig(this, sourceIndex, client, sourceUrl, sid == "" ? null : sid, targetPartIndices));
+                InstallTaskConfigs.Add(new HttpInstallTaskConfig(this, sourceIndex, targetPartIndices, sourceUrl, sid == "" ? null : sid));
         }
 
-        public void QueueInstall(int sourceIndex, HttpClient client, string sourceUrl, string sid, int splitBy = 8, int maxPartsPerRequest = 1024)
+        public void QueueInstall(int sourceIndex, string sourceUrl, string sid, int splitBy = 8)
         {
-            var indices = MissingPartIndicesPerPatch[sourceIndex];
-            var indicesPerRequest = Math.Min((int)Math.Ceiling(1.0 * indices.Count / splitBy), maxPartsPerRequest);
-            for (int j = 0; j < indices.Count; j += indicesPerRequest)
-                QueueInstall(sourceIndex, client, sourceUrl, sid, indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)).ToHashSet());
+            const int MaxDownloadPerRequest = 64 * 1024 * 1024;
+
+            var indices = MissingPartIndicesPerPatch[sourceIndex].ToList();
+            var indicesPerRequest = (int)Math.Ceiling(1.0 * indices.Count / splitBy);
+            for (int j = 0; j < indices.Count;)
+            {
+                SortedSet<Tuple<int, int>> targetPartIndices = new();
+                long size = 0;
+                for (; j < indices.Count && targetPartIndices.Count < indicesPerRequest && size < MaxDownloadPerRequest; ++j)
+                {
+                    targetPartIndices.Add(indices[j]);
+                    size += Index[indices[j].Item1][indices[j].Item2].MaxSourceSize;
+                }
+                QueueInstall(sourceIndex, sourceUrl, sid, targetPartIndices);
+            }
         }
 
         public void QueueInstall(int sourceIndex, Stream stream, ISet<Tuple<int, int>> targetPartIndices)
         {
             if (targetPartIndices.Any())
-                InstallTaskConfigs.Add(new StreamInstallTaskConfig(this, sourceIndex, stream, targetPartIndices));
+                InstallTaskConfigs.Add(new StreamInstallTaskConfig(this, sourceIndex, targetPartIndices, stream));
         }
 
         public void QueueInstall(int sourceIndex, FileInfo file, ISet<Tuple<int, int>> targetPartIndices)
@@ -463,61 +653,69 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public async Task Install(int concurrentCount, CancellationToken? cancellationToken = null)
         {
             if (!InstallTaskConfigs.Any())
+            {
+                await RepairNonPatchData();
                 return;
+            }
 
             long progressMax = InstallTaskConfigs.Select(x => x.ProgressMax).Sum();
+
+            CancellationTokenSource localCancelSource = new();
+
+            if (cancellationToken.HasValue)
+                cancellationToken.Value.Register(() => localCancelSource?.Cancel());
 
             Task progressReportTask = null;
             Queue<InstallTaskConfig> pendingTaskConfigs = new();
             foreach (var x in InstallTaskConfigs)
                 pendingTaskConfigs.Enqueue(x);
 
-            Dictionary<Task, InstallTaskConfig> runningTasks = new();
+            List<Task> runningTasks = new();
 
-            var exceptions = new List<Exception>();
-
-            while (pendingTaskConfigs.Any() || runningTasks.Any())
+            try
             {
-                if (cancellationToken.HasValue)
-                    cancellationToken.Value.ThrowIfCancellationRequested();
-
-                while (pendingTaskConfigs.Any() && runningTasks.Count < concurrentCount)
+                while (pendingTaskConfigs.Any() || runningTasks.Any())
                 {
-                    var config = pendingTaskConfigs.Dequeue();
-                    runningTasks[config.Repair(cancellationToken)] = config;
+                    localCancelSource.Token.ThrowIfCancellationRequested();
+
+                    while (pendingTaskConfigs.Any() && runningTasks.Count < concurrentCount)
+                        runningTasks.Add(pendingTaskConfigs.Dequeue().Repair(localCancelSource.Token));
+
+                    var taskIndex = Math.Max(0, InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count - 1);
+                    var sourceIndexForProgressDisplay = InstallTaskConfigs[Math.Min(taskIndex, InstallTaskConfigs.Count - 1)].SourceIndex;
+                    OnInstallProgress?.Invoke(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
+
+                    if (progressReportTask == null || progressReportTask.IsCompleted)
+                        progressReportTask = Task.Delay(ProgressReportInterval, localCancelSource.Token);
+                    runningTasks.Add(progressReportTask);
+                    await Task.WhenAny(runningTasks);
+                    runningTasks.RemoveAt(runningTasks.Count - 1);
+
+                    if (runningTasks.FirstOrDefault(x => x.IsFaulted) is Task x)
+                        throw x.Exception;
+                    runningTasks.RemoveAll(x => x.IsCompleted);
                 }
-
-                var taskIndex = Math.Max(0, InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count - 1);
-                var sourceIndexForProgressDisplay = InstallTaskConfigs[Math.Min(taskIndex, InstallTaskConfigs.Count - 1)].SourceIndex;
-                OnInstallProgress?.Invoke(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
-
-                if (progressReportTask == null || progressReportTask.IsCompleted)
-                    progressReportTask = cancellationToken.HasValue ? Task.Delay(ProgressReportInterval, cancellationToken.Value) : Task.Delay(ProgressReportInterval);
-                runningTasks[progressReportTask] = null;
-                await Task.WhenAny(runningTasks.Keys);
-                foreach (var kvp in runningTasks)
-                {
-                    if (!kvp.Key.IsFaulted || kvp.Value == null)
-                        continue;
-
-                    if (kvp.Value.ShouldReattempt)
-                    {
-                        Log.Warning(kvp.Key.Exception, "Exception occurred while loading part; trying again");
-                        pendingTaskConfigs.Enqueue(kvp.Value);
-                    }
-                    else
-                    {
-                        exceptions.Add(kvp.Key.Exception);
-                    }
-                }
-                runningTasks.Keys.Where(p => p.IsCompleted || p.IsCanceled || p.IsFaulted || p == progressReportTask).ToList().ForEach(p => runningTasks.Remove(p));
+                await RepairNonPatchData();
             }
-            await RepairNonPatchData();
-
-            if (exceptions.Count == 1)
-                throw exceptions[0];
-            else if (exceptions.Count > 1)
-                throw new AggregateException("More than one error has occurred while installing.", exceptions);
+            finally
+            {
+                localCancelSource.Cancel();
+                foreach (var task in runningTasks)
+                {
+                    if (task.IsCompleted)
+                        continue;
+                    try
+                    {
+                        await task;
+                    }
+                    catch (Exception)
+                    {
+                        // ignore
+                    }
+                }
+                localCancelSource.Dispose();
+                localCancelSource = null;
+            }
         }
 
         public void Dispose()

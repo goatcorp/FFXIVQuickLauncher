@@ -108,7 +108,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             try
             {
                 verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
-                await verifier.VerifyFiles(8, cancellationToken);
+                await verifier.VerifyFiles(false, 8, cancellationToken);
             }
             finally
             {
@@ -130,12 +130,12 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public static async Task RepairFromPatchFileIndexFromFile(string patchIndexFilePath, string gameRootPath, string patchFileRootDir, int concurrentCount, CancellationToken? cancellationToken = null) => await RepairFromPatchFileIndexFromFile(new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress))), gameRootPath, patchFileRootDir, concurrentCount, cancellationToken);
 
-        public static async Task RepairFromPatchFileIndexFromUri(IndexedZiPatchIndex patchIndex, string gameRootPath, HttpClient client, string baseUri, int concurrentCount, CancellationToken? cancellationToken = null)
+        public static async Task RepairFromPatchFileIndexFromUri(IndexedZiPatchIndex patchIndex, string gameRootPath, string baseUri, int concurrentCount, CancellationToken? cancellationToken = null)
         {
             using var verifier = await VerifyFromZiPatchIndex(patchIndex, gameRootPath, cancellationToken);
             verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
             for (var i = 0; i < patchIndex.Sources.Count; i++)
-                verifier.QueueInstall(i, client, baseUri + patchIndex.Sources[i], null, concurrentCount);
+                verifier.QueueInstall(i, baseUri + patchIndex.Sources[i], null, concurrentCount);
 
             void OnInstallProgressCallback(int index, long progress, long max) => Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
             verifier.OnInstallProgress += OnInstallProgressCallback;
@@ -150,26 +150,25 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public static async Task RepairFromPatchFileIndexFromUri(string patchIndexFilePath, string gameRootPath, HttpClient client, string baseUri, int concurrentCount, CancellationToken? cancellationToken = null) => await RepairFromPatchFileIndexFromUri(new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress))), gameRootPath, client, baseUri, concurrentCount, cancellationToken);
+        public static async Task RepairFromPatchFileIndexFromUri(string patchIndexFilePath, string gameRootPath, string baseUri, int concurrentCount, CancellationToken? cancellationToken = null) => await RepairFromPatchFileIndexFromUri(new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress))), gameRootPath, baseUri, concurrentCount, cancellationToken);
 
-        private static async Task Test_Single(int expacVersion, string patchFilesPath, string rootPath, HttpClient client, string baseUri, CancellationToken? cancellationToken = null)
+        private static async Task Test_Single(int expacVersion, string patchFilesPath, string rootPath, string baseUri, CancellationToken? cancellationToken = null)
         {
             var patchFiles = Directory.GetFiles(Directory.GetDirectories(patchFilesPath).Where(x => Path.GetFileName(x).Length == 8).First(), "*.patch").ToList();
             patchFiles.Sort((x, y) => Path.GetFileName(x).Substring(1).CompareTo(Path.GetFileName(y).Substring(1)));
             var patchIndex = await CreateZiPatchIndices(expacVersion, patchFiles, cancellationToken);
-            await RepairFromPatchFileIndexFromUri(patchIndex, rootPath, client, baseUri, 8, cancellationToken);
+            await RepairFromPatchFileIndexFromUri(patchIndex, rootPath, baseUri, 8, cancellationToken);
         }
 
         public static void Test()
         {
-            using HttpClient client = new();
             CancellationTokenSource source = new();
             string[] patchFileBaseUrls = new string[] {
                 "http://patch-dl.ffxiv.com/boot/2b5cbc63/",
             };
             // source.Cancel();
             Task.WaitAll(new Task[] {
-                Test_Single(IndexedZiPatchIndex.EXPAC_VERSION_BOOT, @"Z:\patch-dl.ffxiv.com\boot", @"Z:\tgame\boot", client, patchFileBaseUrls[0], source.Token),
+                Test_Single(IndexedZiPatchIndex.EXPAC_VERSION_BOOT, @"Z:\patch-dl.ffxiv.com\boot", @"Z:\tgame\boot", patchFileBaseUrls[0], source.Token),
             });
         }
     }
