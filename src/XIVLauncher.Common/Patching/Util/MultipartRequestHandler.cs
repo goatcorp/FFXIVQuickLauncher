@@ -197,7 +197,7 @@ namespace XIVLauncher.Common.Patching.Util
             private long CurrentPosition;
             private int CurrentStreamIndex = 0;
 
-            private const int BufferSize = 1 << 22;
+            private const int BufferSize = 1 << 16;
             private readonly CircularMemoryStream BackwardSeekBuffer = new(BufferSize, CircularMemoryStream.FeedOverflowMode.DiscardOldest);
             private readonly CircularMemoryStream ForwardBuffer = new(BufferSize, CircularMemoryStream.FeedOverflowMode.Throw);
 

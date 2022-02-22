@@ -199,7 +199,8 @@ namespace XIVLauncher.Game.Patch
                                     remote.OnInstallProgress += UpdateInstallProgress;
 
                                     var fileBroken = new bool[patchIndex.Length].ToList();
-                                    while (true)
+                                    var repaired = false;
+                                    for (var attemptIndex = 0; attemptIndex < 5; attemptIndex++)
                                     {
                                         IsInstalling = false;
 
@@ -215,7 +216,7 @@ namespace XIVLauncher.Game.Patch
                                         await remote.VerifyFiles(Environment.ProcessorCount, _cancellationTokenSource.Token);
 
                                         var missingPartIndicesPerTargetFile = await remote.GetMissingPartIndicesPerTargetFile();
-                                        if (missingPartIndicesPerTargetFile.All(x => !x.Any()))
+                                        if ((repaired = missingPartIndicesPerTargetFile.All(x => !x.Any())))
                                             break;
 
                                         for (var i = 0; i < missingPartIndicesPerTargetFile.Count; i++)
@@ -244,9 +245,20 @@ namespace XIVLauncher.Game.Patch
 
                                         IsInstalling = true;
 
-                                        await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);
-                                        await remote.WriteVersionFiles(adjustedGamePath);
+                                        try
+                                        {
+                                            await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);
+                                            await remote.WriteVersionFiles(adjustedGamePath);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Log.Error(e, "remote.Install");
+                                            if (attemptIndex == 4)
+                                                throw;
+                                        }
                                     }
+                                    if (!repaired)
+                                        throw new Exception("Failed to repair after 5 attempts");
                                     NumBrokenFiles += fileBroken.Where(x => x).Count();
                                     PatchSetIndex++;
                                 }
