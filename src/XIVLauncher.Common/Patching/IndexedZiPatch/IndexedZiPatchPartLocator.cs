@@ -17,6 +17,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public const byte SourceIndex_Unavailable = byte.MaxValue - 2;
         public const byte SourceIndex_MaxValid = byte.MaxValue - 3;
 
+        private const byte Zeros_ByteValue = 0xC1;
+        private const byte EmptyBlock_EmptyByteValue = 0xC2;
+
         private const uint TargetSizeAndFlagMask_IsDeflatedBlockData = 0x80000000;
         private const uint TargetSizeAndFlagMask_IsValidCrc32Value = 0x40000000;
         private const uint TargetSizeAndFlagMask_TargetSize = 0x3FFFFFFF;
@@ -130,15 +133,17 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 return Crc32.Calculate(buf, offset, length) == Crc32OrPlaceholderEntryDataUnits ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
 
             if (IsAllZeros)
-                return buf.Skip(offset).Take(length).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+                return buf.Skip(offset).Take(length).All(x => x == Zeros_ByteValue) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
 
             if (IsEmptyBlock)
                 return BitConverter.ToInt32(buf, offset + 0) == 1 << 7
                     && BitConverter.ToInt32(buf, offset + 4) == 0
                     && BitConverter.ToInt32(buf, offset + 8) == 0
                     && BitConverter.ToInt32(buf, offset + 12) == Crc32OrPlaceholderEntryDataUnits
-                    && buf.Skip(offset + 16).Take(length - 16).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
-            
+                    && BitConverter.ToInt32(buf, offset + 16) == 0
+                    && BitConverter.ToInt32(buf, offset + 20) == 0
+                    && buf.Skip(offset + 24).Take(length - 24).All(x => x == EmptyBlock_EmptyByteValue) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+
             return VerifyDataResult.FailUnverifiable;
         }
 
@@ -169,35 +174,27 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
                     if (readSize != stream.Read(buffer.Buffer, 0, readSize))
                         return VerifyDataResult.FailNotEnoughData;
-                    if (!buffer.Buffer.Take(readSize).All(x => x == 0))
+                    if (!buffer.Buffer.Take(readSize).All(x => x == Zeros_ByteValue))
                         return VerifyDataResult.FailBadData;
                 }
                 return VerifyDataResult.Pass;
             }
             else if (IsEmptyBlock)
             {
-                for (long remaining = TargetSize, i = 0; remaining > 0; remaining -= buffer.Buffer.Length, i++)
-                {
-                    var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
-                    if (readSize != stream.Read(buffer.Buffer, 0, readSize))
-                        return VerifyDataResult.FailNotEnoughData;
-                    if (i == 0)
-                    {
-                        // File entry header for placeholder
-                        if (BitConverter.ToInt32(buffer.Buffer, 0) != 1 << 7
-                            || BitConverter.ToInt32(buffer.Buffer, 4) != 0
-                            || BitConverter.ToInt32(buffer.Buffer, 8) != 0
-                            || BitConverter.ToInt32(buffer.Buffer, 12) != Crc32OrPlaceholderEntryDataUnits
-                            || !buffer.Buffer.Skip(16).Take(readSize - 16).All(x => x == 0))
-                            return VerifyDataResult.FailBadData;
-                    }
-                    else
-                    {
-                        // Remainder of the entry which should be all zeros
-                        if (!buffer.Buffer.Take(readSize).All(x => x == 0))
-                            return VerifyDataResult.FailBadData;
-                    }
-                }
+                var readSize = Math.Min(1 << 7, buffer.Buffer.Length);
+                if (readSize != stream.Read(buffer.Buffer, 0, readSize))
+                    return VerifyDataResult.FailNotEnoughData;
+                
+                // File entry header for placeholder
+                if (BitConverter.ToInt32(buffer.Buffer, 0) != 1 << 7
+                    || BitConverter.ToInt32(buffer.Buffer, 4) != 0
+                    || BitConverter.ToInt32(buffer.Buffer, 8) != 0
+                    || BitConverter.ToInt32(buffer.Buffer, 12) != Crc32OrPlaceholderEntryDataUnits
+                    || BitConverter.ToInt32(buffer.Buffer, 16) != 0
+                    || BitConverter.ToInt32(buffer.Buffer, 20) != 0
+                    || !buffer.Buffer.Skip(24).Take(readSize - 24).All(x => x == EmptyBlock_EmptyByteValue))
+                    return VerifyDataResult.FailBadData;
+
                 return VerifyDataResult.Pass;
             }
 
@@ -232,10 +229,16 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (IsUnavailable)
                 throw new InvalidOperationException("Unavailable part read attempt");
             else if (IsAllZeros)
-                Array.Clear(buffer, bufferOffset, bufferSize);
+            {
+                // Array.Clear(buffer, bufferOffset, bufferSize);
+                for (var i = bufferOffset; i < bufferOffset + bufferSize; i++)
+                    buffer[i] = Zeros_ByteValue;
+            }
             else if (IsEmptyBlock)
             {
-                Array.Clear(buffer, bufferOffset, bufferSize);
+                // Array.Clear(buffer, bufferOffset, bufferSize);
+                for (var i = bufferOffset; i < bufferOffset + bufferSize; i++)
+                    buffer[i] = EmptyBlock_EmptyByteValue;
 
                 if (relativeOffset < 16)
                 {
@@ -244,7 +247,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     buffer2.Writer.Write(0);
                     buffer2.Writer.Write(0);
                     buffer2.Writer.Write((int)Crc32OrPlaceholderEntryDataUnits);
-                    Array.Copy(buffer2.Buffer, relativeOffset, buffer, bufferOffset, Math.Min(bufferSize, 16 - relativeOffset));
+                    buffer2.Writer.Write(0);
+                    buffer2.Writer.Write(0);
+                    Array.Copy(buffer2.Buffer, relativeOffset, buffer, bufferOffset, Math.Min(bufferSize, 24 - relativeOffset));
                 }
             }
             else

@@ -280,6 +280,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 stream.SetLength(file.FileSize);
                 if (useSetFileValidData && !PInvoke.SetFileValidData(stream.SafeFileHandle.DangerousGetHandle(), file.FileSize))
                     Log.Information($"Unable to apply SetFileValidData on file {fileInfo.FullName} (error code {Marshal.GetLastWin32Error()})");
+
+                using var buf = ReusableByteBufferManager.GetBuffer(65536);
+                for (var i = 0; i < 65536; i++)
+                    buf.Buffer[i] = 0xC0;
+                stream.Seek(0, SeekOrigin.Begin);
+                for (var i = 0; i < file.FileSize; i += 65536)
+                    stream.Write(buf.Buffer, 0, (int) Math.Min(file.FileSize - i, 65536));
             }
             TargetStreams[targetIndex] = stream;
         }
@@ -616,7 +623,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public async Task Install(int concurrentCount, CancellationToken? cancellationToken = null)
         {
             if (!InstallTaskConfigs.Any())
+            {
+                await RepairNonPatchData();
                 return;
+            }
 
             long progressMax = InstallTaskConfigs.Select(x => x.ProgressMax).Sum();
 
