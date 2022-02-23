@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using CheapLoc;
 using Serilog;
 
 namespace XIVLauncher.Common.Game  
@@ -22,8 +21,9 @@ namespace XIVLauncher.Common.Game
 
             if (matches.Count is 0 or > 1)
             {
-                Log.Error("Could not get login error.\n" + document);
-                return Loc.Localize("LoginGenericError", "Could not log into your SE account.\nPlease check your username and password.");
+                Log.Error("Could not get login error\n" + document);
+                throw new Exception("Could not get login error"); // TODO(goat): hook up
+                // return Loc.Localize("LoginGenericError", "Could not log into your SE account.\nPlease check your username and password.");
             }
 
             return matches[0].Groups["errorMessage"].Value;

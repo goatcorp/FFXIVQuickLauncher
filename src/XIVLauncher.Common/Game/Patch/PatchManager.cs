@@ -7,8 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using CheapLoc;
 using Serilog;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
@@ -257,8 +255,8 @@ namespace XIVLauncher.Common.Game.Patch
 
             acquisition.Complete += (sender, args) =>
             {
-                var dlFailureLoc = Loc.Localize("PatchManDlFailure",
-                    "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
+                //var dlFailureLoc = Loc.Localize("PatchManDlFailure",
+                //    "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
 
                 if (args == AcquisitionResult.Error)
                 {

@@ -20,7 +20,6 @@
     <ItemGroup>
         <PackageReference Include="Downloader" Version="2.2.8" />
         <PackageReference Include="MonoTorrent" Version="2.0.0" />
-        <PackageReference Include="CheapLoc" Version="1.1.6" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Serilog" Version="2.9.0" />
         <PackageReference Include="Serilog.Sinks.Async" Version="1.4.0" />

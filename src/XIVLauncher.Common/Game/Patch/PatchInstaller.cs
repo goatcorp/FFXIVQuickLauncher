@@ -4,8 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Windows;
-using CheapLoc;
 using Newtonsoft.Json;
 using Serilog;
 using SharedMemory;
