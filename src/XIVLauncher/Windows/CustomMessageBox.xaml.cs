@@ -255,6 +255,7 @@ namespace XIVLauncher.Windows
 
             public Builder() { }
             public Builder WithText(string text) { Text = text; return this; }
+            public Builder WithAppendText(string text) { Text += text; return this; }
             public Builder WithCaption(string caption) { Caption = caption; return this; }
             public Builder WithDescription(string description) { Description = description; return this; }
             public Builder WithAppendDescription(string description) { Description = (Description ?? "") + description; return this; }
@@ -278,6 +279,7 @@ namespace XIVLauncher.Windows
             public static Builder NewFrom(Exception exc, string context, ExitOnCloseModes exitOnCloseMode = ExitOnCloseModes.DontExitOnClose)
             {
                 var builder = new Builder()
+                    .WithText(Loc.Localize("ErrorExplanation", "An error in XIVLauncher occurred. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box."))
                     .WithExitOnClose(exitOnCloseMode)
                     .WithImage(MessageBoxImage.Error)
                     .WithShowHelpLinks(true)

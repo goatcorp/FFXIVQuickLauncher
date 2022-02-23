@@ -248,7 +248,7 @@ namespace XIVLauncher
                 if (_useFullExceptionHandler)
                     CustomMessageBox.Builder
                         .NewFrom((Exception)e.ExceptionObject, "Unhandled", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
-                        .WithText("Error during early initialization. Please report this error.\n\n" + e.ExceptionObject)
+                        .WithAppendText("\n\nError during early initialization. Please report this error.\n\n" + e.ExceptionObject)
                         .Show();
                 else
                     MessageBox.Show(

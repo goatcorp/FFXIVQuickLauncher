@@ -407,7 +407,8 @@ namespace XIVLauncher.Windows.ViewModel
 
                                 CustomMessageBox.Builder
                                     .NewFrom(aggregate, "StartGameAndAddon", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
-                                    .WithText(Loc.Localize("GenericLoginError",
+                                    .WithAppendText("\n\n")
+                                    .WithAppendText(Loc.Localize("GenericLoginError",
                                         "Error occurred during login, please report this error."))
                                     .Show();
                                 break;
@@ -479,7 +480,8 @@ namespace XIVLauncher.Windows.ViewModel
 
                 CustomMessageBox.Builder
                     .NewFrom(ex, "Login")
-                    .WithText(Loc.Localize("CheckLoginInfoNotAdditionally",
+                    .WithAppendText("\n\n")
+                    .WithAppendText(Loc.Localize("CheckLoginInfoNotAdditionally",
                         "Please check your login information or try again."))
                     .Show();
                 Reactivate();
@@ -567,7 +569,8 @@ namespace XIVLauncher.Windows.ViewModel
                             doLogin = false;
                             doVerify = CustomMessageBox.Builder
                                 .NewFrom(verify.LastException, "PatchVerifier")
-                                .WithText(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."))
+                                .WithAppendText("\n\n")
+                                .WithAppendText(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."))
                                 .WithImage(MessageBoxImage.Exclamation)
                                 .WithButtons(MessageBoxButton.OKCancel)
                                 .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
@@ -736,7 +739,8 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 CustomMessageBox.Builder
                     .NewFrom(ex, "Addons")
-                    .WithText(Loc.Localize("AddonLoadError",
+                    .WithAppendText("\n\n")
+                    .WithAppendText(Loc.Localize("AddonLoadError",
                         "This could be caused by your antivirus, please check its logs and add any needed exclusions."))
                     .Show();
                 IsLoggingIn = false;
@@ -909,7 +913,8 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 CustomMessageBox.Builder
                     .NewFrom(ex, nameof(HandleBootCheck))
-                    .WithText(Loc.Localize("BootPatchFailure", "Could not patch boot."))
+                    .WithAppendText("\n\n")
+                    .WithAppendText(Loc.Localize("BootPatchFailure", "Could not patch boot."))
                     .Show();
                 Environment.Exit(0);
 

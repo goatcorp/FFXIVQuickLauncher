@@ -323,7 +323,8 @@ namespace XIVLauncher.Windows
                 {
                     CustomMessageBox.Builder
                         .NewFrom(ex, "AutoLogin")
-                        .WithText(Loc.Localize("CheckLoginInfo",
+                        .WithAppendText("\n\n")
+                        .WithAppendText(Loc.Localize("CheckLoginInfo",
                             "Additionally, please check your login information or try again."))
                         .Show();
                     App.Settings.AutologinEnabled = false;
