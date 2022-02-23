@@ -104,8 +104,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var index = reader.ReadInt32();
             var progress = reader.ReadInt64();
             var max = reader.ReadInt64();
+            var state = (IndexedZiPatchInstaller.InstallTaskState)reader.ReadInt32();
 
-            OnInstallProgress?.Invoke(index, progress, max);
+            OnInstallProgress?.Invoke(index, progress, max, state);
         }
 
         private void OnReceiveVerifyProgressUpdate(BinaryReader reader)
@@ -478,7 +479,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 });
             }
 
-            private void OnInstallProgressUpdate(int index, long progress, long max)
+            private void OnInstallProgressUpdate(int index, long progress, long max, IndexedZiPatchInstaller.InstallTaskState state)
             {
                 lock (ProgressUpdateSync)
                 {
@@ -489,6 +490,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     writer.Write(index);
                     writer.Write(progress);
                     writer.Write(max);
+                    writer.Write((int)state);
                     ProgressUpdateCounter += 1;
                     SubprocessBuffer.RemoteRequest(ms.ToArray());
                 }
@@ -609,9 +611,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         Log.Information("[{0}/{1}] Checking file {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Length, patchIndex[Math.Min(index, patchIndex.Length - 1)].RelativePath, progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                     }
 
-                    void ReportInstallProgress(int index, long progress, long max)
+                    void ReportInstallProgress(int index, long progress, long max, IndexedZiPatchInstaller.InstallTaskState state)
                     {
-                        Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index + 1, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+                        Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", index + 1, patchIndex.Sources.Count, state, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
                     }
 
                     verifier.OnVerifyProgress += ReportCheckProgress;

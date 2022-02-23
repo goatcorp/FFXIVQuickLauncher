@@ -17,13 +17,13 @@ namespace XIVLauncher.Windows.ViewModel
         private void SetupLoc()
         {
             OtpInputPromptLoc = Loc.Localize("OtpInputPrompt", "Please enter your OTP key.");
-            CancelLoc = Loc.Localize("Cancel", "Cancel");
+            CancelWithShortcutLoc = Loc.Localize("CancelWithShortcut", "_Cancel");
             OkLoc = Loc.Localize("OK", "OK");
             OtpOneClickHintLoc = Loc.Localize("OtpOneClickHint", "Or use the app!\r\nClick here to learn more!");
         }
 
         public string OtpInputPromptLoc { get; private set; }
-        public string CancelLoc { get; private set; }
+        public string CancelWithShortcutLoc { get; private set; }
         public string OkLoc { get; private set; }
         public string OtpOneClickHintLoc { get; private set; }
     }

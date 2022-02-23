@@ -13,45 +13,74 @@
     TextElement.FontWeight="Medium"
     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
     SizeToContent="WidthAndHeight">
-    <Grid>
+    <Grid MouseMove="CustomMessageBox_MouseMove">
         <StackPanel
             Orientation="Horizontal" Margin="10 10 10 50">
-            <TextBlock MaxWidth="500" MinHeight="100" TextWrapping="Wrap" x:Name="MessageTextBlock">On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue;
-                <LineBreak></LineBreak> <LineBreak></LineBreak>equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.</TextBlock>
-            <materialDesign:PackIcon Kind="AlertOctagon" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="30"
-                                     Height="30" Foreground="Red" Margin="10,0,0,0" x:Name="ErrorPackIcon"/>
+            <materialDesign:PackIcon Kind="AlertOctagon" HorizontalAlignment="Stretch" VerticalAlignment="Top" Width="30"
+                                     Height="30" Foreground="Red" Margin="0,0,10,0" x:Name="ErrorPackIcon"/>
+            <StackPanel Orientation="Vertical" Width="540" MinHeight="100">
+                <Grid MinHeight="30">
+                    <TextBlock TextWrapping="Wrap" x:Name="MessageTextBlock" VerticalAlignment="Center">On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue;
+                    <LineBreak></LineBreak> <LineBreak></LineBreak>equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.</TextBlock>
+                </Grid>
+                <RichTextBox Margin="0,10,0,0" Padding="4" AcceptsReturn="True" IsDocumentEnabled="True"
+                         IsReadOnly="True"
+                         VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="False"
+                         materialDesign:HintAssist.Hint="Multiline text"
+                         MaxHeight="120" x:Name="DescriptionTextBox">
+                    <RichTextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="4" />
+                        </Style>
+                    </RichTextBox.Resources>
+                </RichTextBox>
+            </StackPanel>
+            <StackPanel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{Binding CopyWithShortcutLoc}" Command="{Binding Path=CopyMessageTextCommand}" />
+                </ContextMenu>
+            </StackPanel.ContextMenu>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 0 10 10">
             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    x:Name="OfficialLauncherButton" Margin="0,0,5,0">
+                    x:Name="OfficialLauncherButton" Margin="5,0,0,0" Click="OfficialLauncherButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Launch" />
                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OfficialLauncherLoc}"/>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    x:Name="DiscordButton" Margin="0,0,5,0">
+                    x:Name="DiscordButton" Margin="5,0,0,0" Click="DiscordButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Discord" />
                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}"/>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    x:Name="FaqButton" Margin="0,0,5,0">
+                    x:Name="FaqButton" Margin="5,0,0,0" Click="FaqButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon  Kind="Information" />
                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OpenFaqLoc}"/>
                 </StackPanel>
             </Button>
             <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    x:Name="IntegrityReportButton" Margin="0,0,5,0" Click="IntegrityReportButton_OnClick">
+                    x:Name="IntegrityReportButton" Margin="5,0,0,0" Click="IntegrityReportButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="FileDocument" />
                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding OpenIntegrityReportLoc}"/>
                 </StackPanel>
             </Button>
-            <Button Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click" Content="{Binding OkLoc}"/>
+            <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
+                    x:Name="NewGitHubIssueButton" Margin="5,0,0,0" Click="NewGitHubIssueButton_OnClick">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Github" />
+                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding ReportErrorLoc}"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="Button1" Margin="5,0,0,0" HorizontalAlignment="Right" Click="Button1_Click" Content="Button1" MinWidth="80"/>
+            <Button x:Name="Button2" Margin="5,0,0,0" HorizontalAlignment="Right" Click="Button2_Click" Content="Button2" MinWidth="80"/>
+            <Button x:Name="Button3" Margin="5,0,0,0" HorizontalAlignment="Right" Click="Button3_Click" Content="Button3" MinWidth="80"/>
         </StackPanel>
     </Grid>
 </Window>

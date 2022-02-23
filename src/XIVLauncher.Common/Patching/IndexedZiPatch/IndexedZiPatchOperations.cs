@@ -137,7 +137,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             for (var i = 0; i < patchIndex.Sources.Count; i++)
                 verifier.QueueInstall(i, baseUri + patchIndex.Sources[i], null, concurrentCount);
 
-            void OnInstallProgressCallback(int index, long progress, long max) => Log.Information("[{0}/{1}] Installing {2}... {3:0.00}/{4:0.00}MB ({5:00.00}%)", index, patchIndex.Sources.Count, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
+            void OnInstallProgressCallback(int index, long progress, long max, IndexedZiPatchInstaller.InstallTaskState state) => Log.Information("[{0}/{1}] {2} {3}... {4:0.00}/{5:0.00}MB ({6:00.00}%)", index, patchIndex.Sources.Count, state, patchIndex.Sources[Math.Min(index, patchIndex.Sources.Count - 1)], progress / 1048576.0, max / 1048576.0, 100.0 * progress / max);
             verifier.OnInstallProgress += OnInstallProgressCallback;
             try
             {

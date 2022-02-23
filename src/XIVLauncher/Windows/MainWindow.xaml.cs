@@ -321,9 +321,12 @@ namespace XIVLauncher.Windows
                 }
                 catch (Exception ex)
                 {
-                    ErrorWindow.Show(ex,
-                        Loc.Localize("CheckLoginInfo",
-                            "Additionally, please check your login information or try again."), "AutoLogin");
+                    CustomMessageBox.Builder
+                        .NewFrom(ex, "AutoLogin")
+                        .WithAppendText("\n\n")
+                        .WithAppendText(Loc.Localize("CheckLoginInfo",
+                            "Additionally, please check your login information or try again."))
+                        .Show();
                     App.Settings.AutologinEnabled = false;
                 }
             }

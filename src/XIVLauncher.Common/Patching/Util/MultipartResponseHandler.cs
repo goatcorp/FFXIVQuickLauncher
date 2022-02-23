@@ -155,7 +155,7 @@ namespace XIVLauncher.Common.Patching.Util
             Response?.Dispose();
         }
 
-        public class ReadLengthLimitingStream : Stream
+        private class ReadLengthLimitingStream : Stream
         {
             private readonly Stream BaseStream;
             private readonly long LimitedLength;
@@ -199,7 +199,7 @@ namespace XIVLauncher.Common.Patching.Util
             public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         }
 
-        public class ConsumeLengthLimitingStream : Stream
+        private class ConsumeLengthLimitingStream : Stream
         {
             private readonly CircularMemoryStream BaseStream;
             private readonly long LimitedLength;
@@ -254,7 +254,7 @@ namespace XIVLauncher.Common.Patching.Util
             public long OriginEnd => OriginOffset + OriginLength;
             private long PositionInternal;
 
-            public MultipartPartStream(long originTotalLength, long originOffset, long originLength)
+            internal MultipartPartStream(long originTotalLength, long originOffset, long originLength)
             {
                 OriginTotalLength = originTotalLength;
                 OriginOffset = originOffset;
@@ -262,7 +262,7 @@ namespace XIVLauncher.Common.Patching.Util
                 PositionInternal = originOffset;
             }
 
-            public void AppendBaseStream(Stream stream)
+            internal void AppendBaseStream(Stream stream)
             {
                 if (stream.Length == 0)
                     return;
@@ -271,7 +271,12 @@ namespace XIVLauncher.Common.Patching.Util
                 BaseStreams.Add(stream);
             }
 
-            public long UnfulfilledBaseStreamLength => OriginLength - BaseStreams.Select(x => x.Length).Sum();
+            internal long UnfulfilledBaseStreamLength => OriginLength - BaseStreams.Select(x => x.Length).Sum();
+
+            public void CaptureBackwards(long captureCapacity)
+            {
+                LoopStream.Reserve(captureCapacity);
+            }
 
             public override int Read(byte[] buffer, int offset, int count)
             {

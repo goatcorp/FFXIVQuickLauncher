@@ -78,9 +78,11 @@ namespace XIVLauncher.Game
 
             if (!CheckSymlinkValid(d3d11) || !CheckSymlinkValid(dxgi))
             {
-                if (MessageBox.Show(
-                    Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."),
-                    "XIVLauncher Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                if (CustomMessageBox.Builder
+                        .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
+                        .WithButtons(MessageBoxButton.YesNo)
+                        .WithImage(MessageBoxImage.Error)
+                        .Show() == MessageBoxResult.Yes)
                 {
                     try
                     {
@@ -101,9 +103,11 @@ namespace XIVLauncher.Game
                 if (dxgiInfo.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase) &&
                     d3d11Info.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (MessageBox.Show(
-                        Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."),
-                        "XIVLauncher Error", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
+                    if (CustomMessageBox.Builder
+                            .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
+                            .WithButtons(MessageBoxButton.YesNo)
+                            .WithImage(MessageBoxImage.Error)
+                            .Show() == MessageBoxResult.Yes)
                     {
                         try
                         {

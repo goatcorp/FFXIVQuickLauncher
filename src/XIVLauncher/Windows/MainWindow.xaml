@@ -312,7 +312,7 @@
                                             Style="{StaticResource MaterialDesignFlatButton}"
                                             IsCancel="True"
                                             Margin="0 8 0 0"
-                                            Click="QuitMaintenanceQueueButton_OnClick" Content="{Binding CancelLoc}"
+                                            Click="QuitMaintenanceQueueButton_OnClick" Content="{Binding CancelWithShortcutLoc}"
                                             Visibility="{Binding LoadingDialogCancelButtonVisibility}"/>
                                     </StackPanel>
                                 </StackPanel>

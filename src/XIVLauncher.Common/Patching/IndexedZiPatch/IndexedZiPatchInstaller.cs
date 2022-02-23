@@ -24,9 +24,20 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         private readonly List<Stream> TargetStreams = new();
         private readonly List<object> TargetLocks = new();
 
+        public enum InstallTaskState
+        {
+            NotStarted,
+            WaitingForReattempt,
+            Connecting,
+            Working,
+            Finishing,
+            Done,
+            Error,
+        }
+
         public delegate void OnCorruptionFoundDelegate(IndexedZiPatchPartLocator part, IndexedZiPatchPartLocator.VerifyDataResult result);
         public delegate void OnVerifyProgressDelegate(int targetIndex, long progress, long max);
-        public delegate void OnInstallProgressDelegate(int sourceIndex, long progress, long max);
+        public delegate void OnInstallProgressDelegate(int sourceIndex, long progress, long max, InstallTaskState state);
 
         public event OnCorruptionFoundDelegate OnCorruptionFound;
         public event OnVerifyProgressDelegate OnVerifyProgress;
@@ -403,6 +414,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             public readonly int SourceIndex;
             public readonly List<Tuple<int, int>> TargetPartIndices;
             public readonly List<Tuple<int, int>> CompletedTargetPartIndices = new();
+            public InstallTaskState State { get; protected set; } = InstallTaskState.NotStarted;
 
             public InstallTaskConfig(IndexedZiPatchInstaller installer, int sourceIndex, IEnumerable<Tuple<int, int>> targetPartIndices)
             {
@@ -412,12 +424,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 TargetPartIndices = targetPartIndices.ToList();
             }
 
-            public virtual void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
-            {
-                TargetPartIndices.Clear();
-                TargetPartIndices.AddRange(targetPartIndices);
-            }
-
             public abstract Task Repair(CancellationToken cancellationToken);
 
             public virtual void Dispose() { }
@@ -425,6 +431,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public class HttpInstallTaskConfig : InstallTaskConfig
         {
+            private static readonly int[] ReattemptWait = new int[] { 0, 500, 1000, 2000, 3000, 5000, 10000, 15000, 20000, 25000, 30000, 45000, 60000 };
+            private const int MergedGapDownload = 512;
+
             public readonly string SourceUrl;
             private readonly HttpClient Client = new();
             private readonly List<long> TargetPartOffsets;
@@ -442,29 +451,19 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     ProgressMax += Index[targetIndex][partIndex].TargetSize;
             }
 
-            public override void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
-            {
-                base.Again(targetPartIndices);
-                TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
-                TargetPartOffsets.Clear();
-                TargetPartOffsets.AddRange(TargetPartIndices.Select(x => Index[x.Item1][x.Item2].SourceOffset));
-                foreach (var (targetIndex, partIndex) in TargetPartIndices)
-                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
-            }
-
-            private MultipartResponseHandler multipartResponse = null;
+            private MultipartResponseHandler MultipartResponse = null;
 
             private async Task<MultipartResponseHandler.MultipartPartStream> GetNextStream(CancellationToken cancellationToken)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (multipartResponse != null)
+                if (MultipartResponse != null)
                 {
-                    var stream1 = await multipartResponse.NextPart(cancellationToken);
+                    var stream1 = await MultipartResponse.NextPart(cancellationToken);
                     if (stream1 != null)
                         return stream1;
-                    multipartResponse?.Dispose();
-                    multipartResponse = null;
+                    MultipartResponse?.Dispose();
+                    MultipartResponse = null;
                 }
 
                 var offsets = new List<Tuple<long, long>>();
@@ -475,7 +474,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                 for (int i = 1; i < offsets.Count; i++)
                 {
-                    if (offsets[i].Item1 - offsets[i - 1].Item2 >= 16384)
+                    if (offsets[i].Item1 - offsets[i - 1].Item2 >= MergedGapDownload)
                         continue;
                     offsets[i - 1] = Tuple.Create(offsets[i - 1].Item1, Math.Max(offsets[i - 1].Item2, offsets[i].Item2));
                     offsets.RemoveAt(i);
@@ -492,10 +491,17 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 req.Headers.Add("User-Agent", Constants.PatcherUserAgent);
                 req.Headers.Add("Connection", "Keep-Alive");
 
-                var resp = await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-                multipartResponse = new MultipartResponseHandler(resp);
+                try
+                {
+                    var resp = await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                    MultipartResponse = new MultipartResponseHandler(resp);
+                }
+                catch (HttpRequestException e)
+                {
+                    throw new IOException($"Failed to send request to {SourceUrl} with {offsets.Count} range element(s).", e);
+                }
 
-                var stream2 = await multipartResponse.NextPart(cancellationToken);
+                var stream2 = await MultipartResponse.NextPart(cancellationToken);
                 if (stream2 == null)
                     throw new EndOfStreamException("Encountered premature end of stream");
                 return stream2;
@@ -503,23 +509,28 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             public override async Task Repair(CancellationToken cancellationToken)
             {
-                for (int failedCount = 0; TargetPartIndices.Any() && failedCount < 8;)
+                for (int failedCount = 0; TargetPartIndices.Any() && failedCount < ReattemptWait.Length;)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    if (failedCount >= 2)
-                        await Task.Delay(1000 * (1 << Math.Min(5, failedCount - 2)), cancellationToken);
-
                     try
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        State = InstallTaskState.WaitingForReattempt;
+                        await Task.Delay(ReattemptWait[failedCount], cancellationToken);
+
+                        State = InstallTaskState.Connecting;
                         var stream = await GetNextStream(cancellationToken);
 
-                        while (TargetPartOffsets.Any() && TargetPartOffsets.First() < stream.OriginEnd)
+                        State = InstallTaskState.Working;
+                        while (TargetPartOffsets.Any())
                         {
                             cancellationToken.ThrowIfCancellationRequested();
 
                             var (targetIndex, partIndex) = TargetPartIndices.First();
                             var part = Index[targetIndex][partIndex];
+
+                            if (Math.Min(part.MaxSourceEnd, Index.GetSourceLastPtr(SourceIndex)) > stream.OriginEnd)
+                                break;
 
                             using var targetBuffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
                             part.Reconstruct(stream, targetBuffer.Buffer);
@@ -538,14 +549,27 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             Log.Error(ex, "HttpInstallTask failed");
                         else
                             Log.Warning(ex, "HttpInstallTask reattempting");
+
                         failedCount++;
+                        if (failedCount == ReattemptWait.Length)
+                        {
+                            State = InstallTaskState.Error;
+                            throw;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        State = InstallTaskState.Error;
+                        throw;
                     }
                 }
+
+                State = InstallTaskState.Done;
             }
 
             public override void Dispose()
             {
-                multipartResponse?.Dispose();
+                MultipartResponse?.Dispose();
                 Client.Dispose();
                 base.Dispose();
             }
@@ -566,34 +590,35 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 ProgressMax = totalTargetSize;
             }
 
-            public override void Again(IEnumerable<Tuple<int, int>> targetPartIndices)
-            {
-                base.Again(targetPartIndices);
-                TargetPartIndices.Sort((x, y) => Index[x.Item1][x.Item2].SourceOffset.CompareTo(Index[y.Item1][y.Item2].SourceOffset));
-                foreach (var (targetIndex, partIndex) in TargetPartIndices)
-                    ProgressMax += Index[targetIndex][partIndex].TargetSize;
-            }
-
             public override async Task Repair(CancellationToken cancellationToken)
             {
-                await Task.Run(() =>
+                State = InstallTaskState.Working;
+                try
                 {
-                    while (TargetPartIndices.Any())
+                    await Task.Run(() =>
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
+                        while (TargetPartIndices.Any())
+                        {
+                            cancellationToken.ThrowIfCancellationRequested();
 
-                        var (targetIndex, partIndex) = TargetPartIndices.First();
-                        var part = Index[targetIndex][partIndex];
+                            var (targetIndex, partIndex) = TargetPartIndices.First();
+                            var part = Index[targetIndex][partIndex];
 
-                        using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
-                        part.Reconstruct(SourceStream, buffer.Buffer);
-                        Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
+                            using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
+                            part.Reconstruct(SourceStream, buffer.Buffer);
+                            Installer.WriteToTarget(part.TargetIndex, part.TargetOffset, buffer.Buffer, 0, (int)part.TargetSize);
 
-                        ProgressValue += part.TargetSize;
-                        CompletedTargetPartIndices.Add(TargetPartIndices.First());
-                        TargetPartIndices.RemoveAt(0);
-                    }
-                });
+                            ProgressValue += part.TargetSize;
+                            CompletedTargetPartIndices.Add(TargetPartIndices.First());
+                            TargetPartIndices.RemoveAt(0);
+                        }
+                    });
+                    State = InstallTaskState.Done;
+                }
+                catch (Exception)
+                {
+                    State = InstallTaskState.Error;
+                }
             }
 
             public override void Dispose()
@@ -613,7 +638,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public void QueueInstall(int sourceIndex, string sourceUrl, string sid, int splitBy = 8)
         {
-            const int MaxDownloadPerRequest = 64 * 1024 * 1024;
+            const int MaxDownloadPerRequest = 256 * 1024 * 1024;
 
             var indices = MissingPartIndicesPerPatch[sourceIndex].ToList();
             var indicesPerRequest = (int)Math.Ceiling(1.0 * indices.Count / splitBy);
@@ -681,9 +706,12 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     while (pendingTaskConfigs.Any() && runningTasks.Count < concurrentCount)
                         runningTasks.Add(pendingTaskConfigs.Dequeue().Repair(localCancelSource.Token));
 
-                    var taskIndex = Math.Max(0, InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count - 1);
-                    var sourceIndexForProgressDisplay = InstallTaskConfigs[Math.Min(taskIndex, InstallTaskConfigs.Count - 1)].SourceIndex;
-                    OnInstallProgress?.Invoke(sourceIndexForProgressDisplay, InstallTaskConfigs.Select(x => x.ProgressValue).Sum(), progressMax);
+                    OnInstallProgress?.Invoke(
+                        InstallTaskConfigs[Math.Max(0, InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count - 1)].SourceIndex,
+                        InstallTaskConfigs.Select(x => x.ProgressValue).Sum(),
+                        progressMax,
+                        InstallTaskConfigs.Where(x => x.State < InstallTaskState.Finishing).Select(x => x.State).Max()
+                        );
 
                     if (progressReportTask == null || progressReportTask.IsCompleted)
                         progressReportTask = Task.Delay(ProgressReportInterval, localCancelSource.Token);
@@ -695,6 +723,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         throw x.Exception;
                     runningTasks.RemoveAll(x => x.IsCompleted);
                 }
+
+                OnInstallProgress?.Invoke(InstallTaskConfigs.Last().SourceIndex, progressMax, progressMax, InstallTaskState.Finishing);
                 await RepairNonPatchData();
             }
             finally

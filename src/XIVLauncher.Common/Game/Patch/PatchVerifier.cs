@@ -31,13 +31,13 @@ namespace XIVLauncher.Common.Game.Patch
 
         public int ProgressUpdateInterval { get; private set; }
         public int NumBrokenFiles { get; private set; } = 0;
-        public bool IsInstalling { get; private set; } = false;
         public int PatchSetIndex { get; private set; }
         public int PatchSetCount { get; private set; }
         public int TaskIndex { get; private set; }
         public long Progress { get; private set; }
         public long Total { get; private set; }
         public int TaskCount { get; private set; }
+        public IndexedZiPatchInstaller.InstallTaskState CurrentMetaInstallState { get; private set; } = IndexedZiPatchInstaller.InstallTaskState.NotStarted;
         public string CurrentFile { get; private set; }
         public long Speed { get; private set; }
         public Exception LastException { get; private set; }
@@ -88,6 +88,22 @@ namespace XIVLauncher.Common.Game.Patch
         public void Start()
         {
             Debug.Assert(_repoMetaPaths.Count != 0 && _patchSources.Count != 0);
+            Debug.Assert(_verificationTask == null || _verificationTask.IsCompleted);
+
+            _cancellationTokenSource = new();
+            _reportedProgresses.Clear();
+            ProgressUpdateInterval = 0;
+            NumBrokenFiles = 0;
+            PatchSetIndex = 0;
+            PatchSetCount = 0;
+            TaskIndex = 0;
+            Progress = 0;
+            Total = 0;
+            TaskCount = 0;
+            CurrentFile = null;
+            Speed = 0;
+            CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.NotStarted;
+            LastException = null;
 
             _verificationTask = Task.Run(this.RunVerifier, _cancellationTokenSource.Token);
         }
@@ -95,6 +111,12 @@ namespace XIVLauncher.Common.Game.Patch
         public async Task Cancel()
         {
             _cancellationTokenSource.Cancel();
+            if (_verificationTask != null)
+                await _verificationTask;
+        }
+
+        public async Task WaitForCompletion()
+        {
             await _verificationTask;
         }
 
@@ -186,12 +208,13 @@ namespace XIVLauncher.Common.Game.Patch
                                     RecordProgressForEstimation();
                                 }
 
-                                void UpdateInstallProgress(int sourceIndex, long progress, long max)
+                                void UpdateInstallProgress(int sourceIndex, long progress, long max, IndexedZiPatchInstaller.InstallTaskState state)
                                 {
                                     CurrentFile = patchIndex.Sources[Math.Min(sourceIndex, patchIndex.Sources.Count - 1)];
                                     TaskIndex = sourceIndex;
                                     Progress = Math.Min(progress, max);
                                     Total = max;
+                                    CurrentMetaInstallState = state;
                                     RecordProgressForEstimation();
                                 }
 
@@ -205,7 +228,7 @@ namespace XIVLauncher.Common.Game.Patch
                                     var repaired = false;
                                     for (var attemptIndex = 0; attemptIndex < 5; attemptIndex++)
                                     {
-                                        IsInstalling = false;
+                                        CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.NotStarted;
 
                                         TaskCount = patchIndex.Length;
                                         Progress = Total = TaskIndex = 0;
@@ -246,8 +269,7 @@ namespace XIVLauncher.Common.Game.Patch
                                                 throw new InvalidOperationException("_patchSources contains non-Uri/FileInfo");
                                         }
 
-                                        IsInstalling = true;
-
+                                        CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.Connecting;
                                         try
                                         {
                                             await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);

@@ -246,14 +246,16 @@ namespace XIVLauncher
                 Log.Error((Exception) e.ExceptionObject, "Unhandled exception.");
 
                 if (_useFullExceptionHandler)
-                    ErrorWindow.Show((Exception) e.ExceptionObject, "An unhandled exception occurred.", "Unhandled");
+                    CustomMessageBox.Builder
+                        .NewFrom((Exception)e.ExceptionObject, "Unhandled", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
+                        .WithAppendText("\n\nError during early initialization. Please report this error.\n\n" + e.ExceptionObject)
+                        .Show();
                 else
                     MessageBox.Show(
                         "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
                         "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                Log.CloseAndFlush();
-                Environment.Exit(0);
+                Environment.Exit(-1);
             });
         }
 
