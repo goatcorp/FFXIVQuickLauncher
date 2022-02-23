@@ -21,13 +21,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         private const uint TARGET_SIZE_AND_FLAG_MASK_IS_VALID_CRC32_VALUE = 0x40000000;
         private const uint TARGET_SIZE_AND_FLAG_MASK_TARGET_SIZE = 0x3FFFFFFF;
 
-        private uint TargetOffsetUint;  // up to 35 bits, using only 32 bits (28 bits for locator + lsh 7; odd values exist), but currently .dat# files are delimited at 1.9GB
-        private uint SourceOffsetUint;  // up to 31 bits (patch files were delimited at 1.5GB-ish; odd values exist)
-        private uint TargetSizeAndFlags;  // 2 flag bits + up to 31 size bits, using only 30 bits (same with above)
-        public uint Crc32OrPlaceholderEntryDataUnits;  // fixed 32 bits
-        private ushort SplitDecodedSourceFromUshort;  // up to 14 bits (max value 15999)
-        private byte TargetIndexByte;  // using only 8 bits for now
-        private byte SourceIndexByte;  // using only 8 bits for now
+        private uint TargetOffsetUint; // up to 35 bits, using only 32 bits (28 bits for locator + lsh 7; odd values exist), but currently .dat# files are delimited at 1.9GB
+        private uint SourceOffsetUint; // up to 31 bits (patch files were delimited at 1.5GB-ish; odd values exist)
+        private uint TargetSizeAndFlags; // 2 flag bits + up to 31 size bits, using only 30 bits (same with above)
+        public uint Crc32OrPlaceholderEntryDataUnits; // fixed 32 bits
+        private ushort SplitDecodedSourceFromUshort; // up to 14 bits (max value 15999)
+        private byte TargetIndexByte; // using only 8 bits for now
+        private byte SourceIndexByte; // using only 8 bits for now
 
         public long TargetOffset
         {
@@ -88,6 +88,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
         private static extern void CopyMemory([Out] byte[] dest, ref IndexedZiPatchPartLocator src, int cb);
+
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
         private static extern void CopyMemory(out IndexedZiPatchPartLocator dest, [In] byte[] src, int cb);
 
@@ -133,13 +134,17 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 return buf.Skip(offset).Take(length).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
 
             if (IsEmptyBlock)
+            {
                 return BitConverter.ToInt32(buf, offset + 0) == 1 << 7
-                    && BitConverter.ToInt32(buf, offset + 4) == 0
-                    && BitConverter.ToInt32(buf, offset + 8) == 0
-                    && BitConverter.ToInt32(buf, offset + 12) == Crc32OrPlaceholderEntryDataUnits
-                    && BitConverter.ToInt32(buf, offset + 16) == 0
-                    && BitConverter.ToInt32(buf, offset + 20) == 0
-                    && buf.Skip(offset + 24).Take(length - 24).All(x => x == 0) ? VerifyDataResult.Pass : VerifyDataResult.FailBadData;
+                       && BitConverter.ToInt32(buf, offset + 4) == 0
+                       && BitConverter.ToInt32(buf, offset + 8) == 0
+                       && BitConverter.ToInt32(buf, offset + 12) == this.Crc32OrPlaceholderEntryDataUnits
+                       && BitConverter.ToInt32(buf, offset + 16) == 0
+                       && BitConverter.ToInt32(buf, offset + 20) == 0
+                       && buf.Skip(offset + 24).Take(length - 24).All(x => x == 0)
+                    ? VerifyDataResult.Pass
+                    : VerifyDataResult.FailBadData;
+            }
 
             return VerifyDataResult.FailUnverifiable;
         }
@@ -153,15 +158,19 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (IsValidCrc32Value)
             {
                 Crc32 crc32 = new();
+
                 for (var remaining = TargetSize; remaining > 0; remaining -= buffer.Buffer.Length)
                 {
                     var readSize = (int)Math.Min(remaining, buffer.Buffer.Length);
                     if (readSize != stream.Read(buffer.Buffer, 0, readSize))
                         return VerifyDataResult.FailNotEnoughData;
+
                     crc32.Update(buffer.Buffer, 0, readSize);
                 }
+
                 if (crc32.Checksum != Crc32OrPlaceholderEntryDataUnits)
                     return VerifyDataResult.FailBadData;
+
                 return VerifyDataResult.Pass;
             }
             else if (IsAllZeros)
@@ -174,6 +183,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     if (!buffer.Buffer.Take(readSize).All(x => x == 0))
                         return VerifyDataResult.FailBadData;
                 }
+
                 return VerifyDataResult.Pass;
             }
             else if (IsEmptyBlock)
@@ -181,7 +191,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 var readSize = Math.Min(1 << 7, buffer.Buffer.Length);
                 if (readSize != stream.Read(buffer.Buffer, 0, readSize))
                     return VerifyDataResult.FailNotEnoughData;
-                
+
                 // File entry header for placeholder
                 if (BitConverter.ToInt32(buffer.Buffer, 0) != 1 << 7
                     || BitConverter.ToInt32(buffer.Buffer, 4) != 0
@@ -246,6 +256,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
             else
                 throw new InvalidOperationException("This part requires source data.");
+
             return bufferSize;
         }
 
@@ -261,11 +272,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (IsDeflatedBlockData)
             {
                 using var inflatedBuffer = ReusableByteBufferManager.GetBuffer(MaxSourceSize);
-                var inflatedLength = 0;
                 using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegmentLength - sourceSegmentOffset), CompressionMode.Decompress, true))
-                    inflatedLength = stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
+                    stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
                 if (VerifyDataResult.Pass != Verify(inflatedBuffer.Buffer, (int)SplitDecodedSourceFrom, (int)TargetSize))
                     throw new IOException("Verify failed on reconstruct (inflate)");
+
                 Array.Copy(inflatedBuffer.Buffer, SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
             else
@@ -274,8 +285,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     throw new IOException("Insufficient source data");
                 if (VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)TargetSize))
                     throw new IOException("Verify failed on reconstruct");
+
                 Array.Copy(sourceSegment, sourceSegmentOffset + SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
             }
+
             return bufferSize;
         }
 
@@ -312,6 +325,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             if (v > maxValue)
                 throw new ArgumentException("Value too big");
+
             return (uint)v;
         }
 
@@ -319,6 +333,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             if (v > maxValue)
                 throw new ArgumentException("Value too big");
+
             return (ushort)v;
         }
 
@@ -326,6 +341,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             if (v > maxValue)
                 throw new ArgumentException("Value too big");
+
             return (byte)v;
         }
     }

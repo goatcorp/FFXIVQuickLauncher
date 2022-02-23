@@ -14,7 +14,7 @@ using CheapLoc;
 using Serilog;
 using XIVLauncher.Accounts;
 using XIVLauncher.Common;
-using XIVLauncher.Dalamud;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.PlatformAbstractions;

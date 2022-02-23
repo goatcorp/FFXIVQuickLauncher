@@ -1,7 +1,6 @@
 ﻿using System;
-using XIVLauncher.Common;
 
-namespace Dalamud
+namespace XIVLauncher.Common.Dalamud
 {
     [Serializable]
     public sealed class DalamudStartInfo

@@ -15,6 +15,7 @@ using Serilog;
 using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch;

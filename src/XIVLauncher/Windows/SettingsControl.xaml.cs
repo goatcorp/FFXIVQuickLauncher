@@ -15,6 +15,7 @@ using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using Newtonsoft.Json.Linq;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;

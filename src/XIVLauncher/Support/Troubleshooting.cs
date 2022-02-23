@@ -4,7 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common;
-using XIVLauncher.Dalamud;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 
 namespace XIVLauncher.Support

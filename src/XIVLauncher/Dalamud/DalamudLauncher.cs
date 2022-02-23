@@ -8,17 +8,17 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using CheapLoc;
-using Dalamud;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Addon;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
 {
-    class DalamudLauncher : IRunnableAddon
+    internal class DalamudLauncher : IRunnableAddon
     {
         private readonly DalamudLoadingOverlay _overlay;
         private readonly DalamudLoadMethod _loadMethod;
