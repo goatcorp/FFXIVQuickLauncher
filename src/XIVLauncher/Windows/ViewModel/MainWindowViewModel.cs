@@ -587,7 +587,8 @@ namespace XIVLauncher.Windows.ViewModel
                 var progressDialog = PatchDownloadDialogFactory(patcher);
                 progressDialog.Show();
 
-                patcher.Start();
+                if (!HandlePatchStart(patcher))
+                    return false;
 
                 while (!patcher.IsDone)
                 {
@@ -841,7 +842,8 @@ namespace XIVLauncher.Windows.ViewModel
                     var progressDialog = PatchDownloadDialogFactory(patcher);
                     progressDialog.Show();
 
-                    patcher.Start();
+                    if (!HandlePatchStart(patcher))
+                        return false;
 
                     while (!patcher.IsDone)
                     {
@@ -875,6 +877,44 @@ namespace XIVLauncher.Windows.ViewModel
                 ErrorWindow.Show(ex, "Could not patch boot.", nameof(HandleBootCheck));
                 Environment.Exit(0);
 
+                return false;
+            }
+        }
+
+        private bool HandlePatchStart(PatchManager manager)
+        {
+            try
+            {
+                manager.Start();
+                return true;
+            }
+            catch (PatchInstallerException ex)
+            {
+                var message = Loc.Localize("PatchManNoInstaller",
+                    "The patch installer could not start correctly.\n{0}\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.");
+
+                CustomMessageBox.Show(string.Format(message, ex.Message), "XIVLauncher Error", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                return false;
+            }
+            catch (NotEnoughSpaceException sex)
+            {
+                switch (sex.Kind)
+                {
+                    case NotEnoughSpaceException.SpaceKind.Patches:
+                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(sex.BytesRequired), Util.BytesToString(sex.BytesFree)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                    case NotEnoughSpaceException.SpaceKind.AllPatches:
+                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceErrorAll", "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(sex.BytesRequired), Util.BytesToString(sex.BytesFree)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                    case NotEnoughSpaceException.SpaceKind.Game:
+                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceGameError", "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(sex.BytesRequired), Util.BytesToString(sex.BytesFree)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                
                 return false;
             }
         }

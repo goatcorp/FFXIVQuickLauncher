@@ -36,11 +36,8 @@ namespace XIVLauncher.Common.Game.Patch
             this._settings = _settings;
         }
 
-        public bool StartIfNeeded()
+        public void StartIfNeeded()
         {
-            if (State != InstallerState.NotStarted)
-                return true;
-
             var rpcName = "XLPatcher" + Guid.NewGuid().ToString();
 
             Log.Information("[PATCHERIPC] Starting patcher with '{0}'", rpcName);
@@ -68,10 +65,8 @@ namespace XIVLauncher.Common.Game.Patch
             catch (Exception ex)
             {
                 Log.Error(ex, "Could not launch Patch Installer");
-                return false;
+                throw new PatchInstallerException("Start failed.", ex);
             }
-
-            return true;
         }
 
         private void RemoteCallHandler(ulong msgId, byte[] payload)
@@ -113,14 +108,8 @@ namespace XIVLauncher.Common.Game.Patch
 
                 Thread.Sleep(500);
             }
-
-            /*
-            MessageBox.Show(
-                Loc.Localize("PatchInstallerNotOpen",
-                    "Could not connect to the patch installer.\nPlease report this error."), "XIVLauncher",
-                MessageBoxButton.OK, MessageBoxImage.Error);
-                */
-            throw new PatchInstallerException(); //TODO(goat): Handle properly
+            
+            throw new PatchInstallerException("Installer RPC timed out.");
         }
 
         public void Stop()
