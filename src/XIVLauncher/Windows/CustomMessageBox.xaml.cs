@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Media;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
@@ -293,7 +295,11 @@ namespace XIVLauncher.Windows
                     .WithAppendDescription("\n64bit? " + Environment.Is64BitProcess);
 
                 if (exitOnCloseMode == ExitOnCloseModes.ExitOnClose)
-                    builder.WithOkButtonText(Loc.Localize("Exit", "_Exit"));
+                {
+                    builder.WithButtons(MessageBoxButton.YesNo)
+                        .WithYesButtonText(Loc.Localize("Restart", "_Restart"))
+                        .WithNoButtonText(Loc.Localize("Exit", "_Exit"));
+                }
 
                 if (App.Settings != null)
                 {
@@ -353,21 +359,21 @@ namespace XIVLauncher.Windows
 
             public MessageBoxResult Show()
             {
-                try
+                MessageBoxResult result;
+                if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+                    result = ShowAssumingDispatcherThread();
+                else
+                    result = Application.Current.Dispatcher.Invoke(ShowAssumingDispatcherThread);
+
+                if (ExitOnCloseMode == ExitOnCloseModes.ExitOnClose)
                 {
-                    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-                        return ShowAssumingDispatcherThread();
-                    else
-                        return Application.Current.Dispatcher.Invoke(ShowAssumingDispatcherThread);
+                    Log.CloseAndFlush();
+                    if (result == MessageBoxResult.Yes)
+                        Process.Start(Process.GetCurrentProcess().MainModule.FileName, string.Join(" ", Environment.GetCommandLineArgs().Skip(1).Select(x => EncodeParameterArgument(x))));
+                    Environment.Exit(-1);
                 }
-                finally
-                {
-                    if (ExitOnCloseMode == ExitOnCloseModes.ExitOnClose)
-                    {
-                        Log.CloseAndFlush();
-                        Environment.Exit(1);
-                    }
-                }
+
+                return result;
             }
         }
 
@@ -384,6 +390,44 @@ namespace XIVLauncher.Windows
                 .WithShowIntegrityReportLink(showReportLinks)
                 .WithShowOfficialLauncher(showOfficialLauncher)
                 .Show();
+        }
+
+        // https://docs.microsoft.com/en-us/archive/blogs/twistylittlepassagesallalike/everyone-quotes-command-line-arguments-the-wrong-way
+        private static string EncodeParameterArgument(string argument, bool force = false)
+        {
+            if (!force && argument.Length > 0 && argument.IndexOfAny(" \t\n\v\"".ToCharArray()) == -1)
+                return argument;
+
+            var quoted = new StringBuilder(argument.Length * 2);
+            quoted.Append('"');
+
+            var numberBackslashes = 0;
+
+            foreach (var chr in argument)
+            {
+                switch (chr)
+                {
+                    case '\\':
+                        numberBackslashes++;
+                        continue;
+
+                    case '"':
+                        quoted.Append('\\', numberBackslashes * 2 + 1);
+                        quoted.Append(chr);
+                        break;
+
+                    default:
+                        quoted.Append('\\', numberBackslashes);
+                        quoted.Append(chr);
+                        break;
+                }
+                numberBackslashes = 0;
+            }
+
+            quoted.Append('\\', numberBackslashes * 2);
+            quoted.Append('"');
+
+            return quoted.ToString();
         }
     }
 }
