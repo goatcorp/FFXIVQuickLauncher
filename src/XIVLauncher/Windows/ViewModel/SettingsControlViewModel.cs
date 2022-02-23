@@ -137,7 +137,7 @@ namespace XIVLauncher.Windows.ViewModel
             PluginsToggleLoc = Loc.Localize("Toggle", "Toggle");
             PluginsDeleteLoc = Loc.Localize("Delete", "Delete");
             PluginsInstallHintLoc =
-                Loc.Localize("PluginsInstallHint", "You can use the /xlplugins command in-game to install more plugins.");
+                Loc.Localize("PluginsInstallHint", "Choose \"Plugin Installer\" or use the /xlplugins command in-game to install more plugins.");
 
             SettingsPatchingLoc = Loc.Localize("SettingsPatching", "Patching");
             AskBeforePatchLoc = Loc.Localize("AskBeforePatch", "Ask before installing a game patch");
@@ -148,7 +148,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             SettingsAboutLoc = Loc.Localize("SettingsAbout", "About");
             CreditsLoc = Loc.Localize("Credits",
-                "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!");
+                "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, kizer and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!");
             LicenseLoc = Loc.Localize("License", "Licensed under GPLv3 or later. Click here for more.");
             JoinDiscordLoc = Loc.Localize("JoinDiscord", "Join Discord");
             OpenFaqLoc = Loc.Localize("OpenFaq", "Open FAQ");
