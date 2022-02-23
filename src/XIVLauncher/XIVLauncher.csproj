@@ -29,6 +29,12 @@
     </COMReference>
   </ItemGroup>
 
+  <!-- Assets -->
+  <ItemGroup>
+    <Resource Include="Resources\*.*" />
+    <EmbeddedResource Include="Resources\Loc\xl\*.json" />
+  </ItemGroup>
+
   <PropertyGroup>
     <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
   </PropertyGroup>
