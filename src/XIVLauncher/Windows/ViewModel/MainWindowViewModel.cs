@@ -418,15 +418,18 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (OauthLoginException oauthLoginException)
             {
-                var failedOauthMessage = oauthLoginException.Message.Replace("\\r\\n", "\n").Replace("\r\n", "\n");
+                var message = oauthLoginException.OauthErrorMessage;
+                message ??= Loc.Localize("LoginGenericError", "Could not log into your SE account.\nPlease check your username and password.");
+                
+                var normalizedMessage = message.Replace("\\r\\n", "\n").Replace("\r\n", "\n");
                 if (App.Settings.AutologinEnabled)
                 {
-                    failedOauthMessage +=
+                    normalizedMessage +=
                         Loc.Localize("LoginNoOauthAutologinHint", "\n\nAuto-Login has been disabled.");
                     App.Settings.AutologinEnabled = false;
                 }
 
-                CustomMessageBox.Show(failedOauthMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"),
+                CustomMessageBox.Show(normalizedMessage, Loc.Localize("LoginNoOauthTitle", "Login issue"),
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Reactivate();

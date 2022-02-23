@@ -10,20 +10,21 @@ namespace XIVLauncher.Common.Game
         private static Regex errorMessageRegex =
             new(@"window.external.user\(""login=auth,ng,err,(?<errorMessage>.*)\""\);", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public OauthLoginException(string document) : base(GetErrorMessage(document))
+        public string? OauthErrorMessage { get; private set; }
+        
+        public OauthLoginException(string document) : base(GetErrorMessage(document) ?? "Unknown error")
         {
-            // ignored
+            OauthErrorMessage = GetErrorMessage(document);
         }
 
-        private static string GetErrorMessage(string document)
+        private static string? GetErrorMessage(string document)
         {
             var matches = errorMessageRegex.Matches(document);
 
             if (matches.Count is 0 or > 1)
             {
-                Log.Error("Could not get login error\n" + document);
-                throw new Exception("Could not get login error"); // TODO(goat): hook up
-                // return Loc.Localize("LoginGenericError", "Could not log into your SE account.\nPlease check your username and password.");
+                Log.Error("Could not get login error\n{Doc}", document);
+                return null;
             }
 
             return matches[0].Groups["errorMessage"].Value;
