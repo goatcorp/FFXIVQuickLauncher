@@ -21,6 +21,7 @@ namespace XIVLauncher.Windows.ViewModel
             RepairingLoc = Loc.Localize("NowRepairing", "Repairing game files...");
             ConnectingLoc = Loc.Localize("NowRepairingConnecting", "Connecting...");
             ReattemptWaitingLoc = Loc.Localize("NowRepairingReattemptWaiting", "Waiting before trying again...");
+            FinishingLoc = Loc.Localize("NowRepairingFinishing", "Finishing...");
             CancelLoc = Loc.Localize("Cancel", "Cancel");
             SpeedUnitPerSecLoc = Loc.Localize("SpeedUnitPerSecLoc", "{0}/s");
             EstimatedRemainingDurationLoc = Loc.Localize("EstimatedRemainingDuration", "{0:00}:{1:00} remaining");
@@ -31,6 +32,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string RepairingLoc { get; private set; }
         public string ConnectingLoc { get; private set; }
         public string ReattemptWaitingLoc { get; private set; }
+        public string FinishingLoc { get; private set; }
         public string CancelLoc { get; private set; }
         public string SpeedUnitPerSecLoc { get; private set; }
         public string EstimatedRemainingDurationLoc { get; private set; }

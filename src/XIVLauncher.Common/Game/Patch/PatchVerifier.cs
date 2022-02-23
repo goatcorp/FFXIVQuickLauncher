@@ -37,7 +37,7 @@ namespace XIVLauncher.Common.Game.Patch
         public long Progress { get; private set; }
         public long Total { get; private set; }
         public int TaskCount { get; private set; }
-        public IndexedZiPatchInstaller.InstallTaskState? CurrentMetaInstallState { get; private set; }
+        public IndexedZiPatchInstaller.InstallTaskState CurrentMetaInstallState { get; private set; } = IndexedZiPatchInstaller.InstallTaskState.NotStarted;
         public string CurrentFile { get; private set; }
         public long Speed { get; private set; }
         public Exception LastException { get; private set; }

@@ -80,6 +80,7 @@ namespace XIVLauncher.Windows
             {
                 Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => ViewModel.ReattemptWaitingLoc,
                 Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => ViewModel.ConnectingLoc,
+                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Finishing => ViewModel.FinishingLoc,
                 _ => string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed)),
             };
 
@@ -87,6 +88,7 @@ namespace XIVLauncher.Windows
             {
                 Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => "",
                 Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => "",
+                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Finishing => "",
                 _ => ViewModel.FormatEstimatedTime(_verify.Total - _verify.Progress, _verify.Speed),
             };
 

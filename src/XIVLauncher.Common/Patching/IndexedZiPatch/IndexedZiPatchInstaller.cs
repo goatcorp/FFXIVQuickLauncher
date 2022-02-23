@@ -30,6 +30,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             WaitingForReattempt,
             Connecting,
             Working,
+            Finishing,
             Done,
             Error,
         }
@@ -431,6 +432,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public class HttpInstallTaskConfig : InstallTaskConfig
         {
             private static readonly int[] ReattemptWait = new int[] { 0, 500, 1000, 2000, 3000, 5000, 10000, 15000, 20000, 25000, 30000, 45000, 60000 };
+            private const int MergedGapDownload = 512;
+
             public readonly string SourceUrl;
             private readonly HttpClient Client = new();
             private readonly List<long> TargetPartOffsets;
@@ -471,7 +474,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
                 for (int i = 1; i < offsets.Count; i++)
                 {
-                    if (offsets[i].Item1 - offsets[i - 1].Item2 >= 16384)
+                    if (offsets[i].Item1 - offsets[i - 1].Item2 >= MergedGapDownload)
                         continue;
                     offsets[i - 1] = Tuple.Create(offsets[i - 1].Item1, Math.Max(offsets[i - 1].Item2, offsets[i].Item2));
                     offsets.RemoveAt(i);
@@ -519,12 +522,15 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         var stream = await GetNextStream(cancellationToken);
 
                         State = InstallTaskState.Working;
-                        while (TargetPartOffsets.Any() && TargetPartOffsets.First() < stream.OriginEnd)
+                        while (TargetPartOffsets.Any())
                         {
                             cancellationToken.ThrowIfCancellationRequested();
 
                             var (targetIndex, partIndex) = TargetPartIndices.First();
                             var part = Index[targetIndex][partIndex];
+
+                            if (Math.Min(part.MaxSourceEnd, Index.GetSourceLastPtr(SourceIndex)) > stream.OriginEnd)
+                                break;
 
                             using var targetBuffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
                             part.Reconstruct(stream, targetBuffer.Buffer);
@@ -704,7 +710,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         InstallTaskConfigs[Math.Max(0, InstallTaskConfigs.Count - pendingTaskConfigs.Count - runningTasks.Count - 1)].SourceIndex,
                         InstallTaskConfigs.Select(x => x.ProgressValue).Sum(),
                         progressMax,
-                        InstallTaskConfigs.Where(x => x.State < InstallTaskState.Done).Select(x => x.State).Max()
+                        InstallTaskConfigs.Where(x => x.State < InstallTaskState.Finishing).Select(x => x.State).Max()
                         );
 
                     if (progressReportTask == null || progressReportTask.IsCompleted)
@@ -717,6 +723,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         throw x.Exception;
                     runningTasks.RemoveAll(x => x.IsCompleted);
                 }
+
+                OnInstallProgress?.Invoke(InstallTaskConfigs.Last().SourceIndex, progressMax, progressMax, InstallTaskState.Finishing);
                 await RepairNonPatchData();
             }
             finally
