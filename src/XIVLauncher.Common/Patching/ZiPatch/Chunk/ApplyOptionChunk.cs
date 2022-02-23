@@ -34,7 +34,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         public ApplyOptionKind OptionKind { get; protected set; }
 
         /// <summary>
-        /// Gets the option value.
+        /// Gets a value indicating whether the option is enabled.
         /// </summary>
         /// <remarks>
         /// This is false on all files seen so far.

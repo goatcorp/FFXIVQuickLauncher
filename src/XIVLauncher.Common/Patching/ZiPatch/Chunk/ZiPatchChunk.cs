@@ -8,6 +8,9 @@ using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
+    /// <summary>
+    /// Base chunk abstraction.
+    /// </summary>
     public abstract class ZiPatchChunk
     {
         /// <summary>
@@ -40,7 +43,10 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         /// </summary>
         public uint CalculatedChecksum { get; protected set; }
 
-        protected readonly ChecksumBinaryReader Reader;
+        /// <summary>
+        /// Gets the binary reader.
+        /// </summary>
+        private protected ChecksumBinaryReader Reader { get; }
 
         private static readonly AsyncLocal<MemoryStream> localMemoryStream = new AsyncLocal<MemoryStream>();
 
@@ -95,7 +101,6 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
                 var type = binaryReader.ReadFixedLengthString(4u);
                 if (!ChunkTypes.TryGetValue(type, out var constructor))
                     throw new ZiPatchException();
-
 
                 var chunk = constructor(binaryReader, baseOffset, size);
 
