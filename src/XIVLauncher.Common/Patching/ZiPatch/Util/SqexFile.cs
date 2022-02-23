@@ -75,9 +75,9 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
         /// Get all expansion files.
         /// </summary>
         /// <param name="fullPath">Folder path.</param>
-        /// <param name="ExpansionId">Expansion ID.</param>
+        /// <param name="expansionId">Expansion ID.</param>
         /// <returns>All files for the specified expansion.</returns>
-        public static IEnumerable<string> GetAllExpansionFiles(string fullPath, ushort ExpansionId)
+        public static IEnumerable<string> GetAllExpansionFiles(string fullPath, ushort expansionId)
         {
             var xpacPath = GetExpansionFolder((byte)expansionId);
 

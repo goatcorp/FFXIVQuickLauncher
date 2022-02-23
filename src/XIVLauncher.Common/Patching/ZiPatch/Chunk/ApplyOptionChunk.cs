@@ -54,7 +54,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         {
             var start = this.Reader.BaseStream.Position;
 
-            OptionKind = (ApplyOptionKind)reader.ReadUInt32BE();
+            OptionKind = (ApplyOptionKind)this.Reader.ReadUInt32BE();
 
             // Discarded padding, always 0x0000_0004 as far as observed
             this.Reader.ReadBytes(4);
