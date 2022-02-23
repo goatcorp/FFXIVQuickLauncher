@@ -52,6 +52,17 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoStartCommand = new AsyncCommand(GetLoginFunc(false, false, false), () => !IsLoggingIn);
             LoginNoDalamudCommand = new AsyncCommand(GetLoginFunc(true, false, true), () => !IsLoggingIn);
             LoginRepairCommand = new AsyncCommand(GetLoginFunc(false, true, false), () => !IsLoggingIn);
+            
+            _installer.OnFail += InstallerOnFail;
+        }
+
+        private void InstallerOnFail()
+        {
+            CustomMessageBox.Show(
+                Loc.Localize("PatchInstallerInstallFailed", "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher."),
+                "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            Environment.Exit(0);
         }
 
         private Func<object, Task> GetLoginFunc(bool startGame, bool isRepair, bool forceNoDalamud)
