@@ -2,7 +2,7 @@ using System.IO;
 using Newtonsoft.Json;
 using XIVLauncher.Common;
 
-namespace XIVLauncher.Settings
+namespace XIVLauncher.Common
 {
     class DalamudSettings
     {

@@ -114,7 +114,7 @@
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding AutoLaunchHintLoc}" />
 
-                        <materialDesign:Card Margin="0,20,0,0" Height="220">
+                        <materialDesign:Card Margin="0,0,0,0" Height="220">
                             <ListView x:Name="AddonListView" Margin="0,0,0,0" Height="220"
                                       MouseUp="AddonListView_OnMouseUp">
                                 <ListView.ContextMenu>
@@ -204,7 +204,7 @@
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PluginsDescriptionLoc}" />
 
-                    <materialDesign:Card Margin="0,20,0,0" Height="230">
+                    <materialDesign:Card Margin="0,0,0,0" Height="230">
                         <ListView x:Name="PluginListView" Margin="0,0,0,0" Height="230"
                                   Foreground="{DynamicResource MaterialDesignBody}">
                             <ListView.ContextMenu>

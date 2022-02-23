@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using MaterialDesignThemes.Wpf;
 using XIVLauncher.Common;
-using XIVLauncher.Game;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 

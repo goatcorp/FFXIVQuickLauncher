@@ -8,7 +8,7 @@ using Config.Net;
 using Newtonsoft.Json;
 using XIVLauncher.Addon;
 
-namespace XIVLauncher.Settings.Parsers
+namespace XIVLauncher.Common.Parsers
 {
     class AddonListParser : ITypeParser
     {

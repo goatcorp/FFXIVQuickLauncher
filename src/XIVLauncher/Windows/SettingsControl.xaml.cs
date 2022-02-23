@@ -13,11 +13,10 @@ using Serilog;
 using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 using XIVLauncher.Dalamud;
-using XIVLauncher.Game;
-using XIVLauncher.Settings;
+using XIVLauncher.Common.Game;
 using Newtonsoft.Json.Linq;
 using XIVLauncher.Common;
-using XIVLauncher.Game.Patch.Acquisition;
+using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 

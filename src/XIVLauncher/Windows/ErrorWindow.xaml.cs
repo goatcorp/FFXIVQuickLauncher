@@ -4,7 +4,7 @@ using System.Media;
 using System.Threading;
 using System.Windows;
 using XIVLauncher.Common;
-using XIVLauncher.Game;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 

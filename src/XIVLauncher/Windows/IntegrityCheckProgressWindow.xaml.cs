@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using XIVLauncher.Game;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XIVLauncher.Settings
+namespace XIVLauncher.Common
 {
     public enum LauncherLanguage
     {

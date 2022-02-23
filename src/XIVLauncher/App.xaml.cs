@@ -13,9 +13,8 @@ using Serilog;
 using Serilog.Events;
 using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
-using XIVLauncher.Game;
-using XIVLauncher.Settings;
-using XIVLauncher.Settings.Parsers;
+using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Parsers;
 using XIVLauncher.Support;
 using XIVLauncher.Windows;
 

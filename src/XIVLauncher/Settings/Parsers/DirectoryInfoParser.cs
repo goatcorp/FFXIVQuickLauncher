@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Config.Net;
 
-namespace XIVLauncher.Settings.Parsers
+namespace XIVLauncher.Common.Parsers
 {
     class DirectoryInfoParser : ITypeParser
     {

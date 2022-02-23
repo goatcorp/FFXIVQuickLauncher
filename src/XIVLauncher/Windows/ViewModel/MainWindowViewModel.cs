@@ -17,8 +17,9 @@ using XIVLauncher.Addon;
 using XIVLauncher.Cache;
 using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
+using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Game;
-using XIVLauncher.Game.Patch;
 using XIVLauncher.PatchInstaller;
 using XIVLauncher.Support;
 using XIVLauncher.Xaml;
@@ -30,7 +31,7 @@ namespace XIVLauncher.Windows.ViewModel
         public bool IsLoggingIn;
 
         private readonly Launcher _launcher = new();
-        private readonly Game.Patch.PatchInstaller _installer = new();
+        private readonly Common.Game.Patch.PatchInstaller _installer = new();
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
 
@@ -799,7 +800,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
-                Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
+                Common.Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
                 try
                 {
                     bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);

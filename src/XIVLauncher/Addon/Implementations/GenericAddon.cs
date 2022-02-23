@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using XIVLauncher.Settings;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Addon
 {

@@ -11,12 +11,11 @@ using NuGet;
 using Serilog;
 using XIVLauncher.Cache;
 using XIVLauncher.Common;
-using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
 {
-    static class DalamudUpdater
+    public static class DalamudUpdater
     {
         public static DownloadState State { get; private set; } = DownloadState.Unknown;
         public static bool IsStaging { get; private set; } = false;

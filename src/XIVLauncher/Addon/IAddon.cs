@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using XIVLauncher.Settings;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Addon
 {

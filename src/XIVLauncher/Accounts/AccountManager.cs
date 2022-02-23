@@ -4,7 +4,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common;
-using XIVLauncher.Settings;
 
 namespace XIVLauncher.Accounts
 {

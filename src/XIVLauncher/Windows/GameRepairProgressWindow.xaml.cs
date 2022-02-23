@@ -5,7 +5,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using XIVLauncher.Common;
-using XIVLauncher.Game.Patch;
+using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Windows.ViewModel;
 using XIVLauncher.Xaml;
 

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using XIVLauncher.Settings;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Addon
 {

@@ -3,9 +3,9 @@ using System.IO;
 using XIVLauncher.Addon;
 using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
-using XIVLauncher.Game.Patch.Acquisition;
+using XIVLauncher.Common.Game.Patch.Acquisition;
 
-namespace XIVLauncher.Settings
+namespace XIVLauncher.Common
 {
     public interface ILauncherSettingsV3
     {
