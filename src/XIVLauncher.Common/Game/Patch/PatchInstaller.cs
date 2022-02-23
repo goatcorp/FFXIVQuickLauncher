@@ -116,11 +116,13 @@ namespace XIVLauncher.Common.Game.Patch
                 Thread.Sleep(500);
             }
 
+            /*
             MessageBox.Show(
                 Loc.Localize("PatchInstallerNotOpen",
                     "Could not connect to the patch installer.\nPlease report this error."), "XIVLauncher",
                 MessageBoxButton.OK, MessageBoxImage.Error);
-            Environment.Exit(0);
+                */
+            throw new PatchInstallerException(); //TODO(goat): Handle properly
         }
 
         public void Stop()
