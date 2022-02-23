@@ -190,10 +190,20 @@ namespace XIVLauncher.Windows
 
         private void OfficialLauncherButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Steam account?", "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                Process.Start($"steam://rungameid/{Launcher.STEAM_APP_ID}");
-            else
-                Util.StartOfficialLauncher(App.Settings.GamePath, false);
+            switch (Builder
+                    .NewFrom(Loc.Localize("RunOfficialLauncherConfirmSteam", "Do you have your game account associated with a Steam account?"))
+                    .WithImage(MessageBoxImage.Question)
+                    .WithButtons(MessageBoxButton.YesNoCancel)
+                    .Show())
+            {
+                case MessageBoxResult.Yes:
+                    Process.Start($"steam://rungameid/{Launcher.STEAM_APP_ID}");
+                    break;
+
+                case MessageBoxResult.No:
+                    Util.StartOfficialLauncher(App.Settings.GamePath, false);
+                    break;
+            }
         }
 
         private void DiscordButton_Click(object sender, RoutedEventArgs e)
@@ -258,11 +268,11 @@ namespace XIVLauncher.Windows
             public Builder WithCancelButtonText(string text) { CancelButtonText = text; return this; }
             public Builder WithYesButtonText(string text) { YesButtonText = text; return this; }
             public Builder WithNoButtonText(string text) { NoButtonText = text; return this; }
-            public Builder WithShowHelpLinks(bool showHelpLinks) { ShowHelpLinks = showHelpLinks; return this; }
-            public Builder WithShowDiscordLink(bool showDiscordLink) { ShowDiscordLink = showDiscordLink; return this; }
-            public Builder WithShowOfficialLauncher(bool showOfficialLauncher) { ShowOfficialLauncher = showOfficialLauncher; return this; }
-            public Builder WithShowIntegrityReportLink(bool showReportLinks) { ShowIntegrityReportLinks = showReportLinks; return this; }
-            public Builder WithShowNewGitHubIssue(bool showNewGitHubIssue) { ShowNewGitHubIssue = showNewGitHubIssue; return this; }
+            public Builder WithShowHelpLinks(bool showHelpLinks = true) { ShowHelpLinks = showHelpLinks; return this; }
+            public Builder WithShowDiscordLink(bool showDiscordLink = true) { ShowDiscordLink = showDiscordLink; return this; }
+            public Builder WithShowOfficialLauncher(bool showOfficialLauncher = true) { ShowOfficialLauncher = showOfficialLauncher; return this; }
+            public Builder WithShowIntegrityReportLink(bool showReportLinks = true) { ShowIntegrityReportLinks = showReportLinks; return this; }
+            public Builder WithShowNewGitHubIssue(bool showNewGitHubIssue = true) { ShowNewGitHubIssue = showNewGitHubIssue; return this; }
 
             public static Builder NewFrom(string text) => new Builder().WithText(text);
             public static Builder NewFrom(Exception exc, string context, ExitOnCloseModes exitOnCloseMode = ExitOnCloseModes.DontExitOnClose)

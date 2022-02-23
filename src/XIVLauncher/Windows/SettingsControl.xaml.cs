@@ -169,9 +169,11 @@ namespace XIVLauncher.Windows
 
         private void OriginalLauncherButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var isSteam =
-                MessageBox.Show(Loc.Localize("LaunchAsSteam", "Launch as a steam user?"), "XIVLauncher", MessageBoxButton.YesNo,
-                    MessageBoxImage.Question) == MessageBoxResult.Yes;
+            var isSteam = CustomMessageBox.Builder
+                .NewFrom(Loc.Localize("LaunchAsSteam", "Launch as a steam user?"))
+                .WithButtons(MessageBoxButton.YesNo)
+                .WithImage(MessageBoxImage.Question)
+                .Show() == MessageBoxResult.Yes;
             Util.StartOfficialLauncher(App.Settings.GamePath, isSteam);
         }
 
