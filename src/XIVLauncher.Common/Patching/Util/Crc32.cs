@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace XIVLauncher.Common.Patching.Util
 {
@@ -49,7 +45,7 @@ namespace XIVLauncher.Common.Patching.Util
 
         public void Update(byte[] data, int offset, int length)
         {
-            for (int i = offset, i_ = offset + length; i < i_; i++)
+            for (int i = offset, readIndex = offset + length; i < readIndex; i++)
                 Update(data[i]);
         }
 
@@ -62,7 +58,7 @@ namespace XIVLauncher.Common.Patching.Util
         public static uint Calculate(byte[] data, int offset, int length)
         {
             uint v = 0xFFFFFFFF;
-            for (int i = offset, i_ = offset + length; i < i_; i++)
+            for (int i = offset, readIndex = offset + length; i < readIndex; i++)
                 v = CrcArray[(v ^ data[i]) & 0xFF] ^
                          ((v >> 8) & 0x00FFFFFF);
             return ~v;

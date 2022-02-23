@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Util
@@ -15,7 +10,6 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
         protected uint FileId { get; }
 
         protected byte ExpansionId => (byte)(SubId >> 8);
-
 
         protected SqpackFile(BinaryReader reader)
         {

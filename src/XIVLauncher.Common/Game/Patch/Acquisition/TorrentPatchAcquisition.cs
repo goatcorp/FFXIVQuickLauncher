@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using MonoTorrent;
-using MonoTorrent.BEncoding;
 using MonoTorrent.Client;
 using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;

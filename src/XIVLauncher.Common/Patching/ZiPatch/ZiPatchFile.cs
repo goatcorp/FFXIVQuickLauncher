@@ -9,7 +9,8 @@ namespace XIVLauncher.Common.Patching.ZiPatch
 {
     public class ZiPatchFile : IDisposable
     {
-        private static readonly uint[] ZIPATCH_MAGIC = {
+        private static readonly uint[] zipatchMagic =
+        {
             0x50495A91, 0x48435441, 0x0A1A0A0D
         };
 
@@ -25,7 +26,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch
             this._stream = stream;
 
             var reader = new BinaryReader(stream);
-            if (ZIPATCH_MAGIC.Any(magic => magic != reader.ReadUInt32()))
+            if (zipatchMagic.Any(magic => magic != reader.ReadUInt32()))
                 throw new ZiPatchException();
         }
 

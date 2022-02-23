@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using XIVLauncher.Common;
 
 namespace XIVLauncher.Http
 {

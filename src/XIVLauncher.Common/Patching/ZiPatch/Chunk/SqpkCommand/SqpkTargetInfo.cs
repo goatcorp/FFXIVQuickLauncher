@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XIVLauncher.Common.Patching.Util;
+﻿using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 {
-    class SqpkTargetInfo : SqpkChunk
+    internal class SqpkTargetInfo : SqpkChunk
     {
         // Only Platform is used on recent patcher versions
         public new static string Command = "T";
-
 
         // US/EU/JP are Global
         // ZH seems to also be Global
@@ -28,27 +22,24 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public ulong DeletedDataSize { get; protected set; }
         public ulong SeekCount { get; protected set; }
 
-
-
         public SqpkTargetInfo(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
-
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
             // Reserved
-            reader.ReadBytes(3);
+            this.Reader.ReadBytes(3);
 
-            Platform = (ZiPatchConfig.PlatformId)reader.ReadUInt16BE();
-            Region = (RegionId)reader.ReadInt16BE();
-            IsDebug = reader.ReadInt16BE() != 0;
-            Version = reader.ReadUInt16BE();
-            DeletedDataSize = reader.ReadUInt64();
-            SeekCount = reader.ReadUInt64();
+            Platform = (ZiPatchConfig.PlatformId)this.Reader.ReadUInt16BE();
+            Region = (RegionId)this.Reader.ReadInt16BE();
+            IsDebug = this.Reader.ReadInt16BE() != 0;
+            Version = this.Reader.ReadUInt16BE();
+            DeletedDataSize = this.Reader.ReadUInt64();
+            SeekCount = this.Reader.ReadUInt64();
 
             // Empty 32 + 64 bytes
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)

@@ -12,14 +12,14 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
     [Serializable]
     public struct IndexedZiPatchPartLocator : IComparable<IndexedZiPatchPartLocator>
     {
-        public const byte SourceIndex_Zeros = byte.MaxValue - 0;
-        public const byte SourceIndex_EmptyBlock = byte.MaxValue - 1;
-        public const byte SourceIndex_Unavailable = byte.MaxValue - 2;
-        public const byte SourceIndex_MaxValid = byte.MaxValue - 3;
+        public const byte SOURCE_INDEX_ZEROS = byte.MaxValue - 0;
+        public const byte SOURCE_INDEX_EMPTY_BLOCK = byte.MaxValue - 1;
+        public const byte SOURCE_INDEX_UNAVAILABLE = byte.MaxValue - 2;
+        public const byte SOURCE_INDEX_MAX_VALID = byte.MaxValue - 3;
 
-        private const uint TargetSizeAndFlagMask_IsDeflatedBlockData = 0x80000000;
-        private const uint TargetSizeAndFlagMask_IsValidCrc32Value = 0x40000000;
-        private const uint TargetSizeAndFlagMask_TargetSize = 0x3FFFFFFF;
+        private const uint TARGET_SIZE_AND_FLAG_MASK_IS_DEFLATED_BLOCK_DATA = 0x80000000;
+        private const uint TARGET_SIZE_AND_FLAG_MASK_IS_VALID_CRC32_VALUE = 0x40000000;
+        private const uint TARGET_SIZE_AND_FLAG_MASK_TARGET_SIZE = 0x3FFFFFFF;
 
         private uint TargetOffsetUint;  // up to 35 bits, using only 32 bits (28 bits for locator + lsh 7; odd values exist), but currently .dat# files are delimited at 1.9GB
         private uint SourceOffsetUint;  // up to 31 bits (patch files were delimited at 1.5GB-ish; odd values exist)
@@ -43,8 +43,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public long TargetSize
         {
-            get => TargetSizeAndFlags & TargetSizeAndFlagMask_TargetSize;
-            set => TargetSizeAndFlags = CheckedCastToUint((TargetSizeAndFlags & ~TargetSizeAndFlagMask_TargetSize) | value, TargetSizeAndFlagMask_TargetSize);
+            get => TargetSizeAndFlags & TARGET_SIZE_AND_FLAG_MASK_TARGET_SIZE;
+            set => TargetSizeAndFlags = CheckedCastToUint((TargetSizeAndFlags & ~TARGET_SIZE_AND_FLAG_MASK_TARGET_SIZE) | value, TARGET_SIZE_AND_FLAG_MASK_TARGET_SIZE);
         }
 
         public long SplitDecodedSourceFrom
@@ -71,19 +71,19 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public bool IsDeflatedBlockData
         {
-            get => 0 != (TargetSizeAndFlags & TargetSizeAndFlagMask_IsDeflatedBlockData);
-            set => TargetSizeAndFlags = (TargetSizeAndFlags & ~TargetSizeAndFlagMask_IsDeflatedBlockData) | (value ? TargetSizeAndFlagMask_IsDeflatedBlockData : 0u);
+            get => 0 != (TargetSizeAndFlags & TARGET_SIZE_AND_FLAG_MASK_IS_DEFLATED_BLOCK_DATA);
+            set => TargetSizeAndFlags = (TargetSizeAndFlags & ~TARGET_SIZE_AND_FLAG_MASK_IS_DEFLATED_BLOCK_DATA) | (value ? TARGET_SIZE_AND_FLAG_MASK_IS_DEFLATED_BLOCK_DATA : 0u);
         }
 
         public bool IsValidCrc32Value
         {
-            get => 0 != (TargetSizeAndFlags & TargetSizeAndFlagMask_IsValidCrc32Value);
-            set => TargetSizeAndFlags = (TargetSizeAndFlags & ~TargetSizeAndFlagMask_IsValidCrc32Value) | (value ? TargetSizeAndFlagMask_IsValidCrc32Value : 0u);
+            get => 0 != (TargetSizeAndFlags & TARGET_SIZE_AND_FLAG_MASK_IS_VALID_CRC32_VALUE);
+            set => TargetSizeAndFlags = (TargetSizeAndFlags & ~TARGET_SIZE_AND_FLAG_MASK_IS_VALID_CRC32_VALUE) | (value ? TARGET_SIZE_AND_FLAG_MASK_IS_VALID_CRC32_VALUE : 0u);
         }
 
-        public bool IsAllZeros => SourceIndex == SourceIndex_Zeros;
-        public bool IsEmptyBlock => SourceIndex == SourceIndex_EmptyBlock;
-        public bool IsUnavailable => SourceIndex == SourceIndex_Unavailable;
+        public bool IsAllZeros => SourceIndex == SOURCE_INDEX_ZEROS;
+        public bool IsEmptyBlock => SourceIndex == SOURCE_INDEX_EMPTY_BLOCK;
+        public bool IsUnavailable => SourceIndex == SOURCE_INDEX_UNAVAILABLE;
         public bool IsFromSourceFile => !IsAllZeros && !IsEmptyBlock && !IsUnavailable;
 
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
@@ -202,6 +202,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             if (IsFromSourceFile)
                 return Reconstruct(sources[SourceIndex], buffer, bufferOffset, bufferSize, relativeOffset);
+
             return Reconstruct(null, 0, 0, buffer, bufferOffset, bufferSize, relativeOffset);
         }
 

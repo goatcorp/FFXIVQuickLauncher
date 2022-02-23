@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+// ReSharper disable InconsistentNaming
 
 namespace XIVLauncher.Common.Patching.Util
 {

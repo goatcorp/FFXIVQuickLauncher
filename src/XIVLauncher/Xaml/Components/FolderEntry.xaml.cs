@@ -1,11 +1,6 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using Serilog;
 
 namespace XIVLauncher.Xaml.Components
 {

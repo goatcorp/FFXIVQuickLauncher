@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XIVLauncher.Common.Patching.Util;
+﻿using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -27,14 +21,14 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            OptionKind = (ApplyOptionKind) reader.ReadUInt32BE();
+            OptionKind = (ApplyOptionKind)this.Reader.ReadUInt32BE();
 
             // Discarded padding, always 0x0000_0004 as far as observed
-            reader.ReadBytes(4);
+            this.Reader.ReadBytes(4);
 
-            var value = reader.ReadUInt32BE() != 0;
+            var value = this.Reader.ReadUInt32BE() != 0;
 
             if (OptionKind == ApplyOptionKind.IgnoreMissing ||
                 OptionKind == ApplyOptionKind.IgnoreOldMismatch)
@@ -42,7 +36,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             else
                 OptionValue = false; // defaults to false if OptionKind isn't valid
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)
@@ -52,6 +46,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
                 case ApplyOptionKind.IgnoreMissing:
                     config.IgnoreMissing = OptionValue;
                     break;
+
                 case ApplyOptionKind.IgnoreOldMismatch:
                     config.IgnoreOldMismatch = OptionValue;
                     break;

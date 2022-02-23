@@ -32,16 +32,16 @@ namespace XIVLauncher.Common.Encryption
             }
         }
 
-        private readonly List<KeyValuePair<string, string>> m_arguments;
+        private readonly List<KeyValuePair<string, string>> arguments;
 
         public ArgumentBuilder()
         {
-            m_arguments = new List<KeyValuePair<string, string>>();
+            this.arguments = new List<KeyValuePair<string, string>>();
         }
 
         public ArgumentBuilder(IEnumerable<KeyValuePair<string, string>> items)
         {
-            m_arguments = new List<KeyValuePair<string, string>>(items);
+            this.arguments = new List<KeyValuePair<string, string>>(items);
         }
 
         public ArgumentBuilder Append(string key, string value)
@@ -51,31 +51,31 @@ namespace XIVLauncher.Common.Encryption
 
         public ArgumentBuilder Append(KeyValuePair<string, string> item)
         {
-            m_arguments.Add(item);
+            this.arguments.Add(item);
 
             return this;
         }
 
         public ArgumentBuilder Append(IEnumerable<KeyValuePair<string, string>> items)
         {
-            m_arguments.AddRange(items);
+            this.arguments.AddRange(items);
 
             return this;
         }
 
         public string Build()
         {
-            return m_arguments.Aggregate(new StringBuilder(),
-                    (whole, part) => whole.Append($" {part.Key}={part.Value}"))
-                .ToString();
+            return this.arguments.Aggregate(new StringBuilder(),
+                           (whole, part) => whole.Append($" {part.Key}={part.Value}"))
+                       .ToString();
         }
 
         public string BuildEncrypted(uint key)
         {
-            var arguments = m_arguments.Aggregate(new StringBuilder(),
-                    // Yes, they do have a space prepended even for the first argument.
-                    (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
-                .ToString();
+            var arguments = this.arguments.Aggregate(new StringBuilder(),
+                                    // Yes, they do have a space prepended even for the first argument.
+                                    (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
+                                .ToString();
 
             var blowfish = new Blowfish(GetKeyBytes(key));
             var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
@@ -104,10 +104,10 @@ namespace XIVLauncher.Common.Encryption
             Log.Information("ArgumentBuilder::DeriveKey() rawTickCount:{0} ticks:{1} key:{2}", rawTickCount, ticks, key);
 
             var keyPair = new KeyValuePair<string, string>("T", Convert.ToString(ticks));
-            if (m_arguments.Count > 0 && m_arguments[0].Key == "T")
-                m_arguments[0] = keyPair;
+            if (this.arguments.Count > 0 && this.arguments[0].Key == "T")
+                this.arguments[0] = keyPair;
             else
-                m_arguments.Insert(0, keyPair);
+                this.arguments.Insert(0, keyPair);
 
             return key;
         }

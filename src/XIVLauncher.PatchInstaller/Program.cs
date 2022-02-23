@@ -20,7 +20,7 @@ namespace XIVLauncher.PatchInstaller
 {
     public class Program
     {
-        private static RpcBuffer _rpc;
+        private static RpcBuffer rpc;
 
         private static readonly ConcurrentQueue<PatcherIpcStartInstall> _queuedInstalls = new();
 
@@ -131,7 +131,7 @@ namespace XIVLauncher.PatchInstaller
                     return;
                 }
 
-                _rpc = new RpcBuffer(args[1], RemoteCallHandler);
+                rpc = new RpcBuffer(args[1], RemoteCallHandler);
 
                 Log.Information("[PATCHER] IPC connected");
 
@@ -216,7 +216,7 @@ namespace XIVLauncher.PatchInstaller
                 var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
 
                 Log.Information("[PATCHERIPC] SEND: " + json);
-                _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
+                rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
             }
             catch (Exception e)
             {

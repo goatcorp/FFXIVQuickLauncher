@@ -49,7 +49,7 @@ namespace XIVLauncher.Common
             return language == null || language == LauncherLanguage.English;
         }
 
-        public static LauncherLanguage GetLangFromTwoLetterISO(this LauncherLanguage? language, string code)
+        public static LauncherLanguage GetLangFromTwoLetterIso(this LauncherLanguage? language, string code)
         {
             foreach (var langCode in GetLangCodes())
             {

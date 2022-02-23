@@ -29,20 +29,20 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            IndexCommand = (IndexCommandKind)reader.ReadByte();
-            IsSynonym = reader.ReadBoolean();
-            reader.ReadByte(); // Alignment
+            IndexCommand = (IndexCommandKind)this.Reader.ReadByte();
+            IsSynonym = this.Reader.ReadBoolean();
+            this.Reader.ReadByte(); // Alignment
 
-            TargetFile = new SqpackIndexFile(reader);
+            TargetFile = new SqpackIndexFile(this.Reader);
 
-            FileHash = reader.ReadUInt64BE();
+            FileHash = this.Reader.ReadUInt64BE();
 
-            BlockOffset = reader.ReadUInt32BE();
-            BlockNumber = reader.ReadUInt32BE();
+            BlockOffset = this.Reader.ReadUInt32BE();
+            BlockNumber = this.Reader.ReadUInt32BE();
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override string ToString()

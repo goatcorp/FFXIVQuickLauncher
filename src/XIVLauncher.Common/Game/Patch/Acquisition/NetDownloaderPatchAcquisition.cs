@@ -6,12 +6,12 @@ using Serilog;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition
 {
-    class NetDownloaderPatchAcquisition : PatchAcquisition
+    internal class NetDownloaderPatchAcquisition : PatchAcquisition
     {
         private readonly DirectoryInfo _patchStore;
         private DownloadService _dlService;
 
-        private string DownloadTempPath => Path.Combine(_patchStore.FullName, "temp");
+        private string downloadTempPath => Path.Combine(_patchStore.FullName, "temp");
 
         private DownloadConfiguration _downloadOpt = new DownloadConfiguration
         {
@@ -34,7 +34,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
         {
             this._patchStore = patchStore;
 
-            this._downloadOpt.TempDirectory = DownloadTempPath;
+            this._downloadOpt.TempDirectory = this.downloadTempPath;
         }
 
         public override async Task StartDownloadAsync(string url, FileInfo outFile)

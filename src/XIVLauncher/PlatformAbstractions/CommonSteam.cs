@@ -4,14 +4,14 @@ namespace XIVLauncher.PlatformAbstractions
 {
     public class CommonSteam : ISteam
     {
-        private static CommonSteam _instance;
+        private static CommonSteam instance;
         
         public static CommonSteam Instance
         {
             get
             {
-                _instance ??= new CommonSteam();
-                return _instance;
+                instance ??= new CommonSteam();
+                return instance;
             }
         }
         

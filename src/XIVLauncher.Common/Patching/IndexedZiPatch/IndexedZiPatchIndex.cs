@@ -18,10 +18,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public readonly int ExpacVersion;
 
-        private readonly List<string> SourceFiles = new();
-        private readonly List<int> SourceFileLastPtr = new();
-        private readonly List<IndexedZiPatchTargetFile> TargetFiles = new();
-        private readonly List<IList<Tuple<int, int>>> SourceFilePartsCache = new();
+        private readonly List<string> sourceFiles = new();
+        private readonly List<int> sourceFileLastPtr = new();
+        private readonly List<IndexedZiPatchTargetFile> targetFiles = new();
+        private readonly List<IList<Tuple<int, int>>> sourceFilePartsCache = new();
 
         public IndexedZiPatchIndex(int expacVersion)
         {
@@ -34,13 +34,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 ExpacVersion = reader.ReadInt32();
 
-                for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
-                    SourceFiles.Add(reader.ReadString());
-                foreach (var _ in SourceFiles)
-                    SourceFileLastPtr.Add(reader.ReadInt32());
+                for (int i = 0, readIndex = reader.ReadInt32(); i < readIndex; i++)
+                    this.sourceFiles.Add(reader.ReadString());
+                foreach (var _ in this.sourceFiles)
+                    this.sourceFileLastPtr.Add(reader.ReadInt32());
 
-                for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
-                    TargetFiles.Add(new IndexedZiPatchTargetFile(reader, false));
+                for (int i = 0, readIndex = reader.ReadInt32(); i < readIndex; i++)
+                    this.targetFiles.Add(new IndexedZiPatchTargetFile(reader, false));
             }
             finally
             {
@@ -51,44 +51,47 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public IList<string> Sources => SourceFiles.AsReadOnly();
-        public int GetSourceLastPtr(int index) => SourceFileLastPtr[index];
-        public IList<IndexedZiPatchTargetFile> Targets => TargetFiles.AsReadOnly();
+        public IList<string> Sources => this.sourceFiles.AsReadOnly();
+        public int GetSourceLastPtr(int index) => this.sourceFileLastPtr[index];
+        public IList<IndexedZiPatchTargetFile> Targets => this.targetFiles.AsReadOnly();
+
         public IList<IList<Tuple<int, int>>> SourceParts
         {
             get
             {
-                for (var sourceFileIndex = SourceFilePartsCache.Count; sourceFileIndex < SourceFiles.Count; sourceFileIndex++)
+                for (var sourceFileIndex = this.sourceFilePartsCache.Count; sourceFileIndex < this.sourceFiles.Count; sourceFileIndex++)
                 {
                     var list = new List<Tuple<int, int>>();
-                    for (var i = 0; i < TargetFiles.Count; i++)
-                        for (var j = 0; j < TargetFiles[i].Count; j++)
-                            if (TargetFiles[i][j].SourceIndex == sourceFileIndex)
+                    for (var i = 0; i < this.targetFiles.Count; i++)
+                        for (var j = 0; j < this.targetFiles[i].Count; j++)
+                            if (this.targetFiles[i][j].SourceIndex == sourceFileIndex)
                                 list.Add(Tuple.Create(i, j));
-                    list.Sort((x, y) => TargetFiles[x.Item1][x.Item2].SourceOffset.CompareTo(TargetFiles[y.Item1][y.Item2].SourceOffset));
-                    SourceFilePartsCache.Add(list.AsReadOnly());
+                    list.Sort((x, y) => this.targetFiles[x.Item1][x.Item2].SourceOffset.CompareTo(this.targetFiles[y.Item1][y.Item2].SourceOffset));
+                    this.sourceFilePartsCache.Add(list.AsReadOnly());
                 }
-                return SourceFilePartsCache.AsReadOnly();
+
+                return this.sourceFilePartsCache.AsReadOnly();
             }
         }
-        public IndexedZiPatchTargetFile this[int index] => TargetFiles[index];
-        public IndexedZiPatchTargetFile this[string name] => TargetFiles[IndexOf(name)];
-        public int IndexOf(string name) => TargetFiles.FindIndex(x => x.RelativePath == NormalizePath(name));
-        public int Length => TargetFiles.Count;
-        public string VersionName => SourceFiles.Last().Substring(1, SourceFiles.Last().Length - 7);
+
+        public IndexedZiPatchTargetFile this[int index] => this.targetFiles[index];
+        public IndexedZiPatchTargetFile this[string name] => this.targetFiles[IndexOf(name)];
+        public int IndexOf(string name) => this.targetFiles.FindIndex(x => x.RelativePath == NormalizePath(name));
+        public int Length => this.targetFiles.Count;
+        public string VersionName => this.sourceFiles.Last().Substring(1, this.sourceFiles.Last().Length - 7);
         public string VersionFileBase => ExpacVersion == EXPAC_VERSION_BOOT ? "ffxivboot" : ExpacVersion == EXPAC_VERSION_BASE_GAME ? "ffxivgame" : $"sqpack/ex{ExpacVersion}/ex{ExpacVersion}";
         public string VersionFileVer => VersionFileBase + ".ver";
         public string VersionFileBck => VersionFileBase + ".bck";
 
         private void ReassignTargetIndices()
         {
-            for (int i = 0; i < TargetFiles.Count; i++)
+            for (int i = 0; i < this.targetFiles.Count; i++)
             {
-                for (var j = 0; j < TargetFiles[i].Count; j++)
+                for (var j = 0; j < this.targetFiles[i].Count; j++)
                 {
-                    var obj = TargetFiles[i][j];
+                    var obj = this.targetFiles[i][j];
                     obj.TargetIndex = i;
-                    TargetFiles[i][j] = obj;
+                    this.targetFiles[i][j] = obj;
                 }
             }
         }
@@ -99,20 +102,20 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var targetFileIndex = IndexOf(target);
             if (targetFileIndex == -1)
             {
-                TargetFiles.Add(new(target));
-                targetFileIndex = TargetFiles.Count - 1;
+                this.targetFiles.Add(new(target));
+                targetFileIndex = this.targetFiles.Count - 1;
             }
-            return Tuple.Create(targetFileIndex, TargetFiles[targetFileIndex]);
+            return Tuple.Create(targetFileIndex, this.targetFiles[targetFileIndex]);
         }
 
         public async Task ApplyZiPatch(string patchFileName, ZiPatchFile patchFile, CancellationToken? cancellationToken = null)
         {
             await Task.Run(() =>
             {
-                var SourceIndex = SourceFiles.Count;
-                SourceFiles.Add(patchFileName);
-                SourceFileLastPtr.Add(0);
-                SourceFilePartsCache.Clear();
+                var sourceIndex = this.sourceFiles.Count;
+                this.sourceFiles.Add(patchFileName);
+                this.sourceFileLastPtr.Add(0);
+                this.sourceFilePartsCache.Clear();
 
                 var platform = ZiPatchConfig.PlatformId.Win32;
                 foreach (var patchChunk in patchFile.GetChunks())
@@ -123,7 +126,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     if (patchChunk is DeleteDirectoryChunk deleteDirectoryChunk)
                     {
                         var prefix = NormalizePath(deleteDirectoryChunk.DirName.ToLowerInvariant());
-                        TargetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant().StartsWith(prefix));
+                        this.targetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant().StartsWith(prefix));
                         ReassignTargetIndices();
                     }
                     else if (patchChunk is SqpkTargetInfo sqpkTargetInfo)
@@ -154,11 +157,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                             TargetOffset = offset,
                                             TargetSize = block.DecompressedSize,
                                             TargetIndex = targetIndex,
-                                            SourceIndex = SourceIndex,
+                                            SourceIndex = sourceIndex,
                                             SourceOffset = dataOffset,
                                             IsDeflatedBlockData = true,
                                         });
-                                        SourceFileLastPtr[SourceFileLastPtr.Count - 1] = dataOffset + block.CompressedSize;
+                                        this.sourceFileLastPtr[this.sourceFileLastPtr.Count - 1] = dataOffset + block.CompressedSize;
                                     }
                                     else
                                     {
@@ -167,10 +170,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                             TargetOffset = offset,
                                             TargetSize = block.DecompressedSize,
                                             TargetIndex = targetIndex,
-                                            SourceIndex = SourceIndex,
+                                            SourceIndex = sourceIndex,
                                             SourceOffset = dataOffset,
                                         });
-                                        SourceFileLastPtr[SourceFileLastPtr.Count - 1] = dataOffset + block.DecompressedSize;
+                                        this.sourceFileLastPtr[this.sourceFileLastPtr.Count - 1] = dataOffset + block.DecompressedSize;
                                     }
                                     offset += block.DecompressedSize;
                                 }
@@ -180,13 +183,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             case SqpkFile.OperationKind.RemoveAll:
                                 var xpacPath = SqexFile.GetExpansionFolder((byte)sqpkFile.ExpansionId);
 
-                                TargetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant().StartsWith($"sqpack/{xpacPath}"));
-                                TargetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant().StartsWith($"movie/{xpacPath}"));
+                                this.targetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant().StartsWith($"sqpack/{xpacPath}"));
+                                this.targetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant().StartsWith($"movie/{xpacPath}"));
                                 ReassignTargetIndices();
                                 break;
 
                             case SqpkFile.OperationKind.DeleteFile:
-                                TargetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant() == sqpkFile.TargetFile.RelativePath.ToLowerInvariant());
+                                this.targetFiles.RemoveAll(x => x.RelativePath.ToLowerInvariant() == sqpkFile.TargetFile.RelativePath.ToLowerInvariant());
                                 ReassignTargetIndices();
                                 break;
                         }
@@ -200,17 +203,17 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             TargetOffset = sqpkAddData.BlockOffset,
                             TargetSize = sqpkAddData.BlockNumber,
                             TargetIndex = targetIndex,
-                            SourceIndex = SourceIndex,
+                            SourceIndex = sourceIndex,
                             SourceOffset = sqpkAddData.BlockDataSourceOffset,
                             Crc32OrPlaceholderEntryDataUnits = (uint)(sqpkAddData.BlockNumber >> 7) - 1,
                         });
-                        SourceFileLastPtr[SourceFileLastPtr.Count - 1] = (int)(sqpkAddData.BlockDataSourceOffset + sqpkAddData.BlockNumber);
+                        this.sourceFileLastPtr[this.sourceFileLastPtr.Count - 1] = (int)(sqpkAddData.BlockDataSourceOffset + sqpkAddData.BlockNumber);
                         file.Update(new IndexedZiPatchPartLocator
                         {
                             TargetOffset = sqpkAddData.BlockOffset + sqpkAddData.BlockNumber,
                             TargetSize = sqpkAddData.BlockDeleteNumber,
                             TargetIndex = targetIndex,
-                            SourceIndex = IndexedZiPatchPartLocator.SourceIndex_Zeros,
+                            SourceIndex = IndexedZiPatchPartLocator.SOURCE_INDEX_ZEROS,
                             Crc32OrPlaceholderEntryDataUnits = (uint)(sqpkAddData.BlockDeleteNumber >> 7) - 1,
                         });
                     }
@@ -225,7 +228,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 TargetOffset = sqpkDeleteData.BlockOffset,
                                 TargetSize = 1 << 7,
                                 TargetIndex = targetIndex,
-                                SourceIndex = IndexedZiPatchPartLocator.SourceIndex_EmptyBlock,
+                                SourceIndex = IndexedZiPatchPartLocator.SOURCE_INDEX_EMPTY_BLOCK,
                                 Crc32OrPlaceholderEntryDataUnits = (uint)sqpkDeleteData.BlockNumber - 1,
                             });
                             if (sqpkDeleteData.BlockNumber > 1)
@@ -235,7 +238,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                     TargetOffset = sqpkDeleteData.BlockOffset + (1 << 7),
                                     TargetSize = (sqpkDeleteData.BlockNumber - 1) << 7,
                                     TargetIndex = targetIndex,
-                                    SourceIndex = IndexedZiPatchPartLocator.SourceIndex_Zeros,
+                                    SourceIndex = IndexedZiPatchPartLocator.SOURCE_INDEX_ZEROS,
                                 });
                             }
                         }
@@ -251,7 +254,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 TargetOffset = sqpkExpandData.BlockOffset,
                                 TargetSize = 1 << 7,
                                 TargetIndex = targetIndex,
-                                SourceIndex = IndexedZiPatchPartLocator.SourceIndex_EmptyBlock,
+                                SourceIndex = IndexedZiPatchPartLocator.SOURCE_INDEX_EMPTY_BLOCK,
                                 Crc32OrPlaceholderEntryDataUnits = (uint)sqpkExpandData.BlockNumber - 1,
                             });
                             if (sqpkExpandData.BlockNumber > 1)
@@ -261,7 +264,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                     TargetOffset = sqpkExpandData.BlockOffset + (1 << 7),
                                     TargetSize = (sqpkExpandData.BlockNumber - 1) << 7,
                                     TargetIndex = targetIndex,
-                                    SourceIndex = IndexedZiPatchPartLocator.SourceIndex_Zeros,
+                                    SourceIndex = IndexedZiPatchPartLocator.SOURCE_INDEX_ZEROS,
                                 });
                             }
                         }
@@ -275,10 +278,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                             TargetOffset = sqpkHeader.HeaderKind == SqpkHeader.TargetHeaderKind.Version ? 0 : SqpkHeader.HEADER_SIZE,
                             TargetSize = SqpkHeader.HEADER_SIZE,
                             TargetIndex = targetIndex,
-                            SourceIndex = SourceIndex,
+                            SourceIndex = sourceIndex,
                             SourceOffset = sqpkHeader.HeaderDataSourceOffset,
                         });
-                        SourceFileLastPtr[SourceFileLastPtr.Count - 1] = (int)(sqpkHeader.HeaderDataSourceOffset + SqpkHeader.HEADER_SIZE);
+                        this.sourceFileLastPtr[this.sourceFileLastPtr.Count - 1] = (int)(sqpkHeader.HeaderDataSourceOffset + SqpkHeader.HEADER_SIZE);
                     }
                 }
             });
@@ -286,7 +289,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public async Task CalculateCrc32(List<Stream> sources, CancellationToken? cancellationToken = null)
         {
-            foreach (var file in TargetFiles)
+            foreach (var file in this.targetFiles)
             {
                 if (cancellationToken.HasValue)
                     cancellationToken.Value.ThrowIfCancellationRequested();
@@ -298,14 +301,14 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             writer.Write(ExpacVersion);
 
-            writer.Write(SourceFiles.Count);
-            foreach (var file in SourceFiles)
+            writer.Write(this.sourceFiles.Count);
+            foreach (var file in this.sourceFiles)
                 writer.Write(file);
-            foreach (var file in SourceFileLastPtr)
+            foreach (var file in this.sourceFileLastPtr)
                 writer.Write(file);
 
-            writer.Write(TargetFiles.Count);
-            foreach (var file in TargetFiles)
+            writer.Write(this.targetFiles.Count);
+            foreach (var file in this.targetFiles)
                 file.WriteTo(writer);
         }
 

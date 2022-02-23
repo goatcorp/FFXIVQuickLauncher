@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Patching.Util
 {
@@ -37,36 +35,36 @@ namespace XIVLauncher.Common.Patching.Util
             public void Dispose() => BufferManager?.Return(this);
         }
 
-        private readonly int ArraySize;
-        private readonly Allocation[] Buffers;
+        private readonly int arraySize;
+        private readonly Allocation[] buffers;
 
         public ReusableByteBufferManager(int arraySize, int maxBuffers)
         {
-            ArraySize = arraySize;
-            Buffers = new Allocation[maxBuffers];
+            this.arraySize = arraySize;
+            this.buffers = new Allocation[maxBuffers];
         }
 
         public Allocation Allocate(bool clear = false)
         {
             Allocation res = null;
 
-            for (int i = 0; i < Buffers.Length; i++)
+            for (int i = 0; i < this.buffers.Length; i++)
             {
-                if (Buffers[i] == null)
+                if (this.buffers[i] == null)
                     continue;
 
-                lock (Buffers.SyncRoot)
+                lock (this.buffers.SyncRoot)
                 {
-                    if (Buffers[i] == null)
+                    if (this.buffers[i] == null)
                         continue;
 
-                    res = Buffers[i];
-                    Buffers[i] = null;
+                    res = this.buffers[i];
+                    this.buffers[i] = null;
                     break;
                 }
             }
             if (res == null)
-                res = new Allocation(this, ArraySize);
+                res = new Allocation(this, this.arraySize);
             else if (clear)
                 res.Clear();
             res.ResetState();
@@ -75,17 +73,17 @@ namespace XIVLauncher.Common.Patching.Util
 
         internal void Return(Allocation buf)
         {
-            for (int i = 0; i < Buffers.Length; i++)
+            for (int i = 0; i < this.buffers.Length; i++)
             {
-                if (Buffers[i] != null)
+                if (this.buffers[i] != null)
                     continue;
 
-                lock (Buffers.SyncRoot)
+                lock (this.buffers.SyncRoot)
                 {
-                    if (Buffers[i] != null)
+                    if (this.buffers[i] != null)
                         continue;
 
-                    Buffers[i] = buf;
+                    this.buffers[i] = buf;
                     return;
                 }
             }

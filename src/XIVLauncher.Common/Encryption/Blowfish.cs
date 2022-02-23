@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace XIVLauncher.Common.Encryption
@@ -7,14 +6,15 @@ namespace XIVLauncher.Common.Encryption
     public class Blowfish
     {
         #region P-Array and S-Boxes
-        private readonly uint[] P =
+
+        private readonly uint[] p =
         {
             0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0,
             0x082efa98, 0xec4e6c89, 0x452821e6, 0x38d01377, 0xbe5466cf, 0x34e90c6c,
             0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917, 0x9216d5d9, 0x8979fb1b
         };
 
-        private readonly uint[,] S =
+        private readonly uint[,] s =
         {
             {
                 0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96,
@@ -197,22 +197,23 @@ namespace XIVLauncher.Common.Encryption
                 0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6
             }
         };
+
         #endregion
 
         private static readonly int Rounds = 16;
 
         public Blowfish(byte[] key)
         {
-            foreach (var (i, keyFragment) in WrappingUInt32(key, P.Length))
-                P[i] ^= keyFragment;
+            foreach (var (i, keyFragment) in WrappingUInt32(key, this.p.Length))
+                this.p[i] ^= keyFragment;
 
-            uint L = 0, R = 0;
-            for (int i = 0; i < P.Length; i += 2)
-                (L, R) = (P[i], P[i + 1]) = Encrypt(L, R);
+            uint l = 0, r = 0;
+            for (int i = 0; i < this.p.Length; i += 2)
+                (l, r) = (this.p[i], this.p[i + 1]) = Encrypt(l, r);
 
-            for (int i = 0; i < S.GetLength(0); i++)
-                for (int j = 0; j < S.GetLength(1); j += 2)
-                    (L, R) = (S[i, j], S[i, j + 1]) = Encrypt(L, R);
+            for (int i = 0; i < this.s.GetLength(0); i++)
+                for (int j = 0; j < this.s.GetLength(1); j += 2)
+                    (l, r) = (this.s[i, j], this.s[i, j + 1]) = Encrypt(l, r);
         }
 
         public byte[] Encrypt(byte[] data)
@@ -221,12 +222,11 @@ namespace XIVLauncher.Common.Encryption
             var buffer = new byte[paddedLength];
             Buffer.BlockCopy(data, 0, buffer, 0, data.Length);
 
-
             for (int i = 0; i < paddedLength; i += 8)
             {
-                var (L, R) = Encrypt(BitConverter.ToUInt32(buffer, i), BitConverter.ToUInt32(buffer, i + 4));
-                CopyUInt32IntoArray(buffer, L, i);
-                CopyUInt32IntoArray(buffer, R, i + 4);
+                var (l, r) = Encrypt(BitConverter.ToUInt32(buffer, i), BitConverter.ToUInt32(buffer, i + 4));
+                CopyUInt32IntoArray(buffer, l, i);
+                CopyUInt32IntoArray(buffer, r, i + 4);
             }
 
             return buffer;
@@ -236,9 +236,9 @@ namespace XIVLauncher.Common.Encryption
         {
             for (int i = 0; i < data.Length; i += 8)
             {
-                var (L, R) = Decrypt(BitConverter.ToUInt32(data, i), BitConverter.ToUInt32(data, i + 4));
-                CopyUInt32IntoArray(data, L, i);
-                CopyUInt32IntoArray(data, R, i + 4);
+                var (l, r) = Decrypt(BitConverter.ToUInt32(data, i), BitConverter.ToUInt32(data, i + 4));
+                CopyUInt32IntoArray(data, l, i);
+                CopyUInt32IntoArray(data, r, i + 4);
             }
         }
 
@@ -252,36 +252,36 @@ namespace XIVLauncher.Common.Encryption
 
         private uint F(uint i)
         {
-            return ((S[0, i >> 24]
-                + S[1, (i >> 16) & 0xFF])
-                ^ S[2, (i >> 8) & 0xFF])
-                + S[3, i & 0xFF];
+            return ((this.s[0, i >> 24]
+                     + this.s[1, (i >> 16) & 0xFF])
+                    ^ this.s[2, (i >> 8) & 0xFF])
+                   + this.s[3, i & 0xFF];
         }
 
-        private (uint, uint) Encrypt(uint L, uint R)
+        private (uint, uint) Encrypt(uint l, uint r)
         {
             for (int i = 0; i < Rounds; i += 2)
             {
-                L ^= P[i];
-                R ^= F(L);
-                R ^= P[i + 1];
-                L ^= F(R);
+                l ^= this.p[i];
+                r ^= F(l);
+                r ^= this.p[i + 1];
+                l ^= F(r);
             }
 
-            return (R ^ P[17], L ^ P[16]);
+            return (r ^ this.p[17], l ^ this.p[16]);
         }
 
-        private (uint, uint) Decrypt(uint L, uint R)
+        private (uint, uint) Decrypt(uint l, uint r)
         {
             for (int i = Rounds; i > 0; i -= 2)
             {
-                L ^= P[i + 1];
-                R ^= F(L);
-                R ^= P[i];
-                L ^= F(R);
+                l ^= this.p[i + 1];
+                r ^= F(l);
+                r ^= this.p[i];
+                l ^= F(r);
             }
 
-            return (R ^ P[0], L ^ P[1]);
+            return (r ^ this.p[0], l ^ this.p[1]);
         }
 
         private static IEnumerable<TSource> Cycle<TSource>(IEnumerable<TSource> source)

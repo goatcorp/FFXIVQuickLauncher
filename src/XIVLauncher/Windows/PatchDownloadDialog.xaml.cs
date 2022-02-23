@@ -1,18 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Game.Patch.Acquisition;
-using XIVLauncher.Http;
 using XIVLauncher.Windows.ViewModel;
 using Brushes = System.Windows.Media.Brushes;
 

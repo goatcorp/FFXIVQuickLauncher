@@ -103,50 +103,50 @@ namespace XIVLauncher.Windows
         }
 
         // https://stackoverflow.com/questions/11434673/bitmap-save-to-save-an-icon-actually-saves-a-png
-        void SaveAsIcon(Bitmap SourceBitmap, string FilePath)
+        void SaveAsIcon(Bitmap sourceBitmap, string filePath)
         {
-            FileStream FS = new FileStream(FilePath, FileMode.Create);
+            FileStream fs = new FileStream(filePath, FileMode.Create);
             // ICO header
-            FS.WriteByte(0); FS.WriteByte(0);
-            FS.WriteByte(1); FS.WriteByte(0);
-            FS.WriteByte(1); FS.WriteByte(0);
+            fs.WriteByte(0); fs.WriteByte(0);
+            fs.WriteByte(1); fs.WriteByte(0);
+            fs.WriteByte(1); fs.WriteByte(0);
 
             // Image size
-            FS.WriteByte((byte)SourceBitmap.Width);
-            FS.WriteByte((byte)SourceBitmap.Height);
+            fs.WriteByte((byte)sourceBitmap.Width);
+            fs.WriteByte((byte)sourceBitmap.Height);
             // Palette
-            FS.WriteByte(0);
+            fs.WriteByte(0);
             // Reserved
-            FS.WriteByte(0);
+            fs.WriteByte(0);
             // Number of color planes
-            FS.WriteByte(0); FS.WriteByte(0);
+            fs.WriteByte(0); fs.WriteByte(0);
             // Bits per pixel
-            FS.WriteByte(32); FS.WriteByte(0);
+            fs.WriteByte(32); fs.WriteByte(0);
 
             // Data size, will be written after the data
-            FS.WriteByte(0);
-            FS.WriteByte(0);
-            FS.WriteByte(0);
-            FS.WriteByte(0);
+            fs.WriteByte(0);
+            fs.WriteByte(0);
+            fs.WriteByte(0);
+            fs.WriteByte(0);
 
             // Offset to image data, fixed at 22
-            FS.WriteByte(22);
-            FS.WriteByte(0);
-            FS.WriteByte(0);
-            FS.WriteByte(0);
+            fs.WriteByte(22);
+            fs.WriteByte(0);
+            fs.WriteByte(0);
+            fs.WriteByte(0);
 
             // Writing actual data
-            SourceBitmap.Save(FS, ImageFormat.Png);
+            sourceBitmap.Save(fs, ImageFormat.Png);
 
             // Getting data length (file length minus header)
-            long Len = FS.Length - 22;
+            long len = fs.Length - 22;
 
             // Write it in the correct place
-            FS.Seek(14, SeekOrigin.Begin);
-            FS.WriteByte((byte)Len);
-            FS.WriteByte((byte)(Len >> 8));
+            fs.Seek(14, SeekOrigin.Begin);
+            fs.WriteByte((byte)len);
+            fs.WriteByte((byte)(len >> 8));
 
-            FS.Close();
+            fs.Close();
         }
 
         private void CreateDesktopShortcut_OnClick(object sender, RoutedEventArgs e)

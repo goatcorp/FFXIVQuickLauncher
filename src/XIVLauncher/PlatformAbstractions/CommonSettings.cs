@@ -7,14 +7,14 @@ namespace XIVLauncher.PlatformAbstractions
 {
     public class CommonSettings : ISettings
     {
-        private static CommonSettings _instance;
+        private static CommonSettings instance;
         
         public static CommonSettings Instance
         {
             get
             {
-                _instance ??= new CommonSettings();
-                return _instance;
+                instance ??= new CommonSettings();
+                return instance;
             }
         }
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using XIVLauncher.Common.Patching.Util;
+﻿using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -30,35 +24,34 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         public uint SqpkHeaderCommands { get; protected set; }
         public uint SqpkFileCommands { get; protected set; }
 
-
         public FileHeaderChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            Version = (byte)(reader.ReadUInt32() >> 16);
-            PatchType = reader.ReadFixedLengthString(4u);
-            EntryFiles = reader.ReadUInt32BE();
+            Version = (byte)(this.Reader.ReadUInt32() >> 16);
+            PatchType = this.Reader.ReadFixedLengthString(4u);
+            EntryFiles = this.Reader.ReadUInt32BE();
 
             if (Version == 3)
             {
-                AddDirectories = reader.ReadUInt32BE();
-                DeleteDirectories = reader.ReadUInt32BE();
-                DeleteDataSize = reader.ReadUInt32BE() | ((long)reader.ReadUInt32BE() << 32);
-                MinorVersion = reader.ReadUInt32BE();
-                RepositoryName = reader.ReadUInt32BE();
-                Commands = reader.ReadUInt32BE();
-                SqpkAddCommands = reader.ReadUInt32BE();
-                SqpkDeleteCommands = reader.ReadUInt32BE();
-                SqpkExpandCommands = reader.ReadUInt32BE();
-                SqpkHeaderCommands = reader.ReadUInt32BE();
-                SqpkFileCommands = reader.ReadUInt32BE();
+                AddDirectories = this.Reader.ReadUInt32BE();
+                DeleteDirectories = this.Reader.ReadUInt32BE();
+                DeleteDataSize = this.Reader.ReadUInt32BE() | ((long)this.Reader.ReadUInt32BE() << 32);
+                MinorVersion = this.Reader.ReadUInt32BE();
+                RepositoryName = this.Reader.ReadUInt32BE();
+                Commands = this.Reader.ReadUInt32BE();
+                SqpkAddCommands = this.Reader.ReadUInt32BE();
+                SqpkDeleteCommands = this.Reader.ReadUInt32BE();
+                SqpkExpandCommands = this.Reader.ReadUInt32BE();
+                SqpkHeaderCommands = this.Reader.ReadUInt32BE();
+                SqpkFileCommands = this.Reader.ReadUInt32BE();
             }
 
             // 0xB8 of unknown data for V3, 0x08 of 0x00 for V2
             // ... Probably irrelevant.
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override string ToString()

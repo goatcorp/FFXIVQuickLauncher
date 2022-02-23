@@ -14,13 +14,13 @@ namespace AriaNet
 {
     public class AriaManager
     {
-        private JsonRpcHttpClient RpcClient;
+        private readonly JsonRpcHttpClient rpcClient;
         private readonly string secret;
         
         public AriaManager(string secret, string rpcUrl = "http://localhost:6800/jsonrpc")
         {
             this.secret = secret;
-            RpcClient = new JsonRpcHttpClient(rpcUrl);
+            this.rpcClient = new JsonRpcHttpClient(rpcUrl);
         }
 
         private async Task<T> Invoke<T>(string method, params object[] arguments)
@@ -29,7 +29,7 @@ namespace AriaNet
             args[0] = $"token:{this.secret}";
             Array.Copy(arguments, 0, args, 1, arguments.Length);
 
-            return await RpcClient.Invoke<T>(method, args);
+            return await this.rpcClient.Invoke<T>(method, args);
         }
 
         public async Task<string> AddUri(List<string> uriList)

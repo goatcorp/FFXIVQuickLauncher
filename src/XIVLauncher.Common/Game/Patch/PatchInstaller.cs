@@ -31,9 +31,9 @@ namespace XIVLauncher.Common.Game.Patch
 
         public event Action OnFail;
 
-        public PatchInstaller(ISettings _settings)
+        public PatchInstaller(ISettings settings)
         {
-            this._settings = _settings;
+            this._settings = settings;
         }
 
         public void StartIfNeeded()

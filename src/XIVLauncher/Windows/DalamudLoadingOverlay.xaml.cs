@@ -1,14 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Input;
 using CheapLoc;
-using Serilog;
-using XIVLauncher.Http;
 using XIVLauncher.Windows.ViewModel;
 using XIVLauncher.Xaml;
 

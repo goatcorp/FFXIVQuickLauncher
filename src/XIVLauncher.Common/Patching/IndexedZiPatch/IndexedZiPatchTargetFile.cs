@@ -13,7 +13,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
     public partial class IndexedZiPatchTargetFile : IList<IndexedZiPatchPartLocator>
     {
         public string RelativePath = "";
-        private readonly List<IndexedZiPatchPartLocator> Underlying = new();
+        private readonly List<IndexedZiPatchPartLocator> underlying = new();
 
         public IndexedZiPatchTargetFile() : base() { }
 
@@ -34,37 +34,37 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public IndexedZiPatchPartLocator this[int index] { get => Underlying[index]; set => Underlying[index] = value; }
+        public IndexedZiPatchPartLocator this[int index] { get => this.underlying[index]; set => this.underlying[index] = value; }
 
-        public int Count => Underlying.Count;
+        public int Count => this.underlying.Count;
 
         public bool IsReadOnly => false;
 
-        public void Add(IndexedZiPatchPartLocator item) => Underlying.Add(item);
+        public void Add(IndexedZiPatchPartLocator item) => this.underlying.Add(item);
 
-        public void Clear() => Underlying.Clear();
+        public void Clear() => this.underlying.Clear();
 
-        public bool Contains(IndexedZiPatchPartLocator item) => Underlying.Contains(item);
+        public bool Contains(IndexedZiPatchPartLocator item) => this.underlying.Contains(item);
 
-        public void CopyTo(IndexedZiPatchPartLocator[] array, int arrayIndex) => Underlying.CopyTo(array, arrayIndex);
+        public void CopyTo(IndexedZiPatchPartLocator[] array, int arrayIndex) => this.underlying.CopyTo(array, arrayIndex);
 
-        public IEnumerator<IndexedZiPatchPartLocator> GetEnumerator() => Underlying.GetEnumerator();
+        public IEnumerator<IndexedZiPatchPartLocator> GetEnumerator() => this.underlying.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => Underlying.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.underlying.GetEnumerator();
 
-        public int IndexOf(IndexedZiPatchPartLocator item) => Underlying.IndexOf(item);
+        public int IndexOf(IndexedZiPatchPartLocator item) => this.underlying.IndexOf(item);
 
-        public void Insert(int index, IndexedZiPatchPartLocator item) => Underlying.Insert(index, item);
+        public void Insert(int index, IndexedZiPatchPartLocator item) => this.underlying.Insert(index, item);
 
-        public bool Remove(IndexedZiPatchPartLocator item) => Underlying.Remove(item);
+        public bool Remove(IndexedZiPatchPartLocator item) => this.underlying.Remove(item);
 
-        public void RemoveAt(int index) => Underlying.RemoveAt(index);
+        public void RemoveAt(int index) => this.underlying.RemoveAt(index);
 
-        public long FileSize => Underlying.Count > 0 ? Underlying.Last().TargetEnd : 0;
+        public long FileSize => this.underlying.Count > 0 ? this.underlying.Last().TargetEnd : 0;
 
         public int BinarySearchByTargetOffset(long targetOffset)
         {
-            return Underlying.BinarySearch(new IndexedZiPatchPartLocator { TargetOffset = targetOffset }); ;
+            return this.underlying.BinarySearch(new IndexedZiPatchPartLocator { TargetOffset = targetOffset }); ;
         }
 
         public void SplitAt(long offset, int targetFileIndex)
@@ -81,37 +81,37 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 // Do nothing; split at 0 is a given
             }
-            else if (i == 0 && Underlying.Count == 0)
+            else if (i == 0 && this.underlying.Count == 0)
             {
-                Underlying.Add(new IndexedZiPatchPartLocator
+                this.underlying.Add(new IndexedZiPatchPartLocator
                 {
                     TargetSize = offset,
                     TargetIndex = targetFileIndex,
-                    SourceIndex = IndexedZiPatchPartLocator.SourceIndex_Zeros,
+                    SourceIndex = IndexedZiPatchPartLocator.SOURCE_INDEX_ZEROS,
                 });
             }
-            else if (i == Underlying.Count && Underlying[i - 1].TargetEnd == offset)
+            else if (i == this.underlying.Count && this.underlying[i - 1].TargetEnd == offset)
             {
                 // Do nothing; split at TargetEnd of last part is give
             }
-            else if (i == Underlying.Count && Underlying[i - 1].TargetEnd < offset)
+            else if (i == this.underlying.Count && this.underlying[i - 1].TargetEnd < offset)
             {
-                Underlying.Add(new IndexedZiPatchPartLocator
+                this.underlying.Add(new IndexedZiPatchPartLocator
                 {
-                    TargetOffset = Underlying[i - 1].TargetEnd,
-                    TargetSize = offset - Underlying[i - 1].TargetEnd,
+                    TargetOffset = this.underlying[i - 1].TargetEnd,
+                    TargetSize = offset - this.underlying[i - 1].TargetEnd,
                     TargetIndex = targetFileIndex,
-                    SourceIndex = IndexedZiPatchPartLocator.SourceIndex_Zeros,
+                    SourceIndex = IndexedZiPatchPartLocator.SOURCE_INDEX_ZEROS,
                 });
             }
             else
             {
                 i -= 1;
-                var part = Underlying[i];
+                var part = this.underlying[i];
 
                 if (part.IsDeflatedBlockData || part.IsEmptyBlock)
                 {
-                    Underlying[i] = new IndexedZiPatchPartLocator
+                    this.underlying[i] = new IndexedZiPatchPartLocator
                     {
                         TargetOffset = part.TargetOffset,
                         TargetSize = offset - part.TargetOffset,
@@ -122,7 +122,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
                         IsDeflatedBlockData = part.IsDeflatedBlockData,
                     };
-                    Underlying.Insert(i + 1, new IndexedZiPatchPartLocator
+                    this.underlying.Insert(i + 1, new IndexedZiPatchPartLocator
                     {
                         TargetOffset = offset,
                         TargetSize = part.TargetEnd - offset,
@@ -139,7 +139,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     if (part.SplitDecodedSourceFrom != 0)
                         throw new ArgumentException("Not deflated but SplitDecodeSourceFrom is given");
 
-                    Underlying[i] = new IndexedZiPatchPartLocator
+                    this.underlying[i] = new IndexedZiPatchPartLocator
                     {
                         TargetOffset = part.TargetOffset,
                         TargetSize = offset - part.TargetOffset,
@@ -148,7 +148,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         SourceOffset = part.SourceOffset,
                         Crc32OrPlaceholderEntryDataUnits = part.Crc32OrPlaceholderEntryDataUnits,
                     };
-                    Underlying.Insert(i + 1, new IndexedZiPatchPartLocator
+                    this.underlying.Insert(i + 1, new IndexedZiPatchPartLocator
                     {
                         TargetOffset = offset,
                         TargetSize = part.TargetEnd - offset,
@@ -173,9 +173,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (left < 0)
                 left = ~left;
 
-            if (left == Underlying.Count)
+            if (left == this.underlying.Count)
             {
-                Underlying.Add(part);
+                this.underlying.Add(part);
                 return;
             }
 
@@ -186,15 +186,15 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             if (right - left - 1 < 0)
                 Debugger.Break();
 
-            Underlying[left] = part;
-            Underlying.RemoveRange(left + 1, right - left - 1);
+            this.underlying[left] = part;
+            this.underlying.RemoveRange(left + 1, right - left - 1);
         }
 
         public async Task CalculateCrc32(List<Stream> sources, CancellationToken? cancellationToken = null)
         {
             await Task.Run(() =>
             {
-                var list = Underlying.ToArray();
+                var list = this.underlying.ToArray();
                 for (var i = 0; i < list.Length; ++i)
                 {
                     if (cancellationToken.HasValue)
@@ -202,8 +202,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     if (list[i].IsFromSourceFile)
                         IndexedZiPatchPartLocator.CalculateCrc32(ref list[i], sources[list[i].SourceIndex]);
                 }
-                Underlying.Clear();
-                Underlying.AddRange(list);
+                this.underlying.Clear();
+                this.underlying.AddRange(list);
             });
         }
 
@@ -220,8 +220,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public void WriteTo(BinaryWriter writer)
         {
             writer.Write(RelativePath);
-            writer.Write(Underlying.Count);
-            foreach (var item in Underlying) 
+            writer.Write(this.underlying.Count);
+            foreach (var item in this.underlying) 
                 item.WriteTo(writer);
         }
 
@@ -231,8 +231,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var dest = new IndexedZiPatchPartLocator[reader.ReadInt32()];
             for (var i = 0; i < dest.Length; ++i)
                 dest[i].ReadFrom(reader);
-            Underlying.Clear();
-            Underlying.AddRange(dest);
+            this.underlying.Clear();
+            this.underlying.AddRange(dest);
         }
     }
 }

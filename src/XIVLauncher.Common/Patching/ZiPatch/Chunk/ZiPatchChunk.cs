@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using XIVLauncher.Common.Patching.Util;
@@ -21,8 +20,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         public uint Checksum { get; protected set; }
         public uint CalculatedChecksum { get; protected set; }
 
-
-        protected readonly ChecksumBinaryReader reader;
+        protected readonly ChecksumBinaryReader Reader;
 
         private static readonly AsyncLocal<MemoryStream> localMemoryStream = new AsyncLocal<MemoryStream>();
 
@@ -91,7 +89,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected ZiPatchChunk(ChecksumBinaryReader reader, int offset, int size)
         {
-            this.reader = reader;
+            this.Reader = reader;
 
             Offset = offset;
             Size = size;
@@ -99,15 +97,15 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected virtual void ReadChunk()
         {
-            reader.ReadBytes(Size);
+            this.Reader.ReadBytes(Size);
         }
 
         public virtual void ApplyChunk(ZiPatchConfig config) {}
 
         protected void ReadChecksum()
         {
-            CalculatedChecksum = reader.GetCrc32();
-            Checksum = reader.ReadUInt32BE();
+            CalculatedChecksum = this.Reader.GetCrc32();
+            Checksum = this.Reader.ReadUInt32BE();
         }
 
         public bool IsChecksumValid => CalculatedChecksum == Checksum;

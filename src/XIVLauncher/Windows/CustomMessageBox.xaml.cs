@@ -225,7 +225,7 @@ namespace XIVLauncher.Windows
 
         private void NewGitHubIssueButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start($"{App.RepoUrl}/issues/new");
+            Process.Start($"{App.REPO_URL}/issues/new");
         }
 
         public enum ExitOnCloseModes

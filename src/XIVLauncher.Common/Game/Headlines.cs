@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using XIVLauncher.Common;
 
 namespace XIVLauncher.Common.Game
 {
@@ -50,13 +49,13 @@ namespace XIVLauncher.Common.Game
 
             var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*"));
 
-            return JsonConvert.DeserializeObject<Headlines>(json, Converter.Settings);
+            return JsonConvert.DeserializeObject<Headlines>(json, Converter.SETTINGS);
         }
     }
 
     internal static class Converter
     {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        public static readonly JsonSerializerSettings SETTINGS = new JsonSerializerSettings
         {
             MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
             DateParseHandling = DateParseHandling.None,

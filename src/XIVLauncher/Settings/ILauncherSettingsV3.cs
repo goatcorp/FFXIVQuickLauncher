@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using XIVLauncher.Addon;
-using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 

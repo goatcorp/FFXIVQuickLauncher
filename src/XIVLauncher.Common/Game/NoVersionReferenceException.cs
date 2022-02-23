@@ -1,5 +1,4 @@
 using System;
-using XIVLauncher.Common;
 
 namespace XIVLauncher.Common.Game
 {

@@ -6,13 +6,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 {
     public class IndexedZiPatchTargetViewStream : Stream
     {
-        private readonly List<Stream> Sources;
-        private readonly IndexedZiPatchTargetFile PartList;
+        private readonly List<Stream> sources;
+        private readonly IndexedZiPatchTargetFile partList;
 
         internal IndexedZiPatchTargetViewStream(List<Stream> sources, IndexedZiPatchTargetFile partList)
         {
-            Sources = sources;
-            PartList = partList;
+            this.sources = sources;
+            this.partList = partList;
         }
 
         public override bool CanRead => true;
@@ -21,7 +21,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public override bool CanWrite => false;
 
-        public override long Length => PartList.FileSize;
+        public override long Length => this.partList.FileSize;
 
         public override long Position { get; set; }
 
@@ -30,11 +30,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var beginOffset = offset;
             while (count > 0 && Position < Length)
             {
-                var i = PartList.BinarySearchByTargetOffset(Position);
+                var i = this.partList.BinarySearchByTargetOffset(Position);
                 if (i < 0)
                     i = ~i - 1;
 
-                var reconstructedLength = PartList[i].Reconstruct(Sources, buffer, offset, count, (int)(Position - PartList[i].TargetOffset));
+                var reconstructedLength = this.partList[i].Reconstruct(this.sources, buffer, offset, count, (int)(Position - this.partList[i].TargetOffset));
                 offset += reconstructedLength;
                 count -= reconstructedLength;
                 Position += reconstructedLength;

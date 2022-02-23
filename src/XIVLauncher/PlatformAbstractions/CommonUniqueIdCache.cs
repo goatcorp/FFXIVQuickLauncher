@@ -10,14 +10,14 @@ namespace XIVLauncher.PlatformAbstractions
 {
     public class CommonUniqueIdCache : IUniqueIdCache
     {
-        private static CommonUniqueIdCache _instance;
+        private static CommonUniqueIdCache instance;
         
         public static CommonUniqueIdCache Instance
         {
             get
             {
-                _instance ??= new CommonUniqueIdCache();
-                return _instance;
+                instance ??= new CommonUniqueIdCache();
+                return instance;
             }
         }
         

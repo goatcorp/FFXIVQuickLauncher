@@ -25,7 +25,7 @@ namespace XIVLauncher
     /// </summary>
     public partial class App : Application
     {
-        public const string RepoUrl = "https://github.com/goatcorp/FFXIVQuickLauncher";
+        public const string REPO_URL = "https://github.com/goatcorp/FFXIVQuickLauncher";
 
         public static ILauncherSettingsV3 Settings;
 
@@ -108,7 +108,7 @@ namespace XIVLauncher
                 if (App.Settings.LauncherLanguage == null)
                 {
                     var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-                    App.Settings.LauncherLanguage = App.Settings.LauncherLanguage.GetLangFromTwoLetterISO(currentUiLang);
+                    App.Settings.LauncherLanguage = App.Settings.LauncherLanguage.GetLangFromTwoLetterIso(currentUiLang);
                 }
 
                 Log.Information("Trying to set up Loc for language code {0}", App.Settings.LauncherLanguage.GetLocalizationCode());

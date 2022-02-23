@@ -33,21 +33,21 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            FileKind = (TargetFileKind)reader.ReadByte();
-            HeaderKind = (TargetHeaderKind)reader.ReadByte();
-            reader.ReadByte(); // Alignment
+            FileKind = (TargetFileKind)this.Reader.ReadByte();
+            HeaderKind = (TargetHeaderKind)this.Reader.ReadByte();
+            this.Reader.ReadByte(); // Alignment
 
             if (FileKind == TargetFileKind.Dat)
-                TargetFile = new SqpackDatFile(reader);
+                TargetFile = new SqpackDatFile(this.Reader);
             else
-                TargetFile = new SqpackIndexFile(reader);
+                TargetFile = new SqpackIndexFile(this.Reader);
 
-            HeaderDataSourceOffset = Offset + reader.BaseStream.Position;
-            HeaderData = reader.ReadBytes(HEADER_SIZE);
+            HeaderDataSourceOffset = Offset + this.Reader.BaseStream.Position;
+            HeaderData = this.Reader.ReadBytes(HEADER_SIZE);
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)

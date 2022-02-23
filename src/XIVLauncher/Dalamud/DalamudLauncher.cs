@@ -14,8 +14,6 @@ using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Addon;
 using XIVLauncher.Common;
-using XIVLauncher.Common.Game;
-using XIVLauncher.PatchInstaller;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
@@ -126,7 +124,7 @@ namespace XIVLauncher.Dalamud
                 Language = language,
                 PluginDirectory = ingamePluginPath,
                 DefaultPluginDirectory = defaultPluginPath,
-                ConfigurationPath = DalamudSettings.ConfigPath,
+                ConfigurationPath = DalamudSettings.CONFIG_PATH,
                 AssetDirectory = DalamudUpdater.AssetDirectory.FullName,
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 OptOutMbCollection = _optOutMbCollection,
@@ -272,7 +270,7 @@ namespace XIVLauncher.Dalamud
             // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
             // and https://github.com/bitbeans/RedistributableChecker
 
-            var VC2022Paths = new List<string>
+            var vc2022Paths = new List<string>
                         {
                             @"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum",
                             @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64",
@@ -286,7 +284,7 @@ namespace XIVLauncher.Dalamud
                         };
 
             bool passedRegistry = false;
-            foreach (var path in VC2022Paths)
+            foreach (var path in vc2022Paths)
             {
                 Log.Debug("Checking Registry with: " + path);
                 var vcregcheck = Registry.ClassesRoot.OpenSubKey(path, false);

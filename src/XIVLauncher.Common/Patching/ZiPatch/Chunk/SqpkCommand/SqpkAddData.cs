@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Serilog;
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
@@ -23,20 +22,20 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            reader.ReadBytes(3); // Alignment
+            this.Reader.ReadBytes(3); // Alignment
 
-            TargetFile = new SqpackDatFile(reader);
+            TargetFile = new SqpackDatFile(this.Reader);
 
-            BlockOffset = reader.ReadInt32BE() << 7;
-            BlockNumber = reader.ReadInt32BE() << 7;
-            BlockDeleteNumber = reader.ReadInt32BE() << 7;
+            BlockOffset = this.Reader.ReadInt32BE() << 7;
+            BlockNumber = this.Reader.ReadInt32BE() << 7;
+            BlockDeleteNumber = this.Reader.ReadInt32BE() << 7;
 
-            BlockDataSourceOffset = Offset + reader.BaseStream.Position;
-            BlockData = reader.ReadBytes((int)BlockNumber);
+            BlockDataSourceOffset = Offset + this.Reader.BaseStream.Position;
+            BlockData = this.Reader.ReadBytes((int)BlockNumber);
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)

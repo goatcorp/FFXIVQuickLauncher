@@ -72,12 +72,12 @@ namespace XIVLauncher.Accounts
 
                 if (searchResponse.Results.Count > 1) //If we get more than one match from XIVAPI
                 {
-                    foreach (var AccountInfo in searchResponse.Results)
+                    foreach (var accountInfo in searchResponse.Results)
                     {
                         //We have to check with it all lower in case they type their character name LiKe ThIsLoL. The server XIVAPI returns also contains the DC name, so let's just do a contains on the server to make it easy.
-                        if (AccountInfo.Name.Value.ToLower() == ChosenCharacterName.ToLower() && AccountInfo.Server.Value.ToLower().Contains(ChosenCharacterWorld.ToLower()))
+                        if (accountInfo.Name.Value.ToLower() == ChosenCharacterName.ToLower() && accountInfo.Server.Value.ToLower().Contains(ChosenCharacterWorld.ToLower()))
                         {
-                            return AccountInfo.Avatar.Value;
+                            return accountInfo.Avatar.Value;
                         }
                     }
                 }

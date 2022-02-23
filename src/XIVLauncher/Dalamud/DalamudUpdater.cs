@@ -20,7 +20,7 @@ namespace XIVLauncher.Dalamud
         public static DownloadState State { get; private set; } = DownloadState.Unknown;
         public static bool IsStaging { get; private set; } = false;
 
-        private static FileInfo _runnerInternal;
+        private static FileInfo runnerInternal;
         public static FileInfo Runner
         {
             get
@@ -28,9 +28,9 @@ namespace XIVLauncher.Dalamud
                 if (RunnerOverride != null)
                     return RunnerOverride;
 
-                return _runnerInternal;
+                return runnerInternal;
             }
-            private set => _runnerInternal = value;
+            private set => runnerInternal = value;
         }
 
         public static FileInfo RunnerOverride { get; set; }

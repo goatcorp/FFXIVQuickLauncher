@@ -1,6 +1,5 @@
 ﻿using System;
 using XIVLauncher.Common;
-using XIVLauncher.Common.Game;
 
 namespace Dalamud
 {

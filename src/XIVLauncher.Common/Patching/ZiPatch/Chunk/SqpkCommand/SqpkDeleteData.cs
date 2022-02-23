@@ -18,18 +18,18 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            reader.ReadBytes(3); // Alignment
+            this.Reader.ReadBytes(3); // Alignment
 
-            TargetFile = new SqpackDatFile(reader);
+            TargetFile = new SqpackDatFile(this.Reader);
 
-            BlockOffset = reader.ReadInt32BE() << 7;
-            BlockNumber = reader.ReadInt32BE();
+            BlockOffset = this.Reader.ReadInt32BE() << 7;
+            BlockNumber = this.Reader.ReadInt32BE();
 
-            reader.ReadUInt32(); // Reserved
+            this.Reader.ReadUInt32(); // Reserved
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)

@@ -29,12 +29,6 @@
     </COMReference>
   </ItemGroup>
 
-  <!-- Assets -->
-  <ItemGroup>
-    <Resource Include="Resources\*.*" />
-    <EmbeddedResource Include="Resources\Loc\xl\*.json" />
-  </ItemGroup>
-
   <PropertyGroup>
     <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -75,10 +69,6 @@
   </ItemGroup>
 
   <!-- SteamWorksSharp natives -->
-  <ItemGroup>
-    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x86\steam_api.dll" />
-    <EmbeddedResource Include="SteamWorksSharp\Native\Windows_x64\steam_api64.dll" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AdysTech.CredentialManager" Version="1.8.0" />

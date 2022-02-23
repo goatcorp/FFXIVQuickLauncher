@@ -6,7 +6,7 @@ using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 {
-    class SqpkFile : SqpkChunk
+    internal class SqpkFile : SqpkChunk
     {
         public new static string Command = "F";
 
@@ -14,6 +14,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         {
             AddFile = (byte)'A',
             RemoveAll = (byte)'R',
+
             // I've seen no cases in the wild of these two
             DeleteFile = (byte)'D',
             MakeDirTree = (byte)'M'
@@ -32,35 +33,35 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            Operation = (OperationKind)reader.ReadByte();
-            reader.ReadBytes(2); // Alignment
+            Operation = (OperationKind)this.Reader.ReadByte();
+            this.Reader.ReadBytes(2); // Alignment
 
-            FileOffset = reader.ReadInt64BE();
-            FileSize = reader.ReadUInt64BE();
+            FileOffset = this.Reader.ReadInt64BE();
+            FileSize = this.Reader.ReadUInt64BE();
 
-            var pathLen = reader.ReadUInt32BE();
+            var pathLen = this.Reader.ReadUInt32BE();
 
-            ExpansionId = reader.ReadUInt16BE();
-            reader.ReadBytes(2);
+            ExpansionId = this.Reader.ReadUInt16BE();
+            this.Reader.ReadBytes(2);
 
-            TargetFile = new SqexFile(reader.ReadFixedLengthString(pathLen));
+            TargetFile = new SqexFile(this.Reader.ReadFixedLengthString(pathLen));
 
             if (Operation == OperationKind.AddFile)
             {
                 CompressedDataSourceOffsets = new();
                 CompressedData = new List<SqpkCompressedBlock>();
 
-                while (Size - reader.BaseStream.Position + start > 0)
+                while (Size - this.Reader.BaseStream.Position + start > 0)
                 {
-                    CompressedDataSourceOffsets.Add(Offset + reader.BaseStream.Position);
-                    CompressedData.Add(new SqpkCompressedBlock(reader));
+                    CompressedDataSourceOffsets.Add(Offset + this.Reader.BaseStream.Position);
+                    CompressedData.Add(new SqpkCompressedBlock(this.Reader));
                     CompressedDataSourceOffsets[CompressedDataSourceOffsets.Count - 1] += CompressedData[CompressedData.Count - 1].HeaderSize;
                 }
             }
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         private static bool RemoveAllFilter(string filePath) =>
@@ -76,9 +77,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
                     // TODO: Check this. I *think* boot usually creates all the folders like sqpack, movie, etc., so this might be kind of a hack
                     TargetFile.CreateDirectoryTree(config.GamePath);
 
-                    var fileStream = config.Store == null ?
-                        TargetFile.OpenStream(config.GamePath, FileMode.OpenOrCreate) :
-                        TargetFile.OpenStream(config.Store, config.GamePath, FileMode.OpenOrCreate);
+                    var fileStream = config.Store == null ? TargetFile.OpenStream(config.GamePath, FileMode.OpenOrCreate) : TargetFile.OpenStream(config.Store, config.GamePath, FileMode.OpenOrCreate);
 
                     if (FileOffset == 0)
                         fileStream.SetLength(0);
@@ -88,13 +87,16 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
                         block.DecompressInto(fileStream);
 
                     break;
+
                 case OperationKind.RemoveAll:
                     foreach (var file in SqexFile.GetAllExpansionFiles(config.GamePath, ExpansionId).Where(RemoveAllFilter))
                         File.Delete(file);
                     break;
+
                 case OperationKind.DeleteFile:
                     File.Delete(config.GamePath + "/" + TargetFile.RelativePath);
                     break;
+
                 case OperationKind.MakeDirTree:
                     Directory.CreateDirectory(config.GamePath + "/" + TargetFile.RelativePath);
                     break;

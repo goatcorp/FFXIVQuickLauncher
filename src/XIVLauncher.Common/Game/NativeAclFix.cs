@@ -8,6 +8,7 @@ using System.Reflection;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using Serilog;
+// ReSharper disable InconsistentNaming
 
 namespace XIVLauncher.Common.Game
 {

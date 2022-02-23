@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,11 +13,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 {
     public class IndexedZiPatchIndexRemoteInstaller : IDisposable
     {
-        private readonly Process WorkerProcess;
-        private readonly RpcBuffer SubprocessBuffer;
-        private int CancellationTokenCounter = 1;
-        private long LastProgressUpdateCounter = 0;
-        private bool IsDisposed = false;
+        private readonly Process workerProcess;
+        private readonly RpcBuffer subprocessBuffer;
+        private int cancellationTokenCounter = 1;
+        private long lastProgressUpdateCounter = 0;
+        private bool isDisposed = false;
 
         public event IndexedZiPatchInstaller.OnInstallProgressDelegate OnInstallProgress;
         public event IndexedZiPatchInstaller.OnVerifyProgressDelegate OnVerifyProgress;
@@ -26,53 +25,53 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public IndexedZiPatchIndexRemoteInstaller(string workerExecutablePath, bool asAdmin)
         {
             var rpcChannelName = "RemoteZiPatchIndexInstaller" + Guid.NewGuid().ToString();
-            SubprocessBuffer = new RpcBuffer(rpcChannelName, RpcResponseHandler);
+            this.subprocessBuffer = new RpcBuffer(rpcChannelName, RpcResponseHandler);
 
             if (workerExecutablePath != null)
             {
-                WorkerProcess = new();
-                WorkerProcess.StartInfo.FileName = workerExecutablePath;
-                WorkerProcess.StartInfo.UseShellExecute = true;
-                WorkerProcess.StartInfo.Verb = asAdmin ? "runas" : "open";
-                WorkerProcess.StartInfo.Arguments = $"index-rpc {Process.GetCurrentProcess().Id} {rpcChannelName}";
-                WorkerProcess.Start();
+                this.workerProcess = new();
+                this.workerProcess.StartInfo.FileName = workerExecutablePath;
+                this.workerProcess.StartInfo.UseShellExecute = true;
+                this.workerProcess.StartInfo.Verb = asAdmin ? "runas" : "open";
+                this.workerProcess.StartInfo.Arguments = $"index-rpc {Process.GetCurrentProcess().Id} {rpcChannelName}";
+                this.workerProcess.Start();
             }
             else
             {
-                WorkerProcess = null;
+                this.workerProcess = null;
                 Task.Run(() => new WorkerSubprocessBody(Process.GetCurrentProcess().Id, rpcChannelName).RunToDisposeSelf());
             }
         }
 
         public void Dispose()
         {
-            if (IsDisposed)
+            if (this.isDisposed)
                 throw new ObjectDisposedException(GetType().FullName);
 
             try
             {
-                SubprocessBuffer.RemoteRequest(((MemoryStream)GetRequestCreator(WorkerInboundOpcode.DisposeAndExit, null).BaseStream).ToArray(), 100);
+                this.subprocessBuffer.RemoteRequest(((MemoryStream)GetRequestCreator(WorkerInboundOpcode.DisposeAndExit, null).BaseStream).ToArray(), 100);
             }
             catch (Exception)
             {
                 // ignore any exception
             }
 
-            if (WorkerProcess != null && !WorkerProcess.HasExited)
+            if (this.workerProcess != null && !this.workerProcess.HasExited)
             {
-                WorkerProcess.WaitForExit(1000);
+                this.workerProcess.WaitForExit(1000);
                 try
                 {
-                    WorkerProcess.Kill();
+                    this.workerProcess.Kill();
                 }
                 catch (Exception)
                 {
-                    if (!WorkerProcess.HasExited)
+                    if (!this.workerProcess.HasExited)
                         throw;
                 }
             }
-            SubprocessBuffer.Dispose();
-            IsDisposed = true;
+            this.subprocessBuffer.Dispose();
+            this.isDisposed = true;
         }
 
         private void RpcResponseHandler(ulong _, byte[] data)
@@ -97,10 +96,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         private void OnReceiveInstallProgressUpdate(BinaryReader reader)
         {
             var progressUpdateCounter = reader.ReadInt64();
-            if (progressUpdateCounter < LastProgressUpdateCounter)
+            if (progressUpdateCounter < this.lastProgressUpdateCounter)
                 return;
 
-            LastProgressUpdateCounter = progressUpdateCounter;
+            this.lastProgressUpdateCounter = progressUpdateCounter;
             var index = reader.ReadInt32();
             var progress = reader.ReadInt64();
             var max = reader.ReadInt64();
@@ -112,10 +111,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         private void OnReceiveVerifyProgressUpdate(BinaryReader reader)
         {
             var progressUpdateCounter = reader.ReadInt64();
-            if (progressUpdateCounter < LastProgressUpdateCounter)
+            if (progressUpdateCounter < this.lastProgressUpdateCounter)
                 return;
 
-            LastProgressUpdateCounter = progressUpdateCounter;
+            this.lastProgressUpdateCounter = progressUpdateCounter;
             var index = reader.ReadInt32();
             var progress = reader.ReadInt64();
             var max = reader.ReadInt64();
@@ -130,7 +129,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var tokenId = -1;
             if (cancellationToken.HasValue)
             {
-                tokenId = CancellationTokenCounter++;
+                tokenId = this.cancellationTokenCounter++;
                 cancellationToken.Value.Register(async () => await CancelRemoteTask(tokenId));
             }
             writer.Write(tokenId);
@@ -143,13 +142,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var requestData = ((MemoryStream)req.BaseStream).ToArray();
             RpcResponse response;
             if (cancellationToken.HasValue)
-                response = await SubprocessBuffer.RemoteRequestAsync(requestData, timeoutMs, cancellationToken.Value);
+                response = await this.subprocessBuffer.RemoteRequestAsync(requestData, timeoutMs, cancellationToken.Value);
             else
-                response = await SubprocessBuffer.RemoteRequestAsync(requestData, timeoutMs);
+                response = await this.subprocessBuffer.RemoteRequestAsync(requestData, timeoutMs);
             if (cancellationToken.HasValue)
                 cancellationToken.Value.ThrowIfCancellationRequested();
 
-            if (IsDisposed)
+            if (this.isDisposed)
                 throw new OperationCanceledException();
             var reader = new BinaryReader(new MemoryStream(response.Data));
             try
@@ -172,7 +171,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         private async Task CancelRemoteTask(int tokenId)
         {
-            if (IsDisposed)
+            if (this.isDisposed)
                 return;
 
             try
@@ -279,10 +278,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetMissingPartIndicesPerPatch, cancellationToken), cancellationToken, 30000, false);
             List<SortedSet<Tuple<int, int>>> result = new();
-            for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
+            for (int i = 0, iReadLength = reader.ReadInt32(); i < iReadLength; i++)
             {
                 SortedSet<Tuple<int, int>> e1 = new();
-                for (int j = 0, j_ = reader.ReadInt32(); j < j_; j++)
+                for (int j = 0, jReadLength = reader.ReadInt32(); j < jReadLength; j++)
                     e1.Add(Tuple.Create(reader.ReadInt32(), reader.ReadInt32()));
                 result.Add(e1);
             }
@@ -293,10 +292,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetMissingPartIndicesPerTargetFile, cancellationToken), cancellationToken, 30000, false);
             List<SortedSet<int>> result = new();
-            for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
+            for (int i = 0, iReadLength = reader.ReadInt32(); i < iReadLength; i++)
             {
                 SortedSet<int> e1 = new();
-                for (int j = 0, j_ = reader.ReadInt32(); j < j_; j++)
+                for (int j = 0, jReadLength = reader.ReadInt32(); j < jReadLength; j++)
                     e1.Add(reader.ReadInt32());
                 result.Add(e1);
             }
@@ -307,7 +306,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             using var reader = await WaitForResult(GetRequestCreator(WorkerInboundOpcode.GetSizeMismatchTargetFileIndices, cancellationToken), cancellationToken, 30000, false);
             SortedSet<int> result = new();
-            for (int i = 0, i_ = reader.ReadInt32(); i < i_; i++)
+            for (int i = 0, readIndex = reader.ReadInt32(); i < readIndex; i++)
                 result.Add(reader.ReadInt32());
             return result;
         }
@@ -321,25 +320,25 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public class WorkerSubprocessBody : IDisposable
         {
-            private readonly object ProgressUpdateSync = new();
-            private readonly Process ParentProcess;
-            private readonly RpcBuffer SubprocessBuffer;
-            private readonly Dictionary<int, CancellationTokenSource> CancellationTokenSources = new();
-            private IndexedZiPatchInstaller Instance = null;
-            private long ProgressUpdateCounter = 0;
+            private readonly object progressUpdateSync = new();
+            private readonly Process parentProcess;
+            private readonly RpcBuffer subprocessBuffer;
+            private readonly Dictionary<int, CancellationTokenSource> cancellationTokenSources = new();
+            private IndexedZiPatchInstaller instance = null;
+            private long progressUpdateCounter = 0;
 
             public WorkerSubprocessBody(int monitorProcessId, string channelName)
             {
-                ParentProcess = Process.GetProcessById(monitorProcessId);
-                SubprocessBuffer = new RpcBuffer(channelName, async (ulong _, byte[] data) =>
+                this.parentProcess = Process.GetProcessById(monitorProcessId);
+                this.subprocessBuffer = new RpcBuffer(channelName, async (ulong _, byte[] data) =>
                 {
                     using var reader = new BinaryReader(new MemoryStream(data));
                     var cancelSourceId = reader.ReadInt32();
                     CancellationToken? cancelToken = null;
                     if (cancelSourceId != -1)
                     {
-                        CancellationTokenSources[cancelSourceId] = new CancellationTokenSource();
-                        cancelToken = CancellationTokenSources[cancelSourceId].Token;
+                        this.cancellationTokenSources[cancelSourceId] = new CancellationTokenSource();
+                        cancelToken = this.cancellationTokenSources[cancelSourceId].Token;
                     }
                     var method = (WorkerInboundOpcode)reader.ReadInt32();
 
@@ -352,76 +351,76 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                         switch (method)
                         {
                             case WorkerInboundOpcode.CancelTask:
-                                lock (CancellationTokenSources)
+                                lock (this.cancellationTokenSources)
                                 {
-                                    if (CancellationTokenSources.TryGetValue(reader.ReadInt32(), out var cts))
+                                    if (this.cancellationTokenSources.TryGetValue(reader.ReadInt32(), out var cts))
                                         cts.Cancel();
                                 }
                                 break;
 
                             case WorkerInboundOpcode.Construct:
-                                Instance?.Dispose();
-                                Instance = new(new IndexedZiPatchIndex(reader, false))
+                                this.instance?.Dispose();
+                                this.instance = new(new IndexedZiPatchIndex(reader, false))
                                 {
                                     ProgressReportInterval = reader.ReadInt32(),
                                 };
-                                Instance.OnInstallProgress += OnInstallProgressUpdate;
-                                Instance.OnVerifyProgress += OnVerifyProgressUpdate;
+                                this.instance.OnInstallProgress += OnInstallProgressUpdate;
+                                this.instance.OnVerifyProgress += OnVerifyProgressUpdate;
                                 break;
 
                             case WorkerInboundOpcode.DisposeAndExit:
-                                Instance?.Dispose();
-                                Instance = null;
+                                this.instance?.Dispose();
+                                this.instance = null;
                                 Environment.Exit(0);
                                 break;
 
                             case WorkerInboundOpcode.VerifyFiles:
-                                await Instance.VerifyFiles(reader.ReadBoolean(), reader.ReadInt32(), cancelToken);
+                                await this.instance.VerifyFiles(reader.ReadBoolean(), reader.ReadInt32(), cancelToken);
                                 break;
 
                             case WorkerInboundOpcode.MarkFileAsMissing:
-                                Instance.MarkFileAsMissing(reader.ReadInt32());
+                                this.instance.MarkFileAsMissing(reader.ReadInt32());
                                 break;
 
                             case WorkerInboundOpcode.SetTargetStreamFromPathReadOnly:
-                                Instance.SetTargetStreamForRead(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.Open, FileAccess.Read));
+                                this.instance.SetTargetStreamForRead(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.Open, FileAccess.Read));
                                 break;
 
                             case WorkerInboundOpcode.SetTargetStreamFromPathReadWrite:
-                                Instance.SetTargetStreamForWriteFromFile(reader.ReadInt32(), new FileInfo(reader.ReadString()));
+                                this.instance.SetTargetStreamForWriteFromFile(reader.ReadInt32(), new FileInfo(reader.ReadString()));
                                 break;
 
                             case WorkerInboundOpcode.SetTargetStreamsFromPathReadOnly:
-                                Instance.SetTargetStreamsFromPathReadOnly(reader.ReadString());
+                                this.instance.SetTargetStreamsFromPathReadOnly(reader.ReadString());
                                 break;
 
                             case WorkerInboundOpcode.SetTargetStreamsFromPathReadWriteForMissingFiles:
-                                Instance.SetTargetStreamsFromPathReadWriteForMissingFiles(reader.ReadString());
+                                this.instance.SetTargetStreamsFromPathReadWriteForMissingFiles(reader.ReadString());
                                 break;
 
                             case WorkerInboundOpcode.RepairNonPatchData:
-                                await Instance.RepairNonPatchData(cancelToken);
+                                await this.instance.RepairNonPatchData(cancelToken);
                                 break;
 
                             case WorkerInboundOpcode.WriteVersionFiles:
-                                Instance.WriteVersionFiles(reader.ReadString());
+                                this.instance.WriteVersionFiles(reader.ReadString());
                                 break;
 
                             case WorkerInboundOpcode.QueueInstallFromUrl:
-                                Instance.QueueInstall(reader.ReadInt32(), reader.ReadString(), reader.ReadString(), reader.ReadInt32());
+                                this.instance.QueueInstall(reader.ReadInt32(), reader.ReadString(), reader.ReadString(), reader.ReadInt32());
                                 break;
 
                             case WorkerInboundOpcode.QueueInstallFromLocalFile:
-                                Instance.QueueInstall(reader.ReadInt32(), new FileInfo(reader.ReadString()), reader.ReadInt32());
+                                this.instance.QueueInstall(reader.ReadInt32(), new FileInfo(reader.ReadString()), reader.ReadInt32());
                                 break;
 
                             case WorkerInboundOpcode.Install:
-                                await Instance.Install(reader.ReadInt32(), cancelToken);
+                                await this.instance.Install(reader.ReadInt32(), cancelToken);
                                 break;
 
                             case WorkerInboundOpcode.GetMissingPartIndicesPerPatch:
-                                writer.Write(Instance.MissingPartIndicesPerPatch.Count);
-                                foreach (var e1 in Instance.MissingPartIndicesPerPatch)
+                                writer.Write(this.instance.MissingPartIndicesPerPatch.Count);
+                                foreach (var e1 in this.instance.MissingPartIndicesPerPatch)
                                 {
                                     writer.Write(e1.Count);
                                     foreach (var e2 in e1)
@@ -433,8 +432,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 break;
 
                             case WorkerInboundOpcode.GetMissingPartIndicesPerTargetFile:
-                                writer.Write(Instance.MissingPartIndicesPerTargetFile.Count);
-                                foreach (var e1 in Instance.MissingPartIndicesPerTargetFile)
+                                writer.Write(this.instance.MissingPartIndicesPerTargetFile.Count);
+                                foreach (var e1 in this.instance.MissingPartIndicesPerTargetFile)
                                 {
                                     writer.Write(e1.Count);
                                     foreach (var e2 in e1)
@@ -443,8 +442,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 break;
 
                             case WorkerInboundOpcode.GetSizeMismatchTargetFileIndices:
-                                writer.Write(Instance.SizeMismatchTargetFileIndices.Count);
-                                foreach (var e1 in Instance.SizeMismatchTargetFileIndices)
+                                writer.Write(this.instance.SizeMismatchTargetFileIndices.Count);
+                                foreach (var e1 in this.instance.SizeMismatchTargetFileIndices)
                                     writer.Write(e1);
                                 break;
 
@@ -473,7 +472,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                     finally
                     {
                         if (cancelSourceId != -1)
-                            CancellationTokenSources.Remove(cancelSourceId);
+                            this.cancellationTokenSources.Remove(cancelSourceId);
                     }
                     return ms.ToArray();
                 });
@@ -481,46 +480,46 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
             private void OnInstallProgressUpdate(int index, long progress, long max, IndexedZiPatchInstaller.InstallTaskState state)
             {
-                lock (ProgressUpdateSync)
+                lock (this.progressUpdateSync)
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
                     writer.Write((int)WorkerOutboundOpcode.UpdateInstallProgress);
-                    writer.Write(ProgressUpdateCounter);
+                    writer.Write(this.progressUpdateCounter);
                     writer.Write(index);
                     writer.Write(progress);
                     writer.Write(max);
                     writer.Write((int)state);
-                    ProgressUpdateCounter += 1;
-                    SubprocessBuffer.RemoteRequest(ms.ToArray());
+                    this.progressUpdateCounter += 1;
+                    this.subprocessBuffer.RemoteRequest(ms.ToArray());
                 }
             }
 
             private void OnVerifyProgressUpdate(int index, long progress, long max)
             {
-                lock (ProgressUpdateSync)
+                lock (this.progressUpdateSync)
                 {
                     var ms = new MemoryStream();
                     var writer = new BinaryWriter(ms);
                     writer.Write((int)WorkerOutboundOpcode.UpdateVerifyProgress);
-                    writer.Write(ProgressUpdateCounter);
+                    writer.Write(this.progressUpdateCounter);
                     writer.Write(index);
                     writer.Write(progress);
                     writer.Write(max);
-                    ProgressUpdateCounter += 1;
-                    SubprocessBuffer.RemoteRequest(ms.ToArray());
+                    this.progressUpdateCounter += 1;
+                    this.subprocessBuffer.RemoteRequest(ms.ToArray());
                 }
             }
 
             public void Dispose()
             {
-                SubprocessBuffer.Dispose();
-                Instance?.Dispose();
+                this.subprocessBuffer.Dispose();
+                this.instance?.Dispose();
             }
 
             public void Run()
             {
-                ParentProcess.WaitForExit();
+                this.parentProcess.WaitForExit();
             }
 
             public void RunToDisposeSelf()

@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
-using XIVLauncher.Common;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 using XIVLauncher.Common.PlatformAbstractions;
 
@@ -191,7 +190,7 @@ namespace XIVLauncher.Common.Game.Patch
                             State = VerifyState.Verify;
                             break;
                         case VerifyState.Verify:
-                            const int maxConcurrentConnectionsForPatchSet = 8;
+                            const int MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET = 8;
 
                             PatchSetIndex = 0;
                             PatchSetCount = _repoMetaPaths.Count;
@@ -262,9 +261,9 @@ namespace XIVLauncher.Common.Game.Patch
 
                                             var source = _patchSources[prefix + patchIndex.Sources[i]];
                                             if (source is Uri uri)
-                                                await remote.QueueInstall(i, uri, null, maxConcurrentConnectionsForPatchSet);
+                                                await remote.QueueInstall(i, uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET);
                                             else if (source is FileInfo file)
-                                                await remote.QueueInstall(i, file, maxConcurrentConnectionsForPatchSet);
+                                                await remote.QueueInstall(i, file, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET);
                                             else
                                                 throw new InvalidOperationException("_patchSources contains non-Uri/FileInfo");
                                         }
@@ -272,7 +271,7 @@ namespace XIVLauncher.Common.Game.Patch
                                         CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.Connecting;
                                         try
                                         {
-                                            await remote.Install(maxConcurrentConnectionsForPatchSet, _cancellationTokenSource.Token);
+                                            await remote.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token);
                                             await remote.WriteVersionFiles(adjustedGamePath);
                                         }
                                         catch (Exception e)

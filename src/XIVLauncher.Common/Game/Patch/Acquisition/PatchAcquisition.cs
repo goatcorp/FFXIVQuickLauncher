@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using XIVLauncher.Common.Game.Patch.PatchList;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition
 {

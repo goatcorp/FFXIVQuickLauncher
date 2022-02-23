@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -13,61 +12,61 @@ namespace XIVLauncher.Common.Patching.Util
 {
     public class MultipartResponseHandler : IDisposable
     {
-        private readonly HttpResponseMessage Response;
-        private bool NoMoreParts = false;
-        private Stream BaseStream;
-        private string MultipartBoundary;
-        private string MultipartEndBoundary;
-        private CircularMemoryStream MultipartBufferStream;
-        private List<string> MultipartHeaderLines;
+        private readonly HttpResponseMessage response;
+        private bool noMoreParts = false;
+        private Stream baseStream;
+        public string MultipartBoundary;
+        private string multipartEndBoundary;
+        private CircularMemoryStream multipartBufferStream;
+        private List<string> multipartHeaderLines;
 
         public MultipartResponseHandler(HttpResponseMessage responseMessage)
         {
-            Response = responseMessage;
+            this.response = responseMessage;
         }
 
         public async Task<MultipartPartStream> NextPart(CancellationToken? cancellationToken = null)
         {
-            if (NoMoreParts)
+            if (this.noMoreParts)
                 return null;
 
-            if (BaseStream == null)
-                BaseStream = new BufferedStream(await Response.Content.ReadAsStreamAsync(), 16384);
+            if (this.baseStream == null)
+                this.baseStream = new BufferedStream(await this.response.Content.ReadAsStreamAsync(), 16384);
 
             if (MultipartBoundary == null)
             {
-                switch (Response.StatusCode)
+                switch (this.response.StatusCode)
                 {
                     case System.Net.HttpStatusCode.OK:
                         {
-                            NoMoreParts = true;
-                            var stream = new MultipartPartStream(Response.Content.Headers.ContentLength.Value, 0, Response.Content.Headers.ContentLength.Value);
-                            stream.AppendBaseStream(new ReadLengthLimitingStream(BaseStream, Response.Content.Headers.ContentLength.Value));
+                            this.noMoreParts = true;
+                            var stream = new MultipartPartStream(this.response.Content.Headers.ContentLength.Value, 0, this.response.Content.Headers.ContentLength.Value);
+                            stream.AppendBaseStream(new ReadLengthLimitingStream(this.baseStream, this.response.Content.Headers.ContentLength.Value));
                             return stream;
                         }
 
                     case System.Net.HttpStatusCode.PartialContent:
-                        if (Response.Content.Headers.ContentType.MediaType.ToLowerInvariant() != "multipart/byteranges")
+                        if (this.response.Content.Headers.ContentType.MediaType.ToLowerInvariant() != "multipart/byteranges")
                         {
-                            NoMoreParts = true;
-                            var rangeHeader = Response.Content.Headers.ContentRange;
+                            this.noMoreParts = true;
+                            var rangeHeader = this.response.Content.Headers.ContentRange;
                             var rangeLength = rangeHeader.To.Value + 1 - rangeHeader.From.Value;
                             var stream = new MultipartPartStream(rangeHeader.Length.Value, rangeHeader.From.Value, rangeLength);
-                            stream.AppendBaseStream(new ReadLengthLimitingStream(BaseStream, rangeLength));
+                            stream.AppendBaseStream(new ReadLengthLimitingStream(this.baseStream, rangeLength));
                             return stream;
                         }
                         else
                         {
-                            MultipartBoundary = "--" + Response.Content.Headers.ContentType.Parameters.Where(p => p.Name.ToLowerInvariant() == "boundary").First().Value;
-                            MultipartEndBoundary = MultipartBoundary + "--";
-                            MultipartBufferStream = new();
-                            MultipartHeaderLines = new();
+                            MultipartBoundary = "--" + this.response.Content.Headers.ContentType.Parameters.Where(p => p.Name.ToLowerInvariant() == "boundary").First().Value;
+                            this.multipartEndBoundary = MultipartBoundary + "--";
+                            this.multipartBufferStream = new();
+                            this.multipartHeaderLines = new();
                         }
                         break;
 
                     default:
-                        Response.EnsureSuccessStatusCode();
-                        throw new EndOfStreamException($"Unhandled success status code {Response.StatusCode}");
+                        this.response.EnsureSuccessStatusCode();
+                        throw new EndOfStreamException($"Unhandled success status code {this.response.StatusCode}");
                 }
             }
 
@@ -81,47 +80,48 @@ namespace XIVLauncher.Common.Patching.Util
                 {
                     int readSize;
                     if (cancellationToken == null)
-                        readSize = await BaseStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length);
+                        readSize = await this.baseStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length);
                     else
-                        readSize = await BaseStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length, (CancellationToken)cancellationToken);
+                        readSize = await this.baseStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length, (CancellationToken)cancellationToken);
 
                     if (readSize == 0)
                         eof = true;
                     else
-                        MultipartBufferStream.Feed(buffer.Buffer, 0, readSize);
+                        this.multipartBufferStream.Feed(buffer.Buffer, 0, readSize);
                 }
 
-                for (int i = 0; i < MultipartBufferStream.Length - 1; ++i)
+                for (int i = 0; i < this.multipartBufferStream.Length - 1; ++i)
                 {
-                    if (MultipartBufferStream[i + 0] != '\r' || MultipartBufferStream[i + 1] != '\n')
+                    if (this.multipartBufferStream[i + 0] != '\r' || this.multipartBufferStream[i + 1] != '\n')
                         continue;
 
-                    var IsEmptyLine = i == 0;
-                    if (IsEmptyLine)
-                        MultipartBufferStream.Consume(null, 0, 2);
+                    var isEmptyLine = i == 0;
+                    
+                    if (isEmptyLine)
+                        this.multipartBufferStream.Consume(null, 0, 2);
                     else
                     {
                         using var buffer = ReusableByteBufferManager.GetBuffer();
                         if (i > buffer.Buffer.Length)
                             throw new IOException($"Multipart header line is too long ({i} bytes)");
 
-                        MultipartBufferStream.Consume(buffer.Buffer, 0, i + 2);
-                        MultipartHeaderLines.Add(Encoding.UTF8.GetString(buffer.Buffer, 0, i));
+                        this.multipartBufferStream.Consume(buffer.Buffer, 0, i + 2);
+                        this.multipartHeaderLines.Add(Encoding.UTF8.GetString(buffer.Buffer, 0, i));
                     }
                     i = -1;
 
-                    if (MultipartHeaderLines.Count == 0)
+                    if (this.multipartHeaderLines.Count == 0)
                         continue;
-                    if (MultipartHeaderLines.Last() == MultipartEndBoundary)
+                    if (this.multipartHeaderLines.Last() == this.multipartEndBoundary)
                     {
-                        NoMoreParts = true;
+                        this.noMoreParts = true;
                         return null;
                     }
-                    if (!IsEmptyLine)
+                    if (!isEmptyLine)
                         continue;
 
                     ContentRangeHeaderValue rangeHeader = null;
-                    foreach (var headerLine in MultipartHeaderLines)
+                    foreach (var headerLine in this.multipartHeaderLines)
                     {
                         var kvs = headerLine.Split(new char[] { ':' }, 2);
                         if (kvs.Length != 2)
@@ -134,53 +134,53 @@ namespace XIVLauncher.Common.Patching.Util
                     if (rangeHeader == null)
                         throw new IOException("Content-Range not found in multipart part");
 
-                    MultipartHeaderLines.Clear();
+                    this.multipartHeaderLines.Clear();
                     var rangeFrom = rangeHeader.From.Value;
                     var rangeLength = rangeHeader.To.Value - rangeFrom + 1;
                     var stream = new MultipartPartStream(rangeHeader.Length.Value, rangeFrom, rangeLength);
-                    stream.AppendBaseStream(new ConsumeLengthLimitingStream(MultipartBufferStream, Math.Min(rangeLength, MultipartBufferStream.Length)));
-                    stream.AppendBaseStream(new ReadLengthLimitingStream(BaseStream, stream.UnfulfilledBaseStreamLength));
+                    stream.AppendBaseStream(new ConsumeLengthLimitingStream(this.multipartBufferStream, Math.Min(rangeLength, this.multipartBufferStream.Length)));
+                    stream.AppendBaseStream(new ReadLengthLimitingStream(this.baseStream, stream.UnfulfilledBaseStreamLength));
                     return stream;
                 }
 
-                if (eof && !NoMoreParts)
+                if (eof && !this.noMoreParts)
                     throw new EndOfStreamException("Reached premature EOF");
             }
         }
 
         public void Dispose()
         {
-            MultipartBufferStream?.Dispose();
-            BaseStream?.Dispose();
-            Response?.Dispose();
+            this.multipartBufferStream?.Dispose();
+            this.baseStream?.Dispose();
+            this.response?.Dispose();
         }
 
         private class ReadLengthLimitingStream : Stream
         {
-            private readonly Stream BaseStream;
-            private readonly long LimitedLength;
-            private long LimitedPointer = 0;
+            private readonly Stream baseStream;
+            private readonly long limitedLength;
+            private long limitedPointer = 0;
 
             public ReadLengthLimitingStream(Stream stream, long length)
             {
-                BaseStream = stream;
-                LimitedLength = length;
+                this.baseStream = stream;
+                this.limitedLength = length;
             }
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                count = (int)Math.Min(count, LimitedLength - LimitedPointer);
+                count = (int)Math.Min(count, this.limitedLength - this.limitedPointer);
                 if (count == 0)
                     return 0;
 
-                var read = BaseStream.Read(buffer, offset, count);
+                var read = this.baseStream.Read(buffer, offset, count);
                 if (read == 0)
                     throw new EndOfStreamException("Premature end of stream detected");
-                LimitedPointer += read;
+                this.limitedPointer += read;
                 return read;
             }
 
-            public override long Length => LimitedLength;
+            public override long Length => this.limitedLength;
 
             public override bool CanRead => true;
 
@@ -188,7 +188,7 @@ namespace XIVLauncher.Common.Patching.Util
 
             public override bool CanWrite => false;
 
-            public override long Position { get => LimitedPointer; set => throw new NotSupportedException(); }
+            public override long Position { get => this.limitedPointer; set => throw new NotSupportedException(); }
 
             public override void Flush() => throw new NotSupportedException();
 
@@ -201,30 +201,30 @@ namespace XIVLauncher.Common.Patching.Util
 
         private class ConsumeLengthLimitingStream : Stream
         {
-            private readonly CircularMemoryStream BaseStream;
-            private readonly long LimitedLength;
-            private long LimitedPointer = 0;
+            private readonly CircularMemoryStream baseStream;
+            private readonly long limitedLength;
+            private long limitedPointer = 0;
 
             public ConsumeLengthLimitingStream(CircularMemoryStream stream, long length)
             {
-                BaseStream = stream;
-                LimitedLength = length;
+                this.baseStream = stream;
+                this.limitedLength = length;
             }
 
             public override int Read(byte[] buffer, int offset, int count)
             {
-                count = (int)Math.Min(count, LimitedLength - LimitedPointer);
+                count = (int)Math.Min(count, this.limitedLength - this.limitedPointer);
                 if (count == 0)
                     return 0;
 
-                var read = BaseStream.Consume(buffer, offset, count);
+                var read = this.baseStream.Consume(buffer, offset, count);
                 if (read == 0)
                     throw new EndOfStreamException("Premature end of stream detected");
-                LimitedPointer += read;
+                this.limitedPointer += read;
                 return read;
             }
 
-            public override long Length => LimitedLength;
+            public override long Length => this.limitedLength;
 
             public override bool CanRead => true;
 
@@ -232,7 +232,7 @@ namespace XIVLauncher.Common.Patching.Util
 
             public override bool CanWrite => false;
 
-            public override long Position { get => LimitedPointer; set => throw new NotSupportedException(); }
+            public override long Position { get => this.limitedPointer; set => throw new NotSupportedException(); }
 
             public override void Flush() => throw new NotSupportedException();
 
@@ -245,21 +245,21 @@ namespace XIVLauncher.Common.Patching.Util
 
         public class MultipartPartStream : Stream
         {
-            private readonly CircularMemoryStream LoopStream = new(16384, CircularMemoryStream.FeedOverflowMode.DiscardOldest);
-            private readonly List<Stream> BaseStreams = new();
-            private int BaseStreamIndex = 0;
+            private readonly CircularMemoryStream loopStream = new(16384, CircularMemoryStream.FeedOverflowMode.DiscardOldest);
+            private readonly List<Stream> baseStreams = new();
+            private int baseStreamIndex = 0;
             public readonly long OriginTotalLength;
             public readonly long OriginOffset;
             public readonly long OriginLength;
             public long OriginEnd => OriginOffset + OriginLength;
-            private long PositionInternal;
+            private long positionInternal;
 
             internal MultipartPartStream(long originTotalLength, long originOffset, long originLength)
             {
                 OriginTotalLength = originTotalLength;
                 OriginOffset = originOffset;
                 OriginLength = originLength;
-                PositionInternal = originOffset;
+                this.positionInternal = originOffset;
             }
 
             internal void AppendBaseStream(Stream stream)
@@ -268,50 +268,50 @@ namespace XIVLauncher.Common.Patching.Util
                     return;
                 if (UnfulfilledBaseStreamLength < stream.Length)
                     throw new ArgumentException("Total length of given streams exceed OriginTotalLength.");
-                BaseStreams.Add(stream);
+                this.baseStreams.Add(stream);
             }
 
-            internal long UnfulfilledBaseStreamLength => OriginLength - BaseStreams.Select(x => x.Length).Sum();
+            internal long UnfulfilledBaseStreamLength => OriginLength - this.baseStreams.Select(x => x.Length).Sum();
 
             public void CaptureBackwards(long captureCapacity)
             {
-                LoopStream.Reserve(captureCapacity);
+                this.loopStream.Reserve(captureCapacity);
             }
 
             public override int Read(byte[] buffer, int offset, int count)
             {
                 int totalRead = 0;
-                while (count > 0 && LoopStream.Position < LoopStream.Length)
+                while (count > 0 && this.loopStream.Position < this.loopStream.Length)
                 {
-                    var read1 = (int)Math.Min(count, LoopStream.Length - LoopStream.Position);
-                    var read2 = LoopStream.Read(buffer, offset, read1);
+                    var read1 = (int)Math.Min(count, this.loopStream.Length - this.loopStream.Position);
+                    var read2 = this.loopStream.Read(buffer, offset, read1);
                     if (read2 == 0)
                         throw new EndOfStreamException("MultipartPartStream.Read:1");
 
                     totalRead += read2;
-                    PositionInternal += read2;
+                    this.positionInternal += read2;
                     count -= read2;
                     offset += read2;
                 }
 
-                while (count > 0 && BaseStreamIndex < BaseStreams.Count)
+                while (count > 0 && this.baseStreamIndex < this.baseStreams.Count)
                 {
-                    var stream = BaseStreams[BaseStreamIndex];
+                    var stream = this.baseStreams[this.baseStreamIndex];
                     var read1 = (int)Math.Min(count, stream.Length - stream.Position);
                     var read2 = stream.Read(buffer, offset, read1);
                     if (read2 == 0)
                         throw new EndOfStreamException("MultipartPartStream.Read:2");
 
-                    LoopStream.Feed(buffer, offset, read2);
-                    LoopStream.Position = LoopStream.Length;
+                    this.loopStream.Feed(buffer, offset, read2);
+                    this.loopStream.Position = this.loopStream.Length;
 
                     totalRead += read2;
-                    PositionInternal += read2;
+                    this.positionInternal += read2;
                     count -= read2;
                     offset += read2;
 
                     if (stream.Position == stream.Length)
-                        BaseStreamIndex++;
+                        this.baseStreamIndex++;
                 }
 
                 return totalRead;
@@ -322,25 +322,25 @@ namespace XIVLauncher.Common.Patching.Util
                 switch (origin)
                 {
                     case SeekOrigin.Begin:
-                        offset -= PositionInternal;
+                        offset -= this.positionInternal;
                         break;
                     case SeekOrigin.End:
-                        offset = OriginTotalLength - offset - PositionInternal;
+                        offset = OriginTotalLength - offset - this.positionInternal;
                         break;
                 }
 
-                var finalPosition = PositionInternal + offset;
+                var finalPosition = this.positionInternal + offset;
 
                 if (finalPosition > OriginOffset + OriginLength)
                     throw new ArgumentException("Tried to seek after the end of the segment.");
                 else if (finalPosition < OriginOffset)
                     throw new ArgumentException("Tried to seek behind the beginning of the segment.");
 
-                var backwards = LoopStream.Length - LoopStream.Position;
+                var backwards = this.loopStream.Length - this.loopStream.Position;
                 var backwardAdjustment = Math.Min(backwards, offset);
-                LoopStream.Position += backwardAdjustment;  // This will throw if there are not enough old data available
+                this.loopStream.Position += backwardAdjustment;  // This will throw if there are not enough old data available
                 offset -= backwardAdjustment;
-                PositionInternal += backwardAdjustment;
+                this.positionInternal += backwardAdjustment;
 
                 if (offset > 0)
                 {
@@ -350,10 +350,10 @@ namespace XIVLauncher.Common.Patching.Util
                             throw new EndOfStreamException("MultipartPartStream.Read:3");
                 }
 
-                if (PositionInternal != finalPosition)
+                if (this.positionInternal != finalPosition)
                     throw new IOException("Failed to seek properly.");
 
-                return PositionInternal;
+                return this.positionInternal;
             }
 
             public override bool CanRead => true;
@@ -364,7 +364,7 @@ namespace XIVLauncher.Common.Patching.Util
 
             public override long Length => OriginTotalLength;
 
-            public override long Position { get => PositionInternal; set => Seek(value, SeekOrigin.Begin); }
+            public override long Position { get => this.positionInternal; set => Seek(value, SeekOrigin.Begin); }
 
             public override void Flush() => throw new NotSupportedException();
 

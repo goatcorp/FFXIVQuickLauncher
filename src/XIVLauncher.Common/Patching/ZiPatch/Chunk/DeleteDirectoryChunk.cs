@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using Serilog;
 using XIVLauncher.Common.Patching.Util;
@@ -12,18 +11,17 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         public string DirName { get; protected set; }
 
-
         public DeleteDirectoryChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            var dirNameLen = reader.ReadUInt32BE();
+            var dirNameLen = this.Reader.ReadUInt32BE();
 
-            DirName = reader.ReadFixedLengthString(dirNameLen);
+            DirName = this.Reader.ReadFixedLengthString(dirNameLen);
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)
@@ -34,7 +32,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             }
             catch (Exception e)
             {
-                Log.Debug(e, $"Ran into {this}, failed at deleting the dir.");
+                Log.Debug(e, "Ran into {This}, failed at deleting the dir", this);
                 throw;
             }
         }

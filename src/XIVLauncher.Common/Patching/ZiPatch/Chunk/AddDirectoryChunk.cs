@@ -11,13 +11,13 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected override void ReadChunk()
         {
-            var start = reader.BaseStream.Position;
+            var start = this.Reader.BaseStream.Position;
 
-            var dirNameLen = reader.ReadUInt32BE();
+            var dirNameLen = this.Reader.ReadUInt32BE();
 
-            DirName = reader.ReadFixedLengthString(dirNameLen);
+            DirName = this.Reader.ReadFixedLengthString(dirNameLen);
 
-            reader.ReadBytes(Size - (int)(reader.BaseStream.Position - start));
+            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
 
