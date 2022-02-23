@@ -49,7 +49,7 @@ namespace XIVLauncher.Windows
                     Task.Run(() => _otpListener.Start());
                     Log.Debug("OTP server started...");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Log.Error(ex, "Could not start OTP HTTP listener.");
                 }
@@ -78,12 +78,17 @@ namespace XIVLauncher.Windows
 
         private void OtpTextBox_OnKeyDown(object sender, KeyEventArgs e)
         {
-            if ((e.Key != Key.Enter && e.Key != Key.Return) || OtpTextBox.Text.Length != 6) 
-                return;
-
-            Result = OtpTextBox.Text;
-            _otpListener?.Stop();
-            Close();
+            if (e.Key == Key.Escape)
+            {
+                _otpListener?.Stop();
+                Close();
+            }
+            else if (e.Key == Key.Enter && OtpTextBox.Text.Length == 6)
+            {
+                Result = OtpTextBox.Text;
+                _otpListener?.Stop();
+                Close();
+            }
         }
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
