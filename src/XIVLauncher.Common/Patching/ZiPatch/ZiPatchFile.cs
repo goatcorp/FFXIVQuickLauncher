@@ -21,6 +21,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch
         private readonly Stream _stream;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ZiPatchFile"/> class.
         /// Instantiates a ZiPatchFile from a Stream.
         /// </summary>
         /// <param name="stream">Stream to a ZiPatch.</param>

@@ -2,23 +2,54 @@ using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
+    /// <summary>
+    /// An "APLY" (Apply Option) chunk.
+    /// </summary>
     public class ApplyOptionChunk : ZiPatchChunk
     {
-        public new static string Type = "APLY";
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
+        public static new string Type = "APLY";
 
+        /// <summary>
+        /// Gets the ApplyOption kind.
+        /// </summary>
         public enum ApplyOptionKind : uint
         {
+            /// <summary>
+            /// Ignore missing.
+            /// </summary>
             IgnoreMissing = 1,
-            IgnoreOldMismatch = 2
+
+            /// <summary>
+            /// Ignore old mismatch.
+            /// </summary>
+            IgnoreOldMismatch = 2,
         }
 
-        // These are both false on all files seen
+        /// <summary>
+        /// Gets the option kind.
+        /// </summary>
         public ApplyOptionKind OptionKind { get; protected set; }
 
+        /// <summary>
+        /// Gets the option value.
+        /// </summary>
+        /// <remarks>
+        /// This is false on all files seen so far.
+        /// </remarks>
         public bool OptionValue { get; protected set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApplyOptionChunk"/> class.
+        /// </summary>
+        /// <param name="reader">Binary reader.</param>
+        /// <param name="offset">Chunk offset.</param>
+        /// <param name="size">Chunk size.</param>
         public ApplyOptionChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
 
+        /// <inheritdoc/>
         protected override void ReadChunk()
         {
             var start = this.Reader.BaseStream.Position;
@@ -39,6 +70,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
+        /// <inheritdoc/>
         public override void ApplyChunk(ZiPatchConfig config)
         {
             switch (OptionKind)
@@ -53,6 +85,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             }
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"{Type}:{OptionKind}:{OptionValue}";
