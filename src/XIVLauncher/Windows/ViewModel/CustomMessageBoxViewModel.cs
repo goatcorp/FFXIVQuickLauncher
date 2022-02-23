@@ -9,11 +9,11 @@ using XIVLauncher.Xaml;
 
 namespace XIVLauncher.Windows.ViewModel
 {
-    class ErrorWindowViewModel
+    class CustomMessageBoxViewModel
     {
         public ICommand CopyMessageTextCommand { get; set; }
 
-        public ErrorWindowViewModel()
+        public CustomMessageBoxViewModel()
         {
             SetupLoc();
         }

@@ -76,9 +76,8 @@ namespace XIVLauncher.Windows.ViewModel
 
                 if (isRepair)
                 {
-                    var res = new CustomMessageBox.Builder()
-                        .WithCaption("XIVLauncher")
-                        .WithText(Loc.Localize("GameRepairDisclaimer", "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?"))
+                    var res = CustomMessageBox.Builder
+                        .NewFrom(Loc.Localize("GameRepairDisclaimer", "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?"))
                         .WithButtons(MessageBoxButton.YesNo)
                         .WithImage(MessageBoxImage.Question)
                         .Show();
@@ -406,10 +405,11 @@ namespace XIVLauncher.Windows.ViewModel
                             {
                                 Log.Error(aggregate, "Unhandled AggregateException Inner during StartGameAndAddon...");
 
-                                ErrorWindow.Show(aggregate,
-                                    Loc.Localize("GenericLoginError",
-                                        "Error occurred during login, please report this error."), "StartGameAndAddon");
-                                Environment.Exit(1);
+                                CustomMessageBox.Builder
+                                    .NewFrom(aggregate, "StartGameAndAddon", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
+                                    .WithText(Loc.Localize("GenericLoginError",
+                                        "Error occurred during login, please report this error."))
+                                    .Show();
                                 break;
                             }
                     }
@@ -477,7 +477,11 @@ namespace XIVLauncher.Windows.ViewModel
                     return;
                 }
 
-                ErrorWindow.Show(ex, "Please also check your login information or try again.", "Login");
+                CustomMessageBox.Builder
+                    .NewFrom(ex, "Login")
+                    .WithText(Loc.Localize("CheckLoginInfoNotAdditionally",
+                        "Please check your login information or try again."))
+                    .Show();
                 Reactivate();
             }
         }
@@ -531,8 +535,8 @@ namespace XIVLauncher.Windows.ViewModel
                     switch (verify.State)
                     {
                         case PatchVerifier.VerifyState.Done:
-                            switch (new CustomMessageBox.Builder()
-                                .WithText(verify.NumBrokenFiles switch
+                            switch (CustomMessageBox.Builder
+                                .NewFrom(verify.NumBrokenFiles switch
                                 {
                                     0 => Loc.Localize("GameRepairSuccess0", "All game files seem to be valid."),
                                     1 => Loc.Localize("GameRepairSuccess1", "XIVLauncher has successfully repaired 1 game file."),
@@ -561,7 +565,8 @@ namespace XIVLauncher.Windows.ViewModel
 
                         case PatchVerifier.VerifyState.Error:
                             doLogin = false;
-                            doVerify = new CustomMessageBox.Builder()
+                            doVerify = CustomMessageBox.Builder
+                                .NewFrom(verify.LastException, "PatchVerifier")
                                 .WithText(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."))
                                 .WithImage(MessageBoxImage.Exclamation)
                                 .WithButtons(MessageBoxButton.OKCancel)
@@ -729,9 +734,11 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (Exception ex)
             {
-                ErrorWindow.Show(ex,
-                    "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-                    "Addons");
+                CustomMessageBox.Builder
+                    .NewFrom(ex, "Addons")
+                    .WithText(Loc.Localize("AddonLoadError",
+                        "This could be caused by your antivirus, please check its logs and add any needed exclusions."))
+                    .Show();
                 IsLoggingIn = false;
 
                 addonMgr.StopAddons();
@@ -900,7 +907,10 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (Exception ex)
             {
-                ErrorWindow.Show(ex, "Could not patch boot.", nameof(HandleBootCheck));
+                CustomMessageBox.Builder
+                    .NewFrom(ex, nameof(HandleBootCheck))
+                    .WithText(Loc.Localize("BootPatchFailure", "Could not patch boot."))
+                    .Show();
                 Environment.Exit(0);
 
                 return false;
