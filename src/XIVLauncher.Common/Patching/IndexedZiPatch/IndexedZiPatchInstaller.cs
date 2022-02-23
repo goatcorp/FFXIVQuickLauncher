@@ -1,4 +1,3 @@
-﻿using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +8,8 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Serilog;
 using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.IndexedZiPatch

@@ -10,15 +10,15 @@ public class NotEnoughSpaceException : Exception
         AllPatches,
         Game,
     }
-    
+
     public SpaceKind Kind { get; private set; }
-    
+
     public long BytesRequired { get; set; }
-    
+
     public long BytesFree { get; set; }
 
     public NotEnoughSpaceException(SpaceKind kind, long required, long free)
     {
-        
+
     }
 }

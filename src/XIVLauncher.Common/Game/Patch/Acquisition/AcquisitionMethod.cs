@@ -1,4 +1,4 @@
-﻿namespace XIVLauncher.Common.Game.Patch.Acquisition
+namespace XIVLauncher.Common.Game.Patch.Acquisition
 {
     public enum AcquisitionMethod
     {

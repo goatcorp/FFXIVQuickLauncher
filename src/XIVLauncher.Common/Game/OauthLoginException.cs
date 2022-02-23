@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
+
 using Serilog;
 
-namespace XIVLauncher.Common.Game  
+namespace XIVLauncher.Common.Game
 {
     [Serializable]
     public class OauthLoginException : Exception
@@ -11,7 +12,7 @@ namespace XIVLauncher.Common.Game
             new(@"window.external.user\(""login=auth,ng,err,(?<errorMessage>.*)\""\);", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public string? OauthErrorMessage { get; private set; }
-        
+
         public OauthLoginException(string document) : base(GetErrorMessage(document) ?? "Unknown error")
         {
             OauthErrorMessage = GetErrorMessage(document);

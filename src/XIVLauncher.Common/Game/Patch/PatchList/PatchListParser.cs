@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace XIVLauncher.Common.Game.Patch.PatchList
@@ -11,7 +11,7 @@ namespace XIVLauncher.Common.Game.Patch.PatchList
                 new[] { "\r\n", "\r", "\n", Environment.NewLine },
                 StringSplitOptions.None
             );
-            
+
             var output = new List<PatchListEntry>();
 
             for (var i = 5; i < lines.Length - 2; i++)
@@ -30,7 +30,7 @@ namespace XIVLauncher.Common.Game.Patch.PatchList
                     Url = fields[fields.Length == 9 ? 8 : 5]
                 });
             }
-            
+
             return output.ToArray();
         }
     }

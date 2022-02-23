@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Encryption;
@@ -460,7 +461,7 @@ namespace XIVLauncher.Common.Game
 
             Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
 
-            var checkSum = (byte) -(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+            var checkSum = (byte)-(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
             bytes[0] = checkSum;
 
             return BitConverter.ToString(bytes).Replace("-", "").ToLower();

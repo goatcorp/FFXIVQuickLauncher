@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
@@ -29,7 +30,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public List<long> CompressedDataSourceOffsets { get; protected set; }
         public List<SqpkCompressedBlock> CompressedData { get; protected set; }
 
-        public SqpkFile(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkFile(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
 
         protected override void ReadChunk()
         {

@@ -1,4 +1,4 @@
-﻿using XIVLauncher.Common.Patching.Util;
+using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -21,7 +21,8 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
-        public ApplyFreeSpaceChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+
+        public ApplyFreeSpaceChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
 
         public override string ToString()
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace XIVLauncher.Common.Patching.Util
@@ -7,7 +7,7 @@ namespace XIVLauncher.Common.Patching.Util
     {
         private readonly Crc32 _crc32 = new Crc32();
 
-        public ChecksumBinaryReader(Stream input) : base(input) {}
+        public ChecksumBinaryReader(Stream input) : base(input) { }
 
 
         public void InitCrc32()

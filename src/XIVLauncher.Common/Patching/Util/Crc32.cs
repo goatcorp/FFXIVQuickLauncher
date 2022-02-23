@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 
 namespace XIVLauncher.Common.Patching.Util
 {
@@ -14,7 +14,7 @@ namespace XIVLauncher.Common.Patching.Util
             {
                 var k = (uint)i;
                 for (var j = 0; j < 8; j++)
-                    k = (k & 1) != 0 ? 
+                    k = (k & 1) != 0 ?
                         (k >> 1) ^ POLY :
                         k >> 1;
 

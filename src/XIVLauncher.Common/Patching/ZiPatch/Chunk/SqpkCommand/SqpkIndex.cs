@@ -1,4 +1,4 @@
-﻿using XIVLauncher.Common.Patching.Util;
+using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
@@ -25,7 +25,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
 
 
-        public SqpkIndex(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkIndex(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
 
         protected override void ReadChunk()
         {

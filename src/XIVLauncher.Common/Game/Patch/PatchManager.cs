@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Serilog;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
@@ -96,7 +97,7 @@ namespace XIVLauncher.Common.Game.Patch
             if (!_patchStore.Exists)
                 _patchStore.Create();
 
-            Downloads = patches.Select(patchListEntry => new PatchDownload {Patch = patchListEntry, State = PatchState.Nothing}).ToList().AsReadOnly();
+            Downloads = patches.Select(patchListEntry => new PatchDownload { Patch = patchListEntry, State = PatchState.Nothing }).ToList().AsReadOnly();
 
             // All dl slots are available at the start
             for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
@@ -326,9 +327,9 @@ namespace XIVLauncher.Common.Game.Patch
 
         public void CancelAllDownloads()
         {
-            #if !DEBUG
+#if !DEBUG
             return;
-            #endif
+#endif
 
             foreach (var downloadService in DownloadServices)
             {
@@ -468,12 +469,12 @@ namespace XIVLauncher.Common.Game.Patch
                 return HashCheckResult.BadLength;
             }
 
-            var parts = (int) Math.Ceiling((double) patchListEntry.Length / patchListEntry.HashBlockSize);
+            var parts = (int)Math.Ceiling((double)patchListEntry.Length / patchListEntry.HashBlockSize);
             var block = new byte[patchListEntry.HashBlockSize];
 
             for (var i = 0; i < parts; i++)
             {
-                var read = stream.Read(block, 0, (int) patchListEntry.HashBlockSize);
+                var read = stream.Read(block, 0, (int)patchListEntry.HashBlockSize);
 
                 if (read < patchListEntry.HashBlockSize)
                 {
@@ -533,5 +534,6 @@ namespace XIVLauncher.Common.Game.Patch
 
         private long GetDownloadLength() => GetDownloadLength(Downloads.Count);
 
-        private long GetDownloadLength(int takeAmount) => Downloads.Take(takeAmount).Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();    }
+        private long GetDownloadLength(int takeAmount) => Downloads.Take(takeAmount).Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();
+    }
 }

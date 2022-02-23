@@ -1,4 +1,5 @@
-﻿using System.IO;
+using System.IO;
+
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
@@ -18,7 +19,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public long BlockDataSourceOffset { get; protected set; }
 
 
-        public SqpkAddData(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkAddData(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
 
         protected override void ReadChunk()
         {

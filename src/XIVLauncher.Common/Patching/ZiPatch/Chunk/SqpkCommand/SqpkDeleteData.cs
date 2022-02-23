@@ -1,4 +1,5 @@
-﻿using System.IO;
+using System.IO;
+
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
@@ -14,7 +15,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public int BlockNumber { get; protected set; }
 
 
-        public SqpkDeleteData(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkDeleteData(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
 
         protected override void ReadChunk()
         {

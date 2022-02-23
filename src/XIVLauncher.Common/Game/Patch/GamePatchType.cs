@@ -1,4 +1,4 @@
-﻿namespace XIVLauncher.Common.Game.Patch
+namespace XIVLauncher.Common.Game.Patch
 {
     public enum GamePatchType
     {

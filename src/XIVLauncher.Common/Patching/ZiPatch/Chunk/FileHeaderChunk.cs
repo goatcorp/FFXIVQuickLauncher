@@ -1,4 +1,4 @@
-﻿using XIVLauncher.Common.Patching.Util;
+using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -24,7 +24,8 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         public uint SqpkHeaderCommands { get; protected set; }
         public uint SqpkFileCommands { get; protected set; }
 
-        public FileHeaderChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+
+        public FileHeaderChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
 
         protected override void ReadChunk()
         {

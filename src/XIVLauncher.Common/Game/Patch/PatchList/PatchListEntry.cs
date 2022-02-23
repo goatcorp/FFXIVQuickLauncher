@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace XIVLauncher.Common.Game.Patch.PatchList
@@ -21,7 +21,7 @@ namespace XIVLauncher.Common.Game.Patch.PatchList
         public string GetRepoName()
         {
             var name = this.Deconstruct().Groups[3].Captures[0].Value;
-            
+
             // The URL doesn't have the "ffxiv" part for ffxiv repo. Let's fake it for readability.
             return name == "4e9a232b" ? "ffxiv" : name;
         }

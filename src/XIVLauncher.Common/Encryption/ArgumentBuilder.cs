@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+
 using Serilog;
 
 namespace XIVLauncher.Common.Encryption
@@ -17,7 +18,7 @@ namespace XIVLauncher.Common.Encryption
         private static readonly char[] checksumTable =
         {
             'f', 'X', '1', 'p', 'G', 't', 'd', 'S',
-            '5', 'C', 'A', 'P', '4', '_', 'V', 'L'
+            '5', 'C', 'A', 'P', '4', '_', 'V', 'L',
         };
 
         private static char DeriveChecksum(uint key)
@@ -26,7 +27,8 @@ namespace XIVLauncher.Common.Encryption
             try
             {
                 return checksumTable[index];
-            } catch (IndexOutOfRangeException)
+            }
+            catch (IndexOutOfRangeException)
             {
                 return '!'; // Conceivably, this shouldn't happen...
             }
