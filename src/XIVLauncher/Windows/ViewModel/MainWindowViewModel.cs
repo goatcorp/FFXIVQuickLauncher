@@ -591,7 +591,8 @@ namespace XIVLauncher.Windows.ViewModel
                 Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
 
                 var patcher = new PatchManager(CommonSettings.Instance, Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer, _launcher, loginResult.UniqueId);
-
+                patcher.OnFail += PatcherOnFail;
+                
                 IsEnabled = false;
                 Hide();
 
@@ -636,6 +637,26 @@ namespace XIVLauncher.Windows.ViewModel
 
                 return false;
             }
+        }
+
+        private void PatcherOnFail(PatchManager.FailReason reason, string versionId)
+        {
+            var dlFailureLoc = Loc.Localize("PatchManDlFailure",
+                "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
+            
+            switch (reason)
+            {
+                case PatchManager.FailReason.DownloadProblem:
+                    CustomMessageBox.Show(string.Format(dlFailureLoc, "Problem", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
+                case PatchManager.FailReason.HashCheck:
+                    CustomMessageBox.Show(string.Format(dlFailureLoc, "IsHashCheckPass", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(reason), reason, null);
+            }
+
+            Environment.Exit(0);
         }
 
         public void StartGameAndAddon(Launcher.LoginResult loginResult, bool gateStatus, bool isSteam, bool forceNoDalamud)
@@ -846,7 +867,8 @@ namespace XIVLauncher.Windows.ViewModel
                     }
 
                     var patcher = new PatchManager(CommonSettings.Instance, Repository.Boot, bootPatches, App.Settings.GamePath,
-                        App.Settings.PatchPath, _installer, null, null);
+                        App.Settings.PatchPath, _installer, _launcher, null);
+                    patcher.OnFail += PatcherOnFail;
 
                     IsEnabled = false;
 

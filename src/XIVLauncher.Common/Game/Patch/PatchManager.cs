@@ -71,11 +71,10 @@ namespace XIVLauncher.Common.Game.Patch
 
         public long AllDownloadsLength => GetDownloadLength();
 
-        public event Action<FailReason, string> OnFail; // TODO(goat): hook up
+        public event Action<FailReason, string> OnFail;
 
         public enum FailReason
         {
-            NoPatcher,
             DownloadProblem,
             HashCheck,
         }
@@ -253,31 +252,26 @@ namespace XIVLauncher.Common.Game.Patch
 
             acquisition.Complete += (sender, args) =>
             {
-                //var dlFailureLoc = Loc.Localize("PatchManDlFailure",
-                //    "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
-
                 if (args == AcquisitionResult.Error)
                 {
                     Log.Error("Download failed for {0}", download.Patch.VersionId);
 
                     CancelAllDownloads();
-                    //CustomMessageBox.Show(string.Format(dlFailureLoc, "Problem", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    OnFail?.Invoke(FailReason.DownloadProblem, download.Patch.VersionId);
                     
+                    OnFail?.Invoke(FailReason.DownloadProblem, download.Patch.VersionId);
+
+                    IsSuccess = false;
+                    IsDone = true;
+
                     Environment.Exit(0);
                     return;
                 }
 
                 if (args == AcquisitionResult.Cancelled)
                 {
+                    // Cancellation should not produce an error message, since it is always triggered by another error or the user.
                     Log.Error("Download cancelled for {0}", download.Patch.VersionId);
-                    /*
-                    Cancellation should not produce an error message, since it is always triggered by another error or the user.
 
-                    CancelAllDownloads();
-                    CustomMessageBox.Show(string.Format(Loc.Localize("PatchManDlFailure", "XIVLauncher could not verify the downloaded game files.\n\nThis usually indicates a problem with your internet connection.\nIf this error occurs again, try using a VPN set to Japan.\n\nContext: {0}\n{1}"), "Cancelled", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Environment.Exit(0);
-                    */
                     return;
                 }
 
@@ -291,8 +285,11 @@ namespace XIVLauncher.Common.Game.Patch
                 {
                     CancelAllDownloads();
                     Log.Error("IsHashCheckPass failed with {Result} for {VersionId} after DL", checkResult, download.Patch.VersionId);
-                    //CustomMessageBox.Show(string.Format(dlFailureLoc, $"IsHashCheckPass({checkResult})", download.Patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    
                     OnFail?.Invoke(FailReason.HashCheck, download.Patch.VersionId);
+                    
+                    IsSuccess = false;
+                    IsDone = true;
                     
                     outFile.Delete();
                     Environment.Exit(0);

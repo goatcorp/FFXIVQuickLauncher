@@ -29,7 +29,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public InstallerState State { get; private set; } = InstallerState.NotStarted;
 
-        public event Action OnFail; // TODO(goat): Handle in XL
+        public event Action OnFail;
 
         public PatchInstaller(ISettings _settings)
         {
