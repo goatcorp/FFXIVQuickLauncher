@@ -66,19 +66,30 @@ namespace XIVLauncher.Windows
 
         private void UpdateStatusDisplay()
         {
-            if (_verify.IsInstalling)
+            CurrentStepText.Text = _verify.CurrentMetaInstallState switch
             {
-                this.CurrentStepText.Text = ViewModel.RepairingLoc;
-            }
-            else
-            {
-                this.CurrentStepText.Text = ViewModel.VerifyingLoc;
-            }
+                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.NotStarted => ViewModel.VerifyingLoc,
+                _ => ViewModel.RepairingLoc,
+            };
 
             InfoTextBlock.Text = $"{_verify.CurrentFile}";
+
             StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {Math.Min(_verify.TaskIndex + 1, _verify.TaskCount)}/{_verify.TaskCount} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
-            SpeedTextBlock.Text = string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed));
-            EstimatedTimeTextBlock.Text = ViewModel.FormatEstimatedTime(_verify.Total - _verify.Progress, _verify.Speed);
+
+            SpeedTextBlock.Text = _verify.CurrentMetaInstallState switch
+            {
+                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => ViewModel.ReattemptWaitingLoc,
+                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => ViewModel.ConnectingLoc,
+                _ => string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed)),
+            };
+
+            EstimatedTimeTextBlock.Text = _verify.CurrentMetaInstallState switch
+            {
+                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => "",
+                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => "",
+                _ => ViewModel.FormatEstimatedTime(_verify.Total - _verify.Progress, _verify.Speed),
+            };
+
             this.Progress.Value = _verify.Total != 0 ? 100.0 * _verify.Progress / _verify.Total : 0;
         }
 
