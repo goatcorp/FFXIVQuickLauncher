@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NuGet;
 using Serilog;
-using XIVLauncher.Cache;
 using XIVLauncher.Common;
+using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud
@@ -141,7 +141,7 @@ namespace XIVLauncher.Dalamud
                     CleanUpOld(addonPath, remoteVersionInfo.AssemblyVersion);
 
                     // This is a good indicator that we should clear the UID cache
-                    UniqueIdCache.Instance.Reset();
+                    CommonUniqueIdCache.Instance.Reset();
                 }
                 catch (Exception ex)
                 {

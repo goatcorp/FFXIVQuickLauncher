@@ -6,7 +6,7 @@ public interface IUniqueIdCache
 
     void Add(string name, string uid, int region, int maxExpansion);
 
-    bool TryGet(string name, out CachedUid cached);
+    bool TryGet(string userName, out CachedUid cached);
     
     public struct CachedUid
     {

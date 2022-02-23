@@ -14,13 +14,11 @@ using CheapLoc;
 using Serilog;
 using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
-using XIVLauncher.Cache;
 using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Game;
-using XIVLauncher.PatchInstaller;
 using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;
 using XIVLauncher.Xaml;
@@ -178,7 +176,7 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
-            var hasValidCache = UniqueIdCache.Instance.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
+            var hasValidCache = CommonUniqueIdCache.Instance.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
 
             var otp = string.Empty;
             if (IsOtp && (!hasValidCache || isRepair))
@@ -856,7 +854,7 @@ namespace XIVLauncher.Windows.ViewModel
                     IsEnabled = true;
 
                     // This is a good indicator that we should clear the UID cache
-                    UniqueIdCache.Instance.Reset();
+                    CommonUniqueIdCache.Instance.Reset();
 
                     mutex.Close();
                     mutex = null;

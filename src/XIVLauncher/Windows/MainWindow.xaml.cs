@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using CheapLoc;
 using Serilog;
 using XIVLauncher.Accounts;
-using XIVLauncher.Cache;
 using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
@@ -297,7 +296,7 @@ namespace XIVLauncher.Windows
 
             if (App.Settings.UniqueIdCacheEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                UniqueIdCache.Instance.Reset();
+                CommonUniqueIdCache.Instance.Reset();
                 Console.Beep(523, 150); // Feedback without popup
             }
 
@@ -444,7 +443,7 @@ namespace XIVLauncher.Windows
         private void SetupMaintenanceQueueTimer()
         {
             // This is a good indicator that we should clear the UID cache
-            UniqueIdCache.Instance.Reset();
+            CommonUniqueIdCache.Instance.Reset();
 
             _maintenanceQueueTimer = new Timer
             {
