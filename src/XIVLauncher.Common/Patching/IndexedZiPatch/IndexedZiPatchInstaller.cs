@@ -647,7 +647,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var indices = MissingPartIndicesPerPatch[sourceIndex];
             var indicesPerRequest = (int)Math.Ceiling(1.0 * indices.Count / splitBy);
             for (int j = 0; j < indices.Count; j += indicesPerRequest)
-                QueueInstall(sourceIndex, file, indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)).ToHashSet());
+                QueueInstall(sourceIndex, file, new HashSet<Tuple<int, int>>(indices.Skip(j).Take(Math.Min(indicesPerRequest, indices.Count - j)))); // This was .ToHashSet(), but .NET Standard 2.0 doesn't have it
         }
 
         public async Task Install(int concurrentCount, CancellationToken? cancellationToken = null)

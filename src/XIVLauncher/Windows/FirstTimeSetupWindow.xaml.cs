@@ -25,7 +25,7 @@ namespace XIVLauncher.Windows
 
             this.DataContext = new FirstTimeSetupViewModel();
 
-            var detectedPath = Util.TryGamePaths();
+            var detectedPath = AppUtil.TryGamePaths();
 
             if (detectedPath != null) GamePathEntry.Text = detectedPath;
 
