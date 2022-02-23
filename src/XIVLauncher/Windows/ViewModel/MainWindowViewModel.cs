@@ -21,6 +21,7 @@ using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Game;
 using XIVLauncher.PatchInstaller;
+using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;
 using XIVLauncher.Xaml;
 
@@ -30,8 +31,8 @@ namespace XIVLauncher.Windows.ViewModel
     {
         public bool IsLoggingIn;
 
-        private readonly Launcher _launcher = new();
-        private readonly Common.Game.Patch.PatchInstaller _installer = new();
+        private readonly Launcher _launcher = new(CommonRunner.Instance, CommonSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
+        private readonly Common.Game.Patch.PatchInstaller _installer = new(CommonSettings.Instance);
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
 
@@ -482,7 +483,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Log.Information("STARTING REPAIR");
 
-                using var verify = new PatchVerifier(loginResult, 20);
+                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20);
 
                 Hide();
                 IsEnabled = false;
@@ -577,7 +578,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
 
-                var patcher = new PatchManager(Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer, _launcher, loginResult.UniqueId);
+                var patcher = new PatchManager(CommonSettings.Instance, Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer, _launcher, loginResult.UniqueId);
 
                 IsEnabled = false;
                 Hide();
@@ -647,7 +648,7 @@ namespace XIVLauncher.Windows.ViewModel
             }
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-            var gameProcess = Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
+            var gameProcess = _launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
                     isSteam, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false),
                     process => {
@@ -831,7 +832,7 @@ namespace XIVLauncher.Windows.ViewModel
                         return false;
                     }
 
-                    var patcher = new PatchManager(Repository.Boot, bootPatches, App.Settings.GamePath,
+                    var patcher = new PatchManager(CommonSettings.Instance, Repository.Boot, bootPatches, App.Settings.GamePath,
                         App.Settings.PatchPath, _installer, null, null);
 
                     IsEnabled = false;

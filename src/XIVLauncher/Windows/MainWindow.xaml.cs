@@ -18,6 +18,7 @@ using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch.Acquisition;
+using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 using Timer = System.Timers.Timer;
@@ -36,8 +37,7 @@ namespace XIVLauncher.Windows
 
         private Timer _maintenanceQueueTimer;
 
-        private readonly Launcher _launcher = new Launcher();
-        private readonly Common.Game.Patch.PatchInstaller _installer = new Common.Game.Patch.PatchInstaller();
+        private readonly Launcher _launcher = new(CommonRunner.Instance, CommonSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
 
         private AccountManager _accountManager;
 
