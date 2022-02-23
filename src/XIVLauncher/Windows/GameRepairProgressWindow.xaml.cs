@@ -38,8 +38,6 @@ namespace XIVLauncher.Windows
             _timer.Elapsed += ViewUpdateTimerOnElapsed;
             _timer.AutoReset = true;
             _timer.Interval = verify.ProgressUpdateInterval;
-            _timer.Enabled = true;
-            _timer.Start();
         }
 
         private async Task CancelButton_OnCommand(object p)
@@ -103,6 +101,11 @@ namespace XIVLauncher.Windows
         public void StopTimer()
         {
             _timer.Stop();
+        }
+
+        public void StartTimer()
+        {
+            _timer.Start();
         }
     }
 }

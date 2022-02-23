@@ -76,8 +76,13 @@ namespace XIVLauncher.Windows.ViewModel
 
                 if (isRepair)
                 {
-                    if (MessageBox.Show(Loc.Localize("GameRepairDisclaimer", "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?"),
-                            "XIVLauncher", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                    var res = new CustomMessageBox.Builder()
+                        .WithCaption("XIVLauncher")
+                        .WithText(Loc.Localize("GameRepairDisclaimer", "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?"))
+                        .WithButtons(MessageBoxButton.YesNo)
+                        .WithImage(MessageBoxImage.Question)
+                        .Show();
+                    if (res == MessageBoxResult.No)
                     {
                         Reactivate();
                         return;
@@ -241,10 +246,13 @@ namespace XIVLauncher.Windows.ViewModel
 
                     if (isRepair && loginResult.State == Launcher.LoginState.NeedsPatchGame)
                     {
-                        await RepairGame(loginResult);
-
-                        Reactivate();
-                        return;
+                        if (await RepairGame(loginResult))
+                            startGame = true;
+                        else
+                        {
+                            Reactivate();
+                            return;
+                        }
                     }
 
                     if (loginResult.State == Launcher.LoginState.NoService)
@@ -270,56 +278,59 @@ namespace XIVLauncher.Windows.ViewModel
                         return;
                     }
 
-                    /*
-                     * The server requested us to patch Boot, even though in order to get to this code, we just checked for boot patches.
-                     *
-                     * This means that something or someone modified boot binaries without our involvement.
-                     * We have no way to go back to a "known" good state other than to do a full reinstall.
-                     *
-                     * This has happened multiple times with users that have viruses that infect other EXEs and change their hashes, causing the update
-                     * server to reject our boot hashes.
-                     *
-                     * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
-                     * complexity and if boot is fucked game probably is too.
-                     */
-                    if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
+                    if (!isRepair)
                     {
-                        CustomMessageBox.Show(
-                            Loc.Localize("EverythingIsFuckedMessage",
-                                "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord."),
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                        Reactivate();
-                        return;
-                    }
-
-                    var patchSuccess = true;
-                    if (App.Settings.AskBeforePatchInstall.HasValue && App.Settings.AskBeforePatchInstall.Value)
-                    {
-                        var selfPatchAsk = MessageBox.Show(
-                            Loc.Localize("PatchInstallDisclaimer",
-                                "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?"),
-                            "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-                        if (selfPatchAsk == MessageBoxResult.Yes)
+                        /*
+                         * The server requested us to patch Boot, even though in order to get to this code, we just checked for boot patches.
+                         *
+                         * This means that something or someone modified boot binaries without our involvement.
+                         * We have no way to go back to a "known" good state other than to do a full reinstall.
+                         *
+                         * This has happened multiple times with users that have viruses that infect other EXEs and change their hashes, causing the update
+                         * server to reject our boot hashes.
+                         *
+                         * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
+                         * complexity and if boot is fucked game probably is too.
+                         */
+                        if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
                         {
-                            patchSuccess = await InstallGamePatch(loginResult);
-                        }
-                        else
-                        {
+                            CustomMessageBox.Show(
+                                Loc.Localize("EverythingIsFuckedMessage",
+                                    "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord."),
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
                             Reactivate();
                             return;
                         }
-                    }
-                    else
-                    {
-                        patchSuccess = await InstallGamePatch(loginResult);
-                    }
 
-                    if (!patchSuccess)
-                    {
-                        Log.Error("patchSuccess != true");
-                        return;
+                        var patchSuccess = true;
+                        if (App.Settings.AskBeforePatchInstall.HasValue && App.Settings.AskBeforePatchInstall.Value)
+                        {
+                            var selfPatchAsk = MessageBox.Show(
+                                Loc.Localize("PatchInstallDisclaimer",
+                                    "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?"),
+                                "Out of date", MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+                            if (selfPatchAsk == MessageBoxResult.Yes)
+                            {
+                                patchSuccess = await InstallGamePatch(loginResult);
+                            }
+                            else
+                            {
+                                Reactivate();
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            patchSuccess = await InstallGamePatch(loginResult);
+                        }
+
+                        if (!patchSuccess)
+                        {
+                            Log.Error("patchSuccess != true");
+                            return;
+                        }
                     }
                 }
 
@@ -358,49 +369,49 @@ namespace XIVLauncher.Windows.ViewModel
                             Reactivate();
                             break;
                         case GameExitedException:
-                        {
-                            Log.Error("Game exited prematurely!");
-
-                            if (Process.GetProcessesByName("ffxiv_dx11").Length +
-                                Process.GetProcessesByName("ffxiv").Length >= 2)
                             {
-                                CustomMessageBox.Show(
-                                    Loc.Localize("MultiboxDeniedWarning",
-                                        "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly."),
-                                    "XIVLauncher Error", image: MessageBoxImage.Error);
-                            }
-                            else
-                            {
-                                CustomMessageBox.Show(
-                                    Loc.Localize("GameExitedPrematurelyError",
-                                        "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid."),
-                                    Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
-                            }
+                                Log.Error("Game exited prematurely!");
 
-                            Reactivate();
-                            break;
-                        }
+                                if (Process.GetProcessesByName("ffxiv_dx11").Length +
+                                    Process.GetProcessesByName("ffxiv").Length >= 2)
+                                {
+                                    CustomMessageBox.Show(
+                                        Loc.Localize("MultiboxDeniedWarning",
+                                            "You can't launch more than two instances of the game by default.\n\nPlease check if there is an instance of the game that did not close correctly."),
+                                        "XIVLauncher Error", image: MessageBoxImage.Error);
+                                }
+                                else
+                                {
+                                    CustomMessageBox.Show(
+                                        Loc.Localize("GameExitedPrematurelyError",
+                                            "XIVLauncher could not detect that the game started correctly.\n\nThis may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid."),
+                                        Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK,
+                                        MessageBoxImage.Error);
+                                }
+
+                                Reactivate();
+                                break;
+                            }
                         case BinaryNotPresentException binaryNotPresentException:
-                        {
-                            CustomMessageBox.Show(
-                                Loc.Localize("BinaryNotPresentError",
-                                    "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game."),
-                                "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            {
+                                CustomMessageBox.Show(
+                                    Loc.Localize("BinaryNotPresentError",
+                                        "Could not find the game executable.\nThis might be caused by your antivirus. You may have to reinstall the game."),
+                                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                            Log.Error("Game binary at {0} wasn't present.", binaryNotPresentException.Path);
-                            break;
-                        }
+                                Log.Error("Game binary at {0} wasn't present.", binaryNotPresentException.Path);
+                                break;
+                            }
                         default:
-                        {
-                            Log.Error(aggregate, "Unhandled AggregateException Inner during StartGameAndAddon...");
+                            {
+                                Log.Error(aggregate, "Unhandled AggregateException Inner during StartGameAndAddon...");
 
-                            ErrorWindow.Show(aggregate,
-                                Loc.Localize("GenericLoginError",
-                                    "Error occurred during login, please report this error."), "StartGameAndAddon");
-                            Environment.Exit(1);
-                            break;
-                        }
+                                ErrorWindow.Show(aggregate,
+                                    Loc.Localize("GenericLoginError",
+                                        "Error occurred during login, please report this error."), "StartGameAndAddon");
+                                Environment.Exit(1);
+                                break;
+                            }
                     }
                 }
             }
@@ -473,6 +484,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<bool> RepairGame(Launcher.LoginResult loginResult)
         {
+            var doLogin = false;
             var mutex = new Mutex(false, "XivLauncherIsPatching");
             if (mutex.WaitOne(0, false))
             {
@@ -504,56 +516,74 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 var progressDialog = GameRepairProgressWindowFactory(verify);
-                progressDialog.Show();
 
-                verify.Start();
-
-                while (verify.State != PatchVerifier.VerifyState.Done && verify.State != PatchVerifier.VerifyState.Cancelled && verify.State != PatchVerifier.VerifyState.Error)
+                for (bool doVerify = true; doVerify;)
                 {
-                    await Task.Delay(1000);
-                }
+                    progressDialog.Dispatcher.Invoke(() => progressDialog.Show());
+                    progressDialog.Dispatcher.Invoke(() => progressDialog.StartTimer());
 
-                progressDialog.Dispatcher.Invoke(() =>
-                {
-                    progressDialog.StopTimer();
-                    progressDialog.Hide();
-                    progressDialog.Close();
-                });
+                    verify.Start();
+                    await verify.WaitForCompletion();
 
-                switch (verify.State)
-                {
-                    case PatchVerifier.VerifyState.Done:
+                    progressDialog.Dispatcher.Invoke(() => progressDialog.StopTimer());
+                    progressDialog.Dispatcher.Invoke(() => progressDialog.Hide());
+
+                    switch (verify.State)
                     {
-                        var successMsgTemplate = Loc.Localize("GameRepairSuccess",
-                            "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.");
+                        case PatchVerifier.VerifyState.Done:
+                            switch (new CustomMessageBox.Builder()
+                                .WithText(verify.NumBrokenFiles switch
+                                {
+                                    0 => Loc.Localize("GameRepairSuccess0", "All game files seem to be valid."),
+                                    1 => Loc.Localize("GameRepairSuccess1", "XIVLauncher has successfully repaired 1 game file."),
+                                    _ => string.Format(Loc.Localize("GameRepairSuccessPlural", "XIVLauncher has successfully repaired {0} game files."), verify.NumBrokenFiles),
+                                })
+                                .WithImage(MessageBoxImage.Information)
+                                .WithButtons(MessageBoxButton.YesNoCancel)
+                                .WithYesButtonText(Loc.Localize("GameRepairSuccess_LaunchGame", "_Launch game"))
+                                .WithNoButtonText(Loc.Localize("GameRepairSuccess_VerifyAgain", "_Verify again"))
+                                .WithCancelButtonText(Loc.Localize("GameRepairSuccess_Close", "_Close"))
+                                .Show())
+                            {
+                                case MessageBoxResult.Yes:
+                                    doLogin = true;
+                                    doVerify = false;
+                                    break;
+                                case MessageBoxResult.No:
+                                    doLogin = false;
+                                    doVerify = true;
+                                    break;
+                                case MessageBoxResult.Cancel:
+                                    doLogin = doVerify = false;
+                                    break;
+                            }
+                            break;
 
-                        CustomMessageBox.Show(string.Format(successMsgTemplate, verify.NumBrokenFiles, verify.NumBrokenFiles == 1 ? Loc.Localize("GameRepairSuccessFileWas", "file was") : Loc.Localize("GameRepairSuccessFilesWere", "files were")),
-                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
-                        break;
+                        case PatchVerifier.VerifyState.Error:
+                            doLogin = false;
+                            doVerify = new CustomMessageBox.Builder()
+                                .WithText(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."))
+                                .WithImage(MessageBoxImage.Exclamation)
+                                .WithButtons(MessageBoxButton.OKCancel)
+                                .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
+                                .Show() == MessageBoxResult.OK;
+                            break;
+
+                        case PatchVerifier.VerifyState.Cancelled:
+                            doLogin = doVerify = false;
+                            break;
                     }
-                    case PatchVerifier.VerifyState.Error:
-                        CustomMessageBox.Show(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\n\nYou may have to reinstall the game."),
-                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                        break;
                 }
 
+                progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
                 mutex.Close();
                 mutex = null;
-
-#if DEBUG
-                if (Keyboard.IsKeyDown(Key.LeftAlt))
-                    return await RepairGame(loginResult);
-#endif
-
-                return verify.State == PatchVerifier.VerifyState.Done;
             }
             else
             {
                 CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-                Environment.Exit(0);
-
-                return false;
             }
+            return doLogin;
         }
 
         private async Task<bool> InstallGamePatch(Launcher.LoginResult loginResult)
@@ -649,7 +679,8 @@ namespace XIVLauncher.Windows.ViewModel
             var gameProcess = _launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
                     isSteam, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false),
-                    process => {
+                    process =>
+                    {
                         if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.EntryPoint)
                         {
                             if (isDalamudEnabled && App.Settings.IsDx11 && dalamudOk)
@@ -1006,7 +1037,7 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoDalamudLoc = Loc.Localize("LoginBoxNoDalamudLogin", "Start without Dalamud");
             LoginTooltipLoc = Loc.Localize("LoginBoxLoginTooltip", "Log in with the provided credentials");
             WaitingForMaintenanceLoc = Loc.Localize("LoginBoxWaitingForMaint", "Waiting for maintenance to be over...");
-            CancelLoc = Loc.Localize("Cancel", "Cancel");
+            CancelWithShortcutLoc = Loc.Localize("CancelWithShortcut", "_Cancel");
             OpenAccountSwitcherLoc = Loc.Localize("OpenAccountSwitcher", "Open Account Switcher");
             SettingsLoc = Loc.Localize("Settings", "Settings");
             WorldStatusLoc = Loc.Localize("WorldStatus", "World Status");
@@ -1024,7 +1055,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string LoginNoDalamudLoc { get; private set; }
         public string LoginRepairLoc { get; private set; }
         public string WaitingForMaintenanceLoc { get; private set; }
-        public string CancelLoc { get; private set; }
+        public string CancelWithShortcutLoc { get; private set; }
         public string LoginTooltipLoc { get; private set; }
         public string OpenAccountSwitcherLoc { get; private set; }
         public string SettingsLoc { get; private set; }

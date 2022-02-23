@@ -36,6 +36,18 @@ namespace XIVLauncher.Xaml
         private readonly Func<object, Task> _command;
         private readonly Func<bool> _canExecute;
 
+        public AsyncCommand(Action<object> command)
+        {
+            _command = p => Task.Run(() => command(p));
+            _canExecute = () => true;
+        }
+
+        public AsyncCommand(Action<object> command, Func<bool> canExecute)
+        {
+            _command = p => Task.Run(() => command(p));
+            _canExecute = canExecute;
+        }
+
         public AsyncCommand(Func<object, Task> command)
         {
             _command = command;

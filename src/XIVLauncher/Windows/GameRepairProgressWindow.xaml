@@ -22,7 +22,7 @@
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" x:Name="StatusTextBlock" Margin="0,2,0,0">Status</TextBlock>
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" x:Name="SpeedTextBlock" Margin="0,2,0,0">Speed</TextBlock>
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" x:Name="EstimatedTimeTextBlock" Margin="0,2,0,0">Estimated duration</TextBlock>
-                <Button Content="{Binding CancelLoc}" Command="{Binding Path=CancelCommand}" x:Name="CancelButton" Margin="0,10,0,0" Width="84" />
+                <Button Content="{Binding CancelWithShortcutLoc}" Command="{Binding Path=CancelCommand}" x:Name="CancelButton" Margin="0,10,0,0" Width="84" />
             </StackPanel>
         </materialDesign:Card>
     </Grid>

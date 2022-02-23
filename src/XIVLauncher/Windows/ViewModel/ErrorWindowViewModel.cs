@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using CheapLoc;
+using XIVLauncher.Xaml;
 
 namespace XIVLauncher.Windows.ViewModel
 {
     class ErrorWindowViewModel
     {
+        public ICommand CopyMessageTextCommand { get; set; }
+
         public ErrorWindowViewModel()
         {
             SetupLoc();
@@ -24,6 +28,10 @@ namespace XIVLauncher.Windows.ViewModel
             OpenFaqLoc = Loc.Localize("OpenFaq", "Open FAQ");
             ReportErrorLoc = Loc.Localize("ReportError", "Report error");
             OkLoc = Loc.Localize("OK", "OK");
+            YesWithShortcutLoc = Loc.Localize("Yes", "_Yes");
+            NoWithShortcutLoc = Loc.Localize("No", "_No");
+            CancelWithShortcutLoc = Loc.Localize("Cancel", "_Cancel");
+            CopyWithShortcutLoc = Loc.Localize("Copy", "_Copy");
         }
 
         public string ErrorExplanationMsgLoc { get; private set; }
@@ -33,5 +41,9 @@ namespace XIVLauncher.Windows.ViewModel
         public string OpenFaqLoc { get; private set; }
         public string ReportErrorLoc { get; private set; }
         public string OkLoc { get; private set; }
+        public string YesWithShortcutLoc { get; private set; }
+        public string NoWithShortcutLoc { get; private set; }
+        public string CancelWithShortcutLoc { get; private set; }
+        public string CopyWithShortcutLoc { get; private set; }
     }
 }

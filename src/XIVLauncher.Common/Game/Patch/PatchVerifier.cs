@@ -88,6 +88,22 @@ namespace XIVLauncher.Common.Game.Patch
         public void Start()
         {
             Debug.Assert(_repoMetaPaths.Count != 0 && _patchSources.Count != 0);
+            Debug.Assert(_verificationTask == null || _verificationTask.IsCompleted);
+
+            _cancellationTokenSource = new();
+            _reportedProgresses.Clear();
+            ProgressUpdateInterval = 0;
+            NumBrokenFiles = 0;
+            PatchSetIndex = 0;
+            PatchSetCount = 0;
+            TaskIndex = 0;
+            Progress = 0;
+            Total = 0;
+            TaskCount = 0;
+            CurrentFile = null;
+            Speed = 0;
+            CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.NotStarted;
+            LastException = null;
 
             _verificationTask = Task.Run(this.RunVerifier, _cancellationTokenSource.Token);
         }
@@ -95,6 +111,12 @@ namespace XIVLauncher.Common.Game.Patch
         public async Task Cancel()
         {
             _cancellationTokenSource.Cancel();
+            if (_verificationTask != null)
+                await _verificationTask;
+        }
+
+        public async Task WaitForCompletion()
+        {
             await _verificationTask;
         }
 
