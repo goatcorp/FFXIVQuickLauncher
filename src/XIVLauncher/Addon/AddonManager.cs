@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Serilog;
-using XIVLauncher.Common;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Addon
 {

@@ -14,6 +14,7 @@ using Serilog;
 using XIVLauncher.Addon;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
+using XIVLauncher.Settings;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Dalamud

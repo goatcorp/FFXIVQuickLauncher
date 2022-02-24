@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using XIVLauncher.Common;
+using XIVLauncher.Settings;
 
-namespace XIVLauncher.Addon
+namespace XIVLauncher.Addon.Implementations
 {
     public class GenericAddon : IRunnableAddon, INotifyAddonAfterClose
     {

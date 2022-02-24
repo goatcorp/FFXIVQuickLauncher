@@ -5,6 +5,7 @@ using System.Windows;
 using CheapLoc;
 using IWshRuntimeLibrary;
 using XIVLauncher.Addon;
+using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Common;
 using XIVLauncher.Windows.ViewModel;
 

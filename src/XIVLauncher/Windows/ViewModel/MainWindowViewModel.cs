@@ -755,10 +755,10 @@ namespace XIVLauncher.Windows.ViewModel
 
             try
             {
-                if (App.Settings.AddonList == null)
-                    App.Settings.AddonList = new List<AddonEntry>();
+                App.Settings.AddonList ??= new List<AddonEntry>();
 
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
+
                 if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
                 {
                     if (isDalamudEnabled && App.Settings.IsDx11 && dalamudOk)
@@ -770,6 +770,7 @@ namespace XIVLauncher.Windows.ViewModel
                         Log.Warning("In-Game addon was not enabled or failed to ensure (tried to load via DLL injection)");
                     }
                 }
+
                 addonMgr.RunAddons(gameProcess, App.Settings, addons);
             }
             catch (Exception ex)

@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common;
+using XIVLauncher.Settings;
 
 namespace XIVLauncher.Accounts
 {
@@ -15,14 +16,12 @@ namespace XIVLauncher.Accounts
         {
             get
             {
-                return Accounts.Count > 1 ?
-                    Accounts.FirstOrDefault(a => a.Id == _setting.CurrentAccountId) :
-                    Accounts.FirstOrDefault();
+                return Accounts.Count > 1 ? Accounts.FirstOrDefault(a => a.Id == _setting.CurrentAccountId) : Accounts.FirstOrDefault();
             }
             set => _setting.CurrentAccountId = value.Id;
         }
 
-        private ILauncherSettingsV3 _setting;
+        private readonly ILauncherSettingsV3 _setting;
 
         public AccountManager(ILauncherSettingsV3 setting)
         {

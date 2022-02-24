@@ -15,6 +15,7 @@ using XIVLauncher.Common;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Parsers;
+using XIVLauncher.Settings;
 using XIVLauncher.Support;
 using XIVLauncher.Windows;
 
