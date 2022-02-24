@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common.Tests", "XIVLauncher.Common.Tests\XIVLauncher.Common.Tests.csproj", "{FE0EAE21-4812-4565-8766-856AE9F9E99B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common.Windows", "XIVLauncher.Common.Windows\XIVLauncher.Common.Windows.csproj", "{4BD8A159-1B5E-41ED-A215-75B9871BA929}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,12 @@ Global
 		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.ReleaseNoUpdate|Any CPU.ActiveCfg = Debug|Any CPU
 		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.ReleaseNoUpdate|Any CPU.Build.0 = Debug|Any CPU
+		{4BD8A159-1B5E-41ED-A215-75B9871BA929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BD8A159-1B5E-41ED-A215-75B9871BA929}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BD8A159-1B5E-41ED-A215-75B9871BA929}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BD8A159-1B5E-41ED-A215-75B9871BA929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BD8A159-1B5E-41ED-A215-75B9871BA929}.ReleaseNoUpdate|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BD8A159-1B5E-41ED-A215-75B9871BA929}.ReleaseNoUpdate|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

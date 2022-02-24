@@ -19,6 +19,7 @@ using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch;
+using XIVLauncher.Common.Windows;
 using XIVLauncher.Game;
 using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;
@@ -26,11 +27,11 @@ using XIVLauncher.Xaml;
 
 namespace XIVLauncher.Windows.ViewModel
 {
-    class MainWindowViewModel : INotifyPropertyChanged
+    internal class MainWindowViewModel : INotifyPropertyChanged
     {
         public bool IsLoggingIn;
 
-        private readonly Launcher _launcher = new(CommonRunner.Instance, CommonSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
+        public Launcher Launcher { get; set; } = new(new WindowsRunner(), CommonSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
         private readonly Common.Game.Patch.PatchInstaller _installer = new(CommonSettings.Instance);
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
@@ -228,7 +229,7 @@ namespace XIVLauncher.Windows.ViewModel
             var gateStatus = false;
             try
             {
-                gateStatus = await _launcher.GetGateStatus();
+                gateStatus = await this.Launcher.GetGateStatus();
             }
             catch (Exception ex)
             {
@@ -246,7 +247,7 @@ namespace XIVLauncher.Windows.ViewModel
                 if (isRepair)
                     enableUidCache = false;
 
-                var loginResult = await _launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, isRepair);
+                var loginResult = await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, isRepair);
 
                 Debug.Assert(loginResult != null, "ASSERTION FAILED loginResult != null!");
 
@@ -629,7 +630,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
 
-                var patcher = new PatchManager(CommonSettings.Instance, Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer, _launcher, loginResult.UniqueId);
+                var patcher = new PatchManager(CommonSettings.Instance, Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer, this.Launcher, loginResult.UniqueId);
                 patcher.OnFail += PatcherOnFail;
                 
                 IsEnabled = false;
@@ -721,7 +722,7 @@ namespace XIVLauncher.Windows.ViewModel
             }
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-            var gameProcess = _launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
+            var gameProcess = this.Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
                     loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
                     isSteam, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false),
                     process =>
@@ -882,7 +883,7 @@ namespace XIVLauncher.Windows.ViewModel
                 Common.Game.Patch.PatchList.PatchListEntry[] bootPatches = null;
                 try
                 {
-                    bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);
+                    bootPatches = await this.Launcher.CheckBootVersion(App.Settings.GamePath);
                 }
                 catch (Exception ex)
                 {
@@ -911,7 +912,7 @@ namespace XIVLauncher.Windows.ViewModel
                     }
 
                     var patcher = new PatchManager(CommonSettings.Instance, Repository.Boot, bootPatches, App.Settings.GamePath,
-                        App.Settings.PatchPath, _installer, _launcher, null);
+                        App.Settings.PatchPath, _installer, this.Launcher, null);
                     patcher.OnFail += PatcherOnFail;
 
                     IsEnabled = false;

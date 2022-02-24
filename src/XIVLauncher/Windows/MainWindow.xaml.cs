@@ -36,17 +36,18 @@ namespace XIVLauncher.Windows
 
         private Timer _maintenanceQueueTimer;
 
-        private readonly Launcher _launcher = new(CommonRunner.Instance, CommonSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
-
         private AccountManager _accountManager;
 
         private MainWindowViewModel Model => this.DataContext as MainWindowViewModel;
+        private readonly Launcher _launcher;
 
         public MainWindow()
         {
             InitializeComponent();
 
             this.DataContext = new MainWindowViewModel();
+            _launcher = Model.Launcher;
+
             Closed += Model.OnWindowClosed;
             Closing += Model.OnWindowClosing;
 
