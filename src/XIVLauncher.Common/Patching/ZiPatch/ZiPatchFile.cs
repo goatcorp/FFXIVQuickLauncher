@@ -15,7 +15,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch
     {
         private static readonly uint[] zipatchMagic =
         {
-            0x50495A91, 0x48435441, 0x0A1A0A0D
+            0x50495A91, 0x48435441, 0x0A1A0A0D,
         };
 
         private readonly Stream _stream;
