@@ -48,8 +48,8 @@ namespace XIVLauncher
 
             return reader.ReadToEnd();
         }
-        
-               private static string DefaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn");
+
+        private static readonly string defaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "SquareEnix\\FINAL FANTASY XIV - A Realm Reborn");
 
         private static string[] GetCommonPaths()
         {
@@ -143,11 +143,11 @@ namespace XIVLauncher
                     }
                 }
 
-                return foundVersions.Count == 0 ? DefaultPath : foundVersions.OrderByDescending(x => x.Value).First().Key;
+                return foundVersions.Count == 0 ? defaultPath : foundVersions.OrderByDescending(x => x.Value).First().Key;
             }
             catch (Exception)
             {
-                return DefaultPath;
+                return defaultPath;
             }
         }
     }

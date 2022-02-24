@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher", "XIVLauncher\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.PatchInstaller", "XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj", "{395CDFAB-48F8-4EC5-833D-05F5795A157D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Tests", "XIVLauncher.Tests\XIVLauncher.Tests.csproj", "{6B17C1CE-68F5-44EE-98D2-28D9DAA36BE1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common", "XIVLauncher.Common\XIVLauncher.Common.csproj", "{24916430-532C-4D4D-93FF-861076E8F63C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{10DF8F12-50FD-45D8-8A38-17BA764BF54D}"
@@ -17,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		XIVLauncher.sln.DotSettings = XIVLauncher.sln.DotSettings
 		CodeAnalysis\xl.ruleset = CodeAnalysis\xl.ruleset
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common.Tests", "XIVLauncher.Common.Tests\XIVLauncher.Common.Tests.csproj", "{FE0EAE21-4812-4565-8766-856AE9F9E99B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,18 +37,18 @@ Global
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.ReleaseNoUpdate|Any CPU.ActiveCfg = Release|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.ReleaseNoUpdate|Any CPU.Build.0 = Release|Any CPU
-		{6B17C1CE-68F5-44EE-98D2-28D9DAA36BE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B17C1CE-68F5-44EE-98D2-28D9DAA36BE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B17C1CE-68F5-44EE-98D2-28D9DAA36BE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B17C1CE-68F5-44EE-98D2-28D9DAA36BE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B17C1CE-68F5-44EE-98D2-28D9DAA36BE1}.ReleaseNoUpdate|Any CPU.ActiveCfg = Release|Any CPU
-		{6B17C1CE-68F5-44EE-98D2-28D9DAA36BE1}.ReleaseNoUpdate|Any CPU.Build.0 = Release|Any CPU
 		{24916430-532C-4D4D-93FF-861076E8F63C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24916430-532C-4D4D-93FF-861076E8F63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24916430-532C-4D4D-93FF-861076E8F63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24916430-532C-4D4D-93FF-861076E8F63C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{24916430-532C-4D4D-93FF-861076E8F63C}.ReleaseNoUpdate|Any CPU.ActiveCfg = Debug|Any CPU
 		{24916430-532C-4D4D-93FF-861076E8F63C}.ReleaseNoUpdate|Any CPU.Build.0 = Debug|Any CPU
+		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.ReleaseNoUpdate|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE0EAE21-4812-4565-8766-856AE9F9E99B}.ReleaseNoUpdate|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
