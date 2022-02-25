@@ -12,10 +12,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: Initialize Submodules
         run: git submodule update --init --recursive
-      - name: Setup Nuget
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: "latest"
       - name: Restore Nuget Packages
         run: |
           cd .\src\
@@ -81,12 +77,11 @@ jobs:
       - name: Initialize Submodules
         run: git submodule update --init --recursive
           
-      - name: Setup Nuget
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: "latest"
       - name: Restore Nuget Packages
-        run: nuget restore src\XIVLauncher.sln
+        run: |
+          cd .\src\
+          dotnet restore
+          cd ..
       - name: Define VERSION
         run: |
           $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
