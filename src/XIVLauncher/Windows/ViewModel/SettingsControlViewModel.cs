@@ -126,6 +126,10 @@ namespace XIVLauncher.Windows.ViewModel
                 "New: improves compatibility with certain other software and plugins that need to load early.");
             InGameAddonLoadMethodDllInjectLoc = Loc.Localize("InGameAddonLoadMethodDllInjectLoc",
                 "Legacy: old version of the Dalamud injection system that may be more stable.");
+            InGameAddonLoadMethodEntryPointDescriptionLoc = Loc.Localize("InGameAddonLoadMethodEntryPointDescriptionLoc",
+                "This method uses Entry-Point rewriting to load Dalamud, which may be more compatible with certain other software, like anti-virus tools.");
+            InGameAddonLoadMethodDllInjectDescriptionLoc = Loc.Localize("InGameAddonLoadMethodDllInjectDescriptionLoc",
+                "This method loads Dalamud via DLL-injection, which may be more stable on certain systems.");
 
             UniversalisHintLoc = Loc.Localize("UniversalisHint",
                 "Market board data provided in cooperation with Universalis.");
@@ -207,6 +211,8 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonLoadMethodLoc { get; private set; }
         public string InGameAddonLoadMethodEntryPointLoc { get; private set; }
         public string InGameAddonLoadMethodDllInjectLoc { get; private set; }
+        public string InGameAddonLoadMethodEntryPointDescriptionLoc { get; private set; }
+        public string InGameAddonLoadMethodDllInjectDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
 
