@@ -51,7 +51,7 @@ jobs:
           $setup_file = $current.assets | Where-Object -Property name -Value "Setup.exe" -EQ
           Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\Setup.exe
            ~\.nuget\packages\squirrel.windows\1.9.1\tools\Squirrel.exe --no-msi --releasify .\XIVLauncher.$refver.nupkg --setupIcon=.\XIVLauncher\Resources\dalamud_icon.ico --icon=.\XIVLauncher\Resources\dalamud_icon.ico
-          Start-Sleep -s 30
+          Start-Sleep -s 60
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
       - name: Create Release
