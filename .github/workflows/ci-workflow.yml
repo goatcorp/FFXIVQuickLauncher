@@ -17,7 +17,10 @@ jobs:
         with:
           nuget-version: "latest"
       - name: Restore Nuget Packages
-        run: nuget restore src\XIVLauncher.sln
+        run: |
+          cd .\src\
+          dotnet restore
+          cd ..
       - name: Define VERSION
         run: |
           $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
