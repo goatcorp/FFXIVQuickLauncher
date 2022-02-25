@@ -1,16 +1,16 @@
 using XIVLauncher.Common.PlatformAbstractions;
 
-namespace XIVLauncher.PlatformAbstractions
+namespace XIVLauncher.Common.Windows
 {
-    public class CommonSteam : ISteam
+    public class WindowsSteam : ISteam
     {
-        private static CommonSteam instance;
+        private static WindowsSteam instance;
         
-        public static CommonSteam Instance
+        public static WindowsSteam Instance
         {
             get
             {
-                instance ??= new CommonSteam();
+                instance ??= new WindowsSteam();
                 return instance;
             }
         }

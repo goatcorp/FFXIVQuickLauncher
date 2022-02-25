@@ -36,7 +36,7 @@ namespace XIVLauncher.PlatformAbstractions
 
         public void Save()
         {
-            File.WriteAllText(ConfigPath,  JsonConvert.SerializeObject(_cache, Formatting.Indented, new JsonSerializerSettings
+            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(_cache, Formatting.Indented, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Objects,
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple

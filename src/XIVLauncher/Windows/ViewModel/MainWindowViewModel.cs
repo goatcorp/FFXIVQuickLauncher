@@ -31,7 +31,7 @@ namespace XIVLauncher.Windows.ViewModel
     {
         public bool IsLoggingIn;
 
-        public Launcher Launcher { get; set; } = new(new WindowsRunner(), CommonSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
+        public Launcher Launcher { get; set; } = new(new WindowsRunner(), WindowsSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
         private readonly Common.Game.Patch.PatchInstaller _installer = new(CommonSettings.Instance);
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
