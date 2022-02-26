@@ -147,6 +147,12 @@ namespace XIVLauncher.Windows
 
             if (EnvironmentSettings.IsWine)
                 Title += " - Wine on Linux";
+
+            if (App.Settings.LauncherLanguage == LauncherLanguage.Russian)
+            {
+                AccountSwitcherButton.Background = App.UaBrush;
+                AccountSwitcherButton.BorderBrush = App.UaBrush;
+            }
         }
 
         private async Task SetupHeadlines()

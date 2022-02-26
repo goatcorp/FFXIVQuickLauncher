@@ -38,6 +38,14 @@ namespace XIVLauncher
 
         public static bool GlobalIsDisableAutologin { get; private set; }
 
+
+        public static Brush UaBrush = new LinearGradientBrush(new GradientStopCollection()
+        {
+            new(Color.FromArgb(0xFF, 0x27, 0x3F, 0xC3), 0.5f),
+            new(Color.FromArgb(0xFF, 0xe6, 0xde, 0x12), 0.5f),
+        }, 0.7f);
+
+
         public App()
         {
             // wine does not support WPF with HW rendering, so switch to software only mode
@@ -321,6 +329,20 @@ namespace XIVLauncher
 
             Log.Verbose("Loading MainWindow for account '{0}'", accountName);
 
+            if (App.Settings.LauncherLanguage == LauncherLanguage.Russian)
+            {
+                var dict = new ResourceDictionary
+                {
+                    {"PrimaryHueLightBrush", UaBrush},
+                    //{"PrimaryHueLightForegroundBrush", uaBrush},
+                    {"PrimaryHueMidBrush", UaBrush},
+                    //{"PrimaryHueMidForegroundBrush", uaBrush},
+                    {"PrimaryHueDarkBrush", UaBrush},
+                    //{"PrimaryHueDarkForegroundBrush", uaBrush},
+                };
+                this.Resources.MergedDictionaries.Add(dict);
+            }
+            
             if (EnvironmentSettings.IsDisableUpdates)
             {
                 OnUpdateCheckFinished(true);
