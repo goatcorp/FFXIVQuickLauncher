@@ -108,11 +108,11 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "XIVLauncher has been updated to version {0}.",
+    "message": "XIVLauncher がバージョン {0} に更新されました。",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoading": {
-    "message": "Loading changelog...",
+    "message": "更新履歴を読み込み中...",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoadingError": {
@@ -160,7 +160,7 @@
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "StartOfficialLauncher": {
-    "message": "Official Launcher",
+    "message": "公式ランチャー",
     "description": "ErrorWindowViewModel.SetupLoc"
   },
   "OpenIntegrityReport": {
@@ -296,11 +296,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxRepairLogin": {
-    "message": "Repair game files",
+    "message": "ゲームファイルの修復",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start without Dalamud",
+    "message": "Dalamudなしで開始",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -344,7 +344,7 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "Transmission in progress...",
+    "message": "送信中...",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "CheckBootVersionError": {
@@ -360,11 +360,11 @@
     "description": "<HandleBootCheck>d__40.MoveNext"
   },
   "KillswitchText": {
-    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "message": "スクウェア・エニックスがログイン方法を変更したため、XIVLauncherでゲームを起動することができなくなりました。\nXIVLauncherチームは、安全にランチャーを再有効化する前に、変更を行う必要があります。後ほど、再度お試しください。\n\nこのような状況になってしまい、誠に申し訳ございません。\n\n下の「公式ランチャー」ボタンから、公式ランチャーを起動することができます。\n",
     "description": "<Login>d__28.MoveNext"
   },
   "SteamLinkingText": {
-    "message": "You may be prompted to link your Steam account to your Square Enix account.",
+    "message": "Steamアカウントとスクウェア・エニックス アカウントをリンクするよう促される場合があります。",
     "description": "<Login>d__28.MoveNext"
   },
   "EmptyUsernameError": {

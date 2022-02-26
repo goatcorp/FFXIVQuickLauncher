@@ -4,7 +4,7 @@
     "description": "<Run>d__0.MoveNext"
   },
   "DalamudUpdateDalamud": {
-    "message": "正在更新核心……",
+    "message": "正在更新核心…",
     "description": "DalamudLoadingOverlay.SetProgress"
   },
   "DalamudUpdateAssets": {
@@ -112,11 +112,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoading": {
-    "message": "Loading changelog...",
+    "message": "正在加载更新日志…",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoadingError": {
-    "message": "Could not load changelog. Please check GitHub or Discord instead!",
+    "message": "无法加载更新日志。请检查 GitHub 或 Discord ！",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
@@ -220,11 +220,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "NowVerifying": {
-    "message": "Verifying game files...",
+    "message": "正在验证游戏文件…",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairing": {
-    "message": "Repairing game files...",
+    "message": "正在修复游戏文件…",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -296,11 +296,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxRepairLogin": {
-    "message": "Repair game files",
+    "message": "修復遊戲文件",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start without Dalamud",
+    "message": "不使用 Dalamud 启动",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -432,23 +432,23 @@
     "description": "<LoginToGame>d__30.MoveNext"
   },
   "NoVersionReferenceError": {
-    "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
+    "message": "您正在使用的游戏版本因参考信息不足而无法被 XIVLauncher 修复。\n请稍后再试。",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccess": {
-    "message": "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.",
+    "message": "游戏文件已由 XIVLauncher 验证。 {0} {1} 已修复。\n\n请正常登录。",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFilesWere": {
-    "message": "files were",
+    "message": "档案是",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFileWas": {
-    "message": "file was",
+    "message": "文件是",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairError": {
-    "message": "An error occurred while repairing the game files.\n\nYou may have to reinstall the game.",
+    "message": "修复游戏檔案时出現錯誤。\n\n您可能需要重新安装游戏。",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "OtpInputPrompt": {

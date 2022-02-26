@@ -84,7 +84,7 @@
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".",
+    "message": "Certains fichiers du jeu semblent avoir été modifiés ou sont corrompus. \n\nSi vous utilisez des mods avec TexTools, c'est le résultat attendu.\n\nSi vous n'utilisez pas de mods, faites un clic droit sur le bouton \"Connexion\" sur l'accueil de XIVLauncher et choisissez \"Réparer le jeu\".",
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
@@ -336,11 +336,11 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameIsOpenRepairError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.",
+    "message": "Le jeu et/ou le lanceur officiel sont ouverts. XIVLauncher ne peut pas réparer le jeu lorsque c’est le cas.\nVeuillez fermer le jeu et le lanceur officiel et réessayer.",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameRepairDisclaimer": {
-    "message": "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?",
+    "message": "XIVLauncher va à présent tenter de trouver des fichiers du jeu corrompus et de les réparer.\nSi vous utilisez un ou plusieurs mods via TexTools, cela remplacera tous ces mods et restaurera le jeu à son état initial.\n\nVoulez-vous continuer ?",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
@@ -432,23 +432,23 @@
     "description": "<LoginToGame>d__30.MoveNext"
   },
   "NoVersionReferenceError": {
-    "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
+    "message": "La version du jeu dont vous disposez ne peut pas encore être réparée par XIVLauncher car les informations de référence ne sont pas encore disponibles.\nVeuillez réessayer plus tard.",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccess": {
-    "message": "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.",
+    "message": "Les fichiers du jeu ont été vérifiés par XIVLauncher. {0} {1}.\n\nVeuillez vous connecter normalement.",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFilesWere": {
-    "message": "files were",
+    "message": "fichiers ont été réparés",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFileWas": {
-    "message": "file was",
+    "message": "fichier a été réparé",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairError": {
-    "message": "An error occurred while repairing the game files.\n\nYou may have to reinstall the game.",
+    "message": "Une erreur est survenue lors de la réparation des fichiers du jeu.\n\nVous devrez peut-être réinstaller le jeu.",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "OtpInputPrompt": {
@@ -804,7 +804,7 @@
     "description": "DalamudLauncher.HoldForUpdate"
   },
   "AntivirusDeletedBoot": {
-    "message": "La DLL de démarrage de Dalamud n'a pas pu être trouvée.\n\nElle a probablement été supprimée par votre logiciel antivirus. Veuillez ajouter une exception pour le dossier XIVLauncher et réessayez.",
+    "message": "La DLL de démarrage de Dalamud n'a pas pu être trouvée.\n\nElle a probablement été supprimée par votre logiciel antivirus. Veuillez ajouter une exception pour le dossier XIVLauncher et réessayer.",
     "description": "DalamudLauncher.Run"
   },
   "DalamudVc2019RedistError": {

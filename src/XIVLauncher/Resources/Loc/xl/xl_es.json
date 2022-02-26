@@ -436,7 +436,7 @@
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccess": {
-    "message": "XIVLauncher ha verificado los archivos del juego. {0} {1}.",
+    "message": "XIVLauncher ha verificado los archivos del juego. {0} {1}.\n\nPor favor inicia sesión de manera normal.",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFilesWere": {
