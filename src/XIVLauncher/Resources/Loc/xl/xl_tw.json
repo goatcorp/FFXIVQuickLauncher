@@ -112,11 +112,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoading": {
-    "message": "Loading changelog...",
+    "message": "正在載入更新日誌…",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoadingError": {
-    "message": "Could not load changelog. Please check GitHub or Discord instead!",
+    "message": "無法載入更新日誌。請檢查 GitHub 或 Discord ！",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
@@ -152,7 +152,7 @@
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "DalamudUpdate": {
-    "message": "正在更新 Dalamud...",
+    "message": "正在更新 Dalamud…",
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ErrorExplanation": {
@@ -220,11 +220,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "NowVerifying": {
-    "message": "Verifying game files...",
+    "message": "正在驗證遊戲檔案…",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairing": {
-    "message": "Repairing game files...",
+    "message": "正在修復遊戲檔案…",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -296,7 +296,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxRepairLogin": {
-    "message": "Repair game files",
+    "message": "修復遊戲檔案",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
@@ -344,7 +344,7 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "正在傳輸...",
+    "message": "正在傳輸…",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "CheckBootVersionError": {
@@ -432,23 +432,23 @@
     "description": "<LoginToGame>d__30.MoveNext"
   },
   "NoVersionReferenceError": {
-    "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
+    "message": "您正在使用的遊戲版本因參考信息不足而無法被 XIVLauncher 修復。\n請稍後再試。",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccess": {
-    "message": "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.",
+    "message": "遊戲檔案已由 XIVLauncher 驗證。 {0} {1} 已修復。\n\n請正常登錄。",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFilesWere": {
-    "message": "files were",
+    "message": "檔案是",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFileWas": {
-    "message": "file was",
+    "message": "檔案是",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairError": {
-    "message": "An error occurred while repairing the game files.\n\nYou may have to reinstall the game.",
+    "message": "修復遊戲檔案時出現錯誤。\n\n您可能需要重新安裝遊戲。",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "OtpInputPrompt": {
@@ -484,7 +484,7 @@
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "正在等待下載...",
+    "message": "正在等待下載…",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
@@ -796,7 +796,7 @@
     "description": "PatchManager.Start"
   },
   "PatchManDlFailure": {
-    "message": "XIVLauncher 無法驗證已下載的游戲文件。請重新啟動並再試一次。\n\n這通常代表您的互聯網連接發生問題。\n如果此錯誤仍然存在，請嘗試使用日本 VPN。\n\n相關資訊： {0}\n{1}",
+    "message": "XIVLauncher 無法驗證已下載的遊戲檔案。請重新啟動並再試一次。\n\n這通常代表您的互聯網連接發生問題。\n如果此錯誤仍然存在，請嘗試使用日本 VPN。\n\n相關資訊： {0}\n{1}",
     "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
   },
   "DalamudRunnerError": {
