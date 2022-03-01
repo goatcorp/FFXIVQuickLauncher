@@ -438,12 +438,25 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Reactivate();
             }
+            catch (SteamException ex)
+            {
+                Log.Error(ex, "Steam failed");
+                var message = string.Format(Loc.Localize("LoginSteamIssue",
+                    "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\n\nContext: {0}"), ex.Message);
+
+                CustomMessageBox.Show(message,
+                    Loc.Localize("LoginNoOauthTitle", "Login issue"),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Reactivate();
+            }
             catch (OauthLoginException oauthLoginException)
             {
                 var message = oauthLoginException.OauthErrorMessage;
                 message ??= Loc.Localize("LoginGenericError", "Could not log into your SE account.\nPlease check your username and password.");
 
                 var normalizedMessage = message.Replace("\\r\\n", "\n").Replace("\r\n", "\n");
+
                 if (App.Settings.AutologinEnabled)
                 {
                     normalizedMessage +=
