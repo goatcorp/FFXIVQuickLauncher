@@ -57,6 +57,7 @@
     <Resource Remove="Resources\CHANGELOG.txt" />
     <Resource Remove="Resources\COPYING.aria2" />
     <Resource Remove="Resources\LICENSE.txt" />
+    <None Remove="steam_appid.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +71,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="steam_appid.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

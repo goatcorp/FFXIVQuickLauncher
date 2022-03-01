@@ -20,6 +20,17 @@
     <ItemGroup>
       <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <None Remove="steam_api64.dll" />
+        <Content Include="steam_api64.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="steam_api.dll" />
+        <Content Include="steam_api.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
