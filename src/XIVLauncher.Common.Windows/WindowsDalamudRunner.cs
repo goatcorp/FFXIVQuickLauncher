@@ -38,8 +38,6 @@ public class WindowsDalamudRunner : IDalamudRunner
                 catch (DllNotFoundException ex)
                 {
                     Log.Error(ex, "[HOOKS] Dalamud entrypoint DLL not found");
-                    //CustomMessageBox.Show(Loc.Localize("AntivirusDeletedBoot", "The Dalamud boot DLL could not be found.\n\nIt was likely deleted by your antivirus software. Please add an exception for the XIVLauncher folder and try again."),
-                    //    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     throw new DalamudRunnerException("DLL not found");
                 }
 

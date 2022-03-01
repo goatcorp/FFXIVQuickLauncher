@@ -18,6 +18,7 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch;
+using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Game;
 using XIVLauncher.PlatformAbstractions;
@@ -714,12 +715,49 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
-            var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), new WindowsDalamudCompatibilityCheck(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject), CommonSettings.Instance);
+            var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject), CommonSettings.Instance);
             var dalamudOk = false;
+
+            var dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
+
+            try
+            {
+                dalamudCompatCheck.EnsureCompatibility();
+            }
+            catch (IDalamudCompatibilityCheck.NoRedistsException ex)
+            {
+                Log.Error(ex, "No Dalamud Redists found");
+
+                CustomMessageBox.Show(
+                    Loc.Localize("DalamudVc2019RedistError",
+                        "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            catch (IDalamudCompatibilityCheck.ArchitectureNotSupportedException ex)
+            {
+                Log.Error(ex, "Architecture not supported");
+
+                CustomMessageBox.Show(
+                    Loc.Localize("DalamudArchError",
+                        "Dalamud cannot run your computer's architecture. Please make sure that you are running a 64-bit version of Windows.\nIf you are using Windows on ARM, please make sure that x64-Emulation is enabled for XIVLauncher."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
 
             if (App.Settings.InGameAddonEnabled && !forceNoDalamud && App.Settings.IsDx11)
             {
-                dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
+                try
+                {
+                    dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
+                }
+                catch (DalamudRunnerException ex)
+                {
+                    Log.Error(ex, "Couldn't ensure Dalamud runner");
+
+                    var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
+                        "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
+
+                    CustomMessageBox.Builder.NewFrom(runnerErrorMessage).WithImage(MessageBoxImage.Error).WithButtons(MessageBoxButton.OK).WithShowHelpLinks().Show();
+                }
             }
 
             var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));

@@ -100,7 +100,7 @@ namespace XIVLauncher.Common.Game
         }
 
         private static void CheckDirectory(DirectoryInfo directory, SHA1Managed sha1, string rootDirectory,
-            ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
+                                           ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
         {
             foreach (var file in directory.GetFiles())
             {
@@ -118,7 +118,7 @@ namespace XIVLauncher.Common.Game
                 try
                 {
                     using (var stream =
-                        new BufferedStream(file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite), 1200000))
+                           new BufferedStream(file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite), 1200000))
                     {
                         var hash = sha1.ComputeHash(stream);
 

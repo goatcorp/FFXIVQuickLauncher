@@ -14,14 +14,12 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo gamePath;
         private readonly ClientLanguage language;
         private readonly IDalamudRunner runner;
-        private readonly IDalamudCompatibilityCheck compatCheck;
         private readonly DalamudUpdater updater;
         private readonly int injectionDelay;
 
-        public DalamudLauncher(IDalamudRunner runner, IDalamudCompatibilityCheck compatCheck, DalamudUpdater updater, DalamudLoadMethod loadMethod, ISettings settings)
+        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, ISettings settings)
         {
             this.runner = runner;
-            this.compatCheck = compatCheck;
             this.updater = updater;
             this.loadMethod = loadMethod;
             this.gamePath = settings.GamePath;
@@ -34,9 +32,6 @@ namespace XIVLauncher.Common.Dalamud
         public bool HoldForUpdate(DirectoryInfo gamePath)
         {
             Log.Information("[HOOKS] DalamudLauncher::HoldForUpdate(gp:{0})", gamePath.FullName);
-
-            //var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
-            //    "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
 
             if (this.updater.State != DalamudUpdater.DownloadState.Done)
                 this.updater.ShowOverlay();
@@ -77,16 +72,11 @@ namespace XIVLauncher.Common.Dalamud
         {
             Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2})", this.gamePath.FullName, this.language, gameProcess.Id);
 
-            this.compatCheck.EnsureCompatibility();
-
             var ingamePluginPath = Path.Combine(Paths.RoamingPath, "installedPlugins");
             var defaultPluginPath = Path.Combine(Paths.RoamingPath, "devPlugins");
 
             Directory.CreateDirectory(ingamePluginPath);
             Directory.CreateDirectory(defaultPluginPath);
-
-            //var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
-            //    "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
 
             var startInfo = new DalamudStartInfo
             {
@@ -138,26 +128,5 @@ namespace XIVLauncher.Common.Dalamud
 
             return true;
         }
-
-        /*
-         TODO(goat): hook up
-        private static bool CheckVcRedist()
-        {
-            // we only need to run these once.
-            var checkForVc2019 = CheckVc2019(); // this also checks all the dll locations now
-
-            if (checkForVc2019)
-                return true;
-
-            Log.Error("VC 2015-2019 redistributable not found");
-
-            CustomMessageBox.Show(
-                Loc.Localize("DalamudVc2019RedistError",
-                    "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
-                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-            return false;
-        }
-        */
     }
 }
