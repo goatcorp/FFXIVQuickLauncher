@@ -2,7 +2,10 @@ namespace XIVLauncher.Common.PlatformAbstractions;
 
 public interface ISteam
 {
-    bool Initialize(int appId);
-    bool IsSteamRunning();
-    bool Shutdown();
+    void Initialize(uint appId);
+    bool IsValid { get; }
+    void Shutdown();
+    byte[] GetAuthSessionTicket();
+    bool IsAppInstalled(uint appId);
+    string GetAppInstallDir(uint appId);
 }

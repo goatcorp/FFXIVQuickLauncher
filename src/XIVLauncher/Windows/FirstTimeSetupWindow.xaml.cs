@@ -111,7 +111,6 @@ namespace XIVLauncher.Windows
                 App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
                 App.Settings.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
                 App.Settings.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
-                App.Settings.SteamIntegrationEnabled = SteamCheckBox.IsChecked == true;
 
                 App.Settings.AddonList = new List<AddonEntry>();
 

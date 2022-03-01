@@ -764,7 +764,6 @@ namespace XIVLauncher.Windows.ViewModel
                 loginResult.UniqueId,
                 loginResult.OauthLogin.Region,
                 loginResult.OauthLogin.MaxExpansion,
-                App.Settings.SteamIntegrationEnabled,
                 isSteam,
                 App.Settings.AdditionalLaunchArgs,
                 App.Settings.GamePath,
@@ -816,12 +815,24 @@ namespace XIVLauncher.Windows.ViewModel
                     Thread.Sleep(100);
                 }
 
-                Log.Information("Game has exited.");
+                Log.Verbose("Game has exited");
 
                 if (addonMgr.IsRunning)
                     addonMgr.StopAddons();
 
                 CleanUp();
+
+                try
+                {
+                    if (WindowsSteam.Instance.IsValid)
+                    {
+                        WindowsSteam.Instance.Shutdown();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not shut down Steam");
+                }
 
                 Environment.Exit(0);
             });

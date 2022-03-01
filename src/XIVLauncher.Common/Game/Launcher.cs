@@ -18,22 +18,23 @@ namespace XIVLauncher.Common.Game
 {
     public class Launcher
     {
-        private readonly ISteam _steam;
-        private readonly IUniqueIdCache _uniqueIdCache;
-        private readonly ISettings _settings;
+        private readonly ISteam steam;
+        private readonly IUniqueIdCache uniqueIdCache;
+        private readonly ISettings settings;
+        private readonly HttpClient client;
 
         public Launcher(ISteam steam, IUniqueIdCache uniqueIdCache, ISettings settings)
         {
-            this._steam = steam;
-            this._uniqueIdCache = uniqueIdCache;
-            this._settings = settings;
+            this.steam = steam;
+            this.uniqueIdCache = uniqueIdCache;
+            this.settings = settings;
 
             ServicePointManager.Expect100Continue = false;
             var handler = new HttpClientHandler
             {
                 UseCookies = false,
             };
-            _client = new HttpClient(handler);
+            this.client = new HttpClient(handler);
         }
 
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
@@ -41,8 +42,6 @@ namespace XIVLauncher.Common.Game
         private readonly string _userAgent = GenerateUserAgent();
 
         public const int STEAM_APP_ID = 39210;
-
-        private readonly HttpClient _client;
 
         private static readonly string[] FilesToHash =
         {
@@ -82,12 +81,44 @@ namespace XIVLauncher.Common.Game
 
             LoginState loginState;
 
-            Log.Information($"XivGame::Login(steamServiceAccount:{isSteamServiceAccount}, cache:{useCache})");
+            Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteamServiceAccount, useCache);
 
-            if (!useCache || !_uniqueIdCache.TryGet(userName, out var cached))
+            byte[] steamTicket = null;
+
+            if (isSteamServiceAccount)
             {
-                Log.Information("Cache is invalid or disabled, logging in normally.");
+                try
+                {
+                    this.steam.Initialize(STEAM_APP_ID);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not initialize Steam");
+                    throw new SteamException("SteamAPI_Init() failed.", ex);
+                }
 
+                if (!this.steam.IsValid)
+                {
+                    throw new SteamException("Not logged into Steam. Please log in and try again.");
+                }
+
+                try
+                {
+                    steamTicket = this.steam.GetAuthSessionTicket();
+                }
+                catch (Exception ex)
+                {
+                    throw new SteamException("Could not request encrypted app ticket.", ex);
+                }
+
+                if (steamTicket == null)
+                {
+                    throw new SteamException("Steam app ticket was null.");
+                }
+            }
+
+            if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
+            {
                 oauthLoginResult = await OauthLogin(userName, password, otp, isSteamServiceAccount, 3);
 
                 Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
@@ -111,11 +142,11 @@ namespace XIVLauncher.Common.Game
                 (uid, loginState, pendingPatches) = await RegisterSession(oauthLoginResult, gamePath, forceBaseVersion);
 
                 if (useCache)
-                    this._uniqueIdCache.Add(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion);
+                    this.uniqueIdCache.Add(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion);
             }
             else
             {
-                Log.Information("Cached UID found, using instead.");
+                Log.Information("Cached UID found, using instead");
                 uid = cached.UniqueId;
                 loginState = LoginState.Ok;
 
@@ -138,23 +169,12 @@ namespace XIVLauncher.Common.Game
         }
 
         public Process LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                                  bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
+                                  bool isSteamServiceAccount, string additionalArguments,
                                   DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
                                   bool encryptArguments, DpiAwareness dpiAwareness)
         {
             Log.Information(
-                $"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
-
-            if (isSteamIntegrationEnabled)
-                try
-                {
-                    if (_steam.IsSteamRunning() && _steam.Initialize(STEAM_APP_ID))
-                        Log.Information("Steam initialized.");
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Could not initialize Steam.");
-                }
+                $"XivGame::LaunchGame(steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
 
             var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
             if (!isDx11)
@@ -196,18 +216,6 @@ namespace XIVLauncher.Common.Game
                 : argumentBuilder.Build();
 
             var game = runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
-
-            if (isSteamIntegrationEnabled)
-            {
-                try
-                {
-                    _steam.Shutdown();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Could not uninitialize Steam.");
-                }
-            }
 
             return game;
         }
@@ -261,13 +269,13 @@ namespace XIVLauncher.Common.Game
             request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
             request.Headers.AddWithoutValidation("Host", "patch-bootver.ffxiv.com");
 
-            var resp = await _client.SendAsync(request);
+            var resp = await this.client.SendAsync(request);
             var text = await resp.Content.ReadAsStringAsync();
 
             if (text == string.Empty)
                 return null;
 
-            Log.Verbose("Boot patching is needed... List:\n" + resp);
+            Log.Verbose("Boot patching is needed... List:\n{PatchList}", resp);
 
             return PatchListParser.Parse(text);
         }
@@ -282,7 +290,7 @@ namespace XIVLauncher.Common.Game
 
             request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion, forceBaseVersion));
 
-            var resp = await _client.SendAsync(request);
+            var resp = await this.client.SendAsync(request);
             var text = await resp.Content.ReadAsStringAsync();
 
             // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
@@ -297,7 +305,7 @@ namespace XIVLauncher.Common.Game
             if (string.IsNullOrEmpty(text))
                 return (uid, LoginState.Ok, null);
 
-            Log.Verbose("Game Patching is needed... List:\n" + text);
+            Log.Verbose("Game Patching is needed... List:\n{PatchList}", text);
 
             var pendingPatches = PatchListParser.Parse(text);
             return (uid, LoginState.NeedsPatchGame, pendingPatches);
@@ -314,7 +322,7 @@ namespace XIVLauncher.Common.Game
 
             request.Content = new StringContent(patchUrl);
 
-            var resp = await _client.SendAsync(request);
+            var resp = await this.client.SendAsync(request);
             resp.EnsureSuccessStatusCode();
 
             return await resp.Content.ReadAsStringAsync();
@@ -325,14 +333,14 @@ namespace XIVLauncher.Common.Game
             // This is needed to be able to access the login site correctly
             var request = new HttpRequestMessage(HttpMethod.Get, GetOauthTopUrl(region, isSteam));
             request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-            request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(_settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English)));
+            request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(this.settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English)));
             request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-            request.Headers.AddWithoutValidation("Accept-Language", _settings.AcceptLanguage);
+            request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
             request.Headers.AddWithoutValidation("User-Agent", _userAgent);
             request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
             request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
-            var reply = await _client.SendAsync(request);
+            var reply = await this.client.SendAsync(request);
             var text = await reply.Content.ReadAsStringAsync();
 
             var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
@@ -371,7 +379,7 @@ namespace XIVLauncher.Common.Game
 
             request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
             request.Headers.AddWithoutValidation("Referer", GetOauthTopUrl(region, isSteam));
-            request.Headers.AddWithoutValidation("Accept-Language", _settings.AcceptLanguage);
+            request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
             request.Headers.AddWithoutValidation("User-Agent", _userAgent);
             //request.Headers.AddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
             request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
@@ -390,7 +398,7 @@ namespace XIVLauncher.Common.Game
                     // { "saveid", "1" } // NOTE(goat): This adds a Set-Cookie with a filled-out _rsid value in the login response.
                 });
 
-            var response = await _client.SendAsync(request);
+            var response = await this.client.SendAsync(request);
 
             var reply = await response.Content.ReadAsStringAsync();
 
@@ -436,7 +444,7 @@ namespace XIVLauncher.Common.Game
             }
             catch (Exception exc)
             {
-                throw new Exception("Could not get gate status.", exc);
+                throw new Exception("Could not get gate status", exc);
             }
         }
 
@@ -469,13 +477,13 @@ namespace XIVLauncher.Common.Game
             }
 
             request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-            request.Headers.AddWithoutValidation("Accept-Language", _settings.AcceptLanguage);
+            request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
 
             request.Headers.AddWithoutValidation("Origin", "https://launcher.finalfantasyxiv.com");
 
             request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(language));
 
-            var resp = await _client.SendAsync(request);
+            var resp = await this.client.SendAsync(request);
             return await resp.Content.ReadAsByteArrayAsync();
         }
 

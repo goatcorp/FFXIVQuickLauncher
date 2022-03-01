@@ -1,3 +1,4 @@
+using Steamworks;
 using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.Common.Windows
@@ -5,7 +6,7 @@ namespace XIVLauncher.Common.Windows
     public class WindowsSteam : ISteam
     {
         private static WindowsSteam instance;
-        
+
         public static WindowsSteam Instance
         {
             get
@@ -14,20 +15,32 @@ namespace XIVLauncher.Common.Windows
                 return instance;
             }
         }
-        
-        public bool Initialize(int appId)
+
+        public void Initialize(uint appId)
         {
-            throw new System.NotImplementedException();
+            SteamClient.Init(appId);
         }
 
-        public bool IsSteamRunning()
+        public bool IsValid => SteamClient.IsValid && SteamClient.IsLoggedOn;
+
+        public void Shutdown()
         {
-            throw new System.NotImplementedException();
+            SteamClient.Shutdown();
         }
 
-        public bool Shutdown()
+        public byte[] GetAuthSessionTicket()
         {
-            throw new System.NotImplementedException();
+            return SteamUser.GetAuthSessionTicketAsync().GetAwaiter().GetResult().Data;
+        }
+
+        public bool IsAppInstalled(uint appId)
+        {
+            return SteamApps.IsAppInstalled(appId);
+        }
+
+        public string GetAppInstallDir(uint appId)
+        {
+            return SteamApps.AppInstallDir(appId);
         }
     }
 }

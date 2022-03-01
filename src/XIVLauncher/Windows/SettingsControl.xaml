@@ -38,8 +38,6 @@
                                Foreground="Red" Text="{Binding GamePathSafeguardLoc}" x:Name="GamePathSafeguardText" Visibility="Collapsed"/>
 
                     <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
-                              x:Name="SteamIntegrationCheckBox" Margin="0,15,0,0" Content="{Binding SteamCheckBoxLoc}" />
-                    <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
                               x:Name="OtpServerCheckBox" Margin="0,15,0,0" Content="{Binding OtpServerCheckBoxLoc}" />
 
                     <TextBox Width="500" VerticalAlignment="Center"
