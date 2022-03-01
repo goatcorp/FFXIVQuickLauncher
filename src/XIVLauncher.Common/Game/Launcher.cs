@@ -18,14 +18,12 @@ namespace XIVLauncher.Common.Game
 {
     public class Launcher
     {
-        private readonly IRunner _runner;
         private readonly ISteam _steam;
         private readonly IUniqueIdCache _uniqueIdCache;
         private readonly ISettings _settings;
 
-        public Launcher(IRunner runner, ISteam steam, IUniqueIdCache uniqueIdCache, ISettings settings)
+        public Launcher(ISteam steam, IUniqueIdCache uniqueIdCache, ISettings settings)
         {
-            this._runner = runner;
             this._steam = steam;
             this._uniqueIdCache = uniqueIdCache;
             this._settings = settings;
@@ -139,10 +137,10 @@ namespace XIVLauncher.Common.Game
             };
         }
 
-        public Process LaunchGame(string sessionId, int region, int expansionLevel,
-            bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
-            DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-            bool encryptArguments, Action<Process> beforeResume)
+        public Process LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
+                                  bool isSteamIntegrationEnabled, bool isSteamServiceAccount, string additionalArguments,
+                                  DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
+                                  bool encryptArguments, DpiAwareness dpiAwareness)
         {
             Log.Information(
                 $"XivGame::LaunchGame(steamIntegration:{isSteamIntegrationEnabled}, steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
@@ -165,13 +163,13 @@ namespace XIVLauncher.Common.Game
             var environment = new Dictionary<string, string>();
 
             var argumentBuilder = new ArgumentBuilder()
-                .Append("DEV.DataPathType", "1")
-                .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
-                .Append("DEV.TestSID", sessionId)
-                .Append("DEV.UseSqPack", "1")
-                .Append("SYS.Region", region.ToString())
-                .Append("language", ((int)language).ToString())
-                .Append("ver", Repository.Ffxiv.GetVer(gamePath));
+                                  .Append("DEV.DataPathType", "1")
+                                  .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
+                                  .Append("DEV.TestSID", sessionId)
+                                  .Append("DEV.UseSqPack", "1")
+                                  .Append("SYS.Region", region.ToString())
+                                  .Append("language", ((int)language).ToString())
+                                  .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
             if (isSteamServiceAccount)
             {
@@ -196,8 +194,8 @@ namespace XIVLauncher.Common.Game
             var arguments = encryptArguments
                 ? argumentBuilder.BuildEncrypted()
                 : argumentBuilder.Build();
-            // var game = NativeAclFix.LaunchGame(workingDir, exePath, arguments, environment, beforeResume); OLD
-            var game = _runner.Start(exePath, workingDir, arguments, environment, false);
+
+            var game = runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
 
             if (isSteamIntegrationEnabled)
             {
@@ -432,7 +430,7 @@ namespace XIVLauncher.Common.Game
             {
                 var reply = Encoding.UTF8.GetString(
                     await DownloadAsLauncher(
-                        $"https://frontier.ffxiv.com/worldStatus/gate_status.json?{Util.GetUnixMillis()}", ClientLanguage.English));
+                        $"https://frontier.ffxiv.com/worldStatus/gate_status.json?{Util.GetUnixMillis()}", ClientLanguage.English).ConfigureAwait(true));
 
                 return Convert.ToBoolean(int.Parse(reply[10].ToString()));
             }

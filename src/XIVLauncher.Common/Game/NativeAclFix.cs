@@ -321,7 +321,7 @@ namespace XIVLauncher.Common.Game
             }
         }
 
-        public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars, Action<Process> beforeResume, bool isDalamudStaging, DpiAwareness dpiAwareness)
+        public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars, DpiAwareness dpiAwareness, Action<Process> beforeResume)
         {
             Process process = null;
 
@@ -377,9 +377,6 @@ namespace XIVLauncher.Common.Game
                 {
                     cb = Marshal.SizeOf<PInvoke.STARTUPINFO>()
                 };
-
-                if (isDalamudStaging)
-                    Environment.SetEnvironmentVariable("DALAMUD_IS_STAGING", "true");
 
                 var compatLayerPrev = Environment.GetEnvironmentVariable("__COMPAT_LAYER");
 

@@ -11,7 +11,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
         private readonly DirectoryInfo _patchStore;
         private DownloadService _dlService;
 
-        private string downloadTempPath => Path.Combine(_patchStore.FullName, "temp");
+        private string DownloadTempPath => Path.Combine(_patchStore.FullName, "temp");
 
         private DownloadConfiguration _downloadOpt = new DownloadConfiguration
         {
@@ -34,7 +34,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
         {
             this._patchStore = patchStore;
 
-            this._downloadOpt.TempDirectory = this.downloadTempPath;
+            this._downloadOpt.TempDirectory = this.DownloadTempPath;
         }
 
         public override async Task StartDownloadAsync(string url, FileInfo outFile)

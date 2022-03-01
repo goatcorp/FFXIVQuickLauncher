@@ -12,9 +12,10 @@ using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using XIVLauncher.Common;
-using XIVLauncher.Dalamud;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Parsers;
+using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Settings;
 using XIVLauncher.Support;
 using XIVLauncher.Windows;
@@ -37,6 +38,7 @@ namespace XIVLauncher
         private MainWindow _mainWindow;
 
         public static bool GlobalIsDisableAutologin { get; private set; }
+        public static DalamudUpdater DalamudUpdater { get; private set; }
 
         public App()
         {
@@ -54,11 +56,11 @@ namespace XIVLauncher
             // TODO: Use a real command line parser
             foreach (var arg in Environment.GetCommandLineArgs())
             {
-                if (arg.StartsWith("--roamingPath="))
+                if (arg.StartsWith("--roamingPath=", StringComparison.Ordinal))
                 {
                     Paths.OverrideRoamingPath(arg.Substring(14));
                 }
-                else if (arg.StartsWith("--dalamudRunner="))
+                else if (arg.StartsWith("--dalamudRunner=", StringComparison.Ordinal))
                 {
                     DalamudUpdater.RunnerOverride = new FileInfo(arg.Substring(16));
                 }
@@ -69,16 +71,16 @@ namespace XIVLauncher
             try
             {
                 Log.Logger = new LoggerConfiguration()
-                    .WriteTo.Async(a =>
-                        a.File(Path.Combine(Paths.RoamingPath, "output.log")))
-                    .WriteTo.Sink(SerilogEventSink.Instance)
+                             .WriteTo.Async(a =>
+                                 a.File(Path.Combine(Paths.RoamingPath, "output.log")))
+                             .WriteTo.Sink(SerilogEventSink.Instance)
 #if DEBUG
-                    .WriteTo.Debug()
-                    .MinimumLevel.Verbose()
+                             .WriteTo.Debug()
+                             .MinimumLevel.Verbose()
 #else
-                    .MinimumLevel.Information()
+                            .MinimumLevel.Information()
 #endif
-                    .CreateLogger();
+                             .CreateLogger();
 
 #if !DEBUG
                 AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
@@ -113,6 +115,7 @@ namespace XIVLauncher
                 }
 
                 Log.Information("Trying to set up Loc for language code {0}", App.Settings.LauncherLanguage.GetLocalizationCode());
+
                 if (!App.Settings.LauncherLanguage.IsDefault())
                 {
                     Loc.Setup(AppUtil.GetFromResources($"XIVLauncher.Resources.Loc.xl.xl_{App.Settings.LauncherLanguage.GetLocalizationCode()}.json"));
@@ -135,7 +138,6 @@ namespace XIVLauncher
                 $"XIVLauncher started as {release}");
 
 #if !XL_NOAUTOUPDATE
-
             if (!EnvironmentSettings.IsDisableUpdates)
             {
                 try
@@ -182,11 +184,11 @@ namespace XIVLauncher
         private void SetupSettings()
         {
             Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
-                .UseCommandLineArgs()
-                .UseJsonFile(GetConfigPath("launcher"))
-                .UseTypeParser(new DirectoryInfoParser())
-                .UseTypeParser(new AddonListParser())
-                .Build();
+                       .UseCommandLineArgs()
+                       .UseJsonFile(GetConfigPath("launcher"))
+                       .UseTypeParser(new DirectoryInfoParser())
+                       .UseTypeParser(new AddonListParser())
+                       .Build();
 
             if (string.IsNullOrEmpty(Settings.AcceptLanguage))
             {
@@ -211,23 +213,34 @@ namespace XIVLauncher
                 _mainWindow = new MainWindow();
                 _mainWindow.Initialize();
 
-                var newWindowThread = new Thread(DalamudOverlayThreadStart);
-                newWindowThread.SetApartmentState(ApartmentState.STA);
-                newWindowThread.IsBackground = true;
-                newWindowThread.Start();
+                try
+                {
+                    DalamudUpdater = new DalamudUpdater(CommonUniqueIdCache.Instance);
 
-                while (DalamudUpdater.Overlay == null)
-                    Thread.Yield();
+                    var newWindowThread = new Thread(DalamudOverlayThreadStart);
+                    newWindowThread.SetApartmentState(ApartmentState.STA);
+                    newWindowThread.IsBackground = true;
+                    newWindowThread.Start();
 
-                DalamudUpdater.Run();
+                    while (DalamudUpdater.Overlay == null)
+                        Thread.Yield();
+
+                    DalamudUpdater.Run();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not start dalamud updater");
+                }
             });
         }
 
         // We need this because the main dispatcher is blocked by the main window/login task.
         private static void DalamudOverlayThreadStart()
         {
-            DalamudUpdater.Overlay = new DalamudLoadingOverlay();
-            DalamudUpdater.Overlay.Hide();
+            var overlay = new DalamudLoadingOverlay();
+            overlay.Hide();
+
+            DalamudUpdater.Overlay = overlay;
 
             System.Windows.Threading.Dispatcher.Run();
         }
@@ -244,17 +257,21 @@ namespace XIVLauncher
         {
             this.Dispatcher.Invoke(() =>
             {
-                Log.Error((Exception) e.ExceptionObject, "Unhandled exception.");
+                Log.Error((Exception)e.ExceptionObject, "Unhandled exception");
 
                 if (_useFullExceptionHandler)
+                {
                     CustomMessageBox.Builder
-                        .NewFrom((Exception)e.ExceptionObject, "Unhandled", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
-                        .WithAppendText("\n\nError during early initialization. Please report this error.\n\n" + e.ExceptionObject)
-                        .Show();
+                                    .NewFrom((Exception)e.ExceptionObject, "Unhandled", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
+                                    .WithAppendText("\n\nError during early initialization. Please report this error.\n\n" + e.ExceptionObject)
+                                    .Show();
+                }
                 else
+                {
                     MessageBox.Show(
                         "Error during early initialization. Please report this error.\n\n" + e.ExceptionObject,
                         "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
                 Environment.Exit(-1);
             });
@@ -285,6 +302,7 @@ namespace XIVLauncher
                         {
                             MessageBox.Show(ex.ToString());
                         }
+
                         Environment.Exit(0);
                         return;
                     }
@@ -304,19 +322,19 @@ namespace XIVLauncher
                     }
 
                     // Check if the accountName parameter is provided, if yes, pass it to MainWindow
-                    if (arg.StartsWith("--account="))
+                    if (arg.StartsWith("--account=", StringComparison.Ordinal))
                     {
                         accountName = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
                         App.Settings.CurrentAccountId = accountName;
                     }
 
                     // Override client launch language by parameter
-                    if (arg.StartsWith("--clientlang="))
+                    if (arg.StartsWith("--clientlang=", StringComparison.Ordinal))
                     {
                         string langarg = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
                         Enum.TryParse(langarg, out ClientLanguage lang); // defaults to Japanese if the input was invalid.
                         App.Settings.Language = lang;
-                        Log.Information($"Language set as {App.Settings.Language.ToString()} by launch argument.");
+                        Log.Information("Language set as {Language} by launch argument", App.Settings.Language.ToString());
                     }
                 }
             }

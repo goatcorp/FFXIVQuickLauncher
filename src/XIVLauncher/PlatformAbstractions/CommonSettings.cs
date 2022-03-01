@@ -8,7 +8,7 @@ namespace XIVLauncher.PlatformAbstractions
     public class CommonSettings : ISettings
     {
         private static CommonSettings instance;
-        
+
         public static CommonSettings Instance
         {
             get
@@ -25,5 +25,6 @@ namespace XIVLauncher.PlatformAbstractions
         public DirectoryInfo GamePath => App.Settings.GamePath;
         public AcquisitionMethod? PatchAcquisitionMethod => App.Settings.PatchAcquisitionMethod;
         public long SpeedLimitBytes => App.Settings.SpeedLimitBytes;
+        public int DalamudInjectionDelayMs => (int)App.Settings.DalamudInjectionDelayMs;
     }
 }

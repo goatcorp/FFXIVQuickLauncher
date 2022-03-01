@@ -7,21 +7,20 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NuGet;
 using Serilog;
-using XIVLauncher.Common;
-using XIVLauncher.PlatformAbstractions;
-using XIVLauncher.Windows;
+using XIVLauncher.Common.PlatformAbstractions;
 
-namespace XIVLauncher.Dalamud
+namespace XIVLauncher.Common.Dalamud
 {
-    public static class DalamudUpdater
+    public class DalamudUpdater
     {
-        public static DownloadState State { get; private set; } = DownloadState.Unknown;
-        public static bool IsStaging { get; private set; } = false;
+        private readonly IUniqueIdCache cache;
+        public DownloadState State { get; private set; } = DownloadState.Unknown;
+        public bool IsStaging { get; private set; } = false;
 
-        private static FileInfo runnerInternal;
-        public static FileInfo Runner
+        private FileInfo runnerInternal;
+
+        public FileInfo Runner
         {
             get
             {
@@ -33,11 +32,11 @@ namespace XIVLauncher.Dalamud
             private set => runnerInternal = value;
         }
 
-        public static FileInfo RunnerOverride { get; set; }
+        public FileInfo RunnerOverride { get; set; }
 
-        public static DirectoryInfo AssetDirectory { get; private set; }
+        public DirectoryInfo AssetDirectory { get; private set; }
 
-        public static DalamudLoadingOverlay Overlay { get; set; }
+        public IDalamudLoadingOverlay Overlay { get; set; }
 
         public enum DownloadState
         {
@@ -47,22 +46,30 @@ namespace XIVLauncher.Dalamud
             NoIntegrity
         }
 
-        public static void SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress progress)
+        public DalamudUpdater(IUniqueIdCache cache)
         {
-            Overlay?.Dispatcher.Invoke(() => Overlay.SetProgress(progress));
+            this.cache = cache;
         }
 
-        public static void ShowOverlay()
+        public void SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep progress)
         {
-            Overlay?.Dispatcher.Invoke(() => Overlay.SetVisible());
+            //Overlay?.Dispatcher.Invoke(() => Overlay.SetProgress(progress));
+            Overlay.SetStep(progress);
         }
 
-        public static void CloseOverlay()
+        public void ShowOverlay()
         {
-            Overlay?.Dispatcher.Invoke(() => Overlay.Close());
+            //Overlay?.Dispatcher.Invoke(() => Overlay.SetVisible());
+            Overlay.SetVisible();
         }
 
-        public static void Run()
+        public void CloseOverlay()
+        {
+            //Overlay?.Dispatcher.Invoke(() => Overlay.Close());
+            Overlay.SetInvisible();
+        }
+
+        public void Run()
         {
             Log.Information("[DUPDATE] Starting...");
 
@@ -94,7 +101,7 @@ namespace XIVLauncher.Dalamud
             return (versionInfoRelease, versionInfoStaging);
         }
 
-        private static void UpdateDalamud()
+        private void UpdateDalamud()
         {
             using var client = new WebClient();
 
@@ -106,6 +113,7 @@ namespace XIVLauncher.Dalamud
             var (versionInfoRelease, versionInfoStaging) = GetVersionInfo(client, settings);
 
             var remoteVersionInfo = versionInfoRelease;
+
             if (versionInfoStaging.Key == settings.DalamudBetaKey)
             {
                 remoteVersionInfo = versionInfoStaging;
@@ -133,7 +141,7 @@ namespace XIVLauncher.Dalamud
             {
                 Log.Information("[DUPDATE] Not found, redownloading");
 
-                SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Dalamud);
+                SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Dalamud);
 
                 try
                 {
@@ -141,7 +149,7 @@ namespace XIVLauncher.Dalamud
                     CleanUpOld(addonPath, remoteVersionInfo.AssemblyVersion);
 
                     // This is a good indicator that we should clear the UID cache
-                    CommonUniqueIdCache.Instance.Reset();
+                    cache.Reset();
                 }
                 catch (Exception ex)
                 {
@@ -162,7 +170,7 @@ namespace XIVLauncher.Dalamud
                 {
                     Log.Information("[DUPDATE] Not found, redownloading");
 
-                    SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Runtime);
+                    SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Runtime);
 
                     try
                     {
@@ -182,9 +190,10 @@ namespace XIVLauncher.Dalamud
 
             try
             {
-                SetOverlayProgress(DalamudLoadingOverlay.DalamudLoadingProgress.Assets);
+                SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
 
                 var assetBase = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets"));
+
                 if (!AssetManager.TryEnsureAssets(assetBase, out var assetsDir))
                 {
                     Log.Information("[DUPDATE] Assets not ensured, bailing out...");
@@ -199,6 +208,7 @@ namespace XIVLauncher.Dalamud
                     {
                         Log.Error(ex, "Tried to recover assets, didn't work");
                     }
+
                     return;
                 }
 
@@ -228,17 +238,37 @@ namespace XIVLauncher.Dalamud
             State = DownloadState.Done;
         }
 
+        private static bool CanRead(FileInfo info)
+        {
+            try
+            {
+                using var stream = info.OpenRead();
+                stream.ReadByte();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static bool IsIntegrity(DirectoryInfo addonPath)
         {
             var files = addonPath.GetFiles();
 
             try
             {
-                files.First(x => x.Name == "Dalamud.Injector.exe").OpenRead().ReadAllBytes();
-                files.First(x => x.Name == "Dalamud.dll").OpenRead().ReadAllBytes();
-                files.First(x => x.Name == "ImGuiScene.dll").OpenRead().ReadAllBytes();
+                if (!CanRead(files.First(x => x.Name == "Dalamud.Injector.exe"))
+                    || !CanRead(files.First(x => x.Name == "Dalamud.dll"))
+                    || !CanRead(files.First(x => x.Name == "ImGuiScene.dll")))
+                {
+                    Log.Error("[DUPDATE] Can't open files for read");
+                    return false;
+                }
 
                 var hashesPath = Path.Combine(addonPath.FullName, "hashes.json");
+
                 if (!File.Exists(hashesPath))
                 {
                     Log.Error("[DUPDATE] No hashes.json");
@@ -246,6 +276,7 @@ namespace XIVLauncher.Dalamud
                 }
 
                 var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(hashesPath));
+
                 foreach (var hash in hashes)
                 {
                     var file = Path.Combine(addonPath.FullName, hash.Key);
@@ -253,6 +284,7 @@ namespace XIVLauncher.Dalamud
                     using var md5 = MD5.Create();
 
                     var hashed = BitConverter.ToString(md5.ComputeHash(fileStream)).ToUpperInvariant().Replace("-", string.Empty);
+
                     if (hashed != hash.Value)
                     {
                         Log.Error("[DUPDATE] Integrity check failed for {0} ({1} - {2})", file, hash.Value, hashed);

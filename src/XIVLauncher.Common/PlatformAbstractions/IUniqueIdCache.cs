@@ -7,7 +7,9 @@ public interface IUniqueIdCache
     void Add(string name, string uid, int region, int maxExpansion);
 
     bool TryGet(string userName, out CachedUid cached);
-    
+
+    void Reset();
+
     public struct CachedUid
     {
         public string UniqueId;

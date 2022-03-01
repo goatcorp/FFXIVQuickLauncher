@@ -12,4 +12,5 @@ public interface ISettings
     DirectoryInfo GamePath { get; }
     AcquisitionMethod? PatchAcquisitionMethod { get; }
     long SpeedLimitBytes { get; }
+    int DalamudInjectionDelayMs { get; }
 }

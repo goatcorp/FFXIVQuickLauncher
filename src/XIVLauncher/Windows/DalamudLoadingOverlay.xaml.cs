@@ -2,15 +2,18 @@
 using System.Timers;
 using System.Windows;
 using CheapLoc;
+using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Windows.ViewModel;
 using XIVLauncher.Xaml;
 
 namespace XIVLauncher.Windows
 {
+    // TODO(goat): Dispatcher!!
+
     /// <summary>
     /// Interaction logic for DalamudLoadingOverlay.xaml
     /// </summary>
-    public partial class DalamudLoadingOverlay : Window
+    public partial class DalamudLoadingOverlay : Window, IDalamudLoadingOverlay
     {
         public DalamudLoadingOverlay()
         {
@@ -19,60 +22,74 @@ namespace XIVLauncher.Windows
             this.DataContext = new DalamudLoadingOverlayViewModel();
         }
 
-        public enum DalamudLoadingProgress
+        private IDalamudLoadingOverlay.DalamudUpdateStep _progress;
+
+        public void SetStep(IDalamudLoadingOverlay.DalamudUpdateStep progress)
         {
-            Dalamud,
-            Assets,
-            Runtime,
-            Unavailable
-        }
-
-        private DalamudLoadingProgress _progress;
-
-        public void SetProgress(DalamudLoadingProgress progress)
-        {
-            _progress = progress;
-
-            switch (progress)
+            Dispatcher.Invoke(() =>
             {
-                case DalamudLoadingProgress.Dalamud:
-                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateDalamud", "Updating core...");
-                    break;
-                case DalamudLoadingProgress.Assets:
-                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateAssets", "Updating assets...");
-                    break;
-                case DalamudLoadingProgress.Runtime:
-                    ProgressTextBlock.Text = Loc.Localize("DalamudUpdateRuntime", "Updating runtime...");
-                    break;
-                case DalamudLoadingProgress.Unavailable:
-                    ProgressTextBlock.Text = Loc.Localize("DalamudUnavailable",
-                        "Plugins are currently unavailable\ndue to a game update.");
-                    InfoIcon.Visibility = Visibility.Visible;
-                    ProgressBar.Visibility = Visibility.Collapsed;
-                    UpdateText.Visibility = Visibility.Collapsed;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(progress), progress, null);
-            }
+                _progress = progress;
+
+                switch (progress)
+                {
+                    case IDalamudLoadingOverlay.DalamudUpdateStep.Dalamud:
+                        ProgressTextBlock.Text = Loc.Localize("DalamudUpdateDalamud", "Updating core...");
+                        break;
+
+                    case IDalamudLoadingOverlay.DalamudUpdateStep.Assets:
+                        ProgressTextBlock.Text = Loc.Localize("DalamudUpdateAssets", "Updating assets...");
+                        break;
+
+                    case IDalamudLoadingOverlay.DalamudUpdateStep.Runtime:
+                        ProgressTextBlock.Text = Loc.Localize("DalamudUpdateRuntime", "Updating runtime...");
+                        break;
+
+                    case IDalamudLoadingOverlay.DalamudUpdateStep.Unavailable:
+                        ProgressTextBlock.Text = Loc.Localize("DalamudUnavailable",
+                            "Plugins are currently unavailable\ndue to a game update.");
+                        InfoIcon.Visibility = Visibility.Visible;
+                        ProgressBar.Visibility = Visibility.Collapsed;
+                        UpdateText.Visibility = Visibility.Collapsed;
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(progress), progress, null);
+                }
+            });
         }
 
         public void SetVisible()
         {
-            if (IsClosed)
-                return;
-
-            if (_progress == DalamudLoadingProgress.Unavailable)
+            this.Dispatcher.Invoke(() =>
             {
-                var t = new Timer(15000) {AutoReset = false};
+                if (IsClosed)
+                    return;
 
-                t.Elapsed += (_, _) =>
+                // TODO(goat): this is real bad, just do it any other way that doesn't possibly block
+                if (_progress == IDalamudLoadingOverlay.DalamudUpdateStep.Unavailable)
                 {
-                    this.Dispatcher.Invoke(this.Close);
-                };
-                t.Start();
-            }
+                    var t = new Timer(15000) {AutoReset = false};
 
-            this.Show();
+                    t.Elapsed += (_, _) =>
+                    {
+                        this.Dispatcher.Invoke(this.Close);
+                    };
+                    t.Start();
+                }
+
+                this.Show();
+            });
+        }
+
+        public void SetInvisible()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (IsClosed)
+                    return;
+
+                this.Hide();
+            });
         }
 
         private void DalamudLoadingOverlay_OnLoaded(object sender, RoutedEventArgs e)

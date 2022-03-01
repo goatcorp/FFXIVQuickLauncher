@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 
-namespace XIVLauncher.Dalamud
+namespace XIVLauncher.Common.Dalamud
 {
-    class DalamudVersionInfo
+    internal class DalamudVersionInfo
     {
         public string AssemblyVersion { get; set; }
         public string SupportedGameVer { get; set; }

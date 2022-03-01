@@ -11,7 +11,6 @@ using CheapLoc;
 using MaterialDesignThemes.Wpf.Transitions;
 using Serilog;
 using XIVLauncher.Addon;
-using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using Newtonsoft.Json.Linq;
 using XIVLauncher.Addon.Implementations;
@@ -91,11 +90,6 @@ namespace XIVLauncher.Windows
             SteamIntegrationCheckBox.IsChecked = App.Settings.SteamIntegrationEnabled;
             OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
 
-            // Get old setting if there is one
-            if (App.Settings.OptOutMbCollection == null)
-                App.Settings.OptOutMbCollection = DalamudSettings.GetSettings().OptOutMbCollection.GetValueOrDefault(false);
-            MbUploadOptOutCheckBox.IsChecked = App.Settings.OptOutMbCollection;
-
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
@@ -145,8 +139,6 @@ namespace XIVLauncher.Windows
 
             App.Settings.SteamIntegrationEnabled = SteamIntegrationCheckBox.IsChecked == true;
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
-
-            App.Settings.OptOutMbCollection = MbUploadOptOutCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 

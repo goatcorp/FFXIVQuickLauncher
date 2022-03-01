@@ -5,12 +5,10 @@ using System.Net;
 using Newtonsoft.Json;
 using Serilog;
 using System.Security.Cryptography;
-using Castle.Core.Internal;
-using XIVLauncher.Common;
 
-namespace XIVLauncher.Dalamud
+namespace XIVLauncher.Common.Dalamud
 {
-    internal class AssetManager
+    public class AssetManager
     {
         private const string ASSET_STORE_URL = "https://goatcorp.github.io/DalamudAssets/";
 
@@ -63,7 +61,8 @@ namespace XIVLauncher.Dalamud
                 }
 
                 var refreshFile = false;
-                if (File.Exists(filePath) && !entry.Hash.IsNullOrEmpty())
+
+                if (File.Exists(filePath) && !string.IsNullOrEmpty(entry.Hash))
                 {
                     try
                     {
@@ -75,13 +74,14 @@ namespace XIVLauncher.Dalamud
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "[DASSET] Could not read asset.");
+                        Log.Error(ex, "[DASSET] Could not read asset");
                     }
                 }
 
                 if (!File.Exists(filePath) || isRefreshNeeded || refreshFile)
                 {
                     Log.Verbose("[DASSET] Downloading {0} to {1}...", entry.Url, entry.FileName);
+
                     try
                     {
                         File.WriteAllBytes(filePath, client.DownloadData(entry.Url));

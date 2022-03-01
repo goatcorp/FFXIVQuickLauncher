@@ -16,7 +16,6 @@ using XIVLauncher.Accounts;
 using XIVLauncher.Addon;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
-using XIVLauncher.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Windows;
@@ -31,7 +30,7 @@ namespace XIVLauncher.Windows.ViewModel
     {
         public bool IsLoggingIn;
 
-        public Launcher Launcher { get; set; } = new(new WindowsRunner(), WindowsSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
+        public Launcher Launcher { get; private set; } = new(WindowsSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
         private readonly Common.Game.Patch.PatchInstaller _installer = new(CommonSettings.Instance);
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
@@ -54,7 +53,7 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoStartCommand = new AsyncCommand(GetLoginFunc(false, false, false), () => !IsLoggingIn);
             LoginNoDalamudCommand = new AsyncCommand(GetLoginFunc(true, false, true), () => !IsLoggingIn);
             LoginRepairCommand = new AsyncCommand(GetLoginFunc(false, true, false), () => !IsLoggingIn);
-            
+
             _installer.OnFail += InstallerOnFail;
         }
 
@@ -445,7 +444,7 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 var message = oauthLoginException.OauthErrorMessage;
                 message ??= Loc.Localize("LoginGenericError", "Could not log into your SE account.\nPlease check your username and password.");
-                
+
                 var normalizedMessage = message.Replace("\\r\\n", "\n").Replace("\r\n", "\n");
                 if (App.Settings.AutologinEnabled)
                 {
@@ -632,7 +631,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 var patcher = new PatchManager(CommonSettings.Instance, Repository.Ffxiv, loginResult.PendingPatches, App.Settings.GamePath, App.Settings.PatchPath, _installer, this.Launcher, loginResult.UniqueId);
                 patcher.OnFail += PatcherOnFail;
-                
+
                 IsEnabled = false;
                 Hide();
 
@@ -683,15 +682,17 @@ namespace XIVLauncher.Windows.ViewModel
         {
             var dlFailureLoc = Loc.Localize("PatchManDlFailure",
                 "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
-            
+
             switch (reason)
             {
                 case PatchManager.FailReason.DownloadProblem:
                     CustomMessageBox.Show(string.Format(dlFailureLoc, "Problem", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     break;
+
                 case PatchManager.FailReason.HashCheck:
                     CustomMessageBox.Show(string.Format(dlFailureLoc, "IsHashCheckPass", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(reason), reason, null);
             }
@@ -703,7 +704,7 @@ namespace XIVLauncher.Windows.ViewModel
         {
             if (!gateStatus)
             {
-                Log.Information("GateStatus is false.");
+                Log.Information("GateStatus is false");
                 CustomMessageBox.Show(
                     Loc.Localize("MaintenanceNotice",
                         "Maintenance seems to be in progress. The game shouldn't be launched."),
@@ -713,33 +714,29 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
-            var dalamudLauncher = new DalamudLauncher(DalamudUpdater.Overlay, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
+            var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), new WindowsDalamudCompatibilityCheck(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject), CommonSettings.Instance);
             var dalamudOk = false;
-            var isDalamudEnabled = App.Settings.InGameAddonEnabled && !forceNoDalamud;
-            if (isDalamudEnabled)
+
+            if (App.Settings.InGameAddonEnabled && !forceNoDalamud && App.Settings.IsDx11)
             {
                 dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
             }
 
+            var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
+
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-            var gameProcess = this.Launcher.LaunchGame(loginResult.UniqueId, loginResult.OauthLogin.Region,
-                    loginResult.OauthLogin.MaxExpansion, App.Settings.SteamIntegrationEnabled,
-                    isSteam, App.Settings.AdditionalLaunchArgs, App.Settings.GamePath, App.Settings.IsDx11, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.EncryptArguments.GetValueOrDefault(false),
-                    process =>
-                    {
-                        if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.EntryPoint)
-                        {
-                            if (isDalamudEnabled && App.Settings.IsDx11 && dalamudOk)
-                            {
-                                dalamudLauncher.Setup(process, App.Settings);
-                                dalamudLauncher.Run();
-                            }
-                            else
-                            {
-                                Log.Warning("In-Game addon was not enabled or failed to ensure (tried to load as entry point)");
-                            }
-                        }
-                    });
+            var gameProcess = this.Launcher.LaunchGame(gameRunner,
+                loginResult.UniqueId,
+                loginResult.OauthLogin.Region,
+                loginResult.OauthLogin.MaxExpansion,
+                App.Settings.SteamIntegrationEnabled,
+                isSteam,
+                App.Settings.AdditionalLaunchArgs,
+                App.Settings.GamePath,
+                App.Settings.IsDx11,
+                App.Settings.Language.GetValueOrDefault(ClientLanguage.English),
+                App.Settings.EncryptArguments.GetValueOrDefault(false),
+                App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware));
 
             Troubleshooting.LogTroubleshooting();
 
@@ -760,28 +757,17 @@ namespace XIVLauncher.Windows.ViewModel
 
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
-                if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
-                {
-                    if (isDalamudEnabled && App.Settings.IsDx11 && dalamudOk)
-                    {
-                        addons.Add(dalamudLauncher);
-                    }
-                    else
-                    {
-                        Log.Warning("In-Game addon was not enabled or failed to ensure (tried to load via DLL injection)");
-                    }
-                }
-
                 addonMgr.RunAddons(gameProcess, App.Settings, addons);
             }
             catch (Exception ex)
             {
                 CustomMessageBox.Builder
-                    .NewFrom(ex, "Addons")
-                    .WithAppendText("\n\n")
-                    .WithAppendText(Loc.Localize("AddonLoadError",
-                        "This could be caused by your antivirus, please check its logs and add any needed exclusions."))
-                    .Show();
+                                .NewFrom(ex, "Addons")
+                                .WithAppendText("\n\n")
+                                .WithAppendText(Loc.Localize("AddonLoadError",
+                                    "This could be caused by your antivirus, please check its logs and add any needed exclusions."))
+                                .Show();
+
                 IsLoggingIn = false;
 
                 addonMgr.StopAddons();
@@ -996,7 +982,7 @@ namespace XIVLauncher.Windows.ViewModel
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
+
                 return false;
             }
         }
