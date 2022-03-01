@@ -114,8 +114,9 @@
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                    Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding AutoLaunchHintLoc}" />
 
-                        <materialDesign:Card Margin="0,0,0,0" Height="220">
-                            <ListView x:Name="AddonListView" Margin="0,0,0,0" Height="220"
+                        <!-- BUG(goat): There seems to be an issue with material design wherein this has an unintended margin on? Need to go negative to restore the original look. -->
+                        <materialDesign:Card Margin="0,-25,0,0" Height="220">
+                            <ListView x:Name="AddonListView" Height="220"
                                       MouseUp="AddonListView_OnMouseUp">
                                 <ListView.ContextMenu>
                                     <ContextMenu StaysOpen="true">
@@ -198,8 +199,9 @@
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PluginsDescriptionLoc}" />
 
-                    <materialDesign:Card Margin="0,0,0,0" Height="230">
-                        <ListView x:Name="PluginListView" Margin="0,0,0,0" Height="230"
+                    <!-- BUG(goat): There seems to be an issue with material design wherein this has an unintended margin on? Need to go negative to restore the original look. -->
+                    <materialDesign:Card Margin="0,-15,0,0" Height="230">
+                        <ListView x:Name="PluginListView" Height="230"
                                   Foreground="{DynamicResource MaterialDesignBody}">
                             <ListView.ContextMenu>
                                 <ContextMenu StaysOpen="true">

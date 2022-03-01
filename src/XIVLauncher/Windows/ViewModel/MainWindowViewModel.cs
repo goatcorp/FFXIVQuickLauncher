@@ -90,10 +90,11 @@ namespace XIVLauncher.Windows.ViewModel
                 if (isRepair)
                 {
                     var res = CustomMessageBox.Builder
-                        .NewFrom(Loc.Localize("GameRepairDisclaimer", "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?"))
-                        .WithButtons(MessageBoxButton.YesNo)
-                        .WithImage(MessageBoxImage.Question)
-                        .Show();
+                                              .NewFrom(Loc.Localize("GameRepairDisclaimer", "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?"))
+                                              .WithButtons(MessageBoxButton.YesNo)
+                                              .WithImage(MessageBoxImage.Question)
+                                              .Show();
+
                     if (res == MessageBoxResult.No)
                     {
                         Reactivate();
@@ -102,20 +103,15 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 LoadingDialogCancelButtonVisibility = Visibility.Collapsed;
-                //IsLoadingDialogOpen = true;
-                //LoadingDialogMessage = Loc.Localize("LoadingDialogIsLoggingIn", "Transmission in progress...");
 
                 IsEnabled = false;
                 LoginCardTransitionerIndex = 0;
 
                 IsLoggingIn = true;
 
-                await Login(Username, Password, IsOtp, IsSteam, false, startGame, isRepair, forceNoDalamud);
+                var _ = Task.Run(() => this.Login(this.Username, this.Password, this.IsOtp, this.IsSteam, false, startGame, isRepair, forceNoDalamud)).ConfigureAwait(false);
 
-                //IsLoadingDialogOpen = false;
-                LoginCardTransitionerIndex = 1;
-                IsEnabled = true;
-                IsLoggingIn = false;
+                // pray that whatever happens in Login() calls Reactivate() if it fails
             };
         }
 
@@ -126,6 +122,7 @@ namespace XIVLauncher.Windows.ViewModel
             /* ============= MARCH 2022 STEAM UPDATE ============= */
             var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
             var ver600 = SeVersion.Parse("2021.11.16.0000.0001");
+
             if (bootver > ver600)
             {
                 CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +

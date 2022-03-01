@@ -12,12 +12,11 @@ jobs:
       - uses: actions/checkout@v1
       - name: Initialize Submodules
         run: git submodule update --init --recursive
-      - name: Setup Nuget
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: "latest"
       - name: Restore Nuget Packages
-        run: nuget restore src\XIVLauncher.sln
+        run: |
+          cd .\src\
+          dotnet restore
+          cd ..
       - name: Define VERSION
         run: |
           $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
@@ -51,7 +50,7 @@ jobs:
           $setup_file = $current.assets | Where-Object -Property name -Value "Setup.exe" -EQ
           Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\Setup.exe
            ~\.nuget\packages\squirrel.windows\1.9.1\tools\Squirrel.exe --no-msi --releasify .\XIVLauncher.$refver.nupkg --setupIcon=.\XIVLauncher\Resources\dalamud_icon.ico --icon=.\XIVLauncher\Resources\dalamud_icon.ico
-          Start-Sleep -s 30
+          Start-Sleep -s 60
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
       - name: Create Release
@@ -78,12 +77,11 @@ jobs:
       - name: Initialize Submodules
         run: git submodule update --init --recursive
           
-      - name: Setup Nuget
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-version: "latest"
       - name: Restore Nuget Packages
-        run: nuget restore src\XIVLauncher.sln
+        run: |
+          cd .\src\
+          dotnet restore
+          cd ..
       - name: Define VERSION
         run: |
           $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)

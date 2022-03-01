@@ -12,14 +12,14 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="170.088" Width="269.186">
+        WindowStyle="None" Height="180.088" Width="269.186">
     <Grid Margin="0,0,0,0">
-        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="149" Margin="0,0,10,0">
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="159" Margin="0,0,10,0">
             <StackPanel Margin="16,16,10,0">
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding OtpInputPromptLoc}"/>
                 
                 <TextBox
-                  Margin="0,8,0,0"
+                  Margin="0,8,0,10"
                   HorizontalAlignment="Stretch"
                   PreviewTextInput="OtpTextBox_OnPreviewTextInput"
                   PreviewKeyDown="OtpTextBox_PreviewKeyDown"
