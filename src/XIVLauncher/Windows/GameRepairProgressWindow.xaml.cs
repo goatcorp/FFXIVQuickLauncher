@@ -55,6 +55,7 @@ namespace XIVLauncher.Windows
         private void GameRepairProgressWindow_OnClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
+
             if (CancelButton.IsEnabled)
             {
                 CancelButton.IsEnabled = false;

@@ -15,7 +15,7 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class OtpInputDialog : Window
     {
-        public string Result { get; private set; }
+        public event Action<string> OnResult;
 
         private OtpListener _otpListener;
 
@@ -34,10 +34,10 @@ namespace XIVLauncher.Windows
                 _otpListener = new OtpListener();
                 _otpListener.OnOtpReceived += otp =>
                 {
-                    Result = otp;
+                    OnResult?.Invoke(otp);
                     Dispatcher.Invoke(() =>
                     {
-                        Close();
+                        Hide();
                         _otpListener?.Stop();
                     });
                 };
@@ -79,14 +79,15 @@ namespace XIVLauncher.Windows
         {
             if (e.Key == Key.Escape)
             {
+                OnResult?.Invoke(null);
                 _otpListener?.Stop();
-                Close();
+                Hide();
             }
             else if (e.Key == Key.Enter && OtpTextBox.Text.Length == 6)
             {
-                Result = OtpTextBox.Text;
+                OnResult?.Invoke(this.OtpTextBox.Text);
                 _otpListener?.Stop();
-                Close();
+                Hide();
             }
         }
 
@@ -95,15 +96,16 @@ namespace XIVLauncher.Windows
             if (OtpTextBox.Text.Length != 6)
                 return;
 
-            Result = OtpTextBox.Text;
+            OnResult?.Invoke(this.OtpTextBox.Text);
             _otpListener?.Stop();
-            Close();
+            Hide();
         }
 
         private void CancelButton_OnClick(object sender, RoutedEventArgs e)
         {
             _otpListener?.Stop();
-            Close();
+            OnResult?.Invoke(null);
+            Hide();
         }
 
         public void OpenShortcutInfo_MouseUp(object sender, RoutedEventArgs e)

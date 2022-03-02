@@ -193,8 +193,22 @@ namespace XIVLauncher.Windows.ViewModel
             var hasValidCache = CommonUniqueIdCache.Instance.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
 
             var otp = string.Empty;
+            var signal = new ManualResetEvent(false);
+
             if (IsOtp && (!hasValidCache || isRepair))
-                otp = AskForOtp();
+            {
+                var otpDialog = OtpInputDialogFactory();
+                otpDialog.OnResult += OnOtpResult;
+
+                void OnOtpResult(string result)
+                {
+                    otp = result;
+                    signal.Set();
+                }
+
+                signal.WaitOne();
+                otpDialog.OnResult -= OnOtpResult;
+            }
 
             if (otp == null)
             {
@@ -505,11 +519,11 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 CustomMessageBox.Builder
-                    .NewFrom(ex, "Login")
-                    .WithAppendText("\n\n")
-                    .WithAppendText(Loc.Localize("CheckLoginInfoNotAdditionally",
-                        "Please check your login information or try again."))
-                    .Show();
+                                .NewFrom(ex, "Login")
+                                .WithAppendText("\n\n")
+                                .WithAppendText(Loc.Localize("CheckLoginInfoNotAdditionally",
+                                    "Please check your login information or try again."))
+                                .Show();
                 Reactivate();
             }
         }
@@ -518,6 +532,7 @@ namespace XIVLauncher.Windows.ViewModel
         {
             var doLogin = false;
             var mutex = new Mutex(false, "XivLauncherIsPatching");
+
             if (mutex.WaitOne(0, false))
             {
                 Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
@@ -617,12 +632,14 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
             return doLogin;
         }
 
         private async Task<bool> InstallGamePatch(Launcher.LoginResult loginResult)
         {
             var mutex = new Mutex(false, "XivLauncherIsPatching");
+
             if (mutex.WaitOne(0, false))
             {
                 if (Util.CheckIsGameOpen())
@@ -864,14 +881,6 @@ namespace XIVLauncher.Windows.ViewModel
         {
             if (IsLoggingIn)
                 args.Cancel = true;
-        }
-
-        private string AskForOtp()
-        {
-            var otpDialog = OtpInputDialogFactory();
-            otpDialog.ShowDialog();
-
-            return otpDialog.Result;
         }
 
         private void PersistAccount(string username, string password)

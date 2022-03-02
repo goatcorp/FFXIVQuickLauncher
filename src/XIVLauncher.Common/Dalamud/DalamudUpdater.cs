@@ -5,7 +5,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
@@ -110,8 +109,6 @@ namespace XIVLauncher.Common.Dalamud
 
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            Thread.Sleep(30000);
 
             var (versionInfoRelease, versionInfoStaging) = GetVersionInfo(client, settings);
 

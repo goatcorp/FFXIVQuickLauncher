@@ -41,6 +41,8 @@ namespace XIVLauncher.Windows
         private MainWindowViewModel Model => this.DataContext as MainWindowViewModel;
         private readonly Launcher _launcher;
 
+        private readonly OtpInputDialog otpInputDialog = new();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -69,53 +71,60 @@ namespace XIVLauncher.Windows
 
             Model.PatchDownloadDialogFactory = patcher =>
             {
-                var dialog = new PatchDownloadDialog(patcher);
-
-                if (this.IsVisible)
+                PatchDownloadDialog progressWindow = null;
+                this.Dispatcher.Invoke(() =>
                 {
-                    dialog.Owner = this;
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                }
-                else
-                {
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                }
+                    var dialog = new PatchDownloadDialog(patcher);
 
-                return dialog;
+                    if (this.IsVisible)
+                    {
+                        dialog.Owner = this;
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    }
+                    else
+                    {
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    }
+
+                    progressWindow = dialog;
+                });
+
+                Debug.Assert(progressWindow != null);
+                return progressWindow;
             };
 
             Model.OtpInputDialogFactory = () =>
             {
-                var dialog = new OtpInputDialog();
-
-                if (this.IsVisible)
+                this.Dispatcher.BeginInvoke(() =>
                 {
-                    dialog.Owner = this;
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                }
-                else
-                {
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                }
+                    this.otpInputDialog.ShowDialog();
+                });
 
-                return dialog;
+                return this.otpInputDialog;
             };
 
             Model.GameRepairProgressWindowFactory = verify =>
             {
-                var dialog = new GameRepairProgressWindow(verify);
-
-                if (this.IsVisible)
+                GameRepairProgressWindow progressWindow = null;
+                this.Dispatcher.Invoke(() =>
                 {
-                    dialog.Owner = this;
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                }
-                else
-                {
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                }
+                    var dialog = new GameRepairProgressWindow(verify);
 
-                return dialog;
+                    if (this.IsVisible)
+                    {
+                        dialog.Owner = this;
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    }
+                    else
+                    {
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    }
+
+                    progressWindow = dialog;
+                });
+
+                Debug.Assert(progressWindow != null);
+                return progressWindow;
             };
 
             NewsListView.ItemsSource = new List<News>
@@ -163,6 +172,7 @@ namespace XIVLauncher.Windows
                 _headlines = await Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
+
                 for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
                     var imageBytes = await _launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
@@ -242,6 +252,7 @@ namespace XIVLauncher.Windows
             App.Settings.DpiAwareness ??= DpiAwareness.Unaware;
 
             var versionLevel = App.Settings.VersionUpgradeLevel.GetValueOrDefault(0);
+
             while (versionLevel < CURRENT_VERSION_LEVEL)
             {
                 switch (versionLevel)
@@ -270,6 +281,7 @@ namespace XIVLauncher.Windows
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
                 versionLevel++;
             }
 
@@ -329,11 +341,11 @@ namespace XIVLauncher.Windows
                 catch (Exception ex)
                 {
                     CustomMessageBox.Builder
-                        .NewFrom(ex, "AutoLogin")
-                        .WithAppendText("\n\n")
-                        .WithAppendText(Loc.Localize("CheckLoginInfo",
-                            "Additionally, please check your login information or try again."))
-                        .Show();
+                                    .NewFrom(ex, "AutoLogin")
+                                    .WithAppendText("\n\n")
+                                    .WithAppendText(Loc.Localize("CheckLoginInfo",
+                                        "Additionally, please check your login information or try again."))
+                                    .Show();
                     App.Settings.AutologinEnabled = false;
                 }
             }
@@ -468,6 +480,7 @@ namespace XIVLauncher.Windows
             var bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);
 
             var gateStatus = false;
+
             try
             {
                 gateStatus = Task.Run(() => _launcher.GetGateStatus()).Result;
@@ -480,10 +493,13 @@ namespace XIVLauncher.Windows
             if (gateStatus || bootPatches != null)
             {
                 if (bootPatches != null)
+                {
                     CustomMessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
                         "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher");
+                }
 
-                await Dispatcher.InvokeAsync(async () => {
+                await Dispatcher.InvokeAsync(async () =>
+                {
                     QuitMaintenanceQueueButton_OnClick(null, null);
 
                     if (Model.IsLoggingIn)
