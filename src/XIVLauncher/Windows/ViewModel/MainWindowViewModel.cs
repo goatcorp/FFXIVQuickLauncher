@@ -440,6 +440,18 @@ namespace XIVLauncher.Windows.ViewModel
                     }
                 }
             }
+            catch (IOException ex)
+            {
+                Log.Error(ex, "IOException during login");
+
+                CustomMessageBox.Show(
+                    Loc.Localize("LoginIoError",
+                        "Could not locate game data files.\nThis may mean that the game path set in XIVLauncher isn't preset, e.g. on a disconnected drive or network storage. Please check the game path in the XIVLauncher settings."),
+                    Loc.Localize("LoginNoOauthTitle", "Login issue"),
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Reactivate();
+            }
             catch (InvalidResponseException ex)
             {
                 Log.Error(ex, "Received invalid server response");
