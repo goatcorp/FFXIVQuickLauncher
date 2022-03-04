@@ -55,6 +55,8 @@ namespace XIVLauncher.Accounts
 
         public string ThumbnailUrl;
 
+        public string LastSuccessfulOtp;
+
         public XivAccount(string userName)
         {
             UserName = userName.ToLower();

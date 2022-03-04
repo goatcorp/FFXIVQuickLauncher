@@ -59,7 +59,6 @@ namespace XIVLauncher.Common.Game
             Ok,
             NeedsPatchGame,
             NeedsPatchBoot,
-            NoOAuth,
             NoService,
             NoTerms
         }

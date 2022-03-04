@@ -29,6 +29,9 @@ namespace XIVLauncher.Windows
 
         private CustomMessageBoxViewModel ViewModel => DataContext as CustomMessageBoxViewModel;
 
+        public static string ErrorExplanation = Loc.Localize("ErrorExplanation",
+            "An error in XIVLauncher occurred. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.");
+
         private CustomMessageBox(Builder builder)
         {
             _builder = builder;
@@ -42,7 +45,7 @@ namespace XIVLauncher.Windows
 
             Title = builder.Caption;
             MessageTextBlock.Text = builder.Text;
-            if (builder.Description == null)
+            if (string.IsNullOrWhiteSpace(builder.Description))
                 DescriptionTextBox.Visibility = Visibility.Collapsed;
             else
             {
@@ -257,7 +260,9 @@ namespace XIVLauncher.Windows
 
             public Builder() { }
             public Builder WithText(string text) { Text = text; return this; }
-            public Builder WithAppendText(string text) { Text += text; return this; }
+            public Builder WithTextFormatted(string format, params object[] args) { Text = string.Format(format, args); return this; }
+            public Builder WithAppendText(string text) { Text = (Text ?? "") + text; return this; }
+            public Builder WithAppendTextFormatted(string format, params object[] args) { Text = (Text ?? "") + string.Format(format, args); return this; }
             public Builder WithCaption(string caption) { Caption = caption; return this; }
             public Builder WithDescription(string description) { Description = description; return this; }
             public Builder WithAppendDescription(string description) { Description = (Description ?? "") + description; return this; }
@@ -277,22 +282,48 @@ namespace XIVLauncher.Windows
             public Builder WithShowIntegrityReportLink(bool showReportLinks = true) { ShowIntegrityReportLinks = showReportLinks; return this; }
             public Builder WithShowNewGitHubIssue(bool showNewGitHubIssue = true) { ShowNewGitHubIssue = showNewGitHubIssue; return this; }
 
+            public Builder WithExceptionText()
+            {
+                return this.WithText(Loc.Localize("ErrorExplanation",
+                    "An error in XIVLauncher occurred. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box."));
+            }
+
+            public Builder WithAppendSettingsDescription(string context)
+            {
+                this.WithAppendDescription("\n\nVersion: " + AppUtil.GetAssemblyVersion())
+                    .WithAppendDescription("\nGit Hash: " + AppUtil.GetGitHash())
+                    .WithAppendDescription("\nContext: " + context)
+                    .WithAppendDescription("\nOS: " + Environment.OSVersion)
+                    .WithAppendDescription("\n64bit? " + Environment.Is64BitProcess);
+                if (App.Settings != null)
+                {
+                    this.WithAppendDescription("\nDX11? " + App.Settings.IsDx11)
+                        .WithAppendDescription("\nAddons Enabled? " + App.Settings.InGameAddonEnabled)
+                        .WithAppendDescription("\nAuto Login Enabled? " + App.Settings.AutologinEnabled)
+                        .WithAppendDescription("\nLanguage: " + App.Settings.Language)
+                        .WithAppendDescription("\nLauncherLanguage: " + App.Settings.LauncherLanguage)
+                        .WithAppendDescription("\nGame path: " + App.Settings.GamePath);
+                }
+
+#if DEBUG
+                this.WithAppendDescription("\nDebugging");
+#endif
+
+                return this;
+            }
+
             public static Builder NewFrom(string text) => new Builder().WithText(text);
             public static Builder NewFrom(Exception exc, string context, ExitOnCloseModes exitOnCloseMode = ExitOnCloseModes.DontExitOnClose)
             {
                 var builder = new Builder()
-                    .WithText(Loc.Localize("ErrorExplanation", "An error in XIVLauncher occurred. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box."))
+                    .WithText(ErrorExplanation)
                     .WithExitOnClose(exitOnCloseMode)
                     .WithImage(MessageBoxImage.Error)
                     .WithShowHelpLinks(true)
                     .WithShowDiscordLink(true)
                     .WithShowNewGitHubIssue(true)
                     .WithAppendDescription(exc.ToString())
-                    .WithAppendDescription("\nVersion: " + AppUtil.GetAssemblyVersion())
-                    .WithAppendDescription("\nGit Hash: " + AppUtil.GetGitHash())
-                    .WithAppendDescription("\nContext: " + context)
-                    .WithAppendDescription("\nOS: " + Environment.OSVersion)
-                    .WithAppendDescription("\n64bit? " + Environment.Is64BitProcess);
+                    .WithAppendSettingsDescription(context);
 
                 if (exitOnCloseMode == ExitOnCloseModes.ExitOnClose)
                 {
@@ -301,23 +332,10 @@ namespace XIVLauncher.Windows
                         .WithNoButtonText(Loc.Localize("Exit", "_Exit"));
                 }
 
+                // When this happens we probably don't want them to run into it again, in case it's an issue with a moved game for example
                 if (App.Settings != null)
-                {
-                    builder
-                        .WithAppendDescription("\nDX11? " + App.Settings.IsDx11)
-                        .WithAppendDescription("\nAddons Enabled? " + App.Settings.InGameAddonEnabled)
-                        .WithAppendDescription("\nAuto Login Enabled? " + App.Settings.AutologinEnabled)
-                        .WithAppendDescription("\nLanguage: " + App.Settings.Language)
-                        .WithAppendDescription("\nLauncherLanguage: " + App.Settings.LauncherLanguage)
-                        .WithAppendDescription("\nGame path: " + App.Settings.GamePath);
-
-                    // When this happens we probably don't want them to run into it again, in case it's an issue with a moved game for example
                     App.Settings.AutologinEnabled = false;
-                }
 
-#if DEBUG
-                builder.WithAppendDescription("\nDebugging");
-#endif
                 return builder;
             }
 
@@ -390,6 +408,27 @@ namespace XIVLauncher.Windows
                 .WithShowIntegrityReportLink(showReportLinks)
                 .WithShowOfficialLauncher(showOfficialLauncher)
                 .Show();
+        }
+
+        public static bool AssertOrShowError(bool condition, string context, bool fatal = false)
+        {
+            if (condition)
+                return false;
+
+            try
+            {
+                throw new InvalidOperationException("Assertion failure.");
+            }
+            catch (Exception e)
+            {
+                Builder.NewFrom(e, context, fatal ? ExitOnCloseModes.ExitOnClose : ExitOnCloseModes.DontExitOnClose)
+                    .WithAppendText("\n\n")
+                    .WithAppendText(Loc.Localize("ErrorAssertionFailed",
+                        "Something that cannot happen happened."))
+                    .Show();
+            }
+
+            return true;
         }
 
         // https://docs.microsoft.com/en-us/archive/blogs/twistylittlepassagesallalike/everyone-quotes-command-line-arguments-the-wrong-way

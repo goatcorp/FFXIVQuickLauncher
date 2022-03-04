@@ -97,6 +97,7 @@ namespace XIVLauncher.Windows
             {
                 this.Dispatcher.BeginInvoke(() =>
                 {
+                    this.otpInputDialog.Reset();
                     this.otpInputDialog.ShowDialog();
                 });
 
@@ -334,7 +335,7 @@ namespace XIVLauncher.Windows
                     Model.IsLoggingIn = true;
                     Dispatcher.InvokeAsync(() => Model.Login(savedAccount.UserName, savedAccount.Password,
                         savedAccount.UseOtp,
-                        savedAccount.UseSteamServiceAccount, true, true, false, false));
+                        savedAccount.UseSteamServiceAccount, true, MainWindowViewModel.AfterLoginAction.Start));
 
                     return;
                 }
@@ -506,7 +507,7 @@ namespace XIVLauncher.Windows
                         return;
 
                     Model.IsLoggingIn = true;
-                    await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true, false, false);
+                    await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, MainWindowViewModel.AfterLoginAction.Start);
                     Model.IsLoggingIn = false;
                 });
 
@@ -545,7 +546,7 @@ namespace XIVLauncher.Windows
                 return;
 
             Model.IsLoggingIn = true;
-            await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, true, false, false);
+            await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, MainWindowViewModel.AfterLoginAction.Start);
             Model.IsLoggingIn = false;
         }
 
@@ -591,11 +592,11 @@ namespace XIVLauncher.Windows
 
         private void FakeStart_OnClick(object sender, RoutedEventArgs e)
         {
-            Model.StartGameAndAddon(new Launcher.LoginResult
+            _ = Model.StartGameAndAddon(new Launcher.LoginResult
             {
                 OauthLogin = new Launcher.OauthLoginResult
                 {
-                    MaxExpansion = 3,
+                    MaxExpansion = 4,
                     Playable = true,
                     Region = 0,
                     SessionId = "0",
@@ -603,7 +604,7 @@ namespace XIVLauncher.Windows
                 },
                 State = Launcher.LoginState.Ok,
                 UniqueId = "0"
-            }, true, false, false);
+            }, false, false).ConfigureAwait(false);
         }
 
         private void LoginPassword_OnPasswordChanged(object sender, RoutedEventArgs e)

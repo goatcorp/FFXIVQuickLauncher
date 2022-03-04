@@ -69,6 +69,8 @@ namespace XIVLauncher.Windows
             AddonListView.ItemsSource = App.Settings.AddonList ??= new List<AddonEntry>();
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
+            ExitLauncherAfterGameExitCheckbox.IsChecked = App.Settings.ExitLauncherAfterGameExit ?? true;
+            TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? true;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
             PatchAcquisitionComboBox.SelectedIndex = (int) App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria);
@@ -122,6 +124,8 @@ namespace XIVLauncher.Windows
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
             App.Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
             App.Settings.EncryptArguments = EncryptedArgumentsCheckbox.IsChecked == true;
+            App.Settings.ExitLauncherAfterGameExit = ExitLauncherAfterGameExitCheckbox.IsChecked == true;
+            App.Settings.TreatNonZeroExitCodeAsFailure = TreatNonZeroExitCodeAsFailureCheckbox.IsChecked == true;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
             App.Settings.KeepPatches = KeepPatchesCheckBox.IsChecked == true;
             App.Settings.PatchAcquisitionMethod = (AcquisitionMethod) PatchAcquisitionComboBox.SelectedIndex;
