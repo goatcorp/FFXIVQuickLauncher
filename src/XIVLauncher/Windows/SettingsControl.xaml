@@ -329,11 +329,15 @@
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox x:Name="EncryptedArgumentsCheckbox"
+                            <CheckBox x:Name="EncryptedArgumentsCheckbox"
                                           Content="{Binding EnableEncryptionLoc}"
-                                          HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
-                            </StackPanel>
+                                          HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+                            <CheckBox x:Name="ExitLauncherAfterGameExitCheckbox"
+                                          Content="{Binding ExitLauncherAfterGameExitLoc}"
+                                          HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+                            <CheckBox x:Name="TreatNonZeroExitCodeAsFailureCheckbox"
+                                          Content="{Binding TreatNonZeroExitCodeAsFailureLoc}"
+                                          HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
                         </StackPanel>
 
                         <Image Source="pack://application:,,,/Resources/logo.png" Width="200"

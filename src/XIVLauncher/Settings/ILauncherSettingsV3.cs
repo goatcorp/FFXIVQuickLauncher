@@ -37,6 +37,8 @@ namespace XIVLauncher.Settings
         string AcceptLanguage { get; set; }
         DpiAwareness? DpiAwareness { get; set; }
         int? VersionUpgradeLevel { get; set; }
+        bool? TreatNonZeroExitCodeAsFailure { get; set; }
+        bool? ExitLauncherAfterGameExit { get; set; }
 
         #endregion
     }
