@@ -84,8 +84,6 @@ namespace XIVLauncher
                 System.Environment.Exit(1);
             }
 
-
-
             // Reset security protocol after updating
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
         }

@@ -223,21 +223,12 @@ namespace XIVLauncher.Windows
 
         private const int CURRENT_VERSION_LEVEL = 1;
 
-        public void Initialize()
+        private void SetDefaults()
         {
-#if DEBUG
-            var fakeStartMenuItem = new MenuItem
-            {
-                Header = "Fake start"
-            };
-            fakeStartMenuItem.Click += FakeStart_OnClick;
-
-            LoginContextMenu.Items.Add(fakeStartMenuItem);
-#endif
-
             // Set the default patch acquisition method
             App.Settings.PatchAcquisitionMethod ??=
                 EnvironmentSettings.IsWine ? AcquisitionMethod.NetDownloader : AcquisitionMethod.Aria;
+
             // Set the default Dalamud injection method
             App.Settings.InGameAddonLoadMethod ??= EnvironmentSettings.IsWine
                 ? DalamudLoadMethod.DllInject
@@ -251,6 +242,9 @@ namespace XIVLauncher.Windows
             App.Settings.AskBeforePatchInstall ??= true;
 
             App.Settings.DpiAwareness ??= DpiAwareness.Unaware;
+
+            App.Settings.TreatNonZeroExitCodeAsFailure ??= false;
+            App.Settings.ExitLauncherAfterGameExit ??= true;
 
             var versionLevel = App.Settings.VersionUpgradeLevel.GetValueOrDefault(0);
 
@@ -272,7 +266,7 @@ namespace XIVLauncher.Windows
                                 Log.Information("RTSS/SpecialK detected, setting delay");
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Log.Error(ex, "Could not check for RTSS/SpecialK");
                         }
@@ -287,6 +281,21 @@ namespace XIVLauncher.Windows
             }
 
             App.Settings.VersionUpgradeLevel = versionLevel;
+        }
+
+        public void Initialize()
+        {
+#if DEBUG
+            var fakeStartMenuItem = new MenuItem
+            {
+                Header = "Fake start"
+            };
+            fakeStartMenuItem.Click += FakeStart_OnClick;
+
+            LoginContextMenu.Items.Add(fakeStartMenuItem);
+#endif
+
+            this.SetDefaults();
 
             var worldStatusBrushOk = WorldStatusPackIcon.Foreground;
             // grey out world status icon while deferred check is running
@@ -537,7 +546,7 @@ namespace XIVLauncher.Windows
             Model.IsLoadingDialogOpen = false;
         }
 
-        private async void Card_KeyDown(object sender, KeyEventArgs e)
+        private void Card_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter && e.Key != Key.Return)
                 return;
@@ -546,7 +555,7 @@ namespace XIVLauncher.Windows
                 return;
 
             Model.IsLoggingIn = true;
-            await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, MainWindowViewModel.AfterLoginAction.Start);
+            Model.StartLoginCommand.Execute(null);
             Model.IsLoggingIn = false;
         }
 
