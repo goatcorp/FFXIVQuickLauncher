@@ -29,15 +29,12 @@
                         <TextBlock.Resources>
                             <Storyboard x:Key="InvalidShake">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)">
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="0"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.10" Value="8"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="0"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.20" Value="-6"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="0"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.30" Value="4"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="0"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.40" Value="-2"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.45" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.0" Value="10"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-7"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="5"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-3"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </TextBlock.Resources>
