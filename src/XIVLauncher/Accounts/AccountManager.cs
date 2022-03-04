@@ -44,6 +44,13 @@ namespace XIVLauncher.Accounts
             existingAccount.Password = password;
         }
 
+        public void UpdateLastSuccessfulOtp(XivAccount account, string lastOtp)
+        {
+            var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);
+            existingAccount.LastSuccessfulOtp = lastOtp;
+            Save();
+        }
+
         public void AddAccount(XivAccount account)
         {
             var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);

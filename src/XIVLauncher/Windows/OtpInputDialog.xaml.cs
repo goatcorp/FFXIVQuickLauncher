@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Serilog;
 using XIVLauncher.Http;
 using XIVLauncher.Windows.ViewModel;
@@ -17,11 +20,18 @@ namespace XIVLauncher.Windows
     {
         public event Action<string> OnResult;
 
+        private readonly Brush _otpInputPromptDefaultBrush;
+
+        private OtpInputDialogViewModel ViewModel => DataContext as OtpInputDialogViewModel;
+
         private OtpListener _otpListener;
+        private bool _ignoreCurrentOtp;
 
         public OtpInputDialog()
         {
             InitializeComponent();
+
+            _otpInputPromptDefaultBrush = OtpInputPrompt.Foreground;
 
             this.DataContext = new OtpInputDialogViewModel();
 
@@ -32,15 +42,7 @@ namespace XIVLauncher.Windows
             if (App.Settings.OtpServerEnabled)
             {
                 _otpListener = new OtpListener();
-                _otpListener.OnOtpReceived += otp =>
-                {
-                    OnResult?.Invoke(otp);
-                    Dispatcher.Invoke(() =>
-                    {
-                        Hide();
-                        _otpListener?.Stop();
-                    });
-                };
+                _otpListener.OnOtpReceived += TryAcceptOtp;
 
                 try
                 {
@@ -53,6 +55,57 @@ namespace XIVLauncher.Windows
                     Log.Error(ex, "Could not start OTP HTTP listener.");
                 }
             }
+        }
+
+        public void Reset()
+        {
+            OtpInputPrompt.Text = ViewModel.OtpInputPromptLoc;
+            OtpInputPrompt.Foreground = _otpInputPromptDefaultBrush;
+            OtpTextBox.Text = "";
+            OtpTextBox.Focus();
+        }
+
+        public void IgnoreCurrentResult(string reason)
+        {
+            OtpInputPrompt.Text = reason;
+            OtpInputPrompt.Foreground = Brushes.Red;
+            _ignoreCurrentOtp = true;
+        }
+
+        public void TryAcceptOtp(string otp)
+        {
+            if (otp.Length != 6)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    OtpInputPrompt.Text = ViewModel.OtpInputPromptBadLoc;
+                    OtpInputPrompt.Foreground = Brushes.Red;
+                    Storyboard myStoryboard = (Storyboard)OtpInputPrompt.Resources["InvalidShake"];
+                    Storyboard.SetTarget(myStoryboard.Children.ElementAt(0), OtpInputPrompt);
+                    myStoryboard.Begin();
+                    OtpTextBox.Focus();
+                });
+
+                return;
+            }
+            _ignoreCurrentOtp = false;
+            OnResult?.Invoke(otp);
+
+            Dispatcher.Invoke(() =>
+            {
+                if (_ignoreCurrentOtp)
+                {
+                    Storyboard myStoryboard = (Storyboard)OtpInputPrompt.Resources["InvalidShake"];
+                    Storyboard.SetTarget(myStoryboard.Children.ElementAt(0), OtpInputPrompt);
+                    myStoryboard.Begin();
+                    OtpTextBox.Focus();
+                }
+                else
+                {
+                    Hide();
+                    _otpListener?.Stop();
+                }
+            });
         }
 
         private void OtpInputDialog_OnMouseMove(object sender, MouseEventArgs e)
@@ -83,22 +136,15 @@ namespace XIVLauncher.Windows
                 _otpListener?.Stop();
                 Hide();
             }
-            else if (e.Key == Key.Enter && OtpTextBox.Text.Length == 6)
+            else if (e.Key == Key.Enter)
             {
-                OnResult?.Invoke(this.OtpTextBox.Text);
-                _otpListener?.Stop();
-                Hide();
+                TryAcceptOtp(this.OtpTextBox.Text);
             }
         }
 
         private void OkButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (OtpTextBox.Text.Length != 6)
-                return;
-
-            OnResult?.Invoke(this.OtpTextBox.Text);
-            _otpListener?.Stop();
-            Hide();
+            TryAcceptOtp(this.OtpTextBox.Text);
         }
 
         private void CancelButton_OnClick(object sender, RoutedEventArgs e)

@@ -210,8 +210,16 @@ namespace XIVLauncher.Windows.ViewModel
 
                 void OnOtpResult(string result)
                 {
-                    otp = result;
-                    signal.Set();
+                    if (AccountManager.CurrentAccount.LastSuccessfulOtp == result)
+                    {
+                        otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
+                            "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
+                    }
+                    else
+                    {
+                        otp = result;
+                        signal.Set();
+                    }
                 }
 
                 signal.WaitOne();
@@ -234,6 +242,9 @@ namespace XIVLauncher.Windows.ViewModel
                 Reactivate();
                 return;
             }
+
+            if (otp != null)
+                AccountManager.UpdateLastSuccessfulOtp(AccountManager.CurrentAccount, otp);
 
             Log.Verbose(
                 $"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");

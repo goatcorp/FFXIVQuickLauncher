@@ -12,12 +12,41 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="180.088" Width="269.186">
+        WindowStyle="None" Height="196.088" Width="269.186">
     <Grid Margin="0,0,0,0">
-        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="159" Margin="0,0,10,0">
-            <StackPanel Margin="16,16,10,0">
-                <TextBlock Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding OtpInputPromptLoc}"/>
-                
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="165" Margin="0,0,10,0">
+            <StackPanel Margin="16,8,10,0">
+                <Grid
+                    HorizontalAlignment="Stretch"
+                    Height="32">
+                    <TextBlock
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Text="{Binding OtpInputPromptLoc}"
+                        TextAlignment="Center"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        x:Name="OtpInputPrompt">
+                        <TextBlock.Resources>
+                            <Storyboard x:Key="InvalidShake">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.10" Value="8"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.20" Value="-6"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.30" Value="4"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.40" Value="-2"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.45" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </TextBlock.Resources>
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform X="0" Y="0" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </Grid>
+
                 <TextBox
                   Margin="0,8,0,10"
                   HorizontalAlignment="Stretch"

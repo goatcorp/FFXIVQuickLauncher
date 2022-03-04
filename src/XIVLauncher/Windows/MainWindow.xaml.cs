@@ -97,6 +97,7 @@ namespace XIVLauncher.Windows
             {
                 this.Dispatcher.BeginInvoke(() =>
                 {
+                    this.otpInputDialog.Reset();
                     this.otpInputDialog.ShowDialog();
                 });
 
