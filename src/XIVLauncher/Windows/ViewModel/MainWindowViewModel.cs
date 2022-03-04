@@ -79,6 +79,9 @@ namespace XIVLauncher.Windows.ViewModel
         {
             return async p =>
             {
+                if (this.IsLoggingIn)
+                    return;
+
                 if (IsAutoLogin && App.Settings.HasShownAutoLaunchDisclaimer.GetValueOrDefault(false) == false)
                 {
                     CustomMessageBox.Show(Loc.Localize("AutoLoginIntro", "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon."), "XIVLauncher");
@@ -526,7 +529,7 @@ namespace XIVLauncher.Windows.ViewModel
                             case MessageBoxResult.Cancel:
                                 App.Settings.TreatNonZeroExitCodeAsFailure = false;
                                 return true;
-                        } 
+                        }
                     }
 
                     return true;

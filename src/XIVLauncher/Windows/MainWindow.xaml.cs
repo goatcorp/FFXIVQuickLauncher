@@ -554,9 +554,7 @@ namespace XIVLauncher.Windows
             if (Model.IsLoggingIn)
                 return;
 
-            Model.IsLoggingIn = true;
             Model.StartLoginCommand.Execute(null);
-            Model.IsLoggingIn = false;
         }
 
         private void AccountSwitcherButton_OnClick(object sender, RoutedEventArgs e)
