@@ -64,6 +64,9 @@ namespace XIVLauncher.Core
             var fonts = ImGui.GetIO().Fonts;
             ImGui.GetIO().Fonts.AddFontDefault();
 
+            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad;
+            ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.HasGamepad;
+
             CreateDeviceResources(gd, outputDescription);
             SetKeyMappings();
 

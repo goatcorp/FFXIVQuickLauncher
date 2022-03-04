@@ -10,9 +10,15 @@ public class App : Component
 
     private readonly LoginFrame loginFrame;
 
+    public static bool IsDebug { get; private set; } = false;
+
     public App(Storage storage)
     {
         this.storage = storage;
+
+#if DEBUG
+        IsDebug = true;
+#endif
 
         this.Children.Add(this.loginFrame = new LoginFrame
         {

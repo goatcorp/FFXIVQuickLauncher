@@ -7,6 +7,7 @@
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
+        <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
 
         <!--
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
