@@ -17,6 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Config.Net" Version="4.19.0" />
       <PackageReference Include="ImGui.NET" Version="1.87.2" />
       <PackageReference Include="Serilog" Version="2.10.0" />
       <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />

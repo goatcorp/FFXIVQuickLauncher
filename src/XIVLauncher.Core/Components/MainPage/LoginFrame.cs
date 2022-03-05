@@ -7,9 +7,32 @@ public class LoginFrame : Component
 {
     private string loginUsername = string.Empty;
     private string loginPassword = string.Empty;
+    private bool isOtp = false;
+    private bool isSteam = false;
 
-    public string Username => this.loginUsername;
-    public string Password => this.loginPassword;
+    public string Username
+    {
+        get => this.loginUsername;
+        set => this.loginUsername = value;
+    }
+
+    public string Password
+    {
+        get => this.loginPassword;
+        set => this.loginPassword = value;
+    }
+
+    public bool IsOtp
+    {
+        get => this.isOtp;
+        set => this.isOtp = value;
+    }
+
+    public bool IsSteam
+    {
+        get => this.isSteam;
+        set => this.isSteam = value;
+    }
 
     public event Action<LoginAction>? OnLogin;
 
@@ -63,6 +86,9 @@ public class LoginFrame : Component
         ImGui.InputText("SE ID", ref loginUsername, 128);
         ImGui.InputText("Password", ref loginPassword, 128, ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
 
+        ImGui.Checkbox("Use OTP", ref isOtp);
+        ImGui.Checkbox("Steam service account", ref isSteam);
+
         if (ImGui.Button("Login", new Vector2(100, 30) * ImGuiHelpers.GlobalScale))
         {
             OnLogin?.Invoke(LoginAction.Game);
@@ -80,9 +106,16 @@ public class LoginFrame : Component
             ImGui.OpenPopup(POPUP_ID_LOGINACTION);
         }
 
-        ImGui.PopFont();
-
         ImGui.PopStyleVar();
+
+        ImGui.SameLine();
+
+        if (ImGui.Button(FontAwesomeIcon.UserFriends.ToIconString(), new Vector2(30, 30) * ImGuiHelpers.GlobalScale))
+        {
+
+        }
+
+        ImGui.PopFont();
 
         base.Draw();
     }

@@ -8,4 +8,8 @@ public class Page : Component
     {
         this.App = app;
     }
+
+    public virtual void OnShow()
+    {
+    }
 }

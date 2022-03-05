@@ -29,7 +29,33 @@ public class LauncherApp : Component
         Progress,
     }
 
-    public LauncherState State { get; set; } = LauncherState.Main;
+    private LauncherState state = LauncherState.Main;
+
+    public LauncherState State
+    {
+        get => this.state;
+        set
+        {
+            this.state = value;
+
+            switch (value)
+            {
+                case LauncherState.Settings:
+                    this.setPage.OnShow();
+                    break;
+
+                case LauncherState.Main:
+                    this.mainPage.OnShow();
+                    break;
+
+                case LauncherState.Progress:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
+            }
+        }
+    }
 
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
@@ -71,7 +97,9 @@ public class LauncherApp : Component
     {
         ImGui.SetNextWindowPos(new Vector2(0, 0));
 
-        if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize))
+        ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
+
+        if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize))
         {
             switch (State)
             {

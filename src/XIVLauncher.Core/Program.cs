@@ -1,10 +1,13 @@
 ﻿using System.Numerics;
+using Config.Net;
 using XIVLauncher.Core.Style;
-using ImGuiNET;
 using Serilog;
 using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
+using XIVLauncher.Common;
+using XIVLauncher.Core.Configuration;
+using XIVLauncher.Core.Configuration.Parsers;
 
 namespace XIVLauncher.Core
 {
@@ -17,6 +20,7 @@ namespace XIVLauncher.Core
 
         public static GraphicsDevice GraphicsDevice => gd;
         public static ImGuiBindings ImGuiBindings => bindings;
+        public static ILauncherConfig Config { get; private set; }
 
         private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
         private static bool showImGuiDemoWindow = true;
@@ -41,10 +45,25 @@ namespace XIVLauncher.Core
                          .CreateLogger();
         }
 
+        private static void LoadConfig()
+        {
+            Config = new ConfigurationBuilder<ILauncherConfig>()
+                     .UseCommandLineArgs()
+                     .UseIniFile(storage.GetFile("launcher.ini").FullName)
+                     .UseTypeParser(new DirectoryInfoParser())
+                     .Build();
+
+            if (string.IsNullOrEmpty(Config.AcceptLanguage))
+            {
+                Config.AcceptLanguage = Util.GenerateAcceptLanguage();
+            }
+        }
+
         private static void Main(string[] args)
         {
             storage = new Storage(APP_NAME);
             SetupLogging();
+            LoadConfig();
 
             Log.Debug("Creating veldrid devices...");
 
@@ -81,7 +100,6 @@ namespace XIVLauncher.Core
                 bindings.Update(1f / 60f, snapshot);
 
                 launcherApp.Draw();
-                ImGui.ShowDemoWindow();
 
                 cl.Begin();
                 cl.SetFramebuffer(gd.MainSwapchain.Framebuffer);
