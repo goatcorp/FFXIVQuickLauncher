@@ -486,15 +486,17 @@ namespace XIVLauncher.Core
             drawData.ScaleClipRects(io.DisplayFramebufferScale);
 
             // Render command lists
-            int vtxOffset = 0;
-            int idxOffset = 0;
+            int globalIdxOffset = 0;
+            int globalVtxOffset = 0;
 
             for (int n = 0; n < drawData.CmdListsCount; n++)
             {
                 ImDrawListPtr cmdList = drawData.CmdListsRange[n];
+
                 for (int cmdI = 0; cmdI < cmdList.CmdBuffer.Size; cmdI++)
                 {
                     ImDrawCmdPtr pcmd = cmdList.CmdBuffer[cmdI];
+
                     if (pcmd.UserCallback != IntPtr.Zero)
                     {
                         throw new NotImplementedException();
@@ -520,13 +522,12 @@ namespace XIVLauncher.Core
                             (uint)(pcmd.ClipRect.Z - pcmd.ClipRect.X),
                             (uint)(pcmd.ClipRect.W - pcmd.ClipRect.Y));
 
-                        cl.DrawIndexed(pcmd.ElemCount, 1, (uint)idxOffset, vtxOffset, 0);
+                        cl.DrawIndexed(pcmd.ElemCount, 1, pcmd.IdxOffset + (uint)globalIdxOffset, (int)pcmd.VtxOffset + globalVtxOffset, 0);
                     }
-
-                    idxOffset += (int)pcmd.ElemCount;
                 }
 
-                vtxOffset += cmdList.VtxBuffer.Size;
+                globalIdxOffset += cmdList.IdxBuffer.Size;
+                globalVtxOffset += cmdList.VtxBuffer.Size;
             }
         }
 
