@@ -11,6 +11,10 @@ public class TextureWrap : IDisposable
 
     private readonly Texture deviceTexture;
 
+    public uint Width => this.deviceTexture.Width;
+
+    public uint Height => this.deviceTexture.Height;
+
     protected TextureWrap(byte[] data)
     {
         var image = Image.Load<Rgba32>(data);

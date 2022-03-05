@@ -46,6 +46,8 @@
         <EmbeddedResource Include="Resources/NotoSansCJKjp-Regular.otf" LogicalName="NotoSansCJKjp-Regular.otf" />
 
         <EmbeddedResource Include="Resources/logo.png" LogicalName="logo.png" />
+
+        <EmbeddedResource Include="Resources/bg1.jpg" LogicalName="bg1.jpg" />
     </ItemGroup>
 
     <ItemGroup>

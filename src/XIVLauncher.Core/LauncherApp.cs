@@ -27,6 +27,7 @@ public class LauncherApp : Component
         Main,
         Settings,
         Progress,
+        OtpEntry,
     }
 
     private LauncherState state = LauncherState.Main;
@@ -59,6 +60,8 @@ public class LauncherApp : Component
 
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
+
+    private Background background = new();
 
     public LauncherApp(Storage storage)
     {
@@ -95,11 +98,25 @@ public class LauncherApp : Component
 
     public override void Draw()
     {
-        ImGui.SetNextWindowPos(new Vector2(0, 0));
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2());
 
+        ImGui.SetNextWindowPos(new Vector2(0, 0));
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
 
-        if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize))
+        if (ImGui.Begin("Background", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+        {
+            this.background.Draw();
+        }
+
+        ImGui.End();
+        ImGui.PopStyleVar();
+
+        ImGui.SetNextWindowPos(new Vector2(0, 0));
+        ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
+        ImGui.SetNextWindowBgAlpha(0.7f);
+
+        if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize))
         {
             switch (State)
             {
@@ -116,6 +133,8 @@ public class LauncherApp : Component
         }
 
         ImGui.End();
+
+        ImGui.PopStyleVar();
 
         this.DrawModal();
     }
