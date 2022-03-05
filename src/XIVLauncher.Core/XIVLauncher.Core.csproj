@@ -22,7 +22,9 @@
       <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
       <PackageReference Include="Veldrid" Version="4.8.0" />
+      <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
       <PackageReference Include="Veldrid.SDL2" Version="4.8.0" />
       <PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
     </ItemGroup>
@@ -41,6 +43,8 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources/FontAwesome5FreeSolid.otf" LogicalName="FontAwesome5FreeSolid.otf" />
         <EmbeddedResource Include="Resources/NotoSansCJKjp-Regular.otf" LogicalName="NotoSansCJKjp-Regular.otf" />
+
+        <EmbeddedResource Include="Resources/logo.png" LogicalName="logo.png" />
     </ItemGroup>
 
     <ItemGroup>

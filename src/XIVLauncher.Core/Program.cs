@@ -11,14 +11,17 @@ namespace XIVLauncher.Core
     class Program
     {
         private static Sdl2Window window;
-        private static GraphicsDevice gd;
         private static CommandList cl;
+        private static GraphicsDevice gd;
         private static ImGuiBindings bindings;
+
+        public static GraphicsDevice GraphicsDevice => gd;
+        public static ImGuiBindings ImGuiBindings => bindings;
 
         private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
         private static bool showImGuiDemoWindow = true;
 
-        private static App app;
+        private static LauncherApp launcherApp;
         private static Storage storage;
 
         private const string APP_NAME = "xlcore";
@@ -43,8 +46,6 @@ namespace XIVLauncher.Core
             storage = new Storage(APP_NAME);
             SetupLogging();
 
-            app = new App(storage);
-
             Log.Debug("Creating veldrid devices...");
 
             // Create window, GraphicsDevice, and all resources necessary for the demo.
@@ -67,6 +68,8 @@ namespace XIVLauncher.Core
 
             StyleModelV1.DalamudStandard.Apply();
 
+            launcherApp = new LauncherApp(storage);
+
             // Main application loop
             while (window.Exists)
             {
@@ -77,7 +80,7 @@ namespace XIVLauncher.Core
 
                 bindings.Update(1f / 60f, snapshot);
 
-                app.Draw();
+                launcherApp.Draw();
                 ImGui.ShowDemoWindow();
 
                 cl.Begin();

@@ -1,7 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 
-namespace XIVLauncher.Core.Components;
+namespace XIVLauncher.Core.Components.MainPage;
 
 public class LoginFrame : Component
 {
@@ -47,7 +47,7 @@ public class LoginFrame : Component
                 this.OnLogin?.Invoke(LoginAction.Repair);
             }
 
-            if (App.IsDebug)
+            if (LauncherApp.IsDebug)
             {
                 ImGui.Separator();
 

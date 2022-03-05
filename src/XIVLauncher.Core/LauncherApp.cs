@@ -1,14 +1,14 @@
 using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Core.Components;
+using XIVLauncher.Core.Components.MainPage;
+using XIVLauncher.Core.Components.SettingsPage;
 
 namespace XIVLauncher.Core;
 
-public class App : Component
+public class LauncherApp : Component
 {
     private readonly Storage storage;
-
-    private readonly LoginFrame loginFrame;
 
     public static bool IsDebug { get; private set; } = false;
 
@@ -18,27 +18,32 @@ public class App : Component
     private bool modalOnNextFrame = false;
     private string modalText = string.Empty;
     private string modalTitle = string.Empty;
-    private ManualResetEvent modalWaitHandle = new(false);
+    private readonly ManualResetEvent modalWaitHandle = new(false);
 
     #endregion
 
-    public App(Storage storage)
+    public enum LauncherState
+    {
+        Main,
+        Settings,
+        Progress,
+    }
+
+    public LauncherState State { get; set; } = LauncherState.Main;
+
+    private readonly MainPage mainPage;
+    private readonly SettingsPage setPage;
+
+    public LauncherApp(Storage storage)
     {
         this.storage = storage;
+
+        this.mainPage = new MainPage(this);
+        this.setPage = new SettingsPage(this);
 
 #if DEBUG
         IsDebug = true;
 #endif
-
-        this.Children.Add(this.loginFrame = new LoginFrame
-        {
-            Margins = new(10, 10, 10, 10)
-        });
-
-        this.loginFrame.OnLogin += a =>
-        {
-            OpenModal("Test test testy test", "XIVLauncher");
-        };
     }
 
     public void OpenModal(string text, string title)
@@ -68,7 +73,16 @@ public class App : Component
 
         if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize))
         {
-            ImGui.Text("Hi");
+            switch (State)
+            {
+                case LauncherState.Main:
+                    this.mainPage.Draw();
+                    break;
+
+                case LauncherState.Settings:
+                    this.setPage.Draw();
+                    break;
+            }
 
             base.Draw();
         }
