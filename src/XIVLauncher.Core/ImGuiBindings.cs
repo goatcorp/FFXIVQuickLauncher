@@ -1,8 +1,8 @@
 using System.Numerics;
-using System.Reflection;
 using Veldrid;
 using System.Runtime.CompilerServices;
 using ImGuiNET;
+using Serilog;
 
 namespace XIVLauncher.Core
 {
@@ -95,7 +95,10 @@ namespace XIVLauncher.Core
             _vertexBuffer.Name = "ImGui.NET Vertex Buffer";
             _indexBuffer = factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
             _indexBuffer.Name = "ImGui.NET Index Buffer";
+            var fontMr = new FontManager();
+            fontMr.SetupFonts();
             RecreateFontDeviceTexture(gd);
+            Log.Debug("Fonts OK!");
 
             _projMatrixBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer | BufferUsage.Dynamic));
             _projMatrixBuffer.Name = "ImGui.NET Projection Buffer";
@@ -212,40 +215,29 @@ namespace XIVLauncher.Core
                 case GraphicsBackend.Direct3D11:
                 {
                     string resourceName = name + ".hlsl.bytes";
-                    return GetEmbeddedResourceBytes(resourceName);
+                    return AppUtil.GetEmbeddedResourceBytes(resourceName);
                 }
 
                 case GraphicsBackend.OpenGL:
                 {
                     string resourceName = name + ".glsl";
-                    return GetEmbeddedResourceBytes(resourceName);
+                    return AppUtil.GetEmbeddedResourceBytes(resourceName);
                 }
 
                 case GraphicsBackend.Vulkan:
                 {
                     string resourceName = name + ".spv";
-                    return GetEmbeddedResourceBytes(resourceName);
+                    return AppUtil.GetEmbeddedResourceBytes(resourceName);
                 }
 
                 case GraphicsBackend.Metal:
                 {
                     string resourceName = name + ".metallib";
-                    return GetEmbeddedResourceBytes(resourceName);
+                    return AppUtil.GetEmbeddedResourceBytes(resourceName);
                 }
 
                 default:
                     throw new NotImplementedException();
-            }
-        }
-
-        private byte[] GetEmbeddedResourceBytes(string resourceName)
-        {
-            Assembly assembly = typeof(ImGuiBindings).Assembly;
-            using (Stream s = assembly.GetManifestResourceStream(resourceName))
-            {
-                byte[] ret = new byte[s.Length];
-                s.Read(ret, 0, (int)s.Length);
-                return ret;
             }
         }
 
@@ -496,6 +488,7 @@ namespace XIVLauncher.Core
             // Render command lists
             int vtxOffset = 0;
             int idxOffset = 0;
+
             for (int n = 0; n < drawData.CmdListsCount; n++)
             {
                 ImDrawListPtr cmdList = drawData.CmdListsRange[n];
@@ -532,6 +525,7 @@ namespace XIVLauncher.Core
 
                     idxOffset += (int)pcmd.ElemCount;
                 }
+
                 vtxOffset += cmdList.VtxBuffer.Size;
             }
         }

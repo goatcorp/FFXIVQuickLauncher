@@ -39,6 +39,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Include="Resources/FontAwesome5FreeSolid.otf" LogicalName="FontAwesome5FreeSolid.otf" />
+        <EmbeddedResource Include="Resources/NotoSansCJKjp-Regular.otf" LogicalName="NotoSansCJKjp-Regular.otf" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\XIVLauncher.Common.Windows\XIVLauncher.Common.Windows.csproj" />
       <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
     </ItemGroup>

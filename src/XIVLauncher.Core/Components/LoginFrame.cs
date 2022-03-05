@@ -61,9 +61,9 @@ public class LoginFrame : Component
         }
 
         ImGui.InputText("SE ID", ref loginUsername, 128);
-        ImGui.InputText("Password", ref loginPassword, 128, ImGuiInputTextFlags.Password);
+        ImGui.InputText("Password", ref loginPassword, 128, ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
 
-        if (ImGui.Button("Login"))
+        if (ImGui.Button("Login", new Vector2(100, 30) * ImGuiHelpers.GlobalScale))
         {
             OnLogin?.Invoke(LoginAction.Game);
         }
@@ -73,10 +73,14 @@ public class LoginFrame : Component
         ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1f, 1f));
         ImGui.SameLine();
 
-        if (ImGui.Button("D")) // TODO: "Down arrow" icon
+        ImGui.PushFont(FontManager.IconFont);
+
+        if (ImGui.Button(FontAwesomeIcon.CaretDown.ToIconString(), new Vector2(20, 30) * ImGuiHelpers.GlobalScale)) // TODO: "Down arrow" icon
         {
             ImGui.OpenPopup(POPUP_ID_LOGINACTION);
         }
+
+        ImGui.PopFont();
 
         ImGui.PopStyleVar();
 

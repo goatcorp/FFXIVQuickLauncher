@@ -59,9 +59,10 @@ namespace XIVLauncher.Core
                 bindings.WindowResized(window.Width, window.Height);
             };
             cl = gd.ResourceFactory.CreateCommandList();
-            bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
-
             Log.Debug("Veldrid OK!");
+
+            bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
+            Log.Debug("ImGui OK!");
 
             // Main application loop
             while (window.Exists)
