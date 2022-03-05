@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using XIVLauncher.Core.Style;
 using ImGuiNET;
 using Serilog;
 using Veldrid;
@@ -63,6 +64,8 @@ namespace XIVLauncher.Core
 
             bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
             Log.Debug("ImGui OK!");
+
+            StyleModelV1.DalamudStandard.Apply();
 
             // Main application loop
             while (window.Exists)
