@@ -3,9 +3,9 @@ using ImGuiNET;
 
 namespace XIVLauncher.Core;
 
-public class ImGuiHelpers
+public static class ImGuiHelpers
 {
-    public Vector2 ViewportSize => ImGui.GetMainViewport().Size;
+    public static Vector2 ViewportSize => ImGui.GetMainViewport().Size;
 
-    public float GlobalScale => ImGui.GetIO().FontGlobalScale;
+    public static float GlobalScale => ImGui.GetIO().FontGlobalScale;
 }
