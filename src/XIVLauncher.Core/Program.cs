@@ -7,6 +7,8 @@ using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using XIVLauncher.Common;
+using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Windows;
 using XIVLauncher.Core.Configuration;
 using XIVLauncher.Core.Configuration.Parsers;
 
@@ -23,6 +25,7 @@ namespace XIVLauncher.Core
         public static ImGuiBindings ImGuiBindings => bindings;
         public static ILauncherConfig Config { get; private set; }
         public static CommonSettings CommonSettings => new(Config);
+        public static ISteam Steam { get; private set; }
 
         private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
         private static bool showImGuiDemoWindow = true;
@@ -63,11 +66,16 @@ namespace XIVLauncher.Core
             Config.GlobalScale ??= 1.0f;
         }
 
+        public const int STEAM_APP_ID = 39210;
+
         private static void Main(string[] args)
         {
             storage = new Storage(APP_NAME);
             SetupLogging();
             LoadConfig();
+
+            Steam = new WindowsSteam();
+            Steam.Initialize(STEAM_APP_ID);
 
             Log.Debug("Creating veldrid devices...");
 

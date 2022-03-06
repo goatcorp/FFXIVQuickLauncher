@@ -6,20 +6,9 @@ namespace XIVLauncher.Common.Windows
 {
     public class WindowsSteam : ISteam
     {
-        private static WindowsSteam instance;
-
-        private WindowsSteam()
+        public WindowsSteam()
         {
             SteamUtils.OnGamepadTextInputDismissed += b => OnGamepadTextInputDismissed?.Invoke(b);
-        }
-
-        public static WindowsSteam Instance
-        {
-            get
-            {
-                instance ??= new WindowsSteam();
-                return instance;
-            }
         }
 
         public void Initialize(uint appId)

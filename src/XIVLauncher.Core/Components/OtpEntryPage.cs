@@ -1,5 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
+using Serilog;
 
 namespace XIVLauncher.Core.Components;
 
@@ -10,9 +11,20 @@ public class OtpEntryPage : Page
 
     public string? Result { get; private set; }
 
+    public bool Cancelled { get; private set; }
+
     public OtpEntryPage(LauncherApp app)
         : base(app)
     {
+        Program.Steam.OnGamepadTextInputDismissed += this.SteamOnOnGamepadTextInputDismissed;
+    }
+
+    private void SteamOnOnGamepadTextInputDismissed(bool success)
+    {
+        if (success)
+        {
+            Result = Program.Steam.GetEnteredGamepadText();
+        }
     }
 
     public void Reset()
@@ -20,6 +32,13 @@ public class OtpEntryPage : Page
         this.otp = string.Empty;
         this.appearing = true;
         this.Result = null;
+        this.Cancelled = false;
+
+        if (Program.Steam.IsValid && Program.Steam.IsRunningOnSteamDeck())
+        {
+            var success = Program.Steam.ShowGamepadTextInput(false, false, "Please enter your OTP", 6, string.Empty);
+            Log.Verbose("ShowGamepadTextInput: {Success}", success);
+        }
     }
 
     public override void Draw()

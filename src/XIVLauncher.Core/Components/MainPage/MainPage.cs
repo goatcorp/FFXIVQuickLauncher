@@ -1,6 +1,5 @@
 using XIVLauncher.Common;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Common.Windows;
 using XIVLauncher.Core.Configuration;
 
 namespace XIVLauncher.Core.Components.MainPage;
@@ -42,14 +41,26 @@ public class MainPage : Page
             await this.Login(this.loginFrame.Username, this.loginFrame.Password, this.loginFrame.IsOtp, this.loginFrame.IsSteam, false, action);
         }).ContinueWith(t =>
         {
-            App.HandleContinationBlocking(t);
+            if (!App.HandleContinationBlocking(t))
+                this.Reactivate();
         });
     }
 
     public async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
     {
-        var launcher = new Launcher(WindowsSteam.Instance, new UniqueIdCache(), Program.CommonSettings);
-        var loginResult = await launcher.Login(username, password, string.Empty, isSteam, true, Program.Config.GamePath, false).ConfigureAwait(true);
+        var otp = string.Empty;
+
+        if (isOtp)
+        {
+            App.AskForOtp();
+            otp = App.WaitForOtp();
+        }
+
+        if (otp == null)
+            return;
+
+        var launcher = new Launcher(Program.Steam, new UniqueIdCache(), Program.CommonSettings);
+        var loginResult = await launcher.Login(username, password, otp, isSteam, true, Program.Config.GamePath, false).ConfigureAwait(true);
 
         if (loginResult.State != Launcher.LoginState.Ok)
         {

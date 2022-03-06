@@ -31,7 +31,7 @@ namespace XIVLauncher.Windows.ViewModel
     {
         public bool IsLoggingIn;
 
-        public Launcher Launcher { get; private set; } = new(WindowsSteam.Instance, CommonUniqueIdCache.Instance, CommonSettings.Instance);
+        public Launcher Launcher { get; private set; } = new(App.Steam, CommonUniqueIdCache.Instance, CommonSettings.Instance);
         private readonly Common.Game.Patch.PatchInstaller _installer = new(CommonSettings.Instance);
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
@@ -1010,9 +1010,9 @@ namespace XIVLauncher.Windows.ViewModel
 
             try
             {
-                if (WindowsSteam.Instance.IsValid)
+                if (App.Steam.IsValid)
                 {
-                    WindowsSteam.Instance.Shutdown();
+                    App.Steam.Shutdown();
                 }
             }
             catch (Exception ex)

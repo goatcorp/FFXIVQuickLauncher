@@ -15,6 +15,8 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Parsers;
+using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Windows;
 using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Settings;
 using XIVLauncher.Support;
@@ -30,6 +32,7 @@ namespace XIVLauncher
         public const string REPO_URL = "https://github.com/goatcorp/FFXIVQuickLauncher";
 
         public static ILauncherSettingsV3 Settings;
+        public static ISteam Steam;
 
 #if !XL_NOAUTOUPDATE
         private UpdateLoadingDialog _updateWindow;
@@ -144,6 +147,8 @@ namespace XIVLauncher
 
             Log.Information(
                 $"XIVLauncher started as {release}");
+
+            Steam = new WindowsSteam();
 
 #if !XL_NOAUTOUPDATE
             if (!EnvironmentSettings.IsDisableUpdates)
@@ -362,7 +367,7 @@ namespace XIVLauncher
                 };
                 this.Resources.MergedDictionaries.Add(dict);
             }
-            
+
             if (EnvironmentSettings.IsDisableUpdates)
             {
                 OnUpdateCheckFinished(true);

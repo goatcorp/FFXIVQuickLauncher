@@ -83,8 +83,6 @@ public class LauncherApp : Component
 #if DEBUG
         IsDebug = true;
 #endif
-
-        this.AskForOtp();
     }
 
     public void OpenModal(string text, string title)
@@ -108,22 +106,34 @@ public class LauncherApp : Component
         this.modalWaitHandle.WaitOne();
     }
 
-    public void HandleContinationBlocking(Task task)
+    public bool HandleContinationBlocking(Task task)
     {
         if (task.IsFaulted)
         {
             this.OpenModalBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
+            return false;
         }
         else if (task.IsCanceled)
         {
             this.OpenModalBlocking("Task was canceled.", "Error");
+            return false;
         }
+
+        return true;
     }
 
     public void AskForOtp()
     {
         this.otpEntryPage.Reset();
         this.State = LauncherState.OtpEntry;
+    }
+
+    public string? WaitForOtp()
+    {
+        while (this.otpEntryPage.Result == null && !this.otpEntryPage.Cancelled)
+            Thread.Yield();
+
+        return this.otpEntryPage.Result;
     }
 
     public override void Draw()
