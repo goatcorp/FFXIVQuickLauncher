@@ -93,9 +93,10 @@ namespace XIVLauncher.Common.Game
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Could not initialize Steam");
-                    throw new SteamException("SteamAPI_Init() failed.", ex);
+                    //throw new SteamException("SteamAPI_Init() failed.", ex);
                 }
 
+                /*
                 if (!this.steam.IsValid)
                 {
                     throw new SteamException("Not logged into Steam. Please log in and try again.");
@@ -114,6 +115,7 @@ namespace XIVLauncher.Common.Game
                 {
                     throw new SteamException("Steam app ticket was null.");
                 }
+                */
             }
 
             if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
