@@ -130,6 +130,14 @@ namespace XIVLauncher.Windows.ViewModel
         {
             ProblemCheck.RunCheck();
 
+            var bootRes = await HandleBootCheck();
+
+            if (!bootRes)
+            {
+                Reactivate();
+                return;
+            }
+
             /* ============= MARCH 2022 STEAM UPDATE ============= */
             var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
             var ver600 = SeVersion.Parse("2021.11.16.0000.0001");
@@ -145,14 +153,6 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
             /* =================================================== */
-
-            var bootRes = await HandleBootCheck();
-
-            if (!bootRes)
-            {
-                Reactivate();
-                return;
-            }
 
             if (string.IsNullOrEmpty(username))
             {
