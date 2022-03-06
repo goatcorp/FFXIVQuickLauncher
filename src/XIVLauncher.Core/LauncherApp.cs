@@ -50,6 +50,11 @@ public class LauncherApp : Component
                     break;
 
                 case LauncherState.Progress:
+                    this.loadingPage.OnShow();
+                    break;
+
+                case LauncherState.OtpEntry:
+                    this.otpEntryPage.OnShow();
                     break;
 
                 default:
@@ -60,6 +65,8 @@ public class LauncherApp : Component
 
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
+    private readonly OtpEntryPage otpEntryPage;
+    private readonly LoadingPage loadingPage;
 
     private Background background = new();
 
@@ -69,6 +76,8 @@ public class LauncherApp : Component
 
         this.mainPage = new MainPage(this);
         this.setPage = new SettingsPage(this);
+        this.otpEntryPage = new OtpEntryPage(this);
+        this.loadingPage = new LoadingPage(this);
 
 #if DEBUG
         IsDebug = true;
@@ -94,6 +103,18 @@ public class LauncherApp : Component
         this.modalWaitHandle.Reset();
         this.OpenModal(text, title);
         this.modalWaitHandle.WaitOne();
+    }
+
+    public void HandleContinationBlocking(Task task)
+    {
+        if (task.IsFaulted)
+        {
+            this.OpenModalBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
+        }
+        else if (task.IsCanceled)
+        {
+            this.OpenModalBlocking("Task was canceled.", "Error");
+        }
     }
 
     public override void Draw()

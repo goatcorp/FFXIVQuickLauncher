@@ -21,6 +21,7 @@ namespace XIVLauncher.Core
         public static GraphicsDevice GraphicsDevice => gd;
         public static ImGuiBindings ImGuiBindings => bindings;
         public static ILauncherConfig Config { get; private set; }
+        public static CommonSettings CommonSettings => new(Config);
 
         private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
         private static bool showImGuiDemoWindow = true;

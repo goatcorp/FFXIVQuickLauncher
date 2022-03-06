@@ -18,7 +18,7 @@ public class Background : Component
 
         var vpSize = ImGuiHelpers.ViewportSize;
 
-        var width = ImGui.GetWindowWidth();
+        var width = vpSize.X;
         var height = this.bgTexture.Height / (float)this.bgTexture.Width * width;
 
         if (height < vpSize.Y)

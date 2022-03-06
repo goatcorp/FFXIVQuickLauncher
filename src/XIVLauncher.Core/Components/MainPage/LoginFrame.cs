@@ -5,6 +5,7 @@ namespace XIVLauncher.Core.Components.MainPage;
 
 public class LoginFrame : Component
 {
+    private readonly MainPage mainPage;
     private string loginUsername = string.Empty;
     private string loginPassword = string.Empty;
     private bool isOtp = false;
@@ -36,16 +37,12 @@ public class LoginFrame : Component
 
     public event Action<LoginAction>? OnLogin;
 
-    public enum LoginAction
-    {
-        Game,
-        GameNoDalamud,
-        GameNoLaunch,
-        Repair,
-        Fake,
-    }
-
     private const string POPUP_ID_LOGINACTION = "popup_loginaction";
+
+    public LoginFrame(MainPage mainPage)
+    {
+        this.mainPage = mainPage;
+    }
 
     public override void Draw()
     {
