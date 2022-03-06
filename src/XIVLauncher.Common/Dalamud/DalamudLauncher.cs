@@ -68,7 +68,7 @@ namespace XIVLauncher.Common.Dalamud
             return true;
         }
 
-        public void Run(Process gameProcess) // TODO(goat): hook up
+        public void Run(Process gameProcess)
         {
             Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2})", this.gamePath.FullName, this.language, gameProcess.Id);
 

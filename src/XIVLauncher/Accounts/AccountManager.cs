@@ -81,11 +81,7 @@ namespace XIVLauncher.Accounts
 
         public void Save()
         {
-            File.WriteAllText(ConfigPath,  JsonConvert.SerializeObject(Accounts, Formatting.Indented, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Objects,
-                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
-            }));
+            File.WriteAllText(ConfigPath,  JsonConvert.SerializeObject(Accounts, Formatting.Indented));
         }
 
         public void Load()
@@ -97,10 +93,7 @@ namespace XIVLauncher.Accounts
                 Save();
             }
 
-            Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Objects
-            });
+            Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(File.ReadAllText(ConfigPath));
 
             // If the file is corrupted, this will be null anyway
             Accounts ??= new ObservableCollection<XivAccount>();

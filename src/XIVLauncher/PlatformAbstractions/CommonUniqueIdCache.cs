@@ -11,7 +11,7 @@ namespace XIVLauncher.PlatformAbstractions
     public class CommonUniqueIdCache : IUniqueIdCache
     {
         private static CommonUniqueIdCache instance;
-        
+
         public static CommonUniqueIdCache Instance
         {
             get
@@ -20,7 +20,7 @@ namespace XIVLauncher.PlatformAbstractions
                 return instance;
             }
         }
-        
+
         private const int DAYS_TO_TIMEOUT = 1;
 
         private List<UniqueIdCacheEntry> _cache;
@@ -36,11 +36,7 @@ namespace XIVLauncher.PlatformAbstractions
 
         public void Save()
         {
-            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(_cache, Formatting.Indented, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Objects,
-                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple
-            }));
+            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(_cache, Formatting.Indented));
         }
 
         public void Load()
@@ -51,10 +47,7 @@ namespace XIVLauncher.PlatformAbstractions
                 return;
             }
 
-            _cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(File.ReadAllText(ConfigPath), new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Objects
-            }) ?? new List<UniqueIdCacheEntry>();
+            _cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(File.ReadAllText(ConfigPath)) ?? new List<UniqueIdCacheEntry>();
         }
 
         public void Reset()
@@ -88,7 +81,7 @@ namespace XIVLauncher.PlatformAbstractions
 
              Save();
         }
-        
+
         public bool TryGet(string userName, out IUniqueIdCache.CachedUid cached)
         {
             DeleteOldCaches();
@@ -113,7 +106,7 @@ namespace XIVLauncher.PlatformAbstractions
         private bool IsValidCache(UniqueIdCacheEntry entry, string name) => entry.UserName == name &&
                                                                             (DateTime.Now - entry.CreationDate).TotalDays <=
                                                                             DAYS_TO_TIMEOUT;
-        
+
         public class UniqueIdCacheEntry
         {
             public string UserName { get; set; }
