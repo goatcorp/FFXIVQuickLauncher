@@ -1,12 +1,41 @@
+using System.Numerics;
+using ImGuiNET;
+
 namespace XIVLauncher.Core.Components.SettingsPage;
 
 public abstract class SettingsTab : Component
 {
+    public abstract SettingsEntry[] Entries { get; }
+
     public virtual bool IsLinux => false;
 
     public abstract string Title { get; }
 
-    public abstract void Load();
+    public override void Draw()
+    {
+        foreach (SettingsEntry settingsEntry in Entries)
+        {
+            settingsEntry.Draw();
 
-    public abstract void Save();
+            ImGui.Dummy(new Vector2(10) * ImGuiHelpers.GlobalScale);
+        }
+
+        base.Draw();
+    }
+
+    public void Load()
+    {
+        foreach (SettingsEntry settingsEntry in Entries)
+        {
+            settingsEntry.Load();
+        }
+    }
+
+    public void Save()
+    {
+        foreach (SettingsEntry settingsEntry in Entries)
+        {
+            settingsEntry.Save();
+        }
+    }
 }

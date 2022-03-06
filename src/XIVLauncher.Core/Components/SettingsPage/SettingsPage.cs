@@ -1,5 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
+using XIVLauncher.Core.Components.SettingsPage.Tabs;
 
 namespace XIVLauncher.Core.Components.SettingsPage;
 
@@ -11,6 +12,8 @@ public class SettingsPage : Page
         new SettingsTabWine(),
         new SettingsTabAbout(),
     };
+
+    private string searchInput = string.Empty;
 
     public SettingsPage(LauncherApp app)
         : base(app)
@@ -31,14 +34,50 @@ public class SettingsPage : Page
     {
         if (ImGui.BeginTabBar("###settingsTabs"))
         {
-            foreach (var settingsTab in this.tabs)
+            if (string.IsNullOrEmpty(this.searchInput))
             {
-                if (settingsTab.IsLinux && !OperatingSystem.IsLinux())
-                    continue;
-
-                if (ImGui.BeginTabItem(settingsTab.Title))
+                foreach (SettingsTab settingsTab in this.tabs)
                 {
-                    settingsTab.Draw();
+                    if (settingsTab.IsLinux && !OperatingSystem.IsLinux())
+                        continue;
+
+                    if (ImGui.BeginTabItem(settingsTab.Title))
+                    {
+                        settingsTab.Draw();
+                        ImGui.EndTabItem();
+                    }
+                }
+            }
+            else
+            {
+                if (ImGui.BeginTabItem("Search Results"))
+                {
+                    foreach (SettingsTab settingsTab in this.tabs)
+                    {
+                        if (settingsTab.IsLinux && !OperatingSystem.IsLinux())
+                            continue;
+
+                        var eligible = settingsTab.Entries.Where(x => x.Name.ToLower().Contains(this.searchInput.ToLower())).ToArray();
+
+                        if (!eligible.Any())
+                            continue;
+
+                        ImGui.TextColored(ImGuiColors.DalamudGrey, settingsTab.Title);
+                        ImGui.Dummy(new Vector2(5));
+
+                        foreach (SettingsEntry settingsTabEntry in settingsTab.Entries)
+                        {
+                            if (!settingsTabEntry.Name.ToLower().Contains(this.searchInput.ToLower()))
+                                continue;
+
+                            settingsTabEntry.Draw();
+                        }
+
+                        ImGui.Separator();
+
+                        ImGui.Dummy(new Vector2(10));
+                    }
+
                     ImGui.EndTabItem();
                 }
             }
@@ -50,11 +89,21 @@ public class SettingsPage : Page
 
         if (ImGui.Button(FontAwesomeIcon.Check.ToIconString(), new Vector2(40)))
         {
+            foreach (var settingsTab in this.tabs)
+            {
+                settingsTab.Save();
+            }
+
             this.App.State = LauncherApp.LauncherState.Main;
         }
 
         ImGui.PopStyleVar();
         ImGui.PopFont();
+
+        var vpSize = ImGuiHelpers.ViewportSize;
+        ImGui.SetCursorPos(new Vector2(vpSize.X - 250, 4));
+        ImGui.SetNextItemWidth(240);
+        ImGui.InputTextWithHint("###searchInput", "Search for settings...", ref this.searchInput, 100);
 
         base.Draw();
     }

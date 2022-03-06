@@ -11,4 +11,6 @@ public interface ILauncherConfig
     public string AdditionalArgs { get; set; }
 
     public ClientLanguage ClientLanguage { get; set; }
+
+    public bool? UidCacheEnabled { get; set; }
 }

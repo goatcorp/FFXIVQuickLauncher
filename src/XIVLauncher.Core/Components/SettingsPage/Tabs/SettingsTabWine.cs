@@ -1,23 +1,17 @@
-namespace XIVLauncher.Core.Components.SettingsPage;
+namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
 public class SettingsTabWine : SettingsTab
 {
+    public override SettingsEntry[] Entries { get; } =
+    {
+    };
+
     public override bool IsLinux => true;
 
     public override string Title => "Wine";
 
     public override void Draw()
     {
-
-    }
-
-    public override void Load()
-    {
-
-    }
-
-    public override void Save()
-    {
-
+        base.Draw();
     }
 }
