@@ -1,3 +1,5 @@
+using System;
+
 namespace XIVLauncher.Common.PlatformAbstractions;
 
 public interface ISteam
@@ -8,4 +10,9 @@ public interface ISteam
     byte[] GetAuthSessionTicket();
     bool IsAppInstalled(uint appId);
     string GetAppInstallDir(uint appId);
+    bool ShowGamepadTextInput(bool password, bool multiline, string description, int maxChars, string existingText = "");
+    string GetEnteredGamepadText();
+    bool IsRunningOnSteamDeck();
+
+    event Action<bool> OnGamepadTextInputDismissed;
 }
