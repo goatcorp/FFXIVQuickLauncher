@@ -1,11 +1,4 @@
-﻿• Adds real game file verification & repair (thanks to kizer)
-    => Right click the login button and select "Repair game"
-    => XIVLauncher will check each file and repair the broken parts
-    => If you are using TexTools, this will restore the game to the original state
-    => Depending on how many files need to be replaced, this can take 1-10 minutes - way faster than reinstalling the entire game
-• Preparations for the March Steam update
-• XIVLauncher now offers to open the official launcher when there are update server problems
-• Fixes an issue wherein, on certain configurations, Visual C++ redistributables weren't detected
-• Changelogs are now shown before updating, instead of after updating
-• Updated localization files
-    => If you want to help with localization, please check out the GitHub repository and register on Crowdin!
+﻿• Improvements regarding OTP handling (by kizer)
+    => XIVLauncher will now show a warning if an OTP was reused
+• More preparations for the upcoming Steam update
+• A lot of behind-the-scenes work to enable Linux & Steam Deck compatibility
