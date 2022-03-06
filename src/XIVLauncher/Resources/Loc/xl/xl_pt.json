@@ -84,7 +84,7 @@
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".",
+    "message": "Alguns arquivos do jogo parecem ter sido modificados ou corrompidos. \n\nSe você usar TexTools mods, este é um resultado esperado.\n\nSe você não usa mods, clique com o botão direito em \"Login\" na página inicial do XIVLauncher e escolha \"Reparar jogo\".",
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
@@ -108,15 +108,15 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "XIVLauncher has been updated to version {0}.",
+    "message": "O XIVLauncher foi atualizado para a versão {0}.",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoading": {
-    "message": "Loading changelog...",
+    "message": "Carregando lista de mudanças...",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoadingError": {
-    "message": "Could not load changelog. Please check GitHub or Discord instead!",
+    "message": "Não foi possível carregar o changelog. Por favor, verifique o GitHub ou Discord!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
@@ -220,11 +220,11 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "NowVerifying": {
-    "message": "Verifying game files...",
+    "message": "Verificando arquivos do jogo...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairing": {
-    "message": "Repairing game files...",
+    "message": "Reparando arquivos do jogo...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -296,11 +296,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxRepairLogin": {
-    "message": "Repair game files",
+    "message": "Reparar arquivos do jogo",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start without Dalamud",
+    "message": "Começar sem Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -336,11 +336,11 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameIsOpenRepairError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.",
+    "message": "O jogo e/ou o launcher oficial estão abertos. O XIVLauncher não pode fazer o reparo do jogo nesse caso.\nFeche-os e tente novamente.",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameRepairDisclaimer": {
-    "message": "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?",
+    "message": "XIVLauncher tentará encontrar arquivos de jogos corrompidos e repará-los.\nSe você usar quaisquer mods de TexTools, isso substituirá todos eles e restaurará o jogo ao seu estado inicial.\n\nVocê quer continuar?",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
@@ -432,23 +432,23 @@
     "description": "<LoginToGame>d__30.MoveNext"
   },
   "NoVersionReferenceError": {
-    "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
+    "message": "A versão do jogo em que você está não pode ser reparada pelo XIVLauncher ainda, pois informações de referência ainda não estão disponíveis.\nPor favor, tente novamente mais tarde.",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccess": {
-    "message": "Game files were verified by XIVLauncher. {0} {1} repaired.\n\nPlease log in normally.",
+    "message": "Arquivos de jogo foram verificados pelo XIVLauncher. {0} {1} reparados.\n\nPor favor, faça o login normalmente.",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFilesWere": {
-    "message": "files were",
+    "message": "arquivos foram",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairSuccessFileWas": {
-    "message": "file was",
+    "message": "arquivo foi",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "GameRepairError": {
-    "message": "An error occurred while repairing the game files.\n\nYou may have to reinstall the game.",
+    "message": "Ocorreu um erro ao reparar os arquivos do jogo.\n\nTalvez você precise reinstalar o jogo.",
     "description": "<RepairGame>d__31.MoveNext"
   },
   "OtpInputPrompt": {

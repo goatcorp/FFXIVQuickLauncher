@@ -84,7 +84,7 @@
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".",
+    "message": "一些游戏文件似乎被修改或损坏。 \n\n如果您使用了 TextTools 模組，这是预期的结果。\n\n如果您没有使用模組，请右键单击 XIVLauncher 开始页面上的「登录」按钮并选择 「修复游戏」。",
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
@@ -108,7 +108,7 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "XIVLauncher has been updated to version {0}.",
+    "message": "XIVLauncher 已更新至 {0} 版本。",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoading": {
@@ -296,7 +296,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxRepairLogin": {
-    "message": "修復遊戲文件",
+    "message": "修复游戏文件",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
@@ -336,11 +336,11 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameIsOpenRepairError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.",
+    "message": "游戏或官方启动器正在运行中，因此 XIVLauncher 无法为您修复游戏。\n请先关闭游戏或官方启动器后再试一遍。",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameRepairDisclaimer": {
-    "message": "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?",
+    "message": "XIVLauncher 现在将会尝试寻找损坏的游戏文件并进行修复。\n如果您有使用任何 TexTools 模组，这将取代所有模组并将游戏恢复到初始状态。\n\n你还要继续吗？",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
