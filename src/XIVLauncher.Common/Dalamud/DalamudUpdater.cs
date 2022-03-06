@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -73,11 +74,11 @@ namespace XIVLauncher.Common.Dalamud
         {
             Log.Information("[DUPDATE] Starting...");
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 try
                 {
-                    UpdateDalamud();
+                    await UpdateDalamud();
                 }
                 catch (Exception ex)
                 {
@@ -90,10 +91,15 @@ namespace XIVLauncher.Common.Dalamud
         private static string GetBetaPath(DalamudSettings settings) =>
             string.IsNullOrEmpty(settings.DalamudBetaKind) ? "stg/" : $"{settings.DalamudBetaKind}/";
 
-        private static (DalamudVersionInfo release, DalamudVersionInfo staging) GetVersionInfo(WebClient client, DalamudSettings settings)
+        private static async Task<(DalamudVersionInfo release, DalamudVersionInfo staging)> GetVersionInfo(DalamudSettings settings)
         {
-            var versionInfoJsonRelease = client.DownloadString(DalamudLauncher.REMOTE_BASE + "version");
-            var versionInfoJsonStaging = client.DownloadString(DalamudLauncher.REMOTE_BASE + GetBetaPath(settings) + "version");
+            using var client = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(10),
+            };
+
+            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "version");
+            var versionInfoJsonStaging = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + GetBetaPath(settings) + "version");
 
             var versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
             var versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonStaging);
@@ -101,16 +107,14 @@ namespace XIVLauncher.Common.Dalamud
             return (versionInfoRelease, versionInfoStaging);
         }
 
-        private void UpdateDalamud()
+        private async Task UpdateDalamud()
         {
-            using var client = new WebClient();
-
             var settings = DalamudSettings.GetSettings();
 
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var (versionInfoRelease, versionInfoStaging) = GetVersionInfo(client, settings);
+            var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(settings);
 
             var remoteVersionInfo = versionInfoRelease;
 
@@ -145,7 +149,7 @@ namespace XIVLauncher.Common.Dalamud
 
                 try
                 {
-                    Download(currentVersionPath, settings, IsStaging);
+                    await Download(currentVersionPath, settings, IsStaging);
                     CleanUpOld(addonPath, remoteVersionInfo.AssemblyVersion);
 
                     // This is a good indicator that we should clear the UID cache
@@ -174,7 +178,7 @@ namespace XIVLauncher.Common.Dalamud
 
                     try
                     {
-                        DownloadRuntime(runtimePath, remoteVersionInfo.RuntimeVersion);
+                        await DownloadRuntime(runtimePath, remoteVersionInfo.RuntimeVersion);
                     }
                     catch (Exception ex)
                     {
@@ -325,11 +329,10 @@ namespace XIVLauncher.Common.Dalamud
 
         private static void WriteVersionJson(DirectoryInfo addonPath, string info)
         {
-
             File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
         }
 
-        private static void Download(DirectoryInfo addonPath, DalamudSettings settings, bool isStaging)
+        private static async Task Download(DirectoryInfo addonPath, DalamudSettings settings, bool isStaging)
         {
             // Ensure directory exists
             if (!addonPath.Exists)
@@ -340,14 +343,19 @@ namespace XIVLauncher.Common.Dalamud
                 addonPath.Create();
             }
 
-            using var client = new WebClient();
-
             var downloadPath = Util.GetTempFileName();
 
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            client.DownloadFile(DalamudLauncher.REMOTE_BASE + (isStaging ? GetBetaPath(settings) : string.Empty) + "latest.zip", downloadPath);
+            using var client = new HttpClient
+            {
+                Timeout = TimeSpan.FromMinutes(2),
+            };
+
+            var bytes = await client.GetByteArrayAsync(DalamudLauncher.REMOTE_BASE + (isStaging ? GetBetaPath(settings) : string.Empty) + "latest.zip");
+            File.WriteAllBytes(downloadPath, bytes);
+
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
 
             File.Delete(downloadPath);
@@ -375,7 +383,7 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        private static void DownloadRuntime(DirectoryInfo runtimePath, string version)
+        private static async Task DownloadRuntime(DirectoryInfo runtimePath, string version)
         {
             // Ensure directory exists
             if (!runtimePath.Exists)
@@ -388,8 +396,6 @@ namespace XIVLauncher.Common.Dalamud
                 runtimePath.Create();
             }
 
-            using var client = new WebClient();
-
             var dotnetUrl = $"https://dotnetcli.azureedge.net/dotnet/Runtime/{version}/dotnet-runtime-{version}-win-x64.zip";
             var desktopUrl = $"https://dotnetcli.azureedge.net/dotnet/WindowsDesktop/{version}/windowsdesktop-runtime-{version}-win-x64.zip";
 
@@ -398,10 +404,17 @@ namespace XIVLauncher.Common.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            client.DownloadFile(dotnetUrl, downloadPath);
+            using var client = new HttpClient
+            {
+                Timeout = TimeSpan.FromMinutes(5),
+            };
+
+            var bytesDn = await client.GetByteArrayAsync(dotnetUrl);
+            File.WriteAllBytes(downloadPath, bytesDn);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
-            client.DownloadFile(desktopUrl, downloadPath);
+            var bytesDesktop = await client.GetByteArrayAsync(desktopUrl);
+            File.WriteAllBytes(downloadPath, bytesDesktop);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
             File.Delete(downloadPath);
