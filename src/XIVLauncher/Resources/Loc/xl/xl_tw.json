@@ -48,7 +48,7 @@
     "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
   },
   "SettingsGamePatchPathError": {
-    "message": "遊戲和補丁的下載路徑不能相同。\n請選擇不同的遊戲和補丁下載路徑。",
+    "message": "遊戲和更新包的下載路徑不能相同。\n請選擇不同的遊戲和更新包下載路徑。",
     "description": "SettingsControl.AcceptButton_Click"
   },
   "LaunchAsSteam": {
@@ -60,11 +60,11 @@
     "description": "SettingsControl.RunIntegrityCheck_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud 尚未支持您的遊戲版本。\n這可能由於遊戲更新導致，請耐心等待，或在 Discord 上獲取到最新的消息。",
+    "message": "Dalamud 尚未支持您的遊戲版本。\n這可能由於遊戲更新導致，請耐心等待，或在 Discord 上取得最新的消息。",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "無法從伺服器獲取當前 Dalamud 兼容的遊戲版本。這可能是因為您的 .NET 框架版本過舊。\n您可以在 Discord 中獲取更多有關信息。",
+    "message": "無法從伺服器獲取當前 Dalamud 兼容的遊戲版本。這可能是因為您的 .NET 框架版本過舊。\n您可以在 Discord 上取得更多有關信息。",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -84,7 +84,7 @@
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".",
+    "message": "一些遊戲檔案似乎被修改或損壞。 \n\n如果您使用了 TextTools 模組，這是預期的結果。\n\n如果您沒有使用模組，請右鍵單擊 XIVLauncher 開始頁面上的「登錄」按鈕並選擇「修復遊戲」。",
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
@@ -108,7 +108,7 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "XIVLauncher has been updated to version {0}.",
+    "message": "XIVLauncher 已更新至 {0} 版本。",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoading": {
@@ -300,7 +300,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start without Dalamud",
+    "message": "不使用 Dalamud 啟動",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -336,11 +336,11 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameIsOpenRepairError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.",
+    "message": "遊戲或官方啟動器正在執行中，因此 XIVLauncher 無法為您修復遊戲。\n請先關閉遊戲或官方啟動器後再試一次。",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameRepairDisclaimer": {
-    "message": "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?",
+    "message": "XIVLauncher 現在將會嘗試尋找損壞的遊戲文件並進行修復。\n如果您有使用任何 TexTools 模組，這將取代所有模組並將遊戲恢復到初始狀態。\n\n你還要繼續嗎？",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "LoadingDialogIsLoggingIn": {
