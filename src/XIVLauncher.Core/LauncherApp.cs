@@ -11,6 +11,7 @@ public class LauncherApp : Component
     private readonly Storage storage;
 
     public static bool IsDebug { get; private set; } = false;
+    private bool isDemoWindow = false;
 
     #region Modal State
 
@@ -68,7 +69,7 @@ public class LauncherApp : Component
     private readonly OtpEntryPage otpEntryPage;
     private readonly LoadingPage loadingPage;
 
-    private Background background = new();
+    private readonly Background background = new();
 
     public LauncherApp(Storage storage)
     {
@@ -82,6 +83,8 @@ public class LauncherApp : Component
 #if DEBUG
         IsDebug = true;
 #endif
+
+        this.AskForOtp();
     }
 
     public void OpenModal(string text, string title)
@@ -117,6 +120,12 @@ public class LauncherApp : Component
         }
     }
 
+    public void AskForOtp()
+    {
+        this.otpEntryPage.Reset();
+        this.State = LauncherState.OtpEntry;
+    }
+
     public override void Draw()
     {
         ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
@@ -137,7 +146,7 @@ public class LauncherApp : Component
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
         ImGui.SetNextWindowBgAlpha(0.7f);
 
-        if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize))
+        if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
             switch (State)
             {
@@ -148,14 +157,29 @@ public class LauncherApp : Component
                 case LauncherState.Settings:
                     this.setPage.Draw();
                     break;
+
+                case LauncherState.OtpEntry:
+                    this.otpEntryPage.Draw();
+                    break;
             }
 
             base.Draw();
         }
 
+        if (IsDebug)
+        {
+            if (ImGui.IsKeyPressed(ImGuiKey.D) && ImGui.IsKeyPressed(ImGuiKey.E) && ImGui.IsKeyPressed(ImGuiKey.B))
+            {
+                this.isDemoWindow = true;
+            }
+        }
+
         ImGui.End();
 
         ImGui.PopStyleVar();
+
+        if (this.isDemoWindow)
+            ImGui.ShowDemoWindow(ref this.isDemoWindow);
 
         this.DrawModal();
     }

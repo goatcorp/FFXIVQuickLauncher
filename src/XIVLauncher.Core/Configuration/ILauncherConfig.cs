@@ -13,4 +13,6 @@ public interface ILauncherConfig
     public ClientLanguage ClientLanguage { get; set; }
 
     public bool? UidCacheEnabled { get; set; }
+
+    public float? GlobalScale { get; set; }
 }

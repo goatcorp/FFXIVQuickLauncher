@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Config.Net;
+using ImGuiNET;
 using XIVLauncher.Core.Style;
 using Serilog;
 using Veldrid;
@@ -58,6 +59,8 @@ namespace XIVLauncher.Core
             {
                 Config.AcceptLanguage = Util.GenerateAcceptLanguage();
             }
+
+            Config.GlobalScale ??= 1.0f;
         }
 
         private static void Main(string[] args)
@@ -87,6 +90,7 @@ namespace XIVLauncher.Core
             Log.Debug("ImGui OK!");
 
             StyleModelV1.DalamudStandard.Apply();
+            ImGui.GetIO().FontGlobalScale = Config.GlobalScale ?? 1.0f;
 
             launcherApp = new LauncherApp(storage);
 
