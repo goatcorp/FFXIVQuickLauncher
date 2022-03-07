@@ -2,12 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
-using NuGet;
-using XIVLauncher.Addon;
 using XIVLauncher.Windows.ViewModel;
 using CheckBox = System.Windows.Controls.CheckBox;
 

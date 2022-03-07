@@ -214,14 +214,54 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (isOtp && (!hasValidCache || action == AfterLoginAction.Repair))
             {
-                otp = OtpInputDialog.AskForOtp((otpDialog, result) =>
+                if (!string.IsNullOrWhiteSpace(AccountManager?.CurrentAccount?.OtpUri) && !PreviousLoginFailure)
                 {
-                    if (AccountManager.CurrentAccount != null && result != null && AccountManager.CurrentAccount.LastSuccessfulOtp == result)
+                    try
                     {
-                        otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
-                            "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
+                        if (Uri.TryCreate(AccountManager.CurrentAccount.OtpUri, UriKind.Absolute, out var uri))
+                        {
+                            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+                            if (!query.AllKeys.Contains("secret"))
+                            {
+                                throw new Exception("No Secret");
+                            }
+
+                            var secretKey = query["secret"];
+                            if (!query.AllKeys.Contains("period") || !int.TryParse(query["period"], out var period))
+                                period = 30;
+                            if (!query.AllKeys.Contains("digits") || !int.TryParse(query["digits"], out var digits))
+                                digits = 6;
+
+                            var algorithm = "sha1";
+                            if (query.AllKeys.Contains("algorithm") || new[] { "sha1", "sha256", "sha512" }.Any(a => a.Equals(query["algorithm"], StringComparison.OrdinalIgnoreCase)))
+                                algorithm = query["algorithm"].ToLowerInvariant();
+
+                            otp = Util.GetTotpToken(secretKey, algorithm, digits, period);
+                        }
+                        else
+                        {
+                            var secretKey = AccountManager.CurrentAccount.OtpUri;
+                            otp = Util.GetTotpToken(secretKey);
+                        }
                     }
-                }, _window);
+                    catch (Exception)
+                    {
+                        otp = "";
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(otp))
+                {
+                    otp = OtpInputDialog.AskForOtp((otpDialog, result) =>
+                    {
+                        if (AccountManager.CurrentAccount != null && result != null && AccountManager.CurrentAccount.LastSuccessfulOtp == result)
+                        {
+                            otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
+                                "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
+                        }
+                    }, _window);
+                }
             }
 
             if (otp == null)
