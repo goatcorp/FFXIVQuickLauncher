@@ -209,6 +209,7 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     otpDialog.Reset();
                     otpDialog.Show();
+                    otpDialog.Activate();
                 });
                 otpDialog.OnResult += OnOtpResult;
 
@@ -742,6 +743,7 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     progressDialog.SetPatchVerifier(verify);
                     progressDialog.Show();
+                    progressDialog.Activate();
                 });
 
                 for (bool doVerify = true; doVerify;)
@@ -848,6 +850,7 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     progressDialog.SetPatchManager(patcher);
                     progressDialog.Show();
+                    progressDialog.Activate();
                 });
 
                 if (!HandlePatchStart(patcher))
@@ -1138,6 +1141,7 @@ namespace XIVLauncher.Windows.ViewModel
                     {
                         progressDialog.SetPatchManager(patcher);
                         progressDialog.Show();
+                        progressDialog.Activate();
                     });
 
                     if (!HandlePatchStart(patcher))
