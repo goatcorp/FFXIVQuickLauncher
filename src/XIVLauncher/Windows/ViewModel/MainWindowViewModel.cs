@@ -213,7 +213,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 void OnOtpResult(string result)
                 {
-                    if (AccountManager.CurrentAccount.LastSuccessfulOtp == result)
+                    if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.LastSuccessfulOtp == result)
                     {
                         otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
                             "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
