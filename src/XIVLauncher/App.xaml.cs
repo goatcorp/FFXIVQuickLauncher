@@ -179,7 +179,7 @@ namespace XIVLauncher
                         Log.Error(ex, "Could not load changelog window");
                     }
 
-                    var _ = updateMgr.Run(EnvironmentSettings.IsPreRelease, changelogWindow);
+                    Task.Run(() => updateMgr.Run(EnvironmentSettings.IsPreRelease, changelogWindow));
                 }
                 catch (Exception ex)
                 {
