@@ -41,8 +41,6 @@ namespace XIVLauncher.Windows
         private MainWindowViewModel Model => this.DataContext as MainWindowViewModel;
         private readonly Launcher _launcher;
 
-        private readonly OtpInputDialog otpInputDialog = new();
-
         public MainWindow()
         {
             InitializeComponent();
@@ -68,65 +66,6 @@ namespace XIVLauncher.Windows
             });
 
             Model.ReloadHeadlines += () => Task.Run(SetupHeadlines);
-
-            Model.PatchDownloadDialogFactory = patcher =>
-            {
-                PatchDownloadDialog progressWindow = null;
-                this.Dispatcher.Invoke(() =>
-                {
-                    var dialog = new PatchDownloadDialog(patcher);
-
-                    if (this.IsVisible)
-                    {
-                        dialog.Owner = this;
-                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    }
-                    else
-                    {
-                        dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    }
-
-                    progressWindow = dialog;
-                });
-
-                Debug.Assert(progressWindow != null);
-                return progressWindow;
-            };
-
-            Model.OtpInputDialogFactory = () =>
-            {
-                this.Dispatcher.BeginInvoke(() =>
-                {
-                    this.otpInputDialog.Reset();
-                    this.otpInputDialog.ShowDialog();
-                });
-
-                return this.otpInputDialog;
-            };
-
-            Model.GameRepairProgressWindowFactory = verify =>
-            {
-                GameRepairProgressWindow progressWindow = null;
-                this.Dispatcher.Invoke(() =>
-                {
-                    var dialog = new GameRepairProgressWindow(verify);
-
-                    if (this.IsVisible)
-                    {
-                        dialog.Owner = this;
-                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    }
-                    else
-                    {
-                        dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    }
-
-                    progressWindow = dialog;
-                });
-
-                Debug.Assert(progressWindow != null);
-                return progressWindow;
-            };
 
             NewsListView.ItemsSource = new List<News>
             {

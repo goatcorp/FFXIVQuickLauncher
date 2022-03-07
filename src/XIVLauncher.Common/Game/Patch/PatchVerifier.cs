@@ -91,7 +91,6 @@ namespace XIVLauncher.Common.Game.Patch
 
             _cancellationTokenSource = new();
             _reportedProgresses.Clear();
-            ProgressUpdateInterval = 0;
             NumBrokenFiles = 0;
             PatchSetIndex = 0;
             PatchSetCount = 0;

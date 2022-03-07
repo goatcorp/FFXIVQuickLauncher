@@ -40,10 +40,6 @@ namespace XIVLauncher.Windows.ViewModel
         public Action Hide;
         public Action ReloadHeadlines;
 
-        public Func<PatchManager, PatchDownloadDialog> PatchDownloadDialogFactory { get; set; }
-        public Func<PatchVerifier, GameRepairProgressWindow> GameRepairProgressWindowFactory { get; set; }
-        public Func<OtpInputDialog> OtpInputDialogFactory { get; set; }
-
         public string Password { get; set; }
 
         public enum AfterLoginAction
@@ -208,7 +204,12 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (isOtp && (!hasValidCache || action == AfterLoginAction.Repair))
             {
-                var otpDialog = OtpInputDialogFactory();
+                var otpDialog = App.OtpInputDialog;
+                otpDialog.Dispatcher.Invoke(() =>
+                {
+                    otpDialog.Reset();
+                    otpDialog.Show();
+                });
                 otpDialog.OnResult += OnOtpResult;
 
                 void OnOtpResult(string result)
@@ -736,7 +737,12 @@ namespace XIVLauncher.Windows.ViewModel
                     return false;
                 }
 
-                var progressDialog = GameRepairProgressWindowFactory(verify);
+                var progressDialog = App.GameRepairProgressWindow;
+                progressDialog.Dispatcher.Invoke(() =>
+                {
+                    progressDialog.SetPatchVerifier(verify);
+                    progressDialog.Show();
+                });
 
                 for (bool doVerify = true; doVerify;)
                 {
@@ -837,8 +843,12 @@ namespace XIVLauncher.Windows.ViewModel
                 IsEnabled = false;
                 Hide();
 
-                var progressDialog = PatchDownloadDialogFactory(patcher);
-                progressDialog.Show();
+                var progressDialog = App.PatchDownloadDialog;
+                progressDialog.Dispatcher.Invoke(() =>
+                {
+                    progressDialog.SetPatchManager(patcher);
+                    progressDialog.Show();
+                });
 
                 if (!HandlePatchStart(patcher))
                     return false;
@@ -1123,8 +1133,12 @@ namespace XIVLauncher.Windows.ViewModel
 
                     IsEnabled = false;
 
-                    var progressDialog = PatchDownloadDialogFactory(patcher);
-                    progressDialog.Show();
+                    var progressDialog = App.PatchDownloadDialog;
+                    progressDialog.Dispatcher.Invoke(() =>
+                    {
+                        progressDialog.SetPatchManager(patcher);
+                        progressDialog.Show();
+                    });
 
                     if (!HandlePatchStart(patcher))
                         return false;

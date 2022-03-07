@@ -17,14 +17,14 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class PatchDownloadDialog : Window
     {
-        private readonly PatchManager _manager;
         private readonly Timer _timer;
+
+        private PatchManager? _manager;
 
         public PatchDownloadDialogViewModel ViewModel => DataContext as PatchDownloadDialogViewModel;
 
-        public PatchDownloadDialog(PatchManager manager)
+        public PatchDownloadDialog()
         {
-            _manager = manager;
             InitializeComponent();
             this.DataContext = new PatchDownloadDialogViewModel();
 
@@ -38,6 +38,11 @@ namespace XIVLauncher.Windows
             _timer.Start();
         }
 
+        public void SetPatchManager(PatchManager manager)
+        {
+            _manager = manager;
+        }
+
         private void PatchDownloadDialog_OnMouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -46,6 +51,9 @@ namespace XIVLauncher.Windows
 
         private void ViewUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
         {
+            if (_manager == null)
+                return;
+
             this.Dispatcher.Invoke(() =>
             {
                 SetGeneralProgress(_manager.CurrentInstallIndex, _manager.Downloads.Count, this._manager.IsInstallerBusy);

@@ -43,6 +43,12 @@ namespace XIVLauncher
         public static bool GlobalIsDisableAutologin { get; private set; }
         public static DalamudUpdater DalamudUpdater { get; private set; }
 
+        public static OtpInputDialog OtpInputDialog { get; private set; }
+
+        public static GameRepairProgressWindow GameRepairProgressWindow { get; private set; }
+
+        public static PatchDownloadDialog PatchDownloadDialog { get; private set; }
+
 
         public static Brush UaBrush = new LinearGradientBrush(new GradientStopCollection()
         {
@@ -230,10 +236,10 @@ namespace XIVLauncher
                 {
                     DalamudUpdater = new DalamudUpdater(CommonUniqueIdCache.Instance);
 
-                    var newWindowThread = new Thread(DalamudOverlayThreadStart);
-                    newWindowThread.SetApartmentState(ApartmentState.STA);
-                    newWindowThread.IsBackground = true;
-                    newWindowThread.Start();
+                    var dalamudWindowThread = new Thread(DalamudOverlayThreadStart);
+                    dalamudWindowThread.SetApartmentState(ApartmentState.STA);
+                    dalamudWindowThread.IsBackground = true;
+                    dalamudWindowThread.Start();
 
                     while (DalamudUpdater.Overlay == null)
                         Thread.Yield();
@@ -244,6 +250,14 @@ namespace XIVLauncher
                 {
                     Log.Error(ex, "Could not start dalamud updater");
                 }
+
+                var extraWindowsThread = new Thread(ExtraWindowsThreadStart);
+                extraWindowsThread.SetApartmentState(ApartmentState.STA);
+                extraWindowsThread.IsBackground = true;
+                extraWindowsThread.Start();
+
+                while (GameRepairProgressWindow == null)
+                    Thread.Yield();
             });
         }
 
@@ -254,6 +268,20 @@ namespace XIVLauncher
             overlay.Hide();
 
             DalamudUpdater.Overlay = overlay;
+
+            System.Windows.Threading.Dispatcher.Run();
+        }
+
+        private static void ExtraWindowsThreadStart()
+        {
+            OtpInputDialog = new OtpInputDialog();
+            OtpInputDialog.Hide();
+
+            PatchDownloadDialog = new PatchDownloadDialog();
+            PatchDownloadDialog.Hide();
+
+            GameRepairProgressWindow = new GameRepairProgressWindow();
+            GameRepairProgressWindow.Hide();
 
             System.Windows.Threading.Dispatcher.Run();
         }

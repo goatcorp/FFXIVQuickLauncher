@@ -16,14 +16,14 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class GameRepairProgressWindow : Window
     {
-        private readonly PatchVerifier _verify;
         private readonly Timer _timer;
+
+        private PatchVerifier _verify;
 
         private GameRepairProgressWindowViewModel ViewModel => DataContext as GameRepairProgressWindowViewModel;
 
-        public GameRepairProgressWindow(PatchVerifier verify)
+        public GameRepairProgressWindow()
         {
-            this._verify = verify;
             InitializeComponent();
 
             this.DataContext = new GameRepairProgressWindowViewModel();
@@ -33,11 +33,14 @@ namespace XIVLauncher.Windows
 
             ViewModel.CancelCommand = new AsyncCommand(CancelButton_OnCommand);
 
-            UpdateStatusDisplay();
             _timer = new Timer();
             _timer.Elapsed += ViewUpdateTimerOnElapsed;
             _timer.AutoReset = true;
-            _timer.Interval = verify.ProgressUpdateInterval;
+        }
+
+        public void SetPatchVerifier(PatchVerifier verify)
+        {
+            _verify = verify;
         }
 
         private async Task CancelButton_OnCommand(object p)
@@ -65,6 +68,8 @@ namespace XIVLauncher.Windows
 
         private void UpdateStatusDisplay()
         {
+            _timer.Interval = _verify.ProgressUpdateInterval == 0 ? 100 : _verify.ProgressUpdateInterval;
+
             CurrentStepText.Text = _verify.CurrentMetaInstallState switch
             {
                 Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.NotStarted => ViewModel.VerifyingLoc,
@@ -96,6 +101,9 @@ namespace XIVLauncher.Windows
 
         private void ViewUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
         {
+            if (_verify == null)
+                return;
+
             this.Dispatcher.Invoke(UpdateStatusDisplay);
         }
 
