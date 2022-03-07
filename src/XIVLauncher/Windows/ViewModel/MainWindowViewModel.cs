@@ -806,7 +806,11 @@ namespace XIVLauncher.Windows.ViewModel
                     }
                 }
 
-                progressDialog.Dispatcher.Invoke(() => progressDialog.Close());
+                progressDialog.Dispatcher.Invoke(() =>
+                {
+                    progressDialog.Hide();
+                    progressDialog.SetPatchVerifier(null);
+                });
                 mutex.Close();
                 mutex = null;
             }
@@ -863,9 +867,8 @@ namespace XIVLauncher.Windows.ViewModel
 
                 progressDialog.Dispatcher.Invoke(() =>
                 {
-                    progressDialog.StopTimer();
                     progressDialog.Hide();
-                    progressDialog.Close();
+                    progressDialog.SetPatchManager(null);
                 });
 
                 IsEnabled = false;
@@ -1155,7 +1158,7 @@ namespace XIVLauncher.Windows.ViewModel
                     progressDialog.Dispatcher.Invoke(() =>
                     {
                         progressDialog.Hide();
-                        progressDialog.Close();
+                        progressDialog.SetPatchManager(null);
                     });
 
                     IsEnabled = true;

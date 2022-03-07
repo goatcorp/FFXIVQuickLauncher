@@ -216,10 +216,5 @@ namespace XIVLauncher.Windows
             _manager.CancelAllDownloads();
 #endif
         }
-
-        public void StopTimer()
-        {
-            _timer.Stop();
-        }
     }
 }
