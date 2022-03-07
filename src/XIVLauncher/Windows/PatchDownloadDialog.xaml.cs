@@ -85,7 +85,6 @@ namespace XIVLauncher.Windows
                 if (_manager.DownloadsDone)
                 {
                     SetLeft(0, 0);
-                    SetDownloadDone();
                 }
                 else
                 {
@@ -204,21 +203,6 @@ namespace XIVLauncher.Windows
                 this.Progress4.Background = Brushes.LightSkyBlue;
                 this.Progress4.BorderBrush = Brushes.LightSkyBlue;
             }
-        }
-
-        public void SetDownloadDone()
-        {
-            Progress1.Visibility = Visibility.Collapsed;
-            Progress1Text.Visibility = Visibility.Collapsed;
-
-            Progress2.Visibility = Visibility.Collapsed;
-            Progress2Text.Visibility = Visibility.Collapsed;
-
-            Progress3.Visibility = Visibility.Collapsed;
-            Progress3Text.Visibility = Visibility.Collapsed;
-
-            Progress4.Visibility = Visibility.Collapsed;
-            Progress4Text.Visibility = Visibility.Collapsed;
         }
 
         private void PatchDownloadDialog_OnClosing(object sender, CancelEventArgs e)

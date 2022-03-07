@@ -71,6 +71,8 @@ namespace XIVLauncher.Common.Game.Patch
 
         public long AllDownloadsLength => GetDownloadLength();
 
+        private bool hasError = false;
+
         public event Action<FailReason, string> OnFail;
 
         public enum FailReason
@@ -78,7 +80,7 @@ namespace XIVLauncher.Common.Game.Patch
             DownloadProblem,
             HashCheck,
         }
-        
+
         public PatchManager(ISettings settings, Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, Launcher launcher, string sid)
         {
             Debug.Assert(patches != null, "patches != null ASSERTION FAILED");
@@ -112,7 +114,7 @@ namespace XIVLauncher.Common.Game.Patch
             {
                 IsSuccess = false;
                 IsDone = true;
-                
+
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Patches,
                     Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length, freeSpaceDownload);
             }
@@ -122,7 +124,7 @@ namespace XIVLauncher.Common.Game.Patch
             {
                 IsSuccess = false;
                 IsDone = true;
-                
+
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.AllPatches, AllDownloadsLength,
                     freeSpaceDownload);
             }
@@ -133,12 +135,12 @@ namespace XIVLauncher.Common.Game.Patch
             {
                 IsSuccess = false;
                 IsDone = true;
-                
+
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
                     freeSpaceDownload);
             }
 #endif
-            
+
             try
             {
                 _installer.StartIfNeeded();
@@ -151,7 +153,7 @@ namespace XIVLauncher.Common.Game.Patch
 
                 throw;
             }
-            
+
             InitializeAcquisition().GetAwaiter().GetResult();
 
             Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
@@ -254,11 +256,16 @@ namespace XIVLauncher.Common.Game.Patch
             {
                 if (args == AcquisitionResult.Error)
                 {
+                    if (this.hasError)
+                        return;
+
                     Log.Error("Download failed for {0}", download.Patch.VersionId);
 
-                    CancelAllDownloads();
-                    
+                    hasError = true;
+
                     OnFail?.Invoke(FailReason.DownloadProblem, download.Patch.VersionId);
+
+                    CancelAllDownloads();
 
                     IsSuccess = false;
                     IsDone = true;
@@ -283,14 +290,20 @@ namespace XIVLauncher.Common.Game.Patch
                 // Let's just bail for now, need better handling of this later
                 if (checkResult != HashCheckResult.Pass)
                 {
-                    CancelAllDownloads();
+                    if (this.hasError)
+                        return;
+
                     Log.Error("IsHashCheckPass failed with {Result} for {VersionId} after DL", checkResult, download.Patch.VersionId);
-                    
+
+                    hasError = true;
+
                     OnFail?.Invoke(FailReason.HashCheck, download.Patch.VersionId);
-                    
+
+                    CancelAllDownloads();
+
                     IsSuccess = false;
                     IsDone = true;
-                    
+
                     outFile.Delete();
                     Environment.Exit(0);
                     return;
