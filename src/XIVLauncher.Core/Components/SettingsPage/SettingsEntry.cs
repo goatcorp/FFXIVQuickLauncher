@@ -6,6 +6,8 @@ public abstract class SettingsEntry : Component
 
     public abstract string Name { get; }
 
+    public bool IsValid { get; protected set; }
+
     public abstract void Load();
 
     public abstract void Save();

@@ -10,6 +10,7 @@ public class SettingsPage : Page
     {
         new SettingsTabGame(),
         new SettingsTabWine(),
+        new SettingsTabDalamud(),
         new SettingsTabAbout(),
     };
 
@@ -87,6 +88,10 @@ public class SettingsPage : Page
         ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 100f);
         ImGui.PushFont(FontManager.IconFont);
 
+        var invalid = this.tabs.Any(x => x.Entries.Any(y => !y.IsValid));
+        if (invalid)
+            ImGui.BeginDisabled();
+
         if (ImGui.Button(FontAwesomeIcon.Check.ToIconString(), new Vector2(40)))
         {
             foreach (var settingsTab in this.tabs)
@@ -96,6 +101,9 @@ public class SettingsPage : Page
 
             this.App.State = LauncherApp.LauncherState.Main;
         }
+
+        if (invalid)
+            ImGui.EndDisabled();
 
         ImGui.PopStyleVar();
         ImGui.PopFont();

@@ -7,6 +7,7 @@ using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Core.Configuration;
@@ -50,7 +51,7 @@ namespace XIVLauncher.Core
                          .CreateLogger();
         }
 
-        private static void LoadConfig()
+        private static void LoadConfig(Storage storage)
         {
             Config = new ConfigurationBuilder<ILauncherConfig>()
                      .UseCommandLineArgs()
@@ -63,6 +64,11 @@ namespace XIVLauncher.Core
                 Config.AcceptLanguage = Util.GenerateAcceptLanguage();
             }
 
+            Config.GamePath ??= storage.GetFolder("ffxiv");
+            Config.ClientLanguage ??= ClientLanguage.English;
+
+            Config.DalamudLoadMethod = !OperatingSystem.IsWindows() ? DalamudLoadMethod.DllInject : DalamudLoadMethod.EntryPoint;
+
             Config.GlobalScale ??= 1.0f;
         }
 
@@ -72,7 +78,7 @@ namespace XIVLauncher.Core
         {
             storage = new Storage(APP_NAME);
             SetupLogging();
-            LoadConfig();
+            LoadConfig(storage);
 
             Steam = new WindowsSteam();
             Steam.Initialize(STEAM_APP_ID);
