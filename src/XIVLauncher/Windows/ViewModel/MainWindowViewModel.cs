@@ -270,14 +270,10 @@ namespace XIVLauncher.Windows.ViewModel
             try
             {
                 gateStatus = await this.Launcher.GetGateStatus();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Could not obtain gate status");
-            }
 
-            try
-            {
+                if (gateStatus.Value! == false)
+                    throw new Exception("GateStatus = false");
+
                 var enableUidCache = App.Settings.UniqueIdCacheEnabled;
                 var gamePath = App.Settings.GamePath;
 
@@ -353,6 +349,11 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     msgbox.WithText(Loc.Localize("LoginGenericServerIssue",
                         "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."));
+                }
+                else if (gateStatus == null)
+                {
+                    msgbox.WithText(Loc.Localize("MaintenanceOrConnectionErrorNotice",
+                            "Could not check game server status. Either maintenance is in progress, or your internet connection is unstable. Confirm server statuses from Lodestone and your internet connection."));
                 }
                 // Actual unexpected error; show error details
                 else
