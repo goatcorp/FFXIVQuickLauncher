@@ -250,7 +250,7 @@ namespace XIVLauncher.Windows
             internal string CancelButtonText;
             internal string YesButtonText;
             internal string NoButtonText;
-            internal bool TopMost = false;
+            internal bool TopMost = true;
             internal ExitOnCloseModes ExitOnCloseMode = ExitOnCloseModes.DontExitOnClose;
             internal bool ShowHelpLinks = false;
             internal bool ShowDiscordLink = false;
