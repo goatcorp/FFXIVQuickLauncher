@@ -54,6 +54,8 @@ namespace XIVLauncher.Common.Windows
             return true;
         }
 
+        public uint GetServerRealTime() => (uint)((DateTimeOffset)SteamUtils.SteamServerTime).ToUnixTimeSeconds();
+
         public event Action<bool> OnGamepadTextInputDismissed;
     }
 }

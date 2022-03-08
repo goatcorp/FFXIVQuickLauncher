@@ -13,7 +13,7 @@ public interface ISteam
     bool ShowGamepadTextInput(bool password, bool multiline, string description, int maxChars, string existingText = "");
     string GetEnteredGamepadText();
     bool IsRunningOnSteamDeck();
-
+    uint GetServerRealTime();
 
     event Action<bool> OnGamepadTextInputDismissed;
 }
