@@ -1,6 +1,5 @@
-﻿• Improvements regarding OTP handling (by kizer)
-    => XIVLauncher will now show a warning if an OTP was reused
-• More preparations for the upcoming Steam update
-• A lot of behind-the-scenes work to enable Linux & Steam Deck compatibility
+﻿• Re-enabled XL for non-steam users.
+
+We are still working on a fix for Steam users. Thanks for your understanding.
 
 This patch is a hotfix to an earlier release, fixing several issues related to autologin.
