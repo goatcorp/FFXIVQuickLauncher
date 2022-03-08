@@ -82,7 +82,7 @@ namespace XIVLauncher.Common.Game
 
             Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteamServiceAccount, useCache);
 
-            byte[] steamTicket = null;
+            Ticket? steamTicket = null;
 
             if (isSteamServiceAccount)
             {
@@ -95,6 +95,7 @@ namespace XIVLauncher.Common.Game
                     Log.Error(ex, "Could not initialize Steam");
                     //throw new SteamException("SteamAPI_Init() failed.", ex);
                 }
+                /*
 
                 if (!this.steam.IsValid)
                 {
@@ -103,7 +104,7 @@ namespace XIVLauncher.Common.Game
 
                 try
                 {
-                    steamTicket = this.steam.GetAuthSessionTicket();
+                    steamTicket = Ticket.Get(this.steam);
                 }
                 catch (Exception ex)
                 {
@@ -114,6 +115,7 @@ namespace XIVLauncher.Common.Game
                 {
                     throw new SteamException("Steam app ticket was null.");
                 }
+                */
             }
 
             if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
@@ -377,7 +379,7 @@ namespace XIVLauncher.Common.Game
             public int MaxExpansion { get; set; }
         }
 
-        private static string GetOauthTopUrl(int region, bool isSteam, byte[] steamTicket)
+        private static string GetOauthTopUrl(int region, bool isSteam, Ticket steamTicket)
         {
             var url =
                 $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&launchver=3";
@@ -386,15 +388,14 @@ namespace XIVLauncher.Common.Game
             {
                 url += "&issteam=1";
 
-                var ticketText = Convert.ToBase64String(steamTicket);
-                url += $"&session_ticket={ticketText}";
-                url += $"&ticket_size={ticketText.Length}";
+                url += $"&session_ticket={steamTicket.Text}";
+                url += $"&ticket_size={steamTicket.Length}";
             }
 
             return url;
         }
 
-        private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isSteam, int region, byte[]? steamTicket)
+        private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isSteam, int region, Ticket? steamTicket)
         {
             if (isSteam && steamTicket == null)
                 throw new ArgumentNullException(nameof(steamTicket), "isSteam, but steamTicket == null");
