@@ -182,5 +182,13 @@ namespace XIVLauncher.Common
 
             return Platform.Win32;
         }
+
+        public static string ToMangledSeString(byte[] input)
+        {
+            return Convert.ToBase64String(input)
+                          .Replace('+', '-')
+                          .Replace('/', '_')
+                          .Replace('=', '*');
+        }
     }
 }

@@ -77,9 +77,9 @@ namespace XIVLauncher.Common.Encryption
                                     (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
                                 .ToString();
 
-            var blowfish = new Blowfish(GetKeyBytes(key));
+            var blowfish = new Blowfish(GetKeyBytes(key), true);
             var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
-            var base64Str = ToSeBase64String(ciphertext);
+            var base64Str = Util.ToMangledSeString(ciphertext);
             var checksum = DeriveChecksum(key);
 
             Log.Information("ArgumentBuilder::BuildEncrypted() checksum:{0}", checksum);
@@ -122,14 +122,6 @@ namespace XIVLauncher.Common.Encryption
         private static string EscapeValue(string input)
         {
             return input.Replace(" ", "  ");
-        }
-
-
-        private static string ToSeBase64String(byte[] input)
-        {
-            return Convert.ToBase64String(input)
-                .Replace('+', '-')
-                .Replace('/', '_');
         }
     }
 }
