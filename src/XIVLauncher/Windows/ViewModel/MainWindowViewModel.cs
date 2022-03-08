@@ -136,9 +136,9 @@ namespace XIVLauncher.Windows.ViewModel
 
             /* ============= MARCH 2022 STEAM UPDATE ============= */
             var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
-            var checkver = SeVersion.Parse("2022.03.01.0000.0001");
+            var ver600 = SeVersion.Parse("2021.11.16.0000.0001");
 
-            if (bootver > checkver && !isSteam)
+            if (bootver > ver600 && isSteam)
             {
                 CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
                                                                      "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
