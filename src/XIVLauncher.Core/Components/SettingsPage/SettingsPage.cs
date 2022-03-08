@@ -28,6 +28,8 @@ public class SettingsPage : Page
             settingsTab.Load();
         }
 
+        this.searchInput = string.Empty;
+
         base.OnShow();
     }
 
@@ -53,6 +55,8 @@ public class SettingsPage : Page
             {
                 if (ImGui.BeginTabItem("Search Results"))
                 {
+                    var any = false;
+
                     foreach (SettingsTab settingsTab in this.tabs)
                     {
                         if (settingsTab.IsLinux && !OperatingSystem.IsLinux())
@@ -62,6 +66,8 @@ public class SettingsPage : Page
 
                         if (!eligible.Any())
                             continue;
+
+                        any = true;
 
                         ImGui.TextColored(ImGuiColors.DalamudGrey, settingsTab.Title);
                         ImGui.Dummy(new Vector2(5));
@@ -78,6 +84,9 @@ public class SettingsPage : Page
 
                         ImGui.Dummy(new Vector2(10));
                     }
+
+                    if (!any)
+                        ImGui.TextColored(ImGuiColors.DalamudGrey, "No results found...");
 
                     ImGui.EndTabItem();
                 }

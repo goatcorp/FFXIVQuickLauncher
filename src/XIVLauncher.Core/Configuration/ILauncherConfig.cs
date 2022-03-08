@@ -5,6 +5,7 @@ namespace XIVLauncher.Core.Configuration;
 
 public interface ILauncherConfig
 {
+    public string? CurrentAccountId { get; set; }
     public string? AcceptLanguage { get; set; }
 
     public DirectoryInfo? GamePath { get; set; }
@@ -16,6 +17,8 @@ public interface ILauncherConfig
     public bool? UidCacheEnabled { get; set; }
 
     public float? GlobalScale { get; set; }
+
+    public DpiAwareness? DpiAwareness { get; set; }
 
     #region Dalamud
 

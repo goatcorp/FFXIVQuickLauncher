@@ -27,7 +27,7 @@ public class LauncherApp : Component
     {
         Main,
         Settings,
-        Progress,
+        Loading,
         OtpEntry,
     }
 
@@ -50,7 +50,7 @@ public class LauncherApp : Component
                     this.mainPage.OnShow();
                     break;
 
-                case LauncherState.Progress:
+                case LauncherState.Loading:
                     this.loadingPage.OnShow();
                     break;
 
@@ -136,6 +136,17 @@ public class LauncherApp : Component
         return this.otpEntryPage.Result;
     }
 
+    public void StartLoading(string line1)
+    {
+        this.State = LauncherState.Loading;
+        this.loadingPage.Line1 = line1;
+    }
+
+    public void StopLoading()
+    {
+        this.State = LauncherState.Main;
+    }
+
     public override void Draw()
     {
         ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
@@ -170,6 +181,10 @@ public class LauncherApp : Component
 
                 case LauncherState.OtpEntry:
                     this.otpEntryPage.Draw();
+                    break;
+
+                case LauncherState.Loading:
+                    this.loadingPage.Draw();
                     break;
             }
 

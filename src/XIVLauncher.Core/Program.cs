@@ -8,6 +8,7 @@ using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Core.Configuration;
@@ -27,6 +28,7 @@ namespace XIVLauncher.Core
         public static ILauncherConfig Config { get; private set; }
         public static CommonSettings CommonSettings => new(Config);
         public static ISteam Steam { get; private set; }
+        public static Launcher Launcher { get; private set; }
 
         private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
         private static bool showImGuiDemoWindow = true;
@@ -66,6 +68,7 @@ namespace XIVLauncher.Core
 
             Config.GamePath ??= storage.GetFolder("ffxiv");
             Config.ClientLanguage ??= ClientLanguage.English;
+            Config.DpiAwareness ??= DpiAwareness.Unaware;
 
             Config.DalamudLoadMethod = !OperatingSystem.IsWindows() ? DalamudLoadMethod.DllInject : DalamudLoadMethod.EntryPoint;
 
@@ -82,6 +85,8 @@ namespace XIVLauncher.Core
 
             Steam = new WindowsSteam();
             Steam.Initialize(STEAM_APP_ID);
+
+            Launcher = new Launcher(Steam, new UniqueIdCache(), CommonSettings);
 
             Log.Debug("Creating veldrid devices...");
 
