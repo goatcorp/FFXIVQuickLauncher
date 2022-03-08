@@ -255,11 +255,21 @@ namespace XIVLauncher.Common.Game.Patch
                                         var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                                         for (var i = 0; i < patchIndex.Sources.Count; i++)
                                         {
-                                            if (!missing[i].Any())
-                                                continue;
+                                            var patchSourceKey = prefix + patchIndex.Sources[i];
 
-                                            var source = _patchSources[prefix + patchIndex.Sources[i]];
-                                            if (source is Uri uri)
+                                            if (!missing[i].Any())
+                                            {
+                                                Log.Information("Patch file {0} skipped because no missing files had parts depending on this patch file.", patchIndex.Sources[i]);
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                Log.Information("Looking for patch file {0} (key: \"{1}\")", patchIndex.Sources[i], patchSourceKey);
+                                            }
+
+                                            if (!_patchSources.TryGetValue(patchSourceKey, out var source))
+                                                throw new InvalidOperationException($"Key \"{patchSourceKey}\" not found in _patchSources");
+                                            else if (source is Uri uri)
                                                 await remote.QueueInstall(i, uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET);
                                             else if (source is FileInfo file)
                                                 await remote.QueueInstall(i, file, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET);
@@ -312,6 +322,15 @@ namespace XIVLauncher.Common.Game.Patch
                 else
                 {
                     Log.Error(ex, "Unexpected error occurred in RunVerifier");
+                    Log.Information("_patchSources had following:");
+                    foreach (var kvp in _patchSources)
+                    {
+                        if (kvp.Value == null)
+                            Log.Information("* \"{0}\" = null", kvp.Key);
+                        else
+                            Log.Information("* \"{0}\" = {1}({2})", kvp.Key, kvp.Value.GetType(), kvp.Value);
+                    }
+
                     LastException = ex;
                     State = VerifyState.Error;
                 }
