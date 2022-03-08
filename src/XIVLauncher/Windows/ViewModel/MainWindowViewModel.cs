@@ -262,11 +262,22 @@ namespace XIVLauncher.Windows.ViewModel
             Reactivate();
         }
 
+        private void ShowInternetError()
+        {
+            CustomMessageBox.Show(
+                Loc.Localize("LoginWebExceptionContent",
+                    "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later."),
+                Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error);
+
+            Reactivate();
+        }
+
         private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, AfterLoginAction action)
         {
             Log.Information("LoginToGame() called");
 
             bool? gateStatus = null;
+
             try
             {
                 gateStatus = await this.Launcher.GetGateStatus();
@@ -274,6 +285,28 @@ namespace XIVLauncher.Windows.ViewModel
             catch (Exception ex)
             {
                 Log.Error(ex, "Could not obtain gate status");
+            }
+
+            if (gateStatus == null)
+            {
+                CustomMessageBox.Builder.NewFrom(Loc.Localize("GateUnreachable", "The login servers could not be reached. This usually indicates that the game is under maintenance, or that your connection to the login servers is unstable.\n\nPlease try again later."))
+                                .WithImage(MessageBoxImage.Asterisk)
+                                .WithButtons(MessageBoxButton.OK)
+                                .WithShowHelpLinks(true)
+                                .WithCaption("XIVLauncher")
+                                .Show();
+
+                return null;
+            }
+
+            if (gateStatus == false)
+            {
+                CustomMessageBox.Builder.NewFrom(Loc.Localize("GateClosed", "FFXIV is currently under maintenance. Please try again later or see official sources for more information."))
+                                .WithImage(MessageBoxImage.Asterisk)
+                                .WithButtons(MessageBoxButton.OK)
+                                .WithCaption("XIVLauncher")
+                                .Show();
+                return null;
             }
 
             try
@@ -335,19 +368,10 @@ namespace XIVLauncher.Windows.ViewModel
                         msgbox.WithAppendText(Loc.Localize("LoginGenericErrorCheckOtp",
                             "Double check whether your OTP device's clock is correct.\nIf you have recently logged in, then try logging in again in 30 seconds."));
                 }
-                // Check GateStatus first before spitting out connection related errors
-                else if (gateStatus == false)
-                {
-                    IsLoggingIn = false;
-                    msgbox.WithImage(MessageBoxImage.Exclamation)
-                        .WithText(Loc.Localize("MaintenanceNotice",
-                            "Maintenance seems to be in progress. The game shouldn't be launched."));
-                }
                 // If GateStatus is not set (even gate server could not be contacted) or GateStatus is true (gate server says everything's fine but could not contact login servers)
                 else if (ex is HttpRequestException || ex is TaskCanceledException || ex is WebException)
                 {
-                    msgbox.WithText(Loc.Localize("LoginWebExceptionContent",
-                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later."));
+                    ShowInternetError();
                 }
                 else if (ex is InvalidResponseException)
                 {
