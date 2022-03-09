@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <UseWPF>true</UseWPF>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
@@ -28,5 +28,6 @@
         <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
         <PackageReference Include="SharedMemory" Version="2.3.2" />
+        <PackageReference Include="System.Memory" Version="4.5.4" />
     </ItemGroup>
 </Project>
