@@ -1,5 +1,1 @@
-﻿• Re-enabled XL for non-steam users.
-
-We are still working on a fix for Steam users. Thanks for your understanding.
-
-This patch is a hotfix to an earlier release, fixing several issues related to autologin.
+﻿• Re-enabled XL for Steam users. If you run into issues logging in with Steam, please get in touch.
