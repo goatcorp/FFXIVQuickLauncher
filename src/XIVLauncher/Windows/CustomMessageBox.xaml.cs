@@ -196,19 +196,31 @@ namespace XIVLauncher.Windows
         private void OfficialLauncherButton_Click(object sender, RoutedEventArgs e)
         {
             switch (Builder
-                    .NewFrom(Loc.Localize("RunOfficialLauncherConfirmSteam", "Do you have your game account associated with a Steam account?"))
+                    .NewFrom(Loc.Localize("RunOfficialLauncherConfirmSteam", "Do you have your game account associated with a Steam account? If so, Steam must be installed to continue."))
                     .WithImage(MessageBoxImage.Question)
                     .WithButtons(MessageBoxButton.YesNoCancel)
                     .Show())
             {
                 case MessageBoxResult.Yes:
+                    var steam = App.Steam;
+
+                    if (steam.IsValid)
+                    {
+                        steam.Shutdown();
+                    }
+
+                    Thread.Sleep(5000);
+
                     Process.Start($"steam://rungameid/{Launcher.STEAM_APP_ID}");
+
                     break;
 
                 case MessageBoxResult.No:
                     Util.StartOfficialLauncher(App.Settings.GamePath, false);
                     break;
             }
+
+            Environment.Exit(0);
         }
 
         private void DiscordButton_Click(object sender, RoutedEventArgs e)
