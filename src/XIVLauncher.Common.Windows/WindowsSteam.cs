@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Steamworks;
 using XIVLauncher.Common.PlatformAbstractions;
 
@@ -25,9 +26,10 @@ namespace XIVLauncher.Common.Windows
             SteamClient.Shutdown();
         }
 
-        public byte[] GetAuthSessionTicket()
+        public async Task<byte[]> GetAuthSessionTicketAsync()
         {
-            return SteamUser.GetAuthSessionTicketAsync().GetAwaiter().GetResult().Data;
+            var ticket = await SteamUser.GetAuthSessionTicketAsync().ConfigureAwait(true);
+            return ticket.Data;
         }
 
         public bool IsAppInstalled(uint appId)

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Serilog;
 using XIVLauncher.Common.Encryption.BlockCipher;
 using XIVLauncher.Common.PlatformAbstractions;
@@ -23,9 +24,9 @@ public class Ticket
         this.Length = length;
     }
 
-    public static Ticket? Get(ISteam steam)
+    public static async Task<Ticket?> Get(ISteam steam)
     {
-        var ticketBytes = steam.GetAuthSessionTicket();
+        var ticketBytes = await steam.GetAuthSessionTicketAsync().ConfigureAwait(true);
 
         if (ticketBytes == null)
             return null;

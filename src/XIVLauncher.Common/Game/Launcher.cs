@@ -111,7 +111,7 @@ namespace XIVLauncher.Common.Game
 
                 try
                 {
-                    steamTicket = Ticket.Get(this.steam);
+                    steamTicket = await Ticket.Get(steam).ConfigureAwait(true);
                 }
                 catch (Exception ex)
                 {
