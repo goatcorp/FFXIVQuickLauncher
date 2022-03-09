@@ -431,8 +431,13 @@ namespace XIVLauncher.Common.Game
             request.Headers.AddWithoutValidation("Cache-Control", "no-cache");
             request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
-            if (isSteam && !String.Equals(userName, topResult.SteamLinkedId, StringComparison.OrdinalIgnoreCase))
-                throw new SteamWrongAccountException(userName, topResult.SteamLinkedId);
+            if (isSteam)
+            {
+                if (!String.Equals(userName, topResult.SteamLinkedId, StringComparison.OrdinalIgnoreCase))
+                    throw new SteamWrongAccountException(userName, topResult.SteamLinkedId);
+
+                userName = topResult.SteamLinkedId;
+            }
 
             request.Content = new FormUrlEncodedContent(
                 new Dictionary<string, string>()
