@@ -195,7 +195,7 @@ namespace XIVLauncher.Windows
 
         private void OfficialLauncherButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!Util.GetOfficialLauncherPath(App.Settings.GamePath).Exists)
+            if (App.Settings.GamePath == null || !Util.GetOfficialLauncherPath(App.Settings.GamePath).Exists)
             {
                 CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherNotPresentError", "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher."), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
