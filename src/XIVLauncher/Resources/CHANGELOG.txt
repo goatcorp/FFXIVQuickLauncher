@@ -1,1 +1,2 @@
-﻿
+﻿• Adds "Free Trial mode" checkbox to about tab, for people that are playing the free trial through Steam.
+• The official launcher can now start without being directly installed via Steam, in order to facilitate account linking.
