@@ -88,7 +88,10 @@ namespace XIVLauncher.Common.Game
             {
                 try
                 {
-                    this.steam.Initialize(STEAM_APP_ID);
+                    if (!this.steam.IsValid)
+                    {
+                        this.steam.Initialize(STEAM_APP_ID);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -98,7 +101,12 @@ namespace XIVLauncher.Common.Game
 
                 if (!this.steam.IsValid)
                 {
-                    throw new SteamException("Not logged into Steam. Please log in and try again.");
+                    throw new SteamException("Steam did not initialize successfully. Please restart Steam and try again.");
+                }
+
+                if (!this.steam.BLoggedOn())
+                {
+                    throw new SteamException("Not logged into Steam, or Steam is running in offline mode. Please log in and try again.");
                 }
 
                 try

@@ -16,7 +16,9 @@ namespace XIVLauncher.Common.Windows
             SteamClient.Init(appId);
         }
 
-        public bool IsValid => SteamClient.IsValid && SteamClient.IsLoggedOn;
+        public bool IsValid => SteamClient.IsValid;
+
+        public bool BLoggedOn() => SteamClient.IsLoggedOn;
 
         public void Shutdown()
         {

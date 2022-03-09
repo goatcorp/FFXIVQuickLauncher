@@ -6,6 +6,7 @@ public interface ISteam
 {
     void Initialize(uint appId);
     bool IsValid { get; }
+    bool BLoggedOn();
     void Shutdown();
     byte[] GetAuthSessionTicket();
     bool IsAppInstalled(uint appId);
