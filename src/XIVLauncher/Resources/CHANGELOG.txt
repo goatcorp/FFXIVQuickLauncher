@@ -1,3 +1,1 @@
-﻿• More fixes regarding XL for Steam users. If you run into issues logging in with Steam, please get in touch.
-• Fixes autologin for Steam users.
-• Fixes pending Steam link not being detected correctly.
+﻿
