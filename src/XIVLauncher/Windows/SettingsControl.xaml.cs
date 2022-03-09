@@ -100,6 +100,8 @@ namespace XIVLauncher.Windows
             var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
 
             SpeedLimiterUpDown.Value = val;
+
+            IsFreeTrialCheckbox.IsChecked = App.Settings.IsFt;
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
@@ -149,6 +151,8 @@ namespace XIVLauncher.Windows
             SettingsDismissed?.Invoke(this, null);
 
             App.Settings.SpeedLimitBytes = (long) (SpeedLimiterUpDown.Value * BYTES_TO_MB);
+
+            App.Settings.IsFt = this.IsFreeTrialCheckbox.IsChecked == true;
 
             Transitioner.MoveNextCommand.Execute(null, null);
         }

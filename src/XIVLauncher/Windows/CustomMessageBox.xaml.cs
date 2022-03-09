@@ -12,10 +12,10 @@ using CheapLoc;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using XIVLauncher.Common;
-using XIVLauncher.Common.Game;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 using XIVLauncher.Xaml;
+using Constants = XIVLauncher.Common.Constants;
 
 namespace XIVLauncher.Windows
 {
@@ -195,6 +195,12 @@ namespace XIVLauncher.Windows
 
         private void OfficialLauncherButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!Util.GetOfficialLauncherPath(App.Settings.GamePath).Exists)
+            {
+                CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherNotPresentError", "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher."), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             switch (Builder
                     .NewFrom(Loc.Localize("RunOfficialLauncherConfirmSteam", "Do you have your game account associated with a Steam account? If so, Steam must be installed to continue."))
                     .WithImage(MessageBoxImage.Question)
@@ -208,7 +214,7 @@ namespace XIVLauncher.Windows
                     {
                         if (!steam.IsValid)
                         {
-                            steam.Initialize(Launcher.STEAM_APP_ID);
+                            steam.Initialize(App.Settings.IsFt.GetValueOrDefault(false) ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
                         }
 
                         Thread.Sleep(5000);

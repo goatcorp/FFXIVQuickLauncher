@@ -39,6 +39,7 @@ namespace XIVLauncher.Settings
         int? VersionUpgradeLevel { get; set; }
         bool? TreatNonZeroExitCodeAsFailure { get; set; }
         bool? ExitLauncherAfterGameExit { get; set; }
+        bool? IsFt { get; set; }
 
         #endregion
     }

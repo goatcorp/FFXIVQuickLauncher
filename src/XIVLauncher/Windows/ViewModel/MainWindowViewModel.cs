@@ -301,9 +301,9 @@ namespace XIVLauncher.Windows.ViewModel
                 var gamePath = App.Settings.GamePath;
 
                 if (action == AfterLoginAction.Repair)
-                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true);
+                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false));
                 else
-                    return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false);
+                    return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false));
             }
             catch (Exception ex)
             {

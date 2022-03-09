@@ -64,9 +64,11 @@ namespace XIVLauncher.Common
             return (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
+        public static FileInfo GetOfficialLauncherPath(DirectoryInfo gamePath) => new(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"));
+
         public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam)
         {
-            Process.Start(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
+            Process.Start(GetOfficialLauncherPath(gamePath).FullName, isSteam ? "-issteam" : string.Empty);
         }
 
         public static string BytesToString(double byteCount) => BytesToString(Convert.ToInt64(Math.Floor(byteCount)));

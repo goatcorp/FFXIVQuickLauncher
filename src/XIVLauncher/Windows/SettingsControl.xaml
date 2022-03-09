@@ -338,6 +338,9 @@
                             <CheckBox x:Name="TreatNonZeroExitCodeAsFailureCheckbox"
                                           Content="{Binding TreatNonZeroExitCodeAsFailureLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+                            <CheckBox x:Name="IsFreeTrialCheckbox"
+                                      Content="{Binding IsFreeTrialLoc}"
+                                      HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
                         </StackPanel>
 
                         <Image Source="pack://application:,,,/Resources/logo.png" Width="200"

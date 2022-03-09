@@ -185,6 +185,8 @@ namespace XIVLauncher.Windows
             App.Settings.TreatNonZeroExitCodeAsFailure ??= false;
             App.Settings.ExitLauncherAfterGameExit ??= true;
 
+            App.Settings.IsFt ??= false;
+
             var versionLevel = App.Settings.VersionUpgradeLevel.GetValueOrDefault(0);
 
             while (versionLevel < CURRENT_VERSION_LEVEL)

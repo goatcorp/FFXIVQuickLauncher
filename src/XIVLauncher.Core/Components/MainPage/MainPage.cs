@@ -63,7 +63,7 @@ public class MainPage : Page
         if (otp == null)
             return;
 
-        var loginResult = await Program.Launcher.Login(username, password, otp, isSteam, true, Program.Config.GamePath, false).ConfigureAwait(true);
+        var loginResult = await Program.Launcher.Login(username, password, otp, isSteam, true, Program.Config.GamePath, false, false).ConfigureAwait(true);
 
         if (loginResult.State != Launcher.LoginState.Ok)
         {

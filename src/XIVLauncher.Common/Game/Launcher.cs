@@ -41,8 +41,6 @@ namespace XIVLauncher.Common.Game
         private const string USER_AGENT_TEMPLATE = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
         private readonly string _userAgent = GenerateUserAgent();
 
-        public const int STEAM_APP_ID = 39210;
-
         private static readonly string[] FilesToHash =
         {
             "ffxivboot.exe",
@@ -71,7 +69,7 @@ namespace XIVLauncher.Common.Game
             public string UniqueId { get; set; }
         }
 
-        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion)
+        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFt)
         {
             string uid;
             PatchListEntry[] pendingPatches = null;
@@ -90,7 +88,7 @@ namespace XIVLauncher.Common.Game
                 {
                     if (!this.steam.IsValid)
                     {
-                        this.steam.Initialize(STEAM_APP_ID);
+                        this.steam.Initialize(isFt ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
                     }
                 }
                 catch (Exception ex)
