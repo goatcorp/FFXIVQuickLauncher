@@ -13,6 +13,7 @@
         <UseWPF>true</UseWPF>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <OutputPath>..\bin\</OutputPath>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
