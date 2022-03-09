@@ -115,12 +115,12 @@ namespace XIVLauncher.Common.Game
                 }
                 catch (Exception ex)
                 {
-                    throw new SteamException("Could not request encrypted app ticket.", ex);
+                    throw new SteamException("Could not request auth ticket.", ex);
                 }
 
                 if (steamTicket == null)
                 {
-                    throw new SteamException("Steam app ticket was null.");
+                    throw new SteamException("Steam auth ticket was null.");
                 }
             }
 
@@ -350,8 +350,6 @@ namespace XIVLauncher.Common.Game
             var reply = await this.client.SendAsync(request);
 
             var text = await reply.Content.ReadAsStringAsync();
-
-            Log.Information(text);
 
             if (text.Contains("window.external.user(\"restartup\");"))
             {

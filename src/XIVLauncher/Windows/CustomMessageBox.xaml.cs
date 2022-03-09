@@ -204,14 +204,21 @@ namespace XIVLauncher.Windows
                 case MessageBoxResult.Yes:
                     var steam = App.Steam;
 
-                    if (steam.IsValid)
+                    try
                     {
-                        steam.Shutdown();
+                        if (!steam.IsValid)
+                        {
+                            steam.Initialize(Launcher.STEAM_APP_ID);
+                        }
+
+                        Thread.Sleep(5000);
+
+                        Util.StartOfficialLauncher(App.Settings.GamePath, true);
                     }
-
-                    Thread.Sleep(5000);
-
-                    Process.Start($"steam://rungameid/{Launcher.STEAM_APP_ID}");
+                    catch (Exception)
+                    {
+                        CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherSteamError", "Steam couldn't be loaded. Please start FFXIV directly via Steam."), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
 
                     break;
 

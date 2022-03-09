@@ -26,10 +26,10 @@ namespace XIVLauncher.Common.Windows
             SteamClient.Shutdown();
         }
 
-        public async Task<byte[]> GetAuthSessionTicketAsync()
+        public async Task<byte[]?> GetAuthSessionTicketAsync()
         {
             var ticket = await SteamUser.GetAuthSessionTicketAsync().ConfigureAwait(true);
-            return ticket.Data;
+            return ticket?.Data;
         }
 
         public bool IsAppInstalled(uint appId)

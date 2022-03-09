@@ -9,7 +9,7 @@ public interface ISteam
     bool IsValid { get; }
     bool BLoggedOn();
     void Shutdown();
-    Task<byte[]> GetAuthSessionTicketAsync();
+    Task<byte[]?> GetAuthSessionTicketAsync();
     bool IsAppInstalled(uint appId);
     string GetAppInstallDir(uint appId);
     bool ShowGamepadTextInput(bool password, bool multiline, string description, int maxChars, string existingText = "");
