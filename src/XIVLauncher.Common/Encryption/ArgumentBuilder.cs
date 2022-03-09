@@ -77,9 +77,9 @@ namespace XIVLauncher.Common.Encryption
                                     (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
                                 .ToString();
 
-            var blowfish = new Blowfish(GetKeyBytes(key), true);
+            var blowfish = new LegacyBlowfish(GetKeyBytes(key));
             var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
-            var base64Str = Util.ToMangledSeString(ciphertext);
+            var base64Str = Util.ToMangledSeBase64(ciphertext);
             var checksum = DeriveChecksum(key);
 
             Log.Information("ArgumentBuilder::BuildEncrypted() checksum:{0}", checksum);

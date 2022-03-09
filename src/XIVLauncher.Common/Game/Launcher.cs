@@ -93,9 +93,8 @@ namespace XIVLauncher.Common.Game
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Could not initialize Steam");
-                    //throw new SteamException("SteamAPI_Init() failed.", ex);
+                    throw new SteamException("SteamAPI_Init() failed.", ex);
                 }
-                /*
 
                 if (!this.steam.IsValid)
                 {
@@ -115,7 +114,6 @@ namespace XIVLauncher.Common.Game
                 {
                     throw new SteamException("Steam app ticket was null.");
                 }
-                */
             }
 
             if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
@@ -352,17 +350,23 @@ namespace XIVLauncher.Common.Game
             var matches = storedRegex.Matches(text);
 
             if (matches.Count == 0)
+            {
+                Log.Error(text);
                 throw new InvalidResponseException("Could not get STORED.");
+            }
 
             string? steamUsername = null;
 
             if (isSteam)
             {
                 var steamRegex = new Regex(@"<input name=""sqexid"" type=""hidden"" value=""(?<sqexid>.*)""\/>");
-                var steamMatches = storedRegex.Matches(text);
+                var steamMatches = steamRegex.Matches(text);
 
                 if (steamMatches.Count == 0)
+                {
+                    Log.Error(text);
                     throw new InvalidResponseException("Could not get steam username.");
+                }
 
                 steamUsername = steamMatches[0].Groups["sqexid"].Value;
             }

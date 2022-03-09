@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace XIVLauncher.Common.Encryption
 {
-    public class Blowfish
+    public class LegacyBlowfish
     {
-        private readonly bool fucked;
-
         #region P-Array and S-Boxes
 
         private readonly uint[] p =
@@ -209,9 +207,8 @@ namespace XIVLauncher.Common.Encryption
         /// </summary>
         /// <param name="key">The key to use.</param>
         /// <param name="fucked">Whether or not a sign confusion should be introduced during key init. This is needed for SE's implementation of blowfish.</param>
-        public Blowfish(byte[] key, bool fucked)
+        public LegacyBlowfish(byte[] key)
         {
-            this.fucked = fucked;
             foreach (var (i, keyFragment) in WrappingUInt32(key, this.p.Length))
                 this.p[i] ^= keyFragment;
 
@@ -309,14 +306,7 @@ namespace XIVLauncher.Common.Encryption
 
                 for (var j = 0; j < 4 && enumerator.MoveNext(); j++)
                 {
-                    if (this.fucked)
-                    {
-                        n = (uint)((n << 8) | (sbyte)enumerator.Current); // NOTE(goat): THIS IS A BUG! SE's implementation wrongly uses signed numbers for this, so we need to as well.
-                    }
-                    else
-                    {
-                        n = (n << 8) | enumerator.Current;
-                    }
+                    n = (uint)((n << 8) | (sbyte)enumerator.Current); // NOTE(goat): THIS IS A BUG! SE's implementation wrongly uses signed numbers for this, so we need to as well.
                 }
 
                 yield return (i, n);

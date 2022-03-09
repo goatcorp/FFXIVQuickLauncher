@@ -134,23 +134,6 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
-            /* ============= MARCH 2022 STEAM UPDATE ============= */
-            var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
-            var ver600 = SeVersion.Parse("2021.11.16.0000.0001");
-
-            if (bootver > ver600 && isSteam)
-            {
-                CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
-                                                                     "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
-                                                                     "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
-                                                                     "\n") + Loc.Localize("SteamLinkingText", "You may be prompted to link your Steam account to your Square Enix account.")
-                    , "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
-
-                Environment.Exit(0);
-                return;
-            }
-            /* =================================================== */
-
             if (string.IsNullOrEmpty(username))
             {
                 CustomMessageBox.Show(
