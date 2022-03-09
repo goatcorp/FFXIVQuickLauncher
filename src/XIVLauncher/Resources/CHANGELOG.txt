@@ -1,1 +1,1 @@
-﻿• Re-enabled XL for Steam users. If you run into issues logging in with Steam, please get in touch.
+﻿• More fixes regarding XL for Steam users. If you run into issues logging in with Steam, please get in touch.
