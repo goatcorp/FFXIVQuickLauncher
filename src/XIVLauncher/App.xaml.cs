@@ -57,10 +57,10 @@ namespace XIVLauncher
 
         public App()
         {
-            // wine does not support WPF with HW rendering, so switch to software only mode
+            // HW rendering commonly causes issues with material design, so we turn it off by default for now
             try
             {
-                if (EnvironmentSettings.IsWine)
+                if (!EnvironmentSettings.IsHardwareRendered)
                     RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             }
             catch
