@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <UseWPF>true</UseWPF>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
