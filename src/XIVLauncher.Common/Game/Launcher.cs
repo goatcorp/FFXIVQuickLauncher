@@ -343,6 +343,8 @@ namespace XIVLauncher.Common.Game
 
             var text = await reply.Content.ReadAsStringAsync();
 
+            Log.Information(text);
+
             if (reply.StatusCode == (HttpStatusCode)210)
                 throw new SteamLinkNeededException();
 
@@ -421,8 +423,8 @@ namespace XIVLauncher.Common.Game
             request.Headers.AddWithoutValidation("Cache-Control", "no-cache");
             request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
-            if (isSteam && userName != topResult.SteamLinkedId)
-                throw new SteamWrongAccountException();
+            if (isSteam && !String.Equals(userName, topResult.SteamLinkedId, StringComparison.OrdinalIgnoreCase))
+                throw new SteamWrongAccountException(userName, topResult.SteamLinkedId);
 
             request.Content = new FormUrlEncodedContent(
                 new Dictionary<string, string>()
