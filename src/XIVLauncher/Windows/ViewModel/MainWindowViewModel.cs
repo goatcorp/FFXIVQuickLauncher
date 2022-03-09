@@ -330,6 +330,9 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     msgbox.WithTextFormatted(Loc.Localize("LoginSteamIssue",
                         "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\n\nContext: {0}"), ex.Message);
+
+                    if (ex.InnerException != null)
+                        msgbox.WithAppendDescription(ex.InnerException.ToString());
                 }
                 else if (ex is SteamWrongAccountException)
                 {
