@@ -331,6 +331,16 @@ namespace XIVLauncher.Windows.ViewModel
                     msgbox.WithTextFormatted(Loc.Localize("LoginSteamIssue",
                         "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\n\nContext: {0}"), ex.Message);
                 }
+                else if (ex is SteamWrongAccountException)
+                {
+                    msgbox.WithText(Loc.Localize("LoginSteamWrongAccount",
+                        "The account you are logging in to is NOT the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts."));
+                }
+                else if (ex is SteamLinkNeededException)
+                {
+                    msgbox.WithText(Loc.Localize("LoginSteamLinkNeeded", "Before starting the game with this account, you need to link it to your Steam account with the official launcher.\nPlease link your accounts and try again. You can do so by clicking the \"Official Launcher\" button."))
+                          .WithShowOfficialLauncher();
+                }
                 else if (ex is OauthLoginException oauthLoginException)
                 {
                     disableAutoLogin = true;
