@@ -30,7 +30,7 @@ public class Ticket
         if (ticketBytes == null)
             return null;
 
-        var time = 60 * ((steam.GetServerRealTime() - 5) / 60); // MAY BE WRONG?
+        var time = 60 * ((steam.GetServerRealTime() - 5) / 60);
 
         var ticketString = BitConverter.ToString(ticketBytes).Replace("-", "").ToLower();
         var rawTicketBytes = Encoding.ASCII.GetBytes(ticketString);
@@ -39,7 +39,7 @@ public class Ticket
         Array.Copy(rawTicketBytes, rawTicket, rawTicketBytes.Length);
         rawTicket[rawTicket.Length - 1] = 0;
 
-        Log.Information(ByteArrayToHex(rawTicket));
+        Log.Debug(Util.ByteArrayToHex(rawTicket));
 
         var blowfishKey = $"{time:x08}#un@e=x>";
 
@@ -66,9 +66,7 @@ public class Ticket
         var numRandomBytes = ((ulong)(rawTicket.Length + 9) & 0xFFFFFFFFFFFFFFF8) - 2 - (ulong)rawTicket.Length;
         var garbage = new byte[numRandomBytes];
 
-        var poop = BitConverter.ToUInt32(memorySteam.ToArray(), 0);
-
-        uint fuckedSum = poop;
+        uint fuckedSum = BitConverter.ToUInt32(memorySteam.ToArray(), 0);
 
         for (var i = 0u; i < numRandomBytes; i++)
         {
@@ -93,12 +91,12 @@ public class Ticket
         finalBytes[1] = t;
 
         var keyBytes = Encoding.ASCII.GetBytes(blowfishKey);
-        Log.Information(ByteArrayToHex(keyBytes));
+        Log.Debug(Util.ByteArrayToHex(keyBytes));
 
         var blowfish = new Blowfish(keyBytes);
         var ecb = new Ecb<Blowfish>(blowfish);
 
-        Log.Information(ByteArrayToHex(finalBytes));
+        Log.Debug(Util.ByteArrayToHex(finalBytes));
 
         var encBytes = new byte[finalBytes.Length];
         Debug.Assert(encBytes.Length % 8 == 0);
@@ -106,7 +104,7 @@ public class Ticket
         ecb.Encrypt(finalBytes, encBytes);
         var encString = Util.ToMangledSeBase64(encBytes);
 
-        Log.Information(ByteArrayToHex(encBytes));
+        Log.Debug(Util.ByteArrayToHex(encBytes));
 
         const int SPLIT_SIZE = 300;
         var parts = ChunksUpto(encString, SPLIT_SIZE).ToArray();
@@ -120,71 +118,5 @@ public class Ticket
     {
         for (var i = 0; i < str.Length; i += maxChunkSize)
             yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
-    }
-
-    /// <summary>
-    /// Create a hexdump of the provided bytes.
-    /// </summary>
-    /// <param name="bytes">The bytes to hexdump.</param>
-    /// <param name="offset">The offset in the byte array to start at.</param>
-    /// <param name="bytesPerLine">The amount of bytes to display per line.</param>
-    /// <returns>The generated hexdump in string form.</returns>
-    public static string ByteArrayToHex(byte[] bytes, int offset = 0, int bytesPerLine = 16)
-    {
-        if (bytes == null) return string.Empty;
-
-        var hexChars = "0123456789ABCDEF".ToCharArray();
-
-        var offsetBlock = 8 + 3;
-        var byteBlock = offsetBlock + (bytesPerLine * 3) + ((bytesPerLine - 1) / 8) + 2;
-        var lineLength = byteBlock + bytesPerLine + Environment.NewLine.Length;
-
-        var line = (new string(' ', lineLength - Environment.NewLine.Length) + Environment.NewLine).ToCharArray();
-        var numLines = (bytes.Length + bytesPerLine - 1) / bytesPerLine;
-
-        var sb = new StringBuilder(numLines * lineLength);
-
-        for (var i = 0; i < bytes.Length; i += bytesPerLine)
-        {
-            var h = i + offset;
-
-            line[0] = hexChars[(h >> 28) & 0xF];
-            line[1] = hexChars[(h >> 24) & 0xF];
-            line[2] = hexChars[(h >> 20) & 0xF];
-            line[3] = hexChars[(h >> 16) & 0xF];
-            line[4] = hexChars[(h >> 12) & 0xF];
-            line[5] = hexChars[(h >> 8) & 0xF];
-            line[6] = hexChars[(h >> 4) & 0xF];
-            line[7] = hexChars[(h >> 0) & 0xF];
-
-            var hexColumn = offsetBlock;
-            var charColumn = byteBlock;
-
-            for (var j = 0; j < bytesPerLine; j++)
-            {
-                if (j > 0 && (j & 7) == 0) hexColumn++;
-
-                if (i + j >= bytes.Length)
-                {
-                    line[hexColumn] = ' ';
-                    line[hexColumn + 1] = ' ';
-                    line[charColumn] = ' ';
-                }
-                else
-                {
-                    var by = bytes[i + j];
-                    line[hexColumn] = hexChars[(by >> 4) & 0xF];
-                    line[hexColumn + 1] = hexChars[by & 0xF];
-                    line[charColumn] = by < 32 ? '.' : (char)by;
-                }
-
-                hexColumn += 3;
-                charColumn++;
-            }
-
-            sb.Append(line);
-        }
-
-        return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
     }
 }
