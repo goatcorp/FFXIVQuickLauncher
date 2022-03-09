@@ -353,8 +353,13 @@ namespace XIVLauncher.Common.Game
 
             Log.Information(text);
 
-            if (reply.StatusCode == (HttpStatusCode)210)
-                throw new SteamLinkNeededException();
+            if (text.Contains("window.external.user(\"restartup\");"))
+            {
+                if (isSteam)
+                    throw new SteamLinkNeededException();
+
+                throw new InvalidResponseException("restartup, but not isSteam?");
+            }
 
             var storedRegex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
             var matches = storedRegex.Matches(text);
