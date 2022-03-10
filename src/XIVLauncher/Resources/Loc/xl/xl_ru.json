@@ -1,23 +1,51 @@
 {
   "updatefailureerror": {
     "message": "XIVLauncher не удалось проверить обновления. Это может быть вызвано проблемами подключения к GitHub. Подождите несколько минут и повторите попытку.\nОтключите VPN, если он у Вас есть. Попробуйте добавить XIVLauncher в исключения антивируса.\nЕсли обновление не удаётся проверить после нескольких минут, пожалуйста, обратитесь к FAQ.",
-    "description": "<Run>d__0.MoveNext"
+    "description": "<Run>d__3.MoveNext"
+  },
+  "RunOfficialLauncherNotPresentError": {
+    "message": "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherConfirmSteam": {
+    "message": "Do you have your game account associated with a Steam account? If so, Steam must be installed to continue.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherSteamError": {
+    "message": "Steam couldn't be loaded. Please start FFXIV directly via Steam.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "ErrorAssertionFailed": {
+    "message": "Something that cannot happen happened.",
+    "description": "CustomMessageBox.AssertOrShowError"
+  },
+  "ErrorExplanation": {
+    "message": "В XIVLauncher роизошла ошибка. Пожалуйста, ознакомьтесь с FAQ. Если проблема не исчезнет, сообщите об этом\nна GitHub, нажав кнопку ниже, описав проблему и скопировав текст в поле.",
+    "description": "CustomMessageBox..cctor"
+  },
+  "Restart": {
+    "message": "_Restart",
+    "description": "Builder.NewFrom"
+  },
+  "Exit": {
+    "message": "_Exit",
+    "description": "Builder.NewFrom"
   },
   "DalamudUpdateDalamud": {
     "message": "Обновление ядра...",
-    "description": "DalamudLoadingOverlay.SetProgress"
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudUpdateAssets": {
     "message": "Обновление ресурсов...",
-    "description": "DalamudLoadingOverlay.SetProgress"
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudUpdateRuntime": {
     "message": "Обновление среды выполнения...",
-    "description": "DalamudLoadingOverlay.SetProgress"
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudUnavailable": {
     "message": "Плагины в настоящее время недоступны\nиз-за обновления игры.",
-    "description": "DalamudLoadingOverlay.SetProgress"
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "GamePathEmptyError": {
     "message": "Пожалуйста, выберите игровой путь.",
@@ -41,7 +69,7 @@
   },
   "NewsDlFailed": {
     "message": "Не удалось загрузить новости.",
-    "description": "MainWindow.<SetupHeadlines>b__11_3"
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "Обнаружен патч для лаунчера FFXIV.\nОбычно это означает, что для игры также есть патч.\n\nТеперь вы войдете в систему.",
@@ -151,29 +179,41 @@
     "message": "Как мне это настроить?",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
-  "DalamudUpdate": {
-    "message": "Обновление Dalamud...",
-    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
-  },
-  "ErrorExplanation": {
-    "message": "В XIVLauncher роизошла ошибка. Пожалуйста, ознакомьтесь с FAQ. Если проблема не исчезнет, сообщите об этом\nна GitHub, нажав кнопку ниже, описав проблему и скопировав текст в поле.",
-    "description": "ErrorWindowViewModel.SetupLoc"
-  },
   "StartOfficialLauncher": {
     "message": "Официальный лаунчер",
-    "description": "ErrorWindowViewModel.SetupLoc"
+    "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "OpenIntegrityReport": {
     "message": "Открыть отчёт",
-    "description": "ErrorWindowViewModel.SetupLoc"
+    "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "OpenFaq": {
     "message": "Открыть FAQ",
-    "description": "ErrorWindowViewModel.SetupLoc"
+    "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "ReportError": {
     "message": "Сообщить об ошибке",
-    "description": "ErrorWindowViewModel.SetupLoc"
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Yes": {
+    "message": "_Yes",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "No": {
+    "message": "_No",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Cancel": {
+    "message": "_Cancel",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Copy": {
+    "message": "_Copy",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "Обновление Dalamud...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
     "message": "Пожалуйста, выберите папку в которую установлена игра.\nВ ней должны находиться папки \"game\" и \"boot\".",
@@ -227,6 +267,30 @@
     "message": "Восстановление игровых файлов...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
+  "NowRepairingConnecting": {
+    "message": "Connecting...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingReattemptWaiting": {
+    "message": "Waiting before trying again...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingFinishing": {
+    "message": "Finishing...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "SpeedUnitPerSecLoc": {
+    "message": "{0}/s",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDuration": {
+    "message": "{0:00}:{1:00} remaining",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDurationWithHours": {
+    "message": "{0:00}:{1:00}:{2:00} remaining",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
   "GenericAddonSetupTitle": {
     "message": "Настройка автоматического запуска",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
@@ -255,6 +319,10 @@
     "message": "Запуск проверки целостности...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
+  "PatchInstallerInstallFailed": {
+    "message": "Во время установки возникла проблема.\nПожалуйста, сообщите об этой ошибке.\n\nПопробуйте ещё раз или воспользуйтесь официальным лаунчером.",
+    "description": "MainWindowViewModel.InstallerOnFail"
+  },
   "LoginWebExceptionContent": {
     "message": "XIVLauncher не может установить соединение с игровыми серверами.\n\nВозможно это временная неисправность или у Вас проблема с соединением. Пожалуйста, повторите попытку позже.",
     "description": "MainWindowViewModel.ShowInternetError"
@@ -263,9 +331,25 @@
     "message": "Проблема с входом в систему",
     "description": "MainWindowViewModel.ShowInternetError"
   },
-  "MaintenanceNotice": {
-    "message": "Кажется, идет техническое обслуживание. Игра не должна запускаться.",
-    "description": "MainWindowViewModel.StartGameAndAddon"
+  "PatchManDlFailure": {
+    "message": "XIVLauncher не смог проверить загруженные файлы игры. Пожалуйста, перезапустите и попробуйте ещё раз.\n\nОбычно это означает проблему подключения к Интернету.\nЕсли ошибка повторяется, попробуйте воспользоваться VPN для страны Япония.",
+    "description": "MainWindowViewModel.PatcherOnFail"
+  },
+  "PatchManNoInstaller": {
+    "message": "The patch installer could not start correctly.\n{0}\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
+    "description": "MainWindowViewModel.HandlePatchStart"
+  },
+  "FreeSpaceError": {
+    "message": "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "description": "MainWindowViewModel.HandlePatchStart"
+  },
+  "FreeSpaceErrorAll": {
+    "message": "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}",
+    "description": "MainWindowViewModel.HandlePatchStart"
+  },
+  "FreeSpaceGameError": {
+    "message": "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "description": "MainWindowViewModel.HandlePatchStart"
   },
   "LoginBoxUsername": {
     "message": "Square Enix ID",
@@ -311,8 +395,8 @@
     "message": "Ожидание окончания технического обслуживания...",
     "description": "MainWindowViewModel.SetupLoc"
   },
-  "Cancel": {
-    "message": "Отменить",
+  "CancelWithShortcut": {
+    "message": "_Cancel",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
@@ -331,6 +415,10 @@
     "message": "Дождитесь окончания технического обслуживания",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoadingDialogIsLoggingIn": {
+    "message": "Logging in...",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "AutoLoginIntro": {
     "message": "Вы включаете автоматический вход.\nXIVLauncher всегда будет входить в систему с текущей учетной записью, и вы не увидите это окно.\n\nЧтобы изменить настройки, удерживайте клавишу Shift после включения XIVLauncher.",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
@@ -343,113 +431,221 @@
     "message": "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
-  "LoadingDialogIsLoggingIn": {
-    "message": "Загрузка...",
-    "description": "<<GetLoginFunc>b__0>d.MoveNext"
+  "DuplicateOtpAfterSuccess": {
+    "message": "This OTP has been already used.\nIt may take up to 30 seconds for a new one.",
+    "description": "<>c__DisplayClass21_1.<Login>g__OnOtpResult|1"
   },
   "CheckBootVersionError": {
     "message": "XIVLauncher не смог проверить версию загрузки для выбранной установки игры. Это может произойти, если в настоящее время выполняется техническое обслуживание или если Ваше подключение к серверу проверки версий недоступно. Пожалуйста, сообщите об этой ошибке, если вы можете войти в систему с помощью официального лаунчера, но не с помощью XIVLauncher.",
-    "description": "<HandleBootCheck>d__40.MoveNext"
+    "description": "<HandleBootCheck>d__34.MoveNext"
   },
   "GameIsOpenError": {
     "message": "Игра и/или официальный лаунчер открыты. XIVLauncher не может патчить игру, если это так.\nПожалуйста, закройте официальный лаунчер и повторите попытку.",
-    "description": "<HandleBootCheck>d__40.MoveNext"
+    "description": "<HandleBootCheck>d__34.MoveNext"
   },
   "PatcherAlreadyInProgress": {
     "message": "XIVLauncher уже обновляет Вашу игру в другом экземпляре. Пожалуйста, проверьте, открыт ли ещё один XIVLauncher.",
-    "description": "<HandleBootCheck>d__40.MoveNext"
+    "description": "<HandleBootCheck>d__34.MoveNext"
   },
-  "KillswitchText": {
-    "message": "XIVLauncher не может запустить игру в данный момент, так как Square Enix внес изменения.\nНам нужно адаптироваться к этим изменениям и убедиться, что наши настройки безопасны, прежде чем мы сможем включить лаунчер. Пожалуйста, повторите попытку позже.\n\nПриносим извинения за эти неудобства.\n\nВы можете использовать кнопку \"Официальный лаунчер\" ниже, чтобы запустить официальный лаунчер.\n",
-    "description": "<Login>d__28.MoveNext"
-  },
-  "SteamLinkingText": {
-    "message": "Вам может быть предложено привязать свой аккаунт Steam к аккаунту Square Enix.",
-    "description": "<Login>d__28.MoveNext"
+  "BootPatchFailure": {
+    "message": "Could not patch boot.",
+    "description": "<HandleBootCheck>d__34.MoveNext"
   },
   "EmptyUsernameError": {
     "message": "Пожалуйста, введите имя пользователя.",
-    "description": "<Login>d__28.MoveNext"
+    "description": "<Login>d__21.MoveNext"
   },
   "EmailUsernameError": {
     "message": "Пожалуйста, введите имя учётной записи Square Enix, не email.",
-    "description": "<Login>d__28.MoveNext"
+    "description": "<Login>d__21.MoveNext"
   },
   "EmptyPasswordError": {
     "message": "Пожалуйста, введите пароль.",
-    "description": "<Login>d__28.MoveNext"
+    "description": "<Login>d__21.MoveNext"
   },
   "UidCacheInstallError": {
     "message": "Вы включили кеш UID в настройках патчера.\nЭтот параметр не позволяет переустановить FFXIV.\n\nЕсли Вы хотите переустановить FFXIV, пожалуйста, сначала отключите его.",
-    "description": "<Login>d__28.MoveNext"
-  },
-  "LoginNoServiceMessage": {
-    "message": "Эта учетная запись Square Enix не может играть в FINAL FANTASY XIV.\n\nЕсли вы купили FINAL FANTASY XIV в Steam, обязательно установите флажок \"Использовать учетную запись службы Steam\" при входе в систему.\nЕсли включен автоматический вход в систему, удерживайте нажатой клавишу Shift при запуске для доступа к настройкам.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "LoginAcceptTermsMessage": {
-    "message": "Пожалуйста, примите условия использования FINAL FANTASY XIV в официальном лаунчере.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "EverythingIsFuckedMessage": {
-    "message": "Некоторые важные файлы игры были изменены/повреждены сторонними программами, и игра не может ни обновляться, ни запускаться.\nВам необходимо полностью переустановить игру, чтобы продолжить.\n\nЕсли это будет повторятся, пожалуйста, свяжитесь с нами через Discord.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "PatchInstallDisclaimer": {
-    "message": "Обнаружен новый патч, который необходимо установить, прежде чем вы сможете играть.\nВы хотите, чтобы XIVLauncher установил его?",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "LoginNoStartOk": {
-    "message": "Была выполнена проверка обновлений, и все ожидающие обновления были установлены.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "NativeLauncherError": {
-    "message": "Не удалось правильно запустить игру. Пожалуйста, сообщите об этой ошибке.\n\nHRESULT: 0x{0}",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "MultiboxDeniedWarning": {
-    "message": "Нельзя запускать более двух процессов игры.\n\nПожалуйста, проверьте, нет ли уже запущенного процесса игры или она была закрыта неправильно.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "GameExitedPrematurelyError": {
-    "message": "XIVLauncher определил, что игра была запущена неправильно.\n\nВозможно это временная неисправность. Попробуйте перезагрузить Ваш ПК. Возможно, игра установлена некорректно.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "BinaryNotPresentError": {
-    "message": "Не удалось найти исполняемый файл игры.\nЭто может быть вызвано Вашим антивирусом. Возможно, Вам придется переустановить игру.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "GenericLoginError": {
-    "message": "Произошла ошибка при входе в систему. Пожалуйста, сообщите об этом.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "LoginGenericServerIssue": {
-    "message": "Сервер не отвечает. Это обычное явление во время сбоев или повышенной нагрузки.\nПожалуйста, подождите минуту и повторите вход снова или попробуйте использовать официальный лаунчер.\n\nИнформация о сбоях публикуется на Lodestone.",
-    "description": "<LoginToGame>d__30.MoveNext"
-  },
-  "LoginNoOauthAutologinHint": {
-    "message": "\n\nАвтоматический вход в систему был отключен.",
-    "description": "<LoginToGame>d__30.MoveNext"
+    "description": "<Login>d__21.MoveNext"
   },
   "NoVersionReferenceError": {
     "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
-    "description": "<RepairGame>d__31.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
-  "GameRepairSuccess": {
-    "message": "Файлы игр были проверены XIVLauncher. {0} {1} восстановлены.\n\nПожалуйста, авторизуйтесь как обычно.",
-    "description": "<RepairGame>d__31.MoveNext"
+  "GameRepairSuccess0": {
+    "message": "All game files seem to be valid.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
-  "GameRepairSuccessFilesWere": {
-    "message": "files were",
-    "description": "<RepairGame>d__31.MoveNext"
+  "GameRepairSuccess1": {
+    "message": "XIVLauncher has successfully repaired 1 game file.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
-  "GameRepairSuccessFileWas": {
-    "message": "file was",
-    "description": "<RepairGame>d__31.MoveNext"
+  "GameRepairSuccessPlural": {
+    "message": "XIVLauncher has successfully repaired {0} game files.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_LaunchGame": {
+    "message": "_Launch game",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_VerifyAgain": {
+    "message": "_Verify again",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_Close": {
+    "message": "_Close",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairError": {
-    "message": "Произошла ошибка при восстановлении файлов игры.\n\nВозможно, вам придется переустановить игру.",
-    "description": "<RepairGame>d__31.MoveNext"
+    "message": "An error occurred while repairing the game files.\nYou may have to reinstall the game.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_TryAgain": {
+    "message": "_Try again",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "Для работы внутриигровых дополнений XIVLauncher необходимо установить Microsoft Visual C++ 2015-2019. Пожалуйста, установите его с домашней страницы Microsoft.",
+    "description": "<StartGameAndAddon>d__28.MoveNext"
+  },
+  "DalamudArchError": {
+    "message": "Dalamud cannot run your computer's architecture. Please make sure that you are running a 64-bit version of Windows.\nIf you are using Windows on ARM, please make sure that x64-Emulation is enabled for XIVLauncher.",
+    "description": "<StartGameAndAddon>d__28.MoveNext"
+  },
+  "DalamudRunnerError": {
+    "message": "Не удалось запустить Dalamud. Этому может препятствовать Ваш антивирус.\nЧтобы предотвратить эту проблему, добавьте в исключения антивируса папку \"%AppData%\\XIVLauncher\\addons\".",
+    "description": "<StartGameAndAddon>d__28.MoveNext"
+  },
+  "AddonLoadError": {
+    "message": "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
+    "description": "<StartGameAndAddon>d__28.MoveNext"
+  },
+  "LoginIoErrorSummary": {
+    "message": "Could not locate game data files.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginIoErrorActionable": {
+    "message": "This may mean that the game path set in XIVLauncher isn't preset, e.g. on a disconnected drive or network storage. Please check the game path in the XIVLauncher settings.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginSteamIssue": {
+    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the FFXIV Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginSteamWrongAccount": {
+    "message": "The account you are logging in to is NOT the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginSteamLinkNeeded": {
+    "message": "Before starting the game with this account, you need to link it to your Steam account with the official launcher.\nPlease link your accounts and try again. You can do so by clicking the \"Official Launcher\" button.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericError": {
+    "message": "Не удалось войти в аккаунт Square Enix.\nПроверьте правильность ввода логина и пароля.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericErrorCheckOtpUse": {
+    "message": "If you're using OTP, then tick on \"{0}\" checkbox and try again.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericErrorCheckOtp": {
+    "message": "Double check whether your OTP device's clock is correct.\nIf you have recently logged in, then try logging in again in 30 seconds.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "Сервер не отвечает. Это обычное явление во время сбоев или повышенной нагрузки.\nПожалуйста, подождите минуту и повторите вход снова или попробуйте использовать официальный лаунчер.\n\nИнформация о сбоях публикуется на Lodestone.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "CheckLoginInfoNotAdditionally": {
+    "message": "Please check your login information or try again.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nАвтоматический вход в систему был отключен.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Эта учетная запись Square Enix не может играть в FINAL FANTASY XIV.\n\nЕсли вы купили FINAL FANTASY XIV в Steam, обязательно установите флажок \"Использовать учетную запись службы Steam\" при входе в систему.\nЕсли включен автоматический вход в систему, удерживайте нажатой клавишу Shift при запуске для доступа к настройкам.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Пожалуйста, примите условия использования FINAL FANTASY XIV в официальном лаунчере.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Некоторые важные файлы игры были изменены/повреждены сторонними программами, и игра не может ни обновляться, ни запускаться.\nВам необходимо полностью переустановить игру, чтобы продолжить.\n\nЕсли это будет повторятся, пожалуйста, свяжитесь с нами через Discord.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LoginRepairResponseIsNotNeedsPatchGame": {
+    "message": "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "Обнаружен новый патч, который необходимо установить, прежде чем вы сможете играть.\nВы хотите, чтобы XIVLauncher установил его?",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "Была выполнена проверка обновлений, и все ожидающие обновления были установлены.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameNonZeroExitCode": {
+    "message": "It looks like the game has exited with a fatal error. Do you want to relaunch the game?\n\nExit code: 0x{0:X8}",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameRelaunch": {
+    "message": "_Relaunch",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameClose": {
+    "message": "_Close",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameDoNotAskAgain": {
+    "message": "_Don't ask again",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameRetry": {
+    "message": "_Try again",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "MultiboxDeniedWarningSummary": {
+    "message": "You can't launch more than two instances of the game by default.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "MultiboxDeniedWarningActionable": {
+    "message": "Please check if there is an instance of the game that did not close correctly. (Detected: {0})",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameKillThenRetry": {
+    "message": "_Kill then try again",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "GameExitedPrematurelyErrorSummary": {
+    "message": "XIVLauncher could not detect that the game started correctly.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "GameExitedPrematurelyErrorActionable": {
+    "message": "This may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "BinaryNotPresentErrorSummary": {
+    "message": "Could not find the game executable.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "BinaryNotPresentErrorActionable": {
+    "message": "This might be caused by your antivirus. You may have to reinstall the game.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "UnexpectedErrorSummary": {
+    "message": "Unexpected error has occurred. ({0})",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "UnexpectedErrorActionable": {
+    "message": "Please report this error.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "MultipleErrors": {
+    "message": "Multiple errors have occurred.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "OtpInputPrompt": {
     "message": "Пожалуйста, введите свой одноразовый пароль.",
@@ -459,12 +655,16 @@
     "message": "Или используйте приложение!\nНажмите здесь, чтобы узнать больше!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
+  "OtpInputPromptBad": {
+    "message": "Enter a valid OTP key.\nIt is 6 digits long.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
   "PatchPreparing": {
     "message": "Подготовка...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchGeneralStatus": {
-    "message": "Патч через {0} обновлений...",
+    "message": "Загружено {0} обновлений...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchChecking": {
@@ -667,6 +867,14 @@
     "message": "Старый: устаревшая версия системы Dalamud, может быть более стабильной.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "InGameAddonLoadMethodEntryPointDescriptionLoc": {
+    "message": "This method uses Entry-Point rewriting to load Dalamud, which may be more compatible with certain other software, like anti-virus tools.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectDescriptionLoc": {
+    "message": "This method loads Dalamud via DLL-injection, which may be more stable on certain systems.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "UniversalisHint": {
     "message": "Данные Market Board предоставлены в сотрудничестве с Universalis.",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -688,7 +896,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsInstallHint": {
-    "message": "Вы можете использовать команду /xlplugins в игре, чтобы установить дополнительные плагины.",
+    "message": "Choose \"Plugin Installer\" or use the /xlplugins command in-game to install more plugins.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
@@ -720,7 +928,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Создано goat. Особая благодарность Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, Aireil и the angry paissa artist!\n\nЕсть вопросы или предложения? Присоединяйтесь к Discord или создайте запрос на GitHub!",
+    "message": "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, kizer and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "License": {
@@ -747,6 +955,18 @@
     "message": "Включить шифрование параметров для клиента",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "Exit XIVLauncher after game exit",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "Treat non-zero game exit code as failure",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "IsFreeTrial": {
+    "message": "Start in free trial mode",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "UpdateCheckMsg": {
     "message": "Проверка обновлений...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
@@ -758,10 +978,6 @@
   "ResetUidCacheHint": {
     "message": "Удерживайте клавишу Ctrl, чтобы сбросить кеш UID!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
-  },
-  "LoginGenericError": {
-    "message": "Не удалось войти в аккаунт Square Enix.\nПроверьте правильность ввода логина и пароля.",
-    "description": "OauthLoginException.GetErrorMessage"
   },
   "AdminCheck": {
     "message": "XIVLauncher и/или FINAL FANTASY XIV настроены на запуск от имени администратора.\nЭто может привести к различным проблемам, в том числе к сбою при запуске дополнений и отказу горячих клавиш.\n\nВы хотите исправить эту проблему автоматически?",
@@ -782,33 +998,5 @@
   "GShadeError": {
     "message": "Обнаружена некорректно установленный GShade.\n\nИгра не может быть запущена. Хотите, чтобы XIVLauncher исправил эту проблему? Потребуется переустановка GShade.",
     "description": "ProblemCheck.RunCheck"
-  },
-  "PatchInstallerInstallFailed": {
-    "message": "Во время установки возникла проблема.\nПожалуйста, сообщите об этой ошибке.\n\nПопробуйте ещё раз или воспользуйтесь официальным лаунчером.",
-    "description": "PatchInstaller.RemoteCallHandler"
-  },
-  "PatchInstallerNotOpen": {
-    "message": "Не удалось подключиться к установщику патча.\nПожалуйста, сообщите об этой ошибке.",
-    "description": "PatchInstaller.WaitOnHello"
-  },
-  "PatchManNoInstaller": {
-    "message": "Установщик не был запущен.\n\nЕсли Вы сами его работу или антивирус заблокировали его работу, внесите его в исключения и попробуйте ещё раз. Если проблему не получается решить самостоятельно, свяжитесь с нами в Discord.",
-    "description": "PatchManager.Start"
-  },
-  "PatchManDlFailure": {
-    "message": "XIVLauncher не смог проверить загруженные файлы игры. Пожалуйста, перезапустите и попробуйте ещё раз.\n\nОбычно это означает проблему подключения к Интернету.\nЕсли ошибка повторяется, попробуйте воспользоваться VPN для страны Япония.",
-    "description": "<>c__DisplayClass41_0.<DownloadPatchAsync>b__1"
-  },
-  "DalamudRunnerError": {
-    "message": "Не удалось запустить Dalamud. Этому может препятствовать Ваш антивирус.\nЧтобы предотвратить эту проблему, добавьте в исключения антивируса папку \"%AppData%\\XIVLauncher\\addons\".",
-    "description": "DalamudLauncher.HoldForUpdate"
-  },
-  "AntivirusDeletedBoot": {
-    "message": "Загрузочный DLL Dalamud не найден.\n\nСкорее всего, он был удалён Вашим антивирусом. Пожалуйста, добавьте папку XIVLauncher в исключения и повторите попытку.",
-    "description": "DalamudLauncher.Run"
-  },
-  "DalamudVc2019RedistError": {
-    "message": "Для работы внутриигровых дополнений XIVLauncher необходимо установить Microsoft Visual C++ 2015-2019. Пожалуйста, установите его с домашней страницы Microsoft.",
-    "description": "DalamudLauncher.CheckVcRedist"
   }
 }
