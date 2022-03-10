@@ -15,7 +15,7 @@ namespace XIVLauncher.Game
 {
     static class ProblemCheck
     {
-        public static void RunCheck()
+        public static void RunCheck(Window parentWindow)
         {
             var runningAsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
                 .IsInRole(WindowsBuiltInRole.Administrator);
@@ -36,7 +36,7 @@ namespace XIVLauncher.Game
 
                 if (entriesToFix.Count > 0)
                 {
-                    var result = MessageBox.Show(Loc.Localize("AdminCheck", "XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?"), "XIVLauncher", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
+                    var result = CustomMessageBox.Show(Loc.Localize("AdminCheck", "XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?"), "XIVLauncher", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, parentWindow: parentWindow);
 
                     if (result != MessageBoxResult.OK)
                         return;
@@ -54,20 +54,20 @@ namespace XIVLauncher.Game
 
             if (runningAsAdmin && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
             {
-                CustomMessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                CustomMessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: parentWindow);
                 App.Settings.HasComplainedAboutAdmin = true;
             }
 
             var procModules = Process.GetCurrentProcess().Modules.Cast<ProcessModule>();
             if (procModules.Any(x => x.ModuleName == "MacType.dll" || x.ModuleName == "MacType64.dll"))
             {
-                CustomMessageBox.Show(Loc.Localize("MacTypeNag", "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(Loc.Localize("MacTypeNag", "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parentWindow);
                 Environment.Exit(-1);
             }
 
             if (!CheckMyGamesWriteAccess())
             {
-                CustomMessageBox.Show(Loc.Localize("MyGamesWriteAccessNag", "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                CustomMessageBox.Show(Loc.Localize("MyGamesWriteAccessNag", "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: parentWindow);
             }
 
             if (App.Settings.GamePath == null)
@@ -82,6 +82,7 @@ namespace XIVLauncher.Game
                         .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
                         .WithButtons(MessageBoxButton.YesNo)
                         .WithImage(MessageBoxImage.Error)
+                        .WithParentWindow(parentWindow)
                         .Show() == MessageBoxResult.Yes)
                 {
                     try
@@ -107,6 +108,7 @@ namespace XIVLauncher.Game
                             .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
                             .WithButtons(MessageBoxButton.YesNo)
                             .WithImage(MessageBoxImage.Error)
+                            .WithParentWindow(parentWindow)
                             .Show() == MessageBoxResult.Yes)
                     {
                         try
