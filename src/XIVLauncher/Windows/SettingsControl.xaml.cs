@@ -70,7 +70,7 @@ namespace XIVLauncher.Windows
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
             ExitLauncherAfterGameExitCheckbox.IsChecked = App.Settings.ExitLauncherAfterGameExit ?? true;
-            TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? true;
+            TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? false;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
             PatchAcquisitionComboBox.SelectedIndex = (int) App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria);

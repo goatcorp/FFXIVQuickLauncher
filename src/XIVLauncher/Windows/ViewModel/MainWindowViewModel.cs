@@ -530,7 +530,7 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     using var process = await StartGameAndAddon(loginResult, isSteam, action == AfterLoginAction.StartWithoutDalamud).ConfigureAwait(false);
 
-                    if (process.ExitCode != 0 && (App.Settings.TreatNonZeroExitCodeAsFailure ?? true))
+                    if (process.ExitCode != 0 && (App.Settings.TreatNonZeroExitCodeAsFailure ?? false))
                     {
                         switch (new CustomMessageBox.Builder()
                                 .WithTextFormatted(
