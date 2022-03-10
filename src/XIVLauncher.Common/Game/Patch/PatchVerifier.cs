@@ -19,6 +19,7 @@ namespace XIVLauncher.Common.Game.Patch
     public class PatchVerifier : IDisposable
     {
         private readonly ISettings _settings;
+        private readonly int _maxExpansionToCheck;
         private HttpClient _client;
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -75,11 +76,12 @@ namespace XIVLauncher.Common.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.Unknown;
 
-        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval)
+        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion)
         {
             this._settings = settings;
             _client = new HttpClient();
             ProgressUpdateInterval = progressUpdateInterval;
+            _maxExpansionToCheck = maxExpansion;
 
             SetLoginState(loginResult);
         }
@@ -348,10 +350,14 @@ namespace XIVLauncher.Common.Game.Patch
             var latestVersion = JsonConvert.DeserializeObject<VerifyVersions>(latestVersionJson);
 
             await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder);
-            await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder);
-            await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder);
-            await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder);
-            await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder);
+            if (_maxExpansionToCheck >= 1)
+                await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder);
+            if (_maxExpansionToCheck >= 2)
+                await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder);
+            if (_maxExpansionToCheck >= 3)
+                await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder);
+            if (_maxExpansionToCheck >= 4)
+                await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder);
         }
 
         private async Task GetRepoMeta(Repository repo, string latestVersion, string baseDir)

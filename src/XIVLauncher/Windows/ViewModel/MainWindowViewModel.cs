@@ -743,7 +743,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Log.Information("STARTING REPAIR");
 
-                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20);
+                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20, loginResult.OauthLogin.MaxExpansion);
 
                 Hide();
                 IsEnabled = false;
