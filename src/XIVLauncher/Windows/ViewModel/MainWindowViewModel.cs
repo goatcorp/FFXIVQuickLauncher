@@ -526,7 +526,7 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     using var process = await StartGameAndAddon(loginResult, isSteam, action == AfterLoginAction.StartWithoutDalamud).ConfigureAwait(false);
 
-                    if (process.ExitCode != 0 && (App.Settings.TreatNonZeroExitCodeAsFailure ?? true))
+                    if (process.ExitCode != 0 && (App.Settings.TreatNonZeroExitCodeAsFailure ?? false))
                     {
                         switch (new CustomMessageBox.Builder()
                                 .WithTextFormatted(
@@ -739,7 +739,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Log.Information("STARTING REPAIR");
 
-                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20);
+                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20, loginResult.OauthLogin.MaxExpansion);
 
                 Hide();
                 IsEnabled = false;
