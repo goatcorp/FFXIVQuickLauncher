@@ -2,11 +2,13 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using Serilog;
 using XIVLauncher.Http;
 using XIVLauncher.Windows.ViewModel;
@@ -36,6 +38,8 @@ namespace XIVLauncher.Windows
             this.DataContext = new OtpInputDialogViewModel();
 
             MouseMove += OtpInputDialog_OnMouseMove;
+            Activated += (_, _) => OtpTextBox.Focus();
+            GotFocus += (_, _) => OtpTextBox.Focus();
         }
 
         public new void Show()
@@ -107,10 +111,19 @@ namespace XIVLauncher.Windows
                 }
                 else
                 {
-                    Hide();
                     _otpListener?.Stop();
+                    DialogResult = true;
+                    Hide();
                 }
             });
+        }
+
+        private void Cancel()
+        {
+            OnResult?.Invoke(null);
+            _otpListener?.Stop();
+            DialogResult = false;
+            Hide();
         }
 
         private void OtpInputDialog_OnMouseMove(object sender, MouseEventArgs e)
@@ -137,9 +150,7 @@ namespace XIVLauncher.Windows
         {
             if (e.Key == Key.Escape)
             {
-                OnResult?.Invoke(null);
-                _otpListener?.Stop();
-                Hide();
+                Cancel();
             }
             else if (e.Key == Key.Enter)
             {
@@ -154,14 +165,29 @@ namespace XIVLauncher.Windows
 
         private void CancelButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _otpListener?.Stop();
-            OnResult?.Invoke(null);
-            Hide();
+            Cancel();
         }
 
         public void OpenShortcutInfo_MouseUp(object sender, RoutedEventArgs e)
         {
             Process.Start($"https://goatcorp.github.io/faq/mobile_otp");
+        }
+
+        public static string AskForOtp(Action<OtpInputDialog, string> onOtpResult, Window parentWindow)
+        {
+            if (Dispatcher.CurrentDispatcher != parentWindow.Dispatcher)
+                return parentWindow.Dispatcher.Invoke(() => AskForOtp(onOtpResult, parentWindow));
+            
+            var dialog = new OtpInputDialog();
+            if (parentWindow.IsVisible)
+            {
+                dialog.Owner = parentWindow;
+                dialog.ShowInTaskbar = false;
+            }
+
+            string result = null;
+            dialog.OnResult += otp => onOtpResult(dialog, result = otp);
+            return dialog.ShowDialog() == true ? result : null;
         }
     }
 }

@@ -41,7 +41,17 @@ namespace XIVLauncher.Windows
 
             DataContext = new CustomMessageBoxViewModel();
 
-            ViewModel.CopyMessageTextCommand = new AsyncCommand(p => Application.Current.Dispatcher.Invoke(() => Clipboard.SetText(_builder.Text)));
+            ViewModel.CopyMessageTextCommand = new SyncCommand(p => Clipboard.SetText(_builder.Text));
+
+            if (builder.ParentWindow?.IsVisible ?? false)
+            {
+                Owner = builder.ParentWindow;
+                ShowInTaskbar = false;
+            }
+            else
+            {
+                ShowInTaskbar = true;
+            }
 
             Title = builder.Caption;
             MessageTextBlock.Text = builder.Text;
@@ -141,7 +151,7 @@ namespace XIVLauncher.Windows
             IntegrityReportButton.Visibility = builder.ShowIntegrityReportLinks ? Visibility.Visible : Visibility.Collapsed;
             NewGitHubIssueButton.Visibility = builder.ShowNewGitHubIssue ? Visibility.Visible : Visibility.Collapsed;
 
-            Topmost = builder.TopMost;
+            Topmost = builder.OverrideTopMostFromParentWindow ? builder.ParentWindow?.Topmost ?? builder.TopMost : builder.TopMost;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -197,7 +207,7 @@ namespace XIVLauncher.Windows
         {
             if (App.Settings.GamePath == null || !Util.GetOfficialLauncherPath(App.Settings.GamePath).Exists)
             {
-                CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherNotPresentError", "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher."), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherNotPresentError", "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher."), "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
                 return;
             }
 
@@ -205,6 +215,7 @@ namespace XIVLauncher.Windows
                     .NewFrom(Loc.Localize("RunOfficialLauncherConfirmSteam", "Do you have your game account associated with a Steam account? If so, Steam must be installed to continue."))
                     .WithImage(MessageBoxImage.Question)
                     .WithButtons(MessageBoxButton.YesNoCancel)
+                    .WithParentWindow(this)
                     .Show())
             {
                 case MessageBoxResult.Yes:
@@ -223,7 +234,8 @@ namespace XIVLauncher.Windows
                     }
                     catch (Exception)
                     {
-                        CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherSteamError", "Steam couldn't be loaded. Please start FFXIV directly via Steam."), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherSteamError", "Steam couldn't be loaded. Please start FFXIV directly via Steam."), "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
+                        return;
                     }
 
                     break;
@@ -231,6 +243,9 @@ namespace XIVLauncher.Windows
                 case MessageBoxResult.No:
                     Util.StartOfficialLauncher(App.Settings.GamePath, false, App.Settings.IsFt.GetValueOrDefault(false));
                     break;
+
+                case MessageBoxResult.Cancel:
+                    return;
             }
 
             Environment.Exit(0);
@@ -275,13 +290,15 @@ namespace XIVLauncher.Windows
             internal string CancelButtonText;
             internal string YesButtonText;
             internal string NoButtonText;
-            internal bool TopMost = true;
+            internal bool TopMost = false;
             internal ExitOnCloseModes ExitOnCloseMode = ExitOnCloseModes.DontExitOnClose;
             internal bool ShowHelpLinks = false;
             internal bool ShowDiscordLink = false;
             internal bool ShowIntegrityReportLinks = false;
             internal bool ShowOfficialLauncher = false;
             internal bool ShowNewGitHubIssue = false;
+            internal Window ParentWindow = null;
+            internal bool OverrideTopMostFromParentWindow = true;
 
             public Builder() { }
             public Builder WithText(string text) { Text = text; return this; }
@@ -306,6 +323,8 @@ namespace XIVLauncher.Windows
             public Builder WithShowOfficialLauncher(bool showOfficialLauncher = true) { ShowOfficialLauncher = showOfficialLauncher; return this; }
             public Builder WithShowIntegrityReportLink(bool showReportLinks = true) { ShowIntegrityReportLinks = showReportLinks; return this; }
             public Builder WithShowNewGitHubIssue(bool showNewGitHubIssue = true) { ShowNewGitHubIssue = showNewGitHubIssue; return this; }
+            public Builder WithParentWindow(Window window) { ParentWindow = window; return this; }
+            public Builder WithParentWindow(Window window, bool overrideTopMost) { ParentWindow = window; OverrideTopMostFromParentWindow = overrideTopMost; return this; }
 
             public Builder WithExceptionText()
             {
@@ -364,6 +383,18 @@ namespace XIVLauncher.Windows
                 return builder;
             }
 
+            public static Builder NewFromUnexpectedException(Exception exc, string context, ExitOnCloseModes exitOnCloseMode = ExitOnCloseModes.DontExitOnClose)
+            {
+                return NewFrom(exc, context, exitOnCloseMode)
+                    .WithAppendTextFormatted(
+                        Loc.Localize("UnexpectedErrorSummary",
+                            "Unexpected error has occurred. ({0})"),
+                        exc.Message)
+                    .WithAppendText("\n")
+                    .WithAppendText(Loc.Localize("UnexpectedErrorActionable",
+                        "Please report this error."));
+            }
+
             public MessageBoxResult ShowAssumingDispatcherThread()
             {
                 DefaultResult = DefaultResult != MessageBoxResult.None ? DefaultResult : Buttons switch
@@ -403,10 +434,20 @@ namespace XIVLauncher.Windows
             public MessageBoxResult Show()
             {
                 MessageBoxResult result;
-                if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
-                    result = ShowAssumingDispatcherThread();
+                if (ParentWindow != null)
+                {
+                    if (System.Windows.Threading.Dispatcher.CurrentDispatcher == ParentWindow.Dispatcher)
+                        result = ShowAssumingDispatcherThread();
+                    else
+                        result = ParentWindow.Dispatcher.Invoke(ShowAssumingDispatcherThread);
+                }
                 else
-                    result = Application.Current.Dispatcher.Invoke(ShowAssumingDispatcherThread);
+                {
+                    if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+                        result = ShowAssumingDispatcherThread();
+                    else
+                        result = Application.Current.Dispatcher.Invoke(ShowAssumingDispatcherThread);
+                }
 
                 if (ExitOnCloseMode == ExitOnCloseModes.ExitOnClose)
                 {
@@ -420,22 +461,22 @@ namespace XIVLauncher.Windows
             }
         }
 
-        public static MessageBoxResult Show(string text, string caption, MessageBoxButton buttons = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Asterisk, bool showHelpLinks = true, bool showDiscordLink = true, bool showReportLinks = false, bool showOfficialLauncher = false)
+        public static MessageBoxResult Show(string text, string caption, MessageBoxButton buttons = MessageBoxButton.OK, MessageBoxImage image = MessageBoxImage.Asterisk, bool showHelpLinks = true, bool showDiscordLink = true, bool showReportLinks = false, bool showOfficialLauncher = false, Window parentWindow = null)
         {
             return new Builder()
                 .WithCaption(caption)
                 .WithText(text)
-                .WithTopMost(true)
                 .WithButtons(buttons)
                 .WithImage(image)
                 .WithShowHelpLinks(showHelpLinks)
                 .WithShowDiscordLink(showDiscordLink)
                 .WithShowIntegrityReportLink(showReportLinks)
                 .WithShowOfficialLauncher(showOfficialLauncher)
+                .WithParentWindow(parentWindow)
                 .Show();
         }
 
-        public static bool AssertOrShowError(bool condition, string context, bool fatal = false)
+        public static bool AssertOrShowError(bool condition, string context, bool fatal = false, Window parentWindow = null)
         {
             if (condition)
                 return false;
@@ -450,6 +491,7 @@ namespace XIVLauncher.Windows
                     .WithAppendText("\n\n")
                     .WithAppendText(Loc.Localize("ErrorAssertionFailed",
                         "Something that cannot happen happened."))
+                    .WithParentWindow(parentWindow)
                     .Show();
             }
 
