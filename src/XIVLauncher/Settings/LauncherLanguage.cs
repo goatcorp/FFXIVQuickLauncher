@@ -36,7 +36,7 @@ namespace XIVLauncher.Common
                 { LauncherLanguage.Norwegian, "no" },
                 { LauncherLanguage.Russian, "ru" },
                 { LauncherLanguage.SimplifiedChinese, "zh" },
-                { LauncherLanguage.TraditionalChinese, "tw" },
+                { LauncherLanguage.TraditionalChinese, "tw" }
             };
         }
 
