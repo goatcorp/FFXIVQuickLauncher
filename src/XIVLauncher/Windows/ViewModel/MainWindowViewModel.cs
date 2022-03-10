@@ -161,7 +161,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, AfterLoginAction action)
         {
-            ProblemCheck.RunCheck();
+            ProblemCheck.RunCheck(_window);
 
             var bootRes = await HandleBootCheck().ConfigureAwait(false);
 
