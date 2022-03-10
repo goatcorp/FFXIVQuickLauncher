@@ -170,11 +170,12 @@ namespace XIVLauncher.Windows
         private void OriginalLauncherButton_OnClick(object sender, RoutedEventArgs e)
         {
             var isSteam = CustomMessageBox.Builder
-                .NewFrom(Loc.Localize("LaunchAsSteam", "Launch as a steam user?"))
-                .WithButtons(MessageBoxButton.YesNo)
-                .WithImage(MessageBoxImage.Question)
-                .Show() == MessageBoxResult.Yes;
-            Util.StartOfficialLauncher(App.Settings.GamePath, isSteam);
+                                          .NewFrom(Loc.Localize("LaunchAsSteam", "Launch as a steam user?"))
+                                          .WithButtons(MessageBoxButton.YesNo)
+                                          .WithImage(MessageBoxImage.Question)
+                                          .Show() == MessageBoxResult.Yes;
+
+            Util.StartOfficialLauncher(App.Settings.GamePath, isSteam, App.Settings.IsFt.GetValueOrDefault(false));
         }
 
         // All of the list handling is very dirty - but i guess it works

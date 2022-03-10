@@ -66,9 +66,20 @@ namespace XIVLauncher.Common
 
         public static FileInfo GetOfficialLauncherPath(DirectoryInfo gamePath) => new(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"));
 
-        public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam)
+        public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam, bool isFreeTrial)
         {
-            Process.Start(GetOfficialLauncherPath(gamePath).FullName, isSteam ? "-issteam" : string.Empty);
+            var args = string.Empty;
+
+            if (isSteam && isFreeTrial)
+            {
+                args = "-issteamfreetrial";
+            }
+            else if (isSteam)
+            {
+                args = "-issteam";
+            }
+
+            Process.Start(GetOfficialLauncherPath(gamePath).FullName, args);
         }
 
         public static string BytesToString(double byteCount) => BytesToString(Convert.ToInt64(Math.Floor(byteCount)));

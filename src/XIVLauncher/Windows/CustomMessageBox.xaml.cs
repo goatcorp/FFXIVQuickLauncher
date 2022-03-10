@@ -219,7 +219,7 @@ namespace XIVLauncher.Windows
 
                         Thread.Sleep(5000);
 
-                        Util.StartOfficialLauncher(App.Settings.GamePath, true);
+                        Util.StartOfficialLauncher(App.Settings.GamePath, true, App.Settings.IsFt.GetValueOrDefault(false));
                     }
                     catch (Exception)
                     {
@@ -229,7 +229,7 @@ namespace XIVLauncher.Windows
                     break;
 
                 case MessageBoxResult.No:
-                    Util.StartOfficialLauncher(App.Settings.GamePath, false);
+                    Util.StartOfficialLauncher(App.Settings.GamePath, false, App.Settings.IsFt.GetValueOrDefault(false));
                     break;
             }
 

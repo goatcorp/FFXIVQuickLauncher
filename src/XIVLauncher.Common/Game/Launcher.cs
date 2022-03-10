@@ -69,7 +69,7 @@ namespace XIVLauncher.Common.Game
             public string UniqueId { get; set; }
         }
 
-        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFt)
+        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
         {
             string uid;
             PatchListEntry[] pendingPatches = null;
@@ -78,17 +78,17 @@ namespace XIVLauncher.Common.Game
 
             LoginState loginState;
 
-            Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteamServiceAccount, useCache);
+            Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteam, useCache);
 
             Ticket? steamTicket = null;
 
-            if (isSteamServiceAccount)
+            if (isSteam)
             {
                 try
                 {
                     if (!this.steam.IsValid)
                     {
-                        this.steam.Initialize(isFt ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
+                        this.steam.Initialize(isFreeTrial ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
                     }
                 }
                 catch (Exception ex)
@@ -124,7 +124,7 @@ namespace XIVLauncher.Common.Game
 
             if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
             {
-                oauthLoginResult = await OauthLogin(userName, password, otp, isSteamServiceAccount, 3, steamTicket);
+                oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
 
                 Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
 
@@ -394,10 +394,10 @@ namespace XIVLauncher.Common.Game
             public int MaxExpansion { get; set; }
         }
 
-        private static string GetOauthTopUrl(int region, bool isSteam, Ticket steamTicket)
+        private static string GetOauthTopUrl(int region, bool isFreeTrial, bool isSteam, Ticket steamTicket)
         {
             var url =
-                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&launchver=3";
+                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft={(isFreeTrial ? "1" : "0")}&cssmode=1&isnew=1&launchver=3";
 
             if (isSteam)
             {
@@ -410,12 +410,12 @@ namespace XIVLauncher.Common.Game
             return url;
         }
 
-        private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isSteam, int region, Ticket? steamTicket)
+        private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket)
         {
             if (isSteam && steamTicket == null)
                 throw new ArgumentNullException(nameof(steamTicket), "isSteam, but steamTicket == null");
 
-            var topUrl = GetOauthTopUrl(region, isSteam, steamTicket);
+            var topUrl = GetOauthTopUrl(region, isFreeTrial, isSteam, steamTicket);
             var topResult = await GetOauthTop(topUrl, isSteam);
 
             var request = new HttpRequestMessage(HttpMethod.Post,
