@@ -16,7 +16,7 @@ namespace XIVLauncher.Common
 
         public static void OverrideRoamingPath(string path)
         {
-            RoamingPath = path;
+            RoamingPath = Environment.ExpandEnvironmentVariables(path);
         }
     }
 }
