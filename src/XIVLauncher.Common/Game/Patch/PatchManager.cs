@@ -108,9 +108,6 @@ namespace XIVLauncher.Common.Game.Patch
 
             if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
             {
-                IsSuccess = false;
-                IsDone = true;
-
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Patches,
                     Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length, freeSpaceDownload);
             }
@@ -118,9 +115,6 @@ namespace XIVLauncher.Common.Game.Patch
             // If the first 6 patches altogether are bigger than the patch drive, we might run out of space
             if (freeSpaceDownload < GetDownloadLength(6))
             {
-                IsSuccess = false;
-                IsDone = true;
-
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.AllPatches, AllDownloadsLength,
                     freeSpaceDownload);
             }
@@ -129,9 +123,6 @@ namespace XIVLauncher.Common.Game.Patch
 
             if (freeSpaceGame < AllDownloadsLength)
             {
-                IsSuccess = false;
-                IsDone = true;
-
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
                     freeSpaceDownload);
             }
