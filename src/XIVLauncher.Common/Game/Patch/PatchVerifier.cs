@@ -58,20 +58,38 @@ namespace XIVLauncher.Common.Game.Patch
             [JsonProperty("boot")]
             public string Boot { get; set; }
 
+            [JsonProperty("bootRevision")]
+            public int BootRevision { get; set; }
+
             [JsonProperty("game")]
             public string Game { get; set; }
+
+            [JsonProperty("gameRevision")]
+            public int GameRevision { get; set; }
 
             [JsonProperty("ex1")]
             public string Ex1 { get; set; }
 
+            [JsonProperty("ex1Revision")]
+            public int Ex1Revision { get; set; }
+
             [JsonProperty("ex2")]
             public string Ex2 { get; set; }
+
+            [JsonProperty("ex2Revision")]
+            public int Ex2Revision { get; set; }
 
             [JsonProperty("ex3")]
             public string Ex3 { get; set; }
 
+            [JsonProperty("ex3Revision")]
+            public int Ex3Revision { get; set; }
+
             [JsonProperty("ex4")]
             public string Ex4 { get; set; }
+
+            [JsonProperty("ex4Revision")]
+            public int Ex4Revision { get; set; }
         }
 
         public VerifyState State { get; private set; } = VerifyState.Unknown;
@@ -349,18 +367,18 @@ namespace XIVLauncher.Common.Game.Patch
             var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json");
             var latestVersion = JsonConvert.DeserializeObject<VerifyVersions>(latestVersionJson);
 
-            await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder);
+            await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder, latestVersion.GameRevision);
             if (_maxExpansionToCheck >= 1)
-                await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder);
+                await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder, latestVersion.Ex1Revision);
             if (_maxExpansionToCheck >= 2)
-                await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder);
+                await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder, latestVersion.Ex2Revision);
             if (_maxExpansionToCheck >= 3)
-                await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder);
+                await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder, latestVersion.Ex3Revision);
             if (_maxExpansionToCheck >= 4)
-                await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder);
+                await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder, latestVersion.Ex4Revision);
         }
 
-        private async Task GetRepoMeta(Repository repo, string latestVersion, string baseDir)
+        private async Task GetRepoMeta(Repository repo, string latestVersion, string baseDir, int patchIndexFileRevision)
         {
             var version = repo.GetVer(_settings.GamePath);
             if (version == Constants.BASE_GAME_VERSION)
@@ -371,7 +389,7 @@ namespace XIVLauncher.Common.Game.Patch
             var fileName = $"{latestVersion}.patch.index";
 
             var metaPath = Path.Combine(baseDir, repoShorthand);
-            var filePath = Path.Combine(metaPath, fileName);
+            var filePath = Path.Combine(metaPath, fileName) + (patchIndexFileRevision > 0 ? $".v{patchIndexFileRevision}" : "");
             Directory.CreateDirectory(metaPath);
 
             if (!File.Exists(filePath))
