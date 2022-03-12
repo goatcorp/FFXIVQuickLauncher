@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -177,7 +176,7 @@ namespace XIVLauncher.Windows
         {
             if (Dispatcher.CurrentDispatcher != parentWindow.Dispatcher)
                 return parentWindow.Dispatcher.Invoke(() => AskForOtp(onOtpResult, parentWindow));
-            
+
             var dialog = new OtpInputDialog();
             if (parentWindow.IsVisible)
             {
