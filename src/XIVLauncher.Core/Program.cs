@@ -83,8 +83,15 @@ namespace XIVLauncher.Core
             SetupLogging();
             LoadConfig(storage);
 
-            Steam = new WindowsSteam();
-            Steam.Initialize(STEAM_APP_ID);
+            try
+            {
+                Steam = new WindowsSteam();
+                Steam.Initialize(STEAM_APP_ID);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "steam init fail");
+            }
 
             Launcher = new Launcher(Steam, new UniqueIdCache(), CommonSettings);
 
