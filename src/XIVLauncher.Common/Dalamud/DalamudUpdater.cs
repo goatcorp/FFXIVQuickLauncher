@@ -76,15 +76,22 @@ namespace XIVLauncher.Common.Dalamud
 
             Task.Run(async () =>
             {
-                try
+                const int MAX_TRIES = 10;
+
+                for (var tries = 0; tries < MAX_TRIES; tries++)
                 {
-                    await UpdateDalamud();
+                    try
+                    {
+                        await UpdateDalamud().ConfigureAwait(true);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries, MAX_TRIES);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "[DUPDATE] Update failed...");
-                    State = DownloadState.Failed;
-                }
+
+                if (this.State != DownloadState.Done) this.State = DownloadState.Failed;
             });
         }
 
