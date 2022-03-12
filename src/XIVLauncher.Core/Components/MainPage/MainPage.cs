@@ -52,6 +52,13 @@ public class MainPage : Page
 
     public async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
     {
+        if (action == LoginAction.Fake)
+        {
+            Program.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 0, 2, false, "", Program.Config.GamePath, true, ClientLanguage.Japanese, true,
+                DpiAwareness.Unaware);
+            return;
+        }
+
         var otp = string.Empty;
 
         if (isOtp)
@@ -89,5 +96,6 @@ public class MainPage : Page
     private void Reactivate()
     {
         IsLoggingIn = false;
+        this.App.State = LauncherApp.LauncherState.Main;
     }
 }

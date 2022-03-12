@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Serilog;
 
 namespace XIVLauncher.Common.Encryption
 {
     public sealed class ArgumentBuilder
     {
-        [DllImport("kernel32.dll")]
-        static extern uint GetTickCount();
-
         private static readonly uint version = 3;
 
         private static readonly char[] checksumTable =
@@ -96,7 +92,7 @@ namespace XIVLauncher.Common.Encryption
 
         private uint DeriveKey()
         {
-            var rawTickCount = GetTickCount();
+            var rawTickCount = (uint)Environment.TickCount;
 
             var ticks = rawTickCount & 0xFFFF_FFFFu;
             var key = ticks & 0xFFFF_0000u;
