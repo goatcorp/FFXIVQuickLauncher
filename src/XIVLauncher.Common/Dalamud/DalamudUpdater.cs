@@ -95,7 +95,7 @@ namespace XIVLauncher.Common.Dalamud
         {
             using var client = new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(10),
+                Timeout = TimeSpan.FromMinutes(5),
             };
 
             var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "version");
@@ -350,7 +350,7 @@ namespace XIVLauncher.Common.Dalamud
 
             using var client = new HttpClient
             {
-                Timeout = TimeSpan.FromMinutes(2),
+                Timeout = TimeSpan.FromMinutes(25),
             };
 
             var bytes = await client.GetByteArrayAsync(DalamudLauncher.REMOTE_BASE + (isStaging ? GetBetaPath(settings) : string.Empty) + "latest.zip");
@@ -406,7 +406,7 @@ namespace XIVLauncher.Common.Dalamud
 
             using var client = new HttpClient
             {
-                Timeout = TimeSpan.FromMinutes(5),
+                Timeout = TimeSpan.FromMinutes(25),
             };
 
             var bytesDn = await client.GetByteArrayAsync(dotnetUrl);
