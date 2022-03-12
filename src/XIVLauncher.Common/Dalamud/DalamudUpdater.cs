@@ -76,15 +76,22 @@ namespace XIVLauncher.Common.Dalamud
 
             Task.Run(async () =>
             {
-                try
+                const int MAX_TRIES = 10;
+
+                for (var tries = 0; tries < MAX_TRIES; tries++)
                 {
-                    await UpdateDalamud();
+                    try
+                    {
+                        await UpdateDalamud().ConfigureAwait(true);
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries, MAX_TRIES);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "[DUPDATE] Update failed...");
-                    State = DownloadState.Failed;
-                }
+
+                if (this.State != DownloadState.Done) this.State = DownloadState.Failed;
             });
         }
 
@@ -95,7 +102,7 @@ namespace XIVLauncher.Common.Dalamud
         {
             using var client = new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(10),
+                Timeout = TimeSpan.FromMinutes(5),
             };
 
             var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "version");
@@ -350,7 +357,7 @@ namespace XIVLauncher.Common.Dalamud
 
             using var client = new HttpClient
             {
-                Timeout = TimeSpan.FromMinutes(2),
+                Timeout = TimeSpan.FromMinutes(25),
             };
 
             var bytes = await client.GetByteArrayAsync(DalamudLauncher.REMOTE_BASE + (isStaging ? GetBetaPath(settings) : string.Empty) + "latest.zip");
@@ -406,7 +413,7 @@ namespace XIVLauncher.Common.Dalamud
 
             using var client = new HttpClient
             {
-                Timeout = TimeSpan.FromMinutes(5),
+                Timeout = TimeSpan.FromMinutes(25),
             };
 
             var bytesDn = await client.GetByteArrayAsync(dotnetUrl);

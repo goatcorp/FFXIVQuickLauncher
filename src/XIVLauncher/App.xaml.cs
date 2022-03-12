@@ -43,12 +43,6 @@ namespace XIVLauncher
         public static bool GlobalIsDisableAutologin { get; private set; }
         public static DalamudUpdater DalamudUpdater { get; private set; }
 
-        public static OtpInputDialog OtpInputDialog { get; private set; }
-
-        public static GameRepairProgressWindow GameRepairProgressWindow { get; private set; }
-
-        public static PatchDownloadDialog PatchDownloadDialog { get; private set; }
-
         public static Brush UaBrush = new LinearGradientBrush(new GradientStopCollection()
         {
             new(Color.FromArgb(0xFF, 0x27, 0x3F, 0xC3), 0.5f),
@@ -57,10 +51,10 @@ namespace XIVLauncher
 
         public App()
         {
-            // wine does not support WPF with HW rendering, so switch to software only mode
+            // HW rendering commonly causes issues with material design, so we turn it off by default for now
             try
             {
-                if (EnvironmentSettings.IsWine)
+                if (!EnvironmentSettings.IsHardwareRendered)
                     RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             }
             catch
@@ -248,14 +242,6 @@ namespace XIVLauncher
                 {
                     Log.Error(ex, "Could not start dalamud updater");
                 }
-
-                var extraWindowsThread = new Thread(ExtraWindowsThreadStart);
-                extraWindowsThread.SetApartmentState(ApartmentState.STA);
-                extraWindowsThread.IsBackground = true;
-                extraWindowsThread.Start();
-
-                while (GameRepairProgressWindow == null)
-                    Thread.Yield();
             });
         }
 
@@ -266,20 +252,6 @@ namespace XIVLauncher
             overlay.Hide();
 
             DalamudUpdater.Overlay = overlay;
-
-            System.Windows.Threading.Dispatcher.Run();
-        }
-
-        private static void ExtraWindowsThreadStart()
-        {
-            OtpInputDialog = new OtpInputDialog();
-            OtpInputDialog.Hide();
-
-            PatchDownloadDialog = new PatchDownloadDialog();
-            PatchDownloadDialog.Hide();
-
-            GameRepairProgressWindow = new GameRepairProgressWindow();
-            GameRepairProgressWindow.Hide();
 
             System.Windows.Threading.Dispatcher.Run();
         }

@@ -42,8 +42,6 @@ namespace XIVLauncher.Common.Game
         private const string USER_AGENT_TEMPLATE = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
         private readonly string _userAgent = GenerateUserAgent();
 
-        public const int STEAM_APP_ID = 39210;
-
         private static readonly string[] FilesToHash =
         {
             "ffxivboot.exe",
@@ -72,7 +70,7 @@ namespace XIVLauncher.Common.Game
             public string UniqueId { get; set; }
         }
 
-        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteamServiceAccount, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion)
+        public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
         {
             string uid;
             PatchListEntry[] pendingPatches = null;
@@ -81,47 +79,53 @@ namespace XIVLauncher.Common.Game
 
             LoginState loginState;
 
-            Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteamServiceAccount, useCache);
+            Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteam, useCache);
 
-            byte[] steamTicket = null;
+            Ticket? steamTicket = null;
 
-            if (isSteamServiceAccount)
+            if (isSteam)
             {
                 try
                 {
-                    this.steam.Initialize(STEAM_APP_ID);
+                    if (!this.steam.IsValid)
+                    {
+                        this.steam.Initialize(isFreeTrial ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
+                    }
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Could not initialize Steam");
-                    //throw new SteamException("SteamAPI_Init() failed.", ex);
+                    throw new SteamException("SteamAPI_Init() failed.", ex);
                 }
 
-                /*
                 if (!this.steam.IsValid)
                 {
-                    throw new SteamException("Not logged into Steam. Please log in and try again.");
+                    throw new SteamException("Steam did not initialize successfully. Please restart Steam and try again.");
+                }
+
+                if (!this.steam.BLoggedOn())
+                {
+                    throw new SteamException("Not logged into Steam, or Steam is running in offline mode. Please log in and try again.");
                 }
 
                 try
                 {
-                    steamTicket = this.steam.GetAuthSessionTicket();
+                    steamTicket = await Ticket.Get(steam).ConfigureAwait(true);
                 }
                 catch (Exception ex)
                 {
-                    throw new SteamException("Could not request encrypted app ticket.", ex);
+                    throw new SteamException("Could not request auth ticket.", ex);
                 }
 
                 if (steamTicket == null)
                 {
-                    throw new SteamException("Steam app ticket was null.");
+                    throw new SteamException("Steam auth ticket was null.");
                 }
-                */
             }
 
             if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
             {
-                oauthLoginResult = await OauthLogin(userName, password, otp, isSteamServiceAccount, 3);
+                oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
 
                 Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
 
@@ -330,10 +334,10 @@ namespace XIVLauncher.Common.Game
             return await resp.Content.ReadAsStringAsync();
         }
 
-        private async Task<string> GetStored(bool isSteam, int region)
+        private async Task<(string Stored, string? SteamLinkedId)> GetOauthTop(string url, bool isSteam)
         {
             // This is needed to be able to access the login site correctly
-            var request = new HttpRequestMessage(HttpMethod.Get, GetOauthTopUrl(region, isSteam));
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
             request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(this.settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English)));
             request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
@@ -343,15 +347,43 @@ namespace XIVLauncher.Common.Game
             request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
             var reply = await this.client.SendAsync(request);
+
             var text = await reply.Content.ReadAsStringAsync();
 
-            var regex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
-            var matches = regex.Matches(text);
+            if (text.Contains("window.external.user(\"restartup\");"))
+            {
+                if (isSteam)
+                    throw new SteamLinkNeededException();
+
+                throw new InvalidResponseException("restartup, but not isSteam?");
+            }
+
+            var storedRegex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
+            var matches = storedRegex.Matches(text);
 
             if (matches.Count == 0)
+            {
+                Log.Error(text);
                 throw new InvalidResponseException("Could not get STORED.");
+            }
 
-            return matches[0].Groups["stored"].Value;
+            string? steamUsername = null;
+
+            if (isSteam)
+            {
+                var steamRegex = new Regex(@"<input name=""sqexid"" type=""hidden"" value=""(?<sqexid>.*)""\/>");
+                var steamMatches = steamRegex.Matches(text);
+
+                if (steamMatches.Count == 0)
+                {
+                    Log.Error(text);
+                    throw new InvalidResponseException("Could not get steam username.");
+                }
+
+                steamUsername = steamMatches[0].Groups["sqexid"].Value;
+            }
+
+            return (matches[0].Groups["stored"].Value, steamUsername);
         }
 
         public class OauthLoginResult
@@ -363,24 +395,35 @@ namespace XIVLauncher.Common.Game
             public int MaxExpansion { get; set; }
         }
 
-        private static string GetOauthTopUrl(int region, bool isSteam)
+        private static string GetOauthTopUrl(int region, bool isFreeTrial, bool isSteam, Ticket steamTicket)
         {
             var url =
-                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft=0&cssmode=1&isnew=1&launchver=3";
+                $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft={(isFreeTrial ? "1" : "0")}&cssmode=1&isnew=1&launchver=3";
 
             if (isSteam)
+            {
                 url += "&issteam=1";
+
+                url += $"&session_ticket={steamTicket.Text}";
+                url += $"&ticket_size={steamTicket.Length}";
+            }
 
             return url;
         }
 
-        private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isSteam, int region)
+        private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket)
         {
+            if (isSteam && steamTicket == null)
+                throw new ArgumentNullException(nameof(steamTicket), "isSteam, but steamTicket == null");
+
+            var topUrl = GetOauthTopUrl(region, isFreeTrial, isSteam, steamTicket);
+            var topResult = await GetOauthTop(topUrl, isSteam);
+
             var request = new HttpRequestMessage(HttpMethod.Post,
                 "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
 
             request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-            request.Headers.AddWithoutValidation("Referer", GetOauthTopUrl(region, isSteam));
+            request.Headers.AddWithoutValidation("Referer", topUrl);
             request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
             request.Headers.AddWithoutValidation("User-Agent", _userAgent);
             //request.Headers.AddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
@@ -390,10 +433,18 @@ namespace XIVLauncher.Common.Game
             request.Headers.AddWithoutValidation("Cache-Control", "no-cache");
             request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
+            if (isSteam)
+            {
+                if (!String.Equals(userName, topResult.SteamLinkedId, StringComparison.OrdinalIgnoreCase))
+                    throw new SteamWrongAccountException(userName, topResult.SteamLinkedId);
+
+                userName = topResult.SteamLinkedId;
+            }
+
             request.Content = new FormUrlEncodedContent(
                 new Dictionary<string, string>()
                 {
-                    { "_STORED_", await GetStored(isSteam, region) },
+                    { "_STORED_", topResult.Stored },
                     { "sqexid", userName },
                     { "password", password },
                     { "otppw", otp },

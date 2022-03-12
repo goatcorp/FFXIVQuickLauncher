@@ -88,7 +88,7 @@ namespace XIVLauncher.Common.Dalamud
 
                         try
                         {
-                            File.Copy(filePath, filePathDev);
+                            File.Copy(filePath, filePathDev, true);
                         }
                         catch
                         {

@@ -98,6 +98,7 @@
                         <ComboBoxItem>Norsk</ComboBoxItem>
                         <ComboBoxItem>русский</ComboBoxItem>
                         <ComboBoxItem>简体中文</ComboBoxItem>
+                        <ComboBoxItem>繁體中文</ComboBoxItem>
                     </ComboBox>
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 20, 0, 0"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding LauncherLanguageHelpCtaLoc}" TextDecorations="Underline" MouseLeftButtonUp="OpenI18nLabel_OnClick" Cursor="Hand"/>
@@ -338,6 +339,9 @@
                             <CheckBox x:Name="TreatNonZeroExitCodeAsFailureCheckbox"
                                           Content="{Binding TreatNonZeroExitCodeAsFailureLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+                            <CheckBox x:Name="IsFreeTrialCheckbox"
+                                      Content="{Binding IsFreeTrialLoc}"
+                                      HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
                         </StackPanel>
 
                         <Image Source="pack://application:,,,/Resources/logo.png" Width="200"

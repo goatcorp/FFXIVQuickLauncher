@@ -1,6 +1,8 @@
 using XIVLauncher.Common;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Core.Configuration;
+using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Windows;
 
 namespace XIVLauncher.Core.Components.MainPage;
 
@@ -26,6 +28,8 @@ public class MainPage : Page
         if (this.IsLoggingIn)
             return;
 
+        this.App.StartLoading("Logging in...");
+
         Task.Run(async () =>
         {
             if (Util.CheckIsGameOpen() && action == LoginAction.Repair)
@@ -48,6 +52,13 @@ public class MainPage : Page
 
     public async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
     {
+        if (action == LoginAction.Fake)
+        {
+            Program.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 1, 2, false, "", Program.Config.GamePath, true, ClientLanguage.Japanese, true,
+                DpiAwareness.Unaware);
+            return;
+        }
+
         var otp = string.Empty;
 
         if (isOtp)
@@ -59,17 +70,32 @@ public class MainPage : Page
         if (otp == null)
             return;
 
-        var launcher = new Launcher(Program.Steam, new UniqueIdCache(), Program.CommonSettings);
-        var loginResult = await launcher.Login(username, password, otp, isSteam, true, Program.Config.GamePath, false).ConfigureAwait(true);
+        var loginResult = await Program.Launcher.Login(username, password, otp, isSteam, true, Program.Config.GamePath, false, false).ConfigureAwait(true);
 
         if (loginResult.State != Launcher.LoginState.Ok)
         {
             throw new Exception($"poop: {loginResult.State}");
         }
+
+        IGameRunner runner;
+
+        if (OperatingSystem.IsWindows())
+        {
+            runner = new WindowsGameRunner(null, false, Program.Config.DalamudLoadMethod ?? DalamudLoadMethod.DllInject);
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+
+        Program.Launcher.LaunchGame(runner, loginResult.UniqueId, loginResult.OauthLogin.Region, loginResult.OauthLogin.MaxExpansion, this.loginFrame.IsSteam, Program.Config.AdditionalArgs,
+            Program.Config.GamePath,
+            true, Program.Config.ClientLanguage ?? ClientLanguage.English, true, Program.Config.DpiAwareness ?? DpiAwareness.Unaware);
     }
 
     private void Reactivate()
     {
         IsLoggingIn = false;
+        this.App.State = LauncherApp.LauncherState.Main;
     }
 }

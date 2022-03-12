@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 
 using Serilog;
@@ -10,9 +9,6 @@ namespace XIVLauncher.Common.Encryption
 {
     public sealed class ArgumentBuilder
     {
-        [DllImport("kernel32.dll")]
-        static extern uint GetTickCount();
-
         private static readonly uint version = 3;
 
         private static readonly char[] checksumTable =
@@ -79,9 +75,9 @@ namespace XIVLauncher.Common.Encryption
                                     (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
                                 .ToString();
 
-            var blowfish = new Blowfish(GetKeyBytes(key));
+            var blowfish = new LegacyBlowfish(GetKeyBytes(key));
             var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
-            var base64Str = ToSeBase64String(ciphertext);
+            var base64Str = Util.ToMangledSeBase64(ciphertext);
             var checksum = DeriveChecksum(key);
 
             Log.Information("ArgumentBuilder::BuildEncrypted() checksum:{0}", checksum);
@@ -98,7 +94,7 @@ namespace XIVLauncher.Common.Encryption
 
         private uint DeriveKey()
         {
-            var rawTickCount = GetTickCount();
+            var rawTickCount = (uint)Environment.TickCount;
 
             var ticks = rawTickCount & 0xFFFF_FFFFu;
             var key = ticks & 0xFFFF_0000u;
@@ -124,14 +120,6 @@ namespace XIVLauncher.Common.Encryption
         private static string EscapeValue(string input)
         {
             return input.Replace(" ", "  ");
-        }
-
-
-        private static string ToSeBase64String(byte[] input)
-        {
-            return Convert.ToBase64String(input)
-                .Replace('+', '-')
-                .Replace('/', '_');
         }
     }
 }

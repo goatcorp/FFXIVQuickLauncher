@@ -87,26 +87,35 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public bool IsUnavailable => SourceIndex == SOURCE_INDEX_UNAVAILABLE;
         public bool IsFromSourceFile => !IsAllZeros && !IsEmptyBlock && !IsUnavailable;
 
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory([Out] byte[] dest, ref IndexedZiPatchPartLocator src, int cb);
-
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory(out IndexedZiPatchPartLocator dest, [In] byte[] src, int cb);
-
-        public void WriteTo(BinaryWriter writer)
+        public unsafe void WriteTo(BinaryWriter writer)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
-            int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
-            CopyMemory(buf.Buffer, ref this, unitSize);
+            int unitSize = Marshal.SizeOf(this);
+            using var buf = ReusableByteBufferManager.GetBuffer(unitSize);
+
+            fixed (byte* pBuf = buf.Buffer)
+            {
+                fixed (IndexedZiPatchPartLocator* pLocator = &this)
+                {
+                    Buffer.MemoryCopy(pLocator, pBuf, unitSize, unitSize);
+                }
+            }
+
             writer.Write(buf.Buffer, 0, unitSize);
         }
 
-        public void ReadFrom(BinaryReader reader)
+        public unsafe void ReadFrom(BinaryReader reader)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
-            int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
+            int unitSize = Marshal.SizeOf(this);
+            using var buf = ReusableByteBufferManager.GetBuffer(unitSize);
             reader.Read(buf.Buffer, 0, unitSize);
-            CopyMemory(out this, buf.Buffer, unitSize);
+
+            fixed (byte* pBuf = buf.Buffer)
+            {
+                fixed (IndexedZiPatchPartLocator* pLocator = &this)
+                {
+                    Buffer.MemoryCopy(pBuf, pLocator, unitSize, unitSize);
+                }
+            }
         }
 
         public int CompareTo(IndexedZiPatchPartLocator other)
@@ -209,12 +218,12 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             return VerifyDataResult.FailUnverifiable;
         }
 
-        public int Reconstruct(IList<Stream> sources, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
+        public int Reconstruct(IList<Stream> sources, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0, bool verify = true)
         {
             if (IsFromSourceFile)
-                return Reconstruct(sources[SourceIndex], buffer, bufferOffset, bufferSize, relativeOffset);
+                return Reconstruct(sources[SourceIndex], buffer, bufferOffset, bufferSize, relativeOffset, verify);
 
-            return Reconstruct(null, 0, 0, buffer, bufferOffset, bufferSize, relativeOffset);
+            return Reconstruct(null, 0, 0, buffer, bufferOffset, bufferSize, relativeOffset, verify);
         }
 
         private int FilterBufferSize(byte[] buffer, int bufferOffset, int bufferSize, int relativeOffset)
@@ -261,7 +270,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             return bufferSize;
         }
 
-        public int Reconstruct(byte[] sourceSegment, int sourceSegmentOffset, int sourceSegmentLength, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
+        public int Reconstruct(byte[] sourceSegment, int sourceSegmentOffset, int sourceSegmentLength, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0, bool verify = true)
         {
             if (!IsFromSourceFile)
                 return ReconstructWithoutSourceData(buffer, bufferOffset, bufferSize, relativeOffset);
@@ -275,7 +284,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 using var inflatedBuffer = ReusableByteBufferManager.GetBuffer(MaxSourceSize);
                 using (var stream = new DeflateStream(new MemoryStream(sourceSegment, sourceSegmentOffset, sourceSegmentLength - sourceSegmentOffset), CompressionMode.Decompress, true))
                     stream.Read(inflatedBuffer.Buffer, 0, inflatedBuffer.Buffer.Length);
-                if (VerifyDataResult.Pass != Verify(inflatedBuffer.Buffer, (int)SplitDecodedSourceFrom, (int)TargetSize))
+                if (verify && VerifyDataResult.Pass != Verify(inflatedBuffer.Buffer, (int)SplitDecodedSourceFrom, (int)TargetSize))
                     throw new IOException("Verify failed on reconstruct (inflate)");
 
                 Array.Copy(inflatedBuffer.Buffer, SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
@@ -284,7 +293,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             {
                 if (sourceSegmentLength - sourceSegmentOffset < TargetSize)
                     throw new IOException("Insufficient source data");
-                if (VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)TargetSize))
+                if (verify && VerifyDataResult.Pass != Verify(sourceSegment, (int)(sourceSegmentOffset + SplitDecodedSourceFrom), (int)TargetSize))
                     throw new IOException("Verify failed on reconstruct");
 
                 Array.Copy(sourceSegment, sourceSegmentOffset + SplitDecodedSourceFrom + relativeOffset, buffer, bufferOffset, bufferSize);
@@ -293,7 +302,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             return bufferSize;
         }
 
-        public int Reconstruct(Stream source, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0)
+        public int Reconstruct(Stream source, byte[] buffer, int bufferOffset = 0, int bufferSize = -1, int relativeOffset = 0, bool verify = true)
         {
             if (!IsFromSourceFile)
                 return ReconstructWithoutSourceData(buffer, bufferOffset, bufferSize, relativeOffset);
@@ -306,7 +315,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var readSize = (int)(IsDeflatedBlockData ? 16384 : TargetSize);
             using var readBuffer = ReusableByteBufferManager.GetBuffer(readSize);
             var read = source.Read(readBuffer.Buffer, 0, readSize);
-            return Reconstruct(readBuffer.Buffer, 0, read, buffer, bufferOffset, bufferSize, relativeOffset);
+            return Reconstruct(readBuffer.Buffer, 0, read, buffer, bufferOffset, bufferSize, relativeOffset, verify);
         }
 
         public static void CalculateCrc32(ref IndexedZiPatchPartLocator part, Stream source)
@@ -315,7 +324,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 return;
 
             using var buffer = ReusableByteBufferManager.GetBuffer(part.TargetSize);
-            if (part.TargetSize != part.Reconstruct(source, buffer.Buffer, 0, (int)part.TargetSize))
+            if (part.TargetSize != part.Reconstruct(source, buffer.Buffer, 0, (int)part.TargetSize, 0, false))
                 throw new EndOfStreamException("Encountered premature end of file while trying to read the source stream.");
 
             part.Crc32OrPlaceholderEntryDataUnits = Crc32.Calculate(buffer.Buffer, 0, (int)part.TargetSize);

@@ -46,6 +46,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         // Definitions taken from PInvoke.net (with some changes)
         // ReSharper disable InconsistentNaming
+
+#if WIN32
         private static class PInvoke
         {
             #region Constants
@@ -67,7 +69,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 public UInt32 LowPart;
                 public Int32 HighPart;
             }
-            
+
             public struct LUID_AND_ATTRIBUTES
             {
                 public LUID Luid;
@@ -158,6 +160,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             #endregion
         }
         // ReSharper restore once InconsistentNaming
+#endif
 
         public IndexedZiPatchInstaller(IndexedZiPatchIndex def)
         {
@@ -315,13 +318,18 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             var file = Index[targetIndex];
             fileInfo.Directory.Create();
             var stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite);
+
             if (stream.Length != file.FileSize)
             {
                 stream.Seek(file.FileSize, SeekOrigin.Begin);
                 stream.SetLength(file.FileSize);
+
+#if WIN32
                 if (useSetFileValidData && !PInvoke.SetFileValidData(stream.SafeFileHandle.DangerousGetHandle(), file.FileSize))
                     Log.Information($"Unable to apply SetFileValidData on file {fileInfo.FullName} (error code {Marshal.GetLastWin32Error()})");
+#endif
             }
+
             this.targetStreams[targetIndex] = stream;
         }
 
@@ -343,7 +351,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             Dispose();
 
-            var useSetFileValidData = false;
+#if WIN32
+            var useSetFileValidData = true;
             try
             {
                 PInvoke.SetCurrentPrivilege("SeManageVolumePrivilege", true);
@@ -353,6 +362,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 Log.Information(e, "Unable to obtain SeManageVolumePrivilege; not using SetFileValidData.");
                 useSetFileValidData = false;
             }
+#else
+            var useSetFileValidData = false;
+#endif
 
             for (var i = 0; i < Index.Length; i++)
             {

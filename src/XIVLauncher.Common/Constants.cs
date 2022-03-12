@@ -12,6 +12,9 @@ namespace XIVLauncher.Common
         /// </summary>
         public const string BASE_GAME_VERSION = "2012.01.01.0000.0000";
 
+        public const uint STEAM_APP_ID = 39210;
+        public const uint STEAM_FT_APP_ID = 312060;
+
         /// <summary>
         /// Gets the patcher user agent.
         /// </summary>

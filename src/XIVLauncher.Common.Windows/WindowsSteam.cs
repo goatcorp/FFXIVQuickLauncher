@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Steamworks;
 using XIVLauncher.Common.PlatformAbstractions;
 
@@ -16,16 +17,19 @@ namespace XIVLauncher.Common.Windows
             SteamClient.Init(appId);
         }
 
-        public bool IsValid => SteamClient.IsValid && SteamClient.IsLoggedOn;
+        public bool IsValid => SteamClient.IsValid;
+
+        public bool BLoggedOn() => SteamClient.IsLoggedOn;
 
         public void Shutdown()
         {
             SteamClient.Shutdown();
         }
 
-        public byte[] GetAuthSessionTicket()
+        public async Task<byte[]?> GetAuthSessionTicketAsync()
         {
-            return SteamUser.GetAuthSessionTicketAsync().GetAwaiter().GetResult().Data;
+            var ticket = await SteamUser.GetAuthSessionTicketAsync().ConfigureAwait(true);
+            return ticket?.Data;
         }
 
         public bool IsAppInstalled(uint appId)
@@ -53,6 +57,8 @@ namespace XIVLauncher.Common.Windows
             //TODO(goat): Facepunch.Steamworks NuGet doesn't have this yet...
             return true;
         }
+
+        public uint GetServerRealTime() => (uint)((DateTimeOffset)SteamUtils.SteamServerTime).ToUnixTimeSeconds();
 
         public event Action<bool> OnGamepadTextInputDismissed;
     }

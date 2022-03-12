@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Product>XIVLauncher.Common.Windows</Product>
         <AssemblyTitle>XIVLauncher.Common.Windows</AssemblyTitle>
@@ -10,7 +10,6 @@
     <PropertyGroup>
         <OutputType>Library</OutputType>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <UseWPF>true</UseWPF>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
         <OutputPath>..\bin\</OutputPath>
@@ -20,7 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <None Remove="steam_api64.dll" />
         <Content Include="steam_api64.dll">

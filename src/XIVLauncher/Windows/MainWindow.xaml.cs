@@ -45,7 +45,7 @@ namespace XIVLauncher.Windows
         {
             InitializeComponent();
 
-            this.DataContext = new MainWindowViewModel();
+            this.DataContext = new MainWindowViewModel(this);
             _launcher = Model.Launcher;
 
             Closed += Model.OnWindowClosed;
@@ -185,6 +185,8 @@ namespace XIVLauncher.Windows
             App.Settings.TreatNonZeroExitCodeAsFailure ??= false;
             App.Settings.ExitLauncherAfterGameExit ??= true;
 
+            App.Settings.IsFt ??= false;
+
             var versionLevel = App.Settings.VersionUpgradeLevel.GetValueOrDefault(0);
 
             while (versionLevel < CURRENT_VERSION_LEVEL)
@@ -277,26 +279,11 @@ namespace XIVLauncher.Windows
             if (App.Settings.AutologinEnabled && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Log.Information("Engaging Autologin...");
+                Model.TryLogin(savedAccount.UserName, savedAccount.Password,
+                    savedAccount.UseOtp,
+                    savedAccount.UseSteamServiceAccount, true, MainWindowViewModel.AfterLoginAction.Start);
 
-                try
-                {
-                    Model.IsLoggingIn = true;
-                    Dispatcher.InvokeAsync(() => Model.Login(savedAccount.UserName, savedAccount.Password,
-                        savedAccount.UseOtp,
-                        savedAccount.UseSteamServiceAccount, true, MainWindowViewModel.AfterLoginAction.Start));
-
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    CustomMessageBox.Builder
-                                    .NewFrom(ex, "AutoLogin")
-                                    .WithAppendText("\n\n")
-                                    .WithAppendText(Loc.Localize("CheckLoginInfo",
-                                        "Additionally, please check your login information or try again."))
-                                    .Show();
-                    App.Settings.AutologinEnabled = false;
-                }
+                return;
             }
             else if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift) || bool.Parse(Environment.GetEnvironmentVariable("XL_NOAUTOLOGIN") ?? "false"))
             {
@@ -444,19 +431,14 @@ namespace XIVLauncher.Windows
                 if (bootPatches != null)
                 {
                     CustomMessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
-                        "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher");
+                        "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher", parentWindow: this);
                 }
 
-                await Dispatcher.InvokeAsync(async () =>
+                Dispatcher.Invoke(() =>
                 {
                     QuitMaintenanceQueueButton_OnClick(null, null);
 
-                    if (Model.IsLoggingIn)
-                        return;
-
-                    Model.IsLoggingIn = true;
-                    await Model.Login(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, MainWindowViewModel.AfterLoginAction.Start);
-                    Model.IsLoggingIn = false;
+                    Model.TryLogin(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, MainWindowViewModel.AfterLoginAction.Start);
                 });
 
                 Console.Beep(523, 150);

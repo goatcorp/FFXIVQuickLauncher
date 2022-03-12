@@ -29,7 +29,7 @@ namespace XIVLauncher.Common
         /// <param name="path">New path to use.</param>
         public static void OverrideRoamingPath(string path)
         {
-            RoamingPath = path;
+            RoamingPath = Environment.ExpandEnvironmentVariables(path);
         }
     }
 }

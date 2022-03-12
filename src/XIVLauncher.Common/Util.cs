@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
+using System.Text;
 
 namespace XIVLauncher.Common
 {
@@ -76,14 +75,27 @@ namespace XIVLauncher.Common
             return (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
+        public static FileInfo GetOfficialLauncherPath(DirectoryInfo gamePath) => new(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"));
+
         /// <summary>
         /// Starts the official SQEX launcher.
         /// </summary>
         /// <param name="gamePath">Path to the game install.</param>
         /// <param name="isSteam">A value indicating whether this is a Steam install.</param>
-        public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam)
+        public static void StartOfficialLauncher(DirectoryInfo gamePath, bool isSteam, bool isFreeTrial)
         {
-            Process.Start(Path.Combine(gamePath.FullName, "boot", "ffxivboot.exe"), isSteam ? "-issteam" : string.Empty);
+            var args = string.Empty;
+
+            if (isSteam && isFreeTrial)
+            {
+                args = "-issteamfreetrial";
+            }
+            else if (isSteam)
+            {
+                args = "-issteam";
+            }
+
+            Process.Start(GetOfficialLauncherPath(gamePath).FullName, args);
         }
 
         /// <summary>
@@ -137,33 +149,22 @@ namespace XIVLauncher.Common
             return false;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
-            out ulong lpFreeBytesAvailable,
-            out ulong lpTotalNumberOfBytes,
-            out ulong lpTotalNumberOfFreeBytes);
-
         /// <summary>
         /// Get the available disk space on a given volume.
         /// </summary>
         /// <param name="path">Volume path.</param>
         /// <returns>The amount of space available.</returns>
-        public static ulong GetDiskFreeSpace(string path)
+        public static long GetDiskFreeSpace(string path)
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
-            ulong dummy = 0;
+            FileInfo file = new FileInfo(path);
+            DriveInfo drive = new DriveInfo(file.Directory.FullName);
 
-            if (!GetDiskFreeSpaceEx(path, out ulong freeSpace, out dummy, out dummy))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            return freeSpace;
+            return drive.AvailableFreeSpace;
         }
 
         private static readonly IPEndPoint DefaultLoopbackEndpoint = new(IPAddress.Loopback, port: 0);
@@ -192,12 +193,14 @@ namespace XIVLauncher.Common
             var rng = new Random(asdf);
 
             var many = rng.Next(10) < 3;
+
             if (many)
             {
                 var howMany = rng.Next(2, 4);
                 var deck = codesMany.OrderBy((x) => rng.Next()).Take(howMany).ToArray();
 
                 var hdr = string.Empty;
+
                 for (int i = 0; i < deck.Count(); i++)
                 {
                     hdr += deck.ElementAt(i) + $";q=0.{10 - (i + 1)}";
@@ -239,6 +242,80 @@ namespace XIVLauncher.Common
             // TODO(goat): Add mac here, once it's merged
 
             return Platform.Win32;
+        }
+
+        public static string ToMangledSeBase64(byte[] input)
+        {
+            return Convert.ToBase64String(input)
+                          .Replace('+', '-')
+                          .Replace('/', '_')
+                          .Replace('=', '*');
+        }
+
+        /// <summary>
+        /// Create a hexdump of the provided bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes to hexdump.</param>
+        /// <param name="offset">The offset in the byte array to start at.</param>
+        /// <param name="bytesPerLine">The amount of bytes to display per line.</param>
+        /// <returns>The generated hexdump in string form.</returns>
+        public static string ByteArrayToHex(byte[] bytes, int offset = 0, int bytesPerLine = 16)
+        {
+            if (bytes == null) return string.Empty;
+
+            var hexChars = "0123456789ABCDEF".ToCharArray();
+
+            var offsetBlock = 8 + 3;
+            var byteBlock = offsetBlock + (bytesPerLine * 3) + ((bytesPerLine - 1) / 8) + 2;
+            var lineLength = byteBlock + bytesPerLine + Environment.NewLine.Length;
+
+            var line = (new string(' ', lineLength - Environment.NewLine.Length) + Environment.NewLine).ToCharArray();
+            var numLines = (bytes.Length + bytesPerLine - 1) / bytesPerLine;
+
+            var sb = new StringBuilder(numLines * lineLength);
+
+            for (var i = 0; i < bytes.Length; i += bytesPerLine)
+            {
+                var h = i + offset;
+
+                line[0] = hexChars[(h >> 28) & 0xF];
+                line[1] = hexChars[(h >> 24) & 0xF];
+                line[2] = hexChars[(h >> 20) & 0xF];
+                line[3] = hexChars[(h >> 16) & 0xF];
+                line[4] = hexChars[(h >> 12) & 0xF];
+                line[5] = hexChars[(h >> 8) & 0xF];
+                line[6] = hexChars[(h >> 4) & 0xF];
+                line[7] = hexChars[(h >> 0) & 0xF];
+
+                var hexColumn = offsetBlock;
+                var charColumn = byteBlock;
+
+                for (var j = 0; j < bytesPerLine; j++)
+                {
+                    if (j > 0 && (j & 7) == 0) hexColumn++;
+
+                    if (i + j >= bytes.Length)
+                    {
+                        line[hexColumn] = ' ';
+                        line[hexColumn + 1] = ' ';
+                        line[charColumn] = ' ';
+                    }
+                    else
+                    {
+                        var by = bytes[i + j];
+                        line[hexColumn] = hexChars[(by >> 4) & 0xF];
+                        line[hexColumn + 1] = hexChars[by & 0xF];
+                        line[charColumn] = by < 32 ? '.' : (char)by;
+                    }
+
+                    hexColumn += 3;
+                    charColumn++;
+                }
+
+                sb.Append(line);
+            }
+
+            return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
         }
     }
 }

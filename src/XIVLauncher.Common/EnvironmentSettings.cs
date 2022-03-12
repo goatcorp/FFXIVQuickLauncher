@@ -9,6 +9,7 @@ namespace XIVLauncher.Common
         /// Gets a value indicating whether XL_WINEONLINUX has been set.
         /// </summary>
         public static bool IsWine => CheckEnvBool("XL_WINEONLINUX");
+        public static bool IsHardwareRendered => CheckEnvBool("XL_HWRENDER");
 
         /// <summary>
         /// Gets a value indicating whether XL_NOAUTOUPDATE has been set.

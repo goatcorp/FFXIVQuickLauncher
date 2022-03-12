@@ -70,7 +70,7 @@ namespace XIVLauncher.Windows
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             EncryptedArgumentsCheckbox.IsChecked = App.Settings.EncryptArguments;
             ExitLauncherAfterGameExitCheckbox.IsChecked = App.Settings.ExitLauncherAfterGameExit ?? true;
-            TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? true;
+            TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? false;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
             PatchAcquisitionComboBox.SelectedIndex = (int) App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria);
@@ -100,6 +100,8 @@ namespace XIVLauncher.Windows
             var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
 
             SpeedLimiterUpDown.Value = val;
+
+            IsFreeTrialCheckbox.IsChecked = App.Settings.IsFt;
         }
 
         private void AcceptButton_Click(object sender, RoutedEventArgs e)
@@ -107,7 +109,7 @@ namespace XIVLauncher.Windows
             if (ViewModel.GamePath == ViewModel.PatchPath)
             {
                 CustomMessageBox.Show(Loc.Localize("SettingsGamePatchPathError", "Game and patch download paths cannot be the same.\nPlease make sure to choose distinct game and patch download paths."), "XIVLauncher Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                    MessageBoxImage.Error, parentWindow: Window.GetWindow(this));
                 return;
             }
 
@@ -150,6 +152,8 @@ namespace XIVLauncher.Windows
 
             App.Settings.SpeedLimitBytes = (long) (SpeedLimiterUpDown.Value * BYTES_TO_MB);
 
+            App.Settings.IsFt = this.IsFreeTrialCheckbox.IsChecked == true;
+
             Transitioner.MoveNextCommand.Execute(null, null);
         }
 
@@ -166,11 +170,13 @@ namespace XIVLauncher.Windows
         private void OriginalLauncherButton_OnClick(object sender, RoutedEventArgs e)
         {
             var isSteam = CustomMessageBox.Builder
-                .NewFrom(Loc.Localize("LaunchAsSteam", "Launch as a steam user?"))
-                .WithButtons(MessageBoxButton.YesNo)
-                .WithImage(MessageBoxImage.Question)
-                .Show() == MessageBoxResult.Yes;
-            Util.StartOfficialLauncher(App.Settings.GamePath, isSteam);
+                                          .NewFrom(Loc.Localize("LaunchAsSteam", "Launch as a steam user?"))
+                                          .WithButtons(MessageBoxButton.YesNo)
+                                          .WithImage(MessageBoxImage.Question)
+                                          .WithParentWindow(Window.GetWindow(this))
+                                          .Show() == MessageBoxResult.Yes;
+
+            Util.StartOfficialLauncher(App.Settings.GamePath, isSteam, App.Settings.IsFt.GetValueOrDefault(false));
         }
 
         // All of the list handling is very dirty - but i guess it works
@@ -257,7 +263,7 @@ namespace XIVLauncher.Windows
 
             if (Repository.Ffxiv.IsBaseVer(gamePath))
             {
-                CustomMessageBox.Show(Loc.Localize("IntegrityCheckBase", "The game is not installed to the path you specified.\nPlease install the game before running an integrity check."), "XIVLauncher");
+                CustomMessageBox.Show(Loc.Localize("IntegrityCheckBase", "The game is not installed to the path you specified.\nPlease install the game before running an integrity check."), "XIVLauncher", parentWindow: Window.GetWindow(this));
                 return;
             }
 
@@ -276,18 +282,18 @@ namespace XIVLauncher.Windows
                     case IntegrityCheck.CompareResult.NoServer:
                         CustomMessageBox.Show(Loc.Localize("IntegrityCheckImpossible",
                             "There is no reference report yet for this game version. Please try again later."),
-                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
                         return;
 
                     case IntegrityCheck.CompareResult.Invalid:
                         CustomMessageBox.Show(Loc.Localize("IntegrityCheckFailed",
                             "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\"."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, showReportLinks: true);
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, showReportLinks: true, parentWindow: Window.GetWindow(this));
                     break;
 
                     case IntegrityCheck.CompareResult.Valid:
                         CustomMessageBox.Show(Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid."), "XIVLauncher", MessageBoxButton.OK,
-                            MessageBoxImage.Asterisk);
+                            MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
                         break;
                 }
             });
@@ -320,12 +326,12 @@ namespace XIVLauncher.Windows
                 if (!string.IsNullOrEmpty(ViewModel.GamePath) && Util.IsValidFfxivPath(ViewModel.GamePath) && !DalamudLauncher.CanRunDalamud(new DirectoryInfo(ViewModel.GamePath)))
                     CustomMessageBox.Show(
                         Loc.Localize("DalamudIncompatible", "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
             }
             catch(Exception exc)
             {
                 CustomMessageBox.Show(Loc.Localize("DalamudCompatCheckFailed",
-                    "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Hand);
+                    "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Hand, parentWindow: Window.GetWindow(this));
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }
@@ -362,7 +368,7 @@ namespace XIVLauncher.Windows
 
             if (pluginVersionPath == null)
             {
-                CustomMessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."), "XIVLauncher Problem");
+                CustomMessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."), "XIVLauncher Problem", parentWindow: Window.GetWindow(this));
                 return;
             }
 
@@ -388,7 +394,7 @@ namespace XIVLauncher.Windows
         {
             if(Util.CheckIsGameOpen())
             {
-                CustomMessageBox.Show(Loc.Localize("GameIsOpenPluginLocked", "The game is open, please close it and try again."), "XIVLauncher Problem");
+                CustomMessageBox.Show(Loc.Localize("GameIsOpenPluginLocked", "The game is open, please close it and try again."), "XIVLauncher Problem", parentWindow: Window.GetWindow(this));
                 return;
             }
 
@@ -396,7 +402,7 @@ namespace XIVLauncher.Windows
 
             if (pluginVersionPath == null)
             {
-                CustomMessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."), "XIVLauncher Problem");
+                CustomMessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."), "XIVLauncher Problem", parentWindow: Window.GetWindow(this));
                 return;
             }
 
@@ -405,7 +411,7 @@ namespace XIVLauncher.Windows
             //Just to be safe
             if (pluginDirectory.Parent.FullName != Path.Combine(Paths.RoamingPath, "installedPlugins"))
             {
-                CustomMessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."), "XIVLauncher Problem");
+                CustomMessageBox.Show(Loc.Localize("PluginPathNotFound", "Couldn't find plugin directory path."), "XIVLauncher Problem", parentWindow: Window.GetWindow(this));
                 return;
             }
 
@@ -482,8 +488,8 @@ namespace XIVLauncher.Windows
             catch (Exception ex)
             {
                 var error = $"Could not open the plugins folder! {pluginsPath}";
-                MessageBox.Show(error,
-                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                CustomMessageBox.Show(error,
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: Window.GetWindow(this));
                 Log.Error(ex, error);
             }
         }

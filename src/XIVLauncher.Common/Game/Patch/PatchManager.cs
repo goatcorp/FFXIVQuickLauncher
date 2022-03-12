@@ -47,10 +47,6 @@ namespace XIVLauncher.Common.Game.Patch
 
         public readonly IReadOnlyList<PatchDownload> Downloads;
 
-        public bool IsDone { get; private set; }
-
-        public bool IsSuccess { get; private set; }
-
         public int CurrentInstallIndex { get; private set; }
 
         public enum SlotState
@@ -106,16 +102,13 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
-        public void Start()
+        public async Task PatchAsync()
         {
 #if !DEBUG
-            var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.Root.FullName);
+            var freeSpaceDownload = Util.GetDiskFreeSpace(this._patchStore.Root.FullName);
 
             if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
             {
-                IsSuccess = false;
-                IsDone = true;
-
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Patches,
                     Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length, freeSpaceDownload);
             }
@@ -123,42 +116,36 @@ namespace XIVLauncher.Common.Game.Patch
             // If the first 6 patches altogether are bigger than the patch drive, we might run out of space
             if (freeSpaceDownload < GetDownloadLength(6))
             {
-                IsSuccess = false;
-                IsDone = true;
-
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.AllPatches, AllDownloadsLength,
                     freeSpaceDownload);
             }
 
-            var freeSpaceGame = (long)Util.GetDiskFreeSpace(_gamePath.Root.FullName);
+            var freeSpaceGame = Util.GetDiskFreeSpace(this._gamePath.Root.FullName);
 
             if (freeSpaceGame < AllDownloadsLength)
             {
-                IsSuccess = false;
-                IsDone = true;
-
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
                     freeSpaceDownload);
             }
 #endif
 
+            _installer.StartIfNeeded();
+            _installer.WaitOnHello();
+
+            await InitializeAcquisition().ConfigureAwait(false);
+
             try
             {
-                _installer.StartIfNeeded();
-                _installer.WaitOnHello();
+                await Task.WhenAll(new Task[] {
+                    Task.Run(RunDownloadQueue, _cancelTokenSource.Token),
+                    Task.Run(RunApplyQueue, _cancelTokenSource.Token),
+                }).ConfigureAwait(false);
             }
-            catch (PatchInstallerException)
+            finally
             {
-                IsSuccess = false;
-                IsDone = true;
-
-                throw;
+                // Only PatchManager uses Aria (or Torrent), so it's safe to shut it down here.
+                await UnInitializeAcquisition().ConfigureAwait(false);
             }
-
-            InitializeAcquisition().GetAwaiter().GetResult();
-
-            Task.Run(RunDownloadQueue, _cancelTokenSource.Token);
-            Task.Run(RunApplyQueue, _cancelTokenSource.Token);
         }
 
         public async Task InitializeAcquisition()
@@ -268,9 +255,6 @@ namespace XIVLauncher.Common.Game.Patch
 
                     CancelAllDownloads();
 
-                    IsSuccess = false;
-                    IsDone = true;
-
                     Environment.Exit(0);
                     return;
                 }
@@ -301,9 +285,6 @@ namespace XIVLauncher.Common.Game.Patch
                     OnFail?.Invoke(FailReason.HashCheck, download.Patch.VersionId);
 
                     CancelAllDownloads();
-
-                    IsSuccess = false;
-                    IsDone = true;
 
                     outFile.Delete();
                     Environment.Exit(0);
@@ -442,9 +423,6 @@ namespace XIVLauncher.Common.Game.Patch
 
             Log.Information("PATCHING finish");
             _installer.FinishInstall(_gamePath);
-
-            IsSuccess = true;
-            IsDone = true;
         }
 
         private enum HashCheckResult

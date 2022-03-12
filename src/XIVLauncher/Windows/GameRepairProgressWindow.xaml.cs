@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -16,37 +15,43 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class GameRepairProgressWindow : Window
     {
-        private readonly Timer _timer;
+        private readonly PatchVerifier _verify;
 
-        private PatchVerifier _verify;
+        private readonly Timer _timer;
 
         private GameRepairProgressWindowViewModel ViewModel => DataContext as GameRepairProgressWindowViewModel;
 
-        public GameRepairProgressWindow()
+        public GameRepairProgressWindow(PatchVerifier verify)
         {
             InitializeComponent();
+
+            _verify = verify;
 
             this.DataContext = new GameRepairProgressWindowViewModel();
 
             MouseMove += GameRepairProgressWindow_OnMouseMove;
             Closing += GameRepairProgressWindow_OnClosing;
 
-            ViewModel.CancelCommand = new AsyncCommand(CancelButton_OnCommand);
+            ViewModel.CancelCommand = new SyncCommand(CancelButton_OnCommand);
 
             _timer = new Timer();
             _timer.Elapsed += ViewUpdateTimerOnElapsed;
             _timer.AutoReset = true;
+            _timer.Interval = 20;
+
+            IsVisibleChanged += (_, _) =>
+            {
+                _timer.Enabled = IsVisible;
+                if (IsVisible)
+                    UpdateStatusDisplay();
+            };
+            Closed += (_, _) => _timer.Dispose();
         }
 
-        public void SetPatchVerifier(PatchVerifier verify)
-        {
-            _verify = verify;
-        }
-
-        private async Task CancelButton_OnCommand(object p)
+        private void CancelButton_OnCommand(object p)
         {
             CancelButton.IsEnabled = false;
-            await _verify.Cancel();
+            _verify.Cancel().ConfigureAwait(false);
         }
 
         private void GameRepairProgressWindow_OnMouseMove(object sender, MouseEventArgs e)
@@ -105,16 +110,6 @@ namespace XIVLauncher.Windows
                 return;
 
             this.Dispatcher.Invoke(UpdateStatusDisplay);
-        }
-
-        public void StopTimer()
-        {
-            _timer.Stop();
-        }
-
-        public void StartTimer()
-        {
-            _timer.Start();
         }
     }
 }
