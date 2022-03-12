@@ -5,6 +5,20 @@
         <Description>Common components for XIVLauncher.</Description>
         <VersionPrefix>1.0.0</VersionPrefix>
         <Nullable>disable</Nullable>
+
+        <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+        <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+        <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IsWindows)'=='true'">
+        <DefineConstants>WIN32</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(IsOSX)'=='true'">
+        <DefineConstants>OSX</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(IsLinux)'=='true'">
+        <DefineConstants>LINUX</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup>
