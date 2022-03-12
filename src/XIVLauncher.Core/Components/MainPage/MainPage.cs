@@ -54,7 +54,7 @@ public class MainPage : Page
     {
         if (action == LoginAction.Fake)
         {
-            Program.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 0, 2, false, "", Program.Config.GamePath, true, ClientLanguage.Japanese, true,
+            Program.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 1, 2, false, "", Program.Config.GamePath, true, ClientLanguage.Japanese, true,
                 DpiAwareness.Unaware);
             return;
         }

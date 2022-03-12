@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -7,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace XIVLauncher.Common
@@ -118,28 +116,17 @@ namespace XIVLauncher.Common
             return false;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
-                                                     out ulong lpFreeBytesAvailable,
-                                                     out ulong lpTotalNumberOfBytes,
-                                                     out ulong lpTotalNumberOfFreeBytes);
-
-        public static ulong GetDiskFreeSpace(string path)
+        public static long GetDiskFreeSpace(string path)
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
-            ulong dummy = 0;
+            FileInfo file = new FileInfo(path);
+            DriveInfo drive = new DriveInfo(file.Directory.FullName);
 
-            if (!GetDiskFreeSpaceEx(path, out ulong freeSpace, out dummy, out dummy))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            return freeSpace;
+            return drive.AvailableFreeSpace;
         }
 
         private static readonly IPEndPoint DefaultLoopbackEndpoint = new(IPAddress.Loopback, port: 0);

@@ -86,26 +86,35 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public bool IsUnavailable => SourceIndex == SOURCE_INDEX_UNAVAILABLE;
         public bool IsFromSourceFile => !IsAllZeros && !IsEmptyBlock && !IsUnavailable;
 
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory([Out] byte[] dest, ref IndexedZiPatchPartLocator src, int cb);
-
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory(out IndexedZiPatchPartLocator dest, [In] byte[] src, int cb);
-
-        public void WriteTo(BinaryWriter writer)
+        public unsafe void WriteTo(BinaryWriter writer)
         {
             using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
             int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
-            CopyMemory(buf.Buffer, ref this, unitSize);
+
+            fixed (byte* pBuf = buf.Buffer)
+            {
+                fixed (IndexedZiPatchPartLocator* pLocator = &this)
+                {
+                    Buffer.MemoryCopy(pLocator, pBuf, unitSize, unitSize);
+                }
+            }
+
             writer.Write(buf.Buffer, 0, unitSize);
         }
 
-        public void ReadFrom(BinaryReader reader)
+        public unsafe void ReadFrom(BinaryReader reader)
         {
             using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
             int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
             reader.Read(buf.Buffer, 0, unitSize);
-            CopyMemory(out this, buf.Buffer, unitSize);
+
+            fixed (byte* pBuf = buf.Buffer)
+            {
+                fixed (IndexedZiPatchPartLocator* pLocator = &this)
+                {
+                    Buffer.MemoryCopy(pBuf, pLocator, unitSize, unitSize);
+                }
+            }
         }
 
         public int CompareTo(IndexedZiPatchPartLocator other)

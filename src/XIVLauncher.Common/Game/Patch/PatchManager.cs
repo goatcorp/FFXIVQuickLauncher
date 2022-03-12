@@ -104,7 +104,7 @@ namespace XIVLauncher.Common.Game.Patch
         public async Task PatchAsync()
         {
 #if !DEBUG
-            var freeSpaceDownload = (long)Util.GetDiskFreeSpace(_patchStore.Root.FullName);
+            var freeSpaceDownload = Util.GetDiskFreeSpace(this._patchStore.Root.FullName);
 
             if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
             {
@@ -119,7 +119,7 @@ namespace XIVLauncher.Common.Game.Patch
                     freeSpaceDownload);
             }
 
-            var freeSpaceGame = (long)Util.GetDiskFreeSpace(_gamePath.Root.FullName);
+            var freeSpaceGame = Util.GetDiskFreeSpace(this._gamePath.Root.FullName);
 
             if (freeSpaceGame < AllDownloadsLength)
             {

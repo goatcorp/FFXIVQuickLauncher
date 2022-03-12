@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -212,16 +211,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             return new IndexedZiPatchTargetViewStream(sources, this);
         }
 
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory([Out] byte[] dest, ref IndexedZiPatchPartLocator src, int cb);
-        [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-        private static extern void CopyMemory(out IndexedZiPatchPartLocator dest, [In] byte[] src, int cb);
-
         public void WriteTo(BinaryWriter writer)
         {
             writer.Write(RelativePath);
             writer.Write(this.underlying.Count);
-            foreach (var item in this.underlying) 
+            foreach (var item in this.underlying)
                 item.WriteTo(writer);
         }
 
