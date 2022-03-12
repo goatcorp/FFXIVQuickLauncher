@@ -193,7 +193,7 @@ public class LauncherApp : Component
 
         if (IsDebug)
         {
-            if (ImGui.IsKeyPressed(ImGuiKey.D) && ImGui.IsKeyPressed(ImGuiKey.E) && ImGui.IsKeyPressed(ImGuiKey.B))
+            if (ImGui.IsKeyPressed(ImGuiKey.D))
             {
                 this.isDemoWindow = true;
             }

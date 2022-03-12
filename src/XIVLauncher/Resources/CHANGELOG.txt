@@ -1,2 +1,4 @@
-﻿• Further fixes regarding Free Trial compatibility and general stability
-• Updated localization files
+﻿• Various bug fixes regarding repairs and other inconsistencies (by kizer)
+• Various bug fixes regarding Dalamud not updating correctly under certain conditions
+• Added support for traditional Chinese (by jackiexyz)
+• Updated localization files (thanks to everyone helping out!)
