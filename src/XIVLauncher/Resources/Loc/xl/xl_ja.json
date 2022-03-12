@@ -4,31 +4,31 @@
     "description": "<Run>d__3.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
-    "message": "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher.",
+    "message": "FFXIVゲーム本体のインストール先が設定されていません。XIVLauncherは公式ランチャーを起動できません。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherConfirmSteam": {
-    "message": "Do you have your game account associated with a Steam account? If so, Steam must be installed to continue.",
+    "message": "Steamアカウントに関連付けられたゲームアカウントをお持ちですか？続行するにはSteamをインストールしてください。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
-    "message": "Steam couldn't be loaded. Please start FFXIV directly via Steam.",
+    "message": "Steamの動作を検出することができませんでした。直接SteamからFFXIVを起動してください。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "ErrorAssertionFailed": {
-    "message": "Something that cannot happen happened.",
+    "message": "原因不明のエラーが起こりました。",
     "description": "CustomMessageBox.AssertOrShowError"
   },
   "ErrorExplanation": {
-    "message": "An error in XIVLauncher occurred. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.",
+    "message": "XIVLauncher でエラーが発生しました。FAQ をご参照下さい。この問題が解決しない場合は、\n下のボタンをクリックし、ボックス内のテキストをコピーして GitHub で報告してください。",
     "description": "CustomMessageBox..cctor"
   },
   "Restart": {
-    "message": "_Restart",
+    "message": "_再起動",
     "description": "Builder.NewFrom"
   },
   "Exit": {
-    "message": "_Exit",
+    "message": "終了_",
     "description": "Builder.NewFrom"
   },
   "DalamudUpdateDalamud": {
@@ -76,7 +76,7 @@
     "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
   },
   "SettingsGamePatchPathError": {
-    "message": "Game and patch download paths cannot be the same.\nPlease make sure to choose distinct game and patch download paths.",
+    "message": "ゲームとパッチのダウンロード保存先は同じにはできません。\nゲームとパッチのダウンロード保存先を別々に選択してください。",
     "description": "SettingsControl.AcceptButton_Click"
   },
   "LaunchAsSteam": {
@@ -84,7 +84,7 @@
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "IntegrityCheckBase": {
-    "message": "The game is not installed to the path you specified.\nPlease install the game before running an integrity check.",
+    "message": "指定された保存先にゲームがインストールされていません。\n整合性チェックを実行する前にゲームをインストールしてください。",
     "description": "SettingsControl.RunIntegrityCheck_OnClick"
   },
   "DalamudIncompatible": {
@@ -112,7 +112,7 @@
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckFailed": {
-    "message": "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".",
+    "message": "いくつかのゲームファイルが改造または破損しているようです。\nもしTexTools MODを導入しているのであれば、それが原因だと思われます。\nもしMOD類を使用していないのであれば、XIVLauncherのログイン画面にある「ログイン」ボタンを右クリックして、「ゲームファイルの修復」を選んでください",
     "description": "<>c__DisplayClass18_0.<RunIntegrityCheck_OnClick>b__2"
   },
   "IntegrityCheckValid": {
@@ -144,7 +144,7 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoadingError": {
-    "message": "Could not load changelog. Please check GitHub or Discord instead!",
+    "message": "変更履歴を読み込めませんでした。代わりにGitHubまたはDiscordを確認してください！",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
@@ -196,19 +196,19 @@
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Yes": {
-    "message": "_Yes",
+    "message": "はい_",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "No": {
-    "message": "_No",
+    "message": "_いいえ",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Cancel": {
-    "message": "_Cancel",
+    "message": "_キャンセル",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Copy": {
-    "message": "_Copy",
+    "message": "_コピー",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "DalamudUpdate": {
@@ -252,43 +252,43 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Do you want to enable Dalamud?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
+    "message": "XIVLauncherのゲーム内機能(Dalamud) を有効にしますか？\nこれにより、RMTチャットのフィルタリングや、チャットやコンテンツファインダーのポップに対するDiscordの通知など、ゲームにいくつかの機能が追加されます。\n\nこれらの設定を行うには、XIVLauncherの設定メニューを開き、「Dalamud」タブに切り替えてください。\nただし、この機能を有効にするとウイルス対策ソフトに誤検知される可能性がありますので、問題が発生した場合はウィルスソフトの設定を確認し、必要に応じて除外設定をしてください。",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Dalamud を有効にする",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "NowVerifying": {
-    "message": "Verifying game files...",
+    "message": "ゲームファイルの整合性を確認しています...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairing": {
-    "message": "Repairing game files...",
+    "message": "ゲームファイルを修復中...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingConnecting": {
-    "message": "Connecting...",
+    "message": "接続中...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingReattemptWaiting": {
-    "message": "Waiting before trying again...",
+    "message": "再試行するまでお持ちください...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingFinishing": {
-    "message": "Finishing...",
+    "message": "終了しています...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "SpeedUnitPerSecLoc": {
-    "message": "{0}/s",
+    "message": "{0} 秒",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "EstimatedRemainingDuration": {
-    "message": "{0:00}:{1:00} remaining",
+    "message": "{0:00}: 残り{1:00}",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "EstimatedRemainingDurationWithHours": {
-    "message": "{0:00}:{1:00}:{2:00} remaining",
+    "message": "{0:00}:{1:00}:{2:00} 残り",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -324,7 +324,7 @@
     "description": "MainWindowViewModel.InstallerOnFail"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
+    "message": "XIVLauncher がゲームサーバーへの接続を確立できませんでした。\n\nこれは一時的な問題やインターネット接続に問題がある可能性があります。後でもう一度やり直してください。",
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "LoginNoOauthTitle": {
@@ -332,23 +332,23 @@
     "description": "MainWindowViewModel.ShowInternetError"
   },
   "PatchManDlFailure": {
-    "message": "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
+    "message": "XIVLauncherはダウンロードしたゲームファイルが正しいことを確認できませんでした。再起動してもう一度お試しください。\n\nインターネットの接続に問題がある可能性があります。\nこのエラーが続くようであれば、接続先が日本であるVPNを利用してみてください。\n\n状況: {0}\n{1}",
     "description": "MainWindowViewModel.PatcherOnFail"
   },
   "PatchManNoInstaller": {
-    "message": "The patch installer could not start correctly.\n{0}\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
+    "message": "パッチインストーラーが正しく起動できませんでした。\n{0}\n\nアクセスを拒否された場合は再度お試しください。この問題が解決しない場合、Discordでお問い合わせください。",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceError": {
-    "message": "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "パッチデータをダウンロードするのに十分なストレージ容量がありません。\n\n設定画面から保存先を変更することができます。\n\n必要な空き容量：{0}\n利用可能な容量：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceErrorAll": {
-    "message": "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "パッチデータをダウンロードするのに十分なストレージ容量がありません。\n\n設定画面から保存先を変更することができます。\n\n必要な空き容量：{0}\n利用可能な容量：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceGameError": {
-    "message": "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "パッチデータをダウンロードするのに十分なストレージ容量がありません。\n\n設定から保存先を変更することができます。\n\n必要な空き容量：{0}\n利用可能な容量：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "LoginBoxUsername": {
@@ -396,7 +396,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "CancelWithShortcut": {
-    "message": "_Cancel",
+    "message": "_キャンセル",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
@@ -416,7 +416,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "Logging in...",
+    "message": "ログインしています...",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "AutoLoginIntro": {
@@ -424,7 +424,7 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameIsOpenRepairError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.",
+    "message": "ゲームクライアントまたは公式ランチャーが起動しているため、ゲームの修復ができません。\nゲームクライアントと公式ランチャーを閉じてから再度お試しください。",
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "GameRepairDisclaimer": {
@@ -448,7 +448,7 @@
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
   "BootPatchFailure": {
-    "message": "Could not patch boot.",
+    "message": "ブートにパッチを適用できませんでした。",
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
   "EmptyUsernameError": {
@@ -468,23 +468,23 @@
     "description": "<Login>d__21.MoveNext"
   },
   "NoVersionReferenceError": {
-    "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
+    "message": "ご利用中のゲームのバージョンは、参照情報がまだ利用できないため、XIVLauncherで修復することはできません。\n後でもう一度お試しください。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess0": {
-    "message": "All game files seem to be valid.",
+    "message": "すべてのゲームファイルは正常なようです。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess1": {
-    "message": "XIVLauncher has successfully repaired 1 game file.",
+    "message": "XIVLauncherは1つのゲームファイルを正常に修復しました。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessPlural": {
-    "message": "XIVLauncher has successfully repaired {0} game files.",
+    "message": "XIVLauncherは {0} のゲームファイルを正常に修復しました。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
-    "message": "_Launch game",
+    "message": "ゲームを開始_",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_VerifyAgain": {
@@ -492,7 +492,7 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_Close": {
-    "message": "_Close",
+    "message": "_閉じる",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairError": {
@@ -500,7 +500,7 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_TryAgain": {
-    "message": "_Try again",
+    "message": "もう一度試してください_",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "DalamudVc2019RedistError": {
@@ -512,7 +512,7 @@
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "DalamudRunnerError": {
-    "message": "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
+    "message": "Dalamud を正常に起動できませんでした。アンチウイルスソフトが原因である可能性があります。\nこれを防ぐために、アンチウイルスソフトの例外設定に「%AppData%\\XIVLauncher\\addons」のフォルダを追加してください。",
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "AddonLoadError": {
@@ -520,7 +520,7 @@
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "LoginIoErrorSummary": {
-    "message": "Could not locate game data files.",
+    "message": "ゲームデータファイルが見つかりませんでした。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginIoErrorActionable": {
@@ -528,19 +528,19 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the FFXIV Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Steamで認証できませんでした。 Steam が起動していること、および スクウェア・エニックスID に紐付けられたSteamアカウントでログインしていることを確認してください。\nFFXIV フリートライアル版でプレイしている場合は、XIVLauncher設定の「情報」タブにある「フリートライアルモード」チェックボックスをチェックしてください。 \n\n\nコンテキスト: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "The account you are logging in to is NOT the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts.",
+    "message": "ログインしているアカウントは、お使いの PC の Steam アカウントにリンクされているアカウントではありません。 この Steam アカウントの使用中は、スクウェア・エニックスIDに関連付けられたアカウントでのみログインできます。\n\n一致するアカウントにログインしてください。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
-    "message": "Before starting the game with this account, you need to link it to your Steam account with the official launcher.\nPlease link your accounts and try again. You can do so by clicking the \"Official Launcher\" button.",
+    "message": "このアカウントでゲームを開始する前に、公式ランチャーでSteamアカウントに紐づける必要があります。\nアカウントを連携してからもう一度お試しください。「公式ランチャーを起動」ボタンをクリックすると、アカウントをリンクできます。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericError": {
-    "message": "Could not log into your SE account.\nPlease check your username and password.",
+    "message": "スクウェア・エニックスアカウントにログインできませんでした。\nユーザー名とパスワードを確認してください。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtpUse": {
