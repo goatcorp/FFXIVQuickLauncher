@@ -88,8 +88,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public unsafe void WriteTo(BinaryWriter writer)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
-            int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
+            int unitSize = Marshal.SizeOf(this);
+            using var buf = ReusableByteBufferManager.GetBuffer(unitSize);
 
             fixed (byte* pBuf = buf.Buffer)
             {
@@ -104,8 +104,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public unsafe void ReadFrom(BinaryReader reader)
         {
-            using var buf = ReusableByteBufferManager.GetBuffer(Marshal.SizeOf(this));
-            int unitSize = Marshal.SizeOf<IndexedZiPatchPartLocator>();
+            int unitSize = Marshal.SizeOf(this);
+            using var buf = ReusableByteBufferManager.GetBuffer(unitSize);
             reader.Read(buf.Buffer, 0, unitSize);
 
             fixed (byte* pBuf = buf.Buffer)

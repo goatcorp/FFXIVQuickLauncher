@@ -350,9 +350,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         {
             Dispose();
 
-            var useSetFileValidData = false;
-
 #if WIN32
+            var useSetFileValidData = true;
             try
             {
                 PInvoke.SetCurrentPrivilege("SeManageVolumePrivilege", true);
@@ -362,6 +361,8 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 Log.Information(e, "Unable to obtain SeManageVolumePrivilege; not using SetFileValidData.");
                 useSetFileValidData = false;
             }
+#else
+            var useSetFileValidData = false;
 #endif
 
             for (var i = 0; i < Index.Length; i++)
