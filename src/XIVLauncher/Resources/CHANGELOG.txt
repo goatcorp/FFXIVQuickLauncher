@@ -2,3 +2,5 @@
 • Various bug fixes regarding Dalamud not updating correctly under certain conditions
 • Added support for traditional Chinese (by jackiexyz)
 • Updated localization files (thanks to everyone helping out!)
+
+This update is a hotfix to a previous update, taking care of some minor issues related to patching and OTPs.

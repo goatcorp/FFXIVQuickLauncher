@@ -104,8 +104,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public async Task PatchAsync()
         {
-#if !DEBUG
-            var freeSpaceDownload = Util.GetDiskFreeSpace(this._patchStore.Root.FullName);
+            var freeSpaceDownload = Util.GetDiskFreeSpace(this._patchStore);
 
             if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
             {
@@ -120,14 +119,13 @@ namespace XIVLauncher.Common.Game.Patch
                     freeSpaceDownload);
             }
 
-            var freeSpaceGame = Util.GetDiskFreeSpace(this._gamePath.Root.FullName);
+            var freeSpaceGame = Util.GetDiskFreeSpace(this._gamePath);
 
             if (freeSpaceGame < AllDownloadsLength)
             {
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
                     freeSpaceDownload);
             }
-#endif
 
             _installer.StartIfNeeded();
             _installer.WaitOnHello();

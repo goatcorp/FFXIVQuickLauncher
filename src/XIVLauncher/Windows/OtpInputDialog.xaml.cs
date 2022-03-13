@@ -41,7 +41,7 @@ namespace XIVLauncher.Windows
             GotFocus += (_, _) => OtpTextBox.Focus();
         }
 
-        public new void Show()
+        public new bool? ShowDialog()
         {
             OtpTextBox.Focus();
 
@@ -62,7 +62,7 @@ namespace XIVLauncher.Windows
                 }
             }
 
-            base.Show();
+            return base.ShowDialog();
         }
 
         public void Reset()
