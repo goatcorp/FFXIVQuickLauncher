@@ -116,15 +116,14 @@ namespace XIVLauncher.Common
             return false;
         }
 
-        public static long GetDiskFreeSpace(string path)
+        public static long GetDiskFreeSpace(DirectoryInfo info)
         {
-            if (string.IsNullOrEmpty(path))
+            if (info == null)
             {
-                throw new ArgumentNullException(nameof(path));
+                throw new ArgumentNullException(nameof(info));
             }
 
-            FileInfo file = new FileInfo(path);
-            DriveInfo drive = new DriveInfo(file.Directory.FullName);
+            DriveInfo drive = new DriveInfo(info.FullName);
 
             return drive.AvailableFreeSpace;
         }
