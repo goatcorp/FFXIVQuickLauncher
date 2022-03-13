@@ -772,7 +772,8 @@ namespace XIVLauncher.Windows.ViewModel
                 var progressDialog = _window.Dispatcher.Invoke(() =>
                 {
                     var d = new GameRepairProgressWindow(verify);
-                    d.Owner = _window;
+                    if (_window.IsVisible)
+                        d.Owner = _window;
                     d.Show();
                     d.Activate();
                     return d;
@@ -1112,7 +1113,8 @@ namespace XIVLauncher.Windows.ViewModel
             PatchDownloadDialog progressDialog = _window.Dispatcher.Invoke(() =>
             {
                 var d = new PatchDownloadDialog(patcher);
-                d.Owner = _window;
+                if (_window.IsVisible)
+                    d.Owner = _window;
                 d.Show();
                 d.Activate();
                 return d;
