@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
+using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.Common.Game.Patch
@@ -46,8 +47,9 @@ namespace XIVLauncher.Common.Game.Patch
 
         public enum VerifyState
         {
-            Unknown,
-            Verify,
+            NotStarted,
+            DownloadMeta,
+            VerifyAndRepair,
             Done,
             Cancelled,
             Error
@@ -98,7 +100,7 @@ namespace XIVLauncher.Common.Game.Patch
             public int Ex4Revision { get; set; }
         }
 
-        public VerifyState State { get; private set; } = VerifyState.Unknown;
+        public VerifyState State { get; private set; } = VerifyState.NotStarted;
 
         public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion)
         {
@@ -112,7 +114,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public void Start()
         {
-            Debug.Assert(_repoMetaPaths.Count != 0 && _patchSources.Count != 0);
+            Debug.Assert(_patchSources.Count != 0);
             Debug.Assert(_verificationTask == null || _verificationTask.IsCompleted);
 
             _cancellationTokenSource = new();
@@ -196,7 +198,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         private async Task RunVerifier()
         {
-            State = VerifyState.Unknown;
+            State = VerifyState.NotStarted;
             LastException = null;
             try
             {
@@ -210,15 +212,27 @@ namespace XIVLauncher.Common.Game.Patch
                     switch (State)
                     {
 
-                        case VerifyState.Unknown:
-                            State = VerifyState.Verify;
+                        case VerifyState.NotStarted:
+                            State = VerifyState.DownloadMeta;
                             break;
-                        case VerifyState.Verify:
+
+                        case VerifyState.DownloadMeta:
+                            await this.GetPatchMeta().ConfigureAwait(false);
+                            State = VerifyState.VerifyAndRepair;
+                            break;
+
+                        case VerifyState.VerifyAndRepair:
+                            Debug.Assert(_repoMetaPaths.Count != 0);
+
                             const int MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET = 8;
                             const int REATTEMPT_COUNT = 5;
 
+                            CurrentFile = null;
+                            TaskIndex = 0;
                             PatchSetIndex = 0;
                             PatchSetCount = _repoMetaPaths.Count;
+                            Progress = Total = 0;
+
                             foreach (var metaPath in _repoMetaPaths)
                             {
                                 var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
@@ -327,8 +341,10 @@ namespace XIVLauncher.Common.Game.Patch
 
                             State = VerifyState.Done;
                             break;
+
                         case VerifyState.Done:
                             break;
+
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -357,29 +373,58 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
-        public async Task GetPatchMeta()
+        private async Task GetPatchMeta()
         {
+            PatchSetCount = 6;
+            PatchSetIndex = 0;
+
             _repoMetaPaths.Clear();
 
             var metaFolder = Path.Combine(Paths.RoamingPath, "patchMeta");
             Directory.CreateDirectory(metaFolder);
 
+            CurrentFile = "latest.json";
+            Total = Progress = 0;
+
             var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json").ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
             var latestVersion = JsonConvert.DeserializeObject<VerifyVersions>(latestVersionJson);
 
+            PatchSetIndex++;
             await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder, latestVersion.GameRevision).ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            PatchSetIndex++;
             if (_maxExpansionToCheck >= 1)
                 await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder, latestVersion.Ex1Revision).ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            PatchSetIndex++;
             if (_maxExpansionToCheck >= 2)
                 await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder, latestVersion.Ex2Revision).ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            PatchSetIndex++;
             if (_maxExpansionToCheck >= 3)
                 await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder, latestVersion.Ex3Revision).ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            PatchSetIndex++;
             if (_maxExpansionToCheck >= 4)
                 await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder, latestVersion.Ex4Revision).ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            PatchSetIndex++;
         }
 
         private async Task GetRepoMeta(Repository repo, string latestVersion, string baseDir, int patchIndexFileRevision)
         {
+            _reportedProgresses.Clear();
+            CurrentFile = latestVersion;
+            Total = 32 * 1048576;
+            Progress = 0;
+
             var version = repo.GetVer(_settings.GamePath);
             if (version == Constants.BASE_GAME_VERSION)
                 return;
@@ -394,13 +439,55 @@ namespace XIVLauncher.Common.Game.Patch
 
             if (!File.Exists(filePath))
             {
-                var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", _cancellationTokenSource.Token).ConfigureAwait(false);
+                var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", HttpCompletionOption.ResponseHeadersRead, _cancellationTokenSource.Token).ConfigureAwait(false);
                 if (request.StatusCode == HttpStatusCode.NotFound)
                     throw new NoVersionReferenceException(repo, version);
 
                 request.EnsureSuccessStatusCode();
 
-                File.WriteAllBytes(filePath, await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false));
+                Total = request.Content.Headers.ContentLength.GetValueOrDefault(Total);
+
+                var tempFile = new FileInfo(filePath + ".tmp");
+                var complete = false;
+                try
+                {
+                    using var sourceStream = await request.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                    using var buffer = ReusableByteBufferManager.GetBuffer();
+                    using (var targetStream = tempFile.OpenWrite())
+                    {
+                        while (true)
+                        {
+                            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                            int read = await sourceStream.ReadAsync(buffer.Buffer, 0, buffer.Buffer.Length, _cancellationTokenSource.Token).ConfigureAwait(false);
+                            if (read == 0)
+                                break;
+
+                            Total = Math.Max(Total, Progress + read);
+                            Progress += read;
+                            RecordProgressForEstimation();
+                            await targetStream.WriteAsync(buffer.Buffer, 0, read, _cancellationTokenSource.Token).ConfigureAwait(false);
+                        }
+                    }
+                    complete = true;
+                }
+                finally
+                {
+                    if (complete)
+                        tempFile.MoveTo(filePath);
+                    else
+                    {
+                        try
+                        {
+                            if (tempFile.Exists)
+                                tempFile.Delete();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warning(ex, "Failed to delete temp file at {0}", tempFile.FullName);
+                        }
+                    }
+                }
             }
 
             _repoMetaPaths.Add(repo, filePath);
