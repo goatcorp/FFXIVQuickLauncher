@@ -24,7 +24,7 @@ namespace XIVLauncher.Common.Game.Patch
         private CancellationTokenSource _cancellationTokenSource = new();
 
         private Dictionary<Repository, string> _repoMetaPaths = new();
-        private Dictionary<string, object> _patchSources = new();
+        private Dictionary<string, PatchSource> _patchSources = new();
 
         private Task _verificationTask;
         private List<Tuple<long, long>> _reportedProgresses = new();
@@ -51,6 +51,12 @@ namespace XIVLauncher.Common.Game.Patch
             Done,
             Cancelled,
             Error
+        }
+
+        private struct PatchSource
+        {
+            public FileInfo FileInfo;
+            public Uri Uri;
         }
 
         private class VerifyVersions
@@ -126,16 +132,15 @@ namespace XIVLauncher.Common.Game.Patch
             _verificationTask = Task.Run(this.RunVerifier, _cancellationTokenSource.Token);
         }
 
-        public async Task Cancel()
+        public Task Cancel()
         {
             _cancellationTokenSource.Cancel();
-            if (_verificationTask != null)
-                await _verificationTask;
+            return WaitForCompletion();
         }
 
-        public async Task WaitForCompletion()
+        public Task WaitForCompletion()
         {
-            await _verificationTask;
+            return _verificationTask ?? Task.CompletedTask;
         }
 
         private void SetLoginState(Launcher.LoginResult result)
@@ -148,11 +153,11 @@ namespace XIVLauncher.Common.Game.Patch
                 if (repoName == "ffxiv")
                     repoName = "ex0";
 
-                var file = new FileInfo(Path.Combine(_settings.PatchPath.FullName, patch.GetFilePath()));
-                if (file.Exists && file.Length == patch.Length)
-                    _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", file);
-                else
-                    _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", new Uri(patch.Url));
+                _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", new PatchSource()
+                {
+                    FileInfo = new FileInfo(Path.Combine(_settings.PatchPath.FullName, patch.GetFilePath())),
+                    Uri = new Uri(patch.Url),
+                });
             }
         }
 
@@ -198,7 +203,7 @@ namespace XIVLauncher.Common.Game.Patch
                 var assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 using var remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
                     AdminAccessRequired(_settings.GamePath.FullName));
-                await remote.SetWorkerProcessPriority(ProcessPriorityClass.Idle);
+                await remote.SetWorkerProcessPriority(ProcessPriorityClass.Idle).ConfigureAwait(false);
 
                 while (!_cancellationTokenSource.IsCancellationRequested && State != VerifyState.Done)
                 {
@@ -210,6 +215,7 @@ namespace XIVLauncher.Common.Game.Patch
                             break;
                         case VerifyState.Verify:
                             const int MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET = 8;
+                            const int REATTEMPT_COUNT = 5;
 
                             PatchSetIndex = 0;
                             PatchSetCount = _repoMetaPaths.Count;
@@ -240,11 +246,11 @@ namespace XIVLauncher.Common.Game.Patch
                                 {
                                     remote.OnVerifyProgress += UpdateVerifyProgress;
                                     remote.OnInstallProgress += UpdateInstallProgress;
-                                    await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval);
+                                    await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval).ConfigureAwait(false);
 
                                     var fileBroken = new bool[patchIndex.Length].ToList();
                                     var repaired = false;
-                                    for (var attemptIndex = 0; attemptIndex < 5; attemptIndex++)
+                                    for (var attemptIndex = 0; attemptIndex < REATTEMPT_COUNT; attemptIndex++)
                                     {
                                         CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.NotStarted;
 
@@ -254,13 +260,15 @@ namespace XIVLauncher.Common.Game.Patch
 
                                         var adjustedGamePath = Path.Combine(_settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
 
-                                        await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath);
+                                        await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath).ConfigureAwait(false);
                                         // TODO: check one at a time if random access is slow?
-                                        await remote.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, _cancellationTokenSource.Token);
+                                        await remote.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, _cancellationTokenSource.Token).ConfigureAwait(false);
 
-                                        var missingPartIndicesPerTargetFile = await remote.GetMissingPartIndicesPerTargetFile();
+                                        var missingPartIndicesPerTargetFile = await remote.GetMissingPartIndicesPerTargetFile().ConfigureAwait(false);
                                         if ((repaired = missingPartIndicesPerTargetFile.All(x => !x.Any())))
                                             break;
+                                        else if (attemptIndex == 1)
+                                            Log.Warning("One or more of local copies of patch files seem to be corrupt, if any. Ignoring local patch files for further attempts.");
 
                                         for (var i = 0; i < missingPartIndicesPerTargetFile.Count; i++)
                                             if (missingPartIndicesPerTargetFile[i].Any())
@@ -269,49 +277,44 @@ namespace XIVLauncher.Common.Game.Patch
                                         TaskCount = patchIndex.Sources.Count;
                                         Progress = Total = TaskIndex = 0;
                                         _reportedProgresses.Clear();
-                                        var missing = await remote.GetMissingPartIndicesPerPatch();
+                                        var missing = await remote.GetMissingPartIndicesPerPatch().ConfigureAwait(false);
 
-                                        await remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath);
+                                        await remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath).ConfigureAwait(false);
                                         var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                                         for (var i = 0; i < patchIndex.Sources.Count; i++)
                                         {
                                             var patchSourceKey = prefix + patchIndex.Sources[i];
 
                                             if (!missing[i].Any())
-                                            {
-                                                Log.Information("Patch file {0} skipped because no missing files had parts depending on this patch file.", patchIndex.Sources[i]);
                                                 continue;
-                                            }
                                             else
-                                            {
                                                 Log.Information("Looking for patch file {0} (key: \"{1}\")", patchIndex.Sources[i], patchSourceKey);
-                                            }
 
                                             if (!_patchSources.TryGetValue(patchSourceKey, out var source))
                                                 throw new InvalidOperationException($"Key \"{patchSourceKey}\" not found in _patchSources");
-                                            else if (source is Uri uri)
-                                                await remote.QueueInstall(i, uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET);
-                                            else if (source is FileInfo file)
-                                                await remote.QueueInstall(i, file, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET);
+
+                                            // We might be trying again because local copy of the patch file might be corrupt, so refer to the local copy only for the first attempt.
+                                            if (attemptIndex == 0 && source.FileInfo.Exists)
+                                                await remote.QueueInstall(i, source.FileInfo, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
                                             else
-                                                throw new InvalidOperationException("_patchSources contains non-Uri/FileInfo");
+                                                await remote.QueueInstall(i, source.Uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
                                         }
 
                                         CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.Connecting;
                                         try
                                         {
-                                            await remote.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token);
-                                            await remote.WriteVersionFiles(adjustedGamePath);
+                                            await remote.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
+                                            await remote.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
                                         }
                                         catch (Exception e)
                                         {
                                             Log.Error(e, "remote.Install");
-                                            if (attemptIndex == 4)
+                                            if (attemptIndex == REATTEMPT_COUNT - 1)
                                                 throw;
                                         }
                                     }
                                     if (!repaired)
-                                        throw new Exception("Failed to repair after 5 attempts");
+                                        throw new IOException("Failed to repair after 5 attempts");
                                     NumBrokenFiles += fileBroken.Where(x => x).Count();
                                     PatchSetIndex++;
                                 }
@@ -345,10 +348,7 @@ namespace XIVLauncher.Common.Game.Patch
                     Log.Information("_patchSources had following:");
                     foreach (var kvp in _patchSources)
                     {
-                        if (kvp.Value == null)
-                            Log.Information("* \"{0}\" = null", kvp.Key);
-                        else
-                            Log.Information("* \"{0}\" = {1}({2})", kvp.Key, kvp.Value.GetType(), kvp.Value);
+                        Log.Information("* \"{0}\" = {1} / {2}({3})", kvp.Key, kvp.Value.Uri.ToString(), kvp.Value.FileInfo.FullName, kvp.Value.FileInfo.Exists ? "Exists" : "Nonexistent");
                     }
 
                     LastException = ex;
@@ -364,18 +364,18 @@ namespace XIVLauncher.Common.Game.Patch
             var metaFolder = Path.Combine(Paths.RoamingPath, "patchMeta");
             Directory.CreateDirectory(metaFolder);
 
-            var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json");
+            var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json").ConfigureAwait(false);
             var latestVersion = JsonConvert.DeserializeObject<VerifyVersions>(latestVersionJson);
 
-            await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder, latestVersion.GameRevision);
+            await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder, latestVersion.GameRevision).ConfigureAwait(false);
             if (_maxExpansionToCheck >= 1)
-                await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder, latestVersion.Ex1Revision);
+                await this.GetRepoMeta(Repository.Ex1, latestVersion.Ex1, metaFolder, latestVersion.Ex1Revision).ConfigureAwait(false);
             if (_maxExpansionToCheck >= 2)
-                await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder, latestVersion.Ex2Revision);
+                await this.GetRepoMeta(Repository.Ex2, latestVersion.Ex2, metaFolder, latestVersion.Ex2Revision).ConfigureAwait(false);
             if (_maxExpansionToCheck >= 3)
-                await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder, latestVersion.Ex3Revision);
+                await this.GetRepoMeta(Repository.Ex3, latestVersion.Ex3, metaFolder, latestVersion.Ex3Revision).ConfigureAwait(false);
             if (_maxExpansionToCheck >= 4)
-                await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder, latestVersion.Ex4Revision);
+                await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder, latestVersion.Ex4Revision).ConfigureAwait(false);
         }
 
         private async Task GetRepoMeta(Repository repo, string latestVersion, string baseDir, int patchIndexFileRevision)
@@ -394,13 +394,13 @@ namespace XIVLauncher.Common.Game.Patch
 
             if (!File.Exists(filePath))
             {
-                var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", _cancellationTokenSource.Token);
+                var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", _cancellationTokenSource.Token).ConfigureAwait(false);
                 if (request.StatusCode == HttpStatusCode.NotFound)
                     throw new NoVersionReferenceException(repo, version);
 
                 request.EnsureSuccessStatusCode();
 
-                File.WriteAllBytes(filePath, await request.Content.ReadAsByteArrayAsync());
+                File.WriteAllBytes(filePath, await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false));
             }
 
             _repoMetaPaths.Add(repo, filePath);
