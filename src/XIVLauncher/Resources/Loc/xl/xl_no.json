@@ -652,7 +652,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "Eller bruk appen!\nTrykk her for å lære mer.",
+    "message": "Du kan også bruke appen!\nTrykk her for å lære mer.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpInputPromptBad": {

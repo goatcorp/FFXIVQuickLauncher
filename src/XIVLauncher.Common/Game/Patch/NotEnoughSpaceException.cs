@@ -19,6 +19,8 @@ public class NotEnoughSpaceException : Exception
 
     public NotEnoughSpaceException(SpaceKind kind, long required, long free)
     {
-
+        this.Kind = kind;
+        this.BytesRequired = required;
+        this.BytesFree = free;
     }
 }

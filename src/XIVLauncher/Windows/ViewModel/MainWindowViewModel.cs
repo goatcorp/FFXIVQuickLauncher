@@ -753,26 +753,11 @@ namespace XIVLauncher.Windows.ViewModel
                 Hide();
                 IsEnabled = false;
 
-                try
-                {
-                    await verify.GetPatchMeta().ConfigureAwait(false);
-                }
-                catch (NoVersionReferenceException ex)
-                {
-                    Log.Error(ex, "No version reference found");
-
-                    CustomMessageBox.Show(
-                        Loc.Localize("NoVersionReferenceError",
-                            "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later."),
-                        Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-
-                    return false;
-                }
-
                 var progressDialog = _window.Dispatcher.Invoke(() =>
                 {
                     var d = new GameRepairProgressWindow(verify);
-                    d.Owner = _window;
+                    if (_window.IsVisible)
+                        d.Owner = _window;
                     d.Show();
                     d.Activate();
                     return d;
@@ -821,15 +806,29 @@ namespace XIVLauncher.Windows.ViewModel
 
                         case PatchVerifier.VerifyState.Error:
                             doLogin = false;
-                            doVerify = CustomMessageBox.Builder
-                                .NewFrom(verify.LastException, "PatchVerifier")
-                                .WithAppendText("\n\n")
-                                .WithAppendText(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."))
-                                .WithImage(MessageBoxImage.Exclamation)
-                                .WithButtons(MessageBoxButton.OKCancel)
-                                .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
-                                .WithParentWindow(_window)
-                                .Show() == MessageBoxResult.OK;
+                            if (verify.LastException is NoVersionReferenceException)
+                            {
+                                doVerify = CustomMessageBox.Builder
+                                    .NewFrom(Loc.Localize("NoVersionReferenceError",
+                                        "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later."))
+                                    .WithImage(MessageBoxImage.Exclamation)
+                                    .WithButtons(MessageBoxButton.OKCancel)
+                                    .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
+                                    .WithParentWindow(_window)
+                                    .Show() == MessageBoxResult.OK;
+                            }
+                            else
+                            {
+                                doVerify = CustomMessageBox.Builder
+                                    .NewFrom(verify.LastException, "PatchVerifier")
+                                    .WithAppendText("\n\n")
+                                    .WithAppendText(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."))
+                                    .WithImage(MessageBoxImage.Exclamation)
+                                    .WithButtons(MessageBoxButton.OKCancel)
+                                    .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
+                                    .WithParentWindow(_window)
+                                    .Show() == MessageBoxResult.OK;
+                            }
                             break;
 
                         case PatchVerifier.VerifyState.Cancelled:
@@ -1112,7 +1111,8 @@ namespace XIVLauncher.Windows.ViewModel
             PatchDownloadDialog progressDialog = _window.Dispatcher.Invoke(() =>
             {
                 var d = new PatchDownloadDialog(patcher);
-                d.Owner = _window;
+                if (_window.IsVisible)
+                    d.Owner = _window;
                 d.Show();
                 d.Activate();
                 return d;

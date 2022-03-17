@@ -75,33 +75,56 @@ namespace XIVLauncher.Windows
         {
             _timer.Interval = _verify.ProgressUpdateInterval == 0 ? 100 : _verify.ProgressUpdateInterval;
 
-            CurrentStepText.Text = _verify.CurrentMetaInstallState switch
+            switch (_verify.State)
             {
-                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.NotStarted => ViewModel.VerifyingLoc,
-                _ => ViewModel.RepairingLoc,
-            };
+                case PatchVerifier.VerifyState.DownloadMeta:
+                    CurrentStepText.Text = ViewModel.DownloadingMetaLoc;
+                    InfoTextBlock.Text = $"{_verify.CurrentFile}";
+                    StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
+                    SpeedTextBlock.Text = string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed));
+                    EstimatedTimeTextBlock.Text = ViewModel.FormatEstimatedTime(_verify.Total - _verify.Progress, _verify.Speed);
+                    this.Progress.Value = _verify.Total != 0 ? 100.0 * _verify.Progress / _verify.Total : 0;
+                    break;
 
-            InfoTextBlock.Text = $"{_verify.CurrentFile}";
+                case PatchVerifier.VerifyState.VerifyAndRepair:
+                    CurrentStepText.Text = _verify.CurrentMetaInstallState switch
+                    {
+                        Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.NotStarted => ViewModel.VerifyingLoc,
+                        _ => ViewModel.RepairingLoc,
+                    };
 
-            StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {Math.Min(_verify.TaskIndex + 1, _verify.TaskCount)}/{_verify.TaskCount} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
+                    InfoTextBlock.Text = $"{_verify.CurrentFile}";
 
-            SpeedTextBlock.Text = _verify.CurrentMetaInstallState switch
-            {
-                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => ViewModel.ReattemptWaitingLoc,
-                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => ViewModel.ConnectingLoc,
-                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Finishing => ViewModel.FinishingLoc,
-                _ => string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed)),
-            };
+                    StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {Math.Min(_verify.TaskIndex + 1, _verify.TaskCount)}/{_verify.TaskCount} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
 
-            EstimatedTimeTextBlock.Text = _verify.CurrentMetaInstallState switch
-            {
-                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => "",
-                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => "",
-                Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Finishing => "",
-                _ => ViewModel.FormatEstimatedTime(_verify.Total - _verify.Progress, _verify.Speed),
-            };
+                    SpeedTextBlock.Text = _verify.CurrentMetaInstallState switch
+                    {
+                        Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => ViewModel.ReattemptWaitingLoc,
+                        Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => ViewModel.ConnectingLoc,
+                        Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Finishing => ViewModel.FinishingLoc,
+                        _ => string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed)),
+                    };
 
-            this.Progress.Value = _verify.Total != 0 ? 100.0 * _verify.Progress / _verify.Total : 0;
+                    EstimatedTimeTextBlock.Text = _verify.CurrentMetaInstallState switch
+                    {
+                        Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => "",
+                        Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => "",
+                        Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Finishing => "",
+                        _ => ViewModel.FormatEstimatedTime(_verify.Total - _verify.Progress, _verify.Speed),
+                    };
+
+                    this.Progress.Value = _verify.Total != 0 ? 100.0 * _verify.Progress / _verify.Total : 0;
+                    break;
+
+                default:
+                    CurrentStepText.Text = "";
+                    InfoTextBlock.Text = "";
+                    StatusTextBlock.Text = $"{Math.Min(_verify.TaskIndex + 1, _verify.TaskCount)}/{_verify.TaskCount}";
+                    SpeedTextBlock.Text = "";
+                    EstimatedTimeTextBlock.Text = "";
+                    this.Progress.Value = _verify.State == PatchVerifier.VerifyState.Done ? this.Progress.Maximum : 0;
+                    break;
+            }
         }
 
         private void ViewUpdateTimerOnElapsed(object sender, ElapsedEventArgs e)
