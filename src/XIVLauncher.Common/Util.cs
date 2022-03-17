@@ -116,6 +116,35 @@ namespace XIVLauncher.Common
             return false;
         }
 
+#if WIN32
+        /*
+         * WINE: The APIs DriveInfo uses are buggy on Wine. Let's just use the kernel32 API instead.
+         */
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+        public static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
+                                                     out ulong lpFreeBytesAvailable,
+                                                     out ulong lpTotalNumberOfBytes,
+                                                     out ulong lpTotalNumberOfFreeBytes);
+
+        public static long GetDiskFreeSpace(DirectoryInfo info)
+        {
+            if (info == null)
+            {
+                throw new ArgumentNullException(nameof(info));
+            }
+
+            ulong dummy = 0;
+
+            if (!GetDiskFreeSpaceEx(info.FullName, out ulong freeSpace, out dummy, out dummy))
+            {
+                throw new System.ComponentModel.Win32Exception(System.Runtime.InteropServices.Marshal.GetLastWin32Error());
+            }
+
+            return (long)freeSpace;
+        }
+#else
         public static long GetDiskFreeSpace(DirectoryInfo info)
         {
             if (info == null)
@@ -127,6 +156,7 @@ namespace XIVLauncher.Common
 
             return drive.AvailableFreeSpace;
         }
+#endif
 
         private static readonly IPEndPoint DefaultLoopbackEndpoint = new(IPAddress.Loopback, port: 0);
 
