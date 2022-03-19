@@ -1,6 +1,3 @@
 ﻿• Various bug fixes regarding repairs and other inconsistencies (by kizer)
-• Various bug fixes regarding Dalamud not updating correctly under certain conditions
-• Added support for traditional Chinese (by jackiexyz)
-• Updated localization files (thanks to everyone helping out!)
-
-This update is a hotfix to a previous update, taking care of issues related to patching after autologin.
+• Fixes an issue wherein integrity checks would not be reporting their result correctly
+• Fixes an issue wherein the patch installer would not report disk space requirements correctly
