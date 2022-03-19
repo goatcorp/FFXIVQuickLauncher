@@ -4,31 +4,31 @@
     "description": "<Run>d__3.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
-    "message": "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher.",
+    "message": "您没有设置 FFXIV 游戏安装路径。XIVLauncher 无法启动官方启动器。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherConfirmSteam": {
-    "message": "Do you have your game account associated with a Steam account? If so, Steam must be installed to continue.",
+    "message": "您的游戏帐户是否链接到 Steam 帐户？如果是，您必须安装 Steam 才能继续。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
-    "message": "Steam couldn't be loaded. Please start FFXIV directly via Steam.",
+    "message": "无法加载 Steam。请通过 Steam 启动 FFXIV。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "ErrorAssertionFailed": {
-    "message": "Something that cannot happen happened.",
+    "message": "不可能发生的事情发生了。",
     "description": "CustomMessageBox.AssertOrShowError"
   },
   "ErrorExplanation": {
-    "message": "XIVLauncher发生错误。请咨询常见问题。 如果这个问题仍然存在，请点击下面的按钮，在GitHub 上报告，描述问题并在方框中复制文本。",
+    "message": "XIVLauncher 发生错误。请查阅常见问题以找到解决方案。 如果问题仍然存在，请点击下面的按钮，在GitHub 上报告，描述问题并附上方框内的文本。",
     "description": "CustomMessageBox..cctor"
   },
   "Restart": {
-    "message": "_Restart",
+    "message": "重新启动 (_R)",
     "description": "Builder.NewFrom"
   },
   "Exit": {
-    "message": "_Exit",
+    "message": "退出 (_E)",
     "description": "Builder.NewFrom"
   },
   "DalamudUpdateDalamud": {
@@ -196,19 +196,19 @@
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Yes": {
-    "message": "_Yes",
+    "message": "是 (_Y)",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "No": {
-    "message": "_No",
+    "message": "否 (_N)",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Cancel": {
-    "message": "_Cancel",
+    "message": "取消 (_C)",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Copy": {
-    "message": "_Copy",
+    "message": "复制 (_C)",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "DalamudUpdate": {
@@ -268,27 +268,27 @@
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingConnecting": {
-    "message": "Connecting...",
+    "message": "正在连接…",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingReattemptWaiting": {
-    "message": "Waiting before trying again...",
+    "message": "请等待，然后再试一次…",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingFinishing": {
-    "message": "Finishing...",
+    "message": "正在结束…",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "SpeedUnitPerSecLoc": {
-    "message": "{0}/s",
+    "message": "{0} 秒",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "EstimatedRemainingDuration": {
-    "message": "{0:00}:{1:00} remaining",
+    "message": "还有 {0:00}:{1:00}",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "EstimatedRemainingDurationWithHours": {
-    "message": "{0:00}:{1:00}:{2:00} remaining",
+    "message": "还有 {0:00}:{1:00}:{2:00}",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
@@ -396,7 +396,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "CancelWithShortcut": {
-    "message": "_Cancel",
+    "message": "取消 (_C)",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
@@ -416,7 +416,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "Logging in...",
+    "message": "正在登录…",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "AutoLoginIntro": {
@@ -484,15 +484,15 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
-    "message": "_Launch game",
+    "message": "启动游戏 (_L)",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_VerifyAgain": {
-    "message": "_Verify again",
+    "message": "再次验证 (_V)",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_Close": {
-    "message": "_Close",
+    "message": "关闭 (_C)",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairError": {
@@ -500,7 +500,7 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_TryAgain": {
-    "message": "_Try again",
+    "message": "重试 (_T)",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "DalamudVc2019RedistError": {
@@ -556,7 +556,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "CheckLoginInfoNotAdditionally": {
-    "message": "Please check your login information or try again.",
+    "message": "请检查您的账号密码是否正确无误并再试一次。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
@@ -576,7 +576,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginRepairResponseIsNotNeedsPatchGame": {
-    "message": "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
+    "message": "请在官方启动器中接受 FINAL FANTASY XIV 的使用条款。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "PatchInstallDisclaimer": {
@@ -596,15 +596,15 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameClose": {
-    "message": "_Close",
+    "message": "关闭 (_C)",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameDoNotAskAgain": {
-    "message": "_Don't ask again",
+    "message": "不再询问 (_D)",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRetry": {
-    "message": "_Try again",
+    "message": "重试 (_T)",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningSummary": {
@@ -616,7 +616,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameKillThenRetry": {
-    "message": "_Kill then try again",
+    "message": "终止后再试 (_K)",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
@@ -636,11 +636,11 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "UnexpectedErrorSummary": {
-    "message": "Unexpected error has occurred. ({0})",
+    "message": "发生了未知错误。 ({0})",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "UnexpectedErrorActionable": {
-    "message": "Please report this error.",
+    "message": "请报告此错误。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultipleErrors": {
@@ -656,7 +656,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpInputPromptBad": {
-    "message": "Enter a valid OTP key.\nIt is 6 digits long.",
+    "message": "请输入一个有效的 OTP 密钥。\n长度为6位数字。",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
@@ -896,7 +896,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsInstallHint": {
-    "message": "Choose \"Plugin Installer\" or use the /xlplugins command in-game to install more plugins.",
+    "message": "选择「插件安装器」或在游戏中使用「/xlplugins」命令来安装更多插件。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
@@ -928,7 +928,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, kizer and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!",
+    "message": "作者：goat\n特别鸣谢：Mino、sky、LeonBlade、Wintermute、Zyian、Roy、Meli、\nAida Enna、Aireil、kizer 及 the angry paissa artist。\n\n如果您有任何问题或建议，请加入 Discord 伺服器或在 GitHub 上建立一个「Issue」。",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "License": {
@@ -956,7 +956,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ExitLauncherAfterGameExitLoc": {
-    "message": "Exit XIVLauncher after game exit",
+    "message": "游戏退出后关闭 XIVLauncher",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "TreatNonZeroExitCodeAsFailureLoc": {
@@ -964,7 +964,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "IsFreeTrial": {
-    "message": "Start in free trial mode",
+    "message": "在免费试用模式下启动",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {
