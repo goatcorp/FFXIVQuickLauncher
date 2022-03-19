@@ -13,6 +13,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void SetupLoc()
         {
+            DownloadingMetaLoc = Loc.Localize("NowDownloadingMeta", "Downloading meta files...");
             VerifyingLoc = Loc.Localize("NowVerifying", "Verifying game files...");
             RepairingLoc = Loc.Localize("NowRepairing", "Repairing game files...");
             ConnectingLoc = Loc.Localize("NowRepairingConnecting", "Connecting...");
@@ -24,6 +25,7 @@ namespace XIVLauncher.Windows.ViewModel
             EstimatedRemainingDurationWithHoursLoc = Loc.Localize("EstimatedRemainingDurationWithHours", "{0:00}:{1:00}:{2:00} remaining");
         }
 
+        public string DownloadingMetaLoc { get; private set; }
         public string VerifyingLoc { get; private set; }
         public string RepairingLoc { get; private set; }
         public string ConnectingLoc { get; private set; }

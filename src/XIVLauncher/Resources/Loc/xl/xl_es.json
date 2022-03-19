@@ -8,7 +8,7 @@
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherConfirmSteam": {
-    "message": "¿Has asociado tu cuenta del juego con una cuenta de Steam? Si es así, para continuar debes tener Steam instalado.",
+    "message": "¿Has asociado tu cuenta del juego con una cuenta de Steam? Si es así, debes tener Steam instalado para continuar.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
