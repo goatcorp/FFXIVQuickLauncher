@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: XIV Launcher Discord
+  - name: XIVLauncher FAQ
+    url: https://goatcorp.github.io/faq/
+    about: Help and more information about XIVLauncher and potential issues you might be encountering. Please check this first.
+  - name: XIVLauncher Discord
     url: https://discord.gg/aSuNjps
-    about: Discussion about XIVLauncher and it's development - Your question may be answered here!
+    about: Discussion about XIVLauncher and it's development - we'll do our best to answer your question if you can't find an answer in the FAQ!

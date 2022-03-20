@@ -1,0 +1,52 @@
+name: Bug Report
+description: File a bug report for the launcher itself.
+labels: ["bug", "triage"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please read all prompts on this page carefully and make sure that you have entered the relevant details **before** submitting.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Update disclaimer
+      description: If FFXIV recently updated, XIVLauncher and plugins will not work. They need to be updated first. You can get notified about updates on our Discord.
+      options:
+        - label: Yes, I have checked and my issue is not related to FFXIV updating and plugins not working correctly.
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What did you do?
+      description: What were you doing when the problem occurred? Please give us *step by step* directions. You can drop files and images here to attach them.
+      placeholder: Tell us what you did!
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where were you running XIVLauncher?
+      options:
+        - Windows
+        - Linux (Wine/Proton)
+        - Linux (native)
+        - Mac OS X
+    validations:
+      required: true
+  - type: input
+    id: runnerver
+    attributes:
+      label: Wine/Proton runner version
+      description: If you are using Linux or Mac OS X, what version of Wine/Proton are you using? Leave this empty if you are on Windows.
+      placeholder: e.g. Proton-GE-7.0
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output or error message. You can see this in the error message that popped up or in relevant log files.
+      render: shell

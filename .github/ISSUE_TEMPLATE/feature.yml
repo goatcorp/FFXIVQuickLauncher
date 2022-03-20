@@ -1,0 +1,50 @@
+name: Feature Request
+description: If you want to request a feature for the launcher, please do so here.
+labels: ["enhancement", "triage"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request! Please read all prompts on this page carefully and make sure that you have entered the relevant details **before** submitting.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Update disclaimer
+      description: If FFXIV recently updated, XIVLauncher and plugins will not work. They need to be updated first. You can get notified about updates on our Discord.
+      options:
+        - label: Yes, I have checked and my request is not related to FFXIV updating and plugins not working correctly.
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, what did not, what did you want to happen?
+      description: Please tell us exactly what your request relates to.
+      placeholder: Tell us what you did!
+    validations:
+      required: true
+  - type: dropdown
+    id: dist
+    attributes:
+      label: Version
+      description: What version of XIVLauncher are you running/does this request apply to? If you don't know what this is about, you're probably using the Standard version.
+      options:
+        - Standard version (Windows, Lutris)
+        - Native/Core version (Linux)
+        - Both
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where are you running XIVLauncher?
+      options:
+        - Applies to all
+        - Windows
+        - Linux (Wine/Proton)
+        - Linux (native)
+        - Mac OS X
+    validations:
+      required: true
