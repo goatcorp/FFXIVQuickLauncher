@@ -413,7 +413,7 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 CustomMessageBox.Show(
                     Loc.Localize("LoginNoServiceMessage",
-                        "This Square Enix account cannot play FINAL FANTASY XIV.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
+                        "This Square Enix account cannot play FINAL FANTASY XIV. Please make sure that you have an active subscription and that it is paid up.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
                     "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error, showHelpLinks: false, showDiscordLink: false, parentWindow: _window);
 
