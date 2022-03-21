@@ -164,13 +164,11 @@ namespace XIVLauncher.Common.Dalamud
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[DUPDATE] Could not donwload dalamud");
+                    Log.Error(ex, "[DUPDATE] Could not download dalamud");
 
                     State = DownloadState.NoIntegrity;
                     return;
                 }
-
-                Log.Information("[DUPDATE] Download OK!");
             }
 
             if (remoteVersionInfo.RuntimeRequired || settings.DoDalamudRuntime)
@@ -194,8 +192,6 @@ namespace XIVLauncher.Common.Dalamud
                         State = DownloadState.Failed;
                         return;
                     }
-
-                    Log.Information("[DUPDATE] Download OK!");
                 }
             }
 

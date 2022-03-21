@@ -1,3 +1,2 @@
-﻿• Various bug fixes regarding repairs and other inconsistencies (by kizer)
-• Fixes an issue wherein integrity checks would not be reporting their result correctly
-• Fixes an issue wherein the patch installer would not report disk space requirements correctly
+﻿• Uses a new CDN for Dalamud update checks & assets, as GitHub was causing a lot of network issues
+• Fixes an issue wherein disk space checks would fail when doing a fresh install on Wine
