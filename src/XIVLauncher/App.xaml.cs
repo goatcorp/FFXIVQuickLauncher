@@ -347,6 +347,13 @@ namespace XIVLauncher
                         GlobalSteamTicket = Convert.FromBase64String(steamTicket);
                     }
 
+                    // same as above but read it from a predefined file
+                    if (arg.StartsWith("--steamticketfile", StringComparison.Ordinal))
+                    {
+                        string steamTicket = File.ReadAllText(Path.Combine(Paths.RoamingPath, "ticket.txt"));
+                        GlobalSteamTicket = Convert.FromBase64String(steamTicket);
+                    }
+
                     // Override client launch language by parameter
                     if (arg.StartsWith("--clientlang=", StringComparison.Ordinal))
                     {
