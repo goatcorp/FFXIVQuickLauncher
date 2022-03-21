@@ -95,8 +95,8 @@ namespace XIVLauncher.Common.Dalamud
             });
         }
 
-        private static string GetBetaPath(DalamudSettings settings) =>
-            string.IsNullOrEmpty(settings.DalamudBetaKind) ? "stg/" : $"{settings.DalamudBetaKind}/";
+        private static string GetBetaTrackName(DalamudSettings settings) =>
+            string.IsNullOrEmpty(settings.DalamudBetaKind) ? "staging" : settings.DalamudBetaKind;
 
         private static async Task<(DalamudVersionInfo release, DalamudVersionInfo staging)> GetVersionInfo(DalamudSettings settings)
         {
@@ -105,8 +105,8 @@ namespace XIVLauncher.Common.Dalamud
                 Timeout = TimeSpan.FromMinutes(5),
             };
 
-            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "version");
-            var versionInfoJsonStaging = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + GetBetaPath(settings) + "version");
+            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "release");
+            var versionInfoJsonStaging = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(settings));
 
             var versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
             var versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonStaging);
@@ -156,7 +156,7 @@ namespace XIVLauncher.Common.Dalamud
 
                 try
                 {
-                    await Download(currentVersionPath, settings, IsStaging);
+                    await Download(currentVersionPath, settings, remoteVersionInfo).ConfigureAwait(true);
                     CleanUpOld(addonPath, remoteVersionInfo.AssemblyVersion);
 
                     // This is a good indicator that we should clear the UID cache
@@ -164,7 +164,7 @@ namespace XIVLauncher.Common.Dalamud
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[DUPDATE] Could not download update package.");
+                    Log.Error(ex, "[DUPDATE] Could not donwload dalamud");
 
                     State = DownloadState.NoIntegrity;
                     return;
@@ -189,7 +189,7 @@ namespace XIVLauncher.Common.Dalamud
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "[DUPDATE] Could not download update package.");
+                        Log.Error(ex, "[DUPDATE] Could not download runtime");
 
                         State = DownloadState.Failed;
                         return;
@@ -339,7 +339,7 @@ namespace XIVLauncher.Common.Dalamud
             File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
         }
 
-        private static async Task Download(DirectoryInfo addonPath, DalamudSettings settings, bool isStaging)
+        private static async Task Download(DirectoryInfo addonPath, DalamudSettings settings, DalamudVersionInfo version)
         {
             // Ensure directory exists
             if (!addonPath.Exists)
@@ -360,7 +360,7 @@ namespace XIVLauncher.Common.Dalamud
                 Timeout = TimeSpan.FromMinutes(25),
             };
 
-            var bytes = await client.GetByteArrayAsync(DalamudLauncher.REMOTE_BASE + (isStaging ? GetBetaPath(settings) : string.Empty) + "latest.zip");
+            var bytes = await client.GetByteArrayAsync(version.DownloadUrl).ConfigureAwait(true);
             File.WriteAllBytes(downloadPath, bytes);
 
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
