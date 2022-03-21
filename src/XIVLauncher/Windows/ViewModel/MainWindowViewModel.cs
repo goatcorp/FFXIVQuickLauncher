@@ -35,7 +35,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         public bool IsLoggingIn;
 
-        public Launcher Launcher { get; private set; } = new(App.Steam, CommonUniqueIdCache.Instance, CommonSettings.Instance);
+        public Launcher Launcher { get; private set; }
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
 
@@ -63,6 +63,10 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoStartCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.UpdateOnly), () => !IsLoggingIn);
             LoginNoDalamudCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.StartWithoutDalamud), () => !IsLoggingIn);
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
+
+            Launcher = App.GlobalSteamTicket == null ?
+                new(App.Steam, CommonUniqueIdCache.Instance, CommonSettings.Instance) :
+                new(App.GlobalSteamTicket, CommonUniqueIdCache.Instance, CommonSettings.Instance);
         }
 
         private void InstallerOnFail()

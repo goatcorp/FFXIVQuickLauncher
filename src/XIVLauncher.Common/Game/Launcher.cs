@@ -18,12 +18,13 @@ namespace XIVLauncher.Common.Game
 {
     public class Launcher
     {
-        private readonly ISteam steam;
+        private readonly ISteam? steam;
+        private readonly byte[]? steamTicket;
         private readonly IUniqueIdCache uniqueIdCache;
         private readonly ISettings settings;
         private readonly HttpClient client;
 
-        public Launcher(ISteam steam, IUniqueIdCache uniqueIdCache, ISettings settings)
+        public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings)
         {
             this.steam = steam;
             this.uniqueIdCache = uniqueIdCache;
@@ -35,6 +36,11 @@ namespace XIVLauncher.Common.Game
                 UseCookies = false,
             };
             this.client = new HttpClient(handler);
+        }
+
+        public Launcher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings) : this(steam: null, uniqueIdCache, settings)
+        {
+            this.steamTicket = steamTicket;
         }
 
         // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
@@ -84,36 +90,46 @@ namespace XIVLauncher.Common.Game
 
             if (isSteam)
             {
-                try
+                if (this.steamTicket != null)
                 {
+                    steamTicket = Ticket.EncryptAuthSessionTicket(this.steamTicket, (uint) DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                    Log.Information("Using predefined steam ticket");
+                }
+                else
+                {
+                    Debug.Assert(this.steam != null);
+
+                    try
+                    {
+                        if (!this.steam.IsValid)
+                        {
+                            this.steam.Initialize(isFreeTrial ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Could not initialize Steam");
+                        throw new SteamException("SteamAPI_Init() failed.", ex);
+                    }
+
                     if (!this.steam.IsValid)
                     {
-                        this.steam.Initialize(isFreeTrial ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
+                        throw new SteamException("Steam did not initialize successfully. Please restart Steam and try again.");
                     }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Could not initialize Steam");
-                    throw new SteamException("SteamAPI_Init() failed.", ex);
-                }
 
-                if (!this.steam.IsValid)
-                {
-                    throw new SteamException("Steam did not initialize successfully. Please restart Steam and try again.");
-                }
+                    if (!this.steam.BLoggedOn())
+                    {
+                        throw new SteamException("Not logged into Steam, or Steam is running in offline mode. Please log in and try again.");
+                    }
 
-                if (!this.steam.BLoggedOn())
-                {
-                    throw new SteamException("Not logged into Steam, or Steam is running in offline mode. Please log in and try again.");
-                }
-
-                try
-                {
-                    steamTicket = await Ticket.Get(steam).ConfigureAwait(true);
-                }
-                catch (Exception ex)
-                {
-                    throw new SteamException("Could not request auth ticket.", ex);
+                    try
+                    {
+                        steamTicket = await Ticket.Get(steam).ConfigureAwait(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new SteamException("Could not request auth ticket.", ex);
+                    }
                 }
 
                 if (steamTicket == null)

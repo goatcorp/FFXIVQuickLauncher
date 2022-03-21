@@ -41,6 +41,7 @@ namespace XIVLauncher
         private MainWindow _mainWindow;
 
         public static bool GlobalIsDisableAutologin { get; private set; }
+        public static byte[] GlobalSteamTicket { get; private set; }
         public static DalamudUpdater DalamudUpdater { get; private set; }
 
         public static Brush UaBrush = new LinearGradientBrush(new GradientStopCollection()
@@ -337,6 +338,13 @@ namespace XIVLauncher
                     {
                         accountName = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
                         App.Settings.CurrentAccountId = accountName;
+                    }
+
+                    // Check if the steam ticket parameter is provided, use it later to skip steam integration
+                    if (arg.StartsWith("--steamticket=", StringComparison.Ordinal))
+                    {
+                        string steamTicket = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
+                        GlobalSteamTicket = Convert.FromBase64String(steamTicket);
                     }
 
                     // Override client launch language by parameter
