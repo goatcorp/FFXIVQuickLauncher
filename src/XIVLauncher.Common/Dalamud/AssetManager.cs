@@ -10,7 +10,7 @@ namespace XIVLauncher.Common.Dalamud
 {
     public class AssetManager
     {
-        private const string ASSET_STORE_URL = "https://goatcorp.github.io/DalamudAssets/";
+        private const string ASSET_STORE_URL = "https://kamori.goats.dev/Dalamud/Asset/Meta";
 
         internal class AssetInfo
         {
@@ -51,6 +51,7 @@ namespace XIVLauncher.Common.Dalamud
                 var filePathDev = Path.Combine(devDir.FullName, entry.FileName);
 
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+
                 try
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(filePathDev)!);
@@ -97,7 +98,7 @@ namespace XIVLauncher.Common.Dalamud
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "[DASSET] Could not download asset.");
+                        Log.Error(ex, "[DASSET] Could not download asset");
                         assetsDir = null;
                         return false;
                     }
@@ -147,7 +148,7 @@ namespace XIVLauncher.Common.Dalamud
                     Log.Error(ex, "[DASSET] Could not read asset.ver");
                 }
 
-                var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL + "asset.json"));
+                var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL));
 
                 Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer.Version);
 
