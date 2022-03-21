@@ -18,13 +18,13 @@ namespace XIVLauncher.Common.Game
 {
     public class Launcher
     {
-        private readonly ISteam steam;
-        private readonly byte[] steamTicket;
+        private readonly ISteam? steam;
+        private readonly byte[]? steamTicket;
         private readonly IUniqueIdCache uniqueIdCache;
         private readonly ISettings settings;
         private readonly HttpClient client;
 
-        public Launcher(ISteam steam, IUniqueIdCache uniqueIdCache, ISettings settings)
+        public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings)
         {
             this.steam = steam;
             this.uniqueIdCache = uniqueIdCache;
@@ -97,6 +97,8 @@ namespace XIVLauncher.Common.Game
                 }
                 else
                 {
+                    Debug.Assert(this.steam != null);
+
                     try
                     {
                         if (!this.steam.IsValid)
