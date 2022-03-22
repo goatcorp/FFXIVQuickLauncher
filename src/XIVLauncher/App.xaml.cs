@@ -350,7 +350,9 @@ namespace XIVLauncher
                     // same as above but read it from a predefined file
                     if (arg.StartsWith("--steamticketfile", StringComparison.Ordinal))
                     {
-                        string steamTicket = File.ReadAllText(Path.Combine(Paths.RoamingPath, "ticket.txt"));
+                        int fileNameIndex = arg.IndexOf("=", StringComparison.InvariantCulture) + 1;
+                        string fileName = fileNameIndex == 0 ? Path.Combine(Paths.RoamingPath, "ticket.txt") : arg.Substring(fileNameIndex);
+                        string steamTicket = File.ReadAllText(fileName);
                         GlobalSteamTicket = Convert.FromBase64String(steamTicket);
                     }
 
