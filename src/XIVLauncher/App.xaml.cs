@@ -11,6 +11,7 @@ using Config.Net;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
+using Squirrel;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
@@ -52,6 +53,11 @@ namespace XIVLauncher
 
         public App()
         {
+            SquirrelAwareApp.HandleEvents(
+                onInitialInstall: (v, t) => t.CreateShortcutForThisExe(),
+                onAppUpdate: (v, t) => t.CreateShortcutForThisExe(),
+                onAppUninstall: (v, t) => t.RemoveShortcutForThisExe());
+
             // HW rendering commonly causes issues with material design, so we turn it off by default for now
             try
             {
@@ -88,7 +94,7 @@ namespace XIVLauncher
                              .WriteTo.Debug()
                              .MinimumLevel.Verbose()
 #else
-                            .MinimumLevel.Information()
+                             .MinimumLevel.Information()
 #endif
                              .CreateLogger();
 
@@ -159,8 +165,7 @@ namespace XIVLauncher
                     _updateWindow = new UpdateLoadingDialog();
                     _updateWindow.Show();
 
-                    var updateMgr = new Updates();
-                    updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;
+                    var updateMgr = new Updates(OnUpdateCheckFinished);
 
                     ChangelogWindow changelogWindow = null;
                     try

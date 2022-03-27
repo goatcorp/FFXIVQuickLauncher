@@ -5,7 +5,9 @@ using System.Windows;
 using CheapLoc;
 using Serilog;
 using Squirrel;
+using Squirrel.SimpleSplat;
 using XIVLauncher.Windows;
+using ILogger = Squirrel.SimpleSplat.ILogger;
 
 #nullable enable
 
@@ -13,7 +15,17 @@ namespace XIVLauncher
 {
     class Updates
     {
-        public event Action<bool>? OnUpdateCheckFinished;
+        public event Action<bool> OnUpdateCheckFinished;
+
+        private readonly SquirrelLogger squirrelLogger;
+
+        public Updates(Action<bool> updateCheckFinished) 
+        { 
+            OnUpdateCheckFinished += updateCheckFinished;
+
+            squirrelLogger = new SquirrelLogger();
+            SquirrelLocator.CurrentMutable.Register(() => squirrelLogger, typeof(ILogger));
+        }
 
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {
@@ -30,19 +42,12 @@ namespace XIVLauncher
             {
                 ReleaseEntry? newRelease = null;
 
-                using (var updateManager = new UpdateManager(url, "XIVLauncher"))
-                {
-                    // TODO: is this allowed?
-                    SquirrelAwareApp.HandleEvents(
-                        onInitialInstall: (v, t) => updateManager.CreateShortcutForThisExe(),
-                        onAppUpdate: (v, t) => updateManager.CreateShortcutForThisExe(),
-                        onAppUninstall: (v, t) => updateManager.RemoveShortcutForThisExe());
+                using var updateManager = new UpdateManager(url, "XIVLauncher");
 
 #pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
-                    var a = await updateManager.CheckForUpdate();
-                    newRelease = await updateManager.UpdateApp();
+                var a = await updateManager.CheckForUpdate();
+                newRelease = await updateManager.UpdateApp();
 #pragma warning restore CA2007 // Consider calling ConfigureAwait on the awaited task
-                }
 
                 if (newRelease != null)
                 {
@@ -65,7 +70,7 @@ namespace XIVLauncher
                             };
                         });
 
-                        OnUpdateCheckFinished?.Invoke(false);
+                        OnUpdateCheckFinished(false);
                     }
                     catch (Exception ex)
                     {
@@ -75,7 +80,7 @@ namespace XIVLauncher
                 }
 #if !XL_NOAUTOUPDATE
                 else
-                    OnUpdateCheckFinished?.Invoke(true);
+                    OnUpdateCheckFinished(true);
 #endif
             }
             catch (Exception ex)
@@ -90,6 +95,40 @@ namespace XIVLauncher
 
             // Reset security protocol after updating
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+        }
+
+        private class SquirrelLogger : ILogger, IDisposable
+        {
+            public LogLevel Level { get; set; } = LogLevel.Info;
+
+            public void Dispose()
+            {
+            }
+
+            public void Write(string message, LogLevel logLevel)
+            {
+                if (logLevel < Level)
+                    return;
+
+                switch(logLevel)
+                {
+                    case LogLevel.Debug:
+                        Log.Debug(message);
+                        break;
+                    case LogLevel.Info:
+                        Log.Information(message);
+                        break;
+                    case LogLevel.Warn:
+                        Log.Warning(message);
+                        break;
+                    case LogLevel.Error:
+                        Log.Error(message);
+                        break;
+                    case LogLevel.Fatal:
+                        Log.Fatal(message);
+                        break;
+                }
+            }
         }
     }
 }
