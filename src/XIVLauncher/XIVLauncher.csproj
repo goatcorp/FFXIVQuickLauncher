@@ -37,6 +37,7 @@
 
   <PropertyGroup>
     <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -72,6 +73,7 @@
   <ItemGroup>
     <PackageReference Include="AdysTech.CredentialManager" Version="1.8.0" />
     <PackageReference Include="CheapLoc" Version="1.1.6" />
+    <PackageReference Include="Clowd.Squirrel" Version="2.8.40" />
     <PackageReference Include="Config.Net.Json" Version="4.14.23" />
     <PackageReference Include="Downloader" Version="2.2.8" />
     <PackageReference Include="Dragablz" Version="0.0.3.223" />
@@ -85,7 +87,6 @@
     <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="SharedMemory" Version="2.3.2" />
-    <PackageReference Include="squirrel.windows" Version="1.9.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
   </ItemGroup>

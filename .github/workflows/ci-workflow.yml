@@ -38,7 +38,6 @@ jobs:
           $current = ConvertFrom-Json -InputObject $releases.Content | Select-Object -First 1
           $refver = $env:GITHUB_REF -replace '.*/'
           echo "::set-output name=version::$refver"
-          nuget pack .\XIVLauncher.nuspec -properties version=$refver
           mkdir Releases
           cp .\XIVLauncher\Resources\CHANGELOG.txt .\Releases\
           $release_file = $current.assets | Where-Object -Property name -Value RELEASES -EQ
@@ -47,9 +46,9 @@ jobs:
           Invoke-WebRequest -Uri $delta_file.browser_download_url -OutFile ".\Releases\$($delta_file.name)"
           $full_file = $current.assets | Where-Object -Property name -Value "*full.nupkg" -Like
           Invoke-WebRequest -Uri $full_file.browser_download_url -OutFile ".\Releases\$($full_file.name)"
-          $setup_file = $current.assets | Where-Object -Property name -Value "Setup.exe" -EQ
-          Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\Setup.exe
-           ~\.nuget\packages\squirrel.windows\1.9.1\tools\Squirrel.exe --no-msi --releasify .\XIVLauncher.$refver.nupkg --setupIcon=.\XIVLauncher\Resources\dalamud_icon.ico --icon=.\XIVLauncher\Resources\dalamud_icon.ico
+          $setup_file = $current.assets | Where-Object -Property name -Match "(XIVLauncher)?Setup\.exe"
+          Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\XIVLauncherSetup.exe
+           ~\.nuget\packages\clowd.squirrel\2.8.40\tools\Squirrel.exe pack -p .\bin\ --packTitle XIVLauncher --packId XIVLauncher --packVersion $refver --packAuthors goatsoft -i .\XIVLauncher\Resources\dalamud_icon.ico --appIcon .\XIVLauncher\Resources\dalamud_icon.ico -f 'net472,vcredist143-x64'
           Start-Sleep -s 60
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"

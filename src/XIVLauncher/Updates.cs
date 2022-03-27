@@ -7,11 +7,13 @@ using Serilog;
 using Squirrel;
 using XIVLauncher.Windows;
 
+#nullable enable
+
 namespace XIVLauncher
 {
     class Updates
     {
-        public event Action<bool> OnUpdateCheckFinished;
+        public event Action<bool>? OnUpdateCheckFinished;
 
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {
@@ -26,18 +28,20 @@ namespace XIVLauncher
 
             try
             {
-                ReleaseEntry newRelease = null;
+                ReleaseEntry? newRelease = null;
 
                 using (var updateManager = new UpdateManager(url, "XIVLauncher"))
                 {
                     // TODO: is this allowed?
                     SquirrelAwareApp.HandleEvents(
-                        onInitialInstall: v => updateManager.CreateShortcutForThisExe(),
-                        onAppUpdate: v => updateManager.CreateShortcutForThisExe(),
-                        onAppUninstall: v => updateManager.RemoveShortcutForThisExe());
+                        onInitialInstall: (v, t) => updateManager.CreateShortcutForThisExe(),
+                        onAppUpdate: (v, t) => updateManager.CreateShortcutForThisExe(),
+                        onAppUninstall: (v, t) => updateManager.RemoveShortcutForThisExe());
 
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task
                     var a = await updateManager.CheckForUpdate();
                     newRelease = await updateManager.UpdateApp();
+#pragma warning restore CA2007 // Consider calling ConfigureAwait on the awaited task
                 }
 
                 if (newRelease != null)
@@ -89,3 +93,5 @@ namespace XIVLauncher
         }
     }
 }
+
+#nullable disable
