@@ -175,15 +175,21 @@ namespace XIVLauncher.Common.Dalamud
             {
                 Log.Information("[DUPDATE] Now starting for .NET Runtime {0}", remoteVersionInfo.RuntimeVersion);
 
-                if (runtimePaths.Any(p => !p.Exists))
+                var versionFile = new FileInfo(Path.Combine(runtimePath.FullName, "version"));
+                var localVersion = "5.0.6"; // This is the version we first shipped. We didn't write out a version file, so we can't check it.
+                if (versionFile.Exists)
+                    localVersion = File.ReadAllText(versionFile.FullName);
+
+                if (runtimePaths.Any(p => !p.Exists) || localVersion != remoteVersionInfo.RuntimeVersion)
                 {
-                    Log.Information("[DUPDATE] Not found, redownloading");
+                    Log.Information("[DUPDATE] Not found or outdated: {LocalVer} - {RemoteVer}", localVersion, remoteVersionInfo.RuntimeVersion);
 
                     SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Runtime);
 
                     try
                     {
                         await DownloadRuntime(runtimePath, remoteVersionInfo.RuntimeVersion);
+                        File.WriteAllText(versionFile.FullName, remoteVersionInfo.RuntimeVersion);
                     }
                     catch (Exception ex)
                     {
