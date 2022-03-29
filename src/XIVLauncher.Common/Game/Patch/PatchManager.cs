@@ -123,7 +123,7 @@ namespace XIVLauncher.Common.Game.Patch
             if (freeSpaceGame < AllDownloadsLength)
             {
                 throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
-                    freeSpaceDownload);
+                    freeSpaceGame);
             }
 
             _installer.StartIfNeeded();
