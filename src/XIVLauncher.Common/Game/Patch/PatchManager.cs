@@ -103,27 +103,30 @@ namespace XIVLauncher.Common.Game.Patch
 
         public async Task PatchAsync()
         {
-            var freeSpaceDownload = Util.GetDiskFreeSpace(this._patchStore);
-
-            if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
+            if (!EnvironmentSettings.IsIgnoreSpaceRequirements)
             {
-                throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Patches,
-                    Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length, freeSpaceDownload);
-            }
+                var freeSpaceDownload = Util.GetDiskFreeSpace(this._patchStore);
 
-            // If the first 6 patches altogether are bigger than the patch drive, we might run out of space
-            if (freeSpaceDownload < GetDownloadLength(6))
-            {
-                throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.AllPatches, AllDownloadsLength,
-                    freeSpaceDownload);
-            }
+                if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
+                {
+                    throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Patches,
+                        Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length, freeSpaceDownload);
+                }
 
-            var freeSpaceGame = Util.GetDiskFreeSpace(this._gamePath);
+                // If the first 6 patches altogether are bigger than the patch drive, we might run out of space
+                if (freeSpaceDownload < GetDownloadLength(6))
+                {
+                    throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.AllPatches, AllDownloadsLength,
+                        freeSpaceDownload);
+                }
 
-            if (freeSpaceGame < AllDownloadsLength)
-            {
-                throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
-                    freeSpaceGame);
+                var freeSpaceGame = Util.GetDiskFreeSpace(this._gamePath);
+
+                if (freeSpaceGame < AllDownloadsLength)
+                {
+                    throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
+                        freeSpaceGame);
+                }
             }
 
             _installer.StartIfNeeded();
