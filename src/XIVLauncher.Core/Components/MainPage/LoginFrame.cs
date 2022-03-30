@@ -50,28 +50,18 @@ public class LoginFrame : Component
     {
         this.mainPage = mainPage;
 
-        loginInput = new Input("Square Enix ID", "Enter your Square Enix ID", new Vector2(12f, 0f), 128);
-        passwordInput = new Input("Password", "Enter your password", new Vector2(12f, 0f), 128, flags: ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
-        oneTimePasswordInput = new Input("One-time password", "Enter your one-time password", new Vector2(12f, 0f), 6, false, ImGuiInputTextFlags.CharsDecimal);
+        this.loginInput = new Input("Square Enix ID", "Enter your Square Enix ID", new Vector2(12f, 0f), 128);
+        this.passwordInput = new Input("Password", "Enter your password", new Vector2(12f, 0f), 128, flags: ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
+        this.oneTimePasswordInput = new Input("One-time password", "Enter your one-time password", new Vector2(12f, 0f), 6, false, ImGuiInputTextFlags.CharsDecimal);
 
-        oneTimePasswordCheckbox = new Checkbox("Use one-time password");
-        oneTimePasswordCheckbox.OnChange += newValue =>
-        {
-            this.oneTimePasswordInput.IsEnabled = newValue;
-        };
+        this.oneTimePasswordCheckbox = new Checkbox("Use one-time password");
+        this.oneTimePasswordCheckbox.OnChange += newValue => { this.oneTimePasswordInput.IsEnabled = newValue; };
 
-        useSteamServiceCheckbox = new Checkbox("Use steam service");
-        useSteamServiceCheckbox.OnChange += newValue =>
-        {
-            this.isSteam = newValue;
-        };
+        this.useSteamServiceCheckbox = new Checkbox("Use steam service");
+        this.useSteamServiceCheckbox.OnChange += newValue => { this.isSteam = newValue; };
 
-
-        loginButton = new Button("Login");
-        loginButton.Click += () =>
-        {
-            OnLogin?.Invoke(LoginAction.Game);
-        };
+        this.loginButton = new Button("Login");
+        this.loginButton.Click += () => { this.OnLogin?.Invoke(LoginAction.Game); };
     }
 
     private Vector2 GetSize()
@@ -97,10 +87,10 @@ public class LoginFrame : Component
 
             ImGui.NewLine();
 
-
             ImGui.OpenPopupOnItemClick(POPUP_ID_LOGINACTION, ImGuiPopupFlags.MouseButtonRight);
 
             ImGui.PushStyleColor(ImGuiCol.PopupBg, ImGuiColors.BlueShade1);
+
             if (ImGui.BeginPopupContextItem(POPUP_ID_LOGINACTION))
             {
                 if (ImGui.MenuItem("Launch without Dalamud"))

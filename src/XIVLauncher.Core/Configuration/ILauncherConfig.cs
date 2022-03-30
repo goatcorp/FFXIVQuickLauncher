@@ -1,5 +1,6 @@
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
+using XIVLauncher.Core.Configuration.Linux;
 
 namespace XIVLauncher.Core.Configuration;
 
@@ -19,6 +20,14 @@ public interface ILauncherConfig
     public float? GlobalScale { get; set; }
 
     public DpiAwareness? DpiAwareness { get; set; }
+
+    #region Linux
+
+    public LinuxStartupType? LinuxStartupType { get; set; }
+
+    public string? LinuxStartCommandLine { get; set; }
+
+    #endregion
 
     #region Dalamud
 
