@@ -11,6 +11,7 @@ using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
+using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Configuration;
 using XIVLauncher.Core.Configuration.Linux;
 using XIVLauncher.Core.Configuration.Parsers;
@@ -30,6 +31,8 @@ namespace XIVLauncher.Core
         public static CommonSettings CommonSettings => new(Config);
         public static ISteam Steam { get; private set; }
         public static Launcher Launcher { get; private set; }
+        public static DalamudUpdater DalamudUpdater { get; private set; }
+        public static DalamudOverlayInfoProxy DalamudLoadInfo { get; private set; }
 
         private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
         private static bool showImGuiDemoWindow = true;
@@ -98,6 +101,13 @@ namespace XIVLauncher.Core
             }
 
             Launcher = new Launcher(Steam, new UniqueIdCache(), CommonSettings);
+
+            DalamudLoadInfo = new DalamudOverlayInfoProxy();
+            DalamudUpdater = new DalamudUpdater(storage.GetFolder("dalamud"), storage.GetFolder("runtime"), storage.GetFolder("dalamudAssets"), null)
+            {
+                Overlay = DalamudLoadInfo
+            };
+            DalamudUpdater.Run();
 
             Log.Debug("Creating veldrid devices...");
 

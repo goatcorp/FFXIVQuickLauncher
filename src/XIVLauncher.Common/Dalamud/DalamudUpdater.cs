@@ -15,7 +15,10 @@ namespace XIVLauncher.Common.Dalamud
 {
     public class DalamudUpdater
     {
-        private readonly IUniqueIdCache cache;
+        private readonly DirectoryInfo addonDirectory;
+        private readonly DirectoryInfo runtimeDirectory;
+        private readonly DirectoryInfo assetDirectory;
+        private readonly IUniqueIdCache? cache;
         public DownloadState State { get; private set; } = DownloadState.Unknown;
         public bool IsStaging { get; private set; } = false;
 
@@ -47,8 +50,11 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity
         }
 
-        public DalamudUpdater(IUniqueIdCache cache)
+        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, IUniqueIdCache? cache)
         {
+            this.addonDirectory = addonDirectory;
+            this.runtimeDirectory = runtimeDirectory;
+            this.assetDirectory = assetDirectory;
             this.cache = cache;
         }
 
@@ -138,9 +144,9 @@ namespace XIVLauncher.Common.Dalamud
 
             var versionInfoJson = JsonConvert.SerializeObject(remoteVersionInfo);
 
-            var addonPath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks"));
+            var addonPath = new DirectoryInfo(Path.Combine(this.addonDirectory.FullName, "Hooks"));
             var currentVersionPath = new DirectoryInfo(Path.Combine(addonPath.FullName, remoteVersionInfo.AssemblyVersion));
-            var runtimePath = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "runtime"));
+            var runtimePath = new DirectoryInfo(Path.Combine(this.runtimeDirectory.FullName, "runtime"));
             var runtimePaths = new DirectoryInfo[]
             {
                 new(Path.Combine(runtimePath.FullName, "host", "fxr", remoteVersionInfo.RuntimeVersion)),
@@ -160,7 +166,7 @@ namespace XIVLauncher.Common.Dalamud
                     CleanUpOld(addonPath, remoteVersionInfo.AssemblyVersion);
 
                     // This is a good indicator that we should clear the UID cache
-                    cache.Reset();
+                    cache?.Reset();
                 }
                 catch (Exception ex)
                 {
@@ -205,9 +211,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
 
-                var assetBase = new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets"));
-
-                if (!AssetManager.TryEnsureAssets(assetBase, out var assetsDir))
+                if (!AssetManager.TryEnsureAssets(this.assetDirectory, out var assetsDir))
                 {
                     Log.Information("[DUPDATE] Assets not ensured, bailing out...");
                     State = DownloadState.Failed;
@@ -215,7 +219,7 @@ namespace XIVLauncher.Common.Dalamud
                     // TODO(goat): We might want to try again here
                     try
                     {
-                        assetBase.Delete(true);
+                        this.assetDirectory.Delete(true);
                     }
                     catch (Exception ex)
                     {

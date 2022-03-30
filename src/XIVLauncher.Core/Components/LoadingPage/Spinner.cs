@@ -1,7 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 
-namespace XIVLauncher.Core.Components.Loading;
+namespace XIVLauncher.Core.Components.LoadingPage;
 
 public class Spinner : Component
 {

@@ -1,6 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Core.Components;
+using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Components.MainPage;
 using XIVLauncher.Core.Components.SettingsPage;
 

@@ -1,9 +1,8 @@
 using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Core.Components.Common;
-using XIVLauncher.Core.Components.Loading;
 
-namespace XIVLauncher.Core.Components;
+namespace XIVLauncher.Core.Components.LoadingPage;
 
 public class LoadingPage : Page
 {

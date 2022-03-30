@@ -5,6 +5,7 @@ using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
+using XIVLauncher.Core.Runners;
 
 namespace XIVLauncher.Core.Components.MainPage;
 
@@ -103,6 +104,10 @@ public class MainPage : Page
         if (OperatingSystem.IsWindows())
         {
             runner = new WindowsGameRunner(null, false, Program.Config.DalamudLoadMethod ?? DalamudLoadMethod.DllInject);
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            runner = new LinuxGameRunner();
         }
         else
         {
