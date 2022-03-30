@@ -1,32 +1,39 @@
 using System.Numerics;
 using ImGuiNET;
+using XIVLauncher.Core.Components.Common;
 
 namespace XIVLauncher.Core.Components.MainPage;
 
 public class LoginFrame : Component
 {
     private readonly MainPage mainPage;
-    private string loginUsername = string.Empty;
-    private string loginPassword = string.Empty;
+
+    private readonly Input loginInput;
+    private readonly Input passwordInput;
+    private readonly Input oneTimePasswordInput;
+    private readonly Checkbox oneTimePasswordCheckbox;
+    private readonly Checkbox useSteamServiceCheckbox;
+    private readonly Button loginButton;
+
     private bool isOtp = false;
     private bool isSteam = false;
 
     public string Username
     {
-        get => this.loginUsername;
-        set => this.loginUsername = value;
+        get => this.loginInput.Value;
+        set => this.loginInput.Value = value;
     }
 
     public string Password
     {
-        get => this.loginPassword;
-        set => this.loginPassword = value;
+        get => this.passwordInput.Value;
+        set => this.passwordInput.Value = value;
     }
 
     public bool IsOtp
     {
-        get => this.isOtp;
-        set => this.isOtp = value;
+        get => this.oneTimePasswordCheckbox.Value;
+        set => this.oneTimePasswordCheckbox.Value = value;
     }
 
     public bool IsSteam
@@ -42,77 +49,112 @@ public class LoginFrame : Component
     public LoginFrame(MainPage mainPage)
     {
         this.mainPage = mainPage;
+
+        loginInput = new Input("Square Enix ID", "Enter your Square Enix ID", new Vector2(12f, 0f), 128);
+        passwordInput = new Input("Password", "Enter your password", new Vector2(12f, 0f), 128, flags: ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
+        oneTimePasswordInput = new Input("One-time password", "Enter your one-time password", new Vector2(12f, 0f), 6, false, ImGuiInputTextFlags.CharsDecimal);
+
+        oneTimePasswordCheckbox = new Checkbox("Use one-time password");
+        oneTimePasswordCheckbox.OnChange += newValue =>
+        {
+            this.oneTimePasswordInput.IsEnabled = newValue;
+        };
+
+        useSteamServiceCheckbox = new Checkbox("Use steam service");
+        useSteamServiceCheckbox.OnChange += newValue =>
+        {
+            this.isSteam = newValue;
+        };
+
+
+        loginButton = new Button("Login");
+        loginButton.Click += () =>
+        {
+            OnLogin?.Invoke(LoginAction.Game);
+        };
+    }
+
+    private Vector2 GetSize()
+    {
+        var vp = ImGuiHelpers.ViewportSize;
+        return new Vector2(-1, vp.Y - 128f);
     }
 
     public override void Draw()
     {
-        if (ImGui.BeginPopupContextItem(POPUP_ID_LOGINACTION))
+        if (ImGui.BeginChild("###loginFrame", this.GetSize()))
         {
-            if (ImGui.MenuItem("Launch without Dalamud"))
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(32f, 32f));
+            this.loginInput.Draw();
+            this.passwordInput.Draw();
+            this.oneTimePasswordInput.Draw();
+
+            this.oneTimePasswordCheckbox.Draw();
+
+            this.loginButton.Draw();
+
+            ImGui.PopStyleVar();
+
+            ImGui.NewLine();
+
+
+            ImGui.OpenPopupOnItemClick(POPUP_ID_LOGINACTION, ImGuiPopupFlags.MouseButtonRight);
+
+            ImGui.PushStyleColor(ImGuiCol.PopupBg, ImGuiColors.BlueShade1);
+            if (ImGui.BeginPopupContextItem(POPUP_ID_LOGINACTION))
             {
-                this.OnLogin?.Invoke(LoginAction.GameNoDalamud);
-            }
+                if (ImGui.MenuItem("Launch without Dalamud"))
+                {
+                    this.OnLogin?.Invoke(LoginAction.GameNoDalamud);
+                }
 
-            ImGui.Separator();
-
-            if (ImGui.MenuItem("Patch without launching"))
-            {
-                this.OnLogin?.Invoke(LoginAction.GameNoLaunch);
-            }
-
-            ImGui.Separator();
-
-            if (ImGui.MenuItem("Repair game files"))
-            {
-                this.OnLogin?.Invoke(LoginAction.Repair);
-            }
-
-            if (LauncherApp.IsDebug)
-            {
                 ImGui.Separator();
 
-                if (ImGui.MenuItem("Fake Login"))
+                if (ImGui.MenuItem("Patch without launching"))
                 {
-                    this.OnLogin?.Invoke(LoginAction.Fake);
+                    this.OnLogin?.Invoke(LoginAction.GameNoLaunch);
                 }
+
+                ImGui.Separator();
+
+                if (ImGui.MenuItem("Repair game files"))
+                {
+                    this.OnLogin?.Invoke(LoginAction.Repair);
+                }
+
+                if (LauncherApp.IsDebug)
+                {
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Fake Login"))
+                    {
+                        this.OnLogin?.Invoke(LoginAction.Fake);
+                    }
+                }
+
+                ImGui.EndPopup();
             }
 
-            ImGui.EndPopup();
+            ImGui.PopStyleColor();
+
+            ImGui.PushFont(FontManager.IconFont);
+
+            if (ImGui.Button(FontAwesomeIcon.CaretDown.ToIconString(), new Vector2(30, 30) * ImGuiHelpers.GlobalScale))
+            {
+                ImGui.OpenPopup(POPUP_ID_LOGINACTION);
+            }
+
+            ImGui.SameLine();
+
+            if (ImGui.Button(FontAwesomeIcon.UserFriends.ToIconString(), new Vector2(30, 30) * ImGuiHelpers.GlobalScale))
+            {
+
+            }
+
+            ImGui.PopFont();
         }
 
-        ImGui.InputText("SE ID", ref loginUsername, 128);
-        ImGui.InputText("Password", ref loginPassword, 128, ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
-
-        ImGui.Checkbox("Use OTP", ref isOtp);
-        ImGui.Checkbox("Steam service account", ref isSteam);
-
-        if (ImGui.Button("Login", new Vector2(100, 30) * ImGuiHelpers.GlobalScale))
-        {
-            OnLogin?.Invoke(LoginAction.Game);
-        }
-
-        ImGui.OpenPopupOnItemClick(POPUP_ID_LOGINACTION, ImGuiPopupFlags.MouseButtonRight);
-
-        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1f, 1f));
-        ImGui.SameLine();
-
-        ImGui.PushFont(FontManager.IconFont);
-
-        if (ImGui.Button(FontAwesomeIcon.CaretDown.ToIconString(), new Vector2(20, 30) * ImGuiHelpers.GlobalScale)) // TODO: "Down arrow" icon
-        {
-            ImGui.OpenPopup(POPUP_ID_LOGINACTION);
-        }
-
-        ImGui.PopStyleVar();
-
-        ImGui.SameLine();
-
-        if (ImGui.Button(FontAwesomeIcon.UserFriends.ToIconString(), new Vector2(30, 30) * ImGuiHelpers.GlobalScale))
-        {
-
-        }
-
-        ImGui.PopFont();
+        ImGui.EndChild();
 
         base.Draw();
     }

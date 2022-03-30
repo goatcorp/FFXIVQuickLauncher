@@ -1,3 +1,5 @@
+using ImGuiNET;
+using System.Numerics;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
@@ -9,6 +11,7 @@ namespace XIVLauncher.Core.Components.MainPage;
 public class MainPage : Page
 {
     private readonly LoginFrame loginFrame;
+    private readonly NewsFrame newsFrame;
     private readonly ActionButtons actionButtons;
 
     public bool IsLoggingIn { get; private set; }
@@ -16,11 +19,29 @@ public class MainPage : Page
     public MainPage(LauncherApp app)
         : base(app)
     {
-        this.Children.Add(this.loginFrame = new LoginFrame(this));
-        this.Children.Add(this.actionButtons = new ActionButtons());
+        this.loginFrame = new LoginFrame(this);
+        this.newsFrame = new NewsFrame(this);
+
+        this.actionButtons = new ActionButtons();
 
         this.loginFrame.OnLogin += this.ProcessLogin;
         this.actionButtons.OnSettingsButtonClicked += () => this.App.State = LauncherApp.LauncherState.Settings;
+
+        this.Padding = new Vector2(32f, 32f);
+    }
+
+    public override void Draw()
+    {
+        base.Draw();
+
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(32f, 32f));
+        this.newsFrame.Draw();
+
+        ImGui.SameLine();
+
+        this.loginFrame.Draw();
+
+        this.actionButtons.Draw();
     }
 
     private void ProcessLogin(LoginAction action)
