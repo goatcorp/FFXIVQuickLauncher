@@ -11,7 +11,10 @@ public class SettingsTabWine : SettingsTab
         Entries = new SettingsEntry[]
         {
             startupTypeSetting = new SettingsEntry<LinuxStartupType>("Installation Type", "Choose how XIVLauncher will start and manage your game installation.",
-                () => Program.Config.LinuxStartupType ?? LinuxStartupType.Managed, x => Program.Config.LinuxStartupType = x),
+                () => Program.Config.LinuxStartupType ?? LinuxStartupType.Managed, x => Program.Config.LinuxStartupType = x)
+            {
+                CheckValidity = type => type == LinuxStartupType.Managed ? "Managed wine installations are not yet implemented." : null,
+            },
 
             new SettingsEntry<string>("Startup Command Line",
                 "Set the command XIVLauncher will run to start applications via wine. Here, you should specify things like your wineprefix. %COMMAND% is aliased to the EXE file and its arguments by XIVLauncher.",

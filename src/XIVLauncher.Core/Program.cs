@@ -12,6 +12,7 @@ using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Core.Configuration;
+using XIVLauncher.Core.Configuration.Linux;
 using XIVLauncher.Core.Configuration.Parsers;
 
 namespace XIVLauncher.Core
@@ -73,6 +74,9 @@ namespace XIVLauncher.Core
             Config.DalamudLoadMethod = !OperatingSystem.IsWindows() ? DalamudLoadMethod.DllInject : DalamudLoadMethod.EntryPoint;
 
             Config.GlobalScale ??= 1.0f;
+
+            Config.LinuxStartupType ??= LinuxStartupType.Command;
+            Config.LinuxStartCommandLine ??= "wine %COMMAND%";
         }
 
         public const int STEAM_APP_ID = 39210;
