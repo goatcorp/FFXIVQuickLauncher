@@ -118,7 +118,7 @@ namespace XIVLauncher.Core
             // Create window, GraphicsDevice, and all resources necessary for the demo.
             VeldridStartup.CreateWindowAndGraphicsDevice(
                 new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "XIVLauncher"),
-                new GraphicsDeviceOptions(true, null, true, ResourceBindingModel.Improved, true, true),
+                new GraphicsDeviceOptions(false, null, true, ResourceBindingModel.Improved, true, true),
                 out window,
                 out gd);
 
