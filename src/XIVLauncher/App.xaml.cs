@@ -41,6 +41,7 @@ namespace XIVLauncher
         private MainWindow _mainWindow;
 
         public static bool GlobalIsDisableAutologin { get; private set; }
+        public static byte[] GlobalSteamTicket { get; private set; }
         public static DalamudUpdater DalamudUpdater { get; private set; }
 
         public static Brush UaBrush = new LinearGradientBrush(new GradientStopCollection()
@@ -134,7 +135,8 @@ namespace XIVLauncher
                     Loc.SetupWithFallbacks();
                 }
             }
-            catch(Exception ex){
+            catch (Exception ex)
+            {
                 Log.Error(ex, "Could not get language information. Setting up fallbacks.");
                 Loc.Setup("{}");
             }
@@ -226,7 +228,10 @@ namespace XIVLauncher
 
                 try
                 {
-                    DalamudUpdater = new DalamudUpdater(CommonUniqueIdCache.Instance);
+                    DalamudUpdater = new DalamudUpdater(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon")),
+                        new DirectoryInfo(Path.Combine(Paths.RoamingPath, "runtime")),
+                        new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets")),
+                        CommonUniqueIdCache.Instance);
 
                     var dalamudWindowThread = new Thread(DalamudOverlayThreadStart);
                     dalamudWindowThread.SetApartmentState(ApartmentState.STA);
@@ -339,6 +344,13 @@ namespace XIVLauncher
                         App.Settings.CurrentAccountId = accountName;
                     }
 
+                    // Check if the steam ticket parameter is provided, use it later to skip steam integration
+                    if (arg.StartsWith("--steamticket=", StringComparison.Ordinal))
+                    {
+                        string steamTicket = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
+                        GlobalSteamTicket = Convert.FromBase64String(steamTicket);
+                    }
+
                     // Override client launch language by parameter
                     if (arg.StartsWith("--clientlang=", StringComparison.Ordinal))
                     {
@@ -356,11 +368,11 @@ namespace XIVLauncher
             {
                 var dict = new ResourceDictionary
                 {
-                    {"PrimaryHueLightBrush", UaBrush},
+                    { "PrimaryHueLightBrush", UaBrush },
                     //{"PrimaryHueLightForegroundBrush", uaBrush},
-                    {"PrimaryHueMidBrush", UaBrush},
+                    { "PrimaryHueMidBrush", UaBrush },
                     //{"PrimaryHueMidForegroundBrush", uaBrush},
-                    {"PrimaryHueDarkBrush", UaBrush},
+                    { "PrimaryHueDarkBrush", UaBrush },
                     //{"PrimaryHueDarkForegroundBrush", uaBrush},
                 };
                 this.Resources.MergedDictionaries.Add(dict);

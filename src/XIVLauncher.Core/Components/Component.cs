@@ -8,7 +8,9 @@ public abstract class Component
 
     public Margins Margins { get; set; } = new();
 
-    public BlockingCollection<Component> Children { get; } = new BlockingCollection<Component>();
+    public BlockingCollection<Component> Children { get; } = new();
+
+    protected Guid Id { get; } = Guid.NewGuid();
 
     public virtual void Draw()
     {

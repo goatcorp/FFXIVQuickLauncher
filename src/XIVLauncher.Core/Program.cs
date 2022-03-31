@@ -9,9 +9,12 @@ using Veldrid.StartupUtilities;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
+using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Configuration;
+using XIVLauncher.Core.Configuration.Linux;
 using XIVLauncher.Core.Configuration.Parsers;
 
 namespace XIVLauncher.Core
@@ -29,6 +32,8 @@ namespace XIVLauncher.Core
         public static CommonSettings CommonSettings => new(Config);
         public static ISteam Steam { get; private set; }
         public static Launcher Launcher { get; private set; }
+        public static DalamudUpdater DalamudUpdater { get; private set; }
+        public static DalamudOverlayInfoProxy DalamudLoadInfo { get; private set; }
 
         private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
         private static bool showImGuiDemoWindow = true;
@@ -70,9 +75,15 @@ namespace XIVLauncher.Core
             Config.ClientLanguage ??= ClientLanguage.English;
             Config.DpiAwareness ??= DpiAwareness.Unaware;
 
+            Config.PatchPath ??= storage.GetFolder("patch");
+            Config.PatchAcquisitionMethod ??= AcquisitionMethod.Aria;
+
             Config.DalamudLoadMethod = !OperatingSystem.IsWindows() ? DalamudLoadMethod.DllInject : DalamudLoadMethod.EntryPoint;
 
             Config.GlobalScale ??= 1.0f;
+
+            Config.LinuxStartupType ??= LinuxStartupType.Command;
+            Config.LinuxStartCommandLine ??= "wine %COMMAND%";
         }
 
         public const int STEAM_APP_ID = 39210;
@@ -95,12 +106,19 @@ namespace XIVLauncher.Core
 
             Launcher = new Launcher(Steam, new UniqueIdCache(), CommonSettings);
 
+            DalamudLoadInfo = new DalamudOverlayInfoProxy();
+            DalamudUpdater = new DalamudUpdater(storage.GetFolder("dalamud"), storage.GetFolder("runtime"), storage.GetFolder("dalamudAssets"), null)
+            {
+                Overlay = DalamudLoadInfo
+            };
+            DalamudUpdater.Run();
+
             Log.Debug("Creating veldrid devices...");
 
             // Create window, GraphicsDevice, and all resources necessary for the demo.
             VeldridStartup.CreateWindowAndGraphicsDevice(
                 new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "XIVLauncher"),
-                new GraphicsDeviceOptions(true, null, true, ResourceBindingModel.Improved, true, true),
+                new GraphicsDeviceOptions(false, null, true, ResourceBindingModel.Improved, true, true),
                 out window,
                 out gd);
 

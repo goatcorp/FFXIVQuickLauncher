@@ -1,8 +1,11 @@
 using System.Numerics;
 using ImGuiNET;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Core.Components;
+using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Components.MainPage;
 using XIVLauncher.Core.Components.SettingsPage;
+using XIVLauncher.Core.Configuration;
 
 namespace XIVLauncher.Core;
 
@@ -10,7 +13,7 @@ public class LauncherApp : Component
 {
     private readonly Storage storage;
 
-    public static bool IsDebug { get; private set; } = false;
+    public static bool IsDebug { get; private set; } = true;
     private bool isDemoWindow = false;
 
     #region Modal State
@@ -64,6 +67,18 @@ public class LauncherApp : Component
         }
     }
 
+    public Page CurrentPage => this.state switch
+    {
+        LauncherState.Main => this.mainPage,
+        LauncherState.Settings => this.setPage,
+        LauncherState.Loading => this.loadingPage,
+        LauncherState.OtpEntry => this.otpEntryPage,
+        _ => throw new ArgumentOutOfRangeException(nameof(this.state), this.state, null)
+    };
+
+    public ILauncherConfig Settings => Program.Config;
+    public Launcher Launcher => Program.Launcher;
+
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
     private readonly OtpEntryPage otpEntryPage;
@@ -85,7 +100,7 @@ public class LauncherApp : Component
 #endif
     }
 
-    public void OpenModal(string text, string title)
+    public void ShowMessage(string text, string title)
     {
         if (this.isModalDrawing)
             throw new InvalidOperationException("Cannot open modal while another modal is open");
@@ -96,26 +111,31 @@ public class LauncherApp : Component
         this.modalOnNextFrame = true;
     }
 
-    public void OpenModalBlocking(string text, string title)
+    public void ShowMessageBlocking(string text, string title)
     {
         if (!this.modalWaitHandle.WaitOne(0) && this.isModalDrawing)
             throw new InvalidOperationException("Cannot open modal while another modal is open");
 
         this.modalWaitHandle.Reset();
-        this.OpenModal(text, title);
+        this.ShowMessage(text, title);
         this.modalWaitHandle.WaitOne();
+    }
+
+    public void ShowExceptionBlocking(Exception exception, string context)
+    {
+        this.ShowMessageBlocking($"An error occurred ({context}).\n\n{exception}", "XIVLauncher Error");
     }
 
     public bool HandleContinationBlocking(Task task)
     {
         if (task.IsFaulted)
         {
-            this.OpenModalBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
+            this.ShowMessageBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
             return false;
         }
         else if (task.IsCanceled)
         {
-            this.OpenModalBlocking("Task was canceled.", "Error");
+            this.ShowMessageBlocking("Task was canceled.", "Error");
             return false;
         }
 
@@ -150,18 +170,21 @@ public class LauncherApp : Component
     public override void Draw()
     {
         ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2());
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, this.CurrentPage.Padding ?? ImGui.GetStyle().WindowPadding);
 
         ImGui.SetNextWindowPos(new Vector2(0, 0));
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
 
-        if (ImGui.Begin("Background", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+        if (ImGui.Begin("Background",
+                ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNavFocus
+                | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
-            this.background.Draw();
+            // this.background.Draw();
+
+            ImGui.PushStyleColor(ImGuiCol.WindowBg, ImGuiColors.BlueShade0);
         }
 
         ImGui.End();
-        ImGui.PopStyleVar();
 
         ImGui.SetNextWindowPos(new Vector2(0, 0));
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
@@ -169,39 +192,18 @@ public class LauncherApp : Component
 
         if (ImGui.Begin("XIVLauncher", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
-            switch (State)
-            {
-                case LauncherState.Main:
-                    this.mainPage.Draw();
-                    break;
-
-                case LauncherState.Settings:
-                    this.setPage.Draw();
-                    break;
-
-                case LauncherState.OtpEntry:
-                    this.otpEntryPage.Draw();
-                    break;
-
-                case LauncherState.Loading:
-                    this.loadingPage.Draw();
-                    break;
-            }
-
+            this.CurrentPage.Draw();
             base.Draw();
         }
 
-        if (IsDebug)
+        if (IsDebug && ImGui.IsKeyDown(ImGuiKey.D))
         {
-            if (ImGui.IsKeyPressed(ImGuiKey.D))
-            {
-                this.isDemoWindow = true;
-            }
+            this.isDemoWindow = true;
         }
 
         ImGui.End();
 
-        ImGui.PopStyleVar();
+        ImGui.PopStyleVar(2);
 
         if (this.isDemoWindow)
             ImGui.ShowDemoWindow(ref this.isDemoWindow);

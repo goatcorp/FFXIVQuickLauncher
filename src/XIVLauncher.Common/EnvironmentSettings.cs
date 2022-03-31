@@ -29,6 +29,11 @@ namespace XIVLauncher.Common
         /// Gets a value indicating whether XL_NO_RUNAS has been set.
         /// </summary>
         public static bool IsNoRunas => CheckEnvBool("XL_NO_RUNAS");
+		
+		/// <summary>
+        /// Gets a value indicating whether XL_NO_SPACE_REQUIREMENTS has been set.
+        /// </summary>
+        public static bool IsIgnoreSpaceRequirements => CheckEnvBool("XL_NO_SPACE_REQUIREMENTS");
 
         /// <summary>
         /// Gets the value within an environment value. It should be parseable as a boolean, or it will default to <see langword="false"/>.

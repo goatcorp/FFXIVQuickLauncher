@@ -27,7 +27,7 @@ namespace XIVLauncher.Common.Dalamud
             this.injectionDelay = settings.DalamudInjectionDelayMs;
         }
 
-        public const string REMOTE_BASE = "https://goatcorp.github.io/dalamud-distrib/";
+        public const string REMOTE_BASE = "https://kamori.goats.dev/Dalamud/Release/VersionInfo?track=";
 
         public bool HoldForUpdate(DirectoryInfo gamePath)
         {
@@ -120,7 +120,7 @@ namespace XIVLauncher.Common.Dalamud
         {
             using var client = new WebClient();
 
-            var versionInfoJson = client.DownloadString(REMOTE_BASE + "version");
+            var versionInfoJson = client.DownloadString(REMOTE_BASE + "release");
             var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
 
             if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)

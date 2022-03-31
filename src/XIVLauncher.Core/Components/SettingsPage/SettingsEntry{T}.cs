@@ -1,4 +1,5 @@
 using ImGuiNET;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Core.Components.SettingsPage;
 
@@ -13,7 +14,11 @@ public class SettingsEntry<T> : SettingsEntry
 
     public string Description { get; }
 
-    public Func<T?, string?>? CheckValidity { get; set; }
+    public Func<T?, string?>? CheckValidity { get; init; }
+
+    public Func<bool>? CheckVisibility { get; init; }
+
+    public override bool IsVisible => CheckVisibility?.Invoke() ?? true;
 
     public T? Value => this.InternalValue == default ? default : (T)this.InternalValue;
 
@@ -31,7 +36,7 @@ public class SettingsEntry<T> : SettingsEntry
 
         if (type == typeof(DirectoryInfo))
         {
-            ImGui.Text(this.Name);
+            ImGuiHelpers.TextWrapped(this.Name);
 
             var value = this.Value as DirectoryInfo;
             var nativeBuffer = value?.FullName ?? string.Empty;
@@ -43,7 +48,7 @@ public class SettingsEntry<T> : SettingsEntry
         }
         else if (type == typeof(string))
         {
-            ImGui.Text(this.Name);
+            ImGuiHelpers.TextWrapped(this.Name);
 
             var nativeBuffer = this.Value as string ?? string.Empty;
 
@@ -63,16 +68,17 @@ public class SettingsEntry<T> : SettingsEntry
         }
         else if (type.IsEnum)
         {
-            ImGui.Text(this.Name);
+            ImGuiHelpers.TextWrapped(this.Name);
 
             var idx = (int)(this.InternalValue ?? 0);
             var values = Enum.GetValues(type);
+            var descriptions = values.Cast<Enum>().Select(x => x.GetAttribute<SettingsDescriptionAttribute>() ?? new SettingsDescriptionAttribute(x.ToString(), string.Empty)).ToArray();
 
-            if (ImGui.BeginCombo($"###{Id.ToString()}", values.GetValue(idx)!.ToString()))
+            if (ImGui.BeginCombo($"###{Id.ToString()}", descriptions[idx].FriendlyName))
             {
-                foreach (object value in values)
+                foreach (int value in values)
                 {
-                    if (ImGui.Selectable(value.ToString(), idx == (int)value))
+                    if (ImGui.Selectable(descriptions[value].FriendlyName, idx == value))
                     {
                         this.InternalValue = value;
                     }
@@ -82,7 +88,9 @@ public class SettingsEntry<T> : SettingsEntry
             }
         }
 
-        ImGui.TextColored(ImGuiColors.DalamudGrey, Description);
+        ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudGrey);
+        ImGuiHelpers.TextWrapped(this.Description);
+        ImGui.PopStyleColor();
 
         if (this.CheckValidity != null)
         {

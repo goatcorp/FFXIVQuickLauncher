@@ -9,6 +9,7 @@ public class SettingsPage : Page
     private readonly SettingsTab[] tabs =
     {
         new SettingsTabGame(),
+        new SettingsTabPatching(),
         new SettingsTabWine(),
         new SettingsTabDalamud(),
         new SettingsTabAbout(),
@@ -41,7 +42,7 @@ public class SettingsPage : Page
             {
                 foreach (SettingsTab settingsTab in this.tabs)
                 {
-                    if (settingsTab.IsLinux && !OperatingSystem.IsLinux())
+                    if (settingsTab.IsLinuxExclusive && !OperatingSystem.IsLinux())
                         continue;
 
                     if (ImGui.BeginTabItem(settingsTab.Title))
@@ -59,7 +60,7 @@ public class SettingsPage : Page
 
                     foreach (SettingsTab settingsTab in this.tabs)
                     {
-                        if (settingsTab.IsLinux && !OperatingSystem.IsLinux())
+                        if (settingsTab.IsLinuxExclusive && !OperatingSystem.IsLinux())
                             continue;
 
                         var eligible = settingsTab.Entries.Where(x => x.Name.ToLower().Contains(this.searchInput.ToLower())).ToArray();

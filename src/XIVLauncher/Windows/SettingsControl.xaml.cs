@@ -277,25 +277,28 @@ namespace XIVLauncher.Windows
 #endif
                 File.WriteAllText(saveIntegrityPath, task.Result.report);
 
-                switch (task.Result.compareResult)
+                this.Dispatcher.Invoke(() =>
                 {
-                    case IntegrityCheck.CompareResult.NoServer:
-                        CustomMessageBox.Show(Loc.Localize("IntegrityCheckImpossible",
-                            "There is no reference report yet for this game version. Please try again later."),
-                            "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
-                        return;
+                    switch (task.Result.compareResult)
+                    {
+                        case IntegrityCheck.CompareResult.NoServer:
+                            CustomMessageBox.Show(Loc.Localize("IntegrityCheckImpossible",
+                                    "There is no reference report yet for this game version. Please try again later."),
+                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
+                            return;
 
-                    case IntegrityCheck.CompareResult.Invalid:
-                        CustomMessageBox.Show(Loc.Localize("IntegrityCheckFailed",
-                            "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\"."),
-                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, showReportLinks: true, parentWindow: Window.GetWindow(this));
-                    break;
+                        case IntegrityCheck.CompareResult.Invalid:
+                            CustomMessageBox.Show(Loc.Localize("IntegrityCheckFailed",
+                                    "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\"."),
+                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, showReportLinks: true, parentWindow: Window.GetWindow(this));
+                            break;
 
-                    case IntegrityCheck.CompareResult.Valid:
-                        CustomMessageBox.Show(Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid."), "XIVLauncher", MessageBoxButton.OK,
-                            MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
-                        break;
-                }
+                        case IntegrityCheck.CompareResult.Valid:
+                            CustomMessageBox.Show(Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid."), "XIVLauncher", MessageBoxButton.OK,
+                                MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
+                            break;
+                    }
+                });
             });
 
             window.ShowDialog();

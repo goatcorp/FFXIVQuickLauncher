@@ -10,7 +10,7 @@ public class SettingsTabGame : SettingsTab
         {
             CheckValidity = x =>
             {
-                if (x == null)
+                if (string.IsNullOrWhiteSpace(x?.FullName))
                     return "Game path is not set.";
 
                 if (x.Name == "game" || x.Name == "boot")

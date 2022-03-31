@@ -10,14 +10,13 @@ using Serilog;
 using SharedMemory;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PatcherIpc;
-using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.Common.Game.Patch
 {
     public class PatchInstaller : IDisposable
     {
-        private readonly ISettings _settings;
-        private RpcBuffer _rpc;
+        private readonly bool keepPatches;
+        private RpcBuffer rpc;
 
         public enum InstallerState
         {
@@ -32,9 +31,9 @@ namespace XIVLauncher.Common.Game.Patch
 
         public event Action OnFail;
 
-        public PatchInstaller(ISettings settings)
+        public PatchInstaller(bool keepPatches)
         {
-            this._settings = settings;
+            this.keepPatches = keepPatches;
         }
 
         public void StartIfNeeded()
@@ -43,7 +42,7 @@ namespace XIVLauncher.Common.Game.Patch
 
             Log.Information("[PATCHERIPC] Starting patcher with '{0}'", rpcName);
 
-            _rpc = new RpcBuffer(rpcName, RemoteCallHandler);
+            this.rpc = new RpcBuffer(rpcName, RemoteCallHandler);
 
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 "XIVLauncher.PatchInstaller.exe");
@@ -84,10 +83,12 @@ namespace XIVLauncher.Common.Game.Patch
                     Log.Information("[PATCHERIPC] GOT HELLO");
                     State = InstallerState.Ready;
                     break;
+
                 case PatcherIpcOpCode.InstallOk:
                     Log.Information("[PATCHERIPC] INSTALL OK");
                     State = InstallerState.Ready;
                     break;
+
                 case PatcherIpcOpCode.InstallFailed:
                     State = InstallerState.Failed;
                     OnFail?.Invoke();
@@ -95,6 +96,7 @@ namespace XIVLauncher.Common.Game.Patch
                     Stop();
                     Environment.Exit(0);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -136,7 +138,7 @@ namespace XIVLauncher.Common.Game.Patch
                     PatchFile = file,
                     Repo = repo,
                     VersionId = patch.VersionId,
-                    KeepPatch = _settings.KeepPatches.GetValueOrDefault(false)
+                    KeepPatch = this.keepPatches,
                 }
             });
         }
@@ -157,7 +159,7 @@ namespace XIVLauncher.Common.Game.Patch
                 var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
 
                 Log.Information("[PATCHERIPC] SEND: " + json);
-                _rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
+                this.rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
             }
             catch (Exception e)
             {

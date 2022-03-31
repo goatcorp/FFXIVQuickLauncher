@@ -7,7 +7,7 @@ public abstract class SettingsTab : Component
 {
     public abstract SettingsEntry[] Entries { get; }
 
-    public virtual bool IsLinux => false;
+    public virtual bool IsLinuxExclusive => false;
 
     public abstract string Title { get; }
 
@@ -15,7 +15,8 @@ public abstract class SettingsTab : Component
     {
         foreach (SettingsEntry settingsEntry in Entries)
         {
-            settingsEntry.Draw();
+            if (settingsEntry.IsVisible)
+                settingsEntry.Draw();
 
             ImGui.Dummy(new Vector2(10) * ImGuiHelpers.GlobalScale);
         }

@@ -8,6 +8,8 @@ public abstract class SettingsEntry : Component
 
     public bool IsValid { get; protected set; }
 
+    public abstract bool IsVisible { get; }
+
     public abstract void Load();
 
     public abstract void Save();

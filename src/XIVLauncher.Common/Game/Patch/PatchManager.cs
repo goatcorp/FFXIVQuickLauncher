@@ -12,7 +12,6 @@ using Serilog;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
-using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.Common.Game.Patch
 {
@@ -37,13 +36,14 @@ namespace XIVLauncher.Common.Game.Patch
 
         private readonly CancellationTokenSource _cancelTokenSource = new();
 
-        private readonly ISettings _settings;
-        private readonly Repository _repo;
-        private readonly DirectoryInfo _gamePath;
-        private readonly DirectoryInfo _patchStore;
-        private readonly PatchInstaller _installer;
-        private readonly Launcher _launcher;
-        private readonly string _sid;
+        private readonly AcquisitionMethod acquisitionMethod;
+        private readonly long speedLimitBytes;
+        private readonly Repository repo;
+        private readonly DirectoryInfo gamePath;
+        private readonly DirectoryInfo patchStore;
+        private readonly PatchInstaller installer;
+        private readonly Launcher launcher;
+        private readonly string sid;
 
         public readonly IReadOnlyList<PatchDownload> Downloads;
 
@@ -78,20 +78,21 @@ namespace XIVLauncher.Common.Game.Patch
             HashCheck,
         }
 
-        public PatchManager(ISettings settings, Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, Launcher launcher, string sid)
+        public PatchManager(AcquisitionMethod acquisitionMethod, long speedLimitBytes, Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, Launcher launcher, string sid)
         {
             Debug.Assert(patches != null, "patches != null ASSERTION FAILED");
 
-            _settings = settings;
-            _repo = repo;
-            _gamePath = gamePath;
-            _patchStore = patchStore;
-            _installer = installer;
-            _launcher = launcher;
-            _sid = sid;
+            this.acquisitionMethod = acquisitionMethod;
+            this.speedLimitBytes = speedLimitBytes;
+            this.repo = repo;
+            this.gamePath = gamePath;
+            this.patchStore = patchStore;
+            this.installer = installer;
+            this.launcher = launcher;
+            this.sid = sid;
 
-            if (!_patchStore.Exists)
-                _patchStore.Create();
+            if (!this.patchStore.Exists)
+                this.patchStore.Create();
 
             Downloads = patches.Select(patchListEntry => new PatchDownload { Patch = patchListEntry, State = PatchState.Nothing }).ToList().AsReadOnly();
 
@@ -104,31 +105,34 @@ namespace XIVLauncher.Common.Game.Patch
 
         public async Task PatchAsync()
         {
-            var freeSpaceDownload = Util.GetDiskFreeSpace(this._patchStore);
-
-            if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
+            if (!EnvironmentSettings.IsIgnoreSpaceRequirements)
             {
-                throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Patches,
-                    Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length, freeSpaceDownload);
+                var freeSpaceDownload = Util.GetDiskFreeSpace(this.patchStore);
+
+                if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
+                {
+                    throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Patches,
+                        Downloads.OrderByDescending(x => x.Patch.Length).First().Patch.Length, freeSpaceDownload);
+                }
+
+                // If the first 6 patches altogether are bigger than the patch drive, we might run out of space
+                if (freeSpaceDownload < GetDownloadLength(6))
+                {
+                    throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.AllPatches, AllDownloadsLength,
+                        freeSpaceDownload);
+                }
+
+                var freeSpaceGame = Util.GetDiskFreeSpace(this.gamePath);
+
+                if (freeSpaceGame < AllDownloadsLength)
+                {
+                    throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
+                        freeSpaceGame);
+                }
             }
 
-            // If the first 6 patches altogether are bigger than the patch drive, we might run out of space
-            if (freeSpaceDownload < GetDownloadLength(6))
-            {
-                throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.AllPatches, AllDownloadsLength,
-                    freeSpaceDownload);
-            }
-
-            var freeSpaceGame = Util.GetDiskFreeSpace(this._gamePath);
-
-            if (freeSpaceGame < AllDownloadsLength)
-            {
-                throw new NotEnoughSpaceException(NotEnoughSpaceException.SpaceKind.Game, AllDownloadsLength,
-                    freeSpaceDownload);
-            }
-
-            _installer.StartIfNeeded();
-            _installer.WaitOnHello();
+            this.installer.StartIfNeeded();
+            this.installer.WaitOnHello();
 
             await InitializeAcquisition().ConfigureAwait(false);
 
@@ -149,21 +153,25 @@ namespace XIVLauncher.Common.Game.Patch
         public async Task InitializeAcquisition()
         {
             // TODO: Come up with a better pattern for initialization. This sucks.
-            switch (_settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria))
+            switch (this.acquisitionMethod)
             {
                 case AcquisitionMethod.NetDownloader:
                     // ignored
                     break;
+
                 case AcquisitionMethod.MonoTorrentNetFallback:
-                    await TorrentPatchAcquisition.InitializeAsync(_settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
+
                 case AcquisitionMethod.MonoTorrentAriaFallback:
-                    await AriaHttpPatchAcquisition.InitializeAsync(_settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    await TorrentPatchAcquisition.InitializeAsync(_settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
+
                 case AcquisitionMethod.Aria:
-                    await AriaHttpPatchAcquisition.InitializeAsync(_settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -187,9 +195,9 @@ namespace XIVLauncher.Common.Game.Patch
             var outFile = GetPatchFile(download.Patch);
 
             var realUrl = download.Patch.Url;
-            if (_repo != Repository.Boot && false) // Disabled for now, waiting on SE to patch this
+            if (this.repo != Repository.Boot && false) // Disabled for now, waiting on SE to patch this
             {
-                realUrl = await _launcher.GenPatchToken(download.Patch.Url, _sid);
+                realUrl = await this.launcher.GenPatchToken(download.Patch.Url, this.sid);
             }
 
             Log.Information("Downloading patch {0} at {1} to {2}", download.Patch.VersionId, realUrl, outFile.FullName);
@@ -206,18 +214,20 @@ namespace XIVLauncher.Common.Game.Patch
 
             PatchAcquisition acquisition;
 
-            switch (_settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria))
+            switch (this.acquisitionMethod)
             {
                 case AcquisitionMethod.NetDownloader:
-                    acquisition = new NetDownloaderPatchAcquisition(_patchStore, _settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
+
                 case AcquisitionMethod.MonoTorrentNetFallback:
                     acquisition = new TorrentPatchAcquisition();
 
                     var torrentAcquisition = acquisition as TorrentPatchAcquisition;
                     if (!torrentAcquisition.IsApplicable(download.Patch))
-                        acquisition = new NetDownloaderPatchAcquisition(_patchStore, _settings.SpeedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                        acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
+
                 case AcquisitionMethod.MonoTorrentAriaFallback:
                     acquisition = new TorrentPatchAcquisition();
 
@@ -400,15 +410,15 @@ namespace XIVLauncher.Common.Game.Patch
 
                 IsInstallerBusy = true;
 
-                _installer.StartInstall(_gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch, GetRepoForPatch(toInstall.Patch));
+                this.installer.StartInstall(this.gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch, GetRepoForPatch(toInstall.Patch));
 
-                while (_installer.State != PatchInstaller.InstallerState.Ready)
+                while (this.installer.State != PatchInstaller.InstallerState.Ready)
                 {
                     Thread.Yield();
                 }
 
                 // TODO need to handle this better
-                if (_installer.State == PatchInstaller.InstallerState.Failed)
+                if (this.installer.State == PatchInstaller.InstallerState.Failed)
                     return;
 
                 Log.Information($"Patch at {CurrentInstallIndex} installed");
@@ -420,7 +430,7 @@ namespace XIVLauncher.Common.Game.Patch
             }
 
             Log.Information("PATCHING finish");
-            _installer.FinishInstall(_gamePath);
+            this.installer.FinishInstall(this.gamePath);
         }
 
         private enum HashCheckResult
@@ -482,7 +492,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         private FileInfo GetPatchFile(PatchListEntry patch)
         {
-            var file = new FileInfo(Path.Combine(_patchStore.FullName, patch.GetFilePath()));
+            var file = new FileInfo(Path.Combine(this.patchStore.FullName, patch.GetFilePath()));
             file.Directory.Create();
 
             return file;

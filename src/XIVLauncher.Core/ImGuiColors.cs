@@ -101,4 +101,12 @@ public static class ImGuiColors
     /// Gets parsed gold.
     /// </summary>
     public static Vector4 ParsedGold { get; } = new(0.898f, 0.8f, 0.501f, 1f);
+
+    public static Vector4 Blue { get; } = new Vector4(0.3647058823529412f, 0.4549019607843137f, 0.6745098039215686f, 1f);
+    public static Vector4 BlueShade0 { get; } = new Vector4(0.1686274509803922f, 0.1882352941176471f, 0.2313725490196078f, 1f);
+    public static Vector4 BlueShade1 { get; } = new Vector4(0.2f, 0.2235294117647059f, 0.2784313725490196f, 1f);
+    public static Vector4 BlueShade2 { get; } = new Vector4(0.2705882352941176f, 0.3019607843137255f, 0.3725490196078431f, 1f);
+    public static Vector4 BlueShade3 { get; } = new Vector4(0.2980392156862745f, 0.3843137254901961f, 0.5803921568627451f, 1f);
+    public static Vector4 Text { get; } = new Vector4(0.7843137254901961f, 0.796078431372549f, 0.8196078431372549f, 1f);
+    public static Vector4 TextDisabled { get; } = new Vector4(Text.X, Text.Y, Text.Z, 0.5f);
 }

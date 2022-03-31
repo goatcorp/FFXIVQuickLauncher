@@ -31,9 +31,15 @@ public class Ticket
         if (ticketBytes == null)
             return null;
 
-        var time = 60 * ((steam.GetServerRealTime() - 5) / 60);
+        return EncryptAuthSessionTicket(ticketBytes, steam.GetServerRealTime());
+    }
 
-        var ticketString = BitConverter.ToString(ticketBytes).Replace("-", "").ToLower();
+    public static Ticket EncryptAuthSessionTicket(byte[] ticket, uint time)
+    {
+        time -= 5;
+        time -= time % 60; // Time should be rounded to nearest minute.
+
+        var ticketString = BitConverter.ToString(ticket).Replace("-", "").ToLower();
         var rawTicketBytes = Encoding.ASCII.GetBytes(ticketString);
 
         var rawTicket = new byte[rawTicketBytes.Length + 1];
