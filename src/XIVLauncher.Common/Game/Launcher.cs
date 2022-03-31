@@ -270,34 +270,34 @@ public class Launcher
     /// <param name="exLevel"></param>
     private static void EnsureVersionSanity(DirectoryInfo gamePath, int exLevel)
     {
-        var pass = string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath));
-        pass &= string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath, true));
+        var failed = string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath));
+        failed &= string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath, true));
 
         if (exLevel >= 1)
         {
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath));
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath, true));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath, true));
         }
 
         if (exLevel >= 2)
         {
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath));
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath, true));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath, true));
         }
 
         if (exLevel >= 3)
         {
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath));
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath, true));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath, true));
         }
 
         if (exLevel >= 4)
         {
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath));
-            pass &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath, true));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath, true));
         }
 
-        if (!pass)
+        if (failed)
             throw new InvalidVersionFilesException();
     }
 
