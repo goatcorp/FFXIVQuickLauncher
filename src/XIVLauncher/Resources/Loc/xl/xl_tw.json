@@ -336,11 +336,11 @@
     "description": "MainWindowViewModel.PatcherOnFail"
   },
   "PatchManNoInstaller": {
-    "message": "The patch installer could not start correctly.\n{0}\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
+    "message": "更新程序無法正常執行。\n{0}\n\n如果您剛剛拒絕了權限請求，請重試并授權。\n如果此問題仍然存在，請在 Discord 上聯繫我們。",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceError": {
-    "message": "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "您的硬碟空間不足，無法下載更新。\n\n您可以在設置中更改更新下載目錄。\n\n需要：{0}\n可用：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceErrorAll": {
@@ -432,7 +432,7 @@
     "description": "<<GetLoginFunc>b__0>d.MoveNext"
   },
   "DuplicateOtpAfterSuccess": {
-    "message": "This OTP has been already used.\nIt may take up to 30 seconds for a new one.",
+    "message": "此驗證碼已被使用。\n新的驗證碼可能需要30秒。",
     "description": "<>c__DisplayClass21_1.<Login>g__OnOtpResult|1"
   },
   "CheckBootVersionError": {
@@ -472,15 +472,15 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess0": {
-    "message": "All game files seem to be valid.",
+    "message": "所有遊戲文件似乎都是有效的。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess1": {
-    "message": "XIVLauncher has successfully repaired 1 game file.",
+    "message": "XIVLauncher 已成功修復 1 個遊戲檔案。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessPlural": {
-    "message": "XIVLauncher has successfully repaired {0} game files.",
+    "message": "XIVLauncher 已成功修復 {0} 個遊戲檔案。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -496,7 +496,7 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairError": {
-    "message": "An error occurred while repairing the game files.\nYou may have to reinstall the game.",
+    "message": "修復遊戲檔案時出現錯誤。\n您可能需要重新安裝遊戲。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_TryAgain": {
@@ -520,7 +520,7 @@
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "LoginIoErrorSummary": {
-    "message": "Could not locate game data files.",
+    "message": "無法找到遊戲資料檔案。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginIoErrorActionable": {
@@ -592,7 +592,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRelaunch": {
-    "message": "_Relaunch",
+    "message": "重啟 (_R)",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameClose": {
@@ -628,7 +628,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
-    "message": "Could not find the game executable.",
+    "message": "找不到遊戲的啟動檔案。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorActionable": {
