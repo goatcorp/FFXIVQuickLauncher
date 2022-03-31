@@ -1,2 +1,3 @@
-﻿• Uses a new CDN for Dalamud update checks & assets, as GitHub was causing a lot of network issues
-• Fixes an issue wherein disk space checks would fail when doing a fresh install on Wine
+﻿• Fixes an issue wherein Dalamud would not start correctly in certain cases
+• Fixes an issue wherein disk space requirements were not shown correctly
+• Updated the localization files
