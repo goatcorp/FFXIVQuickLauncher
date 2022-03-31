@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.PlatformAbstractions;
@@ -449,10 +450,12 @@ namespace XIVLauncher.Common.Game.Patch
 
                 var tempFile = new FileInfo(filePath + ".tmp");
                 var complete = false;
+
                 try
                 {
                     using var sourceStream = await request.Content.ReadAsStreamAsync().ConfigureAwait(false);
                     using var buffer = ReusableByteBufferManager.GetBuffer();
+
                     using (var targetStream = tempFile.OpenWrite())
                     {
                         while (true)

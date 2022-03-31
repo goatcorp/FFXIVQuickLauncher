@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XIVLauncher.Common.Game;
+namespace XIVLauncher.Common.Game.Exceptions;
 
 public class SteamWrongAccountException : Exception
 {

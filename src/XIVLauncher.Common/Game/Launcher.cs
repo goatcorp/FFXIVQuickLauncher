@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Encryption;
+using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.Common.Game
@@ -261,6 +262,44 @@ namespace XIVLauncher.Common.Game
         }
 
         /// <summary>
+        /// Check ver & bck files for sanity.
+        /// </summary>
+        /// <param name="gamePath"></param>
+        /// <param name="exLevel"></param>
+        private static void EnsureVersionSanity(DirectoryInfo gamePath, int exLevel)
+        {
+            var pass = string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath));
+            pass &= string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath, true));
+
+            if (exLevel >= 1)
+            {
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath));
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath, true));
+            }
+
+            if (exLevel >= 2)
+            {
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath));
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath, true));
+            }
+
+            if (exLevel >= 3)
+            {
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath));
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath, true));
+            }
+
+            if (exLevel >= 4)
+            {
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath));
+                pass &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath, true));
+            }
+
+            if (!pass)
+                throw new InvalidVersionFilesException();
+        }
+
+        /// <summary>
         /// Calculate the hash that is sent to patch-gamever for version verification/tamper protection.
         /// This same hash is also sent in lobby, but for ffxiv.exe and ffxiv_dx11.exe.
         /// </summary>
@@ -309,6 +348,7 @@ namespace XIVLauncher.Common.Game
             request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
             request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
 
+            EnsureVersionSanity(gamePath, loginResult.MaxExpansion);
             request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion, forceBaseVersion));
 
             var resp = await this.client.SendAsync(request);

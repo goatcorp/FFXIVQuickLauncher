@@ -18,6 +18,7 @@ using XIVLauncher.Addon;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
@@ -312,11 +313,11 @@ namespace XIVLauncher.Windows.ViewModel
                 Log.Error(ex, "StartGame failed... (GateStatus={0})", gateStatus);
 
                 var msgbox = new CustomMessageBox.Builder()
-                    .WithCaption(Loc.Localize("LoginNoOauthTitle", "Login issue"))
-                    .WithImage(MessageBoxImage.Error)
-                    .WithShowHelpLinks(true)
-                    .WithShowDiscordLink(true)
-                    .WithParentWindow(_window);
+                             .WithCaption(Loc.Localize("LoginNoOauthTitle", "Login issue"))
+                             .WithImage(MessageBoxImage.Error)
+                             .WithShowHelpLinks(true)
+                             .WithShowDiscordLink(true)
+                             .WithParentWindow(_window);
 
                 bool disableAutoLogin = false;
 
@@ -328,6 +329,11 @@ namespace XIVLauncher.Windows.ViewModel
                         .WithAppendText("\n\n")
                         .WithAppendText(Loc.Localize("LoginIoErrorActionable",
                             "This may mean that the game path set in XIVLauncher isn't preset, e.g. on a disconnected drive or network storage. Please check the game path in the XIVLauncher settings."));
+                }
+                else if (ex is InvalidVersionFilesException)
+                {
+                    msgbox.WithTextFormatted(Loc.Localize("LoginInvalidVersionFiles",
+                        "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game."), ex.Message);
                 }
                 else if (ex is SteamException)
                 {

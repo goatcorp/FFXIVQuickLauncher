@@ -8,6 +8,8 @@ using System.Reflection;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using Serilog;
+using XIVLauncher.Common.Game.Exceptions;
+
 // ReSharper disable InconsistentNaming
 
 namespace XIVLauncher.Common.Game
@@ -420,7 +422,6 @@ namespace XIVLauncher.Common.Game
                     do
                     {
                         process.WaitForInputIdle();
-
 
                         Thread.Sleep(100);
                     } while (IntPtr.Zero == TryFindGameWindow(process));
