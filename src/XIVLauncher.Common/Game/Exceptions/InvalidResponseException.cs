@@ -4,8 +4,11 @@ namespace XIVLauncher.Common.Game.Exceptions;
 
 public class InvalidResponseException : Exception
 {
-    public InvalidResponseException(string message)
+    public string Document { get; set; }
+
+    public InvalidResponseException(string message, string document)
         : base(message)
     {
+        this.Document = document;
     }
 }

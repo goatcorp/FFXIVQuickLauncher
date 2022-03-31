@@ -452,7 +452,7 @@ namespace XIVLauncher.Common.Game
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error(ex, "[NativeAclFix] Uncaught error during initialization, trying to kill process");
 

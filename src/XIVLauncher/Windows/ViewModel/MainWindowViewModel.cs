@@ -381,8 +381,10 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     ShowInternetError();
                 }
-                else if (ex is InvalidResponseException)
+                else if (ex is InvalidResponseException iex)
                 {
+                    Log.Error("Invalid response from server! Context: {Message}\n{Document}", ex.Message, iex.Document);
+
                     msgbox.WithText(Loc.Localize("LoginGenericServerIssue",
                         "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."));
                 }
