@@ -1,4 +1,5 @@
 using ImGuiNET;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Core.Components.SettingsPage;
 
@@ -71,12 +72,13 @@ public class SettingsEntry<T> : SettingsEntry
 
             var idx = (int)(this.InternalValue ?? 0);
             var values = Enum.GetValues(type);
+            var descriptions = values.Cast<Enum>().Select(x => x.GetAttribute<SettingsDescriptionAttribute>() ?? new SettingsDescriptionAttribute(x.ToString(), string.Empty)).ToArray();
 
-            if (ImGui.BeginCombo($"###{Id.ToString()}", values.GetValue(idx)!.ToString()))
+            if (ImGui.BeginCombo($"###{Id.ToString()}", descriptions[idx].FriendlyName))
             {
-                foreach (object value in values)
+                foreach (int value in values)
                 {
-                    if (ImGui.Selectable(value.ToString(), idx == (int)value))
+                    if (ImGui.Selectable(descriptions[value].FriendlyName, idx == value))
                     {
                         this.InternalValue = value;
                     }

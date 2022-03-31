@@ -17,6 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="CheapLoc" Version="1.1.6" />
       <PackageReference Include="Config.Net" Version="4.19.0" />
       <PackageReference Include="ImGui.NET" Version="1.87.2" />
       <PackageReference Include="KeySharp" Version="1.0.0" />

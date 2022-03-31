@@ -1,9 +1,11 @@
 using System.Numerics;
 using ImGuiNET;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Core.Components;
 using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Components.MainPage;
 using XIVLauncher.Core.Components.SettingsPage;
+using XIVLauncher.Core.Configuration;
 
 namespace XIVLauncher.Core;
 
@@ -74,6 +76,9 @@ public class LauncherApp : Component
         _ => throw new ArgumentOutOfRangeException(nameof(this.state), this.state, null)
     };
 
+    public ILauncherConfig Settings => Program.Config;
+    public Launcher Launcher => Program.Launcher;
+
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
     private readonly OtpEntryPage otpEntryPage;
@@ -95,7 +100,7 @@ public class LauncherApp : Component
 #endif
     }
 
-    public void OpenModal(string text, string title)
+    public void ShowMessage(string text, string title)
     {
         if (this.isModalDrawing)
             throw new InvalidOperationException("Cannot open modal while another modal is open");
@@ -106,26 +111,31 @@ public class LauncherApp : Component
         this.modalOnNextFrame = true;
     }
 
-    public void OpenModalBlocking(string text, string title)
+    public void ShowMessageBlocking(string text, string title)
     {
         if (!this.modalWaitHandle.WaitOne(0) && this.isModalDrawing)
             throw new InvalidOperationException("Cannot open modal while another modal is open");
 
         this.modalWaitHandle.Reset();
-        this.OpenModal(text, title);
+        this.ShowMessage(text, title);
         this.modalWaitHandle.WaitOne();
+    }
+
+    public void ShowExceptionBlocking(Exception exception, string context)
+    {
+        this.ShowMessageBlocking($"An error occurred ({context}).\n\n{exception}", "XIVLauncher Error");
     }
 
     public bool HandleContinationBlocking(Task task)
     {
         if (task.IsFaulted)
         {
-            this.OpenModalBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
+            this.ShowMessageBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
             return false;
         }
         else if (task.IsCanceled)
         {
-            this.OpenModalBlocking("Task was canceled.", "Error");
+            this.ShowMessageBlocking("Task was canceled.", "Error");
             return false;
         }
 

@@ -146,12 +146,11 @@ namespace XIVLauncher.Common.Dalamud
 
             var addonPath = new DirectoryInfo(Path.Combine(this.addonDirectory.FullName, "Hooks"));
             var currentVersionPath = new DirectoryInfo(Path.Combine(addonPath.FullName, remoteVersionInfo.AssemblyVersion));
-            var runtimePath = new DirectoryInfo(Path.Combine(this.runtimeDirectory.FullName, "runtime"));
             var runtimePaths = new DirectoryInfo[]
             {
-                new(Path.Combine(runtimePath.FullName, "host", "fxr", remoteVersionInfo.RuntimeVersion)),
-                new(Path.Combine(runtimePath.FullName, "shared", "Microsoft.NETCore.App", remoteVersionInfo.RuntimeVersion)),
-                new(Path.Combine(runtimePath.FullName, "shared", "Microsoft.WindowsDesktop.App", remoteVersionInfo.RuntimeVersion)),
+                new(Path.Combine(this.runtimeDirectory.FullName, "host", "fxr", remoteVersionInfo.RuntimeVersion)),
+                new(Path.Combine(this.runtimeDirectory.FullName, "shared", "Microsoft.NETCore.App", remoteVersionInfo.RuntimeVersion)),
+                new(Path.Combine(this.runtimeDirectory.FullName, "shared", "Microsoft.WindowsDesktop.App", remoteVersionInfo.RuntimeVersion)),
             };
 
             if (!currentVersionPath.Exists || !IsIntegrity(currentVersionPath))
@@ -181,7 +180,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 Log.Information("[DUPDATE] Now starting for .NET Runtime {0}", remoteVersionInfo.RuntimeVersion);
 
-                var versionFile = new FileInfo(Path.Combine(runtimePath.FullName, "version"));
+                var versionFile = new FileInfo(Path.Combine(this.runtimeDirectory.FullName, "version"));
                 var localVersion = "5.0.6"; // This is the version we first shipped. We didn't write out a version file, so we can't check it.
                 if (versionFile.Exists)
                     localVersion = File.ReadAllText(versionFile.FullName);
@@ -194,7 +193,7 @@ namespace XIVLauncher.Common.Dalamud
 
                     try
                     {
-                        await DownloadRuntime(runtimePath, remoteVersionInfo.RuntimeVersion);
+                        await DownloadRuntime(this.runtimeDirectory, remoteVersionInfo.RuntimeVersion);
                         File.WriteAllText(versionFile.FullName, remoteVersionInfo.RuntimeVersion);
                     }
                     catch (Exception ex)

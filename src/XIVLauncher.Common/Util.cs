@@ -288,5 +288,20 @@ namespace XIVLauncher.Common
 
             return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
         }
+
+        /// <summary>
+        /// Gets an attribute on an enum.
+        /// </summary>
+        /// <typeparam name="TAttribute">The type of attribute to get.</typeparam>
+        /// <param name="value">The enum value that has an attached attribute.</param>
+        /// <returns>The attached attribute, if any.</returns>
+        public static TAttribute? GetAttribute<TAttribute>(this Enum value)
+            where TAttribute : Attribute
+        {
+            var type = value.GetType();
+            var memInfo = type.GetMember(value.ToString());
+            var attributes = memInfo[0].GetCustomAttributes(typeof(TAttribute), false);
+            return (attributes.Length > 0) ? (TAttribute)attributes[0] : null;
+        }
     }
 }

@@ -9,6 +9,7 @@ public class SettingsPage : Page
     private readonly SettingsTab[] tabs =
     {
         new SettingsTabGame(),
+        new SettingsTabPatching(),
         new SettingsTabWine(),
         new SettingsTabDalamud(),
         new SettingsTabAbout(),

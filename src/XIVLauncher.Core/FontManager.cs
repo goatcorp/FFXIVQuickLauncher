@@ -31,7 +31,9 @@ public class FontManager
 
         var japaneseRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
 
-        TextFont = ioFonts.AddFontFromMemoryTTF(fontDataTextPtr, fontDataText.Length, 17.0f, null, japaneseRangeHandle.AddrOfPinnedObject());
+        const float FONT_SIZE = 20.0f;
+
+        TextFont = ioFonts.AddFontFromMemoryTTF(fontDataTextPtr, fontDataText.Length, FONT_SIZE, null, japaneseRangeHandle.AddrOfPinnedObject());
 
         var iconRangeHandle = GCHandle.Alloc(
             new ushort[]
@@ -42,7 +44,7 @@ public class FontManager
             },
             GCHandleType.Pinned);
 
-        IconFont = ioFonts.AddFontFromMemoryTTF(fontDataIconsPtr, fontDataIcons.Length, 17.0f, fontConfig, iconRangeHandle.AddrOfPinnedObject());
+        IconFont = ioFonts.AddFontFromMemoryTTF(fontDataIconsPtr, fontDataIcons.Length, FONT_SIZE, fontConfig, iconRangeHandle.AddrOfPinnedObject());
 
         ioFonts.Build();
 

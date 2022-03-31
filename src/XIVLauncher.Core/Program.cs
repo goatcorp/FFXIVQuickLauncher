@@ -9,6 +9,7 @@ using Veldrid.StartupUtilities;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Core.Components.LoadingPage;
@@ -73,6 +74,9 @@ namespace XIVLauncher.Core
             Config.GamePath ??= storage.GetFolder("ffxiv");
             Config.ClientLanguage ??= ClientLanguage.English;
             Config.DpiAwareness ??= DpiAwareness.Unaware;
+
+            Config.PatchPath ??= storage.GetFolder("patch");
+            Config.PatchAcquisitionMethod ??= AcquisitionMethod.Aria;
 
             Config.DalamudLoadMethod = !OperatingSystem.IsWindows() ? DalamudLoadMethod.DllInject : DalamudLoadMethod.EntryPoint;
 
