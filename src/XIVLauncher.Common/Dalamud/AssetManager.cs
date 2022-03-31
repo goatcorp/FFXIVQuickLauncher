@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Cache;
 using Newtonsoft.Json;
 using Serilog;
 using System.Security.Cryptography;
@@ -28,6 +29,8 @@ namespace XIVLauncher.Common.Dalamud
         public static bool TryEnsureAssets(DirectoryInfo baseDir, out DirectoryInfo assetsDir)
         {
             using var client = new WebClient();
+            client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
             using var sha1 = SHA1.Create();
 
             Log.Verbose("[DASSET] Starting asset download");
@@ -85,7 +88,7 @@ namespace XIVLauncher.Common.Dalamud
 
                     try
                     {
-                        File.WriteAllBytes(filePath, client.DownloadData(entry.Url));
+                        File.WriteAllBytes(filePath, client.DownloadData(entry.Url + "?t=" + DateTime.Now.Ticks));
 
                         try
                         {

@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -109,6 +110,11 @@ namespace XIVLauncher.Common.Dalamud
             using var client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(5),
+            };
+
+            client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
             };
 
             var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "release");
@@ -363,6 +369,11 @@ namespace XIVLauncher.Common.Dalamud
             using var client = new HttpClient
             {
                 Timeout = TimeSpan.FromMinutes(25),
+            };
+
+            client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
             };
 
             var bytes = await client.GetByteArrayAsync(version.DownloadUrl).ConfigureAwait(true);
