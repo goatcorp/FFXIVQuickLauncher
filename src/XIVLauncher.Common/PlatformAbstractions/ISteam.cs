@@ -7,7 +7,8 @@ public interface ISteam
 {
     void Initialize(uint appId);
     bool IsValid { get; }
-    bool BLoggedOn();
+    bool BLoggedOn { get; }
+    bool BOverlayNeedsPresent { get; }
     void Shutdown();
     Task<byte[]?> GetAuthSessionTicketAsync();
     bool IsAppInstalled(uint appId);

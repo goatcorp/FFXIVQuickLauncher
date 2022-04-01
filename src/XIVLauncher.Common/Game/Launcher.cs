@@ -120,7 +120,7 @@ public class Launcher
                     throw new SteamException("Steam did not initialize successfully. Please restart Steam and try again.");
                 }
 
-                if (!this.steam.BLoggedOn())
+                if (!this.steam.BLoggedOn)
                 {
                     throw new SteamException("Not logged into Steam, or Steam is running in offline mode. Please log in and try again.");
                 }

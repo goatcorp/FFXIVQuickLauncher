@@ -43,6 +43,14 @@ namespace XIVLauncher.Core
 
         private const string APP_NAME = "xlcore";
 
+        private static uint invalidationFrames = 0;
+        private static Vector2 lastMousePosition;
+
+        private static void Invalidate(uint frames = 100)
+        {
+            invalidationFrames += frames;
+        }
+
         private static void SetupLogging()
         {
             Log.Logger = new LoggerConfiguration()
@@ -138,6 +146,8 @@ namespace XIVLauncher.Core
 
             launcherApp = new LauncherApp(storage);
 
+            Invalidate(20);
+
             // Main application loop
             while (window.Exists)
             {
@@ -145,6 +155,23 @@ namespace XIVLauncher.Core
 
                 if (!window.Exists)
                     break;
+
+                if (!snapshot.KeyEvents.Any() && !snapshot.MouseEvents.Any() && !snapshot.KeyCharPresses.Any() && invalidationFrames == 0 && lastMousePosition == snapshot.MousePosition
+                    && !Steam.BOverlayNeedsPresent)
+                {
+                    continue;
+                }
+                else if (invalidationFrames == 0)
+                {
+                    invalidationFrames = 10;
+                }
+
+                if (invalidationFrames > 0)
+                {
+                    invalidationFrames--;
+                }
+
+                lastMousePosition = snapshot.MousePosition;
 
                 bindings.Update(1f / 60f, snapshot);
 
