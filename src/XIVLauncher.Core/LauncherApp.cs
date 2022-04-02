@@ -1,11 +1,13 @@
 using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Core.Accounts;
 using XIVLauncher.Core.Components;
 using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Components.MainPage;
 using XIVLauncher.Core.Components.SettingsPage;
 using XIVLauncher.Core.Configuration;
+using XIVLauncher.PlatformAbstractions;
 
 namespace XIVLauncher.Core;
 
@@ -78,6 +80,8 @@ public class LauncherApp : Component
 
     public ILauncherConfig Settings => Program.Config;
     public Launcher Launcher => Program.Launcher;
+    public AccountManager Accounts = new();
+    public CommonUniqueIdCache UniqueIdCache;
 
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
@@ -89,6 +93,8 @@ public class LauncherApp : Component
     public LauncherApp(Storage storage)
     {
         this.storage = storage;
+
+        this.UniqueIdCache = new CommonUniqueIdCache(this.storage.GetFile("uidCache.json"));
 
         this.mainPage = new MainPage(this);
         this.setPage = new SettingsPage(this);

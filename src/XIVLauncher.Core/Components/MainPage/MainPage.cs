@@ -11,6 +11,7 @@ using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
+using XIVLauncher.Core.Accounts;
 using XIVLauncher.Core.Runners;
 
 namespace XIVLauncher.Core.Components.MainPage;
@@ -114,6 +115,8 @@ public class MainPage : Page
         if (otp == null)
             return;
 
+        PersistAccount(username, password, isOtp, isSteam);
+
         var loginResult = await App.Launcher.Login(username, password, otp, isSteam, true, App.Settings.GamePath, false, false).ConfigureAwait(true);
 
         if (loginResult.State != Launcher.LoginState.Ok)
@@ -139,6 +142,30 @@ public class MainPage : Page
         App.Launcher.LaunchGame(runner, loginResult.UniqueId, loginResult.OauthLogin.Region, loginResult.OauthLogin.MaxExpansion, this.loginFrame.IsSteam, App.Settings.AdditionalArgs,
             App.Settings.GamePath,
             true, App.Settings.ClientLanguage ?? ClientLanguage.English, true, App.Settings.DpiAwareness ?? DpiAwareness.Unaware);
+    }
+
+    private void PersistAccount(string username, string password, bool isOtp, bool isSteam)
+    {
+        if (App.Accounts.CurrentAccount != null && App.Accounts.CurrentAccount.UserName.Equals(username) &&
+            App.Accounts.CurrentAccount.Password != password &&
+            App.Accounts.CurrentAccount.SavePassword)
+            App.Accounts.UpdatePassword(App.Accounts.CurrentAccount, password);
+
+        if (App.Accounts.CurrentAccount == null ||
+            App.Accounts.CurrentAccount.Id != $"{username}-{isOtp}-{isSteam}")
+        {
+            var accountToSave = new XivAccount(username)
+            {
+                Password = password,
+                SavePassword = true,
+                UseOtp = isOtp,
+                UseSteamServiceAccount = isSteam
+            };
+
+            App.Accounts.AddAccount(accountToSave);
+
+            App.Accounts.CurrentAccount = accountToSave;
+        }
     }
 
     private async Task<bool> HandleBootCheck()
@@ -276,13 +303,7 @@ public class MainPage : Page
         }
         finally
         {
-            /*
-            progressDialog.Dispatcher.Invoke(() =>
-            {
-                progressDialog.Hide();
-                progressDialog.Close();
-            });
-            */
+            App.State = LauncherApp.LauncherState.Main;
         }
 
         return false;

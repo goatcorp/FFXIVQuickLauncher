@@ -67,8 +67,8 @@ namespace XIVLauncher.Windows.ViewModel
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
             Launcher = App.GlobalSteamTicket == null ?
-                new(App.Steam, CommonUniqueIdCache.Instance, CommonSettings.Instance) :
-                new(App.GlobalSteamTicket, CommonUniqueIdCache.Instance, CommonSettings.Instance);
+                new(App.Steam, App.UniqueIdCache, CommonSettings.Instance) :
+                new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance);
         }
 
         private Action<object> GetLoginFunc(AfterLoginAction action)
@@ -207,7 +207,7 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
-            var hasValidCache = CommonUniqueIdCache.Instance.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
+            var hasValidCache = App.UniqueIdCache.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
 
             var otp = string.Empty;
             var signal = new ManualResetEvent(false);

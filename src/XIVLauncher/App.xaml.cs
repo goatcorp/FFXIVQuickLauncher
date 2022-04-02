@@ -33,6 +33,7 @@ namespace XIVLauncher
 
         public static ILauncherSettingsV3 Settings;
         public static ISteam Steam;
+        public static CommonUniqueIdCache UniqueIdCache;
 
 #if !XL_NOAUTOUPDATE
         private UpdateLoadingDialog _updateWindow;
@@ -207,6 +208,8 @@ namespace XIVLauncher
             {
                 Settings.AcceptLanguage = Util.GenerateAcceptLanguage();
             }
+
+            UniqueIdCache = new CommonUniqueIdCache(new FileInfo(Path.Combine(Paths.RoamingPath, "uidCache.json")));
         }
 
         private void OnUpdateCheckFinished(bool finishUp)
@@ -231,7 +234,7 @@ namespace XIVLauncher
                     DalamudUpdater = new DalamudUpdater(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon")),
                         new DirectoryInfo(Path.Combine(Paths.RoamingPath, "runtime")),
                         new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets")),
-                        CommonUniqueIdCache.Instance);
+                        UniqueIdCache);
 
                     var dalamudWindowThread = new Thread(DalamudOverlayThreadStart);
                     dalamudWindowThread.SetApartmentState(ApartmentState.STA);

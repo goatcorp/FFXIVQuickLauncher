@@ -10,22 +10,11 @@ namespace XIVLauncher.PlatformAbstractions
 {
     public class CommonUniqueIdCache : IUniqueIdCache
     {
-        private static CommonUniqueIdCache instance;
-
-        public static CommonUniqueIdCache Instance
-        {
-            get
-            {
-                instance ??= new CommonUniqueIdCache();
-                return instance;
-            }
-        }
-
         private const int DAYS_TO_TIMEOUT = 1;
 
         private List<UniqueIdCacheEntry> _cache;
 
-        public CommonUniqueIdCache()
+        public CommonUniqueIdCache(FileInfo saveFile)
         {
             Load();
         }
@@ -70,16 +59,16 @@ namespace XIVLauncher.PlatformAbstractions
 
         public void Add(string userName, string uid, int region, int expansionLevel)
         {
-             _cache.Add(new UniqueIdCacheEntry
-             {
-                 CreationDate = DateTime.Now,
-                 UserName = userName,
-                 UniqueId = uid,
-                 Region = region,
-                 ExpansionLevel = expansionLevel
-             });
+            _cache.Add(new UniqueIdCacheEntry
+            {
+                CreationDate = DateTime.Now,
+                UserName = userName,
+                UniqueId = uid,
+                Region = region,
+                ExpansionLevel = expansionLevel
+            });
 
-             Save();
+            Save();
         }
 
         public bool TryGet(string userName, out IUniqueIdCache.CachedUid cached)

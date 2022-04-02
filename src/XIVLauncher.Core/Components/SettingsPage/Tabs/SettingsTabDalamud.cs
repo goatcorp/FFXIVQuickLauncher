@@ -4,8 +4,7 @@ namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
 public class SettingsTabDalamud : SettingsTab
 {
-    public override SettingsEntry[] Entries { get; } = new[]
-    {
+    public override SettingsEntry[] Entries { get; } = {
         new SettingsEntry<DalamudLoadMethod>("Load Method", "Choose how Dalamud is loaded.", () => Program.Config.DalamudLoadMethod ?? DalamudLoadMethod.DllInject, method => Program.Config.DalamudLoadMethod = method)
         {
             CheckValidity = x =>
@@ -16,6 +15,8 @@ public class SettingsTabDalamud : SettingsTab
                 return null;
             },
         },
+
+        new NumericSettingsEntry("Injection Delay", "Choose how long to wait after the game has loaded before injecting.", () => Program.Config.DalamudLoadDelay, delay => Program.Config.DalamudLoadDelay = delay, 0, int.MaxValue, 1000),
     };
 
     public override string Title => "Dalamud";

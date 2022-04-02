@@ -46,5 +46,7 @@ public interface ILauncherConfig
 
     public DalamudLoadMethod? DalamudLoadMethod { get; set; }
 
+    public int DalamudLoadDelay { get; set; }
+
     #endregion
 }

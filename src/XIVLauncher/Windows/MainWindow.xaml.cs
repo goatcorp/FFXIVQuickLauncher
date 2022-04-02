@@ -17,7 +17,6 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch.Acquisition;
-using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 using Timer = System.Timers.Timer;
@@ -266,7 +265,7 @@ namespace XIVLauncher.Windows
 
             if (App.Settings.UniqueIdCacheEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
             {
-                CommonUniqueIdCache.Instance.Reset();
+                App.UniqueIdCache.Reset();
                 Console.Beep(523, 150); // Feedback without popup
             }
 
@@ -401,7 +400,7 @@ namespace XIVLauncher.Windows
         private void SetupMaintenanceQueueTimer()
         {
             // This is a good indicator that we should clear the UID cache
-            CommonUniqueIdCache.Instance.Reset();
+            App.UniqueIdCache.Reset();
 
             _maintenanceQueueTimer = new Timer
             {
