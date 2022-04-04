@@ -15,6 +15,8 @@ namespace XIVLauncher.Game
 {
     static class ProblemCheck
     {
+        private static string GetCmdPath() => Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), "System32", "cmd.exe");
+
         public static void RunCheck(Window parentWindow)
         {
             var runningAsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
@@ -28,6 +30,7 @@ namespace XIVLauncher.Game
                 var compatEntries = compatFlagKey.GetValueNames();
 
                 var entriesToFix = new Stack<string>();
+
                 foreach (var compatEntry in compatEntries)
                 {
                     if ((compatEntry.Contains("ffxiv_dx11") || compatEntry.Contains("XIVLauncher")) && ((string) compatFlagKey.GetValue(compatEntry, string.Empty)).Contains("RUNASADMIN"))
@@ -73,30 +76,42 @@ namespace XIVLauncher.Game
             if (App.Settings.GamePath == null)
                 return;
 
-            var d3d11 = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "d3d11.dll"));
-            var dxgi = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "dxgi.dll"));
-            var dinput8 = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "dinput8.dll"));
+            var gameFolderPath = Path.Combine(App.Settings.GamePath.FullName, "game");
 
-            if (!CheckSymlinkValid(d3d11) || !CheckSymlinkValid(dxgi))
+            var d3d11 = new FileInfo(Path.Combine(gameFolderPath, "d3d11.dll"));
+            var dxgi = new FileInfo(Path.Combine(gameFolderPath, "dxgi.dll"));
+            var dinput8 = new FileInfo(Path.Combine(gameFolderPath, "dinput8.dll"));
+
+            if (!CheckSymlinkValid(d3d11) || !CheckSymlinkValid(dxgi) || !CheckSymlinkValid(dinput8))
             {
                 if (CustomMessageBox.Builder
-                        .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
-                        .WithButtons(MessageBoxButton.YesNo)
-                        .WithImage(MessageBoxImage.Error)
-                        .WithParentWindow(parentWindow)
-                        .Show() == MessageBoxResult.Yes)
+                                    .NewFrom(Loc.Localize("GShadeSymlinks", "GShade symbolic links are corrupted.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
+                                    .WithButtons(MessageBoxButton.YesNo)
+                                    .WithImage(MessageBoxImage.Error)
+                                    .WithParentWindow(parentWindow)
+                                    .Show() == MessageBoxResult.Yes)
                 {
                     try
                     {
-                        d3d11.Delete();
-                        dxgi.Delete();
+                        if (d3d11.Exists)
+                            ElevatedDelete(d3d11);
+
+                        if (dxgi.Exists)
+                            ElevatedDelete(dxgi);
+
+                        if (dinput8.Exists)
+                            ElevatedDelete(dinput8);
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Could not delete broken GShade.");
+                        Log.Error(ex, "Could not delete broken GShade symlinks");
                     }
                 }
             }
+
+            d3d11.Refresh();
+            dinput8.Refresh();
+            dxgi.Refresh();
 
             if (d3d11.Exists && dxgi.Exists)
             {
@@ -115,7 +130,7 @@ namespace XIVLauncher.Game
                     {
                         try
                         {
-                            dxgi.Delete();
+                            ElevatedDelete(d3d11, dxgi);
                         }
                         catch (Exception ex)
                         {
@@ -124,6 +139,10 @@ namespace XIVLauncher.Game
                     }
                 }
             }
+
+            d3d11.Refresh();
+            dinput8.Refresh();
+            dxgi.Refresh();
 
             if ((d3d11.Exists || dinput8.Exists) && !App.Settings.HasComplainedAboutGShade.GetValueOrDefault(false))
             {
@@ -153,9 +172,9 @@ namespace XIVLauncher.Game
                             var psi = new ProcessStartInfo
                             {
                                 Verb = "runas",
-                                FileName = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), "System32", "cmd.exe"),
+                                FileName = GetCmdPath(),
                                 WorkingDirectory = Paths.ResourcesPath,
-                                Arguments = $"/C \"move \"{Path.Combine(App.Settings.GamePath.FullName, "game", toMove.Name)}\" \"{Path.Combine(App.Settings.GamePath.FullName, "game", "dxgi.dll")}\"\"",
+                                Arguments = $"/C \"move \"{Path.Combine(gameFolderPath, toMove.Name)}\" \"{Path.Combine(gameFolderPath, "dxgi.dll")}\"\"",
                                 UseShellExecute = true,
                                 CreateNoWindow = true,
                                 WindowStyle = ProcessWindowStyle.Hidden
@@ -183,12 +202,37 @@ namespace XIVLauncher.Game
             }
         }
 
+        private static void ElevatedDelete(params FileInfo[] info)
+        {
+            var pathsToDelete = info.Select(x => $"\"{x.FullName}\"").Aggregate("", (current, name) => current + $"{name} ");
+
+            var psi = new ProcessStartInfo
+            {
+                Verb = "runas",
+                FileName = GetCmdPath(),
+                Arguments = $"/C \"del {pathsToDelete}\"",
+                UseShellExecute = true,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+
+            var process = Process.Start(psi);
+
+            if (process == null)
+            {
+                throw new Exception("Could not spawn CMD for elevated delete");
+            }
+
+            process.WaitForExit();
+        }
+
         private static bool CheckMyGamesWriteAccess()
         {
             // Create a randomly-named file in the game's user data folder and make sure we don't
             // get a permissions error.
             var myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var tempFile = Path.Combine(myDocuments, "my games", "FINAL FANTASY XIV - A Realm Reborn", Guid.NewGuid().ToString());
+
             try
             {
                 var file = File.Create(tempFile);
