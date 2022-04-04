@@ -150,7 +150,6 @@ namespace XIVLauncher.Game
                         {
                             var toMove = d3d11.Exists ? d3d11 : dinput8;
 
-                            // Start batch file and pass in game directory
                             var psi = new ProcessStartInfo
                             {
                                 Verb = "runas",

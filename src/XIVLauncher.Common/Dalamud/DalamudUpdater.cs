@@ -215,26 +215,7 @@ namespace XIVLauncher.Common.Dalamud
             try
             {
                 SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
-
-                if (!AssetManager.TryEnsureAssets(this.assetDirectory, out var assetsDir))
-                {
-                    Log.Information("[DUPDATE] Assets not ensured, bailing out...");
-                    State = DownloadState.Failed;
-
-                    // TODO(goat): We might want to try again here
-                    try
-                    {
-                        this.assetDirectory.Delete(true);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Tried to recover assets, didn't work");
-                    }
-
-                    return;
-                }
-
-                AssetDirectory = assetsDir;
+                AssetDirectory = await AssetManager.EnsureAssets(assetDirectory).ConfigureAwait(true);
             }
             catch (Exception ex)
             {
