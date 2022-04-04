@@ -29,8 +29,8 @@ namespace XIVLauncher.Settings
         long SpeedLimitBytes { get; set; }
         decimal DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
-        bool? OptOutMbCollection { get; set; }
         bool? HasComplainedAboutAdmin { get; set; }
+        bool? HasComplainedAboutGShade { get; set; }
         string LastVersion { get; set; }
         AcquisitionMethod? PatchAcquisitionMethod { get; set; }
         bool? HasShownAutoLaunchDisclaimer { get; set; }

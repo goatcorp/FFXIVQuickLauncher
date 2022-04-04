@@ -75,6 +75,7 @@ namespace XIVLauncher.Game
 
             var d3d11 = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "d3d11.dll"));
             var dxgi = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "dxgi.dll"));
+            var dinput8 = new FileInfo(Path.Combine(App.Settings.GamePath.FullName, "game", "dinput8.dll"));
 
             if (!CheckSymlinkValid(d3d11) || !CheckSymlinkValid(dxgi))
             {
@@ -101,15 +102,16 @@ namespace XIVLauncher.Game
             {
                 var dxgiInfo = FileVersionInfo.GetVersionInfo(dxgi.FullName);
                 var d3d11Info = FileVersionInfo.GetVersionInfo(d3d11.FullName);
+
                 if (dxgiInfo.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase) &&
                     d3d11Info.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase))
                 {
                     if (CustomMessageBox.Builder
-                            .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
-                            .WithButtons(MessageBoxButton.YesNo)
-                            .WithImage(MessageBoxImage.Error)
-                            .WithParentWindow(parentWindow)
-                            .Show() == MessageBoxResult.Yes)
+                                        .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
+                                        .WithButtons(MessageBoxButton.YesNo)
+                                        .WithImage(MessageBoxImage.Error)
+                                        .WithParentWindow(parentWindow)
+                                        .Show() == MessageBoxResult.Yes)
                     {
                         try
                         {
@@ -117,8 +119,66 @@ namespace XIVLauncher.Game
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, "Could not delete duplicate GShade.");
+                            Log.Error(ex, "Could not delete duplicate GShade");
                         }
+                    }
+                }
+            }
+
+            if ((d3d11.Exists || dinput8.Exists) && !App.Settings.HasComplainedAboutGShade.GetValueOrDefault(false))
+            {
+                FileVersionInfo? d3d11Info = null;
+                FileVersionInfo? dinput8Info = null;
+
+                if (d3d11.Exists)
+                    d3d11Info = FileVersionInfo.GetVersionInfo(d3d11.FullName);
+
+                if (dinput8.Exists)
+                    dinput8Info = FileVersionInfo.GetVersionInfo(dinput8.FullName);
+
+                if ((d3d11Info?.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (dinput8Info?.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase) ?? false))
+                {
+                    if (CustomMessageBox.Builder
+                                        .NewFrom(Loc.Localize("GShadeWrongMode", "You installed GShade in a mode that isn't optimal for use together with XIVLauncher. Do you want XIVLauncher to fix this for you?\n\nThis will not change your presets or settings, it will merely improve compatibility with XIVLauncher features."))
+                                        .WithButtons(MessageBoxButton.YesNo)
+                                        .WithImage(MessageBoxImage.Warning)
+                                        .WithParentWindow(parentWindow)
+                                        .Show() == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            var toMove = d3d11.Exists ? d3d11 : dinput8;
+
+                            // Start batch file and pass in game directory
+                            var psi = new ProcessStartInfo
+                            {
+                                Verb = "runas",
+                                FileName = Path.Combine(Environment.ExpandEnvironmentVariables("%WINDIR%"), "System32", "cmd.exe"),
+                                WorkingDirectory = Paths.ResourcesPath,
+                                Arguments = $"/C \"move \"{Path.Combine(App.Settings.GamePath.FullName, "game", toMove.Name)}\" \"{Path.Combine(App.Settings.GamePath.FullName, "game", "dxgi.dll")}\"\"",
+                                UseShellExecute = true,
+                                CreateNoWindow = true,
+                                WindowStyle = ProcessWindowStyle.Hidden
+                            };
+
+                            var process = Process.Start(psi);
+
+                            if (process == null)
+                            {
+                                throw new Exception("Could not spawn CMD when fixing GShade");
+                            }
+
+                            process.WaitForExit();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Could not fix GShade incompatibility");
+                        }
+                    }
+                    else
+                    {
+                        App.Settings.HasComplainedAboutGShade = true;
                     }
                 }
             }
