@@ -36,6 +36,8 @@ public interface ILauncherConfig
 
     public bool? IsFt { get; set; }
 
+    public bool? IsOtpServer { get; set; }
+
     #region Patching
 
     public DirectoryInfo? PatchPath { get; set; }

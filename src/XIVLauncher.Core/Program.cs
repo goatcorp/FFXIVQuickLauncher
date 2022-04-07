@@ -88,6 +88,7 @@ namespace XIVLauncher.Core
             Config.IsDx11 ??= true;
             Config.IsEncryptArgs ??= true;
             Config.IsFt ??= false;
+            Config.IsOtpServer ??= false;
 
             Config.PatchPath ??= storage.GetFolder("patch");
             Config.PatchAcquisitionMethod ??= AcquisitionMethod.Aria;
