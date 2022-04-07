@@ -102,7 +102,7 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
-        public async Task PatchAsync()
+        public async Task PatchAsync(bool external = true)
         {
             if (!EnvironmentSettings.IsIgnoreSpaceRequirements)
             {
@@ -130,7 +130,7 @@ namespace XIVLauncher.Common.Game.Patch
                 }
             }
 
-            this.installer.StartIfNeeded();
+            this.installer.StartIfNeeded(external);
             this.installer.WaitOnHello();
 
             await InitializeAcquisition().ConfigureAwait(false);

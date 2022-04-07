@@ -35,7 +35,7 @@ namespace XIVLauncher.Common.Game.Patch
             this.keepPatches = keepPatches;
         }
 
-        public void StartIfNeeded()
+        public void StartIfNeeded(bool external = true)
         {
             var rpcName = "XLPatcher" + Guid.NewGuid().ToString();
 

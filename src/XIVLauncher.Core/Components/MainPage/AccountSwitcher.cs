@@ -27,6 +27,11 @@ public class AccountSwitcher : Component
     {
         if (ImGui.BeginPopupContextItem(ACCOUNT_SWITCHER_POPUP_ID))
         {
+            if (this.manager.Accounts.Count == 0)
+            {
+                ImGui.Text("No saved accounts...");
+            }
+
             foreach (XivAccount account in this.manager.Accounts)
             {
                 if (ImGui.Button(account.Id))

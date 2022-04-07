@@ -57,7 +57,7 @@ public class LauncherApp : Component
                     break;
 
                 case LauncherState.Loading:
-                    this.loadingPage.OnShow();
+                    this.LoadingPage.OnShow();
                     break;
 
                 case LauncherState.OtpEntry:
@@ -74,7 +74,7 @@ public class LauncherApp : Component
     {
         LauncherState.Main => this.mainPage,
         LauncherState.Settings => this.setPage,
-        LauncherState.Loading => this.loadingPage,
+        LauncherState.Loading => this.LoadingPage,
         LauncherState.OtpEntry => this.otpEntryPage,
         _ => throw new ArgumentOutOfRangeException(nameof(this.state), this.state, null)
     };
@@ -82,13 +82,15 @@ public class LauncherApp : Component
     public ILauncherConfig Settings => Program.Config;
     public Launcher Launcher => Program.Launcher;
     public ISteam Steam => Program.Steam;
+
+    public LoadingPage LoadingPage { get; }
+
     public AccountManager Accounts;
     public CommonUniqueIdCache UniqueIdCache;
 
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
     private readonly OtpEntryPage otpEntryPage;
-    private readonly LoadingPage loadingPage;
 
     private readonly Background background = new();
 
@@ -102,7 +104,7 @@ public class LauncherApp : Component
         this.mainPage = new MainPage(this);
         this.setPage = new SettingsPage(this);
         this.otpEntryPage = new OtpEntryPage(this);
-        this.loadingPage = new LoadingPage(this);
+        this.LoadingPage = new LoadingPage(this);
 
 #if DEBUG
         IsDebug = true;
@@ -168,7 +170,7 @@ public class LauncherApp : Component
     public void StartLoading(string line1)
     {
         this.State = LauncherState.Loading;
-        this.loadingPage.Line1 = line1;
+        this.LoadingPage.Line1 = line1;
     }
 
     public void StopLoading()

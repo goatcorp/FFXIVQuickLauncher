@@ -826,9 +826,25 @@ public class MainPage : Page
         });
         */
 
+        App.LoadingPage.Line1 = $"Now patching {repository}...";
+        App.LoadingPage.CanCancel = false;
+        App.LoadingPage.IsIndeterminate = false;
+
         try
         {
-            await patcher.PatchAsync().ConfigureAwait(false);
+            var patchTask = patcher.PatchAsync(false);
+
+            while (!patchTask.IsCompleted)
+            {
+                Thread.Sleep(30);
+
+                App.LoadingPage.Line2 = string.Format("Working on {0}/{1}", patcher.CurrentInstallIndex, patcher.Downloads.Count);
+                App.LoadingPage.Line3 = string.Format("{0} left to download at {1}/s", Util.BytesToString(patcher.AllDownloadsLength < 0 ? 0 : patcher.AllDownloadsLength),
+                    Util.BytesToString(patcher.Speeds.Sum()));
+
+                App.LoadingPage.Progress = patcher.CurrentInstallIndex * 100.0f / patcher.Downloads.Count;
+            }
+
             return true;
         }
         catch (PatchInstallerException ex)
