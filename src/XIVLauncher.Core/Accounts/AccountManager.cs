@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Serilog;
-using XIVLauncher.Common;
 
 namespace XIVLauncher.Core.Accounts;
 
@@ -15,8 +14,9 @@ public class AccountManager
         set => Program.Config.CurrentAccountId = value?.Id;
     }
 
-    public AccountManager()
+    public AccountManager(FileInfo configFile)
     {
+        this.configFile = configFile;
         Load();
 
         Accounts.CollectionChanged += Accounts_CollectionChanged;
@@ -67,16 +67,16 @@ public class AccountManager
 
     #region SaveLoad
 
-    private static readonly string ConfigPath = Path.Combine(Paths.RoamingPath, "accountsList.json");
+    private readonly FileInfo configFile;
 
     public void Save()
     {
-        File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(Accounts, Formatting.Indented));
+        File.WriteAllText(this.configFile.FullName, JsonConvert.SerializeObject(Accounts, Formatting.Indented));
     }
 
     public void Load()
     {
-        if (!File.Exists(ConfigPath))
+        if (!this.configFile.Exists)
         {
             Accounts = new ObservableCollection<XivAccount>();
 
@@ -84,7 +84,7 @@ public class AccountManager
             return;
         }
 
-        Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(File.ReadAllText(ConfigPath));
+        Accounts = JsonConvert.DeserializeObject<ObservableCollection<XivAccount>>(File.ReadAllText(this.configFile.FullName));
 
         // If the file is corrupted, this will be null anyway
         Accounts ??= new ObservableCollection<XivAccount>();
