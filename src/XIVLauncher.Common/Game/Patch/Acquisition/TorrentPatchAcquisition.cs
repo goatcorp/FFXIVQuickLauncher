@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+
 using MonoTorrent.Client;
 using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;
@@ -21,7 +22,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
             {
                 torrentEngine = new ClientEngine();
 
-                var builder = new EngineSettingsBuilder(torrentEngine.Settings) {MaximumDownloadSpeed = (int)maxDownloadSpeed};
+                var builder = new EngineSettingsBuilder(torrentEngine.Settings) { MaximumDownloadSpeed = (int)maxDownloadSpeed };
 
                 await torrentEngine.UpdateSettingsAsync(builder.ToSettings());
             }

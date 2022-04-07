@@ -1,46 +1,78 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+
 using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
+    /// <summary>
+    /// Base chunk abstraction.
+    /// </summary>
     public abstract class ZiPatchChunk
     {
+        /// <summary>
+        /// The chunk type.
+        /// </summary>
         public static string Type { get; protected set; }
+
         // Hack: C# doesn't let you get static fields from instances.
-        public virtual string ChunkType => (string) GetType()
+        public virtual string ChunkType => (string)GetType()
             .GetField("Type", BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public)
             ?.GetValue(null);
 
+        /// <summary>
+        /// Gets the chunk offset.
+        /// </summary>
         public int Offset { get; protected set; }
+
+        /// <summary>
+        /// Gets the chunk size.
+        /// </summary>
         public int Size { get; protected set; }
+
+        /// <summary>
+        /// Gets the CRC32 from the chunk.
+        /// </summary>
         public uint Checksum { get; protected set; }
+
+        /// <summary>
+        /// Gets the calculated CRC32 from the chunk reader.
+        /// </summary>
         public uint CalculatedChecksum { get; protected set; }
 
-        protected readonly ChecksumBinaryReader Reader;
+        /// <summary>
+        /// Gets the binary reader.
+        /// </summary>
+        private protected ChecksumBinaryReader Reader { get; }
 
         private static readonly AsyncLocal<MemoryStream> localMemoryStream = new AsyncLocal<MemoryStream>();
-
 
         // Only FileHeader, ApplyOption, Sqpk, and EOF have been observed in XIVARR+ patches
         // AddDirectory and DeleteDirectory can theoretically happen, so they're implemented
         // ApplyFreeSpace doesn't seem to show up anymore, and EntryFile will just error out
         private static readonly Dictionary<string, Func<ChecksumBinaryReader, int, int, ZiPatchChunk>> ChunkTypes =
-            new Dictionary<string, Func<ChecksumBinaryReader, int, int, ZiPatchChunk>> {
-                { FileHeaderChunk.Type, (reader, offset, size) => new FileHeaderChunk(reader, offset, size) },
-                { ApplyOptionChunk.Type, (reader, offset, size) => new ApplyOptionChunk(reader, offset, size) },
-                { ApplyFreeSpaceChunk.Type, (reader, offset, size) => new ApplyFreeSpaceChunk(reader, offset, size) },
-                { AddDirectoryChunk.Type, (reader, offset, size) => new AddDirectoryChunk(reader, offset, size) },
+            new()
+            {
+                #pragma warning disable format // @formatter:off
+                { FileHeaderChunk.Type,      (reader, offset, size) => new FileHeaderChunk(reader, offset, size) },
+                { ApplyOptionChunk.Type,     (reader, offset, size) => new ApplyOptionChunk(reader, offset, size) },
+                { ApplyFreeSpaceChunk.Type,  (reader, offset, size) => new ApplyFreeSpaceChunk(reader, offset, size) },
+                { AddDirectoryChunk.Type,    (reader, offset, size) => new AddDirectoryChunk(reader, offset, size) },
                 { DeleteDirectoryChunk.Type, (reader, offset, size) => new DeleteDirectoryChunk(reader, offset, size) },
-                { SqpkChunk.Type, SqpkChunk.GetCommand },
-                { EndOfFileChunk.Type, (reader, offset, size) => new EndOfFileChunk(reader, offset, size) },
-                { XXXXChunk.Type, (reader, offset, size) => new XXXXChunk(reader, offset, size) }
-        };
+                { EndOfFileChunk.Type,       (reader, offset, size) => new EndOfFileChunk(reader, offset, size) },
+                { XXXXChunk.Type,            (reader, offset, size) => new XXXXChunk(reader, offset, size) },
+                { SqpkChunk.Type,            SqpkChunk.GetCommand },
+                #pragma warning restore format // @formatter:on
+            };
 
-
+        /// <summary>
+        /// Get the next available chunk.
+        /// </summary>
+        /// <param name="stream">Memory stream to read from.</param>
+        /// <returns>A chunk.</returns>
         public static ZiPatchChunk GetChunk(Stream stream)
         {
             localMemoryStream.Value = localMemoryStream.Value ?? new MemoryStream();
@@ -70,7 +102,6 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
                 if (!ChunkTypes.TryGetValue(type, out var constructor))
                     throw new ZiPatchException();
 
-
                 var chunk = constructor(binaryReader, baseOffset, size);
 
                 chunk.ReadChunk();
@@ -87,6 +118,12 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ZiPatchChunk"/> class.
+        /// </summary>
+        /// <param name="reader">Binary reader.</param>
+        /// <param name="offset">Byte offset.</param>
+        /// <param name="size">Chunk size.</param>
         protected ZiPatchChunk(ChecksumBinaryReader reader, int offset, int size)
         {
             this.Reader = reader;
@@ -95,19 +132,32 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             Size = size;
         }
 
+        /// <summary>
+        /// Read a chunk.
+        /// </summary>
         protected virtual void ReadChunk()
         {
             this.Reader.ReadBytes(Size);
         }
 
-        public virtual void ApplyChunk(ZiPatchConfig config) {}
+        /// <summary>
+        /// Apply a chunk.
+        /// </summary>
+        /// <param name="config">Configuration.</param>
+        public virtual void ApplyChunk(ZiPatchConfig config) { }
 
+        /// <summary>
+        /// Read the checksum and store it.
+        /// </summary>
         protected void ReadChecksum()
         {
             CalculatedChecksum = this.Reader.GetCrc32();
             Checksum = this.Reader.ReadUInt32BE();
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the checksums obtained from <see cref="ReadChecksum"/> are valid.
+        /// </summary>
         public bool IsChecksumValid => CalculatedChecksum == Checksum;
     }
 }

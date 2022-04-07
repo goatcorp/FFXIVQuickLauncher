@@ -1,36 +1,94 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 {
+    /// <summary>
+    /// An "F" (File) command chunk.
+    /// </summary>
     internal class SqpkFile : SqpkChunk
     {
-        public new static string Command = "F";
+        /// <summary>
+        /// Gets the command type.
+        /// </summary>
+        public static new string Command = "F";
 
+        /// <summary>
+        /// File operation types.
+        /// </summary>
         public enum OperationKind : byte
         {
+            /// <summary>
+            /// Add file.
+            /// </summary>
             AddFile = (byte)'A',
+
+            /// <summary>
+            /// Remove all.
+            /// </summary>
             RemoveAll = (byte)'R',
 
             // I've seen no cases in the wild of these two
+
+            /// <summary>
+            /// Delete file.
+            /// </summary>
             DeleteFile = (byte)'D',
-            MakeDirTree = (byte)'M'
+
+            /// <summary>
+            /// Make directory tree.
+            /// </summary>
+            MakeDirTree = (byte)'M',
         }
 
-        public OperationKind Operation { get; protected set; }
-        public long FileOffset { get; protected set; }
-        public ulong FileSize { get; protected set; }
-        public ushort ExpansionId { get; protected set; }
-        public SqexFile TargetFile { get; protected set; }
+        /// <summary>
+        /// Gets the operation kind.
+        /// </summary>
+        public OperationKind Operation { get; private protected set; }
 
-        public List<long> CompressedDataSourceOffsets { get; protected set; }
-        public List<SqpkCompressedBlock> CompressedData { get; protected set; }
+        /// <summary>
+        /// Gets the file offset.
+        /// </summary>
+        public long FileOffset { get; private protected set; }
 
-        public SqpkFile(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        /// <summary>
+        /// Gets the file size.
+        /// </summary>
+        public ulong FileSize { get; private protected set; }
 
+        /// <summary>
+        /// Gets the expansion ID.
+        /// </summary>
+        public ushort ExpansionId { get; private protected set; }
+
+        /// <summary>
+        /// Gets the target file.
+        /// </summary>
+        public SqexFile TargetFile { get; private protected set; }
+
+        /// <summary>
+        /// Gets the compressed data source offsets.
+        /// </summary>
+        public List<long> CompressedDataSourceOffsets { get; private protected set; }
+
+        /// <summary>
+        /// Gets the compressed data.
+        /// </summary>
+        public List<SqpkCompressedBlock> CompressedData { get; private protected set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqpkFile"/> class.
+        /// </summary>
+        /// <param name="reader">Binary reader.</param>
+        /// <param name="offset">Chunk offset.</param>
+        /// <param name="size">Chunk size.</param>
+        public SqpkFile(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) { }
+
+        /// <inheritdoc/>
         protected override void ReadChunk()
         {
             var start = this.Reader.BaseStream.Position;
@@ -67,6 +125,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         private static bool RemoveAllFilter(string filePath) =>
             !new[] { ".var", "00000.bk2", "00001.bk2", "00002.bk2", "00003.bk2" }.Any(filePath.EndsWith);
 
+        /// <inheritdoc/>
         public override void ApplyChunk(ZiPatchConfig config)
         {
             switch (Operation)
@@ -103,6 +162,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
             }
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"{Type}:{Command}:{Operation}:{FileOffset}:{FileSize}:{ExpansionId}:{TargetFile}";

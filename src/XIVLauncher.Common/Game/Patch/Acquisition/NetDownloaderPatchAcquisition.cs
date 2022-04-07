@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
+
 using Downloader;
 using Serilog;
 
@@ -45,7 +46,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
             {
                 OnProgressChanged(new AcquisitionProgress
                 {
-                    BytesPerSecondSpeed = (long) args.BytesPerSecondSpeed,
+                    BytesPerSecondSpeed = (long)args.BytesPerSecondSpeed,
                     Progress = args.ReceivedBytesSize
                 });
             };

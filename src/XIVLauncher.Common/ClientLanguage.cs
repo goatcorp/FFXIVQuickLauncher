@@ -1,15 +1,41 @@
-﻿namespace XIVLauncher.Common
+namespace XIVLauncher.Common
 {
+    /// <summary>
+    /// Game language types.
+    /// </summary>
     public enum ClientLanguage
     {
+        /// <summary>
+        /// Japanese.
+        /// </summary>
         Japanese,
+
+        /// <summary>
+        /// English.
+        /// </summary>
         English,
+
+        /// <summary>
+        /// German.
+        /// </summary>
         German,
-        French
+
+        /// <summary>
+        /// French.
+        /// </summary>
+        French,
     }
 
+    /// <summary>
+    /// Extension methods for the <see cref="ClientLanguage"/> enum.
+    /// </summary>
     public static class ClientLanguageExtensions
     {
+        /// <summary>
+        /// Gets the ISO 639-1 language code.
+        /// </summary>
+        /// <param name="language">Client language.</param>
+        /// <returns>An ISO 639-1 compliant language code.</returns>
         public static string GetLangCode(this ClientLanguage language)
         {
             switch (language)

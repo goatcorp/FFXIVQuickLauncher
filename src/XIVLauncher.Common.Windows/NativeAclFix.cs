@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
-using Microsoft.Win32.SafeHandles;
+using System.Runtime.InteropServices;
 using System.Threading;
+
+using Microsoft.Win32.SafeHandles;
 using Serilog;
 using XIVLauncher.Common.Game.Exceptions;
 
@@ -319,7 +320,7 @@ namespace XIVLauncher.Common.Game
 
                 var setProcessHandleMethod = baseType.GetMethod("SetProcessHandle",
                     BindingFlags.NonPublic | BindingFlags.Instance);
-                setProcessHandleMethod?.Invoke(this, new object[] {new SafeProcessHandle(handle, true)});
+                setProcessHandleMethod?.Invoke(this, new object[] { new SafeProcessHandle(handle, true) });
             }
         }
 

@@ -1,12 +1,12 @@
-﻿/**
+/**
  * This file is part of AriaNet by huming2207, licensed under the CC-BY-NC-SA 3.0 Australian Licence.
  * You can find the original code in this GitHub repository: https://github.com/huming2207/AriaNet
  */
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+
 using AriaNet.Attributes;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria.JsonRpc;
 
@@ -16,7 +16,7 @@ namespace AriaNet
     {
         private readonly JsonRpcHttpClient rpcClient;
         private readonly string secret;
-        
+
         public AriaManager(string secret, string rpcUrl = "http://localhost:6800/jsonrpc")
         {
             this.secret = secret;
@@ -57,7 +57,7 @@ namespace AriaNet
             var metaLinkBase64 = Convert.ToBase64String(File.ReadAllBytes(filePath));
             return await Invoke<string>("aria2.addMetalink", metaLinkBase64);
         }
-        
+
         public async Task<string> AddTorrent(string filePath)
         {
             var torrentBase64 = Convert.ToBase64String(File.ReadAllBytes(filePath));
@@ -92,7 +92,7 @@ namespace AriaNet
         {
             return (await Invoke<string>("aria2.pauseAll")).Contains("OK");
         }
-        
+
         public async Task<bool> UnpauseAllTasks()
         {
             return (await Invoke<string>("aria2.unpauseAll")).Contains("OK");
@@ -127,7 +127,7 @@ namespace AriaNet
         {
             return await Invoke<AriaServer>("aria2.getServers", gid);
         }
-        
+
         public async Task<AriaStatus> GetActiveStatus(string gid)
         {
             return await Invoke<AriaStatus>("aria2.tellActive", gid);
@@ -143,12 +143,12 @@ namespace AriaNet
             return (await Invoke<string>("aria2.changeOption", gid, option))
                 .Contains("OK");
         }
-        
+
         public async Task<AriaOption> GetGlobalOption()
         {
             return await Invoke<AriaOption>("aria2.getGlobalOption");
         }
-        
+
         public async Task<bool> ChangeGlobalOption(AriaOption option)
         {
             return (await Invoke<string>("aria2.changeGlobalOption", option))
@@ -164,7 +164,7 @@ namespace AriaNet
         {
             return (await Invoke<string>("aria2.purgeDownloadResult")).Contains("OK");
         }
-        
+
         public async Task<bool> RemoveDownloadResult(string gid)
         {
             return (await Invoke<string>("aria2.removeDownloadResult", gid))
@@ -175,7 +175,7 @@ namespace AriaNet
         {
             return await Invoke<AriaVersionInfo>("aria2.getVersion");
         }
-        
+
         public async Task<AriaSession> GetSessionInfo()
         {
             return await Invoke<AriaSession>("aria2.getSessionInfo");

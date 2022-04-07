@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using AriaNet;
 using Serilog;
 
@@ -76,7 +77,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 
         public static async Task UnInitializeAsync()
         {
-            if (ariaProcess is {HasExited: false})
+            if (ariaProcess is { HasExited: false })
             {
                 try
                 {
