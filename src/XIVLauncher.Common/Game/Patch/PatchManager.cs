@@ -130,6 +130,8 @@ namespace XIVLauncher.Common.Game.Patch
                 }
             }
 
+            throw new Exception("pooped");
+
             this.installer.StartIfNeeded(external);
             this.installer.WaitOnHello();
 

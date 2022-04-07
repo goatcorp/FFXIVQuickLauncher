@@ -53,8 +53,15 @@
     </ItemGroup>
     
     <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-        <Resource Remove="Resources/aria2c-xl.exe" />
-        <Content Include="Resources/aria2c-xl.exe">
+        <Resource Remove="Resources/binaries/aria2c-xl.exe" />
+        <Content Include="Resources/binaries/aria2c-xl.exe">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+        <Resource Remove="Resources/binaries/DalamudWineHelper.exe" />
+        <Content Include="Resources/binaries/DalamudWineHelper.exe">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

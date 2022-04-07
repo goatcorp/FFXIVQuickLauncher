@@ -149,7 +149,7 @@ public class MainPage : Page
 
         PersistAccount(username, password, isOtp, isSteam);
 
-        var loginResult = await App.Launcher.Login(username, password, otp, isSteam, true, App.Settings.GamePath, false, false).ConfigureAwait(true);
+        var loginResult = await TryLoginToGame(username, password, otp, isSteam, action).ConfigureAwait(false);
 
         var result = await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false);
         if (result)
@@ -843,6 +843,12 @@ public class MainPage : Page
                     Util.BytesToString(patcher.Speeds.Sum()));
 
                 App.LoadingPage.Progress = patcher.CurrentInstallIndex * 100.0f / patcher.Downloads.Count;
+            }
+
+            if (patchTask.Exception != null)
+            {
+                throw patchTask.Exception;
+                //return false;
             }
 
             return true;
