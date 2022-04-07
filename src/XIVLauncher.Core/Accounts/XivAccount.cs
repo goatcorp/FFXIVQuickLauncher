@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Serilog;
-using System.ComponentModel;
 using System.Net;
 using KeySharp;
 using Newtonsoft.Json.Linq;
@@ -33,7 +32,7 @@ namespace XIVLauncher.Core.Accounts
                 {
                     Keyring.DeletePassword(PACKAGE, SERVICE, UserName);
                 }
-                catch (Win32Exception)
+                catch (Exception)
                 {
                     // ignored
                 }
