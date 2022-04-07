@@ -141,6 +141,7 @@ namespace XIVLauncher.Core
             {
                 gd.MainSwapchain.Resize((uint)window.Width, (uint)window.Height);
                 bindings.WindowResized(window.Width, window.Height);
+                Invalidate();
             };
             cl = gd.ResourceFactory.CreateCommandList();
             Log.Debug("Veldrid OK!");
@@ -168,7 +169,8 @@ namespace XIVLauncher.Core
                 {
                     continue;
                 }
-                else if (invalidationFrames == 0)
+
+                if (invalidationFrames == 0)
                 {
                     invalidationFrames = 10;
                 }
