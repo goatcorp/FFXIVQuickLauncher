@@ -13,7 +13,7 @@ public class Checkbox : Component
 
     public bool Value
     {
-        get => inputBacking; 
+        get => inputBacking;
         set => inputBacking = value;
     }
 
@@ -50,6 +50,12 @@ public class Checkbox : Component
         ImGui.SameLine();
 
         ImGui.Text(Label);
+
+        if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+        {
+            this.inputBacking = !this.inputBacking;
+            this.OnChange?.Invoke(this.inputBacking);
+        }
 
         ImGui.PopStyleVar(2);
         ImGui.PopStyleColor(5);
