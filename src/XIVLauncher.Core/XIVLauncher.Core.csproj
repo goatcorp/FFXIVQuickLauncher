@@ -51,6 +51,13 @@
 
         <EmbeddedResource Include="Resources/bg1.jpg" LogicalName="bg1.jpg" />
     </ItemGroup>
+    
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+        <Resource Remove="Resources/aria2c-xl.exe" />
+        <Content Include="Resources/aria2c-xl.exe">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\XIVLauncher.Common.Windows\XIVLauncher.Common.Windows.csproj" />

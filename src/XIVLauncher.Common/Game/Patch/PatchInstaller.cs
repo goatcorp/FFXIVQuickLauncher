@@ -9,6 +9,7 @@ using Serilog;
 using SharedMemory;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PatcherIpc;
+using XIVLauncher.Common.Patching;
 
 namespace XIVLauncher.Common.Game.Patch
 {
@@ -16,6 +17,8 @@ namespace XIVLauncher.Common.Game.Patch
     {
         private readonly bool keepPatches;
         private RpcBuffer rpc;
+
+        private RemotePatchInstaller? internalPatchInstaller;
 
         public enum InstallerState
         {
@@ -43,28 +46,36 @@ namespace XIVLauncher.Common.Game.Patch
 
             this.rpc = new RpcBuffer(rpcName, RemoteCallHandler);
 
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                "XIVLauncher.PatchInstaller.exe");
-
-            var startInfo = new ProcessStartInfo(path);
-            startInfo.UseShellExecute = true;
-
-            //Start as admin if needed
-            if (!EnvironmentSettings.IsNoRunas && Environment.OSVersion.Version.Major >= 6)
-                startInfo.Verb = "runas";
-
-            startInfo.Arguments = $"rpc {rpcName}";
-
-            State = InstallerState.NotReady;
-
-            try
+            if (external)
             {
-                Process.Start(startInfo);
+                var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                    "XIVLauncher.PatchInstaller.exe");
+
+                var startInfo = new ProcessStartInfo(path);
+                startInfo.UseShellExecute = true;
+
+                //Start as admin if needed
+                if (!EnvironmentSettings.IsNoRunas && Environment.OSVersion.Version.Major >= 6)
+                    startInfo.Verb = "runas";
+
+                startInfo.Arguments = $"rpc {rpcName}";
+
+                State = InstallerState.NotReady;
+
+                try
+                {
+                    Process.Start(startInfo);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not launch Patch Installer");
+                    throw new PatchInstallerException("Start failed.", ex);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Log.Error(ex, "Could not launch Patch Installer");
-                throw new PatchInstallerException("Start failed.", ex);
+                this.internalPatchInstaller = new RemotePatchInstaller(rpcName);
+                this.internalPatchInstaller.Start();
             }
         }
 
@@ -156,13 +167,11 @@ namespace XIVLauncher.Common.Game.Patch
             try
             {
                 var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
-
-                Log.Information("[PATCHERIPC] SEND: " + json);
                 this.rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
             }
             catch (Exception e)
             {
-                Log.Error(e, "[PATCHERIPC] Failed to send message.");
+                Log.Error(e, "[PATCHERIPC] Failed to send message");
             }
         }
 
