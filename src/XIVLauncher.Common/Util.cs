@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace XIVLauncher.Common
@@ -302,6 +303,28 @@ namespace XIVLauncher.Common
             var memInfo = type.GetMember(value.ToString());
             var attributes = memInfo[0].GetCustomAttributes(typeof(TAttribute), false);
             return (attributes.Length > 0) ? (TAttribute)attributes[0] : null;
+        }
+
+        public static void OpenBrowser(string url)
+        {
+            // https://github.com/dotnet/corefx/issues/10361
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                url = url.Replace("&", "^&");
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start("xdg-open", url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", url);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

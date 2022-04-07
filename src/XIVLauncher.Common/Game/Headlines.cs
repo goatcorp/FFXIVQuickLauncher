@@ -9,31 +9,41 @@ namespace XIVLauncher.Common.Game
 {
     public partial class Headlines
     {
-        [JsonProperty("news")] public News[] News { get; set; }
+        [JsonProperty("news")]
+        public News[] News { get; set; }
 
-        [JsonProperty("topics")] public News[] Topics { get; set; }
+        [JsonProperty("topics")]
+        public News[] Topics { get; set; }
 
-        [JsonProperty("pinned")] public News[] Pinned { get; set; }
+        [JsonProperty("pinned")]
+        public News[] Pinned { get; set; }
 
-        [JsonProperty("banner")] public Banner[] Banner { get; set; }
+        [JsonProperty("banner")]
+        public Banner[] Banner { get; set; }
     }
 
     public class Banner
     {
-        [JsonProperty("lsb_banner")] public Uri LsbBanner { get; set; }
+        [JsonProperty("lsb_banner")]
+        public Uri LsbBanner { get; set; }
 
-        [JsonProperty("link")] public Uri Link { get; set; }
+        [JsonProperty("link")]
+        public Uri Link { get; set; }
     }
 
     public class News
     {
-        [JsonProperty("date")] public DateTimeOffset Date { get; set; }
+        [JsonProperty("date")]
+        public DateTimeOffset Date { get; set; }
 
-        [JsonProperty("title")] public string Title { get; set; }
+        [JsonProperty("title")]
+        public string Title { get; set; }
 
-        [JsonProperty("url")] public string Url { get; set; }
+        [JsonProperty("url")]
+        public string Url { get; set; }
 
-        [JsonProperty("id")] public string Id { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
 
         [JsonProperty("tag", NullValueHandling = NullValueHandling.Ignore)]
         public string Tag { get; set; }
@@ -47,7 +57,7 @@ namespace XIVLauncher.Common.Game
             var langCode = language.GetLangCode();
             var url = $"https://frontier.ffxiv.com/news/headline.json?lang={langCode}&media=pcapp&{unixTimestamp}";
 
-            var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*"));
+            var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*").ConfigureAwait(false));
 
             return JsonConvert.DeserializeObject<Headlines>(json, Converter.SETTINGS);
         }
@@ -61,7 +71,7 @@ namespace XIVLauncher.Common.Game
             DateParseHandling = DateParseHandling.None,
             Converters =
             {
-                new IsoDateTimeConverter {DateTimeStyles = DateTimeStyles.AssumeUniversal}
+                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             }
         };
     }

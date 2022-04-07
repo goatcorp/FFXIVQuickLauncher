@@ -44,6 +44,14 @@ public class LauncherApp : Component
         get => this.state;
         set
         {
+            // If we are coming from the settings, we should reload the news, as the client language might have changed
+            switch (this.state)
+            {
+                case LauncherState.Settings:
+                    this.mainPage.ReloadNews();
+                    break;
+            }
+
             this.state = value;
 
             switch (value)

@@ -29,7 +29,7 @@ public class MainPage : Page
         : base(app)
     {
         this.loginFrame = new LoginFrame(this);
-        this.newsFrame = new NewsFrame(this);
+        this.newsFrame = new NewsFrame(app);
 
         this.actionButtons = new ActionButtons();
 
@@ -62,6 +62,8 @@ public class MainPage : Page
 
         this.actionButtons.Draw();
     }
+
+    public void ReloadNews() => this.newsFrame.ReloadNews();
 
     private void SwitchAccount(XivAccount account, bool saveAsCurrent)
     {

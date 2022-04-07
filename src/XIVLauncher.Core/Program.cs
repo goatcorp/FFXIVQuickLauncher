@@ -46,7 +46,7 @@ class Program
     private static uint invalidationFrames = 0;
     private static Vector2 lastMousePosition;
 
-    private static void Invalidate(uint frames = 100)
+    public static void Invalidate(uint frames = 100)
     {
         invalidationFrames += frames;
     }

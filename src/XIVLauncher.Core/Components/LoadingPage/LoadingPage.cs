@@ -34,7 +34,6 @@ public class LoadingPage : Page
     {
         var vp = ImGuiHelpers.ViewportSize;
 
-
         ImGui.SetCursorPosY(vp.Y / 2 - 100);
 
         // center text in window
@@ -70,6 +69,8 @@ public class LoadingPage : Page
             ImGuiHelpers.CenterCursorFor(this.cancelButton.Width.Value);
             this.cancelButton.Draw();
         }
+
+        Program.Invalidate(10);
 
         base.Draw();
     }

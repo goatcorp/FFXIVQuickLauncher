@@ -1,3 +1,4 @@
+using System.Numerics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Veldrid;
@@ -14,6 +15,8 @@ public class TextureWrap : IDisposable
     public uint Width => this.deviceTexture.Width;
 
     public uint Height => this.deviceTexture.Height;
+
+    public Vector2 Size => new(this.Width, this.Height);
 
     protected TextureWrap(byte[] data)
     {
