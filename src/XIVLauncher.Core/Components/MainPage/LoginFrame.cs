@@ -143,7 +143,7 @@ public class LoginFrame : Component
 
             if (ImGui.Button(FontAwesomeIcon.UserFriends.ToIconString(), new Vector2(30, 30) * ImGuiHelpers.GlobalScale))
             {
-
+                this.mainPage.AccountSwitcher.Open();
             }
 
             ImGui.PopFont();

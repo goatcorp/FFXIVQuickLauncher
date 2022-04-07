@@ -33,6 +33,9 @@ public class MainPage : Page
 
         this.actionButtons = new ActionButtons();
 
+        this.AccountSwitcher = new AccountSwitcher(app.Accounts);
+        this.AccountSwitcher.AccountChanged += this.AccountSwitcherOnAccountChanged;
+
         this.loginFrame.OnLogin += this.ProcessLogin;
         this.actionButtons.OnSettingsButtonClicked += () => this.App.State = LauncherApp.LauncherState.Settings;
 
@@ -43,6 +46,8 @@ public class MainPage : Page
         if (savedAccount != null) this.SwitchAccount(savedAccount, false);
     }
 
+    public AccountSwitcher AccountSwitcher { get; private set; }
+
     public override void Draw()
     {
         base.Draw();
@@ -52,6 +57,7 @@ public class MainPage : Page
 
         ImGui.SameLine();
 
+        this.AccountSwitcher.Draw();
         this.loginFrame.Draw();
 
         this.actionButtons.Draw();
@@ -71,6 +77,11 @@ public class MainPage : Page
         {
             App.Accounts.CurrentAccount = account;
         }
+    }
+
+    private void AccountSwitcherOnAccountChanged(object? sender, XivAccount e)
+    {
+        SwitchAccount(e, true);
     }
 
     private void ProcessLogin(LoginAction action)
