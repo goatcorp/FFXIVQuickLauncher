@@ -1,58 +1,57 @@
 ﻿using ImGuiNET;
 using System.Numerics;
 
-namespace XIVLauncher.Core.Components.Common
+namespace XIVLauncher.Core.Components.Common;
+
+public class Checkbox : Component
 {
-    public class Checkbox : Component
+    private bool inputBacking = false;
+
+    public string Label { get; }
+
+    public bool IsEnabled { get; set; } = true;
+
+    public bool Value
     {
-        private bool inputBacking = false;
+        get => inputBacking; 
+        set => inputBacking = value;
+    }
 
-        public string Label { get; }
+    public event Action<bool> OnChange;
 
-        public bool IsEnabled { get; set; } = true;
+    public Checkbox(string label, bool value = false, bool isEnabled = true)
+    {
+        Label = label;
+        Value = value;
+        IsEnabled = isEnabled;
+    }
 
-        public bool Value
+    public override void Draw()
+    {
+        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0.5f, 0.5f));
+        ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 0);
+        ImGui.PushStyleColor(ImGuiCol.FrameBg, ImGuiColors.BlueShade1);
+        ImGui.PushStyleColor(ImGuiCol.FrameBgActive, ImGuiColors.BlueShade2);
+        ImGui.PushStyleColor(ImGuiCol.FrameBgHovered, ImGuiColors.BlueShade2);
+        ImGui.PushStyleColor(ImGuiCol.TextDisabled, ImGuiColors.TextDisabled);
+        ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.Text);
+
+        if (!this.IsEnabled)
+            ImGui.BeginDisabled();
+
+        if (ImGui.Checkbox($"###{Id}", ref inputBacking))
         {
-            get => inputBacking; 
-            set => inputBacking = value;
+            this.OnChange?.Invoke(this.inputBacking);
         }
 
-        public event Action<bool> OnChange;
+        if (!this.IsEnabled)
+            ImGui.EndDisabled();
 
-        public Checkbox(string label, bool value = false, bool isEnabled = true)
-        {
-            Label = label;
-            Value = value;
-            IsEnabled = isEnabled;
-        }
+        ImGui.SameLine();
 
-        public override void Draw()
-        {
-            ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0.5f, 0.5f));
-            ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 0);
-            ImGui.PushStyleColor(ImGuiCol.FrameBg, ImGuiColors.BlueShade1);
-            ImGui.PushStyleColor(ImGuiCol.FrameBgActive, ImGuiColors.BlueShade2);
-            ImGui.PushStyleColor(ImGuiCol.FrameBgHovered, ImGuiColors.BlueShade2);
-            ImGui.PushStyleColor(ImGuiCol.TextDisabled, ImGuiColors.TextDisabled);
-            ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.Text);
+        ImGui.Text(Label);
 
-            if (!this.IsEnabled)
-                ImGui.BeginDisabled();
-
-            if (ImGui.Checkbox($"###{Id}", ref inputBacking))
-            {
-                this.OnChange?.Invoke(this.inputBacking);
-            }
-
-            if (!this.IsEnabled)
-                ImGui.EndDisabled();
-
-            ImGui.SameLine();
-
-            ImGui.Text(Label);
-
-            ImGui.PopStyleVar(2);
-            ImGui.PopStyleColor(5);
-        }
+        ImGui.PopStyleVar(2);
+        ImGui.PopStyleColor(5);
     }
 }
