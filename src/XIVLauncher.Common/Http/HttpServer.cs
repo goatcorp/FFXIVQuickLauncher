@@ -6,24 +6,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace XIVLauncher.Http
+namespace XIVLauncher.Common.Http
 {
     // This is a very dumb HTTP server that just accepts GETs and fires events with the requested URL
-    public class HttpServer
+    internal class HttpServer
     {
-        private TcpListener _listener;
-        private readonly byte[] httpResponse = Encoding.Default.GetBytes(
-            "HTTP/1.0 200 OK\n"+
-            "Content-Type: application/json; charset=UTF-8\n"+
-            "\n"+
-            "{app:\"XIVLauncher\", version: \"" +
-#if !XL_NOAUTOUPDATE
-            AppUtil.GetAssemblyVersion() +
-#else
-            AppUtil.GetGitHash() +
-#endif
-            "\"}"
-        );
+        private readonly TcpListener listener;
+
+        private readonly byte[] httpResponse;
 
         public EventHandler<HttpServerGetEvent> GetReceived;
 
@@ -34,27 +24,33 @@ namespace XIVLauncher.Http
             public string Path { get; set; }
         }
 
-        public HttpServer(int port)
+        public HttpServer(int port, string version)
         {
-            _listener = new TcpListener(IPAddress.Any, port);
+            this.listener = new TcpListener(IPAddress.Any, port);
+
+            this.httpResponse = Encoding.Default.GetBytes(
+                "HTTP/1.0 200 OK\n" +
+                "Content-Type: application/json; charset=UTF-8\n" +
+                "\n{app:\"XIVLauncher\", version: \"" + version + "\"}"
+            );
         }
 
         public void Start()
         {
             try
             {
-                _listener.Start();
+                this.listener.Start();
                 _isRunning = true;
 
                 while (_isRunning)
                 {
-                    if (!_listener.Pending())
+                    if (!this.listener.Pending())
                     {
                         Thread.Sleep(200);
                         continue;
                     }
 
-                    var client = _listener.AcceptTcpClient();
+                    var client = this.listener.AcceptTcpClient();
 
                     while (client.Connected)
                     {
@@ -88,8 +84,7 @@ namespace XIVLauncher.Http
         public void Stop()
         {
             _isRunning = false;
-            _listener.Stop();
+            this.listener.Stop();
         }
     }
-
 }

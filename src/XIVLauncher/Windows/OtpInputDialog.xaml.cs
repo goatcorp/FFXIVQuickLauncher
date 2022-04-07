@@ -9,7 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Serilog;
-using XIVLauncher.Http;
+using XIVLauncher.Common.Http;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -47,7 +47,7 @@ namespace XIVLauncher.Windows
 
             if (App.Settings.OtpServerEnabled)
             {
-                _otpListener = new OtpListener();
+                _otpListener = new OtpListener("legacy-" + AppUtil.GetAssemblyVersion());
                 _otpListener.OnOtpReceived += TryAcceptOtp;
 
                 try
@@ -84,6 +84,8 @@ namespace XIVLauncher.Windows
         {
             if (otp.Length != 6)
             {
+                Log.Error("Malformed OTP: {Otp}", otp);
+
                 Dispatcher.Invoke(() =>
                 {
                     OtpInputPrompt.Text = ViewModel.OtpInputPromptBadLoc;
@@ -96,6 +98,7 @@ namespace XIVLauncher.Windows
 
                 return;
             }
+
             _ignoreCurrentOtp = false;
             OnResult?.Invoke(otp);
 
