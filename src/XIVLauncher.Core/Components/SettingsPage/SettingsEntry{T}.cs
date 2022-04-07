@@ -16,6 +16,8 @@ public class SettingsEntry<T> : SettingsEntry
 
     public Func<T?, string?>? CheckValidity { get; init; }
 
+    public Func<T?, string?>? CheckWarning { get; init; }
+
     public Func<bool>? CheckVisibility { get; init; }
 
     public override bool IsVisible => CheckVisibility?.Invoke() ?? true;
@@ -107,6 +109,15 @@ public class SettingsEntry<T> : SettingsEntry
         else
         {
             this.IsValid = true;
+        }
+
+        var warningMessage = this.CheckWarning?.Invoke(this.Value);
+
+        if (warningMessage != null)
+        {
+            ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudRed);
+            ImGui.Text(warningMessage);
+            ImGui.PopStyleColor();
         }
 
         base.Draw();

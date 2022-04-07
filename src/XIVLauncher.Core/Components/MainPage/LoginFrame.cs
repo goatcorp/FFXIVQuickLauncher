@@ -10,13 +10,10 @@ public class LoginFrame : Component
 
     private readonly Input loginInput;
     private readonly Input passwordInput;
-    private readonly Input oneTimePasswordInput;
     private readonly Checkbox oneTimePasswordCheckbox;
     private readonly Checkbox useSteamServiceCheckbox;
+    private readonly Checkbox autoLoginCheckbox;
     private readonly Button loginButton;
-
-    private bool isOtp = false;
-    private bool isSteam = false;
 
     public string Username
     {
@@ -38,8 +35,14 @@ public class LoginFrame : Component
 
     public bool IsSteam
     {
-        get => this.isSteam;
-        set => this.isSteam = value;
+        get => this.useSteamServiceCheckbox.Value;
+        set => this.useSteamServiceCheckbox.Value = value;
+    }
+
+    public bool IsAutoLogin
+    {
+        get => this.autoLoginCheckbox.Value;
+        set => this.autoLoginCheckbox.Value = value;
     }
 
     public event Action<LoginAction>? OnLogin;
@@ -52,13 +55,12 @@ public class LoginFrame : Component
 
         this.loginInput = new Input("Square Enix ID", "Enter your Square Enix ID", new Vector2(12f, 0f), 128);
         this.passwordInput = new Input("Password", "Enter your password", new Vector2(12f, 0f), 128, flags: ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
-        this.oneTimePasswordInput = new Input("One-time password", "Enter your one-time password", new Vector2(12f, 0f), 6, false, ImGuiInputTextFlags.CharsDecimal);
 
         this.oneTimePasswordCheckbox = new Checkbox("Use one-time password");
-        this.oneTimePasswordCheckbox.OnChange += newValue => { this.oneTimePasswordInput.IsEnabled = newValue; };
 
         this.useSteamServiceCheckbox = new Checkbox("Use steam service");
-        this.useSteamServiceCheckbox.OnChange += newValue => { this.isSteam = newValue; };
+
+        this.autoLoginCheckbox = new Checkbox("Log in automatically");
 
         this.loginButton = new Button("Login");
         this.loginButton.Click += () => { this.OnLogin?.Invoke(LoginAction.Game); };
@@ -77,9 +79,12 @@ public class LoginFrame : Component
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(32f, 32f));
             this.loginInput.Draw();
             this.passwordInput.Draw();
-            this.oneTimePasswordInput.Draw();
 
             this.oneTimePasswordCheckbox.Draw();
+            this.useSteamServiceCheckbox.Draw();
+            this.autoLoginCheckbox.Draw();
+
+            ImGui.Dummy(new Vector2(10));
 
             this.loginButton.Draw();
 

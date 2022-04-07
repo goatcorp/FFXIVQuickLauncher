@@ -5,6 +5,8 @@ namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 public class SettingsTabDalamud : SettingsTab
 {
     public override SettingsEntry[] Entries { get; } = {
+        new SettingsEntry<bool>("Enable Dalamud", "Enable the Dalamud plugin system", () => Program.Config.DalamudEnabled ?? true, b => Program.Config.DalamudEnabled = b),
+
         new SettingsEntry<DalamudLoadMethod>("Load Method", "Choose how Dalamud is loaded.", () => Program.Config.DalamudLoadMethod ?? DalamudLoadMethod.DllInject, method => Program.Config.DalamudLoadMethod = method)
         {
             CheckValidity = x =>

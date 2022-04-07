@@ -4,16 +4,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using XIVLauncher.Settings;
 
-namespace XIVLauncher.Addon.Implementations
+namespace XIVLauncher.Common.Addon.Implementations
 {
     public class GenericAddon : IRunnableAddon, INotifyAddonAfterClose
     {
         private Process _addonProcess;
         private Process _gameProcess;
 
-        void IAddon.Setup(Process gameProcess, ILauncherSettingsV3 setting)
+        void IAddon.Setup(Process gameProcess)
         {
             _gameProcess = gameProcess;
         }

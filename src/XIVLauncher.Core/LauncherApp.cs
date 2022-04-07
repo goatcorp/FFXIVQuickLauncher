@@ -1,6 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Core.Accounts;
 using XIVLauncher.Core.Components;
 using XIVLauncher.Core.Components.LoadingPage;
@@ -80,6 +81,7 @@ public class LauncherApp : Component
 
     public ILauncherConfig Settings => Program.Config;
     public Launcher Launcher => Program.Launcher;
+    public ISteam Steam => Program.Steam;
     public AccountManager Accounts = new();
     public CommonUniqueIdCache UniqueIdCache;
 

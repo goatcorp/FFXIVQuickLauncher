@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:addon="clr-namespace:XIVLauncher.Addon"
+             xmlns:addon="clr-namespace:XIVLauncher.Common.Addon;assembly=XIVLauncher.Common"
              xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
              xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"

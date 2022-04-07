@@ -72,6 +72,7 @@ namespace XIVLauncher.Core
                      .UseCommandLineArgs()
                      .UseIniFile(storage.GetFile("launcher.ini").FullName)
                      .UseTypeParser(new DirectoryInfoParser())
+                     .UseTypeParser(new AddonListParser())
                      .Build();
 
             if (string.IsNullOrEmpty(Config.AcceptLanguage))
@@ -82,10 +83,16 @@ namespace XIVLauncher.Core
             Config.GamePath ??= storage.GetFolder("ffxiv");
             Config.ClientLanguage ??= ClientLanguage.English;
             Config.DpiAwareness ??= DpiAwareness.Unaware;
+            Config.IsAutologin ??= false;
+
+            Config.IsDx11 ??= true;
+            Config.IsEncryptArgs ??= true;
+            Config.IsFt ??= false;
 
             Config.PatchPath ??= storage.GetFolder("patch");
             Config.PatchAcquisitionMethod ??= AcquisitionMethod.Aria;
 
+            Config.DalamudEnabled ??= true;
             Config.DalamudLoadMethod = !OperatingSystem.IsWindows() ? DalamudLoadMethod.DllInject : DalamudLoadMethod.EntryPoint;
 
             Config.GlobalScale ??= 1.0f;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Config.Net;
 
-namespace XIVLauncher.Common.Parsers
+namespace XIVLauncher.Settings.Parsers
 {
     class DirectoryInfoParser : ITypeParser
     {

@@ -1,6 +1,6 @@
-﻿using XIVLauncher.Addon.Implementations;
+﻿using XIVLauncher.Common.Addon.Implementations;
 
-namespace XIVLauncher.Addon
+namespace XIVLauncher.Common.Addon
 {
     public class AddonEntry
     {

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Config.Net;
+﻿using Config.Net;
 using Newtonsoft.Json;
 using XIVLauncher.Common.Addon;
 
-namespace XIVLauncher.Settings.Parsers
+namespace XIVLauncher.Core.Configuration.Parsers
 {
-    class AddonListParser : ITypeParser
+    internal class AddonListParser : ITypeParser
     {
         public IEnumerable<Type> SupportedTypes => new[] { typeof(List<AddonEntry>) };
 

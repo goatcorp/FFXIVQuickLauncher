@@ -14,11 +14,11 @@ using Serilog.Events;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Common.Parsers;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Settings;
+using XIVLauncher.Settings.Parsers;
 using XIVLauncher.Support;
 using XIVLauncher.Windows;
 

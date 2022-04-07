@@ -1,4 +1,5 @@
 using XIVLauncher.Common;
+using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Core.Configuration.Linux;
@@ -8,7 +9,10 @@ namespace XIVLauncher.Core.Configuration;
 public interface ILauncherConfig
 {
     public string? CurrentAccountId { get; set; }
+
     public string? AcceptLanguage { get; set; }
+
+    public bool? IsAutologin { get; set; }
 
     public DirectoryInfo? GamePath { get; set; }
 
@@ -16,11 +20,21 @@ public interface ILauncherConfig
 
     public ClientLanguage? ClientLanguage { get; set; }
 
-    public bool? UidCacheEnabled { get; set; }
+    public bool? IsUidCacheEnabled { get; set; }
 
     public float? GlobalScale { get; set; }
 
     public DpiAwareness? DpiAwareness { get; set; }
+
+    public bool? TreatNonZeroExitCodeAsFailure { get; set; }
+
+    public List<AddonEntry>? Addons { get; set; }
+
+    public bool? IsDx11 { get; set; }
+
+    public bool? IsEncryptArgs { get; set; }
+
+    public bool? IsFt { get; set; }
 
     #region Patching
 
@@ -43,6 +57,8 @@ public interface ILauncherConfig
     #endregion
 
     #region Dalamud
+
+    public bool? DalamudEnabled { get; set; }
 
     public DalamudLoadMethod? DalamudLoadMethod { get; set; }
 

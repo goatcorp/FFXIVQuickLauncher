@@ -14,8 +14,8 @@ using System.Windows.Threading;
 using CheapLoc;
 using Serilog;
 using XIVLauncher.Accounts;
-using XIVLauncher.Addon;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Exceptions;
@@ -210,7 +210,6 @@ namespace XIVLauncher.Windows.ViewModel
             var hasValidCache = App.UniqueIdCache.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
 
             var otp = string.Empty;
-            var signal = new ManualResetEvent(false);
 
             if (isOtp && (!hasValidCache || action == AfterLoginAction.Repair))
             {
@@ -258,8 +257,6 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, AfterLoginAction action)
         {
-            Log.Information("LoginToGame() called");
-
             bool? gateStatus = null;
 
 #if !DEBUG
@@ -472,7 +469,7 @@ namespace XIVLauncher.Windows.ViewModel
                     {
                         CustomMessageBox.Show(
                             Loc.Localize("LoginRepairResponseIsNotNeedsPatchGame",
-                                "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
+                                "The server sent an incorrect response - the repair cannot proceed."),
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
 
                         return false;
@@ -896,7 +893,11 @@ namespace XIVLauncher.Windows.ViewModel
 
         public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud)
         {
-            var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject), CommonSettings.Instance);
+            var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
+                App.Settings.GamePath,
+                App.Settings.Language.GetValueOrDefault(ClientLanguage.English),
+                (int)App.Settings.DalamudInjectionDelayMs);
+
             var dalamudOk = false;
 
             var dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
@@ -979,7 +980,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
-                addonMgr.RunAddons(gameProcess, App.Settings, addons);
+                addonMgr.RunAddons(gameProcess, addons);
             }
             catch (Exception ex)
             {

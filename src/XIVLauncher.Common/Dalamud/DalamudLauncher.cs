@@ -17,14 +17,14 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DalamudUpdater updater;
         private readonly int injectionDelay;
 
-        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, ISettings settings)
+        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, ClientLanguage clientLanguage, int injectionDelay)
         {
             this.runner = runner;
             this.updater = updater;
             this.loadMethod = loadMethod;
-            this.gamePath = settings.GamePath;
-            this.language = settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English);
-            this.injectionDelay = settings.DalamudInjectionDelayMs;
+            this.gamePath = gamePath;
+            this.language = clientLanguage;
+            this.injectionDelay = injectionDelay;
         }
 
         public const string REMOTE_BASE = "https://kamori.goats.dev/Dalamud/Release/VersionInfo?track=";

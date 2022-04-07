@@ -4,9 +4,9 @@ using System.IO;
 using System.Windows;
 using CheapLoc;
 using IWshRuntimeLibrary;
-using XIVLauncher.Addon;
-using XIVLauncher.Addon.Implementations;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Addon;
+using XIVLauncher.Common.Addon.Implementations;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows

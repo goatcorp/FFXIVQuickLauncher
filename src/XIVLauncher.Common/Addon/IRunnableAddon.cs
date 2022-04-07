@@ -1,4 +1,4 @@
-﻿namespace XIVLauncher.Addon
+﻿namespace XIVLauncher.Common.Addon
 {
     interface IRunnableAddon : IAddon
     {
