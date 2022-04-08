@@ -282,7 +282,7 @@ namespace XIVLauncher.Common.Dalamud
 
                 foreach (var hash in hashes)
                 {
-                    var file = Path.Combine(addonPath.FullName, hash.Key);
+                    var file = Path.Combine(addonPath.FullName, hash.Key.Replace("\\", "/"));
                     using var fileStream = File.OpenRead(file);
                     using var md5 = MD5.Create();
 
