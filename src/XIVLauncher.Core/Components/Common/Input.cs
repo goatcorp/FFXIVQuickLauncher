@@ -20,7 +20,7 @@ public class Input : Component
 
     public string Value
     {
-        get => inputBacking; 
+        get => inputBacking;
         set => inputBacking = value;
     }
 
@@ -58,13 +58,15 @@ public class Input : Component
         var ww = ImGui.GetWindowWidth();
         ImGui.SetNextItemWidth(ww);
 
+        ImGui.PopStyleColor();
+
         ImGui.InputTextWithHint($"###{Id}", Hint, ref inputBacking, MaxLength, Flags);
         ImGui.Dummy(Spacing);
 
         if (!this.IsEnabled)
             ImGui.EndDisabled();
-            
+
         ImGui.PopStyleVar(2);
-        ImGui.PopStyleColor(5);
+        ImGui.PopStyleColor(4);
     }
 }

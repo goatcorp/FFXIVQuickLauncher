@@ -832,9 +832,7 @@ public class MainPage : Page
         });
         */
 
-        App.LoadingPage.Line1 = $"Now patching {repository}...";
-        App.LoadingPage.CanCancel = false;
-        App.LoadingPage.IsIndeterminate = false;
+        this.App.StartLoading($"Now patching {repository.ToString().ToLowerInvariant()}...", canCancel: false, isIndeterminate: false);
 
         try
         {
