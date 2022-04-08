@@ -215,7 +215,7 @@ public class LauncherApp : Component
             base.Draw();
         }
 
-        if (IsDebug && ImGui.IsKeyDown(ImGuiKey.D))
+        if (IsDebug)
         {
             this.isDemoWindow = true;
         }
@@ -232,9 +232,16 @@ public class LauncherApp : Component
 
     private void DrawModal()
     {
-        if (ImGui.BeginPopupModal(this.modalTitle + "###xl_modal", ref this.isModalDrawing, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar))
+        ImGui.SetNextWindowSize(new Vector2(450, 300));
+
+        if (ImGui.BeginPopupModal(this.modalTitle + "###xl_modal", ref this.isModalDrawing, ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoTitleBar))
         {
-            ImGui.TextWrapped(this.modalText);
+            if (ImGui.BeginChild("###xl_modal_scrolling", new Vector2(0, -ImGui.GetTextLineHeightWithSpacing() * 2)))
+            {
+                ImGui.TextWrapped(this.modalText);
+            }
+
+            ImGui.EndChild();
 
             const float BUTTON_WIDTH = 120f;
             ImGui.SetCursorPosX((ImGui.GetWindowWidth() - BUTTON_WIDTH) / 2);
