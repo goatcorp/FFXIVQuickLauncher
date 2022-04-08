@@ -37,6 +37,8 @@ public class OtpEntryPage : Page
         this.Result = null;
         this.Cancelled = false;
 
+        Program.DoAutoSoftwareKbd = false;
+
         // TODO(goat): This doesn't work if you call it right after starting the app... Steam probably takes a little while to initialize. Might be annoying for autologin.
         if (Program.Steam.IsValid && Program.Steam.IsRunningOnSteamDeck())
         {
@@ -72,6 +74,8 @@ public class OtpEntryPage : Page
 
         Log.Verbose("Received OTP: {Otp}", otp);
         this.Result = otp;
+
+        Program.DoAutoSoftwareKbd = true;
     }
 
     public override void Draw()

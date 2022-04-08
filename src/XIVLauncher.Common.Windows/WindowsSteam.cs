@@ -54,6 +54,12 @@ namespace XIVLauncher.Common.Windows
             return SteamUtils.GetEnteredGamepadText();
         }
 
+        public bool ShowFloatingGamepadTextInput(ISteam.EFloatingGamepadTextInputMode mode, int x, int y, int width, int height)
+        {
+            // Facepunch.Steamworks doesn't have this...
+            return false;
+        }
+
         public bool IsRunningOnSteamDeck()
         {
             //TODO(goat): Facepunch.Steamworks NuGet doesn't have this yet...

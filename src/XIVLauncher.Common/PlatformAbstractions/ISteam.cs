@@ -15,8 +15,17 @@ public interface ISteam
     string GetAppInstallDir(uint appId);
     bool ShowGamepadTextInput(bool password, bool multiline, string description, int maxChars, string existingText = "");
     string GetEnteredGamepadText();
+    bool ShowFloatingGamepadTextInput(EFloatingGamepadTextInputMode mode, int x, int y, int width, int height);
     bool IsRunningOnSteamDeck();
     uint GetServerRealTime();
+
+    enum EFloatingGamepadTextInputMode
+    {
+        EnterDismisses,
+        UserDismisses,
+        Email,
+        Numeric,
+    }
 
     event Action<bool> OnGamepadTextInputDismissed;
 }
