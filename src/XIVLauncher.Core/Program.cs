@@ -48,7 +48,7 @@ class Program
 
     public static void Invalidate(uint frames = 100)
     {
-        invalidationFrames += frames;
+        invalidationFrames = frames;
     }
 
     private static void SetupLogging()
@@ -131,9 +131,15 @@ class Program
 
         Log.Debug("Creating veldrid devices...");
 
+#if DEBUG
+        var version = AppUtil.GetGitHash();
+#else
+        var version = AppUtil.GetAssemblyVersion();
+#endif
+
         // Create window, GraphicsDevice, and all resources necessary for the demo.
         VeldridStartup.CreateWindowAndGraphicsDevice(
-            new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "XIVLauncher"),
+            new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, $"XIVLauncher {version}"),
             new GraphicsDeviceOptions(false, null, true, ResourceBindingModel.Improved, true, true),
             out window,
             out gd);
@@ -160,6 +166,8 @@ class Program
         // Main application loop
         while (window.Exists)
         {
+            Thread.Sleep(50);
+
             InputSnapshot snapshot = window.PumpEvents();
 
             if (!window.Exists)
