@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using ImGuiNET;
+﻿using ImGuiNET;
 using System.Numerics;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Game;
@@ -11,7 +10,7 @@ public class NewsFrame : Component
     private const int BANNER_TIME = 8000;
 
     private readonly LauncherApp app;
-    private readonly Stopwatch bannerStopwatch = new();
+    private readonly Timer bannerTimer;
 
     private Headlines? headlines;
     private TextureWrap[]? banners;
@@ -24,6 +23,18 @@ public class NewsFrame : Component
     {
         this.app = app;
         this.ReloadNews();
+
+        this.bannerTimer = new Timer(TimerElapsed);
+        bannerTimer.Change(0, BANNER_TIME);
+    }
+
+    private void TimerElapsed(object? state)
+    {
+        if (!this.newsLoaded)
+            return;
+
+        this.currentBanner = (this.currentBanner + 1) % this.banners.Length;
+        Program.Invalidate(10);
     }
 
     public void ReloadNews()
@@ -44,7 +55,6 @@ public class NewsFrame : Component
             }
 
             this.newsLoaded = true;
-            this.bannerStopwatch.Start();
         });
     }
 
@@ -104,15 +114,6 @@ public class NewsFrame : Component
         }
 
         ImGui.EndChild();
-
-        // Dunno, animate it or something
-        if (this.bannerStopwatch.ElapsedMilliseconds > BANNER_TIME)
-        {
-            this.bannerStopwatch.Restart();
-            this.currentBanner = (this.currentBanner + 1) % this.banners.Length;
-
-            Program.Invalidate(10);
-        }
 
         base.Draw();
     }
