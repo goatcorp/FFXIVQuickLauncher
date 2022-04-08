@@ -20,7 +20,14 @@
       <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+        <None Remove="libsteam_api64.so" />
+        <Content Include="libsteam_api64.so">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
         <None Remove="steam_api64.dll" />
         <Content Include="steam_api64.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
