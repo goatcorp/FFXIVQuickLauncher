@@ -3,13 +3,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Serilog;
-using SharedMemory;
 using XIVLauncher.Common.PatcherIpc;
+using XIVLauncher.Common.Patching.Rpc;
 using XIVLauncher.Common.Patching.ZiPatch;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
@@ -17,20 +15,21 @@ namespace XIVLauncher.Common.Patching;
 
 public class RemotePatchInstaller
 {
-    private readonly RpcBuffer rpc;
+    private readonly IRpc rpc;
     private readonly ConcurrentQueue<PatcherIpcStartInstall> queuedInstalls = new();
     private readonly Thread patcherThread;
     private readonly CancellationTokenSource patcherCancelToken = new();
 
     public bool IsDone { get; private set; }
 
-    public RemotePatchInstaller(string rpcName)
+    public RemotePatchInstaller(IRpc rpc)
     {
-        this.rpc = new RpcBuffer(rpcName, RemoteCallHandler);
+        this.rpc = rpc;
+        this.rpc.MessageReceived += RemoteCallHandler;
 
         Log.Information("[PATCHER] IPC connected");
 
-        SendIpcMessage(new PatcherIpcEnvelope
+        rpc.SendMessage(new PatcherIpcEnvelope
         {
             OpCode = PatcherIpcOpCode.Hello,
             Data = DateTime.Now
@@ -64,21 +63,16 @@ public class RemotePatchInstaller
         catch (Exception ex)
         {
             Log.Error(ex, "[PATCHER] RemotePatchInstaller loop encountered an error");
-            SendIpcMessage(new PatcherIpcEnvelope
+            this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.InstallFailed
             });
         }
     }
 
-    private void RemoteCallHandler(ulong msgId, byte[] payload)
+    private void RemoteCallHandler(PatcherIpcEnvelope envelope)
     {
-        var json = IpcHelpers.Base64Decode(Encoding.ASCII.GetString(payload));
-        Log.Information("[PATCHER] IPC({0}): {1}", msgId, json);
-
-        var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, IpcHelpers.JsonSettings);
-
-        switch (msg.OpCode)
+        switch (envelope.OpCode)
         {
             case PatcherIpcOpCode.Bye:
                 Task.Run(() =>
@@ -90,12 +84,12 @@ public class RemotePatchInstaller
 
             case PatcherIpcOpCode.StartInstall:
 
-                var installData = (PatcherIpcStartInstall)msg.Data;
+                var installData = (PatcherIpcStartInstall)envelope.Data;
                 this.queuedInstalls.Enqueue(installData);
                 break;
 
             case PatcherIpcOpCode.Finish:
-                var path = (DirectoryInfo)msg.Data;
+                var path = (DirectoryInfo)envelope.Data;
 
                 try
                 {
@@ -105,26 +99,13 @@ public class RemotePatchInstaller
                 catch (Exception ex)
                 {
                     Log.Error(ex, "VerToBck failed");
-                    SendIpcMessage(new PatcherIpcEnvelope
+                    this.rpc.SendMessage(new PatcherIpcEnvelope
                     {
                         OpCode = PatcherIpcOpCode.InstallFailed
                     });
                 }
 
                 break;
-        }
-    }
-
-    private void SendIpcMessage(PatcherIpcEnvelope envelope)
-    {
-        try
-        {
-            var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
-            rpc.RemoteRequest(Encoding.ASCII.GetBytes(json));
-        }
-        catch (Exception e)
-        {
-            Log.Error(e, "[PATCHERIPC] Failed to send message");
         }
     }
 
@@ -148,7 +129,7 @@ public class RemotePatchInstaller
                 try
                 {
                     installData.Repo.SetVer(installData.GameDirectory, installData.VersionId);
-                    SendIpcMessage(new PatcherIpcEnvelope
+                    this.rpc.SendMessage(new PatcherIpcEnvelope
                     {
                         OpCode = PatcherIpcOpCode.InstallOk
                     });
@@ -166,7 +147,7 @@ public class RemotePatchInstaller
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Could not set ver file");
-                    SendIpcMessage(new PatcherIpcEnvelope
+                    this.rpc.SendMessage(new PatcherIpcEnvelope
                     {
                         OpCode = PatcherIpcOpCode.InstallFailed
                     });
@@ -177,7 +158,7 @@ public class RemotePatchInstaller
             catch (Exception ex)
             {
                 Log.Error(ex, "[PATCHER] Patch install failed");
-                SendIpcMessage(new PatcherIpcEnvelope
+                this.rpc.SendMessage(new PatcherIpcEnvelope
                 {
                     OpCode = PatcherIpcOpCode.InstallFailed
                 });

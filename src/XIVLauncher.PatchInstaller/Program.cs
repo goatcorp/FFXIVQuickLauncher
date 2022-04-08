@@ -7,6 +7,8 @@ using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Patching;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
+using XIVLauncher.Common.Patching.Rpc;
+using XIVLauncher.Common.Patching.Rpc.Implementations;
 
 namespace XIVLauncher.PatchInstaller
 {
@@ -118,7 +120,7 @@ namespace XIVLauncher.PatchInstaller
                     return;
                 }
 
-                var installer = new RemotePatchInstaller(args[1]);
+                var installer = new RemotePatchInstaller(new SharedMemoryRpc(args[1]));
                 installer.Start();
 
                 while (!installer.IsDone)
