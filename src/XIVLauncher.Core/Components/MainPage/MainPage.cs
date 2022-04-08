@@ -13,6 +13,7 @@ using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Core.Accounts;
+using XIVLauncher.Core.Configuration.Linux;
 using XIVLauncher.Core.Runners;
 
 namespace XIVLauncher.Core.Components.MainPage;
@@ -633,7 +634,10 @@ public class MainPage : Page
         }
         else if (OperatingSystem.IsLinux())
         {
-            runner = new LinuxGameRunner();
+            if (App.Settings.LinuxStartupType == LinuxStartupType.Command && App.Settings.LinuxStartCommandLine == null)
+                throw new Exception("Process command line wasn't set.");
+
+            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine);
         }
         else
         {
@@ -834,23 +838,33 @@ public class MainPage : Page
 
         try
         {
-            var patchTask = patcher.PatchAsync(false);
+            var token = new CancellationTokenSource();
+            var statusThread = new Thread(UpdatePatchStatus);
 
-            while (!patchTask.IsCompleted)
+            statusThread.Start();
+
+            void UpdatePatchStatus()
             {
-                Thread.Sleep(30);
+                while (!token.IsCancellationRequested)
+                {
+                    Thread.Sleep(30);
 
-                App.LoadingPage.Line2 = string.Format("Working on {0}/{1}", patcher.CurrentInstallIndex, patcher.Downloads.Count);
-                App.LoadingPage.Line3 = string.Format("{0} left to download at {1}/s", Util.BytesToString(patcher.AllDownloadsLength < 0 ? 0 : patcher.AllDownloadsLength),
-                    Util.BytesToString(patcher.Speeds.Sum()));
+                    App.LoadingPage.Line2 = string.Format("Working on {0}/{1}", patcher.CurrentInstallIndex, patcher.Downloads.Count);
+                    App.LoadingPage.Line3 = string.Format("{0} left to download at {1}/s", Util.BytesToString(patcher.AllDownloadsLength < 0 ? 0 : patcher.AllDownloadsLength),
+                        Util.BytesToString(patcher.Speeds.Sum()));
 
-                App.LoadingPage.Progress = patcher.CurrentInstallIndex * 100.0f / patcher.Downloads.Count;
+                    App.LoadingPage.Progress = patcher.CurrentInstallIndex * 100.0f / patcher.Downloads.Count;
+                }
             }
 
-            if (patchTask.Exception != null)
+            try
             {
-                throw patchTask.Exception;
-                //return false;
+                await patcher.PatchAsync(false).ConfigureAwait(false);
+            }
+            finally
+            {
+                token.Cancel();
+                statusThread.Join(3000);
             }
 
             return true;
