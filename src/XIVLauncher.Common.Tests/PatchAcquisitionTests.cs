@@ -86,7 +86,7 @@ namespace XIVLauncher.Common.Tests
         [TestMethod]
         public async Task TestAriaDownload()
         {
-            await AriaHttpPatchAcquisition.InitializeAsync(0);
+            await AriaHttpPatchAcquisition.InitializeAsync(0, new FileInfo("aria2.log"));
             await TestPatchDownload(new AriaHttpPatchAcquisition());
         }
 

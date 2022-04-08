@@ -857,7 +857,8 @@ public class MainPage : Page
 
             try
             {
-                await patcher.PatchAsync(false).ConfigureAwait(false);
+                var aria2LogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "launcher.log"));
+                await patcher.PatchAsync(aria2LogFile, false).ConfigureAwait(false);
             }
             finally
             {

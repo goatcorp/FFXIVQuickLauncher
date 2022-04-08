@@ -102,7 +102,7 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
-        public async Task PatchAsync(bool external = true)
+        public async Task PatchAsync(FileInfo aria2LogFile, bool external = true)
         {
             if (!EnvironmentSettings.IsIgnoreSpaceRequirements)
             {
@@ -133,7 +133,7 @@ namespace XIVLauncher.Common.Game.Patch
             this.installer.StartIfNeeded(external);
             this.installer.WaitOnHello();
 
-            await InitializeAcquisition().ConfigureAwait(false);
+            await InitializeAcquisition(aria2LogFile).ConfigureAwait(false);
 
             try
             {
@@ -149,7 +149,7 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
-        public async Task InitializeAcquisition()
+        public async Task InitializeAcquisition(FileInfo aria2LogFile)
         {
             // TODO: Come up with a better pattern for initialization. This sucks.
             switch (this.acquisitionMethod)
@@ -163,12 +163,12 @@ namespace XIVLauncher.Common.Game.Patch
                     break;
 
                 case AcquisitionMethod.MonoTorrentAriaFallback:
-                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
                     await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
 
                 case AcquisitionMethod.Aria:
-                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
+                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
                     break;
 
                 default:

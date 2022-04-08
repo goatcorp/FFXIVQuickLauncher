@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -17,7 +18,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
         private static AriaManager manager;
         private static long maxDownloadSpeed;
 
-        public static async Task InitializeAsync(long maxDownloadSpeed)
+        public static async Task InitializeAsync(long maxDownloadSpeed, FileInfo logFile)
         {
             AriaHttpPatchAcquisition.maxDownloadSpeed = maxDownloadSpeed;
 
@@ -25,6 +26,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
             {
                 // Kill stray aria2c-xl processes
                 var stray = Process.GetProcessesByName("aria2c-xl");
+
                 foreach (var process in stray)
                 {
                     try
@@ -43,11 +45,16 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 
                 var ariaPath = Path.Combine(Paths.ResourcesPath, "aria2c-xl.exe");
 
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    ariaPath = Util.GetBinaryFromPath("aria2c");
+                }
+
                 var ariaPort = Util.GetAvailablePort();
                 var ariaHost = $"http://localhost:{ariaPort}/jsonrpc";
 
                 var ariaArgs =
-                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{Path.Combine(Paths.RoamingPath, "aria.log")}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false --allow-overwrite=true";
+                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{logFile.FullName}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false --allow-overwrite=true";
 
                 Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath} {ariaArgs}...");
 

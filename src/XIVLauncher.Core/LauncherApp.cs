@@ -14,8 +14,6 @@ namespace XIVLauncher.Core;
 
 public class LauncherApp : Component
 {
-    private readonly Storage storage;
-
     public static bool IsDebug { get; private set; } = true;
     private bool isDemoWindow = false;
 
@@ -90,6 +88,7 @@ public class LauncherApp : Component
     public ILauncherConfig Settings => Program.Config;
     public Launcher Launcher => Program.Launcher;
     public ISteam Steam => Program.Steam;
+    public Storage Storage { get; private set; }
 
     public LoadingPage LoadingPage { get; }
 
@@ -104,10 +103,10 @@ public class LauncherApp : Component
 
     public LauncherApp(Storage storage)
     {
-        this.storage = storage;
+        this.Storage = storage;
 
-        this.Accounts = new AccountManager(this.storage.GetFile("accounts.json"));
-        this.UniqueIdCache = new CommonUniqueIdCache(this.storage.GetFile("uidCache.json"));
+        this.Accounts = new AccountManager(this.Storage.GetFile("accounts.json"));
+        this.UniqueIdCache = new CommonUniqueIdCache(this.Storage.GetFile("uidCache.json"));
 
         this.mainPage = new MainPage(this);
         this.setPage = new SettingsPage(this);

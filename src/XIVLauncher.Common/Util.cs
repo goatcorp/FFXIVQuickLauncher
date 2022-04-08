@@ -326,5 +326,41 @@ namespace XIVLauncher.Common
                 throw new NotImplementedException();
             }
         }
+
+        public static string GetBinaryFromPath(string binaryName)
+        {
+            // Which is where on Windows
+            var which = "where";
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                which = "which";
+
+            var psi = new ProcessStartInfo(which)
+            {
+                Arguments = binaryName,
+                RedirectStandardOutput = true
+            };
+
+            var process = Process.Start(psi);
+            if (process == null)
+                throw new Exception("Couldn't start which");
+
+            var output = process.StandardOutput.ReadToEnd().Replace("\n", string.Empty);
+
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+                throw new BinaryNotFoundException(binaryName);
+
+            return output;
+        }
+
+        public class BinaryNotFoundException : Exception
+        {
+            public BinaryNotFoundException(string binaryName)
+                : base($"Couldn't find \"{binaryName}\" on PATH")
+            {
+            }
+        }
     }
 }
