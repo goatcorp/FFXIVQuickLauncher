@@ -30,7 +30,7 @@ class Program
     public static ImGuiBindings ImGuiBindings => bindings;
     public static ILauncherConfig Config { get; private set; }
     public static CommonSettings CommonSettings => new(Config);
-    public static ISteam Steam { get; private set; }
+    public static ISteam? Steam { get; private set; }
     public static Launcher Launcher { get; private set; }
     public static DalamudUpdater DalamudUpdater { get; private set; }
     public static DalamudOverlayInfoProxy DalamudLoadInfo { get; private set; }
@@ -176,8 +176,13 @@ class Program
             if (!window.Exists)
                 break;
 
+            var overlayNeedsPresent = false;
+
+            if (Steam != null && Steam.IsValid)
+                overlayNeedsPresent = Steam.BOverlayNeedsPresent;
+
             if (!snapshot.KeyEvents.Any() && !snapshot.MouseEvents.Any() && !snapshot.KeyCharPresses.Any() && invalidationFrames == 0 && lastMousePosition == snapshot.MousePosition
-                && !Steam.BOverlayNeedsPresent)
+                && !overlayNeedsPresent)
             {
                 continue;
             }
