@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Common.Game;
@@ -14,7 +15,7 @@ namespace XIVLauncher.Core;
 
 public class LauncherApp : Component
 {
-    public static bool IsDebug { get; private set; } = true;
+    public static bool IsDebug { get; private set; } = Debugger.IsAttached;
     private bool isDemoWindow = false;
 
     #region Modal State
@@ -130,7 +131,7 @@ public class LauncherApp : Component
         this.modalOnNextFrame = true;
     }
 
-    public void ShowMessageBlocking(string text, string title)
+    public void ShowMessageBlocking(string text, string title = "XIVLauncher")
     {
         if (!this.modalWaitHandle.WaitOne(0) && this.isModalDrawing)
             throw new InvalidOperationException("Cannot open modal while another modal is open");
