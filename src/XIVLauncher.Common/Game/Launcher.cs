@@ -5,6 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+
+#if NET6_0_OR_GREATER
+using System.Net.Security;
+#endif
+
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -34,10 +39,25 @@ public class Launcher
         this.settings = settings;
 
         ServicePointManager.Expect100Continue = false;
+
+#if NET6_0_OR_GREATER
+        var sslOptions = new SslClientAuthenticationOptions()
+        {
+            CipherSuitesPolicy = new CipherSuitesPolicy(new[] { TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 })
+        };
+
+        var handler = new SocketsHttpHandler
+        {
+            UseCookies = false,
+            SslOptions = sslOptions,
+        };
+#else
         var handler = new HttpClientHandler
         {
             UseCookies = false,
         };
+#endif
+
         this.client = new HttpClient(handler);
     }
 
