@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -21,6 +20,8 @@ public class RemotePatchInstaller
     private readonly CancellationTokenSource patcherCancelToken = new();
 
     public bool IsDone { get; private set; }
+    
+    public bool IsFailed { get; private set; }
 
     public RemotePatchInstaller(IRpc rpc)
     {
@@ -51,9 +52,9 @@ public class RemotePatchInstaller
         {
             while (!this.patcherCancelToken.IsCancellationRequested)
             {
-                if (Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher") && this.queuedInstalls.IsEmpty || !RunInstallQueue())
+                if (!RunInstallQueue())
                 {
-                    IsDone = true;
+                    IsFailed = true;
                     return;
                 }
 

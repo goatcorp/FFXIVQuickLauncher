@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -123,8 +124,13 @@ namespace XIVLauncher.PatchInstaller
                 var installer = new RemotePatchInstaller(new SharedMemoryRpc(args[1]));
                 installer.Start();
 
-                while (!installer.IsDone)
+                while (Process.GetProcesses().Any(x => x.ProcessName == "XIVLauncher") || !installer.IsDone)
+                {
                     Thread.Yield();
+
+                    if (installer.IsFailed)
+                        Environment.Exit(-1);
+                }
 
                 Environment.Exit(0);
             }

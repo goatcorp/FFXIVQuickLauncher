@@ -27,10 +27,12 @@ public class InProcessRpc : IRpc, IDisposable
     {
         var list = instanceMapping[this.channelName];
 
-        foreach (InProcessRpc otherInstance in list)
+        for (var i = 0; i < list.Count; i++)
         {
+            var otherInstance = list[i];
+
             if (otherInstance == this)
-                return;
+                continue;
 
             otherInstance.Dispatch(envelope);
         }
