@@ -1,3 +1,4 @@
+using XIVLauncher.Core.Compatibility;
 using XIVLauncher.Core.Configuration.Linux;
 
 namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
@@ -19,6 +20,8 @@ public class SettingsTabWine : SettingsTab
             {
                 CheckVisibility = () => startupTypeSetting.Value == LinuxStartupType.Command
             },
+
+            new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
         };
     }
 

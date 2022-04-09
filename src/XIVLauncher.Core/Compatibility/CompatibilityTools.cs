@@ -30,7 +30,7 @@ public class CompatibilityTools
             this.Prefix.Create();
     }
 
-    public async Task EnsureToolExists()
+    public async Task EnsureTool()
     {
         if (File.Exists(Wine64Path))
         {
@@ -45,24 +45,14 @@ public class CompatibilityTools
 
         File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WINE_GE_RELEASE_URL).ConfigureAwait(false));
 
-        var tarPath = Util.GetBinaryFromPath("tar");
-
-        var psi = new ProcessStartInfo(tarPath)
-        {
-            Arguments = $"-xf \"{tempPath}\" -C \"{this.toolDirectory.FullName}\""
-        };
-
-        var tarProcess = Process.Start(psi);
-
-        if (tarProcess == null)
-            throw new Exception("Could not start tar.");
-
-        tarProcess.WaitForExit();
-
-        if (tarProcess.ExitCode != 0)
-            throw new Exception("Could not untar compatibility tool");
+        Util.Untar(tempPath, this.toolDirectory.FullName);
 
         Log.Information("Compatibility tool successfully extracted to {Path}", this.toolDirectory.FullName);
+
+        File.Delete(tempPath);
+
+        EnsurePrefix();
+        await Dxvk.InstallDxvk(Prefix).ConfigureAwait(false);
 
         IsToolReady = true;
     }
@@ -85,7 +75,7 @@ public class CompatibilityTools
 
     private Process? RunInPrefix(string command, string environment = "")
     {
-        var line = $"WINEPREFIX=\"{this.Prefix.FullName}\" DXVK_HUD=full {Wine64Path} {command}";
+        var line = $"WINEPREFIX=\"{this.Prefix.FullName}\" WINEDLLOVERRIDES=\"mscoree,mshtml=\" {Wine64Path} {command}";
 
         var psi = new ProcessStartInfo(Util.GetBinaryFromPath("sh"))
         {

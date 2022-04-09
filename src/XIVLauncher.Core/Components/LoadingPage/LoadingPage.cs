@@ -51,6 +51,8 @@ public class LoadingPage : Page
             ImGuiHelpers.CenteredText(Line3);
         }
 
+        ImGui.Dummy(new Vector2(20));
+
         if (IsIndeterminate)
         {
             ImGuiHelpers.CenterCursorFor(SPINNER_RADIUS * 2);

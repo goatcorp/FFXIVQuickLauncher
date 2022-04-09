@@ -652,12 +652,18 @@ public class MainPage : Page
                 throw new Exception("Process command line wasn't set.");
 
             var signal = new ManualResetEvent(false);
+            var isFailed = false;
 
-            Task.Run(async () =>
+            var _ = Task.Run(async () =>
             {
-                await Program.CompatibilityTools.EnsureToolExists();
-                Program.CompatibilityTools.EnsurePrefix();
+                await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
                 Program.CompatibilityTools.EnsureGameFixes();
+            }).ContinueWith(t =>
+            {
+                isFailed = t.IsFaulted || t.IsCanceled;
+
+                if (isFailed)
+                    Log.Error(t.Exception, "Couldn't ensure compatibility tool");
 
                 signal.Set();
             });
@@ -666,7 +672,10 @@ public class MainPage : Page
             signal.WaitOne();
             signal.Dispose();
 
-            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools);
+            if (isFailed)
+                return null;
+
+            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType);
         }
         else
         {
@@ -749,7 +758,7 @@ public class MainPage : Page
         {
             Log.Error(ex, "Could not shut down Steam");
         }
-        
+
         return Process.GetProcessById(gamePid);
     }
 

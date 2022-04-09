@@ -362,5 +362,25 @@ namespace XIVLauncher.Common
             {
             }
         }
+
+        public static void Untar(string path, string output)
+        {
+            var tarPath = GetBinaryFromPath("tar");
+
+            var psi = new ProcessStartInfo(tarPath)
+            {
+                Arguments = $"-xf \"{path}\" -C \"{output}\""
+            };
+
+            var tarProcess = Process.Start(psi);
+
+            if (tarProcess == null)
+                throw new Exception("Could not start tar.");
+
+            tarProcess.WaitForExit();
+
+            if (tarProcess.ExitCode != 0)
+                throw new Exception("Could not untar compatibility tool");
+        }
     }
 }
