@@ -8,10 +8,10 @@ using Veldrid.Sdl2;
 using Veldrid.StartupUtilities;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
-using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
+using XIVLauncher.Core.Compatibility;
 using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Configuration;
 using XIVLauncher.Core.Configuration.Linux;
@@ -31,9 +31,9 @@ class Program
     public static ILauncherConfig Config { get; private set; }
     public static CommonSettings CommonSettings => new(Config);
     public static ISteam? Steam { get; private set; }
-    public static Launcher Launcher { get; private set; }
     public static DalamudUpdater DalamudUpdater { get; private set; }
     public static DalamudOverlayInfoProxy DalamudLoadInfo { get; private set; }
+    public static CompatibilityTools CompatibilityTools { get; private set; }
 
     private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
     private static bool showImGuiDemoWindow = true;
@@ -101,7 +101,7 @@ class Program
 
         Config.GlobalScale ??= 1.0f;
 
-        Config.LinuxStartupType ??= LinuxStartupType.Command;
+        Config.LinuxStartupType ??= LinuxStartupType.Managed;
         Config.LinuxStartCommandLine ??= "wine %COMMAND%";
     }
 
@@ -123,14 +123,14 @@ class Program
             Log.Error(ex, "steam init fail");
         }
 
-        Launcher = new Launcher(Steam, new UniqueIdCache(), CommonSettings);
-
         DalamudLoadInfo = new DalamudOverlayInfoProxy();
         DalamudUpdater = new DalamudUpdater(storage.GetFolder("dalamud"), storage.GetFolder("runtime"), storage.GetFolder("dalamudAssets"), null)
         {
             Overlay = DalamudLoadInfo
         };
-        DalamudUpdater.Run();
+        //DalamudUpdater.Run();
+
+        CompatibilityTools = new CompatibilityTools(storage);
 
         Log.Debug("Creating veldrid devices...");
 

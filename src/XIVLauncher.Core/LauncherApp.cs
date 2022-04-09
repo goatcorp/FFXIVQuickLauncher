@@ -86,7 +86,7 @@ public class LauncherApp : Component
     };
 
     public ILauncherConfig Settings => Program.Config;
-    public Launcher Launcher => Program.Launcher;
+    public Launcher Launcher { get; private set; }
     public ISteam Steam => Program.Steam;
     public Storage Storage { get; private set; }
 
@@ -107,6 +107,7 @@ public class LauncherApp : Component
 
         this.Accounts = new AccountManager(this.Storage.GetFile("accounts.json"));
         this.UniqueIdCache = new CommonUniqueIdCache(this.Storage.GetFile("uidCache.json"));
+        this.Launcher = new Launcher(Program.Steam, UniqueIdCache, Program.CommonSettings);
 
         this.mainPage = new MainPage(this);
         this.setPage = new SettingsPage(this);

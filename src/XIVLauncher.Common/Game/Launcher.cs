@@ -212,10 +212,10 @@ public class Launcher
         };
     }
 
-    public Process LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                              bool isSteamServiceAccount, string additionalArguments,
-                              DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-                              bool encryptArguments, DpiAwareness dpiAwareness)
+    public int? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
+                           bool isSteamServiceAccount, string additionalArguments,
+                           DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
+                           bool encryptArguments, DpiAwareness dpiAwareness)
     {
         Log.Information(
             $"XivGame::LaunchGame(steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
@@ -259,9 +259,7 @@ public class Launcher
             ? argumentBuilder.BuildEncrypted()
             : argumentBuilder.Build();
 
-        var game = runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
-
-        return game;
+        return runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
     }
 
     private static string GetVersionReport(DirectoryInfo gamePath, int exLevel, bool forceBaseVersion)

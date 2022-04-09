@@ -1,11 +1,9 @@
-﻿using System.Diagnostics;
-
-namespace XIVLauncher.Common.Addon
+﻿namespace XIVLauncher.Common.Addon
 {
     public interface IAddon
     {
         string Name { get; }
 
-        void Setup(Process gameProcess);
+        void Setup(int gamePid);
     }
 }

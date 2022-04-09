@@ -10,11 +10,9 @@ namespace XIVLauncher.Common.Addon.Implementations
     public class GenericAddon : IRunnableAddon, INotifyAddonAfterClose
     {
         private Process _addonProcess;
-        private Process _gameProcess;
 
-        void IAddon.Setup(Process gameProcess)
+        void IAddon.Setup(int gamePid)
         {
-            _gameProcess = gameProcess;
         }
 
         public void Run() =>

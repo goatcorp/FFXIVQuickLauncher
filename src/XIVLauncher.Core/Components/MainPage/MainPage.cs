@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using ImGuiNET;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using CheapLoc;
 using Serilog;
 using XIVLauncher.Common;
@@ -569,7 +570,20 @@ public class MainPage : Page
             App.Settings.GamePath, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay);
         var dalamudOk = false;
 
-        var dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
+        IDalamudCompatibilityCheck dalamudCompatCheck;
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            dalamudCompatCheck = new LinuxDalamudCompatibilityCheck();
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
 
         try
         {
@@ -637,7 +651,22 @@ public class MainPage : Page
             if (App.Settings.LinuxStartupType == LinuxStartupType.Command && App.Settings.LinuxStartCommandLine == null)
                 throw new Exception("Process command line wasn't set.");
 
-            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine);
+            var signal = new ManualResetEvent(false);
+
+            Task.Run(async () =>
+            {
+                await Program.CompatibilityTools.EnsureToolExists();
+                Program.CompatibilityTools.EnsurePrefix();
+                Program.CompatibilityTools.EnsureGameFixes();
+
+                signal.Set();
+            });
+
+            App.StartLoading("Ensuring compatibility tool...");
+            signal.WaitOne();
+            signal.Dispose();
+
+            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools);
         }
         else
         {
@@ -645,7 +674,7 @@ public class MainPage : Page
         }
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-        var gameProcess = App.Launcher.LaunchGame(runner,
+        var launchedPid = App.Launcher.LaunchGame(runner,
             loginResult.UniqueId,
             loginResult.OauthLogin.Region,
             loginResult.OauthLogin.MaxExpansion,
@@ -657,12 +686,14 @@ public class MainPage : Page
             App.Settings.IsEncryptArgs.GetValueOrDefault(true),
             App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware));
 
-        if (gameProcess == null)
+        if (launchedPid == null)
         {
             Log.Information("GameProcess was null...");
             IsLoggingIn = false;
             return null;
         }
+
+        var gamePid = launchedPid.Value;
 
         var addonMgr = new AddonManager();
 
@@ -672,7 +703,7 @@ public class MainPage : Page
 
             var addons = App.Settings.Addons.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
-            addonMgr.RunAddons(gameProcess, addons);
+            addonMgr.RunAddons(gamePid, addons);
         }
         catch (Exception ex)
         {
@@ -693,7 +724,15 @@ public class MainPage : Page
         }
 
         Log.Debug("Waiting for game to exit");
-        await Task.Run(() => gameProcess.WaitForExit()).ConfigureAwait(false);
+        //await Task.Run(() => gameProcess.WaitForExit()).ConfigureAwait(false);
+
+        // TODO(Linux): We need to translate the wine pid into the unix pid and go on here
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            Environment.Exit(0);
+            return null;
+        }
+
         Log.Verbose("Game has exited");
 
         if (addonMgr.IsRunning)
@@ -710,8 +749,8 @@ public class MainPage : Page
         {
             Log.Error(ex, "Could not shut down Steam");
         }
-
-        return gameProcess;
+        
+        return Process.GetProcessById(gamePid);
     }
 
     private void PersistAccount(string username, string password, bool isOtp, bool isSteam)
@@ -851,7 +890,7 @@ public class MainPage : Page
                     App.LoadingPage.Line3 = string.Format("{0} left to download at {1}/s", Util.BytesToString(patcher.AllDownloadsLength < 0 ? 0 : patcher.AllDownloadsLength),
                         Util.BytesToString(patcher.Speeds.Sum()));
 
-                    App.LoadingPage.Progress = patcher.CurrentInstallIndex * 100.0f / patcher.Downloads.Count;
+                    App.LoadingPage.Progress = patcher.CurrentInstallIndex / (float)patcher.Downloads.Count;
                 }
             }
 

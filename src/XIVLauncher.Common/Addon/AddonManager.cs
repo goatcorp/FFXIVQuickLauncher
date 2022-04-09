@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Serilog;
 
@@ -12,7 +11,7 @@ namespace XIVLauncher.Common.Addon
 
         public bool IsRunning { get; private set; }
 
-        public void RunAddons(Process gameProcess, List<IAddon> addonEntries)
+        public void RunAddons(int gamePid, List<IAddon> addonEntries)
         {
             if (_runningAddons != null)
                 throw new Exception("Addons still running?");
@@ -21,7 +20,7 @@ namespace XIVLauncher.Common.Addon
 
             foreach (var addonEntry in addonEntries)
             {
-                addonEntry.Setup(gameProcess);
+                addonEntry.Setup(gamePid);
 
                 if (addonEntry is IPersistentAddon persistentAddon)
                 {

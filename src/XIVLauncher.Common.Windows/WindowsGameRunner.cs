@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
@@ -20,7 +19,7 @@ public class WindowsGameRunner : IGameRunner
         this.loadMethod = loadMethod;
     }
 
-    public Process Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
+    public int? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
         var gameProcess = NativeAclFix.LaunchGame(workingDirectory, path, arguments, environment, dpiAwareness, process =>
         {
@@ -37,6 +36,6 @@ public class WindowsGameRunner : IGameRunner
             this.dalamudLauncher.Run(gameProcess);
         }
 
-        return gameProcess;
+        return gameProcess.Id;
     }
 }

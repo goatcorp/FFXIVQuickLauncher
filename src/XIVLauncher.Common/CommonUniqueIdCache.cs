@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using XIVLauncher.Common;
 using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.PlatformAbstractions
@@ -16,27 +15,29 @@ namespace XIVLauncher.PlatformAbstractions
 
         public CommonUniqueIdCache(FileInfo saveFile)
         {
+            this.configFile = saveFile;
+
             Load();
         }
 
         #region SaveLoad
 
-        private static readonly string ConfigPath = Path.Combine(Paths.RoamingPath, "uidCache.json");
+        private readonly FileInfo configFile;
 
         public void Save()
         {
-            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(_cache, Formatting.Indented));
+            File.WriteAllText(configFile.FullName, JsonConvert.SerializeObject(_cache, Formatting.Indented));
         }
 
         public void Load()
         {
-            if (!File.Exists(ConfigPath))
+            if (!File.Exists(configFile.FullName))
             {
                 _cache = new List<UniqueIdCacheEntry>();
                 return;
             }
 
-            _cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(File.ReadAllText(ConfigPath)) ?? new List<UniqueIdCacheEntry>();
+            _cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(File.ReadAllText(configFile.FullName)) ?? new List<UniqueIdCacheEntry>();
         }
 
         public void Reset()
