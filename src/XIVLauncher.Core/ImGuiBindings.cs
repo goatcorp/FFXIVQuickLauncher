@@ -1,8 +1,10 @@
 using System.Numerics;
 using Veldrid;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using ImGuiNET;
 using Serilog;
+using Veldrid.Sdl2;
 
 namespace XIVLauncher.Core;
 
@@ -50,6 +52,14 @@ public class ImGuiBindings : IDisposable
     private readonly List<IDisposable> _ownedResources = new List<IDisposable>();
     private int _lastAssignedID = 100;
 
+    private delegate void SetClipboardTextDelegate(IntPtr userData, string text);
+
+    private delegate string GetClipboardTextDelegate();
+
+    // variables because they need to exist for the program duration without being gc'd
+    private SetClipboardTextDelegate _setText;
+    private GetClipboardTextDelegate _getText;
+
     /// <summary>
     /// Constructs a new ImGuiController.
     /// </summary>
@@ -67,6 +77,14 @@ public class ImGuiBindings : IDisposable
         ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad;
         ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.HasGamepad;
 
+        _setText = new SetClipboardTextDelegate(SetClipboardText);
+        _getText = new GetClipboardTextDelegate(GetClipboardText);
+
+        var io = ImGui.GetIO();
+        io.SetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(_setText);
+        io.GetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(_getText);
+        io.ClipboardUserData = IntPtr.Zero;
+
         CreateDeviceResources(gd, outputDescription);
         SetKeyMappings();
 
@@ -74,6 +92,17 @@ public class ImGuiBindings : IDisposable
 
         ImGui.NewFrame();
         _frameBegun = true;
+    }
+
+    private static void SetClipboardText(IntPtr userData, string text)
+    {
+        // text always seems to have an extra newline, but I'll leave it for now
+        Sdl2Native.SDL_SetClipboardText(text);
+    }
+
+    private static string GetClipboardText()
+    {
+        return Sdl2Native.SDL_GetClipboardText();
     }
 
     public void WindowResized(int width, int height)
@@ -336,6 +365,7 @@ public class ImGuiBindings : IDisposable
         bool leftPressed = false;
         bool middlePressed = false;
         bool rightPressed = false;
+
         foreach (MouseEvent me in snapshot.MouseEvents)
         {
             if (me.Down)
@@ -345,9 +375,11 @@ public class ImGuiBindings : IDisposable
                     case MouseButton.Left:
                         leftPressed = true;
                         break;
+
                     case MouseButton.Middle:
                         middlePressed = true;
                         break;
+
                     case MouseButton.Right:
                         rightPressed = true;
                         break;
@@ -362,6 +394,7 @@ public class ImGuiBindings : IDisposable
         io.MouseWheel = snapshot.WheelDelta;
 
         IReadOnlyList<char> keyCharPresses = snapshot.KeyCharPresses;
+
         for (int i = 0; i < keyCharPresses.Count; i++)
         {
             char c = keyCharPresses[i];
@@ -369,22 +402,27 @@ public class ImGuiBindings : IDisposable
         }
 
         IReadOnlyList<KeyEvent> keyEvents = snapshot.KeyEvents;
+
         for (int i = 0; i < keyEvents.Count; i++)
         {
             KeyEvent keyEvent = keyEvents[i];
             io.KeysDown[(int)keyEvent.Key] = keyEvent.Down;
+
             if (keyEvent.Key == Key.ControlLeft)
             {
                 _controlDown = keyEvent.Down;
             }
+
             if (keyEvent.Key == Key.ShiftLeft)
             {
                 _shiftDown = keyEvent.Down;
             }
+
             if (keyEvent.Key == Key.AltLeft)
             {
                 _altDown = keyEvent.Down;
             }
+
             if (keyEvent.Key == Key.WinLeft)
             {
                 _winKeyDown = keyEvent.Down;
@@ -433,6 +471,7 @@ public class ImGuiBindings : IDisposable
         }
 
         uint totalVbSize = (uint)(drawData.TotalVtxCount * Unsafe.SizeOf<ImDrawVert>());
+
         if (totalVbSize > _vertexBuffer.SizeInBytes)
         {
             gd.DisposeWhenIdle(_vertexBuffer);
@@ -440,6 +479,7 @@ public class ImGuiBindings : IDisposable
         }
 
         uint totalIbSize = (uint)(drawData.TotalIdxCount * sizeof(ushort));
+
         if (totalIbSize > _indexBuffer.SizeInBytes)
         {
             gd.DisposeWhenIdle(_indexBuffer);
