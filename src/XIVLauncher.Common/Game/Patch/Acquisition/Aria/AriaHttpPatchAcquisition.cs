@@ -47,7 +47,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    ariaPath = Util.GetBinaryFromPath("aria2c");
+                    ariaPath = "aria2c";
                 }
 
                 var ariaPort = Util.GetAvailablePort();
