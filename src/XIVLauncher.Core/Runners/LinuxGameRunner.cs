@@ -63,7 +63,7 @@ public class LinuxGameRunner : IGameRunner
             formattedCommand = this.startupCommandLine.Replace("%COMMAND%", $"{defaultEnv} {wineHelperPath} \"{path}\" \"{arguments}\"");
         }
 
-        startInfo.Arguments = $"-c \"{wineDebug}{formattedCommand} &> {wineLogFile.FullName}\"";
+        startInfo.Arguments = $"-c \"{wineDebug}{formattedCommand} 2> {wineLogFile.FullName}\"";
 
         foreach (var variable in environment)
         {
