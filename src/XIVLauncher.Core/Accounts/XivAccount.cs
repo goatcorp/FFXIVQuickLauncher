@@ -3,6 +3,7 @@ using Serilog;
 using System.Net;
 using KeySharp;
 using Newtonsoft.Json.Linq;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Core.Accounts;
 
@@ -23,19 +24,19 @@ public class XivAccount
     {
         get
         {
+            if (EnvironmentSettings.IsNoSavePassword)
+                return string.Empty;
+
+            if (string.IsNullOrEmpty(UserName))
+                return string.Empty;
+
             var credentials = Keyring.GetPassword(PACKAGE, SERVICE, UserName);
             return credentials ?? string.Empty;
         }
         set
         {
-            try
-            {
-                Keyring.DeletePassword(PACKAGE, SERVICE, UserName);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            if (EnvironmentSettings.IsNoSavePassword)
+                return;
 
             if (!string.IsNullOrEmpty(value))
             {
