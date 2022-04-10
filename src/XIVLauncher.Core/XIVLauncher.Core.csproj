@@ -9,6 +9,8 @@
         <LangVersion>latest</LangVersion>
         <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
 
+        <Version>1.0.0.1</Version>
+        
         <!--
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <PublishSingleFile>true</PublishSingleFile>
@@ -20,7 +22,7 @@
       <PackageReference Include="CheapLoc" Version="1.1.6" />
       <PackageReference Include="Config.Net" Version="4.19.0" />
       <PackageReference Include="ImGui.NET" Version="1.87.2" />
-      <PackageReference Include="KeySharp" Version="1.0.0" />
+      <PackageReference Include="KeySharp" Version="1.0.2" />
       <PackageReference Include="Serilog" Version="2.10.0" />
       <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
