@@ -47,7 +47,7 @@ public class LinuxGameRunner : IGameRunner
         var wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
         var defaultEnv = $"WINEPREFIX=\"{compatibility.Prefix}\" DXVK_HUD={dxvkHud} WINEDLLOVERRIDES=\"d3d9,d3d11,d3d10core,dxgi,mscoree=n\"";
 
-        ProcessStartInfo startInfo = new ProcessStartInfo(Util.GetBinaryFromPath("sh"))
+        ProcessStartInfo startInfo = new ProcessStartInfo("sh")
         {
             RedirectStandardOutput = true,
         };

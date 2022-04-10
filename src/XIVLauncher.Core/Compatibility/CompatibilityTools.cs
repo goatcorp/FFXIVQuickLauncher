@@ -80,7 +80,7 @@ public class CompatibilityTools
     {
         var line = $"WINEPREFIX=\"{this.Prefix.FullName}\" WINEDLLOVERRIDES=\"mscoree,mshtml=\" {Wine64Path} {command}";
 
-        var psi = new ProcessStartInfo(Util.GetBinaryFromPath("sh"))
+        var psi = new ProcessStartInfo("sh")
         {
             Arguments = $"-c \"{line}\""
         };
@@ -90,7 +90,7 @@ public class CompatibilityTools
 
     public void Kill()
     {
-        var psi = new ProcessStartInfo(Util.GetBinaryFromPath("sh"))
+        var psi = new ProcessStartInfo("sh")
         {
             Arguments = $"-c \"WINEPREFIX=\"{this.Prefix.FullName}\" {WineServerPath} -k\""
         };
