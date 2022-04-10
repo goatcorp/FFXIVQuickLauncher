@@ -1,3 +1,6 @@
+using System.Numerics;
+using ImGuiNET;
+using XIVLauncher.Common;
 using XIVLauncher.Core.Compatibility;
 using XIVLauncher.Core.Configuration.Linux;
 
@@ -22,6 +25,7 @@ public class SettingsTabWine : SettingsTab
             },
 
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
+            new SettingsEntry<string>("WINEDEBUG Variables", "Configure debug logging for wine. Useful for troubleshooting.", () => Program.Config.WineDebugVars ?? string.Empty, s => Program.Config.WineDebugVars = s)
         };
     }
 
@@ -34,5 +38,33 @@ public class SettingsTabWine : SettingsTab
     public override void Draw()
     {
         base.Draw();
+
+        if (!Program.CompatibilityTools.IsToolDownloaded)
+        {
+            ImGui.BeginDisabled();
+            ImGui.Text("Compatibility tool isn't set up. Please start the game at least once.");
+
+            ImGui.Dummy(new Vector2(10));
+        }
+
+        if (ImGui.Button("Open prefix"))
+        {
+            Util.OpenBrowser(Program.CompatibilityTools.Prefix.FullName);
+        }
+
+        if (ImGui.Button("Open Wine configuration"))
+        {
+            Program.CompatibilityTools.RunInPrefix("C:/windows/system32/winecfg.exe");
+        }
+
+        if (ImGui.Button("Kill all wine processes"))
+        {
+            Program.CompatibilityTools.Kill();
+        }
+
+        if (!Program.CompatibilityTools.IsToolDownloaded)
+        {
+            ImGui.EndDisabled();
+        }
     }
 }

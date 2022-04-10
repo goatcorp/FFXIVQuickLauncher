@@ -19,6 +19,11 @@
       <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
     </ItemGroup>
 
+    <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">
+        <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
+        <PathMap>$(AppOutputBase)=C:\goatsoft\xl\XIVLauncher.Common.Windows\</PathMap>
+    </PropertyGroup>
+
     <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
         <None Remove="libsteam_api64.so" />
         <Content Include="libsteam_api64.so">

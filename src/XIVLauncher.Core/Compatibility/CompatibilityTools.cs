@@ -12,9 +12,12 @@ public class CompatibilityTools
     private const string WINE_GE_RELEASE_NAME = "lutris-GE-Proton7-8-x86_64";
 
     public string Wine64Path => Path.Combine(toolDirectory.FullName, WINE_GE_RELEASE_NAME, "bin", "wine64");
+    public string WineServerPath => Path.Combine(toolDirectory.FullName, WINE_GE_RELEASE_NAME, "bin", "wineserver");
 
     public DirectoryInfo Prefix { get; private set; }
     public bool IsToolReady { get; private set; }
+
+    public bool IsToolDownloaded => File.Exists(Wine64Path) && this.Prefix.Exists;
 
     public CompatibilityTools(Storage storage)
     {
@@ -73,7 +76,7 @@ public class CompatibilityTools
         RunInPrefix("cmd /c dir %userprofile%/My Documents > nul").WaitForExit();
     }
 
-    private Process? RunInPrefix(string command, string environment = "")
+    public Process? RunInPrefix(string command, string environment = "")
     {
         var line = $"WINEPREFIX=\"{this.Prefix.FullName}\" WINEDLLOVERRIDES=\"mscoree,mshtml=\" {Wine64Path} {command}";
 
@@ -83,6 +86,16 @@ public class CompatibilityTools
         };
 
         return Process.Start(psi);
+    }
+
+    public void Kill()
+    {
+        var psi = new ProcessStartInfo(Util.GetBinaryFromPath("sh"))
+        {
+            Arguments = $"-c \"WINEPREFIX=\"{this.Prefix.FullName}\" {WineServerPath} -k\""
+        };
+
+        Process.Start(psi);
     }
 
     public void EnsureGameFixes()

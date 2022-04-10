@@ -103,6 +103,7 @@ class Program
 
         Config.LinuxStartupType ??= LinuxStartupType.Managed;
         Config.LinuxStartCommandLine ??= "wine %COMMAND%";
+        Config.WineDebugVars = string.Empty;
     }
 
     public const int STEAM_APP_ID = 39210;
@@ -128,7 +129,7 @@ class Program
         {
             Overlay = DalamudLoadInfo
         };
-        //DalamudUpdater.Run();
+        DalamudUpdater.Run();
 
         CompatibilityTools = new CompatibilityTools(storage);
 

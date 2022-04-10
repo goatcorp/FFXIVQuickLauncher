@@ -59,6 +59,8 @@ public interface ILauncherConfig
 
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 
+    public string? WineDebugVars { get; set; }
+
     #endregion
 
     #region Dalamud

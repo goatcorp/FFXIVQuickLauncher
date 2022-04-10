@@ -40,7 +40,7 @@ public class OtpEntryPage : Page
         Program.DoAutoSoftwareKbd = false;
 
         // TODO(goat): This doesn't work if you call it right after starting the app... Steam probably takes a little while to initialize. Might be annoying for autologin.
-        if (Program.Steam.IsValid && Program.Steam.IsRunningOnSteamDeck())
+        if (Program.Steam != null && Program.Steam.IsValid && Program.Steam.IsRunningOnSteamDeck() && Environment.GetEnvironmentVariable("XL_NO_SWKBD") != "true")
         {
             var success = Program.Steam.ShowGamepadTextInput(false, false, "Please enter your OTP", 6, string.Empty);
             Log.Verbose("ShowGamepadTextInput: {Success}", success);

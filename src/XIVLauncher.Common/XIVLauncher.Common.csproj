@@ -23,6 +23,11 @@
         <DefineConstants>LINUX</DefineConstants>
     </PropertyGroup>
 
+    <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">
+        <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
+        <PathMap>$(AppOutputBase)=C:\goatsoft\xl\XIVLauncher.Common\</PathMap>
+    </PropertyGroup>
+
     <PropertyGroup>
         <OutputType>Library</OutputType>
         <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>

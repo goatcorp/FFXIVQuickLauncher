@@ -682,7 +682,9 @@ public class MainPage : Page
             if (isFailed)
                 return null;
 
-            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType);
+            var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
+            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
+                App.Settings.WineDebugVars ?? string.Empty, wineLogFile);
         }
         else
         {
