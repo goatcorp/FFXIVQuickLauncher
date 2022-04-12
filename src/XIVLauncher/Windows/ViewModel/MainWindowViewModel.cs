@@ -283,11 +283,15 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (!gateStatus.Status)
             {
-                var gateClosedText = Loc.Localize("GateClosed", "FFXIV is currently under maintenance. Please try again later or see official sources for more information.");
-                var message = gateStatus.Message.Aggregate("", (current, s) => current + s + "\n");
+                var message = Loc.Localize("GateClosed", "FFXIV is currently under maintenance. Please try again later or see official sources for more information.");
 
-                if (string.IsNullOrEmpty(message))
-                    message = gateClosedText;
+                if (gateStatus.Message != null)
+                {
+                    var gateMessage = gateStatus.Message.Aggregate("", (current, s) => current + s + "\n");
+
+                    if (!string.IsNullOrEmpty(gateMessage))
+                        message = gateMessage;
+                }
 
                 var builder = CustomMessageBox.Builder.NewFrom(message)
                                               .WithImage(MessageBoxImage.Asterisk)
@@ -295,10 +299,13 @@ namespace XIVLauncher.Windows.ViewModel
                                               .WithCaption("XIVLauncher")
                                               .WithParentWindow(_window);
 
-                var description = gateStatus.News.Aggregate("", (current, s) => current + s + "\n");
+                if (gateStatus.News != null && gateStatus.News.Count > 0)
+                {
+                    var description = gateStatus.News.Aggregate("", (current, s) => current + s + "\n");
 
-                if (!string.IsNullOrEmpty(description))
-                    builder.WithDescription(description);
+                    if (!string.IsNullOrEmpty(description))
+                        builder.WithDescription(description);
+                }
 
                 builder.Show();
 
