@@ -167,7 +167,9 @@ public class MainPage : Page
 #if !DEBUG
         try
         {
-            gateStatus = await App.Launcher.GetGateStatus().ConfigureAwait(false);
+            // TODO: Also apply the login status fix here
+            var gate = await App.Launcher.GetGateStatus(App.Settings.ClientLanguage ?? ClientLanguage.English).ConfigureAwait(false);
+            gateStatus = gate.Status;
         }
         catch (Exception ex)
         {
