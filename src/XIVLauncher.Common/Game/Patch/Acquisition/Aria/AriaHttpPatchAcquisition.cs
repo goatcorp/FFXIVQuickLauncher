@@ -64,7 +64,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
 #endif
-                    UseShellExecute = true
+                    UseShellExecute = false,
                 };
 
                 ariaProcess = Process.Start(startInfo);
