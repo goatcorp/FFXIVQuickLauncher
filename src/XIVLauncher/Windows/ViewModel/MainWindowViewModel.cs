@@ -951,7 +951,7 @@ namespace XIVLauncher.Windows.ViewModel
             var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-            var gameProcess = this.Launcher.LaunchGame(gameRunner,
+            var pid = this.Launcher.LaunchGame(gameRunner,
                 loginResult.UniqueId,
                 loginResult.OauthLogin.Region,
                 loginResult.OauthLogin.MaxExpansion,
@@ -965,12 +965,14 @@ namespace XIVLauncher.Windows.ViewModel
 
             Troubleshooting.LogTroubleshooting();
 
-            if (gameProcess == null)
+            if (!pid.HasValue)
             {
                 Log.Information("GameProcess was null...");
                 IsLoggingIn = false;
                 return null;
             }
+
+            var gamePid = pid.Value;
 
             var addonMgr = new AddonManager();
 
@@ -980,7 +982,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
-                addonMgr.RunAddons(gameProcess, addons);
+                addonMgr.RunAddons(gamePid, addons);
             }
             catch (Exception ex)
             {
@@ -996,6 +998,8 @@ namespace XIVLauncher.Windows.ViewModel
 
                 addonMgr.StopAddons();
             }
+
+            var gameProcess = Process.GetProcessById(gamePid);
 
             Log.Debug("Waiting for game to exit");
             await Task.Run(() => gameProcess.WaitForExit()).ConfigureAwait(false);
@@ -1136,7 +1140,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             try
             {
-                await patcher.PatchAsync().ConfigureAwait(false);
+                await patcher.PatchAsync(new FileInfo(Path.Combine(Paths.RoamingPath, "aria2.log"))).ConfigureAwait(false);
                 return true;
             }
             catch (PatchInstallerException ex)
