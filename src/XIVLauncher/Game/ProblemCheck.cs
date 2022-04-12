@@ -155,8 +155,8 @@ namespace XIVLauncher.Game
                 if (dinput8.Exists)
                     dinput8Info = FileVersionInfo.GetVersionInfo(dinput8.FullName);
 
-                if ((d3d11Info?.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (dinput8Info?.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase) ?? false))
+                if ((d3d11Info?.ProductName?.Equals("GShade", StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (dinput8Info?.ProductName?.Equals("GShade", StringComparison.OrdinalIgnoreCase) ?? false))
                 {
                     if (CustomMessageBox.Builder
                                         .NewFrom(Loc.Localize("GShadeWrongMode", "You installed GShade in a mode that isn't optimal for use together with XIVLauncher. Do you want XIVLauncher to fix this for you?\n\nThis will not change your presets or settings, it will merely improve compatibility with XIVLauncher features."))
