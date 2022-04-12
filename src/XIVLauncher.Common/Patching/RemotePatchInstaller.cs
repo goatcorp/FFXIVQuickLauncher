@@ -20,8 +20,10 @@ public class RemotePatchInstaller
     private readonly CancellationTokenSource patcherCancelToken = new();
 
     public bool IsDone { get; private set; }
-    
+
     public bool IsFailed { get; private set; }
+
+    public bool HasQueuedInstalls => !this.queuedInstalls.IsEmpty;
 
     public RemotePatchInstaller(IRpc rpc)
     {

@@ -123,15 +123,22 @@ namespace XIVLauncher.PatchInstaller
                 var installer = new RemotePatchInstaller(new SharedMemoryRpc(args[1]));
                 installer.Start();
 
-                while (Process.GetProcesses().Any(x => x.ProcessName == "XIVLauncher") || !installer.IsDone)
+                while (true)
                 {
-                    Thread.Yield();
+                    if ((Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher") && !installer.HasQueuedInstalls) || installer.IsDone)
+                    {
+                        Environment.Exit(0);
+                        return;
+                    }
+
+                    Thread.Sleep(1000);
 
                     if (installer.IsFailed)
+                    {
+                        Log.Information("Exited due to failure");
                         Environment.Exit(-1);
+                    }
                 }
-
-                Environment.Exit(0);
             }
             catch (Exception ex)
             {
