@@ -1004,19 +1004,19 @@ namespace XIVLauncher.Windows.ViewModel
                         "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
 
                     CustomMessageBox.Builder
-                        .NewFrom(runnerErrorMessage)
-                        .WithImage(MessageBoxImage.Error)
-                        .WithButtons(MessageBoxButton.OK)
-                        .WithShowHelpLinks()
-                        .WithParentWindow(_window)
-                        .Show();
+                                    .NewFrom(runnerErrorMessage)
+                                    .WithImage(MessageBoxImage.Error)
+                                    .WithButtons(MessageBoxButton.OK)
+                                    .WithShowHelpLinks()
+                                    .WithParentWindow(_window)
+                                    .Show();
                 }
             }
 
             var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-            var pid = this.Launcher.LaunchGame(gameRunner,
+            var launched = this.Launcher.LaunchGame(gameRunner,
                 loginResult.UniqueId,
                 loginResult.OauthLogin.Region,
                 loginResult.OauthLogin.MaxExpansion,
@@ -1030,14 +1030,12 @@ namespace XIVLauncher.Windows.ViewModel
 
             Troubleshooting.LogTroubleshooting();
 
-            if (!pid.HasValue)
+            if (launched is not Process gameProcess)
             {
                 Log.Information("GameProcess was null...");
                 IsLoggingIn = false;
                 return null;
             }
-
-            var gamePid = pid.Value;
 
             var addonMgr = new AddonManager();
 
@@ -1047,7 +1045,7 @@ namespace XIVLauncher.Windows.ViewModel
 
                 var addons = App.Settings.AddonList.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
-                addonMgr.RunAddons(gamePid, addons);
+                addonMgr.RunAddons(gameProcess.Id, addons);
             }
             catch (Exception ex)
             {
@@ -1063,8 +1061,6 @@ namespace XIVLauncher.Windows.ViewModel
 
                 addonMgr.StopAddons();
             }
-
-            var gameProcess = Process.GetProcessById(gamePid);
 
             Log.Debug("Waiting for game to exit");
             await Task.Run(() => gameProcess.WaitForExit()).ConfigureAwait(false);

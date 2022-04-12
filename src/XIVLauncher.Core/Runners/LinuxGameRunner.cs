@@ -27,7 +27,7 @@ public class LinuxGameRunner : IGameRunner
         this.wineLogFile = wineLogFile;
     }
 
-    public int? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
+    public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
         var dxvkHud = hudType switch
         {

@@ -213,10 +213,10 @@ public class Launcher
         };
     }
 
-    public int? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                           bool isSteamServiceAccount, string additionalArguments,
-                           DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-                           bool encryptArguments, DpiAwareness dpiAwareness)
+    public object? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
+                              bool isSteamServiceAccount, string additionalArguments,
+                              DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
+                              bool encryptArguments, DpiAwareness dpiAwareness)
     {
         Log.Information(
             $"XivGame::LaunchGame(steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");

@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Linq;
 using System.Diagnostics;
-using System.Reflection;
-using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using Serilog;
 using XIVLauncher.Common.Game.Exceptions;
@@ -302,25 +300,6 @@ namespace XIVLauncher.Common.Game
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern IntPtr GetCurrentProcess();
             #endregion
-        }
-
-        private class ExistingProcess : Process
-        {
-            public ExistingProcess(IntPtr handle)
-            {
-                SetHandle(handle);
-            }
-
-            private void SetHandle(IntPtr handle)
-            {
-                var baseType = GetType().BaseType;
-                if (baseType == null)
-                    return;
-
-                var setProcessHandleMethod = baseType.GetMethod("SetProcessHandle",
-                    BindingFlags.NonPublic | BindingFlags.Instance);
-                setProcessHandleMethod?.Invoke(this, new object[] {new SafeProcessHandle(handle, true)});
-            }
         }
 
         public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars, DpiAwareness dpiAwareness, Action<Process> beforeResume)

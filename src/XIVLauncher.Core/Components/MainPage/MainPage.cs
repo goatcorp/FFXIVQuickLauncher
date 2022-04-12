@@ -694,7 +694,7 @@ public class MainPage : Page
         }
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-        var launchedPid = App.Launcher.LaunchGame(runner,
+        var launched = App.Launcher.LaunchGame(runner,
             loginResult.UniqueId,
             loginResult.OauthLogin.Region,
             loginResult.OauthLogin.MaxExpansion,
@@ -706,14 +706,25 @@ public class MainPage : Page
             App.Settings.IsEncryptArgs.GetValueOrDefault(true),
             App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware));
 
-        if (launchedPid == null)
+        if (launched == null)
         {
             Log.Information("GameProcess was null...");
             IsLoggingIn = false;
             return null;
         }
 
-        var gamePid = launchedPid.Value;
+        // This is a Windows process handle on Windows, a Wine pid on Linux
+        var gamePid = 0;
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            var process = launched as Process;
+            gamePid = process!.Id;
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            gamePid = (int)launched;
+        }
 
         var addonMgr = new AddonManager();
 
