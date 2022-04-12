@@ -234,6 +234,7 @@ public class Launcher
                               .Append("DEV.UseSqPack", "1")
                               .Append("SYS.Region", region.ToString())
                               .Append("language", ((int)language).ToString())
+                              .Append("resetConfig", "0")
                               .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
         if (isSteamServiceAccount)
