@@ -577,8 +577,27 @@ namespace XIVLauncher.Windows.ViewModel
             if (CustomMessageBox.AssertOrShowError(loginResult.State == Launcher.LoginState.Ok, "TryProcessLoginResult: loginResult.State should have been Launcher.LoginState.Ok", parentWindow: _window))
                 return false;
 
+#if !DEBUG
             if (!await CheckGateStatus().ConfigureAwait(false))
                 return false;
+#endif
+
+            /* ==================== 6.1 BOOT UPDATE ============= */
+            var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
+            var ver610 = SeVersion.Parse("2022.03.25.0000.0001");
+
+            if (bootver == ver610)
+            {
+                CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
+                                                                     "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
+                                                                     "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
+                                                                     "\n")
+                    , "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
+
+                Environment.Exit(0);
+                return false;
+            }
+            /* =================================================== */
 
             Hide();
 
