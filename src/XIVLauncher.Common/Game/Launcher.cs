@@ -345,7 +345,7 @@ public class Launcher
     {
         var request = new HttpRequestMessage(HttpMethod.Get,
             $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath)}/?time=" +
-            GetLauncherFormattedTimeLong());
+            GetLauncherFormattedTimeLongRounded());
 
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
         request.Headers.AddWithoutValidation("Host", "patch-bootver.ffxiv.com");
@@ -634,15 +634,24 @@ public class Launcher
 
     private static string GenerateFrontierReferer(ClientLanguage language)
     {
-        var langCode = language.GetLangCode();
-        var formattedTime = GetLauncherFormattedTime();
+        var langCode = language.GetLangCode().Replace("-", "_");
+        var formattedTime = GetLauncherFormattedTimeLong();
 
-        return $"https://launcher.finalfantasyxiv.com/v600/index.html?rc_lang={langCode}&time={formattedTime}";
+        return $"https://launcher.finalfantasyxiv.com/v610/index.html?rc_lang={langCode}&time={formattedTime}";
     }
 
+    // Used to be used for frontier top, they now use the un-rounded long timestamp
     private static string GetLauncherFormattedTime() => DateTime.UtcNow.ToString("yyyy-MM-dd-HH");
 
     private static string GetLauncherFormattedTimeLong() => DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm");
+
+    private static string GetLauncherFormattedTimeLongRounded()
+    {
+        var formatted = DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm").ToCharArray();
+        formatted[15] = '0';
+
+        return new string(formatted);
+    }
 
     private static string GenerateUserAgent()
     {

@@ -55,7 +55,7 @@ namespace XIVLauncher.Common.Game
         {
             var unixTimestamp = Util.GetUnixMillis();
             var langCode = language.GetLangCode();
-            var url = $"https://frontier.ffxiv.com/news/headline.json?lang={langCode}&media=pcapp&{unixTimestamp}";
+            var url = $"https://frontier.ffxiv.com/news/headline.json?lang={langCode}&media=pcapp&_={unixTimestamp}";
 
             var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*").ConfigureAwait(false));
 
