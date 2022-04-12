@@ -268,7 +268,7 @@ namespace XIVLauncher.Windows
 
         private void NewGitHubIssueButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Process.Start($"{App.REPO_URL}/issues/new");
+            Process.Start($"{App.REPO_URL}/issues/new?assignees=octocat&labels=bug%2Ctriage&template=bugreport.yml");
         }
 
         public enum ExitOnCloseModes
