@@ -1,3 +1,4 @@
-﻿• Preliminary changes for patch 6.1
-• Allow patching the game during maintenance - this feature was disabled during a refactor
-• Adds further checks for incompatible GShade installations
+﻿• Compatibility with Patch 6.1
+    => Plugins will not work yet! We are still working on fixing plugin support for this patch, and that may take a while. You don't have to do anything to fix them, they'll update automatically once we're done.
+
+• Adds further checks for incompatible GShade installations. This will prevent your plugin windows from looking blurry, but won't change anything about your setup/presets.
