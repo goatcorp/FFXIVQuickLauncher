@@ -255,14 +255,13 @@ namespace XIVLauncher.Windows.ViewModel
                 Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
         }
 
-        private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, AfterLoginAction action)
+        private async Task<bool> CheckGateStatus()
         {
-            bool? gateStatus = null;
+            GateStatus? gateStatus = null;
 
-#if !DEBUG
             try
             {
-                gateStatus = await this.Launcher.GetGateStatus();
+                gateStatus = await Launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -279,10 +278,64 @@ namespace XIVLauncher.Windows.ViewModel
                                 .WithParentWindow(_window)
                                 .Show();
 
+                return false;
+            }
+
+            if (!gateStatus.Status)
+            {
+                var gateClosedText = Loc.Localize("GateClosed", "FFXIV is currently under maintenance. Please try again later or see official sources for more information.");
+                var message = gateStatus.Message.Aggregate("", (current, s) => current + s + "\n");
+
+                if (string.IsNullOrEmpty(message))
+                    message = gateClosedText;
+
+                var builder = CustomMessageBox.Builder.NewFrom(message)
+                                              .WithImage(MessageBoxImage.Asterisk)
+                                              .WithButtons(MessageBoxButton.OK)
+                                              .WithCaption("XIVLauncher")
+                                              .WithParentWindow(_window);
+
+                var description = gateStatus.News.Aggregate("", (current, s) => current + s + "\n");
+
+                if (!string.IsNullOrEmpty(description))
+                    builder.WithDescription(description);
+
+                builder.Show();
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, AfterLoginAction action)
+        {
+            bool? loginStatus = null;
+
+#if !DEBUG
+            try
+            {
+                loginStatus = await Launcher.GetLoginStatus().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not obtain gate status");
+            }
+
+            if (loginStatus == null)
+            {
+                CustomMessageBox.Builder.NewFrom(Loc.Localize("GateUnreachable", "The login servers could not be reached. This usually indicates that the game is under maintenance, or that your connection to the login servers is unstable.\n\nPlease try again later."))
+                                .WithImage(MessageBoxImage.Asterisk)
+                                .WithButtons(MessageBoxButton.OK)
+                                .WithShowHelpLinks(true)
+                                .WithCaption("XIVLauncher")
+                                .WithParentWindow(_window)
+                                .Show();
+
                 return null;
             }
 
-            if (gateStatus == false)
+            if (loginStatus == false)
             {
                 CustomMessageBox.Builder.NewFrom(Loc.Localize("GateClosed", "FFXIV is currently under maintenance. Please try again later or see official sources for more information."))
                                 .WithImage(MessageBoxImage.Asterisk)
@@ -307,7 +360,7 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "StartGame failed... (GateStatus={0})", gateStatus);
+                Log.Error(ex, "StartGame failed... (LoginStatus={0})", loginStatus);
 
                 var msgbox = new CustomMessageBox.Builder()
                              .WithCaption(Loc.Localize("LoginNoOauthTitle", "Login issue"))
@@ -390,11 +443,11 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     disableAutoLogin = true;
                     msgbox.WithShowNewGitHubIssue(true)
-                        .WithAppendDescription(ex.ToString())
-                        .WithAppendSettingsDescription("Login")
-                        .WithAppendText("\n\n")
-                        .WithAppendText(Loc.Localize("CheckLoginInfoNotAdditionally",
-                            "Please check your login information or try again."));
+                          .WithAppendDescription(ex.ToString())
+                          .WithAppendSettingsDescription("Login")
+                          .WithAppendText("\n\n")
+                          .WithAppendText(Loc.Localize("CheckLoginInfoNotAdditionally",
+                              "Please check your login information or try again."));
                 }
 
                 if (disableAutoLogin && App.Settings.AutologinEnabled)
@@ -522,6 +575,9 @@ namespace XIVLauncher.Windows.ViewModel
             }
 
             if (CustomMessageBox.AssertOrShowError(loginResult.State == Launcher.LoginState.Ok, "TryProcessLoginResult: loginResult.State should have been Launcher.LoginState.Ok", parentWindow: _window))
+                return false;
+
+            if (!await CheckGateStatus().ConfigureAwait(false))
                 return false;
 
             Hide();

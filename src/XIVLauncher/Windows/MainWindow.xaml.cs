@@ -241,11 +241,11 @@ namespace XIVLauncher.Windows
             // grey out world status icon while deferred check is running
             WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(38, 38, 38));
 
-            _launcher.GetGateStatus().ContinueWith((resultTask) =>
+            _launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ContinueWith((resultTask) =>
             {
                 try
                 {
-                    var brushToSet = resultTask.Result ? worldStatusBrushOk : null;
+                    var brushToSet = resultTask.Result.Status ? worldStatusBrushOk : null;
                     Dispatcher.InvokeAsync(() =>  WorldStatusPackIcon.Foreground = brushToSet ?? new SolidColorBrush(Color.FromRgb(242, 24, 24)));
                 }
                 catch
@@ -418,7 +418,7 @@ namespace XIVLauncher.Windows
 
             try
             {
-                gateStatus = Task.Run(() => _launcher.GetGateStatus()).Result;
+                gateStatus = Task.Run(() => _launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English))).Result.Status;
             }
             catch
             {

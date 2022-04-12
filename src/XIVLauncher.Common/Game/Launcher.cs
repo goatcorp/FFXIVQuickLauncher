@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Encryption;
@@ -560,13 +561,29 @@ public class Launcher
         return length + "/" + hashstring;
     }
 
-    public async Task<bool> GetGateStatus()
+    public async Task<GateStatus> GetGateStatus(ClientLanguage language)
     {
         try
         {
             var reply = Encoding.UTF8.GetString(
                 await DownloadAsLauncher(
-                    $"https://frontier.ffxiv.com/worldStatus/gate_status.json?{Util.GetUnixMillis()}", ClientLanguage.English).ConfigureAwait(true));
+                    $"https://frontier.ffxiv.com/worldStatus/gate_status.json?lang={language.GetLangCode()}&_={Util.GetUnixMillis()}", language).ConfigureAwait(true));
+
+            return JsonConvert.DeserializeObject<GateStatus>(reply);
+        }
+        catch (Exception exc)
+        {
+            throw new Exception("Could not get gate status", exc);
+        }
+    }
+
+    public async Task<bool> GetLoginStatus()
+    {
+        try
+        {
+            var reply = Encoding.UTF8.GetString(
+                await DownloadAsLauncher(
+                    $"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis()}", ClientLanguage.English).ConfigureAwait(true));
 
             return Convert.ToBoolean(int.Parse(reply[10].ToString()));
         }
