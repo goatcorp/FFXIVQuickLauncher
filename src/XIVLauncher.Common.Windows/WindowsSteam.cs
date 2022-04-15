@@ -14,6 +14,14 @@ namespace XIVLauncher.Common.Windows
 
         public void Initialize(uint appId)
         {
+            // workaround because SetEnvironmentVariable doesn't actually touch the process environment on unix
+            if (Environment.OSVersion.Platform == PlatformID.Unix) {
+                [System.Runtime.InteropServices.DllImport("c")]
+                static extern int setenv(string name, string value, int overwrite);
+
+                setenv("SteamAppId", appId.ToString(), 1);
+            }
+
             SteamClient.Init(appId);
         }
 
