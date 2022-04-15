@@ -73,27 +73,28 @@ public class CompatibilityTools
 
     public void EnsurePrefix()
     {
-        RunInPrefix("cmd /c dir %userprofile%/My Documents > nul").WaitForExit();
+        RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
     public Process? RunInPrefix(string command, string environment = "")
     {
-        var line = $"WINEPREFIX=\"{this.Prefix.FullName}\" WINEDLLOVERRIDES=\"mscoree,mshtml=\" {Wine64Path} {command}";
-
-        var psi = new ProcessStartInfo("sh")
+        var psi = new ProcessStartInfo(Wine64Path)
         {
-            Arguments = $"-c \"{line}\""
+            Arguments = command
         };
+        psi.EnvironmentVariables.Add("WINEPREFIX", this.Prefix.FullName);
+        psi.EnvironmentVariables.Add("WINEDLLOVERRIDES", "mscoree,mshtml=");
 
         return Process.Start(psi);
     }
 
     public void Kill()
     {
-        var psi = new ProcessStartInfo("sh")
+        var psi = new ProcessStartInfo(WineServerPath)
         {
-            Arguments = $"-c \"WINEPREFIX=\"{this.Prefix.FullName}\" {WineServerPath} -k\""
+            Arguments = "-k"
         };
+        psi.EnvironmentVariables.Add("WINEPREFIX", this.Prefix.FullName);
 
         Process.Start(psi);
     }
