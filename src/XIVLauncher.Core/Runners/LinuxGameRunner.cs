@@ -70,7 +70,7 @@ public class LinuxGameRunner : IGameRunner
         }
         else
         {
-            string formattedCommand = this.startupCommandLine.Replace("%COMMAND%", $"{wineHelperPath} \"{path}\" \"{arguments}\"");
+            string formattedCommand = this.startupCommandLine.Replace("%COMMAND%", $"\"{wineHelperPath}\" \"{path}\" \"{arguments}\"");
             helperProcess.StartInfo.FileName = "sh";
             helperProcess.StartInfo.ArgumentList.Add("-c");
             helperProcess.StartInfo.ArgumentList.Add(formattedCommand);
