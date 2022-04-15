@@ -29,52 +29,64 @@ public class LinuxGameRunner : IGameRunner
 
     public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
-        var dxvkHud = hudType switch
+        StreamWriter logWriter = new StreamWriter(wineLogFile.FullName);
+        string wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
+
+        Process helperProcess = new Process();
+        helperProcess.StartInfo.RedirectStandardOutput = true;
+        helperProcess.StartInfo.RedirectStandardError = true;
+
+        helperProcess.ErrorDataReceived += new DataReceivedEventHandler((sendingProcess, errLine) =>
+        {
+            if (!String.IsNullOrEmpty(errLine.Data))
+            {
+                logWriter.WriteLine(errLine.Data);
+            }
+        });
+
+        string dxvkHud = hudType switch
         {
             Dxvk.DxvkHudType.None => "0",
             Dxvk.DxvkHudType.Fps => "fps",
             Dxvk.DxvkHudType.Full => "full",
             _ => throw new ArgumentOutOfRangeException()
         };
-
-        var wineDebug = string.Empty;
+        helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_HUD", dxvkHud);
 
         if (!string.IsNullOrEmpty(this.wineDebugVars))
         {
-            wineDebug = $"WINEDEBUG=\"{wineDebug}\" ";
+            helperProcess.StartInfo.EnvironmentVariables.Add("WINEDEBUG", this.wineDebugVars);
         }
-
-        var wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
-        var defaultEnv = $"WINEPREFIX=\"{compatibility.Prefix}\" DXVK_HUD={dxvkHud} WINEDLLOVERRIDES=\"d3d9,d3d11,d3d10core,dxgi,mscoree=n\"";
-
-        ProcessStartInfo startInfo = new ProcessStartInfo("sh")
-        {
-            RedirectStandardOutput = true,
-        };
-
-        string formattedCommand;
 
         if (this.startupType == LinuxStartupType.Managed)
         {
-            formattedCommand = $"{defaultEnv} {compatibility.Wine64Path} {wineHelperPath} \"{path}\" \"{arguments}\"";
+            helperProcess.StartInfo.FileName = compatibility.Wine64Path;
+            helperProcess.StartInfo.ArgumentList.Add(wineHelperPath);
+            helperProcess.StartInfo.ArgumentList.Add(path);
+            helperProcess.StartInfo.ArgumentList.Add(arguments);
+            helperProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX", compatibility.Prefix.FullName);
+            helperProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
         }
         else
         {
-            formattedCommand = this.startupCommandLine.Replace("%COMMAND%", $"{defaultEnv} {wineHelperPath} \"{path}\" \"{arguments}\"");
+            string defaultEnv = $"WINEPREFIX=\"{compatibility.Prefix}\" WINEDLLOVERRIDES=\"d3d9,d3d11,d3d10core,dxgi,mscoree=n\"";
+            string formattedCommand = this.startupCommandLine.Replace("%COMMAND%", $"{defaultEnv} {wineHelperPath} \"{path}\" \"{arguments}\"");
+            helperProcess.StartInfo.FileName = "sh";
+            helperProcess.StartInfo.ArgumentList.Add("-c");
+            helperProcess.StartInfo.ArgumentList.Add(formattedCommand);
         }
-
-        startInfo.Arguments = $"-c \"{wineDebug}{formattedCommand} 2> {wineLogFile.FullName}\"";
 
         foreach (var variable in environment)
         {
-            startInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
+            helperProcess.StartInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
         }
 
-        Log.Information("Starting game with: {Command}", startInfo.Arguments);
+        Log.Information("Starting game with: {Command} {Args}", helperProcess.StartInfo.FileName, helperProcess.StartInfo.ArgumentList);
 
-        var helperProcess = Process.Start(startInfo);
+        helperProcess.Start();
+        helperProcess.BeginErrorReadLine();
 
-        var pid = helperProcess.StandardOutput.ReadToEnd();
+        string pid = helperProcess.StandardOutput.ReadToEnd();
 
         return int.Parse(pid);
     }
