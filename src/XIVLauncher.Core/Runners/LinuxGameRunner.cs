@@ -33,8 +33,11 @@ public class LinuxGameRunner : IGameRunner
         string wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
 
         Process helperProcess = new Process();
+
         helperProcess.StartInfo.RedirectStandardOutput = true;
         helperProcess.StartInfo.RedirectStandardError = true;
+
+        helperProcess.StartInfo.WorkingDirectory = workingDirectory;
 
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((sendingProcess, errLine) =>
         {
