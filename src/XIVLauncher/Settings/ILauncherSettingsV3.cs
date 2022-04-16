@@ -30,7 +30,7 @@ namespace XIVLauncher.Settings
         decimal DalamudInjectionDelayMs { get; set; }
         bool? KeepPatches { get; set; }
         bool? HasComplainedAboutAdmin { get; set; }
-        bool? HasComplainedAboutGShade { get; set; }
+        bool? HasComplainedAboutGShadeDxgi { get; set; }
         string LastVersion { get; set; }
         AcquisitionMethod? PatchAcquisitionMethod { get; set; }
         bool? HasShownAutoLaunchDisclaimer { get; set; }

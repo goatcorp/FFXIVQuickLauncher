@@ -162,7 +162,7 @@ namespace XIVLauncher.Game
             dinput8.Refresh();
             dxgi.Refresh();
 
-            if ((d3d11.Exists || dinput8.Exists) && !App.Settings.HasComplainedAboutGShade.GetValueOrDefault(false))
+            if ((d3d11.Exists || dinput8.Exists) && !App.Settings.HasComplainedAboutGShadeDxgi.GetValueOrDefault(false))
             {
                 FileVersionInfo? d3d11Info = null;
                 FileVersionInfo? dinput8Info = null;
@@ -259,7 +259,7 @@ namespace XIVLauncher.Game
                     }
                     else
                     {
-                        App.Settings.HasComplainedAboutGShade = true;
+                        App.Settings.HasComplainedAboutGShadeDxgi = true;
                     }
                 }
             }
