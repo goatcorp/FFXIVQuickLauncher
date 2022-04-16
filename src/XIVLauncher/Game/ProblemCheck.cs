@@ -188,6 +188,53 @@ namespace XIVLauncher.Game
                             }
 
                             process.WaitForExit();
+
+                            if (!EnvironmentSettings.IsWine)
+                            {
+                                var gshadeInstKey = Registry.LocalMachine.OpenSubKey(
+                                    "SOFTWARE\\GShade\\Installations", false);
+
+                                if (gshadeInstKey != null)
+                                {
+                                    var gshadeInstSubKeys = gshadeInstKey.GetSubKeyNames();
+
+                                    var gshadeInstsToFix = new Stack<string>();
+
+                                    foreach (var gshadeInst in gshadeInstSubKeys)
+                                    {
+                                        if (gshadeInst.Contains("ffxiv_dx11.exe"))
+                                        {
+                                            gshadeInstsToFix.Push(gshadeInst);
+                                        }
+                                    }
+
+                                    if (gshadeInstsToFix.Count > 0)
+                                    {
+                                        while (gshadeInstsToFix.Count > 0)
+                                        {
+                                            var gshadePsi = new ProcessStartInfo
+                                            {
+                                                Verb = "runas",
+                                                FileName = "reg.exe",
+                                                WorkingDirectory = Environment.SystemDirectory,
+                                                Arguments = $"add \"HKLM\\SOFTWARE\\GShade\\Installations\\{gshadeInstsToFix.Pop()}\" /v \"altdxmode\" /t \"REG_SZ\" /d \"0\" /f",
+                                                UseShellExecute = true,
+                                                CreateNoWindow = true,
+                                                WindowStyle = ProcessWindowStyle.Hidden
+                                            };
+
+                                            var gshadeProcess = Process.Start(gshadePsi);
+
+                                            if (gshadeProcess == null)
+                                            {
+                                                throw new Exception("Could not spawn reg when fixing GShade");
+                                            }
+
+                                            gshadeProcess.WaitForExit();
+                                        }
+                                    }
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
