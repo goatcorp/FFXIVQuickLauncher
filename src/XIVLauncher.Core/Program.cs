@@ -11,10 +11,10 @@ using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
-using XIVLauncher.Core.Compatibility;
+using XIVLauncher.Common.Unix;
+using XIVLauncher.Common.Unix.Compatibility;
 using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Configuration;
-using XIVLauncher.Core.Configuration.Linux;
 using XIVLauncher.Core.Configuration.Parsers;
 
 namespace XIVLauncher.Core;
@@ -101,7 +101,7 @@ class Program
 
         Config.GlobalScale ??= 1.0f;
 
-        Config.LinuxStartupType ??= LinuxStartupType.Managed;
+        Config.LinuxStartupType ??= WineStartupType.Managed;
         Config.LinuxStartCommandLine ??= "wine %COMMAND%";
         Config.WineDebugVars = string.Empty;
     }
@@ -116,7 +116,17 @@ class Program
 
         try
         {
-            Steam = new WindowsSteam();
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.Win32NT:
+                    Steam = new WindowsSteam();
+                    break;
+                case PlatformID.Unix:
+                    Steam = new UnixSteam();
+                    break;
+                default:
+                    throw new PlatformNotSupportedException();
+            }
             Steam.Initialize(STEAM_APP_ID);
         }
         catch (Exception ex)

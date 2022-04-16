@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Core.Configuration.Accounts;
 

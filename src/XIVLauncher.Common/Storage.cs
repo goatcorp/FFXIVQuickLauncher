@@ -1,4 +1,7 @@
-namespace XIVLauncher.Core;
+using System;
+using System.IO;
+
+namespace XIVLauncher.Common;
 
 public class Storage
 {
@@ -11,7 +14,7 @@ public class Storage
             this.Root = new DirectoryInfo(overridePath);
         }
 
-        if (OperatingSystem.IsWindows())
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             this.Root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName));
         }

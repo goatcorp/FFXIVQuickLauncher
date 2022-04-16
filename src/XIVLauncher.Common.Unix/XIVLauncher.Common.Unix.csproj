@@ -1,15 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Product>XIVLauncher.Common.Windows</Product>
-        <AssemblyTitle>XIVLauncher.Common.Windows</AssemblyTitle>
-        <Description>Shared XIVLauncher platform-specific implementations for Windows.</Description>
+        <Product>XIVLauncher.Common.Unix</Product>
+        <AssemblyTitle>XIVLauncher.Common.Unix</AssemblyTitle>
+        <Description>Shared XIVLauncher platform-specific implementations for Unix-like systems.</Description>
         <VersionPrefix>1.0.0</VersionPrefix>
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+        <TargetFrameworks>net6.0</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
@@ -21,22 +21,24 @@
 
     <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">
         <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
-        <PathMap>$(AppOutputBase)=C:\goatsoft\xl\XIVLauncher.Common.Windows\</PathMap>
+        <PathMap>$(AppOutputBase)=C:\goatsoft\xl\XIVLauncher.Common.Unix\</PathMap>
     </PropertyGroup>
 
-    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-        <None Remove="steam_api64.dll" />
-        <Content Include="steam_api64.dll">
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+        <None Remove="libsteam_api64.so" />
+        <Content Include="libsteam_api64.so">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <None Remove="steam_api.dll" />
-        <Content Include="steam_api.dll">
+    </ItemGroup>
+
+    <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+        <None Remove="libsteam_api64.dylib" />
+        <Content Include="libsteam_api64.dylib">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
         <PackageReference Include="Facepunch.Steamworks" Version="2.3.3" />
     </ItemGroup>
 </Project>

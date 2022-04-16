@@ -1,4 +1,7 @@
-namespace XIVLauncher.Core.Compatibility;
+using System.IO;
+using System.Linq;
+
+namespace XIVLauncher.Common.Unix.Compatibility;
 
 public static class GameFixes
 {

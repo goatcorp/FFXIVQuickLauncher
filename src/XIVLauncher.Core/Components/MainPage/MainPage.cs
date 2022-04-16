@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using ImGuiNET;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -13,9 +13,9 @@ using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
+using XIVLauncher.Common.Unix;
+using XIVLauncher.Common.Unix.Compatibility;
 using XIVLauncher.Core.Accounts;
-using XIVLauncher.Core.Configuration.Linux;
-using XIVLauncher.Core.Runners;
 
 namespace XIVLauncher.Core.Components.MainPage;
 
@@ -581,17 +581,16 @@ public class MainPage : Page
 
         IDalamudCompatibilityCheck dalamudCompatCheck;
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        switch (Environment.OSVersion.Platform)
         {
-            dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            dalamudCompatCheck = new LinuxDalamudCompatibilityCheck();
-        }
-        else
-        {
-            throw new NotImplementedException();
+            case PlatformID.Win32NT:
+                dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
+                break;
+            case PlatformID.Unix:
+                dalamudCompatCheck = new UnixDalamudCompatibilityCheck();
+                break;
+            default:
+                throw new NotImplementedException();
         }
 
         try
@@ -655,9 +654,9 @@ public class MainPage : Page
         {
             runner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
         }
-        else if (OperatingSystem.IsLinux())
+        else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
         {
-            if (App.Settings.LinuxStartupType == LinuxStartupType.Command && App.Settings.LinuxStartCommandLine == null)
+            if (App.Settings.LinuxStartupType == WineStartupType.Command && App.Settings.LinuxStartCommandLine == null)
                 throw new Exception("Process command line wasn't set.");
 
             var signal = new ManualResetEvent(false);
@@ -685,7 +684,7 @@ public class MainPage : Page
                 return null;
 
             var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
-            runner = new LinuxGameRunner(App.Settings.LinuxStartupType ?? LinuxStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
+            runner = new UnixGameRunner(App.Settings.LinuxStartupType ?? WineStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
                 App.Settings.WineDebugVars ?? string.Empty, wineLogFile);
         }
         else

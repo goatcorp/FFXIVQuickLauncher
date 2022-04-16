@@ -1,4 +1,4 @@
-using System.Numerics;
+﻿using System.Numerics;
 using ImGuiNET;
 
 namespace XIVLauncher.Core.Components.SettingsPage;
@@ -7,7 +7,7 @@ public abstract class SettingsTab : Component
 {
     public abstract SettingsEntry[] Entries { get; }
 
-    public virtual bool IsLinuxExclusive => false;
+    public virtual bool IsUnixExclusive => false;
 
     public abstract string Title { get; }
 

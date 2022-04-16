@@ -1,23 +1,26 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using Serilog;
-using XIVLauncher.Common;
+using XIVLauncher.Common.Dalamud;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
-using XIVLauncher.Core.Compatibility;
-using XIVLauncher.Core.Configuration.Linux;
+using XIVLauncher.Common.Unix.Compatibility;
 
-namespace XIVLauncher.Core.Runners;
+namespace XIVLauncher.Common.Unix;
 
-public class LinuxGameRunner : IGameRunner
+public class UnixGameRunner : IGameRunner
 {
-    private readonly LinuxStartupType startupType;
+    private readonly WineStartupType startupType;
     private readonly string startupCommandLine;
     private readonly CompatibilityTools compatibility;
     private readonly Dxvk.DxvkHudType hudType;
     private readonly string wineDebugVars;
     private readonly FileInfo wineLogFile;
 
-    public LinuxGameRunner(LinuxStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile)
+    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile)
     {
         this.startupType = startupType;
         this.startupCommandLine = startupCommandLine;
@@ -52,6 +55,7 @@ public class LinuxGameRunner : IGameRunner
             _ => throw new ArgumentOutOfRangeException()
         };
         helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_HUD", dxvkHud);
+        helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_ASYNC", "1");
 
         if (!string.IsNullOrEmpty(this.wineDebugVars))
         {
@@ -61,7 +65,7 @@ public class LinuxGameRunner : IGameRunner
         helperProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX", compatibility.Prefix.FullName);
         helperProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
 
-        if (this.startupType == LinuxStartupType.Managed)
+        if (this.startupType == WineStartupType.Managed)
         {
             helperProcess.StartInfo.FileName = compatibility.Wine64Path;
             helperProcess.StartInfo.ArgumentList.Add(wineHelperPath);

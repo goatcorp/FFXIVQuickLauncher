@@ -1,27 +1,26 @@
-using System.Numerics;
+﻿using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Common;
-using XIVLauncher.Core.Compatibility;
-using XIVLauncher.Core.Configuration.Linux;
+using XIVLauncher.Common.Unix.Compatibility;
 
 namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
 public class SettingsTabWine : SettingsTab
 {
-    private SettingsEntry<LinuxStartupType> startupTypeSetting;
+    private SettingsEntry<WineStartupType> startupTypeSetting;
 
     public SettingsTabWine()
     {
         Entries = new SettingsEntry[]
         {
-            startupTypeSetting = new SettingsEntry<LinuxStartupType>("Installation Type", "Choose how XIVLauncher will start and manage your game installation.",
-                () => Program.Config.LinuxStartupType ?? LinuxStartupType.Managed, x => Program.Config.LinuxStartupType = x),
+            startupTypeSetting = new SettingsEntry<WineStartupType>("Installation Type", "Choose how XIVLauncher will start and manage your game installation.",
+                () => Program.Config.LinuxStartupType ?? WineStartupType.Managed, x => Program.Config.LinuxStartupType = x),
 
             new SettingsEntry<string>("Startup Command Line",
                 "Set the command XIVLauncher will run to start applications via wine. Here, you should specify things like your wineprefix. %COMMAND% is aliased to the EXE file and its arguments by XIVLauncher.",
                 () => Program.Config.LinuxStartCommandLine, s => Program.Config.LinuxStartCommandLine = s)
             {
-                CheckVisibility = () => startupTypeSetting.Value == LinuxStartupType.Command
+                CheckVisibility = () => startupTypeSetting.Value == WineStartupType.Command
             },
 
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
@@ -31,9 +30,9 @@ public class SettingsTabWine : SettingsTab
 
     public override SettingsEntry[] Entries { get; }
 
-    public override bool IsLinuxExclusive => true;
+    public override bool IsUnixExclusive => true;
 
-    public override string Title => "Linux";
+    public override string Title => "Wine";
 
     public override void Draw()
     {

@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Steamworks;
 using XIVLauncher.Common.PlatformAbstractions;
 
-namespace XIVLauncher.Common.Windows
+namespace XIVLauncher.Common.Unix
 {
-    public class WindowsSteam : ISteam
+    public class UnixSteam : ISteam
     {
-        public WindowsSteam()
+        public UnixSteam()
         {
             SteamUtils.OnGamepadTextInputDismissed += b => OnGamepadTextInputDismissed?.Invoke(b);
         }
@@ -15,12 +15,11 @@ namespace XIVLauncher.Common.Windows
         public void Initialize(uint appId)
         {
             // workaround because SetEnvironmentVariable doesn't actually touch the process environment on unix
-            if (Environment.OSVersion.Platform == PlatformID.Unix) {
-                [System.Runtime.InteropServices.DllImport("c")]
-                static extern int setenv(string name, string value, int overwrite);
+            [System.Runtime.InteropServices.DllImport("c")]
+            static extern int setenv(string name, string value, int overwrite);
 
-                setenv("SteamAppId", appId.ToString(), 1);
-            }
+            setenv("SteamAppId", appId.ToString(), 1);
+            setenv("SteamGameId", appId.ToString(), 1);
 
             SteamClient.Init(appId);
         }
@@ -70,7 +69,8 @@ namespace XIVLauncher.Common.Windows
 
         public bool IsRunningOnSteamDeck()
         {
-            return false;
+            //TODO(goat): Facepunch.Steamworks NuGet doesn't have this yet...
+            return true;
         }
 
         public uint GetServerRealTime() => (uint)((DateTimeOffset)SteamUtils.SteamServerTime).ToUnixTimeSeconds();

@@ -1,4 +1,4 @@
-using System.Numerics;
+﻿using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Core.Components.SettingsPage.Tabs;
 
@@ -43,7 +43,7 @@ public class SettingsPage : Page
             {
                 foreach (SettingsTab settingsTab in this.tabs)
                 {
-                    if (settingsTab.IsLinuxExclusive && !OperatingSystem.IsLinux())
+                    if (settingsTab.IsUnixExclusive && !(Environment.OSVersion.Platform == PlatformID.Unix))
                         continue;
 
                     if (ImGui.BeginTabItem(settingsTab.Title))
@@ -61,7 +61,7 @@ public class SettingsPage : Page
 
                     foreach (SettingsTab settingsTab in this.tabs)
                     {
-                        if (settingsTab.IsLinuxExclusive && !OperatingSystem.IsLinux())
+                        if (settingsTab.IsUnixExclusive && !(Environment.OSVersion.Platform == PlatformID.Unix))
                             continue;
 
                         var eligible = settingsTab.Entries.Where(x => x.Name.ToLower().Contains(this.searchInput.ToLower())).ToArray();
