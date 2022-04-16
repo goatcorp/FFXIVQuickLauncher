@@ -141,11 +141,11 @@ namespace XIVLauncher.Common.Dalamud
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(settings);
+            var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(settings).ConfigureAwait(false);
 
             var remoteVersionInfo = versionInfoRelease;
 
-            if (versionInfoStaging.Key == settings.DalamudBetaKey)
+            if (versionInfoStaging?.Key != null && versionInfoStaging.Key == settings.DalamudBetaKey)
             {
                 remoteVersionInfo = versionInfoStaging;
                 IsStaging = true;
