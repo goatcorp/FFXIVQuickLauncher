@@ -105,7 +105,7 @@ namespace XIVLauncher.Common.Dalamud
         private static string GetBetaTrackName(DalamudSettings settings) =>
             string.IsNullOrEmpty(settings.DalamudBetaKind) ? "staging" : settings.DalamudBetaKind;
 
-        private static async Task<(DalamudVersionInfo release, DalamudVersionInfo staging)> GetVersionInfo(DalamudSettings settings)
+        private static async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(DalamudSettings settings)
         {
             using var client = new HttpClient
             {
@@ -117,11 +117,19 @@ namespace XIVLauncher.Common.Dalamud
                 NoCache = true,
             };
 
-            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "release");
-            var versionInfoJsonStaging = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(settings));
+            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "release").ConfigureAwait(false);
 
-            var versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
-            var versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonStaging);
+            DalamudVersionInfo versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
+
+            DalamudVersionInfo? versionInfoStaging = null;
+
+            if (!string.IsNullOrEmpty(settings.DalamudBetaKey))
+            {
+                var versionInfoJsonStaging = await client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(settings)).ConfigureAwait(false);
+
+                if (versionInfoJsonStaging.StatusCode != HttpStatusCode.BadRequest)
+                    versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoJsonStaging.Content.ReadAsStringAsync().ConfigureAwait(false));
+            }
 
             return (versionInfoRelease, versionInfoStaging);
         }
