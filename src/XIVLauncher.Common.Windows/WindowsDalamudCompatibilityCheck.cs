@@ -83,8 +83,8 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
             "vcruntime140"
         };
 
-        bool passedRegistry = false;
-        bool passedDLLChecks = true;
+        var passedRegistry = false;
+        var passedDllChecks = true;
 
         foreach (var path in vc2022Paths)
         {
@@ -94,7 +94,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 
             var vcVersioncheck = vcregcheck.GetValue("Version") ?? "";
 
-            if (((string)vcVersioncheck).StartsWith("14"))
+            if (((string)vcVersioncheck).StartsWith("14", StringComparison.Ordinal))
             {
                 passedRegistry = true;
                 Log.Debug("Passed Registry Check with: " + path);
@@ -105,7 +105,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
         foreach (var path in dllPaths)
         {
             Log.Debug("Checking for DLL: " + path);
-            passedDLLChecks = passedDLLChecks && CheckLibrary(path);
+            passedDllChecks = passedDllChecks && CheckLibrary(path);
         }
 
         // Display our findings
@@ -113,11 +113,12 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
         {
             Log.Error("Failed all registry checks to find any Visual C++ 2015-2022 Runtimes.");
         }
-        if (!passedDLLChecks)
+
+        if (!passedDllChecks)
         {
             Log.Error("Missing DLL files required by Dalamud.");
         }
 
-        return (passedRegistry && passedDLLChecks);
+        return (passedRegistry && passedDllChecks);
     }
 }

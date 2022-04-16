@@ -18,6 +18,11 @@
         -->
     </PropertyGroup>
 
+    <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">
+        <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
+        <PathMap>$(AppOutputBase)=C:\goatsoft\xl\XIVLauncher.Core\</PathMap>
+    </PropertyGroup>
+
     <ItemGroup>
       <PackageReference Include="CheapLoc" Version="1.1.6" />
       <PackageReference Include="Config.Net" Version="4.19.0" />
@@ -28,10 +33,10 @@
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
       <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
-      <PackageReference Include="Veldrid" Version="4.8.0" />
-      <PackageReference Include="Veldrid.ImageSharp" Version="4.8.0" />
-      <PackageReference Include="Veldrid.SDL2" Version="4.8.0" />
-      <PackageReference Include="Veldrid.StartupUtilities" Version="4.8.0" />
+      <PackageReference Include="goaaats.Veldrid" Version="4.9.0-beta1-g70f642e82e" />
+      <PackageReference Include="goaaats.Veldrid.ImageSharp" Version="4.9.0-beta1-g70f642e82e" />
+      <PackageReference Include="goaaats.Veldrid.SDL2" Version="4.9.0-beta1-g70f642e82e" />
+      <PackageReference Include="goaaats.Veldrid.StartupUtilities" Version="4.9.0-beta1-g70f642e82e" />
     </ItemGroup>
 
     <ItemGroup>
