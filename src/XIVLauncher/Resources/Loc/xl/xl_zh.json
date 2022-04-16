@@ -344,11 +344,11 @@
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceErrorAll": {
-    "message": "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "您的磁盘空间不足，无法下载所有更新。\n\n您可以在 XIVLauncher 的设置中更改更新下载目录。\n\n需要：{0}\n可用：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceGameError": {
-    "message": "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "您的磁盘空间不足，无法安装更新。\n\n您可以在设置中更改游戏安装目录。\n\n需要：{0}\n可用：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "LoginBoxUsername": {
@@ -516,7 +516,7 @@
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "AddonLoadError": {
-    "message": "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
+    "message": "这可能是由您的抗病毒引起的，请检查其日志并添加需要的排除项。",
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "LoginIoErrorSummary": {
@@ -544,11 +544,11 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtpUse": {
-    "message": "If you're using OTP, then tick on \"{0}\" checkbox and try again.",
+    "message": "如果您正在使用动态密码 (OTP)，请在\"{0}\"复选框上打勾，然后重试。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtp": {
-    "message": "Double check whether your OTP device's clock is correct.\nIf you have recently logged in, then try logging in again in 30 seconds.",
+    "message": "请仔细检查您的 OTP 设备的时钟是否正确。\n如果您最近已登录，请尝试在 30 秒后再次登录。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericServerIssue": {
@@ -588,7 +588,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameNonZeroExitCode": {
-    "message": "It looks like the game has exited with a fatal error. Do you want to relaunch the game?\n\nExit code: 0x{0:X8}",
+    "message": "看起来游戏因致命错误而退出。你要重新启动游戏吗？\n\n退出代码：0x{0:X8}",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRelaunch": {
@@ -608,11 +608,11 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningSummary": {
-    "message": "You can't launch more than two instances of the game by default.",
+    "message": "默认情况下，您不能启动两个以上的游戏实例。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningActionable": {
-    "message": "Please check if there is an instance of the game that did not close correctly. (Detected: {0})",
+    "message": "请检查是否存在未正确关闭的游戏实例。 (检测到：{0})",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameKillThenRetry": {
@@ -620,11 +620,11 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher could not detect that the game started correctly.",
+    "message": "XIVLauncher 无法检测到游戏正确启动。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "This may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "这可能是暂时的问题。请尝试重启您的电脑。这有可能是你的游戏安装无效。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -632,7 +632,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorActionable": {
-    "message": "This might be caused by your antivirus. You may have to reinstall the game.",
+    "message": "这可能是由您的杀毒软件引起的。您可能需要重新安装游戏。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "UnexpectedErrorSummary": {
@@ -644,7 +644,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultipleErrors": {
-    "message": "Multiple errors have occurred.",
+    "message": "发生了多个错误。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "OtpInputPrompt": {
@@ -656,7 +656,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpInputPromptBad": {
-    "message": "请输入一个有效的 OTP 密钥。\n长度为6位数字。",
+    "message": "请输入一个有效的动态密码 (OTP)。\n长度为6位数字。",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {

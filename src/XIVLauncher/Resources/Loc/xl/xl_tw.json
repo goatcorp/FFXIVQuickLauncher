@@ -340,15 +340,15 @@
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceError": {
-    "message": "您的硬碟空間不足，無法下載更新。\n\n您可以在設置中更改更新下載目錄。\n\n需要：{0}\n可用：{1}",
+    "message": "您的硬碟空間不足，無法下載更新。\n\n您可以在設置中更改更新下載資料夾。\n\n需要：{0}\n可用：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceErrorAll": {
-    "message": "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "您的硬碟空間不足，無法下載所有更新。\n\n您可以在 XIVLauncher 的設置中更改更新下載資料夾。\n\n需要：{0}\n可用：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "FreeSpaceGameError": {
-    "message": "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}",
+    "message": "您的硬碟空間不足，無法安裝更新。\n\n您可以在設置中更改遊戲安裝資料夾。\n\n需要：{0}\n可用：{1}",
     "description": "MainWindowViewModel.HandlePatchStart"
   },
   "LoginBoxUsername": {
@@ -472,7 +472,7 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess0": {
-    "message": "所有遊戲文件似乎都是有效的。",
+    "message": "所有遊戲檔案似乎都是有效的。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess1": {
@@ -516,7 +516,7 @@
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "AddonLoadError": {
-    "message": "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
+    "message": "這可能是由您的防毒軟體引起的，請檢查其日誌並添加需要的排除項。",
     "description": "<StartGameAndAddon>d__28.MoveNext"
   },
   "LoginIoErrorSummary": {
@@ -544,11 +544,11 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtpUse": {
-    "message": "If you're using OTP, then tick on \"{0}\" checkbox and try again.",
+    "message": "如果您正在使用一次性密碼 (OTP)，請在\"{0}\"覆選框上打勾，然後再試一次。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtp": {
-    "message": "Double check whether your OTP device's clock is correct.\nIf you have recently logged in, then try logging in again in 30 seconds.",
+    "message": "請仔細檢查您的 OTP 設備的時鐘是否正確。\n如果您最近已登錄，請嘗試在 30 秒後再次登錄。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericServerIssue": {
@@ -588,7 +588,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameNonZeroExitCode": {
-    "message": "It looks like the game has exited with a fatal error. Do you want to relaunch the game?\n\nExit code: 0x{0:X8}",
+    "message": "看起來遊戲因致命錯誤而退出。你要重新啟動遊戲嗎？\n\n退出代碼：0x{0:X8}",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRelaunch": {
@@ -608,11 +608,11 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningSummary": {
-    "message": "You can't launch more than two instances of the game by default.",
+    "message": "默認情況下，您不能啟動兩個以上的遊戲實例。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningActionable": {
-    "message": "Please check if there is an instance of the game that did not close correctly. (Detected: {0})",
+    "message": "請檢查是否存在未正確關閉的遊戲實例。 (檢測到：{0})",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameKillThenRetry": {
@@ -620,11 +620,11 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher could not detect that the game started correctly.",
+    "message": "XIVLauncher 無法檢測到遊戲正確啟動。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "This may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "這可能是暫時的問題。請嘗試重啟您的電腦。這有可能是你的遊戲安裝無效。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -632,7 +632,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorActionable": {
-    "message": "This might be caused by your antivirus. You may have to reinstall the game.",
+    "message": "這可能是由您的防毒軟體引起的。您可能需要重新安裝遊戲。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "UnexpectedErrorSummary": {
@@ -644,7 +644,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultipleErrors": {
-    "message": "Multiple errors have occurred.",
+    "message": "發生了多個錯誤。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "OtpInputPrompt": {
@@ -656,7 +656,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpInputPromptBad": {
-    "message": "請輸入一個有效的 OTP 密鑰。\n長度為6位數字。",
+    "message": "請輸入一個有效的一次性密碼 (OTP)。\n長度為6位數字。",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
@@ -992,7 +992,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "你沒有權限寫入 FFXIV 的 My Games 文件夾。\n這將導致屏幕截圖與角色數據無法保存。\n\n這可能是由您的防毒軟體或權限錯誤引起的。請檢查您的 My Games 文件夾權限。",
+    "message": "你沒有權限寫入 FFXIV 的 My Games 資料夾。\n這將導致屏幕截圖與角色數據無法保存。\n\n這可能是由您的防毒軟體或權限錯誤引起的。請檢查您的 My Games 資料夾權限。",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
