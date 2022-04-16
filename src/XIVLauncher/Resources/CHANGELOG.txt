@@ -1,3 +1,4 @@
 ﻿• Further improvements to GShade compatibility checks (thanks to Mortalitas!)
+• Further improvements to Dalamud compatibility checks (thanks to Franz!)
 • Some small performance improvements
 • Updated the localization files
