@@ -19,6 +19,9 @@ namespace XIVLauncher.Game
 
         public static void RunCheck(Window parentWindow)
         {
+            if (EnvironmentSettings.IsWine)
+                return;
+
             var runningAsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
                 .IsInRole(WindowsBuiltInRole.Administrator);
 
@@ -33,13 +36,16 @@ namespace XIVLauncher.Game
 
                 foreach (var compatEntry in compatEntries)
                 {
-                    if ((compatEntry.Contains("ffxiv_dx11") || compatEntry.Contains("XIVLauncher")) && ((string) compatFlagKey.GetValue(compatEntry, string.Empty)).Contains("RUNASADMIN"))
+                    if ((compatEntry.Contains("ffxiv_dx11") || compatEntry.Contains("XIVLauncher")) && ((string)compatFlagKey.GetValue(compatEntry, string.Empty)).Contains("RUNASADMIN"))
                         entriesToFix.Push(compatEntry);
                 }
 
                 if (entriesToFix.Count > 0)
                 {
-                    var result = CustomMessageBox.Show(Loc.Localize("AdminCheck", "XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?"), "XIVLauncher", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, parentWindow: parentWindow);
+                    var result = CustomMessageBox.Show(
+                        Loc.Localize("AdminCheck",
+                            "XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?"),
+                        "XIVLauncher", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation, parentWindow: parentWindow);
 
                     if (result != MessageBoxResult.OK)
                         return;
@@ -57,20 +63,30 @@ namespace XIVLauncher.Game
 
             if (runningAsAdmin && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
             {
-                CustomMessageBox.Show(Loc.Localize("AdminCheckNag", "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: parentWindow);
+                CustomMessageBox.Show(
+                    Loc.Localize("AdminCheckNag",
+                        "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin."),
+                    "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: parentWindow);
                 App.Settings.HasComplainedAboutAdmin = true;
             }
 
             var procModules = Process.GetCurrentProcess().Modules.Cast<ProcessModule>();
+
             if (procModules.Any(x => x.ModuleName == "MacType.dll" || x.ModuleName == "MacType64.dll"))
             {
-                CustomMessageBox.Show(Loc.Localize("MacTypeNag", "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parentWindow);
+                CustomMessageBox.Show(
+                    Loc.Localize("MacTypeNag",
+                        "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType."),
+                    "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parentWindow);
                 Environment.Exit(-1);
             }
 
             if (!CheckMyGamesWriteAccess())
             {
-                CustomMessageBox.Show(Loc.Localize("MyGamesWriteAccessNag", "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: parentWindow);
+                CustomMessageBox.Show(
+                    Loc.Localize("MyGamesWriteAccessNag",
+                        "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions."),
+                    "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: parentWindow);
             }
 
             if (App.Settings.GamePath == null)
@@ -85,7 +101,8 @@ namespace XIVLauncher.Game
             if (!CheckSymlinkValid(d3d11) || !CheckSymlinkValid(dxgi) || !CheckSymlinkValid(dinput8))
             {
                 if (CustomMessageBox.Builder
-                                    .NewFrom(Loc.Localize("GShadeSymlinks", "GShade symbolic links are corrupted.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
+                                    .NewFrom(Loc.Localize("GShadeSymlinks",
+                                        "GShade symbolic links are corrupted.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
                                     .WithButtons(MessageBoxButton.YesNo)
                                     .WithImage(MessageBoxImage.Error)
                                     .WithParentWindow(parentWindow)
@@ -122,7 +139,8 @@ namespace XIVLauncher.Game
                     d3d11Info.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase))
                 {
                     if (CustomMessageBox.Builder
-                                        .NewFrom(Loc.Localize("GShadeError", "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
+                                        .NewFrom(Loc.Localize("GShadeError",
+                                            "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade."))
                                         .WithButtons(MessageBoxButton.YesNo)
                                         .WithImage(MessageBoxImage.Error)
                                         .WithParentWindow(parentWindow)
@@ -159,7 +177,8 @@ namespace XIVLauncher.Game
                     (dinput8Info?.ProductName?.Equals("GShade", StringComparison.OrdinalIgnoreCase) ?? false))
                 {
                     if (CustomMessageBox.Builder
-                                        .NewFrom(Loc.Localize("GShadeWrongMode", "You installed GShade in a mode that isn't optimal for use together with XIVLauncher. Do you want XIVLauncher to fix this for you?\n\nThis will not change your presets or settings, it will merely improve compatibility with XIVLauncher features."))
+                                        .NewFrom(Loc.Localize("GShadeWrongMode",
+                                            "You installed GShade in a mode that isn't optimal for use together with XIVLauncher. Do you want XIVLauncher to fix this for you?\n\nThis will not change your presets or settings, it will merely improve compatibility with XIVLauncher features."))
                                         .WithButtons(MessageBoxButton.YesNo)
                                         .WithImage(MessageBoxImage.Warning)
                                         .WithParentWindow(parentWindow)
@@ -189,49 +208,46 @@ namespace XIVLauncher.Game
 
                             process.WaitForExit();
 
-                            if (!EnvironmentSettings.IsWine)
+                            var gshadeInstKey = Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\GShade\\Installations", false);
+
+                            if (gshadeInstKey != null)
                             {
-                                var gshadeInstKey = Registry.LocalMachine.OpenSubKey(
-                                    "SOFTWARE\\GShade\\Installations", false);
+                                var gshadeInstSubKeys = gshadeInstKey.GetSubKeyNames();
 
-                                if (gshadeInstKey != null)
+                                var gshadeInstsToFix = new Stack<string>();
+
+                                foreach (var gshadeInst in gshadeInstSubKeys)
                                 {
-                                    var gshadeInstSubKeys = gshadeInstKey.GetSubKeyNames();
-
-                                    var gshadeInstsToFix = new Stack<string>();
-
-                                    foreach (var gshadeInst in gshadeInstSubKeys)
+                                    if (gshadeInst.Contains("ffxiv_dx11.exe"))
                                     {
-                                        if (gshadeInst.Contains("ffxiv_dx11.exe"))
-                                        {
-                                            gshadeInstsToFix.Push(gshadeInst);
-                                        }
+                                        gshadeInstsToFix.Push(gshadeInst);
                                     }
+                                }
 
-                                    if (gshadeInstsToFix.Count > 0)
+                                if (gshadeInstsToFix.Count > 0)
+                                {
+                                    while (gshadeInstsToFix.Count > 0)
                                     {
-                                        while (gshadeInstsToFix.Count > 0)
+                                        var gshadePsi = new ProcessStartInfo
                                         {
-                                            var gshadePsi = new ProcessStartInfo
-                                            {
-                                                Verb = "runas",
-                                                FileName = "reg.exe",
-                                                WorkingDirectory = Environment.SystemDirectory,
-                                                Arguments = $"add \"HKLM\\SOFTWARE\\GShade\\Installations\\{gshadeInstsToFix.Pop()}\" /v \"altdxmode\" /t \"REG_SZ\" /d \"0\" /f",
-                                                UseShellExecute = true,
-                                                CreateNoWindow = true,
-                                                WindowStyle = ProcessWindowStyle.Hidden
-                                            };
+                                            Verb = "runas",
+                                            FileName = "reg.exe",
+                                            WorkingDirectory = Environment.SystemDirectory,
+                                            Arguments = $"add \"HKLM\\SOFTWARE\\GShade\\Installations\\{gshadeInstsToFix.Pop()}\" /v \"altdxmode\" /t \"REG_SZ\" /d \"0\" /f",
+                                            UseShellExecute = true,
+                                            CreateNoWindow = true,
+                                            WindowStyle = ProcessWindowStyle.Hidden
+                                        };
 
-                                            var gshadeProcess = Process.Start(gshadePsi);
+                                        var gshadeProcess = Process.Start(gshadePsi);
 
-                                            if (gshadeProcess == null)
-                                            {
-                                                throw new Exception("Could not spawn reg when fixing GShade");
-                                            }
-
-                                            gshadeProcess.WaitForExit();
+                                        if (gshadeProcess == null)
+                                        {
+                                            throw new Exception("Could not spawn reg when fixing GShade");
                                         }
+
+                                        gshadeProcess.WaitForExit();
                                     }
                                 }
                             }
