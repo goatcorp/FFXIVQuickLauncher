@@ -11,7 +11,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 {
     public void EnsureCompatibility()
     {
-        if (!CheckVc2019())
+        if (!CheckVcRedists())
             throw new IDalamudCompatibilityCheck.NoRedistsException();
 
         EnsureArchitecture();
@@ -42,10 +42,19 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 
     private static bool CheckLibrary(string fileName)
     {
-        return LoadLibrary(fileName) != IntPtr.Zero;
+        if (LoadLibrary(fileName) != IntPtr.Zero)
+        {
+            Log.Debug("Found " + fileName);
+            return true;
+        }
+        else
+        {
+            Log.Error("Could not find " + fileName);
+        }
+        return false;
     }
 
-    private static bool CheckVc2019()
+    private static bool CheckVcRedists()
     {
         // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
         // and https://github.com/bitbeans/RedistributableChecker
@@ -54,26 +63,38 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
         {
             @"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum",
             @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64",
-            @"Installer\Dependencies\Microsoft.VS.VC_RuntimeMinimumVSU_amd64,v14",
-            @"Installer\Dependencies\VC,redist.x64,amd64,14.31,bundle",
-            @"Installer\Dependencies\VC,redist.x64,amd64,14.30,bundle",
-            @"Installer\Dependencies\VC,redist.x64,amd64,14.29,bundle",
-            @"Installer\Dependencies\VC,redist.x64,amd64,14.28,bundle"
+            @"SOFTWARE\Classes\Installer\Dependencies\Microsoft.VS.VC_RuntimeMinimumVSU_amd64,v14",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.31,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.30,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.29,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.28,bundle",
             // technically, this was introduced in VCrun2017 with 14.16
             // but we shouldn't go that far
+            // here's a legacy vcrun2017 check
+            @"Installer\Dependencies\,,amd64,14.0,bundle",
+            // here's one for vcrun2015
+            @"SOFTWARE\Classes\Installer\Dependencies\{d992c12e-cab2-426f-bde3-fb8c53950b0d}"
         };
 
-        bool passedRegistry = false;
+        var dllPaths = new List<string>
+        {
+            "ucrtbase_clr0400",
+            "vcruntime140_clr0400",
+            "vcruntime140"
+        };
+
+        var passedRegistry = false;
+        var passedDllChecks = true;
 
         foreach (var path in vc2022Paths)
         {
-            Log.Debug("Checking Registry with: " + path);
-            var vcregcheck = Registry.ClassesRoot.OpenSubKey(path, false);
+            Log.Debug("Checking Registry key: " + path);
+            var vcregcheck = Registry.LocalMachine.OpenSubKey(path, false);
             if (vcregcheck == null) continue;
 
             var vcVersioncheck = vcregcheck.GetValue("Version") ?? "";
 
-            if (((string)vcVersioncheck).StartsWith("14"))
+            if (((string)vcVersioncheck).StartsWith("14", StringComparison.Ordinal))
             {
                 passedRegistry = true;
                 Log.Debug("Passed Registry Check with: " + path);
@@ -81,24 +102,23 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
             }
         }
 
-        if (passedRegistry)
+        foreach (var path in dllPaths)
         {
-            if (!EnvironmentSettings.IsWine)
-            {
-                if (CheckLibrary("ucrtbase_clr0400") &&
-                    CheckLibrary("vcruntime140_clr0400") &&
-                    CheckLibrary("vcruntime140"))
-                    return true;
-
-                Log.Error("Missing DLL files required by Dalamud.");
-            }
-            else return true;
-        }
-        else
-        {
-            Log.Error("Failed all registry checks to find Visual C++ 2019 Runtime.");
+            Log.Debug("Checking for DLL: " + path);
+            passedDllChecks = passedDllChecks && CheckLibrary(path);
         }
 
-        return false;
+        // Display our findings
+        if (!passedRegistry)
+        {
+            Log.Error("Failed all registry checks to find any Visual C++ 2015-2022 Runtimes.");
+        }
+
+        if (!passedDllChecks)
+        {
+            Log.Error("Missing DLL files required by Dalamud.");
+        }
+
+        return (passedRegistry && passedDllChecks);
     }
 }
