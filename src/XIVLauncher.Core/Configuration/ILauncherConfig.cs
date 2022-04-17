@@ -52,9 +52,9 @@ public interface ILauncherConfig
 
     #region Linux
 
-    public WineStartupType? LinuxStartupType { get; set; }
+    public WineStartupType? WineStartupType { get; set; }
 
-    public string? LinuxStartCommandLine { get; set; }
+    public string? WineStartCommandLine { get; set; }
 
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 

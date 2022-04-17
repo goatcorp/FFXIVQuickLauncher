@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -18,8 +18,9 @@ public class WindowsDalamudRunner : IDalamudRunner
     [DllImport("Dalamud.Boot.dll")]
     private static extern int RewriteRemoteEntryPointW(IntPtr hProcess, [MarshalAs(UnmanagedType.LPWStr)] string gamePath, [MarshalAs(UnmanagedType.LPWStr)] string loadInfoJson);
 
-    public void Run(Process gameProcess, FileInfo runner, DalamudStartInfo startInfo, DirectoryInfo gamePath, DalamudLoadMethod loadMethod)
+    public void Run(Int32 gameProcessID, FileInfo runner, DalamudStartInfo startInfo, DirectoryInfo gamePath, DalamudLoadMethod loadMethod)
     {
+        var gameProcess = Process.GetProcessById(gameProcessID);
         switch (loadMethod)
         {
             case DalamudLoadMethod.EntryPoint:

@@ -1,3 +1,4 @@
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -68,9 +69,9 @@ namespace XIVLauncher.Common.Dalamud
             return true;
         }
 
-        public void Run(Process gameProcess)
+        public void Run(Int32 gameProcessId)
         {
-            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2})", this.gamePath.FullName, this.language, gameProcess.Id);
+            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2})", this.gamePath.FullName, this.language, gameProcessId);
 
             var ingamePluginPath = Path.Combine(Paths.RoamingPath, "installedPlugins");
             var defaultPluginPath = Path.Combine(Paths.RoamingPath, "devPlugins");
@@ -92,7 +93,7 @@ namespace XIVLauncher.Common.Dalamud
 
             Log.Information("[HOOKS] DelayInitializeMs: {0}", startInfo.DelayInitializeMs);
 
-            this.runner.Run(gameProcess, this.updater.Runner, startInfo, this.gamePath, this.loadMethod);
+            this.runner.Run(gameProcessId, this.updater.Runner, startInfo, this.gamePath, this.loadMethod);
 
             this.updater.CloseOverlay();
 

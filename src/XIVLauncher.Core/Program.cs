@@ -101,8 +101,8 @@ class Program
 
         Config.GlobalScale ??= 1.0f;
 
-        Config.LinuxStartupType ??= WineStartupType.Managed;
-        Config.LinuxStartCommandLine ??= "wine %COMMAND%";
+        Config.WineStartupType ??= WineStartupType.Managed;
+        Config.WineStartCommandLine ??= "wine %COMMAND%";
         Config.WineDebugVars = string.Empty;
     }
 

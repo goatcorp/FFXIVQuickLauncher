@@ -650,13 +650,13 @@ public class MainPage : Page
 
         IGameRunner runner;
 
-        if (OperatingSystem.IsWindows())
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             runner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
         }
-        else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
-            if (App.Settings.LinuxStartupType == WineStartupType.Command && App.Settings.LinuxStartCommandLine == null)
+            if (App.Settings.WineStartupType == WineStartupType.Command && App.Settings.WineStartCommandLine == null)
                 throw new Exception("Process command line wasn't set.");
 
             var signal = new ManualResetEvent(false);
@@ -684,7 +684,7 @@ public class MainPage : Page
                 return null;
 
             var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
-            runner = new UnixGameRunner(App.Settings.LinuxStartupType ?? WineStartupType.Command, App.Settings.LinuxStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
+            runner = new UnixGameRunner(App.Settings.WineStartupType ?? WineStartupType.Command, App.Settings.WineStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
                 App.Settings.WineDebugVars ?? string.Empty, wineLogFile);
         }
         else
