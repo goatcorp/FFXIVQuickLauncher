@@ -44,7 +44,7 @@ public class SettingsTabAbout : SettingsTab
 
         if (ImGui.Button("See software licenses"))
         {
-            Util.OpenBrowser(Path.Combine(Assembly.GetExecutingAssembly().Location, "license.txt"));
+            Util.OpenBrowser(Path.Combine(AppContext.BaseDirectory, "license.txt"));
         }
 
         ImGui.Dummy(new Vector2(20));
