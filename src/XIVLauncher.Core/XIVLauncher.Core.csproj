@@ -70,14 +70,14 @@
     <EmbeddedResource Include="Resources/bg1.jpg" LogicalName="bg1.jpg" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(ResourceIdentifier)' == 'win10-x64'">
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win10-x64'">
     <Resource Remove="Resources/binaries/aria2c-xl.exe" />
     <Content Include="Resources/binaries/aria2c-xl.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(ResourceIdentifier)' != 'win10-x64'">
+  <ItemGroup Condition="'$(RuntimeIdentifier)' != 'win10-x64'">
     <Resource Remove="Resources/binaries/DalamudWineHelper.exe" />
     <Content Include="Resources/binaries/DalamudWineHelper.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
