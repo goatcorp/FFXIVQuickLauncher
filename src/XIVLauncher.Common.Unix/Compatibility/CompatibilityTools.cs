@@ -1,5 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
@@ -17,6 +20,7 @@ public class CompatibilityTools
     public string WineServerPath => Path.Combine(toolDirectory.FullName, WINE_GE_RELEASE_NAME, "bin", "wineserver");
 
     public DirectoryInfo Prefix { get; private set; }
+    public DirectoryInfo DotnetRuntime { get; private set; }
     public bool IsToolReady { get; private set; }
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && this.Prefix.Exists;
@@ -27,6 +31,7 @@ public class CompatibilityTools
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
         this.Prefix = storage.GetFolder("wineprefix");
+        this.DotnetRuntime = storage.GetFolder("runtime");
 
         if (!this.toolDirectory.Exists)
             this.toolDirectory.Create();
@@ -78,16 +83,40 @@ public class CompatibilityTools
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
-    public Process? RunInPrefix(string command, string environment = "")
+    public Process? RunInPrefix(string command, Dictionary<string, string> environment = null, bool redirectOutput = false)
     {
         var psi = new ProcessStartInfo(Wine64Path)
         {
-            Arguments = command
+            Arguments = command,
+            RedirectStandardOutput = redirectOutput
         };
         psi.EnvironmentVariables.Add("WINEPREFIX", this.Prefix.FullName);
-        psi.EnvironmentVariables.Add("WINEDLLOVERRIDES", "mscoree,mshtml=");
-
+        if (environment is not null)
+            foreach (var keyValuePair in environment)
+                psi.EnvironmentVariables.Add(keyValuePair.Key, keyValuePair.Value);
+        else
+            psi.EnvironmentVariables.Add("WINEDLLOVERRIDES", "mshtml=");
         return Process.Start(psi);
+    }
+
+    public Int32[] GetProcessIds(string executableName)
+    {
+        var wineDbg = RunInPrefix("winedbg --command \"info proc\"", redirectOutput: true);
+        var output = wineDbg.StandardOutput.ReadToEnd();
+        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Where(l => l.Contains(executableName));
+        return matchingLines.Select(l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
+    }
+
+    public Int32 GetProcessId(string executableName)
+    {
+        return GetProcessIds(executableName).FirstOrDefault();
+    }
+
+    public string WineToUnixPath(string unixPath)
+    {
+        var winePath = RunInPrefix($"winepath --windows {unixPath}", redirectOutput: true);
+        var output = winePath.StandardOutput.ReadToEnd();
+        return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
 
     public void Kill()

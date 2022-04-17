@@ -575,23 +575,27 @@ public class MainPage : Page
 
     public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud)
     {
-        var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), Program.DalamudUpdater, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
-            App.Settings.GamePath, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay);
         var dalamudOk = false;
 
+        IDalamudRunner dalamudRunner;
         IDalamudCompatibilityCheck dalamudCompatCheck;
 
         switch (Environment.OSVersion.Platform)
         {
             case PlatformID.Win32NT:
+                dalamudRunner = new WindowsDalamudRunner();
                 dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
                 break;
             case PlatformID.Unix:
+                dalamudRunner = new UnixDalamudRunner(Program.CompatibilityTools);
                 dalamudCompatCheck = new UnixDalamudCompatibilityCheck();
                 break;
             default:
                 throw new NotImplementedException();
         }
+
+        var dalamudLauncher = new DalamudLauncher(dalamudRunner, Program.DalamudUpdater, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
+            App.Settings.GamePath, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay);
 
         try
         {
@@ -685,7 +689,7 @@ public class MainPage : Page
 
             var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
             runner = new UnixGameRunner(App.Settings.WineStartupType ?? WineStartupType.Command, App.Settings.WineStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
-                App.Settings.WineDebugVars ?? string.Empty, wineLogFile);
+                App.Settings.WineDebugVars ?? string.Empty, wineLogFile, dalamudLauncher, dalamudOk);
         }
         else
         {
@@ -712,15 +716,15 @@ public class MainPage : Page
             return null;
         }
 
-        // This is a Windows process handle on Windows, a Wine pid on Linux
+        // This is a Windows process handle on Windows, a Wine pid on Unix-like systems
         var gamePid = 0;
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             var process = launched as Process;
             gamePid = process!.Id;
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
             gamePid = (int)launched;
         }
@@ -754,10 +758,22 @@ public class MainPage : Page
         }
 
         Log.Debug("Waiting for game to exit");
-        //await Task.Run(() => gameProcess.WaitForExit()).ConfigureAwait(false);
 
-        // TODO(Linux): We need to translate the wine pid into the unix pid and go on here
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            var process = launched as Process;
+            await Task.Run(() => process!.WaitForExit()).ConfigureAwait(false);
+        }
+        else if (Environment.OSVersion.Platform == PlatformID.Unix)
+        {
+            for(; Program.CompatibilityTools.GetProcessId("ffxiv_dx11.exe") != 0;)
+            {
+                Thread.Sleep(5000);
+            }
+        }
+        // TODO(Linux/macOS):  Translating the Wine pid to a Unix one requires talking to wineserver via Winelib
+        //                     and a platform specific binary with headers compatible with the wine version being shipped 
+        else
         {
             Environment.Exit(0);
             return null;

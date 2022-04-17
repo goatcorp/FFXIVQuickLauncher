@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
@@ -19,8 +20,10 @@ public class UnixGameRunner : IGameRunner
     private readonly Dxvk.DxvkHudType hudType;
     private readonly string wineDebugVars;
     private readonly FileInfo wineLogFile;
+    private readonly DalamudLauncher dalamudLauncher;
+    private readonly bool dalamudOk;
 
-    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile)
+    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile, DalamudLauncher dalamudLauncher, bool dalamudOk)
     {
         this.startupType = startupType;
         this.startupCommandLine = startupCommandLine;
@@ -28,17 +31,20 @@ public class UnixGameRunner : IGameRunner
         this.hudType = hudType;
         this.wineDebugVars = wineDebugVars;
         this.wineLogFile = wineLogFile;
+        this.dalamudLauncher = dalamudLauncher;
+        this.dalamudOk = dalamudOk;
     }
 
     public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
         StreamWriter logWriter = new StreamWriter(wineLogFile.FullName);
         string wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
+        //string lastHelperLine = "";
 
         Process helperProcess = new Process();
         helperProcess.StartInfo.RedirectStandardOutput = true;
         helperProcess.StartInfo.RedirectStandardError = true;
-
+        helperProcess.StartInfo.UseShellExecute = false;
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((sendingProcess, errLine) =>
         {
             if (!String.IsNullOrEmpty(errLine.Data))
@@ -88,10 +94,18 @@ public class UnixGameRunner : IGameRunner
         Log.Information("Starting game with: {Command} {Args}", helperProcess.StartInfo.FileName, helperProcess.StartInfo.ArgumentList);
 
         helperProcess.Start();
+        Int32 gameProcessId = 0;
         helperProcess.BeginErrorReadLine();
-
-        string pid = helperProcess.StandardOutput.ReadToEnd();
-
-        return int.Parse(pid);
+        while (gameProcessId == 0)
+        {
+            Thread.Sleep(50);
+            gameProcessId = compatibility.GetProcessId("ffxiv_dx11.exe");
+        }
+        if (this.dalamudOk)
+        {
+            Log.Verbose("[UnixGameRunner] Now running DLL inject");
+            this.dalamudLauncher.Run(gameProcessId);
+        }
+        return gameProcessId;
     }
 }
