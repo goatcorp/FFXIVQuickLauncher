@@ -768,10 +768,12 @@ public class MainPage : Page
         }
         else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
-            for(; Program.CompatibilityTools.GetProcessId("ffxiv_dx11.exe") != 0;)
+            Int32 processId = (int)launched;
+            while (Program.CompatibilityTools.GetProcessIds("ffxiv_dx11.exe").Contains(processId))
             {
                 Thread.Sleep(5000);
             }
+            UnixGameRunner.runningPids.Remove(processId);
         }
         // TODO(Linux/macOS):  Translating the Wine pid to a Unix one requires talking to wineserver via Winelib
         //                     and a platform specific binary with headers compatible with the wine version being shipped 

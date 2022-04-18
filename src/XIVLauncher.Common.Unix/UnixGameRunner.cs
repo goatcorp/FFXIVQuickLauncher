@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Serilog;
@@ -14,6 +15,8 @@ namespace XIVLauncher.Common.Unix;
 
 public class UnixGameRunner : IGameRunner
 {
+    public static HashSet<Int32> runningPids = new HashSet<Int32>();
+
     private readonly WineStartupType startupType;
     private readonly string startupCommandLine;
     private readonly CompatibilityTools compatibility;
@@ -105,8 +108,11 @@ public class UnixGameRunner : IGameRunner
         while (gameProcessId == 0)
         {
             Thread.Sleep(50);
-            gameProcessId = compatibility.GetProcessId("ffxiv_dx11.exe");
+            var allGamePids = new HashSet<Int32>(compatibility.GetProcessIds("ffxiv_dx11.exe"));
+            allGamePids.ExceptWith(runningPids);
+            gameProcessId = allGamePids.ToArray().FirstOrDefault();
         }
+        runningPids.Add(gameProcessId);
         if (this.dalamudOk)
         {
             Log.Verbose("[UnixGameRunner] Now running DLL inject");
