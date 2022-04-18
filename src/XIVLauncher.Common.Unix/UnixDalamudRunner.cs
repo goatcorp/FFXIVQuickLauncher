@@ -21,7 +21,7 @@ public class UnixDalamudRunner : IDalamudRunner
 
     public void Run(Int32 gameProcessID, FileInfo runner, DalamudStartInfo startInfo, DirectoryInfo gamePath, DalamudLoadMethod loadMethod)
     {
-        //Wine want Windows paths here, so we need to fix up the startinfo dirs
+        // Wine wants Windows paths here, so we need to fix up the startinfo dirs
         startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory);
         startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath);
         startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory);

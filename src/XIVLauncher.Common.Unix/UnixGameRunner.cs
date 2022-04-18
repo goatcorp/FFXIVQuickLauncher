@@ -39,7 +39,6 @@ public class UnixGameRunner : IGameRunner
     {
         StreamWriter logWriter = new StreamWriter(wineLogFile.FullName);
         string wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
-        //string lastHelperLine = "";
 
         Process helperProcess = new Process();
 
