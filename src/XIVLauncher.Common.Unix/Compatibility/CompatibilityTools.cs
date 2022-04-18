@@ -112,7 +112,7 @@ public class CompatibilityTools
         return GetProcessIds(executableName).FirstOrDefault();
     }
 
-    public string WineToUnixPath(string unixPath)
+    public string UnixToWinePath(string unixPath)
     {
         var winePath = RunInPrefix($"winepath --windows {unixPath}", redirectOutput: true);
         var output = winePath.StandardOutput.ReadToEnd();
