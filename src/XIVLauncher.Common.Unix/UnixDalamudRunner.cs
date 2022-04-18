@@ -41,7 +41,8 @@ public class UnixDalamudRunner : IDalamudRunner
                 {
                     { "DALAMUD_RUNTIME", compatibility.WineToUnixPath(compatibility.DotnetRuntime.FullName) },
                     { "XL_WINEONLINUX", "true" },
-                    { "WINEDEBUG", "-all" }
+                    { "WINEDEBUG", "-all" },
+                    { "WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n" }
                 };
                 compatibility.RunInPrefix($"{runner.FullName} {gameProcessID} {parameters}", environment);
                 break;

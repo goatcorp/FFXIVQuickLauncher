@@ -70,6 +70,8 @@ public class UnixGameRunner : IGameRunner
 
         helperProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX", compatibility.Prefix.FullName);
         helperProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
+        helperProcess.StartInfo.EnvironmentVariables.Add("XL_WINEONLINUX", "true");
+        helperProcess.StartInfo.EnvironmentVariables.Add("DALAMUD_RUNTIME", compatibility.WineToUnixPath(compatibility.DotnetRuntime.FullName));
 
         if (this.startupType == WineStartupType.Managed)
         {
