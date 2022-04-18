@@ -666,26 +666,28 @@ public class MainPage : Page
             var signal = new ManualResetEvent(false);
             var isFailed = false;
 
-            var _ = Task.Run(async () =>
-            {
-                await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
-                Program.CompatibilityTools.EnsureGameFixes();
-            }).ContinueWith(t =>
-            {
-                isFailed = t.IsFaulted || t.IsCanceled;
+            if (App.Settings.WineStartupType == WineStartupType.Managed) {
+                var _ = Task.Run(async () =>
+                {
+                    await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
+                    Program.CompatibilityTools.EnsureGameFixes();
+                }).ContinueWith(t =>
+                {
+                    isFailed = t.IsFaulted || t.IsCanceled;
+
+                    if (isFailed)
+                        Log.Error(t.Exception, "Couldn't ensure compatibility tool");
+
+                    signal.Set();
+                });
+
+                App.StartLoading("Ensuring compatibility tool...");
+                signal.WaitOne();
+                signal.Dispose();
 
                 if (isFailed)
-                    Log.Error(t.Exception, "Couldn't ensure compatibility tool");
-
-                signal.Set();
-            });
-
-            App.StartLoading("Ensuring compatibility tool...");
-            signal.WaitOne();
-            signal.Dispose();
-
-            if (isFailed)
-                return null;
+                    return null;
+            }
 
             var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
             runner = new UnixGameRunner(App.Settings.WineStartupType ?? WineStartupType.Command, App.Settings.WineStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,

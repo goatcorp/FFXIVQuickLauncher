@@ -42,9 +42,12 @@ public class UnixGameRunner : IGameRunner
         //string lastHelperLine = "";
 
         Process helperProcess = new Process();
+
         helperProcess.StartInfo.RedirectStandardOutput = true;
         helperProcess.StartInfo.RedirectStandardError = true;
         helperProcess.StartInfo.UseShellExecute = false;
+        helperProcess.StartInfo.WorkingDirectory = workingDirectory;
+
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((sendingProcess, errLine) =>
         {
             if (!String.IsNullOrEmpty(errLine.Data))
@@ -68,17 +71,19 @@ public class UnixGameRunner : IGameRunner
             helperProcess.StartInfo.EnvironmentVariables.Add("WINEDEBUG", this.wineDebugVars);
         }
 
-        helperProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX", compatibility.Prefix.FullName);
-        helperProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
         helperProcess.StartInfo.EnvironmentVariables.Add("XL_WINEONLINUX", "true");
         helperProcess.StartInfo.EnvironmentVariables.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
 
         if (this.startupType == WineStartupType.Managed)
         {
             helperProcess.StartInfo.FileName = compatibility.Wine64Path;
+
             helperProcess.StartInfo.ArgumentList.Add(wineHelperPath);
             helperProcess.StartInfo.ArgumentList.Add(path);
             helperProcess.StartInfo.ArgumentList.Add(arguments);
+
+            helperProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX", compatibility.Prefix.FullName);
+            helperProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
         }
         else
         {
