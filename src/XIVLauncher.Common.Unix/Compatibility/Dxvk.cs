@@ -1,6 +1,9 @@
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using XIVLauncher.Common;
 
-namespace XIVLauncher.Core.Compatibility;
+namespace XIVLauncher.Common.Unix.Compatibility;
 
 public static class Dxvk
 {

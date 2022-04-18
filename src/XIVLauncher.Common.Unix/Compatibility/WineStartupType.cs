@@ -1,8 +1,8 @@
 using XIVLauncher.Common;
 
-namespace XIVLauncher.Core.Configuration.Linux;
+namespace XIVLauncher.Common.Unix.Compatibility;
 
-public enum LinuxStartupType
+public enum WineStartupType
 {
     [SettingsDescription("Managed by XIVLauncher", "The game installation and wine setup is managed by XIVLauncher - you can leave it up to us.")]
     Managed,

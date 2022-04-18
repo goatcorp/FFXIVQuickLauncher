@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
@@ -26,14 +26,14 @@ public class WindowsGameRunner : IGameRunner
             if (this.dalamudOk && this.loadMethod == DalamudLoadMethod.EntryPoint)
             {
                 Log.Verbose("[WindowsGameRunner] Now running OEP rewrite");
-                this.dalamudLauncher.Run(process);
+                this.dalamudLauncher.Run(process.Id);
             }
         });
 
         if (this.dalamudOk && this.loadMethod == DalamudLoadMethod.DllInject)
         {
             Log.Verbose("[WindowsGameRunner] Now running DLL inject");
-            this.dalamudLauncher.Run(gameProcess);
+            this.dalamudLauncher.Run(gameProcess.Id);
         }
 
         return gameProcess;

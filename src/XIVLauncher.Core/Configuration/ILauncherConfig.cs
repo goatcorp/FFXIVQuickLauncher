@@ -1,9 +1,8 @@
-using XIVLauncher.Common;
+﻿using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game.Patch.Acquisition;
-using XIVLauncher.Core.Compatibility;
-using XIVLauncher.Core.Configuration.Linux;
+using XIVLauncher.Common.Unix.Compatibility;
 
 namespace XIVLauncher.Core.Configuration;
 
@@ -53,9 +52,9 @@ public interface ILauncherConfig
 
     #region Linux
 
-    public LinuxStartupType? LinuxStartupType { get; set; }
+    public WineStartupType? WineStartupType { get; set; }
 
-    public string? LinuxStartCommandLine { get; set; }
+    public string? WineStartCommandLine { get; set; }
 
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 

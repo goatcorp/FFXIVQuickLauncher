@@ -1,23 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Serilog;
-using XIVLauncher.Common;
+using XIVLauncher.Common.Dalamud;
+using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
-using XIVLauncher.Core.Compatibility;
-using XIVLauncher.Core.Configuration.Linux;
+using XIVLauncher.Common.Unix.Compatibility;
 
-namespace XIVLauncher.Core.Runners;
+namespace XIVLauncher.Common.Unix;
 
-public class LinuxGameRunner : IGameRunner
+public class UnixGameRunner : IGameRunner
 {
-    private readonly LinuxStartupType startupType;
+    public static HashSet<Int32> runningPids = new HashSet<Int32>();
+
+    private readonly WineStartupType startupType;
     private readonly string startupCommandLine;
     private readonly CompatibilityTools compatibility;
     private readonly Dxvk.DxvkHudType hudType;
     private readonly string wineDebugVars;
     private readonly FileInfo wineLogFile;
+    private readonly DalamudLauncher dalamudLauncher;
+    private readonly bool dalamudOk;
 
-    public LinuxGameRunner(LinuxStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile)
+    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile, DalamudLauncher dalamudLauncher, bool dalamudOk)
     {
         this.startupType = startupType;
         this.startupCommandLine = startupCommandLine;
@@ -25,6 +34,8 @@ public class LinuxGameRunner : IGameRunner
         this.hudType = hudType;
         this.wineDebugVars = wineDebugVars;
         this.wineLogFile = wineLogFile;
+        this.dalamudLauncher = dalamudLauncher;
+        this.dalamudOk = dalamudOk;
     }
 
     public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
@@ -36,7 +47,7 @@ public class LinuxGameRunner : IGameRunner
 
         helperProcess.StartInfo.RedirectStandardOutput = true;
         helperProcess.StartInfo.RedirectStandardError = true;
-
+        helperProcess.StartInfo.UseShellExecute = false;
         helperProcess.StartInfo.WorkingDirectory = workingDirectory;
 
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((sendingProcess, errLine) =>
@@ -55,13 +66,17 @@ public class LinuxGameRunner : IGameRunner
             _ => throw new ArgumentOutOfRangeException()
         };
         helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_HUD", dxvkHud);
+        helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_ASYNC", "1");
 
         if (!string.IsNullOrEmpty(this.wineDebugVars))
         {
             helperProcess.StartInfo.EnvironmentVariables.Add("WINEDEBUG", this.wineDebugVars);
         }
 
-        if (this.startupType == LinuxStartupType.Managed)
+        helperProcess.StartInfo.EnvironmentVariables.Add("XL_WINEONLINUX", "true");
+        helperProcess.StartInfo.EnvironmentVariables.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
+
+        if (this.startupType == WineStartupType.Managed)
         {
             helperProcess.StartInfo.FileName = compatibility.Wine64Path;
 
@@ -88,10 +103,21 @@ public class LinuxGameRunner : IGameRunner
         Log.Information("Starting game with: {Command} {Args}", helperProcess.StartInfo.FileName, helperProcess.StartInfo.ArgumentList);
 
         helperProcess.Start();
+        Int32 gameProcessId = 0;
         helperProcess.BeginErrorReadLine();
-
-        string pid = helperProcess.StandardOutput.ReadToEnd();
-
-        return int.Parse(pid);
+        while (gameProcessId == 0)
+        {
+            Thread.Sleep(50);
+            var allGamePids = new HashSet<Int32>(compatibility.GetProcessIds("ffxiv_dx11.exe"));
+            allGamePids.ExceptWith(runningPids);
+            gameProcessId = allGamePids.ToArray().FirstOrDefault();
+        }
+        runningPids.Add(gameProcessId);
+        if (this.dalamudOk)
+        {
+            Log.Verbose("[UnixGameRunner] Now running DLL inject");
+            this.dalamudLauncher.Run(gameProcessId);
+        }
+        return gameProcessId;
     }
 }
