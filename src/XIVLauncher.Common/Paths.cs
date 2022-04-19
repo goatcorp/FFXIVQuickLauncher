@@ -12,7 +12,7 @@ namespace XIVLauncher.Common
 
         public static string RoamingPath { get; private set; }
 
-        public static string ResourcesPath => Path.Combine(Path.GetDirectoryName(typeof(Paths).Assembly.Location), "Resources");
+        public static string ResourcesPath => Path.Combine(AppContext.BaseDirectory, "Resources");
 
         public static void OverrideRoamingPath(string path)
         {
