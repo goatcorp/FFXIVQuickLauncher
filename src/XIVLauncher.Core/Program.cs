@@ -142,7 +142,7 @@ class Program
         };
         DalamudUpdater.Run();
 
-        CompatibilityTools = new CompatibilityTools(storage);
+        CompatibilityTools = new CompatibilityTools(storage, Config.GameConfigPath);
 
         Log.Debug("Creating veldrid devices...");
 

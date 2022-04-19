@@ -7,6 +7,9 @@ public static class GameFixes
 {
     public static void AddDefaultConfig(DirectoryInfo configFolder)
     {
+        if (!configFolder.Exists)
+            configFolder.Create();
+
         var gameConf = Path.Combine(configFolder.FullName, "FFXIV.cfg");
         if (!File.Exists(gameConf))
             File.WriteAllText(gameConf, "<FINAL FANTASY XIV Config File>\n\n<Cutscene Settings>\nCutsceneMovieOpening 1");
