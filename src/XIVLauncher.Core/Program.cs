@@ -84,6 +84,7 @@ class Program
         }
 
         Config.GamePath ??= storage.GetFolder("ffxiv");
+        Config.GameConfigPath ??= storage.GetFolder("ffxivConfig");
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;

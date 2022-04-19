@@ -12,6 +12,7 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 public class CompatibilityTools
 {
     private DirectoryInfo toolDirectory;
+    private DirectoryInfo gameConfigDirectory;
 
     private const string WINE_GE_RELEASE_URL = "https://github.com/GloriousEggroll/wine-ge-custom/releases/download/GE-Proton7-8/wine-lutris-GE-Proton7-8-x86_64.tar.xz";
     private const string WINE_GE_RELEASE_NAME = "lutris-GE-Proton7-8-x86_64";
@@ -30,6 +31,7 @@ public class CompatibilityTools
         var toolsFolder = storage.GetFolder("compatibilitytool");
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
+        this.gameConfigDirectory = new DirectoryInfo(storage.GetFolder("ffxivConfig").FullName);
         this.Prefix = storage.GetFolder("wineprefix");
         this.DotnetRuntime = storage.GetFolder("runtime");
 
@@ -133,6 +135,6 @@ public class CompatibilityTools
     public void EnsureGameFixes()
     {
         EnsurePrefix();
-        GameFixes.AddDefaultConfig(this.Prefix);
+        GameFixes.AddDefaultConfig(gameConfigDirectory);
     }
 }
