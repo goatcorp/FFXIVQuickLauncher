@@ -698,7 +698,7 @@ public class MainPage : Page
             throw new NotImplementedException();
         }
 
-        App.Settings.AdditionalArgs = $"UserPath=Z:{App.Settings.GameConfigPath.FullName.Replace("/", "\\")}";
+        App.Settings.AdditionalArgs = $"UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
         var launched = App.Launcher.LaunchGame(runner,
