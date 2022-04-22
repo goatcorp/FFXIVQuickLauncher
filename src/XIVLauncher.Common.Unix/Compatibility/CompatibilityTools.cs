@@ -188,6 +188,13 @@ public class CompatibilityTools
         return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
 
+    public void AddRegistryKey(string key, string value, string data)
+    {
+        var args = new string[] { "reg", "add", key, "/v", value, "/d", data, "/f" };
+        var wineProcess = RunInPrefix(args);
+        wineProcess.WaitForExit();
+    }
+
     public void Kill()
     {
         var psi = new ProcessStartInfo(WineServerPath)
