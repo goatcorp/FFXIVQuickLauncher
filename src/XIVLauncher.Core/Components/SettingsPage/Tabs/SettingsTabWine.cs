@@ -23,9 +23,16 @@ public class SettingsTabWine : SettingsTab
                 CheckVisibility = () => startupTypeSetting.Value == WineStartupType.Command
             },
 
-            new SettingsEntry<bool>("Enable GameMode", "Enable launching with GameMode optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b),
-            new SettingsEntry<bool>("Enable ESync", "Enable eventfd-based synchronization.", () => Program.Config.ESyncEnabled ?? true, b => Program.Config.ESyncEnabled = b),
-            new SettingsEntry<bool>("Enable FSync", "Enable fast user mutex (futex2). \n(Requires Linux Kernel 5.16 or later)", () => Program.Config.FSyncEnabled ?? true, b => Program.Config.FSyncEnabled = b),
+            new SettingsEntry<bool>("Enable GameMode", "Enable launching with GameMode optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b)
+            {
+                CheckVisibility = () => File.Exists("/usr/lib/libgamemodeauto.so.0")
+            },
+            new SettingsEntry<bool>("Enable DXVK ASYNC", "Enable PROTON DXVK ASYNC patch.", () => Program.Config.DxvkAsyncEnabled ?? true, b => Program.Config.DxvkAsyncEnabled = b),
+            new SettingsEntry<bool>("Enable ESync", "(Unimplemented) Enable eventfd-based synchronization.", () => Program.Config.ESyncEnabled ?? true, b => Program.Config.ESyncEnabled = b),
+            new SettingsEntry<bool>("Enable FSync", "(Unimplemented)Enable fast user mutex (futex2).", () => Program.Config.FSyncEnabled ?? true, b => Program.Config.FSyncEnabled = b)
+            {
+                CheckVisibility = () => (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 16)
+            },
 
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
             new SettingsEntry<string>("WINEDEBUG Variables", "Configure debug logging for wine. Useful for troubleshooting.", () => Program.Config.WineDebugVars ?? string.Empty, s => Program.Config.WineDebugVars = s)
