@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace XIVLauncher.Core;
 
-public static class AppUtil
+public static partial class AppUtil
 {
     public static byte[] GetEmbeddedResourceBytes(string resourceName)
     {
@@ -22,7 +22,7 @@ public static class AppUtil
     ///     Gets the git hash value from the assembly
     ///     or null if it cannot be found.
     /// </summary>
-    public static string GetGitHash()
+    public static string? GetGitHash()
     {
         var asm = typeof(AppUtil).Assembly;
         var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
@@ -33,17 +33,20 @@ public static class AppUtil
     ///     Gets the build origin from the assembly
     ///     or null if it cannot be found.
     /// </summary>
-    public static string GetBuildOrigin()
+    public static string? GetBuildOrigin()
     {
         var asm = typeof(AppUtil).Assembly;
         var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
         return attrs.FirstOrDefault(a => a.Key == "BuildOrigin")?.Value;
     }
 
+    /// <summary>
+    ///     Gets the version from the "assembly".
+    ///     Should never be null.
+    /// </summary>
     public static string GetAssemblyVersion()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-        return fvi.FileVersion;
+        var fvi = VersionInfo.Instance().Version;
+        return fvi.FileVersion.ToString();
     }
 }
