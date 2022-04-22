@@ -691,7 +691,7 @@ public class MainPage : Page
 
             var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
             runner = new UnixGameRunner(App.Settings.WineStartupType ?? WineStartupType.Command, App.Settings.WineStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
-                App.Settings.GameModeEnabled ?? false, App.Settings.ESyncEnabled ?? false, App.Settings.FSyncEnabled ?? false, App.Settings.WineDebugVars ?? string.Empty, wineLogFile, 
+                App.Settings.GameModeEnabled ?? false, App.Settings.DxvkAsyncEnabled ?? true, App.Settings.ESyncEnabled ?? false, App.Settings.FSyncEnabled ?? false, App.Settings.WineDebugVars ?? string.Empty, wineLogFile, 
                 dalamudLauncher, dalamudOk);
         }
         else

@@ -102,6 +102,7 @@ class Program
         Config.GlobalScale ??= 1.0f;
 
         Config.GameModeEnabled ??= true;
+        Config.DxvkAsyncEnabled ??= true;
         Config.ESyncEnabled ??= true;
         Config.FSyncEnabled ??= false;
 
