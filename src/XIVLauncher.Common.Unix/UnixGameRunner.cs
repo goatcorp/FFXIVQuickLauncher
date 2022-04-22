@@ -22,6 +22,7 @@ public class UnixGameRunner : IGameRunner
     private readonly CompatibilityTools compatibility;
     private readonly Dxvk.DxvkHudType hudType;
     private readonly bool gamemodeOn;
+    private readonly string dxvkAsyncOn;
     private readonly string esyncOn;
     private readonly string fsyncOn;
     private readonly string wineDebugVars;
@@ -29,15 +30,19 @@ public class UnixGameRunner : IGameRunner
     private readonly DalamudLauncher dalamudLauncher;
     private readonly bool dalamudOk;
 
-    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, bool gamemodeOn, bool esyncOn, bool fsyncOn, string wineDebugVars, FileInfo wineLogFile, DalamudLauncher dalamudLauncher, bool dalamudOk)
+    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, bool gamemodeOn, bool dxvkAsyncOn, bool esyncOn,
+                          bool fsyncOn, string wineDebugVars, FileInfo wineLogFile, DalamudLauncher dalamudLauncher, bool dalamudOk)
     {
         this.startupType = startupType;
         this.startupCommandLine = startupCommandLine;
         this.compatibility = compatibility;
         this.hudType = hudType;
         this.gamemodeOn = gamemodeOn;
-        this.esyncOn = esyncOn ? "1" : "0";
-        this.fsyncOn = fsyncOn ? "1" : "0";
+        this.dxvkAsyncOn = dxvkAsyncOn ? "1" : "0";
+        //this.esyncOn = esyncOn ? "1" : "0";
+        this.esyncOn = "0";
+        //this.fsyncOn = fsyncOn ? "1" : "0";
+        this.fsyncOn = "0";
         this.wineDebugVars = wineDebugVars;
         this.wineLogFile = wineLogFile;
         this.dalamudLauncher = dalamudLauncher;
@@ -64,7 +69,7 @@ public class UnixGameRunner : IGameRunner
             }
         });
 
-        string LD_PRELOAD = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
+        string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
 
         string dxvkHud = hudType switch
         {
@@ -74,19 +79,19 @@ public class UnixGameRunner : IGameRunner
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        if (this.gamemodeOn == true && !LD_PRELOAD.Contains("libgamemodeauto.so.0"))
+        if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
         {
-            Log.Information("Gamemode is enabled.");
-            LD_PRELOAD = LD_PRELOAD.Equals("") ? "libgamemodeauto.so.0" : LD_PRELOAD + ":libgamemodeauto.so.0";
+            Log.Information("Gamemode is enabled");
+            ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
         }
 
         helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_HUD", dxvkHud);
-        helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_ASYNC", "1");
+        helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_ASYNC", dxvkAsyncOn);
 
         helperProcess.StartInfo.EnvironmentVariables.Add("WINEESYNC", esyncOn);
         helperProcess.StartInfo.EnvironmentVariables.Add("WINEFSYNC", fsyncOn);
 
-        helperProcess.StartInfo.EnvironmentVariables.Add("LD_PRELOAD", LD_PRELOAD);
+        helperProcess.StartInfo.EnvironmentVariables.Add("LD_PRELOAD", ldPreload);
         //Log.Debug("Applying LD_PRELOAD : {LD_PRELOAD}", LD_PRELOAD);
 
         if (!string.IsNullOrEmpty(this.wineDebugVars))
