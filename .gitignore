@@ -282,6 +282,3 @@ paket-files/
 src/XIVLauncher/XIVLauncher/app-*
 src/XIVLauncher/XIVLauncher
 src/Update.exe
-src/imgui.ini
-src/XIVLauncher.Core/imgui.ini
-.gitignore
