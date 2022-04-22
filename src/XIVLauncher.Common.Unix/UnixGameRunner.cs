@@ -41,7 +41,7 @@ public class UnixGameRunner : IGameRunner
     public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
         StreamWriter logWriter = new StreamWriter(wineLogFile.FullName);
-        string wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
+        string wineHelperPath = Path.Combine(AppContext.BaseDirectory, "Resources", "binaries", "DalamudWineHelper.exe");
 
         Process helperProcess = new Process();
 

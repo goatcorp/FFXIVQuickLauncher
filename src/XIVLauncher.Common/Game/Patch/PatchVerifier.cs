@@ -203,7 +203,7 @@ namespace XIVLauncher.Common.Game.Patch
             LastException = null;
             try
             {
-                var assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var assemblyLocation = AppContext.BaseDirectory;
                 using var remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
                     AdminAccessRequired(_settings.GamePath.FullName));
                 await remote.SetWorkerProcessPriority(ProcessPriorityClass.Idle).ConfigureAwait(false);
