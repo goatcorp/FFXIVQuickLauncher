@@ -692,14 +692,14 @@ public class MainPage : Page
             var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
             runner = new UnixGameRunner(App.Settings.WineStartupType ?? WineStartupType.Command, App.Settings.WineStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
                 App.Settings.WineDebugVars ?? string.Empty, wineLogFile, dalamudLauncher, dalamudOk);
+
+            App.Settings.AdditionalArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
+            App.Settings.AdditionalArgs = App.Settings.AdditionalArgs.Trim();
         }
         else
         {
             throw new NotImplementedException();
         }
-
-        App.Settings.AdditionalArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
-        App.Settings.AdditionalArgs = App.Settings.AdditionalArgs.Trim();
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
         var launched = App.Launcher.LaunchGame(runner,
