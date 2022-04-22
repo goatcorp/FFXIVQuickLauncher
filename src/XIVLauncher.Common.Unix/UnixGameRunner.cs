@@ -53,7 +53,7 @@ public class UnixGameRunner : IGameRunner
     {
         StreamWriter logWriter = new StreamWriter(wineLogFile.FullName);
         string wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
-                
+
         Process helperProcess = new Process();
 
         helperProcess.StartInfo.RedirectStandardOutput = true;
@@ -103,8 +103,8 @@ public class UnixGameRunner : IGameRunner
         helperProcess.StartInfo.EnvironmentVariables.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
 
         if (this.startupType == WineStartupType.Managed)
-        {  
-           helperProcess.StartInfo.FileName = compatibility.Wine64Path;
+        {
+            helperProcess.StartInfo.FileName = compatibility.Wine64Path;
 
             helperProcess.StartInfo.ArgumentList.Add(wineHelperPath);
             helperProcess.StartInfo.ArgumentList.Add(path);
