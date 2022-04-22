@@ -102,7 +102,7 @@ class Program
         Config.GlobalScale ??= 1.0f;
 
         Config.WineStartupType ??= WineStartupType.Managed;
-        Config.WineStartCommandLine ??= "wine %COMMAND%";
+        Config.WineBinaryPath ??= "/usr/bin";
         Config.WineDebugVars = string.Empty;
     }
 
@@ -141,7 +141,7 @@ class Program
         };
         DalamudUpdater.Run();
 
-        CompatibilityTools = new CompatibilityTools(storage);
+        UpdateCompatibilityTools();
 
         Log.Debug("Creating veldrid devices...");
 
@@ -245,5 +245,11 @@ class Program
         bindings.Dispose();
         cl.Dispose();
         gd.Dispose();
+    }
+
+    public static void UpdateCompatibilityTools()
+    {
+        var wineLogFile = new FileInfo(Path.Combine(storage.GetFolder("logs").FullName, "wine.log"));
+        CompatibilityTools = new CompatibilityTools(Config.WineStartupType, Config.WineBinaryPath, storage, Config.DxvkHudType, Config.WineDebugVars, wineLogFile);
     }
 }

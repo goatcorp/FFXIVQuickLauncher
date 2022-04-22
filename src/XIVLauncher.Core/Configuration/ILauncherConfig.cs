@@ -54,7 +54,7 @@ public interface ILauncherConfig
 
     public WineStartupType? WineStartupType { get; set; }
 
-    public string? WineStartCommandLine { get; set; }
+    public string? WineBinaryPath { get; set; }
 
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 
