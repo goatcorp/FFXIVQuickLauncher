@@ -37,7 +37,7 @@ public class UnixDalamudRunner : IDalamudRunner
             case DalamudLoadMethod.DllInject:
             {
                 var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
-                var launchArguments = new List<string> { runner.FullName, gameProcessID.ToString(), parameters };
+                var launchArguments = new string[] { runner.FullName, gameProcessID.ToString(), parameters };
                 var environment = new Dictionary<string, string>();
                 environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
                 compatibility.RunInPrefix(launchArguments, environment: environment);

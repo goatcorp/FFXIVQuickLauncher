@@ -107,7 +107,7 @@ public class CompatibilityTools
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
 
-    public Process RunInPrefix(List<string> args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
+    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
         var psi = new ProcessStartInfo(Wine64Path);
         foreach (var arg in args)

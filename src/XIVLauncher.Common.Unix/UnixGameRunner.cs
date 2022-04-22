@@ -33,7 +33,7 @@ public class UnixGameRunner : IGameRunner
     public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
         var wineHelperPath = Path.Combine(AppContext.BaseDirectory, "Resources", "binaries", "DalamudWineHelper.exe");
-        var launchArguments = new List<string> { wineHelperPath, path, arguments };
+        var launchArguments = new string[] { wineHelperPath, path, arguments };
 
         environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
         var process = compatibility.RunInPrefix(launchArguments, workingDirectory, environment);
