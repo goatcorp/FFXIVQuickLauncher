@@ -101,6 +101,10 @@ class Program
 
         Config.GlobalScale ??= 1.0f;
 
+        Config.GameModeEnabled ??= true;
+        Config.ESyncEnabled ??= true;
+        Config.FSyncEnabled ??= false;
+
         Config.WineStartupType ??= WineStartupType.Managed;
         Config.WineStartCommandLine ??= "wine %COMMAND%";
         Config.WineDebugVars = string.Empty;

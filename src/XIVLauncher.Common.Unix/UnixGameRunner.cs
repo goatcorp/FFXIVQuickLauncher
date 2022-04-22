@@ -21,17 +21,23 @@ public class UnixGameRunner : IGameRunner
     private readonly string startupCommandLine;
     private readonly CompatibilityTools compatibility;
     private readonly Dxvk.DxvkHudType hudType;
+    private readonly bool gamemodeOn;
+    private readonly string esyncOn;
+    private readonly string fsyncOn;
     private readonly string wineDebugVars;
     private readonly FileInfo wineLogFile;
     private readonly DalamudLauncher dalamudLauncher;
     private readonly bool dalamudOk;
 
-    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile, DalamudLauncher dalamudLauncher, bool dalamudOk)
+    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, bool gamemodeOn, bool esyncOn, bool fsyncOn, string wineDebugVars, FileInfo wineLogFile, DalamudLauncher dalamudLauncher, bool dalamudOk)
     {
         this.startupType = startupType;
         this.startupCommandLine = startupCommandLine;
         this.compatibility = compatibility;
         this.hudType = hudType;
+        this.gamemodeOn = gamemodeOn;
+        this.esyncOn = esyncOn ? "1" : "0";
+        this.fsyncOn = fsyncOn ? "1" : "0";
         this.wineDebugVars = wineDebugVars;
         this.wineLogFile = wineLogFile;
         this.dalamudLauncher = dalamudLauncher;
@@ -42,7 +48,7 @@ public class UnixGameRunner : IGameRunner
     {
         StreamWriter logWriter = new StreamWriter(wineLogFile.FullName);
         string wineHelperPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Resources", "binaries", "DalamudWineHelper.exe");
-
+                
         Process helperProcess = new Process();
 
         helperProcess.StartInfo.RedirectStandardOutput = true;
@@ -58,6 +64,8 @@ public class UnixGameRunner : IGameRunner
             }
         });
 
+        string LD_PRELOAD = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
+
         string dxvkHud = hudType switch
         {
             Dxvk.DxvkHudType.None => "0",
@@ -65,8 +73,21 @@ public class UnixGameRunner : IGameRunner
             Dxvk.DxvkHudType.Full => "full",
             _ => throw new ArgumentOutOfRangeException()
         };
+
+        if (this.gamemodeOn == true && !LD_PRELOAD.Contains("libgamemodeauto.so.0"))
+        {
+            Log.Information("Gamemode is enabled.");
+            LD_PRELOAD = LD_PRELOAD.Equals("") ? "libgamemodeauto.so.0" : LD_PRELOAD + ":libgamemodeauto.so.0";
+        }
+
         helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_HUD", dxvkHud);
         helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_ASYNC", "1");
+
+        helperProcess.StartInfo.EnvironmentVariables.Add("WINEESYNC", esyncOn);
+        helperProcess.StartInfo.EnvironmentVariables.Add("WINEFSYNC", fsyncOn);
+
+        helperProcess.StartInfo.EnvironmentVariables.Add("LD_PRELOAD", LD_PRELOAD);
+        //Log.Debug("Applying LD_PRELOAD : {LD_PRELOAD}", LD_PRELOAD);
 
         if (!string.IsNullOrEmpty(this.wineDebugVars))
         {
@@ -77,8 +98,8 @@ public class UnixGameRunner : IGameRunner
         helperProcess.StartInfo.EnvironmentVariables.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
 
         if (this.startupType == WineStartupType.Managed)
-        {
-            helperProcess.StartInfo.FileName = compatibility.Wine64Path;
+        {  
+           helperProcess.StartInfo.FileName = compatibility.Wine64Path;
 
             helperProcess.StartInfo.ArgumentList.Add(wineHelperPath);
             helperProcess.StartInfo.ArgumentList.Add(path);

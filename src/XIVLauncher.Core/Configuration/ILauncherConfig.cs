@@ -56,6 +56,12 @@ public interface ILauncherConfig
 
     public string? WineStartCommandLine { get; set; }
 
+    public bool? GameModeEnabled { get; set; }
+
+    public bool? ESyncEnabled { get; set; }
+
+    public bool? FSyncEnabled { get; set; }
+
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 
     public string? WineDebugVars { get; set; }
