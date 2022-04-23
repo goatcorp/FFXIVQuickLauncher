@@ -1,5 +1,7 @@
 ﻿using System.Numerics;
+using System.Xml.Schema;
 using ImGuiNET;
+using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Unix.Compatibility;
 
@@ -25,13 +27,25 @@ public class SettingsTabWine : SettingsTab
 
             new SettingsEntry<bool>("Enable GameMode", "Enable launching with GameMode optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b)
             {
-                CheckVisibility = () => File.Exists("/usr/lib/libgamemodeauto.so.0")
+                CheckValidity = b =>
+                {
+                    if (b == true && !File.Exists("/usr/lib/libgamemodeauto.so.0"))
+                        return "GameMode not detected.";
+
+                    return null;
+                }
             },
             new SettingsEntry<bool>("Enable DXVK ASYNC", "Enable PROTON DXVK ASYNC patch.", () => Program.Config.DxvkAsyncEnabled ?? true, b => Program.Config.DxvkAsyncEnabled = b),
             new SettingsEntry<bool>("Enable ESync", "(Unimplemented) Enable eventfd-based synchronization.", () => Program.Config.ESyncEnabled ?? true, b => Program.Config.ESyncEnabled = b),
             new SettingsEntry<bool>("Enable FSync", "(Unimplemented)Enable fast user mutex (futex2).", () => Program.Config.FSyncEnabled ?? true, b => Program.Config.FSyncEnabled = b)
             {
-                CheckVisibility = () => (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 16)
+                CheckValidity = b =>
+                {
+                    if (b == true && (Environment.OSVersion.Version.Major < 5 && (Environment.OSVersion.Version.Minor < 16 || Environment.OSVersion.Version.Major < 6)))
+                        return "Kernel 5.16 or higher is required for FSync.";
+
+                    return null;
+                }
             },
 
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
