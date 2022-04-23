@@ -13,6 +13,8 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 public class CompatibilityTools
 {
     private DirectoryInfo toolDirectory;
+    private DirectoryInfo gameConfigDirectory;
+
     private readonly WineStartupType startupType;
     private readonly string customWineBinPath;
 
@@ -36,7 +38,8 @@ public class CompatibilityTools
 
     private readonly Dxvk.DxvkHudType hudType;
 
-    public CompatibilityTools(WineStartupType? startupType, string customWineBinPath, Storage storage, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile)
+    public CompatibilityTools(WineStartupType? startupType, string customWineBinPath, Storage storage,
+        Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile, DirectoryInfo configDirectory)
     {
         this.startupType = startupType ?? WineStartupType.Managed;
         this.customWineBinPath = customWineBinPath;
@@ -47,6 +50,7 @@ public class CompatibilityTools
         var toolsFolder = storage.GetFolder("compatibilitytool");
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
+        this.gameConfigDirectory = configDirectory;
         this.Prefix = storage.GetFolder("wineprefix");
         this.DotnetRuntime = storage.GetFolder("runtime");
 
@@ -209,6 +213,6 @@ public class CompatibilityTools
     public void EnsureGameFixes()
     {
         EnsurePrefix();
-        GameFixes.AddDefaultConfig(this.Prefix);
+        GameFixes.AddDefaultConfig(gameConfigDirectory);
     }
 }

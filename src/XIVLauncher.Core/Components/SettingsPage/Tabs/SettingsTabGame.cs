@@ -20,6 +20,14 @@ public class SettingsTabGame : SettingsTab
             }
         },
 
+        new SettingsEntry<DirectoryInfo>("Game Config Path", "Where the user config files will be stored.", () => Program.Config.GameConfigPath, x => Program.Config.GameConfigPath = x)
+        {
+            CheckValidity = x => string.IsNullOrWhiteSpace(x?.FullName) ? "Game Config Path is not set." : null,
+
+            // TODO: We should also support this on Windows
+            CheckVisibility = () => Environment.OSVersion.Platform == PlatformID.Unix,
+        },
+
         new SettingsEntry<bool>("Use DirectX11", "Use the modern DirectX11 version of the game.", () => Program.Config.IsDx11 ?? true, x => Program.Config.IsDx11 = x)
         {
             CheckWarning = x => !x ? "DirectX 9 is no longer supported by Square Enix or Dalamud. Things may not work." : null

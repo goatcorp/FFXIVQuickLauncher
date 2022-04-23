@@ -84,6 +84,7 @@ class Program
         }
 
         Config.GamePath ??= storage.GetFolder("ffxiv");
+        Config.GameConfigPath ??= storage.GetFolder("ffxivConfig");
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
@@ -250,6 +251,7 @@ class Program
     public static void UpdateCompatibilityTools()
     {
         var wineLogFile = new FileInfo(Path.Combine(storage.GetFolder("logs").FullName, "wine.log"));
-        CompatibilityTools = new CompatibilityTools(Config.WineStartupType, Config.WineBinaryPath, storage, Config.DxvkHudType, Config.WineDebugVars, wineLogFile);
+        CompatibilityTools = new CompatibilityTools(Config.WineStartupType, Config.WineBinaryPath,
+            storage, Config.DxvkHudType, Config.WineDebugVars, wineLogFile, Config.GameConfigPath);
     }
 }
