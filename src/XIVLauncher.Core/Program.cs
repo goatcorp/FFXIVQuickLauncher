@@ -84,6 +84,7 @@ class Program
         }
 
         Config.GamePath ??= storage.GetFolder("ffxiv");
+        Config.GameConfigPath ??= storage.GetFolder("ffxivConfig");
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
@@ -141,7 +142,7 @@ class Program
         };
         DalamudUpdater.Run();
 
-        CompatibilityTools = new CompatibilityTools(storage);
+        CompatibilityTools = new CompatibilityTools(storage, Config.GameConfigPath);
 
         Log.Debug("Creating veldrid devices...");
 

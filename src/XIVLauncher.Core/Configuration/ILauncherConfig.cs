@@ -16,6 +16,8 @@ public interface ILauncherConfig
 
     public DirectoryInfo? GamePath { get; set; }
 
+    public DirectoryInfo? GameConfigPath { get; set; }
+
     public string? AdditionalArgs { get; set; }
 
     public ClientLanguage? ClientLanguage { get; set; }

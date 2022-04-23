@@ -654,6 +654,8 @@ public class MainPage : Page
 
         IGameRunner runner;
 
+        var gameArgs = App.Settings.AdditionalArgs ?? string.Empty;
+
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             runner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
@@ -692,6 +694,9 @@ public class MainPage : Page
             var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
             runner = new UnixGameRunner(App.Settings.WineStartupType ?? WineStartupType.Command, App.Settings.WineStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
                 App.Settings.WineDebugVars ?? string.Empty, wineLogFile, dalamudLauncher, dalamudOk);
+
+            gameArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
+            gameArgs = gameArgs.Trim();
         }
         else
         {
@@ -704,7 +709,7 @@ public class MainPage : Page
             loginResult.OauthLogin.Region,
             loginResult.OauthLogin.MaxExpansion,
             isSteam,
-            App.Settings.AdditionalArgs,
+            gameArgs,
             App.Settings.GamePath,
             App.Settings.IsDx11 ?? true,
             App.Settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English),
