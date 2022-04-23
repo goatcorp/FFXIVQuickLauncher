@@ -31,7 +31,7 @@ namespace XIVLauncher.Common.Http
             this.httpResponse = Encoding.Default.GetBytes(
                 "HTTP/1.0 200 OK\n" +
                 "Content-Type: application/json; charset=UTF-8\n" +
-                "\n{app:\"XIVLauncher\", version: \"" + version + "\"}"
+                "\n{\"app\":\"XIVLauncher\", \"version\":\"" + version + "\"}"
             );
         }
 
