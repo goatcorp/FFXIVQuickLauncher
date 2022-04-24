@@ -48,7 +48,7 @@ public class SettingsTabWine : SettingsTab
 
         if (ImGui.Button("Open prefix"))
         {
-            Util.OpenBrowser(Program.CompatibilityTools.wineSettings.Prefix.FullName);
+            Util.OpenBrowser(Program.CompatibilityTools.Settings.Prefix.FullName);
         }
 
         if (ImGui.Button("Open Wine configuration"))

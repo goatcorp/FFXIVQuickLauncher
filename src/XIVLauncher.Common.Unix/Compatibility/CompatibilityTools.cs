@@ -21,21 +21,21 @@ public class CompatibilityTools
 
     public bool IsToolReady { get; private set; }
 
-    public readonly WineSettings wineSettings;
+    public WineSettings Settings { get; private set; }
 
-    private string WineBinPath => wineSettings.StartupType == WineStartupType.Managed ?
+    private string WineBinPath => Settings.StartupType == WineStartupType.Managed ?
                                     Path.Combine(toolDirectory.FullName, WINE_TKG_RELEASE_NAME, "bin") :
-                                    wineSettings.CustomBinPath;
+                                    Settings.CustomBinPath;
     private string Wine64Path => Path.Combine(WineBinPath, "wine64");
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
 
-    public bool IsToolDownloaded => File.Exists(Wine64Path) && wineSettings.Prefix.Exists;
+    public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
 
     public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, DirectoryInfo toolsFolder)
     {
-        this.wineSettings = wineSettings;
+        this.Settings = wineSettings;
         this.hudType = hudType;
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
@@ -71,19 +71,19 @@ public class CompatibilityTools
         File.Delete(tempPath);
 
         EnsurePrefix();
-        await Dxvk.InstallDxvk(wineSettings.Prefix).ConfigureAwait(false);
+        await Dxvk.InstallDxvk(Settings.Prefix).ConfigureAwait(false);
 
         IsToolReady = true;
     }
 
     private void ResetPrefix()
     {
-        wineSettings.Prefix.Refresh();
+        Settings.Prefix.Refresh();
 
-        if (wineSettings.Prefix.Exists)
-            wineSettings.Prefix.Delete(true);
+        if (Settings.Prefix.Exists)
+            Settings.Prefix.Delete(true);
 
-        wineSettings.Prefix.Create();
+        Settings.Prefix.Create();
         EnsurePrefix();
     }
 
@@ -128,11 +128,11 @@ public class CompatibilityTools
         psi.WorkingDirectory = workingDirectory;
 
         var wineEnviromentVariables = new Dictionary<string, string>();
-        wineEnviromentVariables.Add("WINEPREFIX", wineSettings.Prefix.FullName);
+        wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
         wineEnviromentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
-        if (!string.IsNullOrEmpty(wineSettings.DebugVars))
+        if (!string.IsNullOrEmpty(Settings.DebugVars))
         {
-            wineEnviromentVariables.Add("WINEDEBUG", wineSettings.DebugVars);
+            wineEnviromentVariables.Add("WINEDEBUG", Settings.DebugVars);
         }
 
         wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
@@ -192,7 +192,7 @@ public class CompatibilityTools
         {
             Arguments = "-k"
         };
-        psi.EnvironmentVariables.Add("WINEPREFIX", wineSettings.Prefix.FullName);
+        psi.EnvironmentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
 
         Process.Start(psi);
     }
