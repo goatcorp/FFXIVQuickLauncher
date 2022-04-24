@@ -93,7 +93,7 @@ public class XivAccount
         }
     }
 
-    private const string URL = "http://xivapi.com/";
+    private const string URL = "https://xivapi.com/";
 
     public static async Task<JObject> GetCharacterSearch(string name, string world)
     {
