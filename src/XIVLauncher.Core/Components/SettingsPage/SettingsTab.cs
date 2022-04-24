@@ -32,7 +32,7 @@ public abstract class SettingsTab : Component
         }
     }
 
-    public void Save()
+    public virtual void Save()
     {
         foreach (SettingsEntry settingsEntry in Entries)
         {

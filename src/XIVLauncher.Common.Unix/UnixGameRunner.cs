@@ -17,94 +17,30 @@ public class UnixGameRunner : IGameRunner
 {
     public static HashSet<Int32> runningPids = new HashSet<Int32>();
 
-    private readonly WineStartupType startupType;
-    private readonly string startupCommandLine;
     private readonly CompatibilityTools compatibility;
-    private readonly Dxvk.DxvkHudType hudType;
-    private readonly string wineDebugVars;
-    private readonly FileInfo wineLogFile;
     private readonly DalamudLauncher dalamudLauncher;
     private readonly bool dalamudOk;
+    private readonly DalamudLoadMethod loadMethod;
+    private readonly DirectoryInfo dotnetRuntime;
 
-    public UnixGameRunner(WineStartupType startupType, string startupCommandLine, CompatibilityTools compatibility, Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile, DalamudLauncher dalamudLauncher, bool dalamudOk)
+    public UnixGameRunner(CompatibilityTools compatibility, DalamudLauncher dalamudLauncher, bool dalamudOk, DalamudLoadMethod? loadMethod, DirectoryInfo dotnetRuntime)
     {
-        this.startupType = startupType;
-        this.startupCommandLine = startupCommandLine;
         this.compatibility = compatibility;
-        this.hudType = hudType;
-        this.wineDebugVars = wineDebugVars;
-        this.wineLogFile = wineLogFile;
         this.dalamudLauncher = dalamudLauncher;
         this.dalamudOk = dalamudOk;
+        this.loadMethod = loadMethod ?? DalamudLoadMethod.DllInject;
+        this.dotnetRuntime = dotnetRuntime;
     }
 
     public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
-        StreamWriter logWriter = new StreamWriter(wineLogFile.FullName);
-        string wineHelperPath = Path.Combine(AppContext.BaseDirectory, "Resources", "binaries", "DalamudWineHelper.exe");
+        var wineHelperPath = Path.Combine(AppContext.BaseDirectory, "Resources", "binaries", "DalamudWineHelper.exe");
+        var launchArguments = new string[] { wineHelperPath, path, arguments };
 
-        Process helperProcess = new Process();
+        environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(dotnetRuntime.FullName));
+        var process = compatibility.RunInPrefix(launchArguments, workingDirectory, environment);
 
-        helperProcess.StartInfo.RedirectStandardOutput = true;
-        helperProcess.StartInfo.RedirectStandardError = true;
-        helperProcess.StartInfo.UseShellExecute = false;
-        helperProcess.StartInfo.WorkingDirectory = workingDirectory;
-
-        helperProcess.ErrorDataReceived += new DataReceivedEventHandler((sendingProcess, errLine) =>
-        {
-            if (!String.IsNullOrEmpty(errLine.Data))
-            {
-                logWriter.WriteLine(errLine.Data);
-            }
-        });
-
-        string dxvkHud = hudType switch
-        {
-            Dxvk.DxvkHudType.None => "0",
-            Dxvk.DxvkHudType.Fps => "fps",
-            Dxvk.DxvkHudType.Full => "full",
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_HUD", dxvkHud);
-        helperProcess.StartInfo.EnvironmentVariables.Add("DXVK_ASYNC", "1");
-
-        if (!string.IsNullOrEmpty(this.wineDebugVars))
-        {
-            helperProcess.StartInfo.EnvironmentVariables.Add("WINEDEBUG", this.wineDebugVars);
-        }
-
-        helperProcess.StartInfo.EnvironmentVariables.Add("XL_WINEONLINUX", "true");
-        helperProcess.StartInfo.EnvironmentVariables.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
-
-        if (this.startupType == WineStartupType.Managed)
-        {
-            helperProcess.StartInfo.FileName = compatibility.Wine64Path;
-
-            helperProcess.StartInfo.ArgumentList.Add(wineHelperPath);
-            helperProcess.StartInfo.ArgumentList.Add(path);
-            helperProcess.StartInfo.ArgumentList.Add(arguments);
-
-            helperProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX", compatibility.Prefix.FullName);
-            helperProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
-        }
-        else
-        {
-            string formattedCommand = this.startupCommandLine.Replace("%COMMAND%", $"\"{wineHelperPath}\" \"{path}\" \"{arguments}\"");
-            helperProcess.StartInfo.FileName = "sh";
-            helperProcess.StartInfo.ArgumentList.Add("-c");
-            helperProcess.StartInfo.ArgumentList.Add(formattedCommand);
-        }
-
-        foreach (var variable in environment)
-        {
-            helperProcess.StartInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
-        }
-
-        Log.Information("Starting game with: {Command} {Args}", helperProcess.StartInfo.FileName, helperProcess.StartInfo.ArgumentList);
-
-        helperProcess.Start();
         Int32 gameProcessId = 0;
-        helperProcess.BeginErrorReadLine();
         while (gameProcessId == 0)
         {
             Thread.Sleep(50);
