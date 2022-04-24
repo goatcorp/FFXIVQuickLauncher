@@ -587,7 +587,7 @@ public class MainPage : Page
                 dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
                 break;
             case PlatformID.Unix:
-                dalamudRunner = new UnixDalamudRunner(Program.CompatibilityTools);
+                dalamudRunner = new UnixDalamudRunner(Program.CompatibilityTools, Program.DotnetRuntime);
                 dalamudCompatCheck = new UnixDalamudCompatibilityCheck();
                 break;
             default:
@@ -672,7 +672,7 @@ public class MainPage : Page
                 var _ = Task.Run(async () =>
                 {
                     await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
-                    Program.CompatibilityTools.EnsureGameFixes();
+                    Program.CompatibilityTools.EnsureGameFixes(Program.Config.GameConfigPath);
                 }).ContinueWith(t =>
                 {
                     isFailed = t.IsFaulted || t.IsCanceled;
@@ -691,7 +691,7 @@ public class MainPage : Page
                     return null;
             }
 
-            runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
+            runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod, Program.DotnetRuntime);
 
             gameArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
             gameArgs = gameArgs.Trim();

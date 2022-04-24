@@ -13,10 +13,12 @@ namespace XIVLauncher.Common.Unix;
 public class UnixDalamudRunner : IDalamudRunner
 {
     private readonly CompatibilityTools compatibility;
+    private readonly DirectoryInfo dotnetRuntime;
 
-    public UnixDalamudRunner(CompatibilityTools compatibility)
+    public UnixDalamudRunner(CompatibilityTools compatibility, DirectoryInfo dotnetRuntime)
     {
         this.compatibility = compatibility;
+        this.dotnetRuntime = dotnetRuntime;
     }
 
     public void Run(Int32 gameProcessID, FileInfo runner, DalamudStartInfo startInfo, DirectoryInfo gamePath, DalamudLoadMethod loadMethod)
@@ -39,7 +41,7 @@ public class UnixDalamudRunner : IDalamudRunner
                 var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
                 var launchArguments = new string[] { runner.FullName, gameProcessID.ToString(), parameters };
                 var environment = new Dictionary<string, string>();
-                environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(compatibility.DotnetRuntime.FullName));
+                environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(dotnetRuntime.FullName));
                 compatibility.RunInPrefix(launchArguments, environment: environment);
                 break;
             }

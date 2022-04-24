@@ -13,52 +13,40 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 public class CompatibilityTools
 {
     private DirectoryInfo toolDirectory;
-    private DirectoryInfo gameConfigDirectory;
 
-    private readonly WineStartupType startupType;
-    private readonly string customWineBinPath;
+    private StreamWriter logWriter;
 
     private const string WINE_TKG_RELEASE_URL = "https://github.com/Kron4ek/Wine-Builds/releases/download/7.6/wine-7.6-staging-tkg-amd64.tar.xz";
     private const string WINE_TKG_RELEASE_NAME = "wine-7.6-staging-tkg-amd64";
 
-    private string WineBinPath => startupType == WineStartupType.Managed ?
-                                    Path.Combine(toolDirectory.FullName, WINE_TKG_RELEASE_NAME, "bin") :
-                                    customWineBinPath;
-    public string Wine64Path => Path.Combine(WineBinPath, "wine64");
-    public string WineServerPath => Path.Combine(WineBinPath, "wineserver");
-
-    private readonly string wineDebugVars;
-    private readonly FileInfo wineLogFile;
-
-    public DirectoryInfo Prefix { get; private set; }
-    public DirectoryInfo DotnetRuntime { get; private set; }
     public bool IsToolReady { get; private set; }
 
-    public bool IsToolDownloaded => File.Exists(Wine64Path) && this.Prefix.Exists;
+    public readonly WineSettings wineSettings;
+
+    private string WineBinPath => wineSettings.StartupType == WineStartupType.Managed ?
+                                    Path.Combine(toolDirectory.FullName, WINE_TKG_RELEASE_NAME, "bin") :
+                                    wineSettings.CustomBinPath;
+    private string Wine64Path => Path.Combine(WineBinPath, "wine64");
+    private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
+
+    public bool IsToolDownloaded => File.Exists(Wine64Path) && wineSettings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
 
-    public CompatibilityTools(WineStartupType? startupType, string customWineBinPath, Storage storage,
-        Dxvk.DxvkHudType hudType, string wineDebugVars, FileInfo wineLogFile, DirectoryInfo configDirectory)
+    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, DirectoryInfo toolsFolder)
     {
-        this.startupType = startupType ?? WineStartupType.Managed;
-        this.customWineBinPath = customWineBinPath;
+        this.wineSettings = wineSettings;
         this.hudType = hudType;
-        this.wineDebugVars = wineDebugVars;
-        this.wineLogFile = wineLogFile;
-
-        var toolsFolder = storage.GetFolder("compatibilitytool");
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
-        this.gameConfigDirectory = configDirectory;
-        this.Prefix = storage.GetFolder("wineprefix");
-        this.DotnetRuntime = storage.GetFolder("runtime");
+
+        this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
         if (!this.toolDirectory.Exists)
             this.toolDirectory.Create();
 
-        if (!this.Prefix.Exists)
-            this.Prefix.Create();
+        if (!wineSettings.Prefix.Exists)
+            wineSettings.Prefix.Create();
     }
 
     public async Task EnsureTool()
@@ -83,19 +71,19 @@ public class CompatibilityTools
         File.Delete(tempPath);
 
         EnsurePrefix();
-        await Dxvk.InstallDxvk(Prefix).ConfigureAwait(false);
+        await Dxvk.InstallDxvk(wineSettings.Prefix).ConfigureAwait(false);
 
         IsToolReady = true;
     }
 
     private void ResetPrefix()
     {
-        this.Prefix.Refresh();
+        wineSettings.Prefix.Refresh();
 
-        if (this.Prefix.Exists)
-            this.Prefix.Delete(true);
+        if (wineSettings.Prefix.Exists)
+            wineSettings.Prefix.Delete(true);
 
-        this.Prefix.Create();
+        wineSettings.Prefix.Create();
         EnsurePrefix();
     }
 
@@ -134,18 +122,17 @@ public class CompatibilityTools
 
     private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
-        var logWriter = new StreamWriter(wineLogFile.FullName);
         psi.RedirectStandardOutput = redirectOutput;
         psi.RedirectStandardError = true;
         psi.UseShellExecute = false;
         psi.WorkingDirectory = workingDirectory;
 
         var wineEnviromentVariables = new Dictionary<string, string>();
-        wineEnviromentVariables.Add("WINEPREFIX", this.Prefix.FullName);
+        wineEnviromentVariables.Add("WINEPREFIX", wineSettings.Prefix.FullName);
         wineEnviromentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
-        if (!string.IsNullOrEmpty(this.wineDebugVars))
+        if (!string.IsNullOrEmpty(wineSettings.DebugVars))
         {
-            wineEnviromentVariables.Add("WINEDEBUG", this.wineDebugVars);
+            wineEnviromentVariables.Add("WINEDEBUG", wineSettings.DebugVars);
         }
 
         wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
@@ -205,12 +192,12 @@ public class CompatibilityTools
         {
             Arguments = "-k"
         };
-        psi.EnvironmentVariables.Add("WINEPREFIX", this.Prefix.FullName);
+        psi.EnvironmentVariables.Add("WINEPREFIX", wineSettings.Prefix.FullName);
 
         Process.Start(psi);
     }
 
-    public void EnsureGameFixes()
+    public void EnsureGameFixes(DirectoryInfo gameConfigDirectory)
     {
         EnsurePrefix();
         GameFixes.AddDefaultConfig(gameConfigDirectory);
