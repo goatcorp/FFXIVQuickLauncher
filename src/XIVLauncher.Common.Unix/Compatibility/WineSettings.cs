@@ -26,7 +26,7 @@ public class WineSettings
     {
         this.StartupType = startupType ?? WineStartupType.Custom;
         this.CustomBinPath = customBinPath;
-        this.DebugVars = debugVars;
+        this.DebugVars = string.IsNullOrEmpty(debugVars) ? "-all" : debugVars;
         this.LogFile = logFile;
         this.Prefix = prefix;
     }
