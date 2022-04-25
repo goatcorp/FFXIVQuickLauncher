@@ -18,11 +18,11 @@ public class SettingsTabWine : SettingsTab
             startupTypeSetting = new SettingsEntry<WineStartupType>("Installation Type", "Choose how XIVLauncher will start and manage your game installation.",
                 () => Program.Config.WineStartupType ?? WineStartupType.Managed, x => Program.Config.WineStartupType = x),
 
-            new SettingsEntry<string>("Startup Command Line",
-                "Set the command XIVLauncher will run to start applications via wine. Here, you should specify things like your wineprefix. %COMMAND% is aliased to the EXE file and its arguments by XIVLauncher.",
-                () => Program.Config.WineStartCommandLine, s => Program.Config.WineStartCommandLine = s)
+            new SettingsEntry<string>("Wine Binary Path",
+                "Set the path XIVLauncher will use to run applications via wine.\nIt should be an absolute path to a folder containing wine64 and wineserver binaries.",
+                () => Program.Config.WineBinaryPath, s => Program.Config.WineBinaryPath = s)
             {
-                CheckVisibility = () => startupTypeSetting.Value == WineStartupType.Command
+                CheckVisibility = () => startupTypeSetting.Value == WineStartupType.Custom
             },
 
             new SettingsEntry<bool>("Enable GameMode", "Enable launching with GameMode optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b)
@@ -73,12 +73,12 @@ public class SettingsTabWine : SettingsTab
 
         if (ImGui.Button("Open prefix"))
         {
-            Util.OpenBrowser(Program.CompatibilityTools.Prefix.FullName);
+            Util.OpenBrowser(Program.CompatibilityTools.Settings.Prefix.FullName);
         }
 
         if (ImGui.Button("Open Wine configuration"))
         {
-            Program.CompatibilityTools.RunInPrefix("C:/windows/system32/winecfg.exe");
+            Program.CompatibilityTools.RunInPrefix("winecfg");
         }
 
         if (ImGui.Button("Kill all wine processes"))
@@ -90,5 +90,11 @@ public class SettingsTabWine : SettingsTab
         {
             ImGui.EndDisabled();
         }
+    }
+
+    public override void Save()
+    {
+        base.Save();
+        Program.UpdateCompatibilityTools();
     }
 }

@@ -100,7 +100,7 @@ public class XivAccount
         }
     }
 
-    private const string XIVAPI_BASE = "http://xivapi.com/";
+    private const string XIVAPI_BASE = "https://xivapi.com/";
 
     public static async Task<JObject> GetCharacterSearch(string name, string world)
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,31 +14,39 @@ public class CompatibilityTools
 {
     private DirectoryInfo toolDirectory;
 
-    private const string WINE_GE_RELEASE_URL = "https://github.com/GloriousEggroll/wine-ge-custom/releases/download/GE-Proton7-8/wine-lutris-GE-Proton7-8-x86_64.tar.xz";
-    private const string WINE_GE_RELEASE_NAME = "lutris-GE-Proton7-8-x86_64";
+    private StreamWriter logWriter;
 
-    public string Wine64Path => Path.Combine(toolDirectory.FullName, WINE_GE_RELEASE_NAME, "bin", "wine64");
-    public string WineServerPath => Path.Combine(toolDirectory.FullName, WINE_GE_RELEASE_NAME, "bin", "wineserver");
+    private const string WINE_TKG_RELEASE_URL = "https://github.com/Kron4ek/Wine-Builds/releases/download/7.6/wine-7.6-staging-tkg-amd64.tar.xz";
+    private const string WINE_TKG_RELEASE_NAME = "wine-7.6-staging-tkg-amd64";
 
-    public DirectoryInfo Prefix { get; private set; }
-    public DirectoryInfo DotnetRuntime { get; private set; }
     public bool IsToolReady { get; private set; }
 
-    public bool IsToolDownloaded => File.Exists(Wine64Path) && this.Prefix.Exists;
+    public WineSettings Settings { get; private set; }
 
-    public CompatibilityTools(Storage storage)
+    private string WineBinPath => Settings.StartupType == WineStartupType.Managed ?
+                                    Path.Combine(toolDirectory.FullName, WINE_TKG_RELEASE_NAME, "bin") :
+                                    Settings.CustomBinPath;
+    private string Wine64Path => Path.Combine(WineBinPath, "wine64");
+    private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
+
+    public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
+
+    private readonly Dxvk.DxvkHudType hudType;
+
+    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, DirectoryInfo toolsFolder)
     {
-        var toolsFolder = storage.GetFolder("compatibilitytool");
+        this.Settings = wineSettings;
+        this.hudType = hudType;
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
-        this.Prefix = storage.GetFolder("wineprefix");
-        this.DotnetRuntime = storage.GetFolder("runtime");
+
+        this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
         if (!this.toolDirectory.Exists)
             this.toolDirectory.Create();
 
-        if (!this.Prefix.Exists)
-            this.Prefix.Create();
+        if (!wineSettings.Prefix.Exists)
+            wineSettings.Prefix.Create();
     }
 
     public async Task EnsureTool()
@@ -53,7 +62,7 @@ public class CompatibilityTools
         using var client = new HttpClient();
         var tempPath = Path.GetTempFileName();
 
-        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WINE_GE_RELEASE_URL).ConfigureAwait(false));
+        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WINE_TKG_RELEASE_URL).ConfigureAwait(false));
 
         Util.Untar(tempPath, this.toolDirectory.FullName);
 
@@ -62,19 +71,19 @@ public class CompatibilityTools
         File.Delete(tempPath);
 
         EnsurePrefix();
-        await Dxvk.InstallDxvk(Prefix).ConfigureAwait(false);
+        await Dxvk.InstallDxvk(Settings.Prefix).ConfigureAwait(false);
 
         IsToolReady = true;
     }
 
     private void ResetPrefix()
     {
-        this.Prefix.Refresh();
+        Settings.Prefix.Refresh();
 
-        if (this.Prefix.Exists)
-            this.Prefix.Delete(true);
+        if (Settings.Prefix.Exists)
+            Settings.Prefix.Delete(true);
 
-        this.Prefix.Create();
+        Settings.Prefix.Create();
         EnsurePrefix();
     }
 
@@ -83,20 +92,71 @@ public class CompatibilityTools
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
-    public Process? RunInPrefix(string command, Dictionary<string, string> environment = null, bool redirectOutput = false)
+    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
-        var psi = new ProcessStartInfo(Wine64Path)
+        var psi = new ProcessStartInfo(Wine64Path);
+        psi.Arguments = command;
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
+    }
+
+    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
+    {
+        var psi = new ProcessStartInfo(Wine64Path);
+        foreach (var arg in args)
+            psi.ArgumentList.Add(arg);
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
+    }
+
+    private void MergeDictionaries(StringDictionary a, IDictionary<string, string> b)
+    {
+        if (b is null)
+            return;
+        foreach (var keyValuePair in b)
         {
-            Arguments = command,
-            RedirectStandardOutput = redirectOutput
+            if (a.ContainsKey(keyValuePair.Key))
+                a[keyValuePair.Key] = keyValuePair.Value;
+            else
+                a.Add(keyValuePair.Key, keyValuePair.Value);
+        }
+    }
+
+    private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
+    {
+        psi.RedirectStandardOutput = redirectOutput;
+        psi.RedirectStandardError = true;
+        psi.UseShellExecute = false;
+        psi.WorkingDirectory = workingDirectory;
+
+        var wineEnviromentVariables = new Dictionary<string, string>();
+        wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
+        wineEnviromentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
+        if (!string.IsNullOrEmpty(Settings.DebugVars))
+        {
+            wineEnviromentVariables.Add("WINEDEBUG", Settings.DebugVars);
+        }
+
+        wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
+
+        string dxvkHud = hudType switch
+        {
+            Dxvk.DxvkHudType.None => "0",
+            Dxvk.DxvkHudType.Fps => "fps",
+            Dxvk.DxvkHudType.Full => "full",
+            _ => throw new ArgumentOutOfRangeException()
         };
-        psi.EnvironmentVariables.Add("WINEPREFIX", this.Prefix.FullName);
-        if (environment is not null)
-            foreach (var keyValuePair in environment)
-                psi.EnvironmentVariables.Add(keyValuePair.Key, keyValuePair.Value);
-        else
-            psi.EnvironmentVariables.Add("WINEDLLOVERRIDES", "mshtml=");
-        return Process.Start(psi);
+        wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
+        wineEnviromentVariables.Add("DXVK_ASYNC", "1");
+
+        MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
+        MergeDictionaries(psi.EnvironmentVariables, environment);
+
+        Process helperProcess = new();
+        helperProcess.StartInfo = psi; 
+        helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) => logWriter.WriteLine(errLine.Data));
+        
+        helperProcess.Start();
+        helperProcess.BeginErrorReadLine();
+        return helperProcess;
     }
 
     public Int32[] GetProcessIds(string executableName)
@@ -119,20 +179,27 @@ public class CompatibilityTools
         return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
 
+    public void AddRegistryKey(string key, string value, string data)
+    {
+        var args = new string[] { "reg", "add", key, "/v", value, "/d", data, "/f" };
+        var wineProcess = RunInPrefix(args);
+        wineProcess.WaitForExit();
+    }
+
     public void Kill()
     {
         var psi = new ProcessStartInfo(WineServerPath)
         {
             Arguments = "-k"
         };
-        psi.EnvironmentVariables.Add("WINEPREFIX", this.Prefix.FullName);
+        psi.EnvironmentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
 
         Process.Start(psi);
     }
 
-    public void EnsureGameFixes()
+    public void EnsureGameFixes(DirectoryInfo gameConfigDirectory)
     {
         EnsurePrefix();
-        GameFixes.AddDefaultConfig(this.Prefix);
+        GameFixes.AddDefaultConfig(gameConfigDirectory);
     }
 }

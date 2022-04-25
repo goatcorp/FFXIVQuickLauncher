@@ -40,6 +40,7 @@ class Program
 
     private static LauncherApp launcherApp;
     private static Storage storage;
+    public static DirectoryInfo DotnetRuntime => storage.GetFolder("runtime");
 
     private const string APP_NAME = "xlcore";
 
@@ -84,6 +85,7 @@ class Program
         }
 
         Config.GamePath ??= storage.GetFolder("ffxiv");
+        Config.GameConfigPath ??= storage.GetFolder("ffxivConfig");
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
@@ -107,8 +109,8 @@ class Program
         Config.FSyncEnabled ??= false;
 
         Config.WineStartupType ??= WineStartupType.Managed;
-        Config.WineStartCommandLine ??= "wine %COMMAND%";
-        Config.WineDebugVars = string.Empty;
+        Config.WineBinaryPath ??= "/usr/bin";
+        Config.WineDebugVars = "-all";
     }
 
     public const int STEAM_APP_ID = 39210;
@@ -146,7 +148,7 @@ class Program
         };
         DalamudUpdater.Run();
 
-        CompatibilityTools = new CompatibilityTools(storage);
+        UpdateCompatibilityTools();
 
         Log.Debug("Creating veldrid devices...");
 
@@ -250,5 +252,14 @@ class Program
         bindings.Dispose();
         cl.Dispose();
         gd.Dispose();
+    }
+
+    public static void UpdateCompatibilityTools()
+    {
+        var wineLogFile = new FileInfo(Path.Combine(storage.GetFolder("logs").FullName, "wine.log"));
+        var winePrefix = storage.GetFolder("wineprefix");
+        var wineSettings = new WineSettings(Config.WineStartupType, Config.WineBinaryPath, Config.WineDebugVars, wineLogFile, winePrefix);
+        var toolsFolder = storage.GetFolder("compatibilitytool");
+        CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, toolsFolder);
     }
 }

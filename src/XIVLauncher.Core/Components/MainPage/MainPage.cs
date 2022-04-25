@@ -587,7 +587,7 @@ public class MainPage : Page
                 dalamudCompatCheck = new WindowsDalamudCompatibilityCheck();
                 break;
             case PlatformID.Unix:
-                dalamudRunner = new UnixDalamudRunner(Program.CompatibilityTools);
+                dalamudRunner = new UnixDalamudRunner(Program.CompatibilityTools, Program.DotnetRuntime);
                 dalamudCompatCheck = new UnixDalamudCompatibilityCheck();
                 break;
             default:
@@ -654,14 +654,16 @@ public class MainPage : Page
 
         IGameRunner runner;
 
+        var gameArgs = App.Settings.AdditionalArgs ?? string.Empty;
+
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             runner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
         }
         else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
-            if (App.Settings.WineStartupType == WineStartupType.Command && App.Settings.WineStartCommandLine == null)
-                throw new Exception("Process command line wasn't set.");
+            if (App.Settings.WineStartupType == WineStartupType.Custom && App.Settings.WineBinaryPath == null)
+                throw new Exception("Custom wine binary path wasn't set.");
 
             var signal = new ManualResetEvent(false);
             var isFailed = false;
@@ -670,7 +672,7 @@ public class MainPage : Page
                 var _ = Task.Run(async () =>
                 {
                     await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
-                    Program.CompatibilityTools.EnsureGameFixes();
+                    Program.CompatibilityTools.EnsureGameFixes(Program.Config.GameConfigPath);
                 }).ContinueWith(t =>
                 {
                     isFailed = t.IsFaulted || t.IsCanceled;
@@ -689,10 +691,10 @@ public class MainPage : Page
                     return null;
             }
 
-            var wineLogFile = new FileInfo(Path.Combine(App.Storage.GetFolder("logs").FullName, "wine.log"));
-            runner = new UnixGameRunner(App.Settings.WineStartupType ?? WineStartupType.Command, App.Settings.WineStartCommandLine, Program.CompatibilityTools, App.Settings.DxvkHudType,
-                App.Settings.GameModeEnabled ?? false, App.Settings.DxvkAsyncEnabled ?? true, App.Settings.ESyncEnabled ?? false, App.Settings.FSyncEnabled ?? false, App.Settings.WineDebugVars ?? string.Empty, wineLogFile, 
-                dalamudLauncher, dalamudOk);
+            runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod, Program.DotnetRuntime);
+
+            gameArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
+            gameArgs = gameArgs.Trim();
         }
         else
         {
@@ -705,7 +707,7 @@ public class MainPage : Page
             loginResult.OauthLogin.Region,
             loginResult.OauthLogin.MaxExpansion,
             isSteam,
-            App.Settings.AdditionalArgs,
+            gameArgs,
             App.Settings.GamePath,
             App.Settings.IsDx11 ?? true,
             App.Settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English),

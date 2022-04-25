@@ -16,6 +16,8 @@ public interface ILauncherConfig
 
     public DirectoryInfo? GamePath { get; set; }
 
+    public DirectoryInfo? GameConfigPath { get; set; }
+
     public string? AdditionalArgs { get; set; }
 
     public ClientLanguage? ClientLanguage { get; set; }
@@ -54,7 +56,7 @@ public interface ILauncherConfig
 
     public WineStartupType? WineStartupType { get; set; }
 
-    public string? WineStartCommandLine { get; set; }
+    public string? WineBinaryPath { get; set; }
 
     public bool? GameModeEnabled { get; set; }
     
