@@ -40,9 +40,11 @@ class Program
 
     private static LauncherApp launcherApp;
     private static Storage storage;
+    private static ConfigStorage configStorage;
     public static DirectoryInfo DotnetRuntime => storage.GetFolder("runtime");
 
     private const string APP_NAME = "xlcore";
+    private const string CONFIG_FOLDER = "XIVLauncher";
 
     private static uint invalidationFrames = 0;
     private static Vector2 lastMousePosition;
@@ -74,7 +76,7 @@ class Program
     {
         Config = new ConfigurationBuilder<ILauncherConfig>()
                  .UseCommandLineArgs()
-                 .UseIniFile(storage.GetFile("launcher.ini").FullName)
+                 .UseIniFile(configStorage.GetXLConfig("launcher.ini").FullName)
                  .UseTypeParser(new DirectoryInfoParser())
                  .UseTypeParser(new AddonListParser())
                  .Build();
@@ -85,7 +87,7 @@ class Program
         }
 
         Config.GamePath ??= storage.GetFolder("ffxiv");
-        Config.GameConfigPath ??= storage.GetFolder("ffxivConfig");
+        Config.GameConfigPath ??= configStorage.GetGameConfigFolder("ffxivConfig");
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
@@ -113,6 +115,7 @@ class Program
     private static void Main(string[] args)
     {
         storage = new Storage(APP_NAME);
+        configStorage = new ConfigStorage(APP_NAME, CONFIG_FOLDER);
         SetupLogging();
         LoadConfig(storage);
 
