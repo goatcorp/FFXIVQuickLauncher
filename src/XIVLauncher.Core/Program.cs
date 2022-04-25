@@ -260,6 +260,7 @@ class Program
         var winePrefix = storage.GetFolder("wineprefix");
         var wineSettings = new WineSettings(Config.WineStartupType, Config.WineBinaryPath, Config.WineDebugVars, wineLogFile, winePrefix);
         var toolsFolder = storage.GetFolder("compatibilitytool");
-        CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, toolsFolder);
+        CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, Config.GameModeEnabled, Config.DxvkAsyncEnabled, Config.ESyncEnabled, Config.FSyncEnabled, 
+            toolsFolder);
     }
 }

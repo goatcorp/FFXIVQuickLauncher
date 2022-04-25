@@ -32,11 +32,19 @@ public class CompatibilityTools
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
+    private readonly bool gamemodeOn;
+    private readonly string dxvkAsyncOn;
+    private readonly string esyncOn;
+    private readonly string fsyncOn;
 
-    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, DirectoryInfo toolsFolder)
+    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, bool? esyncOn, bool? fsyncOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
         this.hudType = hudType;
+        this.gamemodeOn = gamemodeOn ?? false;
+        this.dxvkAsyncOn = (dxvkAsyncOn ?? false) ? "1" : "0";
+        this.esyncOn = (esyncOn ?? false) ? "1" : "0";
+        this.fsyncOn = (fsyncOn ?? false) ? "1" : "0";
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
 
@@ -111,6 +119,7 @@ public class CompatibilityTools
     {
         if (b is null)
             return;
+
         foreach (var keyValuePair in b)
         {
             if (a.ContainsKey(keyValuePair.Key))
@@ -130,12 +139,14 @@ public class CompatibilityTools
         var wineEnviromentVariables = new Dictionary<string, string>();
         wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
         wineEnviromentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
+
         if (!string.IsNullOrEmpty(Settings.DebugVars))
         {
             wineEnviromentVariables.Add("WINEDEBUG", Settings.DebugVars);
         }
 
         wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
+        string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
 
         string dxvkHud = hudType switch
         {
@@ -144,8 +155,18 @@ public class CompatibilityTools
             Dxvk.DxvkHudType.Full => "full",
             _ => throw new ArgumentOutOfRangeException()
         };
+
+        if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
+        {
+            ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
+        }
+
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
-        wineEnviromentVariables.Add("DXVK_ASYNC", "1");
+        wineEnviromentVariables.Add("DXVK_ASYNC", dxvkAsyncOn);
+        wineEnviromentVariables.Add("WINEESYNC", esyncOn);
+        wineEnviromentVariables.Add("WINEFSYNC", fsyncOn);
+
+        wineEnviromentVariables.Add("LD_PRELOAD", ldPreload);
 
         MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
         MergeDictionaries(psi.EnvironmentVariables, environment);
@@ -153,7 +174,7 @@ public class CompatibilityTools
         Process helperProcess = new();
         helperProcess.StartInfo = psi; 
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) => logWriter.WriteLine(errLine.Data));
-        
+
         helperProcess.Start();
         helperProcess.BeginErrorReadLine();
         return helperProcess;
