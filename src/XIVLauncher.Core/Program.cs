@@ -103,6 +103,11 @@ class Program
 
         Config.GlobalScale ??= 1.0f;
 
+        Config.GameModeEnabled ??= false;
+        Config.DxvkAsyncEnabled ??= true;
+        Config.ESyncEnabled ??= true;
+        Config.FSyncEnabled ??= false;
+
         Config.WineStartupType ??= WineStartupType.Managed;
         Config.WineBinaryPath ??= "/usr/bin";
         Config.WineDebugVars = "-all";
@@ -255,6 +260,7 @@ class Program
         var winePrefix = storage.GetFolder("wineprefix");
         var wineSettings = new WineSettings(Config.WineStartupType, Config.WineBinaryPath, Config.WineDebugVars, wineLogFile, winePrefix);
         var toolsFolder = storage.GetFolder("compatibilitytool");
-        CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, toolsFolder);
+        CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, Config.GameModeEnabled, Config.DxvkAsyncEnabled, Config.ESyncEnabled, Config.FSyncEnabled, 
+            toolsFolder);
     }
 }

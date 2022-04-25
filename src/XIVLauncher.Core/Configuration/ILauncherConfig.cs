@@ -58,6 +58,14 @@ public interface ILauncherConfig
 
     public string? WineBinaryPath { get; set; }
 
+    public bool? GameModeEnabled { get; set; }
+    
+    public bool? DxvkAsyncEnabled { get; set; }
+
+    public bool? ESyncEnabled { get; set; }
+
+    public bool? FSyncEnabled { get; set; }
+
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 
     public string? WineDebugVars { get; set; }
