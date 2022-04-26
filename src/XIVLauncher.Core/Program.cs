@@ -72,7 +72,7 @@ class Program
                      .CreateLogger();
     }
 
-    private static void LoadConfig(Storage storage)
+    private static void LoadConfig(ConfigStorage configStorage, Storage storage)
     {
         Config = new ConfigurationBuilder<ILauncherConfig>()
                  .UseCommandLineArgs()
@@ -87,7 +87,7 @@ class Program
         }
 
         Config.GamePath ??= storage.GetFolder("ffxiv");
-        Config.GameConfigPath ??= configStorage.GetGameConfigFolder("ffxivConfig");
+        Config.GameConfigPath ??= configStorage.GetGameConfigFolder();
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
@@ -120,9 +120,9 @@ class Program
     private static void Main(string[] args)
     {
         storage = new Storage(APP_NAME);
-        configStorage = new ConfigStorage(APP_NAME, CONFIG_FOLDER);
+        configStorage = new ConfigStorage(CONFIG_FOLDER);
         SetupLogging();
-        LoadConfig(storage);
+        LoadConfig(configStorage, storage);
 
         try
         {
