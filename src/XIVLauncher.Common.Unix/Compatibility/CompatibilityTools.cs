@@ -173,7 +173,21 @@ public class CompatibilityTools
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi; 
-        helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) => logWriter.WriteLine(errLine.Data));
+        helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
+        {
+            if (String.IsNullOrEmpty(errLine.Data))
+                return;
+
+            try
+            {
+                logWriter.WriteLine(errLine.Data);
+            }
+            catch (Exception ex) when (ex is ArgumentOutOfRangeException || ex is OverflowException)
+            {
+                // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
+                logWriter.WriteLine(ex.Message);
+            }
+        });
 
         helperProcess.Start();
         helperProcess.BeginErrorReadLine();
