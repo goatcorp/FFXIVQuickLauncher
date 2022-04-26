@@ -182,9 +182,12 @@ public class CompatibilityTools
             {
                 logWriter.WriteLine(errLine.Data);
             }
-            catch (Exception ex) when (ex is ArgumentOutOfRangeException || ex is OverflowException)
+            catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
+                                       ex is OverflowException ||
+                                       ex is IndexOutOfRangeException)
             {
                 // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
+                logWriter.WriteLine("Error writing Wine log line:");
                 logWriter.WriteLine(ex.Message);
             }
         });
