@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -20,6 +21,26 @@ namespace XIVLauncher.Common.Game.Patch
 {
     public class PatchVerifier : IDisposable
     {
+        private const string RepairRecyclerDirectory = "repair_recycler";
+        private static readonly Regex[] GameIgnoreUnnecessaryFilePatterns = new Regex[]
+        {
+            // Base game version files.
+            new Regex(@"^ffxivgame\.(?:bck|ver)$", RegexOptions.IgnoreCase),
+
+            // Expansion version files.
+            new Regex(@"^sqpack/ex([1-9][0-9]*)/ex\1\.(?:bck|ver)$", RegexOptions.IgnoreCase),
+
+            // Under WINE, since .dat files are actually WMV videos, the game will become unusable.
+            // Bink videos will be used instead in those cases.
+            new Regex(@"^movie/ffxiv/0000[0-3]\.bk2$", RegexOptions.IgnoreCase),
+            
+            // DXVK can deal with corrupted cache files by itself, so let it do the job by itself.
+            new Regex(@"^ffxiv_dx11\.dxvk-cache$", RegexOptions.IgnoreCase),
+
+            // Repair recycle bin folder.
+            new Regex(@"^repair_recycler/.*$", RegexOptions.IgnoreCase),
+        };
+
         private readonly ISettings _settings;
         private readonly int _maxExpansionToCheck;
         private HttpClient _client;
@@ -33,6 +54,8 @@ namespace XIVLauncher.Common.Game.Patch
 
         public int ProgressUpdateInterval { get; private set; }
         public int NumBrokenFiles { get; private set; } = 0;
+        public string MovedFileToDir { get; private set; } = null;
+        public List<string> MovedFiles { get; private set; } = new();
         public int PatchSetIndex { get; private set; }
         public int PatchSetCount { get; private set; }
         public int TaskIndex { get; private set; }
@@ -197,6 +220,64 @@ namespace XIVLauncher.Common.Game.Patch
                 Speed = (_reportedProgresses.Last().Item2 - _reportedProgresses.First().Item2) * 10 * 1000 * 1000 / elapsedMs;
         }
 
+        public async Task MoveUnnecessaryFiles(IndexedZiPatchIndexRemoteInstaller remote, string gamePath, HashSet<string> targetRelativePaths)
+        {
+            this.MovedFileToDir = Path.Combine(gamePath, RepairRecyclerDirectory, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+
+            var rootPathInfo = new DirectoryInfo(gamePath);
+            gamePath = rootPathInfo.FullName;
+
+            Queue<DirectoryInfo> directoriesToVisit = new();
+            HashSet<DirectoryInfo> directoriesVisited = new();
+            directoriesToVisit.Enqueue(rootPathInfo);
+            directoriesVisited.Add(rootPathInfo);
+
+            while (directoriesToVisit.Any())
+            {
+                var dir = directoriesToVisit.Dequeue();
+
+                // For directories, ignore if final path does not belong in the root path.
+                if (!dir.FullName.ToLowerInvariant().Replace('\\', '/').StartsWith(gamePath.ToLowerInvariant().Replace('\\', '/')))
+                    continue;
+
+                var relativeDirPath = dir == rootPathInfo ? "" : dir.FullName.Substring(gamePath.Length + 1).Replace('\\', '/');
+                if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativeDirPath)))
+                    continue;
+
+                if (!dir.EnumerateFileSystemInfos().Any())
+                {
+                    await remote.RemoveDirectory(dir.FullName);
+                    await remote.CreateDirectory(Path.Combine(this.MovedFileToDir, relativeDirPath));
+                    continue;
+                }
+
+                foreach (var subdir in dir.EnumerateDirectories())
+                {
+                    if (directoriesVisited.Contains(subdir))
+                        continue;
+
+                    directoriesVisited.Add(subdir);
+                    directoriesToVisit.Enqueue(subdir);
+                }
+
+                foreach (var file in dir.EnumerateFiles())
+                {
+                    if (!file.FullName.ToLowerInvariant().Replace('\\', '/').StartsWith(gamePath.ToLowerInvariant().Replace('\\', '/')))
+                        continue;
+
+                    var relativePath = file.FullName.Substring(gamePath.Length + 1).Replace('\\', '/');
+                    if (targetRelativePaths.Any(x => x.Replace('\\', '/').ToLowerInvariant() == relativePath.ToLowerInvariant()))
+                        continue;
+
+                    if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativePath)))
+                        continue;
+
+                    await remote.MoveFile(file.FullName, Path.Combine(this.MovedFileToDir, relativePath));
+                    MovedFiles.Add(relativePath);
+                }
+            }
+        }
+
         private async Task RunVerifier()
         {
             State = VerifyState.NotStarted;
@@ -234,9 +315,18 @@ namespace XIVLauncher.Common.Game.Patch
                             PatchSetCount = _repoMetaPaths.Count;
                             Progress = Total = 0;
 
+                            HashSet<string> targetRelativePaths = new();
+
+                            var bootPath = Path.Combine(_settings.GamePath.FullName, "boot");
+                            var gamePath = Path.Combine(_settings.GamePath.FullName, "game");
+
                             foreach (var metaPath in _repoMetaPaths)
                             {
                                 var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
+                                var adjustedGamePath = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? bootPath : gamePath;
+
+                                foreach (var target in patchIndex.Targets)
+                                    targetRelativePaths.Add(target.RelativePath);
 
                                 void UpdateVerifyProgress(int targetIndex, long progress, long max)
                                 {
@@ -272,8 +362,6 @@ namespace XIVLauncher.Common.Game.Patch
                                         TaskCount = patchIndex.Length;
                                         Progress = Total = TaskIndex = 0;
                                         _reportedProgresses.Clear();
-
-                                        var adjustedGamePath = Path.Combine(_settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
 
                                         await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath).ConfigureAwait(false);
                                         // TODO: check one at a time if random access is slow?
@@ -339,6 +427,8 @@ namespace XIVLauncher.Common.Game.Patch
                                     remote.OnInstallProgress -= UpdateInstallProgress;
                                 }
                             }
+
+                            await MoveUnnecessaryFiles(remote, gamePath, targetRelativePaths);
 
                             State = VerifyState.Done;
                             break;

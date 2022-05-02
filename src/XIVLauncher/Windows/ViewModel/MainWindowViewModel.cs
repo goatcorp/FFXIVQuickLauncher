@@ -848,6 +848,13 @@ namespace XIVLauncher.Windows.ViewModel
                                     1 => Loc.Localize("GameRepairSuccess1", "XIVLauncher has successfully repaired 1 game file."),
                                     _ => string.Format(Loc.Localize("GameRepairSuccessPlural", "XIVLauncher has successfully repaired {0} game files."), verify.NumBrokenFiles),
                                 })
+                                .WithAppendText(verify.MovedFiles.Count switch
+                                {
+                                    0 => "",
+                                    1 => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMoved1", "Additionally, 1 file that did not come with the original game installation has been moved to {0}."), verify.MovedFileToDir),
+                                    _ => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMovedPlural", "Additionally, {0} files that did not come with the original game installation have been moved to {1}."), verify.MovedFiles.Count, verify.MovedFileToDir),
+                                })
+                                .WithDescription(verify.MovedFiles.Any() ? string.Join("\n", verify.MovedFiles.Select(x => $"* {x}")) : null)
                                 .WithImage(MessageBoxImage.Information)
                                 .WithButtons(MessageBoxButton.YesNoCancel)
                                 .WithYesButtonText(Loc.Localize("GameRepairSuccess_LaunchGame", "_Launch game"))
