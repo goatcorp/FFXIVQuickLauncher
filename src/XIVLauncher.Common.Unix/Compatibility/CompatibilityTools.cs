@@ -13,18 +13,25 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 public class CompatibilityTools
 {
     private DirectoryInfo toolDirectory;
+    private DirectoryInfo dxvkDirectory;
 
     private StreamWriter logWriter;
 
-    private const string WINE_TKG_RELEASE_URL = "https://github.com/Kron4ek/Wine-Builds/releases/download/7.6/wine-7.6-staging-tkg-amd64.tar.xz";
-    private const string WINE_TKG_RELEASE_NAME = "wine-7.6-staging-tkg-amd64";
+#if WINE_XIV_ARCH_LINUX
+    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/7.7.r14.gd7507fbe/wine-xiv-staging-fsync-git-arch-7.7.r14.gd7507fbe.tar.xz";
+#elif WINE_XIV_FEDORA_LINUX
+    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/7.7.r14.gd7507fbe/wine-xiv-staging-fsync-git-fedora-7.7.r14.gd7507fbe.tar.xz";
+#else
+    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/7.7.r14.gd7507fbe/wine-xiv-staging-fsync-git-ubuntu-7.7.r14.gd7507fbe.tar.xz";
+#endif
+    private const string WINE_XIV_RELEASE_NAME = "wine-xiv-staging-fsync-git-7.7.r14.gd7507fbe";
 
     public bool IsToolReady { get; private set; }
 
     public WineSettings Settings { get; private set; }
 
     private string WineBinPath => Settings.StartupType == WineStartupType.Managed ?
-                                    Path.Combine(toolDirectory.FullName, WINE_TKG_RELEASE_NAME, "bin") :
+                                    Path.Combine(toolDirectory.FullName, WINE_XIV_RELEASE_NAME, "bin") :
                                     Settings.CustomBinPath;
     private string Wine64Path => Path.Combine(WineBinPath, "wine64");
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
@@ -34,24 +41,24 @@ public class CompatibilityTools
     private readonly Dxvk.DxvkHudType hudType;
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
-    private readonly string esyncOn;
-    private readonly string fsyncOn;
 
-    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, bool? esyncOn, bool? fsyncOn, DirectoryInfo toolsFolder)
+    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
         this.hudType = hudType;
         this.gamemodeOn = gamemodeOn ?? false;
         this.dxvkAsyncOn = (dxvkAsyncOn ?? false) ? "1" : "0";
-        this.esyncOn = (esyncOn ?? false) ? "1" : "0";
-        this.fsyncOn = (fsyncOn ?? false) ? "1" : "0";
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
+        this.dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
 
         this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
         if (!this.toolDirectory.Exists)
             this.toolDirectory.Create();
+
+        if (!this.dxvkDirectory.Exists)
+            this.dxvkDirectory.Create();
 
         if (!wineSettings.Prefix.Exists)
             wineSettings.Prefix.Create();
@@ -59,29 +66,30 @@ public class CompatibilityTools
 
     public async Task EnsureTool()
     {
-        if (File.Exists(Wine64Path))
+        if (!File.Exists(Wine64Path))
         {
-            IsToolReady = true;
-            return;
+            Log.Information("Compatibility tool does not exist, downloading");
+            await DownloadTool().ConfigureAwait(false);
         }
 
-        Log.Information("Compatibility tool does not exist, downloading");
+        EnsurePrefix();
+        await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory).ConfigureAwait(false);
 
+        IsToolReady = true;
+    }
+
+    private async Task DownloadTool()
+    {
         using var client = new HttpClient();
         var tempPath = Path.GetTempFileName();
 
-        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WINE_TKG_RELEASE_URL).ConfigureAwait(false));
+        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false));
 
         Util.Untar(tempPath, this.toolDirectory.FullName);
 
         Log.Information("Compatibility tool successfully extracted to {Path}", this.toolDirectory.FullName);
 
         File.Delete(tempPath);
-
-        EnsurePrefix();
-        await Dxvk.InstallDxvk(Settings.Prefix).ConfigureAwait(false);
-
-        IsToolReady = true;
     }
 
     private void ResetPrefix()
@@ -163,8 +171,8 @@ public class CompatibilityTools
 
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
         wineEnviromentVariables.Add("DXVK_ASYNC", dxvkAsyncOn);
-        wineEnviromentVariables.Add("WINEESYNC", esyncOn);
-        wineEnviromentVariables.Add("WINEFSYNC", fsyncOn);
+        wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);
+        wineEnviromentVariables.Add("WINEFSYNC", Settings.FsyncOn);
 
         wineEnviromentVariables.Add("LD_PRELOAD", ldPreload);
 
@@ -210,6 +218,18 @@ public class CompatibilityTools
         return GetProcessIds(executableName).FirstOrDefault();
     }
 
+    public Int32 GetUnixProcessId(Int32 winePid)
+    {
+        var wineDbg = RunInPrefix("winedbg --command \"info procmap\"", redirectOutput: true);
+        var output = wineDbg.StandardOutput.ReadToEnd();
+        if (output.Contains("syntax error\n"))
+            return 0;
+        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
+            l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
+        var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
+        return unixPids.FirstOrDefault();
+    }
+
     public string UnixToWinePath(string unixPath)
     {
         var winePath = RunInPrefix($"winepath --windows {unixPath}", redirectOutput: true);
@@ -237,7 +257,6 @@ public class CompatibilityTools
 
     public void EnsureGameFixes(DirectoryInfo gameConfigDirectory)
     {
-        EnsurePrefix();
         GameFixes.AddDefaultConfig(gameConfigDirectory);
     }
 }
