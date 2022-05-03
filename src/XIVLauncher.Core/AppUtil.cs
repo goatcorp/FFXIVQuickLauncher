@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Reflection;
 
 namespace XIVLauncher.Core;

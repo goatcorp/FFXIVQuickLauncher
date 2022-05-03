@@ -1,7 +1,5 @@
 ﻿using System.Numerics;
-using System.Xml.Schema;
 using ImGuiNET;
-using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Unix.Compatibility;
 

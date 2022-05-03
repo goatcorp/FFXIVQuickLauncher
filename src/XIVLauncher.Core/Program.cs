@@ -13,6 +13,8 @@ using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Common.Unix;
 using XIVLauncher.Common.Unix.Compatibility;
+using XIVLauncher.Core.Accounts.Secrets;
+using XIVLauncher.Core.Accounts.Secrets.Providers;
 using XIVLauncher.Core.Components.LoadingPage;
 using XIVLauncher.Core.Configuration;
 using XIVLauncher.Core.Configuration.Parsers;
@@ -34,6 +36,7 @@ class Program
     public static DalamudUpdater DalamudUpdater { get; private set; }
     public static DalamudOverlayInfoProxy DalamudLoadInfo { get; private set; }
     public static CompatibilityTools CompatibilityTools { get; private set; }
+    public static ISecretProvider Secrets { get; private set; }
 
     private static readonly Vector3 clearColor = new(0.1f, 0.1f, 0.1f);
     private static bool showImGuiDemoWindow = true;
@@ -121,6 +124,8 @@ class Program
         SetupLogging();
         LoadConfig(storage);
 
+        Secrets = GetSecretProvider(storage);
+
         try
         {
             switch (Environment.OSVersion.Platform)
@@ -128,17 +133,20 @@ class Program
                 case PlatformID.Win32NT:
                     Steam = new WindowsSteam();
                     break;
+
                 case PlatformID.Unix:
                     Steam = new UnixSteam();
                     break;
+
                 default:
                     throw new PlatformNotSupportedException();
             }
+
             Steam.Initialize(STEAM_APP_ID);
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "steam init fail");
+            Log.Error(ex, "Steam couldn't load");
         }
 
         DalamudLoadInfo = new DalamudOverlayInfoProxy();
@@ -150,7 +158,7 @@ class Program
 
         UpdateCompatibilityTools();
 
-        Log.Debug("Creating veldrid devices...");
+        Log.Debug("Creating Veldrid devices...");
 
 #if DEBUG
         var version = AppUtil.GetGitHash();
@@ -262,5 +270,37 @@ class Program
         var toolsFolder = storage.GetFolder("compatibilitytool");
         CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, Config.GameModeEnabled, Config.DxvkAsyncEnabled, Config.ESyncEnabled, Config.FSyncEnabled, 
             toolsFolder);
+    }
+
+    public static ISecretProvider GetSecretProvider(Storage storage)
+    {
+        const string FILE_NAME = "secrets.json";
+
+        var envVar = Environment.GetEnvironmentVariable("XL_SECRET_PROVIDER") ?? "FREEDESKTOP";
+
+        switch (envVar)
+        {
+            case "FILE":
+                return new FileSecretProvider(storage.GetFile(FILE_NAME));
+
+            case "FREEDESKTOP":
+            {
+                var keyChain = new KeychainSecretProvider();
+
+                if (!keyChain.IsAvailable)
+                {
+                    Log.Error("An org.freedesktop.secrets provider is not available, falling back to file storage");
+                    return new FileSecretProvider(storage.GetFile(FILE_NAME));
+                }
+
+                return keyChain;
+            }
+
+            case "NONE":
+                return new DummySecretProvider();
+
+            default:
+                throw new ArgumentException($"Invalid secret provider: {envVar}");
+        }
     }
 }

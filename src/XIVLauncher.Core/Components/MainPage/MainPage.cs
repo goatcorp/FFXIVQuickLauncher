@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using ImGuiNET;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using CheapLoc;
 using Serilog;
 using XIVLauncher.Common;

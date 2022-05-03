@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Reflection;
 using ImGuiNET;
 using XIVLauncher.Common;
 
