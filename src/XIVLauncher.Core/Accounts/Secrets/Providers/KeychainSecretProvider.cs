@@ -42,7 +42,17 @@ public class KeychainSecretProvider : ISecretProvider
 
     public string? GetPassword(string accountName)
     {
-        return Keyring.GetPassword(PACKAGE, SERVICE, accountName);
+        try
+        {
+            return Keyring.GetPassword(PACKAGE, SERVICE, accountName);
+        }
+        catch (KeyringException ex)
+        {
+            if (ex.Type == ErrorType.NotFound)
+                return null;
+
+            throw;
+        }
     }
 
     public void SavePassword(string accountName, string password)

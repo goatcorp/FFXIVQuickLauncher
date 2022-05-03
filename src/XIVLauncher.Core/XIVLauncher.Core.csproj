@@ -24,9 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../XIVLauncher.VersionGenerator/XIVLauncher.VersionGenerator.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../XIVLauncher.VersionGenerator/XIVLauncher.VersionGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
