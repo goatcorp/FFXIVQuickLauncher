@@ -354,6 +354,9 @@ public class MainPage : Page
             {
                 using var process = await StartGameAndAddon(loginResult, isSteam, action == LoginAction.GameNoDalamud).ConfigureAwait(false);
 
+                if (process is null)
+                    throw new Exception("Could not obtain Process Handle");
+
                 if (process.ExitCode != 0 && (App.Settings.TreatNonZeroExitCodeAsFailure ?? false))
                 {
                     throw new Exception("Game exited with non-zero exit code");
@@ -722,10 +725,11 @@ public class MainPage : Page
 
         // This is a Windows process handle on Windows, a Wine pid on Unix-like systems
         var gamePid = 0;
+        Process? process = null;
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            var process = launched as Process;
+            process = launched as Process;
             gamePid = process!.Id;
         }
         else if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -765,20 +769,25 @@ public class MainPage : Page
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            var process = launched as Process;
             await Task.Run(() => process!.WaitForExit()).ConfigureAwait(false);
         }
         else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
-            Int32 processId = (int)launched;
-            while (Program.CompatibilityTools.GetProcessIds("ffxiv_dx11.exe").Contains(processId))
+            Int32 unixPid = Program.CompatibilityTools.GetUnixProcessId(gamePid);
+            if (unixPid == 0)
             {
-                Thread.Sleep(5000);
+                Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
+                while (Program.CompatibilityTools.GetProcessIds("ffxiv_dx11.exe").Contains(gamePid))
+                    Thread.Sleep(5000);
             }
-            UnixGameRunner.runningPids.Remove(processId);
+            else
+            {
+                process = Process.GetProcessById(unixPid);
+                var handle = process.Handle;
+                await Task.Run(() => process!.WaitForExit()).ConfigureAwait(false);
+            }
+            UnixGameRunner.runningPids.Remove(gamePid);
         }
-        // TODO(Linux/macOS):  Translating the Wine pid to a Unix one requires talking to wineserver via Winelib
-        //                     and a platform specific binary with headers compatible with the wine version being shipped 
         else
         {
             Environment.Exit(0);
@@ -802,7 +811,7 @@ public class MainPage : Page
             Log.Error(ex, "Could not shut down Steam");
         }
 
-        return Process.GetProcessById(gamePid);
+        return process!;
     }
 
     private void PersistAccount(string username, string password, bool isOtp, bool isSteam)
