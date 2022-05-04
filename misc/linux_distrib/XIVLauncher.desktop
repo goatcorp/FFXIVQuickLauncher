@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=XIVLauncher.Core
+Name=XIVLauncher
 Comment=Custom launcher for Final Fantasy XIV Online
 Exec=/app/opt/XIVLauncher/XIVLauncher.Core
 Icon=dev.goats.xivlauncher
