@@ -1,5 +1,6 @@
 using System.Numerics;
 using ImGuiNET;
+using XIVLauncher.Core.Accounts.Secrets.Providers;
 using XIVLauncher.Core.Components.Common;
 
 namespace XIVLauncher.Core.Components.MainPage;
@@ -131,6 +132,15 @@ public class LoginFrame : Component
             }
 
             ImGui.PopStyleColor();
+
+            if (Program.Secrets is DummySecretProvider)
+            {
+                ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudRed);
+                ImGui.TextWrapped("Take care! No secrets provider is installed or configured. Passwords can't be saved.");
+                ImGui.PopStyleColor();
+
+                ImGui.Dummy(new Vector2(15));
+            }
 
             ImGui.PushFont(FontManager.IconFont);
 

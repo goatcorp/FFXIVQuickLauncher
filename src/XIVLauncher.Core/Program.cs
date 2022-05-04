@@ -288,8 +288,8 @@ class Program
 
                 if (!keyChain.IsAvailable)
                 {
-                    Log.Error("An org.freedesktop.secrets provider is not available, falling back to file storage");
-                    return new FileSecretProvider(storage.GetFile(FILE_NAME));
+                    Log.Error("An org.freedesktop.secrets provider is not available - no secrets will be stored");
+                    return new DummySecretProvider();
                 }
 
                 return keyChain;
