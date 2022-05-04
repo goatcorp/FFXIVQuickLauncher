@@ -275,14 +275,14 @@ class Program
     {
         const string FILE_NAME = "secrets.json";
 
-        var envVar = Environment.GetEnvironmentVariable("XL_SECRET_PROVIDER") ?? "FREEDESKTOP";
+        var envVar = Environment.GetEnvironmentVariable("XL_SECRET_PROVIDER") ?? "KEYRING";
 
         switch (envVar)
         {
             case "FILE":
                 return new FileSecretProvider(storage.GetFile(FILE_NAME));
 
-            case "FREEDESKTOP":
+            case "KEYRING":
             {
                 var keyChain = new KeychainSecretProvider();
 
