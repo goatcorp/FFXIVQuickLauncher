@@ -280,10 +280,16 @@ namespace XIVLauncher.Windows
                 {
                     switch (task.Result.compareResult)
                     {
-                        case IntegrityCheck.CompareResult.NoServer:
+                        case IntegrityCheck.CompareResult.ReferenceNotFound:
                             CustomMessageBox.Show(Loc.Localize("IntegrityCheckImpossible",
                                     "There is no reference report yet for this game version. Please try again later."),
                                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
+                            return;
+
+                        case IntegrityCheck.CompareResult.ReferenceFetchFailure:
+                            CustomMessageBox.Show(Loc.Localize("IntegrityCheckNetworkError",
+                                    "Failed to download reference files for checking integrity. Check your internet connection and try again."),
+                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: Window.GetWindow(this));
                             return;
 
                         case IntegrityCheck.CompareResult.Invalid:

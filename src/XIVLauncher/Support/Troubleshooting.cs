@@ -66,7 +66,8 @@ namespace XIVLauncher.Support
 
                     integrity = result.compareResult switch
                     {
-                        IntegrityCheck.CompareResult.NoServer => TroubleshootingPayload.IndexIntegrityResult.NoServer,
+                        IntegrityCheck.CompareResult.ReferenceFetchFailure => TroubleshootingPayload.IndexIntegrityResult.ReferenceFetchFailure,
+                        IntegrityCheck.CompareResult.ReferenceNotFound => TroubleshootingPayload.IndexIntegrityResult.ReferenceNotFound,
                         IntegrityCheck.CompareResult.Invalid => TroubleshootingPayload.IndexIntegrityResult.Failed,
                         _ => integrity
                     };
@@ -188,7 +189,8 @@ namespace XIVLauncher.Support
                 Failed,
                 Exception,
                 NoGame,
-                NoServer,
+                ReferenceNotFound,
+                ReferenceFetchFailure,
                 Success,
             }
 
