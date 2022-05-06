@@ -39,6 +39,14 @@ namespace XIVLauncher.Common
             return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
         }
 
+        public static bool CanFfxivMightNotBeInternationalClient(string path) {
+            if (Directory.Exists(Path.Combine(path, "sdo")))
+                return true;
+            if (File.Exists(Path.Combine(path, "boot", "FFXIV_Boot.exe")))
+                return true;
+            return false;
+        }
+
         public static bool LetChoosePath(string path)
         {
             if (string.IsNullOrEmpty(path))
