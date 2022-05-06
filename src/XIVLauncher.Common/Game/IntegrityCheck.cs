@@ -29,7 +29,8 @@ namespace XIVLauncher.Common.Game
         {
             Valid,
             Invalid,
-            NoServer
+            ReferenceNotFound,
+            ReferenceFetchFailure,
         }
 
         public static async Task<(CompareResult compareResult, string report, IntegrityCheckResult remoteIntegrity)>
@@ -41,9 +42,11 @@ namespace XIVLauncher.Common.Game
             {
                 remoteIntegrity = DownloadIntegrityCheckForVersion(Repository.Ffxiv.GetVer(gamePath));
             }
-            catch (WebException)
+            catch (WebException e)
             {
-                return (CompareResult.NoServer, null, null);
+                if (e.Response is HttpWebResponse resp && resp.StatusCode == HttpStatusCode.NotFound)
+                    return (CompareResult.ReferenceNotFound, null, null);
+                return (CompareResult.ReferenceFetchFailure, null, null);
             }
 
             var localIntegrity = await RunIntegrityCheckAsync(gamePath, progress, onlyIndex);
@@ -69,8 +72,7 @@ namespace XIVLauncher.Common.Game
                 }
             }
 
-            return (failed ? CompareResult.Invalid : CompareResult.Valid, report,
-                remoteIntegrity);
+            return (failed ? CompareResult.Invalid : CompareResult.Valid, report, remoteIntegrity);
         }
 
         private static IntegrityCheckResult DownloadIntegrityCheckForVersion(string gameVersion)
