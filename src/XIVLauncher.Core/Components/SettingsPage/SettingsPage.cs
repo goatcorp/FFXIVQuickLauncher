@@ -48,7 +48,12 @@ public class SettingsPage : Page
 
                     if (ImGui.BeginTabItem(settingsTab.Title))
                     {
-                        settingsTab.Draw();
+                        if (ImGui.BeginChild($"###settings_scrolling_{settingsTab.Title}", new Vector2(-1, -1), false))
+                        {
+                            settingsTab.Draw();
+                        }
+
+                        ImGui.EndChild();
                         ImGui.EndTabItem();
                     }
                 }
@@ -61,7 +66,7 @@ public class SettingsPage : Page
 
                     foreach (SettingsTab settingsTab in this.tabs)
                     {
-                        if (settingsTab.IsUnixExclusive && !(Environment.OSVersion.Platform == PlatformID.Unix))
+                        if (settingsTab.IsUnixExclusive && Environment.OSVersion.Platform != PlatformID.Unix)
                             continue;
 
                         var eligible = settingsTab.Entries.Where(x => x.Name.ToLower().Contains(this.searchInput.ToLower())).ToArray();
