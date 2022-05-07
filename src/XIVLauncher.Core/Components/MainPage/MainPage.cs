@@ -344,8 +344,6 @@ public class MainPage : Page
 
         Debug.Assert(loginResult.State == Launcher.LoginState.Ok);
 
-        Hide();
-
         while (true)
         {
             List<Exception> exceptions = new();
@@ -702,6 +700,8 @@ public class MainPage : Page
         {
             throw new NotImplementedException();
         }
+
+        Hide();
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
         var launched = App.Launcher.LaunchGame(runner,
