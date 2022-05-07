@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using CheapLoc;
 using Config.Net;
 using ImGuiNET;
 using XIVLauncher.Core.Style;
@@ -68,7 +69,7 @@ class Program
                      .WriteTo.Debug()
                      .MinimumLevel.Verbose()
 #else
-                         .MinimumLevel.Information()
+                     .MinimumLevel.Information()
 #endif
                      .CreateLogger();
     }
@@ -125,6 +126,8 @@ class Program
         LoadConfig(storage);
 
         Secrets = GetSecretProvider(storage);
+
+        Loc.SetupWithFallbacks();
 
         try
         {
