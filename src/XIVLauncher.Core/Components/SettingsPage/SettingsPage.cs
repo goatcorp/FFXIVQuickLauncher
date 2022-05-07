@@ -43,7 +43,7 @@ public class SettingsPage : Page
             {
                 foreach (SettingsTab settingsTab in this.tabs)
                 {
-                    if (settingsTab.IsUnixExclusive && !(Environment.OSVersion.Platform == PlatformID.Unix))
+                    if (settingsTab.IsUnixExclusive && Environment.OSVersion.Platform != PlatformID.Unix)
                         continue;
 
                     if (ImGui.BeginTabItem(settingsTab.Title))
@@ -101,25 +101,31 @@ public class SettingsPage : Page
         }
 
         ImGui.SetCursorPos(ImGuiHelpers.ViewportSize - new Vector2(60));
-        ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 100f);
-        ImGui.PushFont(FontManager.IconFont);
 
-        var invalid = this.tabs.Any(x => x.Entries.Any(y => !y.IsValid));
-        if (invalid)
-            ImGui.BeginDisabled();
-
-        if (ImGui.Button(FontAwesomeIcon.Check.ToIconString(), new Vector2(40)))
+        if (ImGui.BeginChild("###settingsFinishButton"))
         {
-            foreach (var settingsTab in this.tabs)
+            ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 100f);
+            ImGui.PushFont(FontManager.IconFont);
+
+            var invalid = this.tabs.Any(x => x.Entries.Any(y => !y.IsValid));
+            if (invalid)
+                ImGui.BeginDisabled();
+
+            if (ImGui.Button(FontAwesomeIcon.Check.ToIconString(), new Vector2(40)))
             {
-                settingsTab.Save();
+                foreach (var settingsTab in this.tabs)
+                {
+                    settingsTab.Save();
+                }
+
+                this.App.State = LauncherApp.LauncherState.Main;
             }
 
-            this.App.State = LauncherApp.LauncherState.Main;
+            if (invalid)
+                ImGui.EndDisabled();
         }
 
-        if (invalid)
-            ImGui.EndDisabled();
+        ImGui.EndChild();
 
         ImGui.PopStyleVar();
         ImGui.PopFont();
