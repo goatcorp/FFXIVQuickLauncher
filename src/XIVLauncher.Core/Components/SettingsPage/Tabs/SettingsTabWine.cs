@@ -74,9 +74,18 @@ public class SettingsTabWine : SettingsTab
             Util.OpenBrowser(Program.CompatibilityTools.Settings.Prefix.FullName);
         }
 
+        ImGui.SameLine();
+
         if (ImGui.Button("Open Wine configuration"))
         {
             Program.CompatibilityTools.RunInPrefix("winecfg");
+        }
+
+        ImGui.SameLine();
+
+        if (ImGui.Button("Open Wine explorer (run apps in prefix)"))
+        {
+            Program.CompatibilityTools.RunInPrefix("explorer");
         }
 
         if (ImGui.Button("Kill all wine processes"))
