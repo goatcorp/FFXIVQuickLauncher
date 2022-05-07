@@ -273,14 +273,15 @@ class Program
 
     public static ISecretProvider GetSecretProvider(Storage storage)
     {
-        const string FILE_NAME = "secrets.json";
+        var secretsFilePath = Environment.GetEnvironmentVariable("XL_SECRETS_FILE_PATH") ?? "secrets.json";
 
         var envVar = Environment.GetEnvironmentVariable("XL_SECRET_PROVIDER") ?? "KEYRING";
+        envVar = envVar.ToUpper();
 
         switch (envVar)
         {
             case "FILE":
-                return new FileSecretProvider(storage.GetFile(FILE_NAME));
+                return new FileSecretProvider(storage.GetFile(secretsFilePath));
 
             case "KEYRING":
             {

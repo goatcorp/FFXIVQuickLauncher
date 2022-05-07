@@ -230,8 +230,8 @@ public class LauncherApp : Component
 
         ImGui.PopStyleVar(2);
 
-        if (this.isDemoWindow)
-            ImGui.ShowDemoWindow(ref this.isDemoWindow);
+        //if (this.isDemoWindow)
+        //    ImGui.ShowDemoWindow(ref this.isDemoWindow);
 
         this.DrawModal();
     }
