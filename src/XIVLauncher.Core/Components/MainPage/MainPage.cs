@@ -705,7 +705,6 @@ public class MainPage : Page
 
         var wrapper = string.Empty;
 
-#define FLATPAK
 #if FLATPAK
         Log.Warning("THIS IS A FLATPAK LAUNCH!!!!");
         wrapper = "flatpak-spawn --host ";
