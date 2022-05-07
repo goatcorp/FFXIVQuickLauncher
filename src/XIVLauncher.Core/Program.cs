@@ -166,7 +166,7 @@ class Program
 #if DEBUG
         var version = AppUtil.GetGitHash();
 #else
-        var version = AppUtil.GetAssemblyVersion();
+        var version = $"{AppUtil.GetAssemblyVersion()} ({AppUtil.GetGitHash()})";
 #endif
 
         // Create window, GraphicsDevice, and all resources necessary for the demo.
