@@ -271,7 +271,17 @@ class Program
         CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, Config.GameModeEnabled, Config.DxvkAsyncEnabled, toolsFolder);
     }
 
-    public static ISecretProvider GetSecretProvider(Storage storage)
+    public static void ShowWindow()
+    {
+        window.Visible = true;
+    }
+
+    public static void HideWindow()
+    {
+        window.Visible = false;
+    }
+
+    private static ISecretProvider GetSecretProvider(Storage storage)
     {
         var secretsFilePath = Environment.GetEnvironmentVariable("XL_SECRETS_FILE_PATH") ?? "secrets.json";
 

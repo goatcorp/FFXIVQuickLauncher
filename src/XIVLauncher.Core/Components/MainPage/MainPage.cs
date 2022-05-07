@@ -1176,11 +1176,14 @@ public class MainPage : Page
 
     private void Hide()
     {
+        Program.HideWindow();
     }
 
     private void Reactivate()
     {
         IsLoggingIn = false;
         this.App.State = LauncherApp.LauncherState.Main;
+
+        Program.ShowWindow();
     }
 }
