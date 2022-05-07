@@ -280,10 +280,16 @@ namespace XIVLauncher.Windows
                 {
                     switch (task.Result.compareResult)
                     {
-                        case IntegrityCheck.CompareResult.NoServer:
+                        case IntegrityCheck.CompareResult.ReferenceNotFound:
                             CustomMessageBox.Show(Loc.Localize("IntegrityCheckImpossible",
                                     "There is no reference report yet for this game version. Please try again later."),
                                 "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
+                            return;
+
+                        case IntegrityCheck.CompareResult.ReferenceFetchFailure:
+                            CustomMessageBox.Show(Loc.Localize("IntegrityCheckNetworkError",
+                                    "Failed to download reference files for checking integrity. Check your internet connection and try again."),
+                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: Window.GetWindow(this));
                             return;
 
                         case IntegrityCheck.CompareResult.Invalid:
@@ -503,17 +509,32 @@ namespace XIVLauncher.Windows
 
         private void GamePathEntry_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            var isLetChoose = false;
+            var isBootOrGame = false;
+            var mightBeNonInternationalVersion = false;
             try
             {
-                isLetChoose = Util.LetChoosePath(ViewModel.GamePath);
+                isBootOrGame = !Util.LetChoosePath(ViewModel.GamePath);
+                mightBeNonInternationalVersion = Util.CanFfxivMightNotBeInternationalClient(ViewModel.GamePath);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Could not check game path");
             }
 
-            GamePathSafeguardText.Visibility = !isLetChoose ? Visibility.Visible : Visibility.Collapsed;
+            if (isBootOrGame)
+            {
+                GamePathSafeguardText.Text = ViewModel.GamePathSafeguardLoc;
+                GamePathSafeguardText.Visibility = Visibility.Visible;
+            }
+            else if (mightBeNonInternationalVersion)
+            {
+                GamePathSafeguardText.Text = ViewModel.GamePathSafeguardRegionLoc;
+                GamePathSafeguardText.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GamePathSafeguardText.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void LicenseText_OnMouseUp(object sender, MouseButtonEventArgs e)
