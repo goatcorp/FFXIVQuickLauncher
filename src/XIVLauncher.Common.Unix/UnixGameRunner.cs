@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
-using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Unix.Compatibility;
 
@@ -15,7 +12,7 @@ namespace XIVLauncher.Common.Unix;
 
 public class UnixGameRunner : IGameRunner
 {
-    public static HashSet<Int32> runningPids = new HashSet<Int32>();
+    public static HashSet<Int32> RunningPids = new HashSet<Int32>();
 
     private readonly CompatibilityTools compatibility;
     private readonly DalamudLauncher dalamudLauncher;
@@ -41,19 +38,23 @@ public class UnixGameRunner : IGameRunner
         var process = compatibility.RunInPrefix(launchArguments, workingDirectory, environment);
 
         Int32 gameProcessId = 0;
+
         while (gameProcessId == 0)
         {
             Thread.Sleep(50);
             var allGamePids = new HashSet<Int32>(compatibility.GetProcessIds("ffxiv_dx11.exe"));
-            allGamePids.ExceptWith(runningPids);
+            allGamePids.ExceptWith(RunningPids);
             gameProcessId = allGamePids.ToArray().FirstOrDefault();
         }
-        runningPids.Add(gameProcessId);
+
+        RunningPids.Add(gameProcessId);
+
         if (this.dalamudOk)
         {
             Log.Verbose("[UnixGameRunner] Now running DLL inject");
             this.dalamudLauncher.Run(gameProcessId);
         }
+
         return gameProcessId;
     }
 }

@@ -703,13 +703,6 @@ public class MainPage : Page
 
         Hide();
 
-        var wrapper = string.Empty;
-
-#if FLATPAK
-        Log.Warning("THIS IS A FLATPAK LAUNCH!!!!");
-        wrapper = "flatpak-spawn --host ";
-#endif
-
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
         var launched = App.Launcher.LaunchGame(runner,
             loginResult.UniqueId,
@@ -721,8 +714,7 @@ public class MainPage : Page
             App.Settings.IsDx11 ?? true,
             App.Settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English),
             App.Settings.IsEncryptArgs.GetValueOrDefault(true),
-            App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware),
-            wrapper);
+            App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware));
 
         if (launched == null)
         {
@@ -794,7 +786,8 @@ public class MainPage : Page
                 var handle = process.Handle;
                 await Task.Run(() => process!.WaitForExit()).ConfigureAwait(false);
             }
-            UnixGameRunner.runningPids.Remove(gamePid);
+
+            UnixGameRunner.RunningPids.Remove(gamePid);
         }
         else
         {

@@ -110,16 +110,36 @@ public class CompatibilityTools
 
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
+#if FLATPAK
+        Log.Warning("THIS IS A FLATPAK!!!");
+
+        var psi = new ProcessStartInfo("flatpak-spawn");
+        psi.Arguments = $"--host {Wine64Path} {command}";
+#else
         var psi = new ProcessStartInfo(Wine64Path);
         psi.Arguments = command;
+#endif
+
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
+#if FLATPAK
+        Log.Warning("THIS IS A FLATPAK!!!");
+
+        var psi = new ProcessStartInfo("flatpak-spawn");
+        psi.ArgumentList.Add("--host");
+        psi.ArgumentList.Add(Wine64Path);
+
+        foreach (var arg in args)
+            psi.ArgumentList.Add(arg);
+#else
         var psi = new ProcessStartInfo(Wine64Path);
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
+#endif
+
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
 
