@@ -19,20 +19,27 @@ public class UnixGameRunner : IGameRunner
     private readonly bool dalamudOk;
     private readonly DalamudLoadMethod loadMethod;
     private readonly DirectoryInfo dotnetRuntime;
+    private readonly Storage storage;
 
-    public UnixGameRunner(CompatibilityTools compatibility, DalamudLauncher dalamudLauncher, bool dalamudOk, DalamudLoadMethod? loadMethod, DirectoryInfo dotnetRuntime)
+    public UnixGameRunner(CompatibilityTools compatibility, DalamudLauncher dalamudLauncher, bool dalamudOk, DalamudLoadMethod? loadMethod, DirectoryInfo dotnetRuntime, Storage storage)
     {
         this.compatibility = compatibility;
         this.dalamudLauncher = dalamudLauncher;
         this.dalamudOk = dalamudOk;
         this.loadMethod = loadMethod ?? DalamudLoadMethod.DllInject;
         this.dotnetRuntime = dotnetRuntime;
+        this.storage = storage;
     }
 
     public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
         var wineHelperPath = Path.Combine(AppContext.BaseDirectory, "Resources", "binaries", "DalamudWineHelper.exe");
-        var launchArguments = new string[] { wineHelperPath, path, arguments };
+        var helperCopy = this.storage.GetFile("DalamudWineHelper.exe");
+
+        if (!helperCopy.Exists)
+            File.Copy(wineHelperPath, helperCopy.FullName);
+
+        var launchArguments = new string[] { helperCopy.FullName, path, arguments };
 
         environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(dotnetRuntime.FullName));
         var process = compatibility.RunInPrefix(launchArguments, workingDirectory, environment);

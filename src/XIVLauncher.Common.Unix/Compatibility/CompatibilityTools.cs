@@ -222,8 +222,8 @@ public class CompatibilityTools
                                        ex is IndexOutOfRangeException)
             {
                 // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
-                logWriter.WriteLine("Error writing Wine log line:");
-                logWriter.WriteLine(ex.Message);
+                //logWriter.WriteLine("Error writing Wine log line:");
+                //logWriter.WriteLine(ex.Message);
             }
         });
 
