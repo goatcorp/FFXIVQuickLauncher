@@ -114,35 +114,14 @@ public class CompatibilityTools
 
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
-#if FLATPAK
-        var psi = new ProcessStartInfo("flatpak-spawn");
-        psi.Arguments = $"--host {Wine64Path} {command}";
-#else
-        var psi = new ProcessStartInfo(Wine64Path);
-        psi.Arguments = command;
-#endif
-
-        Log.Verbose("Running in prefix (args string): {Command}", psi.Arguments);
-
-        return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
+        return RunInPrefix(command.Split(), workingDirectory, environment, redirectOutput);
     }
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
-#if FLATPAK
-        var psi = new ProcessStartInfo("flatpak-spawn");
-        psi.ArgumentList.Add("--host");
-        psi.ArgumentList.Add(Wine64Path);
-
-        foreach (var arg in args)
-            psi.ArgumentList.Add(arg);
-#else
         var psi = new ProcessStartInfo(Wine64Path);
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
-#endif
-
-        Log.Verbose("Running in prefix (args list): {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
 
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
@@ -203,7 +182,29 @@ public class CompatibilityTools
         MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
         MergeDictionaries(psi.EnvironmentVariables, environment);
 
-        Log.Verbose("Env vars: {EnvironmentVariables}", psi.Environment.Aggregate(string.Empty, (a, b) => $"{a} {b.Key}={b.Value}\n"));
+        //Log.Verbose("Env vars: {EnvironmentVariables}", psi.Environment.Aggregate(string.Empty, (a, b) => $"{a} {b.Key}={b.Value}\n"));
+
+#if FLATPAK
+        psi.FileName = "flatpak-spawn";
+
+        psi.ArgumentList.Insert(0, "--host");
+        psi.ArgumentList.Insert(1, Wine64Path);
+
+        foreach (KeyValuePair<string, string> envVar in wineEnviromentVariables)
+        {
+            psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
+        }
+
+        if (environment != null)
+        {
+            foreach (KeyValuePair<string, string> envVar in environment)
+            {
+                psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
+            }
+        }
+#endif
+
+        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
