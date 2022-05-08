@@ -203,6 +203,8 @@ public class CompatibilityTools
         MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
         MergeDictionaries(psi.EnvironmentVariables, environment);
 
+        Log.Verbose("Env vars: {EnvironmentVariables}", psi.Environment.Aggregate(string.Empty, (a, b) => $"{a} {b.Key}={b.Value}\n"));
+
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
