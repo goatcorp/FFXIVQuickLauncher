@@ -46,6 +46,8 @@ public class UnixGameRunner : IGameRunner
 
         Int32 gameProcessId = 0;
 
+        Log.Verbose("Trying to get game pid via winedbg...");
+
         while (gameProcessId == 0)
         {
             Thread.Sleep(50);
@@ -53,6 +55,8 @@ public class UnixGameRunner : IGameRunner
             allGamePids.ExceptWith(RunningPids);
             gameProcessId = allGamePids.ToArray().FirstOrDefault();
         }
+
+        Log.Verbose("Got game pid: {Pid}", gameProcessId);
 
         RunningPids.Add(gameProcessId);
 
