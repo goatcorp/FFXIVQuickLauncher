@@ -64,13 +64,9 @@ class Program
         Log.Logger = new LoggerConfiguration()
                      .WriteTo.Async(a =>
                          a.File(Path.Combine(storage.GetFolder("logs").FullName, "launcher.log")))
-#if DEBUG
                      .WriteTo.Console()
                      .WriteTo.Debug()
                      .MinimumLevel.Verbose()
-#else
-                     .MinimumLevel.Information()
-#endif
                      .CreateLogger();
     }
 
