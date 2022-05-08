@@ -26,6 +26,10 @@ public class SettingsTabAbout : SettingsTab
         ImGui.Text($"This is XIVLauncher Core v{AppUtil.GetAssemblyVersion()}({AppUtil.GetGitHash()})");
         ImGui.Text("By goaaats");
 
+#if FLATPAK
+        ImGui.TextColored(ImGuiColors.DalamudRed, "THIS IS A FLATPAK!!!");
+#endif
+
         if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             Util.OpenBrowser("https://github.com/goaaats");
 
