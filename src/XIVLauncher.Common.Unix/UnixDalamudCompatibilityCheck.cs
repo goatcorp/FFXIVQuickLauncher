@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
-using Serilog;
 using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.Common.Unix;

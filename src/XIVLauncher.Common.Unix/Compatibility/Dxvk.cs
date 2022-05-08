@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
-using XIVLauncher.Common;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 
@@ -28,7 +27,6 @@ public static class Dxvk
         {
             File.Copy(fileName, Path.Combine(system32, Path.GetFileName(fileName)), true);
         }
-
     }
 
     private static async Task DownloadDxvk(DirectoryInfo installDirectory)

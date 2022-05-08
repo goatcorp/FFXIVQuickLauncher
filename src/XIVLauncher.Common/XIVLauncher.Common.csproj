@@ -13,6 +13,10 @@
         <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <DefineConstants Condition=" '$(ExtraDefineConstants)' != '' ">$(DefineConstants);$(ExtraDefineConstants)</DefineConstants>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(IsWindows)'=='true'">
         <DefineConstants>WIN32</DefineConstants>
     </PropertyGroup>

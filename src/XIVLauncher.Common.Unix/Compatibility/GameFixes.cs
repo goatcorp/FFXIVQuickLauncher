@@ -1,5 +1,4 @@
 using System.IO;
-using System.Linq;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 

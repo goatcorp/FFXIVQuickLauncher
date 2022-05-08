@@ -8,6 +8,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
 
+#if FLATPAK
+#warning THIS IS A FLATPAK BUILD!!!
+#endif
+
 namespace XIVLauncher.Common.Unix.Compatibility;
 
 public class CompatibilityTools
