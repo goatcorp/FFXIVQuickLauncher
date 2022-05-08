@@ -115,8 +115,6 @@ public class CompatibilityTools
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
 #if FLATPAK
-        Log.Warning("THIS IS A FLATPAK!!!");
-
         var psi = new ProcessStartInfo("flatpak-spawn");
         psi.Arguments = $"--host {Wine64Path} {command}";
 #else
@@ -124,14 +122,14 @@ public class CompatibilityTools
         psi.Arguments = command;
 #endif
 
+        Log.Verbose("Running in prefix (args string): {Command}", psi.Arguments);
+
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
 #if FLATPAK
-        Log.Warning("THIS IS A FLATPAK!!!");
-
         var psi = new ProcessStartInfo("flatpak-spawn");
         psi.ArgumentList.Add("--host");
         psi.ArgumentList.Add(Wine64Path);
@@ -143,6 +141,8 @@ public class CompatibilityTools
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 #endif
+
+        Log.Verbose("Running in prefix (args list): {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
 
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
@@ -204,7 +204,7 @@ public class CompatibilityTools
         MergeDictionaries(psi.EnvironmentVariables, environment);
 
         Process helperProcess = new();
-        helperProcess.StartInfo = psi; 
+        helperProcess.StartInfo = psi;
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
         {
             if (String.IsNullOrEmpty(errLine.Data))
