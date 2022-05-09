@@ -182,9 +182,7 @@ public class CompatibilityTools
         MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
         MergeDictionaries(psi.EnvironmentVariables, environment);
 
-        //Log.Verbose("Env vars: {EnvironmentVariables}", psi.Environment.Aggregate(string.Empty, (a, b) => $"{a} {b.Key}={b.Value}\n"));
-
-#if FLATPAK
+#if FLATPAK_NOTRIGHTNOW
         psi.FileName = "flatpak-spawn";
 
         psi.ArgumentList.Insert(0, "--host");
