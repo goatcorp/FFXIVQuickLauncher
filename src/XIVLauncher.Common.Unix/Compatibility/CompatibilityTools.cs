@@ -114,7 +114,9 @@ public class CompatibilityTools
 
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
     {
-        return RunInPrefix(command.Split(), workingDirectory, environment, redirectOutput);
+        var psi = new ProcessStartInfo(Wine64Path);
+        psi.Arguments = command;
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
