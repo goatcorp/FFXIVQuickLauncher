@@ -292,13 +292,16 @@ namespace XIVLauncher.Common.Dalamud
                 {
                     var file = Path.Combine(addonPath.FullName, hash.Key.Replace("\\", "/"));
                     using var fileStream = File.OpenRead(file);
-                    using var sha2 = SHA256.Create();
-                    var hashed = BitConverter.ToString(sha2.ComputeHash(fileStream)).ToUpperInvariant().Replace("-", string.Empty);
+                    using var md5 = MD5.Create();
+
+                    var hashed = BitConverter.ToString(md5.ComputeHash(fileStream)).ToUpperInvariant().Replace("-", string.Empty);
+
                     if (hashed != hash.Value)
                     {
                         Log.Error("[DUPDATE] Integrity check failed for {0} ({1} - {2})", file, hash.Value, hashed);
                         return false;
                     }
+
                     Log.Verbose("[DUPDATE] Integrity check OK for {0} ({1})", file, hashed);
                 }
             }
