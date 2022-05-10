@@ -595,7 +595,7 @@ public class MainPage : Page
         }
 
         var dalamudLauncher = new DalamudLauncher(dalamudRunner, Program.DalamudUpdater, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
-            App.Settings.GamePath, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay);
+            App.Settings.GamePath, App.Storage.Root, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay);
 
         try
         {

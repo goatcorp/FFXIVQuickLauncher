@@ -149,7 +149,7 @@ class Program
         }
 
         DalamudLoadInfo = new DalamudOverlayInfoProxy();
-        DalamudUpdater = new DalamudUpdater(storage.GetFolder("dalamud"), storage.GetFolder("runtime"), storage.GetFolder("dalamudAssets"), null)
+        DalamudUpdater = new DalamudUpdater(storage.GetFolder("dalamud"), storage.GetFolder("runtime"), storage.GetFolder("dalamudAssets"), storage.Root, null)
         {
             Overlay = DalamudLoadInfo
         };
