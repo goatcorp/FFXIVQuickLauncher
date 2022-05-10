@@ -9,10 +9,10 @@
     <LangVersion>latest</LangVersion>
     <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
 
-    <Version>1.0.0.3</Version>
+    <Version>1.0.0.4</Version>
     <FileVersion>$(Version)</FileVersion>
     <AssemblyVersion>$(Version)</AssemblyVersion>
-    
+
     <RuntimeIdentifiers>win10-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <PublishSingleFile>true</PublishSingleFile>
     <!-- <SelfContained>true</SelfContained> -->
@@ -21,7 +21,7 @@
   <PropertyGroup>
     <DefineConstants Condition=" '$(ExtraDefineConstants)' != '' ">$(DefineConstants);$(ExtraDefineConstants)</DefineConstants>
   </PropertyGroup>
-  
+
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">
     <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
     <PathMap>$(AppOutputBase)=C:\goatsoft\xl\XIVLauncher.Core\</PathMap>
@@ -71,7 +71,7 @@
 
     <EmbeddedResource Include="Resources/bg1.jpg" LogicalName="bg1.jpg" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win10-x64'">
     <Resource Remove="Resources/binaries/aria2c-xl.exe" />
     <Content Include="Resources/binaries/aria2c-xl.exe">
