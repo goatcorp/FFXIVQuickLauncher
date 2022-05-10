@@ -94,6 +94,9 @@ public class MainPage : Page
 
         this.App.StartLoading("Logging in...");
 
+        if (Program.UsesFallbackSteamAppId && this.loginFrame.IsSteam)
+            throw new Exception("Doesn't own Steam AppId on this account.");
+
         Task.Run(async () =>
         {
             if (Util.CheckIsGameOpen() && action == LoginAction.Repair)
