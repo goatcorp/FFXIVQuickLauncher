@@ -51,7 +51,10 @@ public class SettingsTabWine : SettingsTab
                     return null;
                 }
             },
-
+            new SettingsEntry<string>("Frame Limit", "Limit DXVK FPS (0 to disable).", () => Program.Config.DxvkFrameRate ?? "0", s => Program.Config.DxvkFrameRate = s)
+            {
+                CheckValidity = s => Regex.IsMatch(s, @"^\d{1,3}$") ? null : "Please specify a valid integer below 999."
+            },
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
             new SettingsEntry<string>("WINEDEBUG Variables", "Configure debug logging for wine. Useful for troubleshooting.", () => Program.Config.WineDebugVars ?? string.Empty, s => Program.Config.WineDebugVars = s)
         };

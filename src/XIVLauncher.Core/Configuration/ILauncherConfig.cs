@@ -71,6 +71,8 @@ public interface ILauncherConfig
     public bool? ESyncEnabled { get; set; }
 
     public bool? FSyncEnabled { get; set; }
+    
+    public string? DxvkFrameRate { get; set; }
 
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 
