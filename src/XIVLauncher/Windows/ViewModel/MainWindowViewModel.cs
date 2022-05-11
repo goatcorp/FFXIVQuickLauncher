@@ -19,6 +19,7 @@ using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Exceptions;
+using XIVLauncher.Common.Game.Launcher;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
@@ -37,7 +38,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         public bool IsLoggingIn;
 
-        public Launcher Launcher { get; private set; }
+        public ILauncher Launcher { get; private set; }
 
         public AccountManager AccountManager { get; private set; } = new(App.Settings);
 
@@ -67,8 +68,8 @@ namespace XIVLauncher.Windows.ViewModel
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
             Launcher = App.GlobalSteamTicket == null ?
-                new(App.Steam, App.UniqueIdCache, CommonSettings.Instance) :
-                new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance);
+                new SqexLauncher(App.Steam, App.UniqueIdCache, CommonSettings.Instance) :
+                new SqexLauncher(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance);
         }
 
         private Action<object> GetLoginFunc(AfterLoginAction action)
@@ -238,7 +239,7 @@ namespace XIVLauncher.Windows.ViewModel
                 AccountManager.UpdateLastSuccessfulOtp(AccountManager.CurrentAccount, otp);
 
             Log.Verbose(
-                $"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");
+                $"[LR] {loginResult.State} {loginResult.PendingPatches.Length > 0} {loginResult.OauthLogin?.Playable}");
 
             if (await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false))
             {
@@ -315,7 +316,7 @@ namespace XIVLauncher.Windows.ViewModel
             return true;
         }
 
-        private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, AfterLoginAction action)
+        private async Task<LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, AfterLoginAction action)
         {
             bool? loginStatus = null;
 
@@ -468,9 +469,9 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
-        private async Task<bool> TryProcessLoginResult(Launcher.LoginResult loginResult, bool isSteam, AfterLoginAction action)
+        private async Task<bool> TryProcessLoginResult(LoginResult loginResult, bool isSteam, AfterLoginAction action)
         {
-            if (loginResult.State == Launcher.LoginState.NoService)
+            if (loginResult.State == LoginState.NoService)
             {
                 CustomMessageBox.Show(
                     Loc.Localize("LoginNoServiceMessage",
@@ -481,7 +482,7 @@ namespace XIVLauncher.Windows.ViewModel
                 return false;
             }
 
-            if (loginResult.State == Launcher.LoginState.NoTerms)
+            if (loginResult.State == LoginState.NoTerms)
             {
                 CustomMessageBox.Show(
                     Loc.Localize("LoginAcceptTermsMessage",
@@ -503,7 +504,7 @@ namespace XIVLauncher.Windows.ViewModel
              * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
              * complexity and if boot is fucked game probably is too.
              */
-            if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
+            if (loginResult.State == LoginState.NeedsPatchBoot)
             {
                 CustomMessageBox.Show(
                     Loc.Localize("EverythingIsFuckedMessage",
@@ -517,12 +518,12 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 try
                 {
-                    if (loginResult.State == Launcher.LoginState.NeedsPatchGame)
+                    if (loginResult.State == LoginState.NeedsPatchGame)
                     {
                         if (!await RepairGame(loginResult).ConfigureAwait(false))
                             return false;
 
-                        loginResult.State = Launcher.LoginState.Ok;
+                        loginResult.State = LoginState.Ok;
                         action = AfterLoginAction.Start;
                     }
                     else
@@ -548,7 +549,7 @@ namespace XIVLauncher.Windows.ViewModel
                 }
             }
 
-            if (loginResult.State == Launcher.LoginState.NeedsPatchGame)
+            if (loginResult.State == LoginState.NeedsPatchGame)
             {
                 if (App.Settings.AskBeforePatchInstall ?? true)
                 {
@@ -567,7 +568,7 @@ namespace XIVLauncher.Windows.ViewModel
                     return false;
                 }
 
-                loginResult.State = Launcher.LoginState.Ok;
+                loginResult.State = LoginState.Ok;
                 action = AfterLoginAction.Start;
             }
 
@@ -581,7 +582,7 @@ namespace XIVLauncher.Windows.ViewModel
                 return false;
             }
 
-            if (CustomMessageBox.AssertOrShowError(loginResult.State == Launcher.LoginState.Ok, "TryProcessLoginResult: loginResult.State should have been Launcher.LoginState.Ok", parentWindow: _window))
+            if (CustomMessageBox.AssertOrShowError(loginResult.State == LoginState.Ok, "TryProcessLoginResult: loginResult.State should have been LoginState.Ok", parentWindow: _window))
                 return false;
 
 #if !DEBUG
@@ -802,7 +803,7 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
-        private async Task<bool> RepairGame(Launcher.LoginResult loginResult)
+        private async Task<bool> RepairGame(LoginResult loginResult)
         {
             var doLogin = false;
             var mutex = new Mutex(false, "XivLauncherIsPatching");
@@ -915,12 +916,13 @@ namespace XIVLauncher.Windows.ViewModel
             return doLogin;
         }
 
-        private Task<bool> InstallGamePatch(Launcher.LoginResult loginResult)
+        private Task<bool> InstallGamePatch(LoginResult loginResult)
         {
-            Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
-                "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+            Debug.Assert(loginResult.State == LoginState.NeedsPatchGame,
+                "loginResult.State == LoginState.NeedsPatchGame ASSERTION FAILED");
 
             Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
+            Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0 ASSERTION FAILED");
 
             return TryHandlePatchAsync(Repository.Ffxiv, loginResult.PendingPatches, loginResult.UniqueId);
         }
@@ -956,7 +958,7 @@ namespace XIVLauncher.Windows.ViewModel
             Environment.Exit(0);
         }
 
-        public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud)
+        public async Task<Process> StartGameAndAddon(LoginResult loginResult, bool isSteam, bool forceNoDalamud)
         {
             var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
                 App.Settings.GamePath,
@@ -1144,7 +1146,7 @@ namespace XIVLauncher.Windows.ViewModel
                     return false;
                 }
 
-                if (bootPatches == null)
+                if (bootPatches.Length == 0)
                     return true;
 
                 return await TryHandlePatchAsync(Repository.Boot, bootPatches, null).ConfigureAwait(false);

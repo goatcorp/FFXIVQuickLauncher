@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using XIVLauncher.Common.Game.Launcher;
 
 namespace XIVLauncher.Common.Game
 {
@@ -51,7 +52,7 @@ namespace XIVLauncher.Common.Game
 
     public partial class Headlines
     {
-        public static async Task<Headlines> Get(Launcher game, ClientLanguage language)
+        public static async Task<Headlines> Get(ILauncher game, ClientLanguage language)
         {
             var unixTimestamp = Util.GetUnixMillis();
             var langCode = language.GetLangCode();

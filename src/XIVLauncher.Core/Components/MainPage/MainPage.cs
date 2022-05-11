@@ -162,7 +162,7 @@ public class MainPage : Page
             Environment.Exit(0);
     }
 
-    private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, LoginAction action)
+    private async Task<LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, LoginAction action)
     {
         bool? gateStatus = null;
 
@@ -228,9 +228,9 @@ public class MainPage : Page
         }
     }
 
-    private async Task<bool> TryProcessLoginResult(Launcher.LoginResult loginResult, bool isSteam, LoginAction action)
+    private async Task<bool> TryProcessLoginResult(LoginResult loginResult, bool isSteam, LoginAction action)
     {
-        if (loginResult.State == Launcher.LoginState.NoService)
+        if (loginResult.State == LoginState.NoService)
         {
             /*
             CustomMessageBox.Show(
@@ -245,7 +245,7 @@ public class MainPage : Page
             return false;
         }
 
-        if (loginResult.State == Launcher.LoginState.NoTerms)
+        if (loginResult.State == LoginState.NoTerms)
         {
             /*
             CustomMessageBox.Show(
@@ -271,7 +271,7 @@ public class MainPage : Page
          * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
          * complexity and if boot is fucked game probably is too.
          */
-        if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
+        if (loginResult.State == LoginState.NeedsPatchBoot)
         {
             /*
             CustomMessageBox.Show(
@@ -289,12 +289,12 @@ public class MainPage : Page
         {
             try
             {
-                if (loginResult.State == Launcher.LoginState.NeedsPatchGame)
+                if (loginResult.State == LoginState.NeedsPatchGame)
                 {
                     if (!await RepairGame(loginResult).ConfigureAwait(false))
                         return false;
 
-                    loginResult.State = Launcher.LoginState.Ok;
+                    loginResult.State = LoginState.Ok;
                     action = LoginAction.Game;
                 }
                 else
@@ -324,7 +324,7 @@ public class MainPage : Page
             }
         }
 
-        if (loginResult.State == Launcher.LoginState.NeedsPatchGame)
+        if (loginResult.State == LoginState.NeedsPatchGame)
         {
             if (!await InstallGamePatch(loginResult).ConfigureAwait(false))
             {
@@ -332,7 +332,7 @@ public class MainPage : Page
                 return false;
             }
 
-            loginResult.State = Launcher.LoginState.Ok;
+            loginResult.State = LoginState.Ok;
             action = LoginAction.Game;
         }
 
@@ -345,7 +345,7 @@ public class MainPage : Page
             return false;
         }
 
-        Debug.Assert(loginResult.State == Launcher.LoginState.Ok);
+        Debug.Assert(loginResult.State == LoginState.Ok);
 
         while (true)
         {
@@ -576,7 +576,7 @@ public class MainPage : Page
         }
     }
 
-    public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud)
+    public async Task<Process> StartGameAndAddon(LoginResult loginResult, bool isSteam, bool forceNoDalamud)
     {
         var dalamudOk = false;
 
@@ -870,7 +870,7 @@ public class MainPage : Page
                 return false;
             }
 
-            if (bootPatches == null)
+            if (bootPatches.Length == 0)
                 return true;
 
             return await TryHandlePatchAsync(Repository.Boot, bootPatches, null).ConfigureAwait(false);
@@ -884,10 +884,10 @@ public class MainPage : Page
         }
     }
 
-    private Task<bool> InstallGamePatch(Launcher.LoginResult loginResult)
+    private Task<bool> InstallGamePatch(LoginResult loginResult)
     {
-        Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
-            "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+        Debug.Assert(loginResult.State == LoginState.NeedsPatchGame,
+            "loginResult.State == LoginState.NeedsPatchGame ASSERTION FAILED");
 
         Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
 
@@ -1055,7 +1055,7 @@ public class MainPage : Page
         Environment.Exit(0);
     }
 
-    private async Task<bool> RepairGame(Launcher.LoginResult loginResult)
+    private async Task<bool> RepairGame(LoginResult loginResult)
     {
         var doLogin = false;
         var mutex = new Mutex(false, "XivLauncherIsPatching");

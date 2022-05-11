@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 
-#if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER && !WIN32
 using System.Net.Security;
 #endif
 
@@ -23,17 +23,19 @@ using XIVLauncher.Common.PlatformAbstractions;
 
 #nullable enable
 
-namespace XIVLauncher.Common.Game;
+namespace XIVLauncher.Common.Game.Launcher;
 
-public class Launcher
+public class SqexLauncher : ILauncher
 {
     private readonly ISteam? steam;
     private readonly byte[]? steamTicket;
     private readonly IUniqueIdCache uniqueIdCache;
     private readonly ISettings settings;
     private readonly HttpClient client;
+    private OauthLoginResult? oauthLoginResult;
+    private string? uniqueId;
 
-    public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings)
+    public SqexLauncher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings)
     {
         this.steam = steam;
         this.uniqueIdCache = uniqueIdCache;
@@ -41,7 +43,7 @@ public class Launcher
 
         ServicePointManager.Expect100Continue = false;
 
-#if NET6_0_OR_GREATER
+#if NET6_0_OR_GREATER && !WIN32
         var sslOptions = new SslClientAuthenticationOptions()
         {
             CipherSuitesPolicy = new CipherSuitesPolicy(new[] { TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 })
@@ -62,7 +64,8 @@ public class Launcher
         this.client = new HttpClient(handler);
     }
 
-    public Launcher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings) : this(steam: null, uniqueIdCache, settings)
+    public SqexLauncher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings)
+        : this(steam: null, uniqueIdCache, settings)
     {
         this.steamTicket = steamTicket;
     }
@@ -81,30 +84,9 @@ public class Launcher
         "ffxivupdater64.exe"
     };
 
-    public enum LoginState
-    {
-        Unknown,
-        Ok,
-        NeedsPatchGame,
-        NeedsPatchBoot,
-        NoService,
-        NoTerms
-    }
-
-    public class LoginResult
-    {
-        public LoginState State { get; set; }
-        public PatchListEntry[] PendingPatches { get; set; }
-        public OauthLoginResult OauthLogin { get; set; }
-        public string UniqueId { get; set; }
-    }
-
     public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
     {
-        string uid;
-        PatchListEntry[] pendingPatches = null;
-
-        OauthLoginResult oauthLoginResult;
+        PatchListEntry[] pendingPatches = Array.Empty<PatchListEntry>();
 
         LoginState loginState;
 
@@ -116,7 +98,7 @@ public class Launcher
         {
             if (this.steamTicket != null)
             {
-                steamTicket = Ticket.EncryptAuthSessionTicket(this.steamTicket, (uint) DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                steamTicket = Ticket.EncryptAuthSessionTicket(this.steamTicket, (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                 Log.Information("Using predefined steam ticket");
             }
             else
@@ -164,11 +146,12 @@ public class Launcher
 
         if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
         {
-            oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
+            this.oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
 
-            Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
+            Log.Information(
+                $"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
 
-            if (!oauthLoginResult.Playable)
+            if (!this.oauthLoginResult.Playable)
             {
                 return new LoginResult
                 {
@@ -176,7 +159,7 @@ public class Launcher
                 };
             }
 
-            if (!oauthLoginResult.TermsAccepted)
+            if (!this.oauthLoginResult.TermsAccepted)
             {
                 return new LoginResult
                 {
@@ -184,18 +167,26 @@ public class Launcher
                 };
             }
 
-            (uid, loginState, pendingPatches) = await RegisterSession(oauthLoginResult, gamePath, forceBaseVersion);
+            try
+            {
+                pendingPatches = await CheckGameVersion(gamePath, forceBaseVersion);
+                loginState = pendingPatches.Length > 0 ? LoginState.NeedsPatchGame : LoginState.Ok;
+            }
+            catch (VersionCheckLoginException ex)
+            {
+                loginState = ex.State;
+            }
 
             if (useCache)
-                this.uniqueIdCache.Add(userName, uid, oauthLoginResult.Region, oauthLoginResult.MaxExpansion);
+                this.uniqueIdCache.Add(userName, this.uniqueId, oauthLoginResult.Region, oauthLoginResult.MaxExpansion);
         }
         else
         {
             Log.Information("Cached UID found, using instead");
-            uid = cached.UniqueId;
+            this.uniqueId = cached.UniqueId;
             loginState = LoginState.Ok;
 
-            oauthLoginResult = new OauthLoginResult
+            this.oauthLoginResult = new OauthLoginResult
             {
                 Playable = true,
                 Region = cached.Region,
@@ -207,9 +198,9 @@ public class Launcher
         return new LoginResult
         {
             PendingPatches = pendingPatches,
-            OauthLogin = oauthLoginResult,
+            OauthLogin = this.oauthLoginResult,
             State = loginState,
-            UniqueId = uid
+            UniqueId = this.uniqueId
         };
     }
 
@@ -284,44 +275,6 @@ public class Launcher
     }
 
     /// <summary>
-    /// Check ver & bck files for sanity.
-    /// </summary>
-    /// <param name="gamePath"></param>
-    /// <param name="exLevel"></param>
-    private static void EnsureVersionSanity(DirectoryInfo gamePath, int exLevel)
-    {
-        var failed = string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath));
-        failed &= string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath, true));
-
-        if (exLevel >= 1)
-        {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath, true));
-        }
-
-        if (exLevel >= 2)
-        {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath, true));
-        }
-
-        if (exLevel >= 3)
-        {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath, true));
-        }
-
-        if (exLevel >= 4)
-        {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath, true));
-        }
-
-        if (failed)
-            throw new InvalidVersionFilesException();
-    }
-
-    /// <summary>
     /// Calculate the hash that is sent to patch-gamever for version verification/tamper protection.
     /// This same hash is also sent in lobby, but for ffxiv.exe and ffxiv_dx11.exe.
     /// </summary>
@@ -342,10 +295,10 @@ public class Launcher
         return result;
     }
 
-    public async Task<PatchListEntry[]> CheckBootVersion(DirectoryInfo gamePath)
+    public async Task<PatchListEntry[]> CheckBootVersion(DirectoryInfo gamePath, bool forceBaseVersion = false)
     {
         var request = new HttpRequestMessage(HttpMethod.Get,
-            $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath)}/?time=" +
+            $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Boot.GetVer(gamePath))}/?time=" +
             GetLauncherFormattedTimeLongRounded());
 
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
@@ -355,43 +308,47 @@ public class Launcher
         var text = await resp.Content.ReadAsStringAsync();
 
         if (text == string.Empty)
-            return null;
+            return Array.Empty<PatchListEntry>();
 
         Log.Verbose("Boot patching is needed... List:\n{PatchList}", resp);
 
         return PatchListParser.Parse(text);
     }
 
-    private async Task<(string Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
+    public async Task<PatchListEntry[]> CheckGameVersion(DirectoryInfo gamePath, bool forceBaseVersion = false)
     {
+        if (this.oauthLoginResult == null)
+        {
+            throw new VersionCheckLoginException(LoginState.NoLogin);
+        }
+        
         var request = new HttpRequestMessage(HttpMethod.Post,
-            $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{loginResult.SessionId}");
+            $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{this.oauthLoginResult.SessionId}");
 
         request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
 
-        EnsureVersionSanity(gamePath, loginResult.MaxExpansion);
-        request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion, forceBaseVersion));
+        Util.EnsureVersionSanity(gamePath, this.oauthLoginResult.MaxExpansion);
+        request.Content = new StringContent(GetVersionReport(gamePath, this.oauthLoginResult.MaxExpansion, forceBaseVersion));
 
         var resp = await this.client.SendAsync(request);
         var text = await resp.Content.ReadAsStringAsync();
 
         // Conflict indicates that boot needs to update, we do not get a patch list or a unique ID to download patches with in this case
         if (resp.StatusCode == HttpStatusCode.Conflict)
-            return (null, LoginState.NeedsPatchBoot, null);
+            throw new VersionCheckLoginException(LoginState.NeedsPatchBoot);
 
         if (!resp.Headers.TryGetValues("X-Patch-Unique-Id", out var uidVals))
             throw new InvalidResponseException("Could not get X-Patch-Unique-Id.", text);
 
-        var uid = uidVals.First();
+        this.uniqueId = uidVals.First();
 
         if (string.IsNullOrEmpty(text))
-            return (uid, LoginState.Ok, null);
+            return Array.Empty<PatchListEntry>();
 
         Log.Verbose("Game Patching is needed... List:\n{PatchList}", text);
 
-        var pendingPatches = PatchListParser.Parse(text);
-        return (uid, LoginState.NeedsPatchGame, pendingPatches);
+        return PatchListParser.Parse(text);
     }
 
     public async Task<string> GenPatchToken(string patchUrl, string uniqueId)
@@ -461,15 +418,6 @@ public class Launcher
         }
 
         return (matches[0].Groups["stored"].Value, steamUsername);
-    }
-
-    public class OauthLoginResult
-    {
-        public string SessionId { get; set; }
-        public int Region { get; set; }
-        public bool TermsAccepted { get; set; }
-        public bool Playable { get; set; }
-        public int MaxExpansion { get; set; }
     }
 
     private static string GetOauthTopUrl(int region, bool isFreeTrial, bool isSteam, Ticket steamTicket)
@@ -605,7 +553,7 @@ public class Launcher
 
         Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
 
-        var checkSum = (byte) -(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+        var checkSum = (byte)-(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
         bytes[0] = checkSum;
 
         return BitConverter.ToString(bytes).Replace("-", "").ToLower();

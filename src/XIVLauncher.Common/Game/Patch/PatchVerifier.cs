@@ -103,7 +103,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
 
-        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion)
+        public PatchVerifier(ISettings settings, LoginResult loginResult, int progressUpdateInterval, int maxExpansion)
         {
             this._settings = settings;
             _client = new HttpClient();
@@ -146,7 +146,7 @@ namespace XIVLauncher.Common.Game.Patch
             return _verificationTask ?? Task.CompletedTask;
         }
 
-        private void SetLoginState(Launcher.LoginResult result)
+        private void SetLoginState(LoginResult result)
         {
             _patchSources.Clear();
 
