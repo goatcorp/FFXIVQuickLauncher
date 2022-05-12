@@ -123,7 +123,7 @@ public class MainPage : Page
             await this.Login(this.loginFrame.Username, this.loginFrame.Password, this.loginFrame.IsOtp, this.loginFrame.IsSteam, false, action);
         }).ContinueWith(t =>
         {
-            if (!App.HandleContinationBlocking(t))
+            if (!App.HandleContinuationBlocking(t))
                 this.Reactivate();
         });
     }
@@ -161,8 +161,16 @@ public class MainPage : Page
         var loginResult = await TryLoginToGame(username, password, otp, isSteam, action).ConfigureAwait(false);
 
         var result = await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false);
+
         if (result)
+        {
             Environment.Exit(0);
+        }
+        else
+        {
+            Log.Verbose("Reactivated after TryProcessLoginResult() != true");
+            this.Reactivate();
+        }
     }
 
     private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, LoginAction action)
@@ -865,7 +873,7 @@ public class MainPage : Page
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Unable to check boot version.");
+                Log.Error(ex, "Unable to check boot version");
                 App.ShowMessage(
                     Loc.Localize("CheckBootVersionError",
                         "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."),
@@ -1018,6 +1026,7 @@ public class MainPage : Page
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error during patching");
             App.ShowExceptionBlocking(ex, "HandlePatchAsync");
         }
         finally

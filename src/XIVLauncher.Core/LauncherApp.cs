@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
 using ImGuiNET;
+using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
@@ -147,10 +148,11 @@ public class LauncherApp : Component
         this.ShowMessageBlocking($"An error occurred ({context}).\n\n{exception}", "XIVLauncher Error");
     }
 
-    public bool HandleContinationBlocking(Task task)
+    public bool HandleContinuationBlocking(Task task)
     {
         if (task.IsFaulted)
         {
+            Log.Error(task.Exception, "Task failed");
             this.ShowMessageBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
             return false;
         }
