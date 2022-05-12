@@ -197,7 +197,7 @@ class Program
         cl = gd.ResourceFactory.CreateCommandList();
         Log.Debug("Veldrid OK!");
 
-        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
+        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height, storage.GetFile("launcherUI.ini"));
         Log.Debug("ImGui OK!");
 
         StyleModelV1.DalamudStandard.Apply();

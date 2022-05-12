@@ -37,6 +37,8 @@ public class ImGuiBindings : IDisposable
     private bool _altDown;
     private bool _winKeyDown;
 
+    private IntPtr _iniPathPtr;
+
     private int _windowWidth;
     private int _windowHeight;
     private Vector2 _scaleFactor = Vector2.One;
@@ -63,7 +65,7 @@ public class ImGuiBindings : IDisposable
     /// <summary>
     /// Constructs a new ImGuiController.
     /// </summary>
-    public ImGuiBindings(GraphicsDevice gd, OutputDescription outputDescription, int width, int height)
+    public ImGuiBindings(GraphicsDevice gd, OutputDescription outputDescription, int width, int height, FileInfo iniPath)
     {
         _gd = gd;
         _windowWidth = width;
@@ -76,6 +78,8 @@ public class ImGuiBindings : IDisposable
 
         ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad;
         ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.HasGamepad;
+
+        SetIniPath(iniPath.FullName);
 
         _setText = new SetClipboardTextDelegate(SetClipboardText);
         _getText = new GetClipboardTextDelegate(GetClipboardText);
@@ -92,6 +96,21 @@ public class ImGuiBindings : IDisposable
 
         ImGui.NewFrame();
         _frameBegun = true;
+    }
+
+    private void SetIniPath(string iniPath)
+    {
+        if (_iniPathPtr != IntPtr.Zero)
+        {
+            Marshal.FreeHGlobal(_iniPathPtr);
+        }
+
+        _iniPathPtr = Marshal.StringToHGlobalAnsi(iniPath);
+
+        unsafe
+        {
+            ImGui.GetIO().NativePtr->IniFilename = (byte*)_iniPathPtr.ToPointer();
+        }
     }
 
     private static void SetClipboardText(IntPtr userData, string text)
