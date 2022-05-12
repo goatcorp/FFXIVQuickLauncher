@@ -120,7 +120,17 @@ public class MainPage : Page
 
             IsLoggingIn = true;
 
-            await this.Login(this.loginFrame.Username, this.loginFrame.Password, this.loginFrame.IsOtp, this.loginFrame.IsSteam, false, action);
+            var result = await Login(loginFrame.Username, loginFrame.Password, loginFrame.IsOtp, loginFrame.IsSteam, false, action).ConfigureAwait(false);
+
+            if (result)
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                Log.Verbose("Reactivated after Login() != true");
+                this.Reactivate();
+            }
         }).ContinueWith(t =>
         {
             if (!App.HandleContinuationBlocking(t))
@@ -128,19 +138,19 @@ public class MainPage : Page
         });
     }
 
-    public async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
+    public async Task<bool> Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
     {
         if (action == LoginAction.Fake)
         {
             App.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 1, 2, false, "", App.Settings.GamePath, true, ClientLanguage.Japanese, true,
                 DpiAwareness.Unaware);
-            return;
+            return true;
         }
 
         var bootRes = await HandleBootCheck().ConfigureAwait(false);
 
         if (!bootRes)
-            return;
+            return false;
 
         var otp = string.Empty;
 
@@ -154,23 +164,13 @@ public class MainPage : Page
         }
 
         if (otp == null)
-            return;
+            return false;
 
         PersistAccount(username, password, isOtp, isSteam);
 
         var loginResult = await TryLoginToGame(username, password, otp, isSteam, action).ConfigureAwait(false);
 
-        var result = await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false);
-
-        if (result)
-        {
-            Environment.Exit(0);
-        }
-        else
-        {
-            Log.Verbose("Reactivated after TryProcessLoginResult() != true");
-            this.Reactivate();
-        }
+        return await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false);
     }
 
     private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, LoginAction action)
