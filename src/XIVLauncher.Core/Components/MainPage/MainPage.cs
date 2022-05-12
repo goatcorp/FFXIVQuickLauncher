@@ -148,6 +148,9 @@ public class MainPage : Page
         {
             App.AskForOtp();
             otp = App.WaitForOtp();
+
+            // Make sure we are loading again
+            App.State = LauncherApp.LauncherState.Loading;
         }
 
         if (otp == null)
@@ -633,6 +636,7 @@ public class MainPage : Page
         {
             try
             {
+                App.StartLoading("Waiting for Dalamud to be ready...", "This may take a little while. Please hold!");
                 dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
             }
             catch (DalamudRunnerException ex)
@@ -686,7 +690,7 @@ public class MainPage : Page
                     signal.Set();
                 });
 
-                App.StartLoading("Ensuring compatibility tool...");
+                App.StartLoading("Ensuring compatibility tool...", "This may take a little while. Please hold!");
                 signal.WaitOne();
                 signal.Dispose();
 
