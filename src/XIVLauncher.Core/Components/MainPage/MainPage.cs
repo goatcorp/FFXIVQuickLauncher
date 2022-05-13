@@ -908,6 +908,8 @@ public class MainPage : Page
 
     private async Task<bool> TryHandlePatchAsync(Repository repository, PatchListEntry[] pendingPatches, string sid)
     {
+        // BUG(goat): This check only behaves correctly on Windows - the mutex doesn't seem to disappear on Linux, .NET issue?
+#if WIN32
         using var mutex = new Mutex(false, "XivLauncherIsPatching");
 
         if (!mutex.WaitOne(0, false))
@@ -917,6 +919,7 @@ public class MainPage : Page
             Environment.Exit(0);
             return false; // This line will not be run.
         }
+#endif
 
         if (Util.CheckIsGameOpen())
         {
