@@ -90,6 +90,7 @@ class Program
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
+        Config.CompletedFts ??= false;
 
         Config.IsDx11 ??= true;
         Config.IsEncryptArgs ??= true;
@@ -183,7 +184,7 @@ class Program
 
         // Create window, GraphicsDevice, and all resources necessary for the demo.
         VeldridStartup.CreateWindowAndGraphicsDevice(
-            new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, $"XIVLauncher {version}"),
+            new WindowCreateInfo(50, 50, 1280, 800, WindowState.Normal, $"XIVLauncher {version}"),
             new GraphicsDeviceOptions(false, null, true, ResourceBindingModel.Improved, true, true),
             out window,
             out gd);

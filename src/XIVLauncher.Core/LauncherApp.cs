@@ -36,6 +36,7 @@ public class LauncherApp : Component
         Settings,
         Loading,
         OtpEntry,
+        Fts,
     }
 
     private LauncherState state = LauncherState.Main;
@@ -73,6 +74,10 @@ public class LauncherApp : Component
                     this.otpEntryPage.OnShow();
                     break;
 
+                case LauncherState.Fts:
+                    this.ftsPage.OnShow();
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value), value, null);
             }
@@ -85,6 +90,7 @@ public class LauncherApp : Component
         LauncherState.Settings => this.setPage,
         LauncherState.Loading => this.LoadingPage,
         LauncherState.OtpEntry => this.otpEntryPage,
+        LauncherState.Fts => this.ftsPage,
         _ => throw new ArgumentOutOfRangeException(nameof(this.state), this.state, null)
     };
 
@@ -101,6 +107,7 @@ public class LauncherApp : Component
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
     private readonly OtpEntryPage otpEntryPage;
+    private readonly FtsPage ftsPage;
 
     private readonly Background background = new();
 
@@ -116,6 +123,9 @@ public class LauncherApp : Component
         this.setPage = new SettingsPage(this);
         this.otpEntryPage = new OtpEntryPage(this);
         this.LoadingPage = new LoadingPage(this);
+        this.ftsPage = new FtsPage(this);
+
+        this.ftsPage.OpenFtsIfNeeded();
 
 #if DEBUG
         IsDebug = true;
