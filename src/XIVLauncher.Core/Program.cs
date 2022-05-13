@@ -91,6 +91,7 @@ class Program
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
         Config.CompletedFts ??= false;
+        Config.DoVersionCheck ??= true;
 
         Config.IsDx11 ??= true;
         Config.IsEncryptArgs ??= true;
@@ -204,7 +205,17 @@ class Program
         StyleModelV1.DalamudStandard.Apply();
         ImGui.GetIO().FontGlobalScale = Config.GlobalScale ?? 1.0f;
 
-        launcherApp = new LauncherApp(storage);
+        var needUpdate = false;
+
+        if (Config.DoVersionCheck ?? false)
+        {
+            var versionCheckResult = UpdateCheck.CheckForUpdate().GetAwaiter().GetResult();
+
+            if (versionCheckResult.Success)
+                needUpdate = versionCheckResult.NeedUpdate;
+        }
+
+        launcherApp = new LauncherApp(storage, needUpdate);
 
         Invalidate(20);
 

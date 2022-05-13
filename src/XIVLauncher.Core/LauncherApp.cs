@@ -37,6 +37,7 @@ public class LauncherApp : Component
         Loading,
         OtpEntry,
         Fts,
+        UpdateWarn,
     }
 
     private LauncherState state = LauncherState.Main;
@@ -78,6 +79,10 @@ public class LauncherApp : Component
                     this.ftsPage.OnShow();
                     break;
 
+                case LauncherState.UpdateWarn:
+                    this.updateWarnPage.OnShow();
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value), value, null);
             }
@@ -91,6 +96,7 @@ public class LauncherApp : Component
         LauncherState.Loading => this.LoadingPage,
         LauncherState.OtpEntry => this.otpEntryPage,
         LauncherState.Fts => this.ftsPage,
+        LauncherState.UpdateWarn => this.updateWarnPage,
         _ => throw new ArgumentOutOfRangeException(nameof(this.state), this.state, null)
     };
 
@@ -108,10 +114,11 @@ public class LauncherApp : Component
     private readonly SettingsPage setPage;
     private readonly OtpEntryPage otpEntryPage;
     private readonly FtsPage ftsPage;
+    private readonly UpdateWarnPage updateWarnPage;
 
     private readonly Background background = new();
 
-    public LauncherApp(Storage storage)
+    public LauncherApp(Storage storage, bool needsUpdateWarning)
     {
         this.Storage = storage;
 
@@ -124,8 +131,16 @@ public class LauncherApp : Component
         this.otpEntryPage = new OtpEntryPage(this);
         this.LoadingPage = new LoadingPage(this);
         this.ftsPage = new FtsPage(this);
+        this.updateWarnPage = new UpdateWarnPage(this);
 
-        this.ftsPage.OpenFtsIfNeeded();
+        if (needsUpdateWarning)
+        {
+            this.State = LauncherState.UpdateWarn;
+        }
+        else
+        {
+            this.RunStartupTasks();
+        }
 
 #if DEBUG
         IsDebug = true;
@@ -202,6 +217,17 @@ public class LauncherApp : Component
     public void StopLoading()
     {
         this.State = LauncherState.Main;
+    }
+
+    public void FinishFromUpdateWarn()
+    {
+        this.State = LauncherState.Main;
+        this.RunStartupTasks();
+    }
+
+    public void RunStartupTasks()
+    {
+        this.ftsPage.OpenFtsIfNeeded();
     }
 
     public override void Draw()

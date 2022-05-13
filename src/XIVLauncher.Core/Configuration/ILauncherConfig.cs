@@ -10,6 +10,8 @@ public interface ILauncherConfig
 {
     public bool? CompletedFts { get; set; }
 
+    public bool? DoVersionCheck { get; set; }
+
     public string? CurrentAccountId { get; set; }
 
     public string? AcceptLanguage { get; set; }
