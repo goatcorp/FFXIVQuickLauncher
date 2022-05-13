@@ -228,6 +228,7 @@ public class LauncherApp : Component
     public void RunStartupTasks()
     {
         this.ftsPage.OpenFtsIfNeeded();
+        this.mainPage.DoAutoLoginIfApplicable();
     }
 
     public override void Draw()

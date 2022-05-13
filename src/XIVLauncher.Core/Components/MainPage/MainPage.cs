@@ -49,6 +49,14 @@ public class MainPage : Page
 
     public AccountSwitcher AccountSwitcher { get; private set; }
 
+    public void DoAutoLoginIfApplicable()
+    {
+        Debug.Assert(App.State == LauncherApp.LauncherState.Main);
+
+        if ((App.Settings.IsAutologin ?? false) && !string.IsNullOrEmpty(this.loginFrame.Username) && !string.IsNullOrEmpty(this.loginFrame.Password))
+            ProcessLogin(LoginAction.Game);
+    }
+
     public override void Draw()
     {
         base.Draw();
@@ -119,6 +127,8 @@ public class MainPage : Page
             }
 
             IsLoggingIn = true;
+
+            App.Settings.IsAutologin = this.loginFrame.IsAutoLogin;
 
             var result = await Login(loginFrame.Username, loginFrame.Password, loginFrame.IsOtp, loginFrame.IsSteam, false, action).ConfigureAwait(false);
 
