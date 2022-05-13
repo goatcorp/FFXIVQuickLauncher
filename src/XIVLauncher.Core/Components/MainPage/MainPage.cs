@@ -100,7 +100,7 @@ public class MainPage : Page
         if (this.IsLoggingIn)
             return;
 
-        this.App.StartLoading("Logging in...");
+        this.App.StartLoading("Logging in...", canDisableAutoLogin: true);
 
         if (Program.UsesFallbackSteamAppId && this.loginFrame.IsSteam)
             throw new Exception("Doesn't own Steam AppId on this account.");

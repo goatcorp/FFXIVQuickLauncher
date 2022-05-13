@@ -204,7 +204,7 @@ public class LauncherApp : Component
         return this.otpEntryPage.Result;
     }
 
-    public void StartLoading(string line1, string line2 = "", string line3 = "", bool isIndeterminate = true, bool canCancel = false)
+    public void StartLoading(string line1, string line2 = "", string line3 = "", bool isIndeterminate = true, bool canCancel = false, bool canDisableAutoLogin = false)
     {
         this.State = LauncherState.Loading;
         this.LoadingPage.Line1 = line1;
@@ -212,6 +212,9 @@ public class LauncherApp : Component
         this.LoadingPage.Line3 = line3;
         this.LoadingPage.IsIndeterminate = isIndeterminate;
         this.LoadingPage.CanCancel = canCancel;
+        this.LoadingPage.CanDisableAutoLogin = canDisableAutoLogin;
+
+        this.LoadingPage.Reset();
     }
 
     public void StopLoading()
