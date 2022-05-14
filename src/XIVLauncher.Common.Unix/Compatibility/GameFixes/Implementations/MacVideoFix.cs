@@ -30,7 +30,7 @@ public class MacVideoFix : GameFix
         {
             if (percentage != null && size != null)
             {
-                this.UpdateProgress?.Invoke($"{LoadingTitle} ({Util.BytesToString(downloaded)}/{Util.BytesToString(size.Value)})", true, (float)percentage.Value);
+                this.UpdateProgress?.Invoke($"{LoadingTitle} ({Util.BytesToString(downloaded)}/{Util.BytesToString(size.Value)})", true, (float)(percentage.Value / 100f));
             }
         };
 
