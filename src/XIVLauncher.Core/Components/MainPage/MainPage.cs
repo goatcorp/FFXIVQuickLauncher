@@ -103,8 +103,8 @@ public class MainPage : Page
 
         this.App.StartLoading("Logging in...", canDisableAutoLogin: true);
 
-        if (Program.UsesFallbackSteamAppId && this.loginFrame.IsSteam)
-            throw new Exception("Doesn't own Steam AppId on this account.");
+        // if (Program.UsesFallbackSteamAppId && this.loginFrame.IsSteam)
+        //     throw new Exception("Doesn't own Steam AppId on this account.");
 
         Task.Run(async () =>
         {

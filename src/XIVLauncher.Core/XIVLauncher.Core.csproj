@@ -86,6 +86,7 @@
     <EmbeddedResource Include="Resources/bg1.jpg" LogicalName="bg1.jpg" />
 
     <EmbeddedResource Include="Resources/steamdeck_fts.png" LogicalName="steamdeck_fts.png" />
+    <EmbeddedResource Include="Resources/steamdeck_fterror.png" LogicalName="steamdeck_fterror.png" />
     <EmbeddedResource Include="Resources/xlcore_updatewarn.png" LogicalName="xlcore_updatewarn.png" />
   </ItemGroup>
 

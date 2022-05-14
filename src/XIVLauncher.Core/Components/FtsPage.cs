@@ -7,20 +7,33 @@ namespace XIVLauncher.Core.Components;
 public class FtsPage : Page
 {
     private readonly TextureWrap steamdeckFtsTexture;
+    private readonly TextureWrap steamdeckAppIdErrorTexture;
+
+    private bool isSteamDeckAppIdError = false;
 
     public FtsPage(LauncherApp app)
         : base(app)
     {
         this.steamdeckFtsTexture = TextureWrap.Load(AppUtil.GetEmbeddedResourceBytes("steamdeck_fts.png"));
+        this.steamdeckAppIdErrorTexture = TextureWrap.Load(AppUtil.GetEmbeddedResourceBytes("steamdeck_fterror.png"));
     }
 
     // TODO: We don't have the steamworks api for this yet.
-    private bool IsSteamDeck => Directory.Exists("/home/deck");
+    private bool IsSteamDeck => Directory.Exists("/home/deck") || true;
 
     public void OpenFtsIfNeeded()
     {
         if (!(App.Settings.CompletedFts ?? false) && IsSteamDeck)
+        {
             App.State = LauncherApp.LauncherState.Fts;
+            return;
+        }
+
+        if (IsSteamDeck && (Program.Steam == null || !Program.Steam.IsValid))
+        {
+            App.State = LauncherApp.LauncherState.Fts;
+            this.isSteamDeckAppIdError = true;
+        }
     }
 
     private void FinishFts(bool save)
@@ -35,7 +48,7 @@ public class FtsPage : Page
     {
         ImGui.SetCursorPos(new Vector2(0));
 
-        ImGui.Image(this.steamdeckFtsTexture.ImGuiHandle, new Vector2(1280, 800));
+        ImGui.Image(this.isSteamDeckAppIdError ? this.steamdeckAppIdErrorTexture.ImGuiHandle : this.steamdeckFtsTexture.ImGuiHandle, new Vector2(1280, 800));
 
         ImGui.PushStyleColor(ImGuiCol.Button, Vector4.Zero);
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, Vector4.Zero);
@@ -45,12 +58,17 @@ public class FtsPage : Page
 
         if (ImGui.Button("###openGuideButton", new Vector2(649, 101)))
         {
-            Util.OpenBrowser("https://goatcorp.github.io/faq/steamdeck");
+            if (!this.isSteamDeckAppIdError)
+            {
+                Util.OpenBrowser("https://goatcorp.github.io/faq/steamdeck");
+            }
+
+            Environment.Exit(0);
         }
 
         ImGui.SetCursorPos(new Vector2(316, 598));
 
-        if (ImGui.Button("###finishFtsButton", new Vector2(649, 101)))
+        if (ImGui.Button("###finishFtsButton", new Vector2(649, 101)) && !this.isSteamDeckAppIdError)
         {
             this.FinishFts(true);
         }

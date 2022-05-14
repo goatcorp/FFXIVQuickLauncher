@@ -34,7 +34,6 @@ class Program
     public static ILauncherConfig Config { get; private set; }
     public static CommonSettings CommonSettings => new(Config);
     public static ISteam? Steam { get; private set; }
-    public static bool UsesFallbackSteamAppId { get; private set; }
     public static DalamudUpdater DalamudUpdater { get; private set; }
     public static DalamudOverlayInfoProxy DalamudLoadInfo { get; private set; }
     public static CompatibilityTools CompatibilityTools { get; private set; }
@@ -118,7 +117,6 @@ class Program
 
     public const uint STEAM_APP_ID = 39210;
     public const uint STEAM_APP_ID_FT = 312060;
-    public const uint STEAM_APP_SSDK = 243750;
 
     private static void Main(string[] args)
     {
@@ -150,15 +148,11 @@ class Program
             {
                 var appId = Config.IsFt == true ? STEAM_APP_ID_FT : STEAM_APP_ID;
                 Steam.Initialize(appId);
-
-                UsesFallbackSteamAppId = false;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Couldn't init Steam with game AppIds, trying Source SDK");
-                Steam.Initialize(STEAM_APP_SSDK);
-
-                UsesFallbackSteamAppId = true;
+                Log.Error(ex, "Couldn't init Steam with game AppIds, trying FT");
+                Steam.Initialize(STEAM_APP_ID_FT);
             }
         }
         catch (Exception ex)
