@@ -87,6 +87,7 @@
 
     <EmbeddedResource Include="Resources/steamdeck_fts.png" LogicalName="steamdeck_fts.png" />
     <EmbeddedResource Include="Resources/steamdeck_fterror.png" LogicalName="steamdeck_fterror.png" />
+    <EmbeddedResource Include="Resources/steamdeck_switchprompt.png" LogicalName="steamdeck_switchprompt.png" />
     <EmbeddedResource Include="Resources/xlcore_updatewarn.png" LogicalName="xlcore_updatewarn.png" />
   </ItemGroup>
 

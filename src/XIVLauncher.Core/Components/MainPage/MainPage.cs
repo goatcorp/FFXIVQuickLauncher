@@ -743,7 +743,14 @@ public class MainPage : Page
             throw new NotImplementedException();
         }
 
-        Hide();
+        if (!Program.IsSteamDeck)
+        {
+            Hide();
+        }
+        else
+        {
+            App.State = LauncherApp.LauncherState.SteamDeckPrompt;
+        }
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
         var launched = App.Launcher.LaunchGame(runner,

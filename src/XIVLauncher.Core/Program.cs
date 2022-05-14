@@ -46,6 +46,9 @@ class Program
     private static Storage storage;
     public static DirectoryInfo DotnetRuntime => storage.GetFolder("runtime");
 
+    // TODO: We don't have the steamworks api for this yet.
+    public static bool IsSteamDeck => Directory.Exists("/home/deck") || true;
+
     private const string APP_NAME = "xlcore";
 
     private static uint invalidationFrames = 0;

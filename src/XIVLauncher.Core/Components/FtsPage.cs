@@ -18,18 +18,15 @@ public class FtsPage : Page
         this.steamdeckAppIdErrorTexture = TextureWrap.Load(AppUtil.GetEmbeddedResourceBytes("steamdeck_fterror.png"));
     }
 
-    // TODO: We don't have the steamworks api for this yet.
-    private bool IsSteamDeck => Directory.Exists("/home/deck") || true;
-
     public void OpenFtsIfNeeded()
     {
-        if (!(App.Settings.CompletedFts ?? false) && IsSteamDeck)
+        if (!(App.Settings.CompletedFts ?? false) && Program.IsSteamDeck)
         {
             App.State = LauncherApp.LauncherState.Fts;
             return;
         }
 
-        if (IsSteamDeck && (Program.Steam == null || !Program.Steam.IsValid))
+        if (Program.IsSteamDeck && (Program.Steam == null || !Program.Steam.IsValid))
         {
             App.State = LauncherApp.LauncherState.Fts;
             this.isSteamDeckAppIdError = true;

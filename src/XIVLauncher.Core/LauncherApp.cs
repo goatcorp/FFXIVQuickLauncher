@@ -38,6 +38,7 @@ public class LauncherApp : Component
         OtpEntry,
         Fts,
         UpdateWarn,
+        SteamDeckPrompt,
     }
 
     private LauncherState state = LauncherState.Main;
@@ -83,6 +84,10 @@ public class LauncherApp : Component
                     this.updateWarnPage.OnShow();
                     break;
 
+                case LauncherState.SteamDeckPrompt:
+                    this.steamDeckPromptPage.OnShow();
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value), value, null);
             }
@@ -97,12 +102,13 @@ public class LauncherApp : Component
         LauncherState.OtpEntry => this.otpEntryPage,
         LauncherState.Fts => this.ftsPage,
         LauncherState.UpdateWarn => this.updateWarnPage,
+        LauncherState.SteamDeckPrompt => this.steamDeckPromptPage,
         _ => throw new ArgumentOutOfRangeException(nameof(this.state), this.state, null)
     };
 
     public ILauncherConfig Settings => Program.Config;
     public Launcher Launcher { get; private set; }
-    public ISteam Steam => Program.Steam;
+    public ISteam? Steam => Program.Steam;
     public Storage Storage { get; private set; }
 
     public LoadingPage LoadingPage { get; }
@@ -115,6 +121,7 @@ public class LauncherApp : Component
     private readonly OtpEntryPage otpEntryPage;
     private readonly FtsPage ftsPage;
     private readonly UpdateWarnPage updateWarnPage;
+    private readonly SteamDeckPromptPage steamDeckPromptPage;
 
     private readonly Background background = new();
 
@@ -132,6 +139,7 @@ public class LauncherApp : Component
         this.LoadingPage = new LoadingPage(this);
         this.ftsPage = new FtsPage(this);
         this.updateWarnPage = new UpdateWarnPage(this);
+        this.steamDeckPromptPage = new SteamDeckPromptPage(this);
 
         if (needsUpdateWarning)
         {
