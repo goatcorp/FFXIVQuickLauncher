@@ -105,6 +105,6 @@ public class SettingsTabWine : SettingsTab
     public override void Save()
     {
         base.Save();
-        Program.UpdateCompatibilityTools();
+        Program.CreateCompatToolsInstance();
     }
 }

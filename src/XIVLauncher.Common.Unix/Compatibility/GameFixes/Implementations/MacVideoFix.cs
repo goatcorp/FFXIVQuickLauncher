@@ -9,8 +9,8 @@ public class MacVideoFix : GameFix
 {
     private const string MAC_ZIP_URL = "https://mac-dl.ffxiv.com/cw/finalfantasyxiv-1.0.7.zip";
 
-    public MacVideoFix(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory)
-        : base(gameDirectory, configDirectory, winePrefixDirectory)
+    public MacVideoFix(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory, DirectoryInfo tempDirectory)
+        : base(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory)
     {
     }
 
@@ -24,7 +24,7 @@ public class MacVideoFix : GameFix
         if (flagFile.Exists)
             return;
 
-        var zipFilePath = Path.GetTempFileName();
+        var zipFilePath = Path.Combine(TempDir.FullName, $"{Guid.NewGuid()}.zip");
         using var client = new HttpClientDownloadWithProgress(MAC_ZIP_URL, zipFilePath);
         client.ProgressChanged += (size, downloaded, percentage) =>
         {
@@ -56,6 +56,7 @@ public class MacVideoFix : GameFix
         File.WriteAllText(flagFile.FullName, DateTimeOffset.Now.ToUnixTimeSeconds().ToString());
 
         Directory.Delete(tempMacExtract, true);
+        File.Delete(zipFilePath);
     }
 
     private class HttpClientDownloadWithProgress : IDisposable

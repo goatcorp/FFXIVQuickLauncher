@@ -173,7 +173,7 @@ class Program
         };
         DalamudUpdater.Run();
 
-        UpdateCompatibilityTools();
+        CreateCompatToolsInstance();
 
         Log.Debug("Creating Veldrid devices...");
 
@@ -289,7 +289,7 @@ class Program
         gd.Dispose();
     }
 
-    public static void UpdateCompatibilityTools()
+    public static void CreateCompatToolsInstance()
     {
         var wineLogFile = new FileInfo(Path.Combine(storage.GetFolder("logs").FullName, "wine.log"));
         var winePrefix = storage.GetFolder("wineprefix");

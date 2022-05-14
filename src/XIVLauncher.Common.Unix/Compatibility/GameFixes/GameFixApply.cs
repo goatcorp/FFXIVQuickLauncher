@@ -11,12 +11,12 @@ public class GameFixApply
 
     public event UpdateProgressDelegate UpdateProgress;
 
-    public GameFixApply(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory)
+    public GameFixApply(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory, DirectoryInfo tempDirectory)
     {
         this.fixes = new GameFix[]
         {
-            new DefaultConfigGameFix(gameDirectory, configDirectory, winePrefixDirectory),
-            new MacVideoFix(gameDirectory, configDirectory, winePrefixDirectory),
+            new DefaultConfigGameFix(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory),
+            new MacVideoFix(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory),
         };
     }
 

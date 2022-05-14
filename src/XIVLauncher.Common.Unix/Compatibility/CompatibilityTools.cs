@@ -68,12 +68,12 @@ public class CompatibilityTools
             wineSettings.Prefix.Create();
     }
 
-    public async Task EnsureTool()
+    public async Task EnsureTool(DirectoryInfo tempPath)
     {
         if (!File.Exists(Wine64Path))
         {
             Log.Information("Compatibility tool does not exist, downloading");
-            await DownloadTool().ConfigureAwait(false);
+            await DownloadTool(tempPath).ConfigureAwait(false);
         }
 
         EnsurePrefix();
@@ -82,18 +82,18 @@ public class CompatibilityTools
         IsToolReady = true;
     }
 
-    private async Task DownloadTool()
+    private async Task DownloadTool(DirectoryInfo tempPath)
     {
         using var client = new HttpClient();
-        var tempPath = Path.GetTempFileName();
+        var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
 
-        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false));
+        await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false)).ConfigureAwait(false);
 
-        Util.Untar(tempPath, this.toolDirectory.FullName);
+        Util.Untar(tempFilePath, this.toolDirectory.FullName);
 
         Log.Information("Compatibility tool successfully extracted to {Path}", this.toolDirectory.FullName);
 
-        File.Delete(tempPath);
+        File.Delete(tempFilePath);
     }
 
     private void ResetPrefix()

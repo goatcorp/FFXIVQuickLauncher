@@ -698,9 +698,11 @@ public class MainPage : Page
             {
                 var _ = Task.Run(async () =>
                 {
-                    await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
+                    var tempPath = App.Storage.GetFolder("temp");
 
-                    var gameFixApply = new GameFixApply(App.Settings.GamePath, App.Settings.GameConfigPath, Program.CompatibilityTools.Settings.Prefix);
+                    await Program.CompatibilityTools.EnsureTool(tempPath).ConfigureAwait(false);
+
+                    var gameFixApply = new GameFixApply(App.Settings.GamePath, App.Settings.GameConfigPath, Program.CompatibilityTools.Settings.Prefix, tempPath);
                     gameFixApply.UpdateProgress += (text, hasProgress, progress) =>
                     {
                         App.LoadingPage.Line1 = "Applying game-specific fixes...";

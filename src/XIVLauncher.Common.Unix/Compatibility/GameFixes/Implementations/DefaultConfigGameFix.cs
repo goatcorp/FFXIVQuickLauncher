@@ -4,8 +4,8 @@ namespace XIVLauncher.Common.Unix.Compatibility.GameFixes.Implementations;
 
 public class DefaultConfigGameFix : GameFix
 {
-    public DefaultConfigGameFix(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory)
-        : base(gameDirectory, configDirectory, winePrefixDirectory)
+    public DefaultConfigGameFix(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory, DirectoryInfo tempDirectory)
+        : base(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory)
     {
     }
 
