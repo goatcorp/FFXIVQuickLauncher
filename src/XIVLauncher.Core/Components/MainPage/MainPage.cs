@@ -731,6 +731,8 @@ public class MainPage : Page
                     return null;
             }
 
+            App.StartLoading("Starting game...", "Have fun!");
+
             runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod, Program.DotnetRuntime, App.Storage);
 
             gameArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
