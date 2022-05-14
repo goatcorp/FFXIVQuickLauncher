@@ -16,10 +16,6 @@ public class DefaultConfigGameFix : GameFix
         if (!ConfigDir.Exists)
             ConfigDir.Create();
 
-        var gameConf = Path.Combine(ConfigDir.FullName, "FFXIV.cfg");
-        if (!File.Exists(gameConf))
-            File.WriteAllText(gameConf, "<FINAL FANTASY XIV Config File>\n\n<Cutscene Settings>\nCutsceneMovieOpening 1");
-
         var bootConf = Path.Combine(ConfigDir.FullName, "FFXIV_BOOT.cfg");
         if (!File.Exists(bootConf))
             File.WriteAllText(bootConf, "<FINAL FANTASY XIV Boot Config File>\n\n<Version>\nBrowser 1\nStartupCompleted 1");
