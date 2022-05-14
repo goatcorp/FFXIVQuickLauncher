@@ -28,9 +28,9 @@ public class MacVideoFix : GameFix
         using var client = new HttpClientDownloadWithProgress(MAC_ZIP_URL, zipFilePath);
         client.ProgressChanged += (size, downloaded, percentage) =>
         {
-            if (percentage != null)
+            if (percentage != null && size != null)
             {
-                this.UpdateProgress?.Invoke(LoadingTitle, true, (float)percentage.Value);
+                this.UpdateProgress?.Invoke($"{LoadingTitle} ({Util.BytesToString(downloaded)}/{Util.BytesToString(size.Value)})", true, (float)percentage.Value);
             }
         };
 
