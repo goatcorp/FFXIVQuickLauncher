@@ -36,7 +36,7 @@ public class MacVideoFix : GameFix
 
         client.StartDownload().GetAwaiter().GetResult();
 
-        var tempMacExtract = Path.Combine(Path.GetTempPath(), "xlcore-macTempExtract");
+        var tempMacExtract = Path.Combine(TempDir.FullName, "xlcore-macTempExtract");
         Util.Unzip(zipFilePath, tempMacExtract);
 
         var videoDirectory = new DirectoryInfo(Path.Combine(tempMacExtract, "FINAL FANTASY XIV ONLINE.app", "Contents", "SharedSupport", "finalfantasyxiv", "support", "published_Final_Fantasy", "drive_c",
