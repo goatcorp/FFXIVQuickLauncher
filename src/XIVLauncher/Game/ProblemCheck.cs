@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
 using System.Windows;
 using CheapLoc;
 using Microsoft.Win32;
@@ -21,9 +20,6 @@ namespace XIVLauncher.Game
         {
             if (EnvironmentSettings.IsWine)
                 return;
-
-            var runningAsAdmin = new WindowsPrincipal(WindowsIdentity.GetCurrent())
-                .IsInRole(WindowsBuiltInRole.Administrator);
 
             var compatFlagKey = Registry.CurrentUser.OpenSubKey(
                 "Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", true);
@@ -61,7 +57,7 @@ namespace XIVLauncher.Game
                 App.Settings.HasComplainedAboutAdmin = true;
             }
 
-            if (runningAsAdmin && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
+            if (Util.IsElevated() && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
             {
                 CustomMessageBox.Show(
                     Loc.Localize("AdminCheckNag",
