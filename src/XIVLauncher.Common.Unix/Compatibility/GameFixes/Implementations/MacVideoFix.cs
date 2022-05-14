@@ -18,6 +18,12 @@ public class MacVideoFix : GameFix
 
     public override void Apply()
     {
+        var outputDirectory = new DirectoryInfo(Path.Combine(GameDir.FullName, "game", "movie", "ffxiv"));
+        var flagFile = new FileInfo(Path.Combine(outputDirectory.FullName, ".fixed"));
+
+        if (flagFile.Exists)
+            return;
+
         var zipFilePath = Path.GetTempFileName();
         using var client = new HttpClientDownloadWithProgress(MAC_ZIP_URL, zipFilePath);
         client.ProgressChanged += (size, downloaded, percentage) =>
@@ -35,12 +41,19 @@ public class MacVideoFix : GameFix
 
         var videoDirectory = new DirectoryInfo(Path.Combine(tempMacExtract, "FINAL FANTASY XIV ONLINE.app", "Contents", "SharedSupport", "finalfantasyxiv", "support", "published_Final_Fantasy", "drive_c",
             "Program Files (x86)", "SquareEnix", "FINAL FANTASY XIV - A Realm Reborn", "game", "movie", "ffxiv"));
-        var outputDirectory = new DirectoryInfo(Path.Combine(GameDir.FullName, "game", "movie", "ffxiv"));
+
+        var filesMoved = 0;
 
         foreach (FileInfo movieFile in videoDirectory.GetFiles("*.bk2"))
         {
             movieFile.MoveTo(Path.Combine(outputDirectory.FullName, movieFile.Name), true);
+            filesMoved++;
         }
+
+        if (filesMoved == 0)
+            throw new Exception("Didn't copy any movies.");
+
+        File.WriteAllText(flagFile.FullName, DateTimeOffset.Now.ToUnixTimeSeconds().ToString());
 
         Directory.Delete(tempMacExtract, true);
     }

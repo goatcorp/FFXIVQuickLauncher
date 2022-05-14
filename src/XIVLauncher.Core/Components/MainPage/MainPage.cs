@@ -705,6 +705,7 @@ public class MainPage : Page
                     {
                         App.LoadingPage.Line1 = "Applying game-specific fixes...";
                         App.LoadingPage.Line2 = text;
+                        App.LoadingPage.Line3 = "This may take a little while. Please hold!";
                         App.LoadingPage.IsIndeterminate = !hasProgress;
                         App.LoadingPage.Progress = progress;
                     };
