@@ -355,7 +355,25 @@ namespace XIVLauncher.Common
             tarProcess.WaitForExit();
 
             if (tarProcess.ExitCode != 0)
-                throw new Exception("Could not untar compatibility tool");
+                throw new Exception("Could not untar.");
+        }
+
+        public static void Unzip(string path, string output)
+        {
+            var psi = new ProcessStartInfo("7z")
+            {
+                Arguments = $"-y -o\"{output}\" x \"{path}\""
+            };
+
+            var tarProcess = Process.Start(psi);
+
+            if (tarProcess == null)
+                throw new Exception("Could not start p7zip.");
+
+            tarProcess.WaitForExit();
+
+            if (tarProcess.ExitCode != 0)
+                throw new Exception("Could not unzip.");
         }
     }
 }

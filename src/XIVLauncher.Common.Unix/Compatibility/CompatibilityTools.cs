@@ -281,9 +281,4 @@ public class CompatibilityTools
 
         Process.Start(psi);
     }
-
-    public void EnsureGameFixes(DirectoryInfo gameConfigDirectory)
-    {
-        GameFixes.AddDefaultConfig(gameConfigDirectory);
-    }
 }

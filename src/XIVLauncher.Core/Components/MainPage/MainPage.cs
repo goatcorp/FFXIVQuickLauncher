@@ -14,6 +14,7 @@ using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Common.Unix;
 using XIVLauncher.Common.Unix.Compatibility;
+using XIVLauncher.Common.Unix.Compatibility.GameFixes;
 using XIVLauncher.Core.Accounts;
 
 namespace XIVLauncher.Core.Components.MainPage;
@@ -693,11 +694,22 @@ public class MainPage : Page
             var signal = new ManualResetEvent(false);
             var isFailed = false;
 
-            if (App.Settings.WineStartupType == WineStartupType.Managed) {
+            if (App.Settings.WineStartupType == WineStartupType.Managed)
+            {
                 var _ = Task.Run(async () =>
                 {
                     await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
-                    Program.CompatibilityTools.EnsureGameFixes(Program.Config.GameConfigPath);
+
+                    var gameFixApply = new GameFixApply(App.Settings.GamePath, App.Settings.GameConfigPath, Program.CompatibilityTools.Settings.Prefix);
+                    gameFixApply.UpdateProgress += (text, hasProgress, progress) =>
+                    {
+                        App.LoadingPage.Line1 = "Applying game-specific fixes...";
+                        App.LoadingPage.Line2 = text;
+                        App.LoadingPage.IsIndeterminate = !hasProgress;
+                        App.LoadingPage.Progress = progress;
+                    };
+
+                    gameFixApply.Run();
                 }).ContinueWith(t =>
                 {
                     isFailed = t.IsFaulted || t.IsCanceled;
