@@ -84,6 +84,7 @@
     <EmbeddedResource Include="Resources/logo.png" LogicalName="logo.png" />
 
     <EmbeddedResource Include="Resources/bg1.jpg" LogicalName="bg1.jpg" />
+    <EmbeddedResource Include="Resources/bg_logo.png" LogicalName="bg_logo.png" />
 
     <EmbeddedResource Include="Resources/steamdeck_fts.png" LogicalName="steamdeck_fts.png" />
     <EmbeddedResource Include="Resources/steamdeck_fterror.png" LogicalName="steamdeck_fterror.png" />

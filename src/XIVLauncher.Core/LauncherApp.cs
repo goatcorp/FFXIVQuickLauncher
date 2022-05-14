@@ -245,7 +245,7 @@ public class LauncherApp : Component
     public override void Draw()
     {
         ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, this.CurrentPage.Padding ?? ImGui.GetStyle().WindowPadding);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0));
 
         ImGui.SetNextWindowPos(new Vector2(0, 0));
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
@@ -254,12 +254,17 @@ public class LauncherApp : Component
                 ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNavFocus
                 | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
-            // this.background.Draw();
+            this.background.Draw();
 
             ImGui.PushStyleColor(ImGuiCol.WindowBg, ImGuiColors.BlueShade0);
         }
 
         ImGui.End();
+
+        ImGui.PopStyleVar(2);
+
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, this.CurrentPage.Padding ?? ImGui.GetStyle().WindowPadding);
 
         ImGui.SetNextWindowPos(new Vector2(0, 0));
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
