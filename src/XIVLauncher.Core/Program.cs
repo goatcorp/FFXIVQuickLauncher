@@ -94,6 +94,7 @@ class Program
         Config.IsAutologin ??= false;
         Config.CompletedFts ??= false;
         Config.DoVersionCheck ??= true;
+        Config.FontPtSize ??= 21.0f;
 
         Config.IsDx11 ??= true;
         Config.IsEncryptArgs ??= true;
@@ -196,7 +197,7 @@ class Program
         cl = gd.ResourceFactory.CreateCommandList();
         Log.Debug("Veldrid OK!");
 
-        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height, storage.GetFile("launcherUI.ini"));
+        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height, storage.GetFile("launcherUI.ini"), Config.FontPtSize ?? 21.0f);
         Log.Debug("ImGui OK!");
 
         StyleModelV1.DalamudStandard.Apply();
