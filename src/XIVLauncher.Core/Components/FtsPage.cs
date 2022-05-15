@@ -1,6 +1,5 @@
 using System.Numerics;
 using ImGuiNET;
-using XIVLauncher.Common;
 
 namespace XIVLauncher.Core.Components;
 
@@ -57,7 +56,7 @@ public class FtsPage : Page
         {
             if (!this.isSteamDeckAppIdError)
             {
-                Util.OpenBrowser("https://goatcorp.github.io/faq/steamdeck");
+                AppUtil.OpenBrowser("https://goatcorp.github.io/faq/steamdeck");
             }
 
             Environment.Exit(0);

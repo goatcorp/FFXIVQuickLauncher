@@ -172,6 +172,7 @@ public class MainPage : Page
 
             // Make sure we are loading again
             App.State = LauncherApp.LauncherState.Loading;
+            Program.Invalidate(10);
         }
 
         if (otp == null)

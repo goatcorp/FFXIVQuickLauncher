@@ -1,4 +1,5 @@
 using System.Reflection;
+using XIVLauncher.Common;
 
 namespace XIVLauncher.Core;
 
@@ -47,5 +48,17 @@ public static partial class AppUtil
     {
         var fvi = VersionInfo.Instance().Version;
         return fvi.FileVersion.ToString();
+    }
+
+    public static void OpenBrowser(string url)
+    {
+        if (Program.IsSteamDeck && Program.Steam != null && Program.Steam.IsValid)
+        {
+            Program.Steam.ActivateGameOverlayToWebPage(url);
+        }
+        else
+        {
+            Util.OpenBrowser(url);
+        }
     }
 }

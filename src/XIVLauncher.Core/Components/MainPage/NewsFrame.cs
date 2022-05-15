@@ -79,7 +79,7 @@ public class NewsFrame : Component
                 ImGui.Image(banner.ImGuiHandle, banner.Size);
 
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-                    Util.OpenBrowser(this.headlines.Banner[this.currentBanner].Link.ToString());
+                    AppUtil.OpenBrowser(this.headlines.Banner[this.currentBanner].Link.ToString());
 
                 ImGui.Dummy(new Vector2(15));
 
@@ -89,7 +89,7 @@ public class NewsFrame : Component
 
                     if (ImGui.IsItemClicked(ImGuiMouseButton.Left) && !string.IsNullOrEmpty(newsEntry.Url))
                     {
-                        Util.OpenBrowser(newsEntry.Url);
+                        AppUtil.OpenBrowser(newsEntry.Url);
                     }
                 }
 
