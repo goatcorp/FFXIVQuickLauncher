@@ -54,9 +54,6 @@ class Program
     private static uint invalidationFrames = 0;
     private static Vector2 lastMousePosition;
 
-    private static bool lastFrameTextInput = false;
-    public static bool DoAutoSoftwareKbd { get; set; } = true;
-
     public static void Invalidate(uint frames = 100)
     {
         invalidationFrames = frames;
@@ -253,23 +250,6 @@ class Program
             bindings.Update(1f / 60f, snapshot);
 
             launcherApp.Draw();
-
-            var wantTextInput = ImGui.GetIO().WantTextInput;
-
-            if (wantTextInput && !lastFrameTextInput && DoAutoSoftwareKbd && Steam.IsRunningOnSteamDeck())
-            {
-                Steam.ShowFloatingGamepadTextInput(ISteam.EFloatingGamepadTextInputMode.EnterDismisses, 0, 0, 100, 100);
-                Log.Verbose("Show kbd");
-                lastFrameTextInput = true;
-            }
-            else if (wantTextInput)
-            {
-                lastFrameTextInput = true;
-            }
-            else
-            {
-                lastFrameTextInput = false;
-            }
 
             cl.Begin();
             cl.SetFramebuffer(gd.MainSwapchain.Framebuffer);
