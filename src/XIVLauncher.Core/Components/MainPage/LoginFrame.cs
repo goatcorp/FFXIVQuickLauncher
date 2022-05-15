@@ -144,14 +144,16 @@ public class LoginFrame : Component
 
             ImGui.PushFont(FontManager.IconFont);
 
-            if (ImGui.Button(FontAwesomeIcon.CaretDown.ToIconString(), new Vector2(30, 30) * ImGuiHelpers.GlobalScale))
+            var extraButtonSize = new Vector2(45) * ImGuiHelpers.GlobalScale;
+
+            if (ImGui.Button(FontAwesomeIcon.CaretDown.ToIconString(), extraButtonSize))
             {
                 ImGui.OpenPopup(POPUP_ID_LOGINACTION);
             }
 
             ImGui.SameLine();
 
-            if (ImGui.Button(FontAwesomeIcon.UserFriends.ToIconString(), new Vector2(30, 30) * ImGuiHelpers.GlobalScale))
+            if (ImGui.Button(FontAwesomeIcon.UserFriends.ToIconString(), extraButtonSize))
             {
                 this.mainPage.AccountSwitcher.Open();
             }
