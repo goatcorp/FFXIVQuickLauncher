@@ -9,7 +9,7 @@
     <LangVersion>latest</LangVersion>
     <ApplicationIcon>Resources\dalamud_icon.ico</ApplicationIcon>
 
-    <Version>1.0.0.8</Version>
+    <Version>1.0.0.9</Version>
     <FileVersion>$(Version)</FileVersion>
     <AssemblyVersion>$(Version)</AssemblyVersion>
 
