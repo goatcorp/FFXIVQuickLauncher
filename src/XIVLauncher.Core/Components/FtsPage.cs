@@ -58,8 +58,10 @@ public class FtsPage : Page
             {
                 AppUtil.OpenBrowser("https://goatcorp.github.io/faq/steamdeck");
             }
-
-            Environment.Exit(0);
+            else
+            {
+                Environment.Exit(0);
+            }
         }
 
         ImGui.SetCursorPos(new Vector2(316, 598));
