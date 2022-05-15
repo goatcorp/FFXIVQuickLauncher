@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ public class MacVideoFix : GameFix
         client.StartDownload().GetAwaiter().GetResult();
 
         var tempMacExtract = Path.Combine(TempDir.FullName, "xlcore-macTempExtract");
-        Util.Unzip(zipFilePath, tempMacExtract);
+        ZipFile.ExtractToDirectory(zipFilePath, tempMacExtract);
 
         var videoDirectory = new DirectoryInfo(Path.Combine(tempMacExtract, "FINAL FANTASY XIV ONLINE.app", "Contents", "SharedSupport", "finalfantasyxiv", "support", "published_Final_Fantasy", "drive_c",
             "Program Files (x86)", "SquareEnix", "FINAL FANTASY XIV - A Realm Reborn", "game", "movie", "ffxiv"));
