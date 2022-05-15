@@ -12,7 +12,7 @@ public interface ILauncherConfig
 
     public bool? DoVersionCheck { get; set; }
 
-    public float? FontPtSize { get; set; }
+    public float? FontPxSize { get; set; }
 
     public string? CurrentAccountId { get; set; }
 

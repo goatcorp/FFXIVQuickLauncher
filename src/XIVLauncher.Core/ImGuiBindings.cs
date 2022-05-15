@@ -65,7 +65,7 @@ public class ImGuiBindings : IDisposable
     /// <summary>
     /// Constructs a new ImGuiController.
     /// </summary>
-    public ImGuiBindings(GraphicsDevice gd, OutputDescription outputDescription, int width, int height, FileInfo iniPath, float fontPtSize)
+    public ImGuiBindings(GraphicsDevice gd, OutputDescription outputDescription, int width, int height, FileInfo iniPath, float fontPxSize)
     {
         _gd = gd;
         _windowWidth = width;
@@ -89,7 +89,7 @@ public class ImGuiBindings : IDisposable
         io.GetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(_getText);
         io.ClipboardUserData = IntPtr.Zero;
 
-        CreateDeviceResources(gd, outputDescription, fontPtSize);
+        CreateDeviceResources(gd, outputDescription, fontPxSize);
         SetKeyMappings();
 
         SetPerFrameImGuiData(1f / 60f);
@@ -135,7 +135,7 @@ public class ImGuiBindings : IDisposable
         Dispose();
     }
 
-    public void CreateDeviceResources(GraphicsDevice gd, OutputDescription outputDescription, float fontPtSize)
+    public void CreateDeviceResources(GraphicsDevice gd, OutputDescription outputDescription, float fontPxSize)
     {
         _gd = gd;
         ResourceFactory factory = gd.ResourceFactory;
@@ -145,7 +145,7 @@ public class ImGuiBindings : IDisposable
         _indexBuffer.Name = "ImGui.NET Index Buffer";
 
         var fontMr = new FontManager();
-        fontMr.SetupFonts(fontPtSize);
+        fontMr.SetupFonts(fontPxSize);
         RecreateFontDeviceTexture(gd);
         Log.Debug("Fonts OK!");
 

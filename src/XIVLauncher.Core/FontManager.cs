@@ -11,7 +11,7 @@ public class FontManager
 
     public static ImFontPtr IconFont { get; private set; }
 
-    public unsafe void SetupFonts(float ptSize)
+    public unsafe void SetupFonts(float pxSize)
     {
         var ioFonts = ImGui.GetIO().Fonts;
 
@@ -31,7 +31,7 @@ public class FontManager
 
         var japaneseRangeHandle = GCHandle.Alloc(GlyphRangesJapanese.GlyphRanges, GCHandleType.Pinned);
 
-        TextFont = ioFonts.AddFontFromMemoryTTF(fontDataTextPtr, fontDataText.Length, ptSize, null, japaneseRangeHandle.AddrOfPinnedObject());
+        TextFont = ioFonts.AddFontFromMemoryTTF(fontDataTextPtr, fontDataText.Length, pxSize, null, japaneseRangeHandle.AddrOfPinnedObject());
 
         var iconRangeHandle = GCHandle.Alloc(
             new ushort[]
@@ -42,7 +42,7 @@ public class FontManager
             },
             GCHandleType.Pinned);
 
-        IconFont = ioFonts.AddFontFromMemoryTTF(fontDataIconsPtr, fontDataIcons.Length, ptSize, fontConfig, iconRangeHandle.AddrOfPinnedObject());
+        IconFont = ioFonts.AddFontFromMemoryTTF(fontDataIconsPtr, fontDataIcons.Length, pxSize, fontConfig, iconRangeHandle.AddrOfPinnedObject());
 
         ioFonts.Build();
 

@@ -68,6 +68,9 @@ class Program
                      .WriteTo.Debug()
                      .MinimumLevel.Verbose()
                      .CreateLogger();
+
+        Log.Information("========================================================");
+        Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
     }
 
     private static void LoadConfig(Storage storage)
@@ -91,7 +94,7 @@ class Program
         Config.IsAutologin ??= false;
         Config.CompletedFts ??= false;
         Config.DoVersionCheck ??= true;
-        Config.FontPtSize ??= 21.0f;
+        Config.FontPxSize ??= 22.0f;
 
         Config.IsDx11 ??= true;
         Config.IsEncryptArgs ??= true;
@@ -194,7 +197,7 @@ class Program
         cl = gd.ResourceFactory.CreateCommandList();
         Log.Debug("Veldrid OK!");
 
-        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height, storage.GetFile("launcherUI.ini"), Config.FontPtSize ?? 21.0f);
+        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height, storage.GetFile("launcherUI.ini"), Config.FontPxSize ?? 21.0f);
         Log.Debug("ImGui OK!");
 
         StyleModelV1.DalamudStandard.Apply();
