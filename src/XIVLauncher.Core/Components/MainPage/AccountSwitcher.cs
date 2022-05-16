@@ -1,3 +1,4 @@
+using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Core.Accounts;
 
@@ -25,6 +26,8 @@ public class AccountSwitcher : Component
 
     public override void Draw()
     {
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(5));
+
         if (ImGui.BeginPopupContextItem(ACCOUNT_SWITCHER_POPUP_ID))
         {
             if (this.manager.Accounts.Count == 0)
@@ -34,7 +37,17 @@ public class AccountSwitcher : Component
 
             foreach (XivAccount account in this.manager.Accounts)
             {
-                if (ImGui.Button(account.Id))
+                var name = account.UserName;
+
+                if (account.UseSteamServiceAccount)
+                    name += " (Steam)";
+
+                if (account.UseOtp)
+                    name += " (OTP)";
+
+                var textLength = ImGui.CalcTextSize(name).X;
+
+                if (ImGui.Button(name + $"###{account.Id}", new Vector2(textLength + 15, 40)))
                 {
                     this.AccountChanged?.Invoke(this, account);
                 }
@@ -42,6 +55,8 @@ public class AccountSwitcher : Component
 
             ImGui.EndPopup();
         }
+
+        ImGui.PopStyleVar();
 
         if (this.doOpen)
         {

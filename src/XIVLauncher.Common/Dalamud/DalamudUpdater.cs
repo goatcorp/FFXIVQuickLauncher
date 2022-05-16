@@ -19,6 +19,7 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo addonDirectory;
         private readonly DirectoryInfo runtimeDirectory;
         private readonly DirectoryInfo assetDirectory;
+        private readonly DirectoryInfo configDirectory;
         private readonly IUniqueIdCache? cache;
         public DownloadState State { get; private set; } = DownloadState.Unknown;
         public bool IsStaging { get; private set; } = false;
@@ -51,11 +52,12 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity
         }
 
-        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, IUniqueIdCache? cache)
+        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, DirectoryInfo configDirectory, IUniqueIdCache? cache)
         {
             this.addonDirectory = addonDirectory;
             this.runtimeDirectory = runtimeDirectory;
             this.assetDirectory = assetDirectory;
+            this.configDirectory = configDirectory;
             this.cache = cache;
         }
 
@@ -136,7 +138,7 @@ namespace XIVLauncher.Common.Dalamud
 
         private async Task UpdateDalamud()
         {
-            var settings = DalamudSettings.GetSettings();
+            var settings = DalamudSettings.GetSettings(this.configDirectory);
 
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;

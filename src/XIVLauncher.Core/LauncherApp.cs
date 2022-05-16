@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
 using ImGuiNET;
+using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
@@ -35,6 +36,9 @@ public class LauncherApp : Component
         Settings,
         Loading,
         OtpEntry,
+        Fts,
+        UpdateWarn,
+        SteamDeckPrompt,
     }
 
     private LauncherState state = LauncherState.Main;
@@ -72,6 +76,18 @@ public class LauncherApp : Component
                     this.otpEntryPage.OnShow();
                     break;
 
+                case LauncherState.Fts:
+                    this.ftsPage.OnShow();
+                    break;
+
+                case LauncherState.UpdateWarn:
+                    this.updateWarnPage.OnShow();
+                    break;
+
+                case LauncherState.SteamDeckPrompt:
+                    this.steamDeckPromptPage.OnShow();
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value), value, null);
             }
@@ -84,12 +100,15 @@ public class LauncherApp : Component
         LauncherState.Settings => this.setPage,
         LauncherState.Loading => this.LoadingPage,
         LauncherState.OtpEntry => this.otpEntryPage,
+        LauncherState.Fts => this.ftsPage,
+        LauncherState.UpdateWarn => this.updateWarnPage,
+        LauncherState.SteamDeckPrompt => this.steamDeckPromptPage,
         _ => throw new ArgumentOutOfRangeException(nameof(this.state), this.state, null)
     };
 
     public ILauncherConfig Settings => Program.Config;
     public Launcher Launcher { get; private set; }
-    public ISteam Steam => Program.Steam;
+    public ISteam? Steam => Program.Steam;
     public Storage Storage { get; private set; }
 
     public LoadingPage LoadingPage { get; }
@@ -100,10 +119,13 @@ public class LauncherApp : Component
     private readonly MainPage mainPage;
     private readonly SettingsPage setPage;
     private readonly OtpEntryPage otpEntryPage;
+    private readonly FtsPage ftsPage;
+    private readonly UpdateWarnPage updateWarnPage;
+    private readonly SteamDeckPromptPage steamDeckPromptPage;
 
     private readonly Background background = new();
 
-    public LauncherApp(Storage storage)
+    public LauncherApp(Storage storage, bool needsUpdateWarning)
     {
         this.Storage = storage;
 
@@ -115,6 +137,18 @@ public class LauncherApp : Component
         this.setPage = new SettingsPage(this);
         this.otpEntryPage = new OtpEntryPage(this);
         this.LoadingPage = new LoadingPage(this);
+        this.ftsPage = new FtsPage(this);
+        this.updateWarnPage = new UpdateWarnPage(this);
+        this.steamDeckPromptPage = new SteamDeckPromptPage(this);
+
+        if (needsUpdateWarning)
+        {
+            this.State = LauncherState.UpdateWarn;
+        }
+        else
+        {
+            this.RunStartupTasks();
+        }
 
 #if DEBUG
         IsDebug = true;
@@ -147,10 +181,11 @@ public class LauncherApp : Component
         this.ShowMessageBlocking($"An error occurred ({context}).\n\n{exception}", "XIVLauncher Error");
     }
 
-    public bool HandleContinationBlocking(Task task)
+    public bool HandleContinuationBlocking(Task task)
     {
         if (task.IsFaulted)
         {
+            Log.Error(task.Exception, "Task failed");
             this.ShowMessageBlocking(task.Exception?.InnerException?.Message ?? "Unknown error - please check logs.", "Error");
             return false;
         }
@@ -177,7 +212,7 @@ public class LauncherApp : Component
         return this.otpEntryPage.Result;
     }
 
-    public void StartLoading(string line1, string line2 = "", string line3 = "", bool isIndeterminate = true, bool canCancel = false)
+    public void StartLoading(string line1, string line2 = "", string line3 = "", bool isIndeterminate = true, bool canCancel = false, bool canDisableAutoLogin = false)
     {
         this.State = LauncherState.Loading;
         this.LoadingPage.Line1 = line1;
@@ -185,6 +220,9 @@ public class LauncherApp : Component
         this.LoadingPage.Line3 = line3;
         this.LoadingPage.IsIndeterminate = isIndeterminate;
         this.LoadingPage.CanCancel = canCancel;
+        this.LoadingPage.CanDisableAutoLogin = canDisableAutoLogin;
+
+        this.LoadingPage.Reset();
     }
 
     public void StopLoading()
@@ -192,10 +230,22 @@ public class LauncherApp : Component
         this.State = LauncherState.Main;
     }
 
+    public void FinishFromUpdateWarn()
+    {
+        this.State = LauncherState.Main;
+        this.RunStartupTasks();
+    }
+
+    public void RunStartupTasks()
+    {
+        this.ftsPage.OpenFtsIfNeeded();
+        this.mainPage.DoAutoLoginIfApplicable();
+    }
+
     public override void Draw()
     {
         ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, this.CurrentPage.Padding ?? ImGui.GetStyle().WindowPadding);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0));
 
         ImGui.SetNextWindowPos(new Vector2(0, 0));
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
@@ -204,12 +254,17 @@ public class LauncherApp : Component
                 ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNavFocus
                 | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
-            // this.background.Draw();
+            this.background.Draw();
 
             ImGui.PushStyleColor(ImGuiCol.WindowBg, ImGuiColors.BlueShade0);
         }
 
         ImGui.End();
+
+        ImGui.PopStyleVar(2);
+
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, this.CurrentPage.Padding ?? ImGui.GetStyle().WindowPadding);
 
         ImGui.SetNextWindowPos(new Vector2(0, 0));
         ImGui.SetNextWindowSize(ImGuiHelpers.ViewportSize);
@@ -230,8 +285,8 @@ public class LauncherApp : Component
 
         ImGui.PopStyleVar(2);
 
-        if (this.isDemoWindow)
-            ImGui.ShowDemoWindow(ref this.isDemoWindow);
+        //if (this.isDemoWindow)
+        //    ImGui.ShowDemoWindow(ref this.isDemoWindow);
 
         this.DrawModal();
     }

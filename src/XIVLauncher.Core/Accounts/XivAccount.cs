@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Serilog;
 using System.Net;
-using KeySharp;
 using Newtonsoft.Json.Linq;
-using XIVLauncher.Common;
 
 namespace XIVLauncher.Core.Accounts;
 
@@ -14,9 +12,6 @@ public class XivAccount
 
     public override string ToString() => Id;
 
-    public const string PACKAGE = "com.goatsoft.xivlauncher";
-    public const string SERVICE = "SEID";
-
     public string UserName { get; private set; }
 
     [JsonIgnore]
@@ -24,23 +19,17 @@ public class XivAccount
     {
         get
         {
-            if (EnvironmentSettings.IsNoSavePassword)
-                return string.Empty;
-
             if (string.IsNullOrEmpty(UserName))
                 return string.Empty;
 
-            var credentials = Keyring.GetPassword(PACKAGE, SERVICE, UserName);
+            var credentials = Program.Secrets.GetPassword(UserName);
             return credentials ?? string.Empty;
         }
         set
         {
-            if (EnvironmentSettings.IsNoSavePassword)
-                return;
-
             if (!string.IsNullOrEmpty(value))
             {
-                Keyring.SetPassword(PACKAGE, SERVICE, UserName, value);
+                Program.Secrets.SavePassword(UserName, value);
             }
         }
     }

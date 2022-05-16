@@ -10,11 +10,12 @@ namespace XIVLauncher.Common.Dalamud
         public string DalamudBetaKind { get; set; }
         public bool? OptOutMbCollection { get; set; }
 
-        public static string ConfigPath => Path.Combine(Paths.RoamingPath, "dalamudConfig.json");
+        public static string GetConfigPath(DirectoryInfo configFolder) => Path.Combine(configFolder.FullName, "dalamudConfig.json");
 
-        public static DalamudSettings GetSettings()
+        public static DalamudSettings GetSettings(DirectoryInfo configFolder)
         {
-            var deserialized = File.Exists(ConfigPath) ? JsonConvert.DeserializeObject<DalamudSettings>(File.ReadAllText(ConfigPath)) : new DalamudSettings();
+            var configPath = GetConfigPath(configFolder);
+            var deserialized = File.Exists(configPath) ? JsonConvert.DeserializeObject<DalamudSettings>(File.ReadAllText(configPath)) : new DalamudSettings();
             deserialized ??= new DalamudSettings(); // In case the .json is corrupted
             return deserialized;
         }

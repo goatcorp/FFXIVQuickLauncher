@@ -29,6 +29,11 @@ To uninstall, you can use the Windows Programs & Apps menu or right click XIVLau
 
 ⚠ <b>Attention!</b> If you receive errors during the installation or if the launcher doesn't work correctly, make sure to <b>check your antivirus</b> first and disable it for XIVLauncher. Many commercial antivirus programs detect XIVLauncher as a false positive. You can check for yourself on VirusTotal. If you need any help with this, please [check our FAQ](https://goatcorp.github.io/faq/xl_troubleshooting#q-how-do-i-whitelist-xivlauncher-and-dalamud-so-my-antivirus-leaves-them-alone) or join our Discord channel.
 
+## On Steam Deck and Desktop Linux
+XIVLauncher now has a native Linux version that works on Steam Deck and Desktop Linux - no more messing around with scripts and command lines, just a few easy steps to install the game and add it to Steam, with a wine version especially tuned to XIV.
+
+Please see a guide here: https://goatcorp.github.io/faq/steamdeck
+
 ## How to install plugins
 XIVLauncher supports the installation of __plugins/addons__ made by __third-party developers__ in-game.
 

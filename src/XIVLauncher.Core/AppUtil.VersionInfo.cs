@@ -9,7 +9,7 @@ public static partial class AppUtil
     /// </summary>
     public partial class VersionInfo
     {
-        private static VersionInfo? _version;
+        private static VersionInfo? version;
 
         /// <summary>
         ///    Gets the version information for the assembly.
@@ -21,10 +21,10 @@ public static partial class AppUtil
         /// </summary>
         public static VersionInfo Instance()
         {
-            if (_version == null)
-                _version = new VersionInfo();
+            if (version == null)
+                version = new VersionInfo();
 
-            return _version;
+            return version;
         }
     }
 }

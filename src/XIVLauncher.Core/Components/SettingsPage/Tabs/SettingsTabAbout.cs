@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Reflection;
 using ImGuiNET;
 using XIVLauncher.Common;
 
@@ -27,19 +26,23 @@ public class SettingsTabAbout : SettingsTab
         ImGui.Text($"This is XIVLauncher Core v{AppUtil.GetAssemblyVersion()}({AppUtil.GetGitHash()})");
         ImGui.Text("By goaaats");
 
+#if FLATPAK
+        ImGui.TextColored(ImGuiColors.DalamudRed, "THIS IS A FLATPAK!!!");
+#endif
+
         if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-            Util.OpenBrowser("https://github.com/goaaats");
+            AppUtil.OpenBrowser("https://github.com/goaaats");
 
         ImGui.Dummy(new Vector2(20));
 
         if (ImGui.Button("Open GitHub"))
         {
-            Util.OpenBrowser("https://github.com/goatcorp/FFXIVQuickLauncher");
+            AppUtil.OpenBrowser("https://github.com/goatcorp/FFXIVQuickLauncher");
         }
 
         if (ImGui.Button("Join our Discord"))
         {
-            Util.OpenBrowser("https://discord.gg/3NMcUV5");
+            AppUtil.OpenBrowser("https://discord.gg/3NMcUV5");
         }
 
         if (ImGui.Button("See software licenses"))

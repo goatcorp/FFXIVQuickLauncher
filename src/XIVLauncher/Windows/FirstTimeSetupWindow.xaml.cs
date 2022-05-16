@@ -89,8 +89,20 @@ namespace XIVLauncher.Windows
 
                 if (!Util.IsValidFfxivPath(GamePathEntry.Text))
                 {
-                    CustomMessageBox.Show(Loc.Localize("GamePathInvalidError", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in."), "XIVLauncher",
-                        MessageBoxButton.OK, MessageBoxImage.Information, parentWindow: this);
+                    if (CustomMessageBox.Show(Loc.Localize("GamePathInvalidConfirm", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.\nContinue?"), "XIVLauncher",
+                        MessageBoxButton.YesNo, MessageBoxImage.Information, parentWindow: this) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
+                if (Util.CanFfxivMightNotBeInternationalClient(GamePathEntry.Text))
+                {
+                    if (CustomMessageBox.Show(Loc.Localize("GamePathRegionConfirm", "The folder you selected might be the Chinese or Korean release of the game. XIVLauncher only supports international release of the game.\nIs the folder you've selected indeed for the international version?"), "XIVLauncher",
+                        MessageBoxButton.YesNo, MessageBoxImage.Warning, parentWindow: this) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
                 }
             }
 

@@ -8,6 +8,12 @@ namespace XIVLauncher.Core.Configuration;
 
 public interface ILauncherConfig
 {
+    public bool? CompletedFts { get; set; }
+
+    public bool? DoVersionCheck { get; set; }
+
+    public float? FontPxSize { get; set; }
+
     public string? CurrentAccountId { get; set; }
 
     public string? AcceptLanguage { get; set; }
@@ -59,7 +65,7 @@ public interface ILauncherConfig
     public string? WineBinaryPath { get; set; }
 
     public bool? GameModeEnabled { get; set; }
-    
+
     public bool? DxvkAsyncEnabled { get; set; }
 
     public bool? ESyncEnabled { get; set; }

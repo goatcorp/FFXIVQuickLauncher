@@ -18,6 +18,7 @@ public interface ISteam
     bool ShowFloatingGamepadTextInput(EFloatingGamepadTextInputMode mode, int x, int y, int width, int height);
     bool IsRunningOnSteamDeck();
     uint GetServerRealTime();
+    public void ActivateGameOverlayToWebPage(string url, bool modal = false);
 
     enum EFloatingGamepadTextInputMode
     {

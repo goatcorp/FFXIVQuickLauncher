@@ -7,6 +7,7 @@ on:
 
 jobs:
   synchronize-with-crowdin:
+    if: github.repository_owner == 'goatcorp'
     runs-on: ubuntu-latest
 
     steps:

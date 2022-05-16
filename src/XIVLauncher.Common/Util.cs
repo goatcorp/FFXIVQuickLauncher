@@ -39,6 +39,14 @@ namespace XIVLauncher.Common
             return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
         }
 
+        public static bool CanFfxivMightNotBeInternationalClient(string path) {
+            if (Directory.Exists(Path.Combine(path, "sdo")))
+                return true;
+            if (File.Exists(Path.Combine(path, "boot", "FFXIV_Boot.exe")))
+                return true;
+            return false;
+        }
+
         public static bool LetChoosePath(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -315,7 +323,12 @@ namespace XIVLauncher.Common
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
+                // NOTE(goat): This is a workaround to xdg-desktop-portal not being correctly configured on Steam Deck.
+#if FLATPAK
+                Process.Start("flatpak-spawn", $"--host xdg-open {url}");
+#else
                 Process.Start("xdg-open", url);
+#endif
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -342,7 +355,7 @@ namespace XIVLauncher.Common
             tarProcess.WaitForExit();
 
             if (tarProcess.ExitCode != 0)
-                throw new Exception("Could not untar compatibility tool");
+                throw new Exception("Could not untar.");
         }
     }
 }

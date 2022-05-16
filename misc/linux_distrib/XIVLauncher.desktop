@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=XIVLauncher
+Comment=Custom launcher for Final Fantasy XIV Online
+Exec=xivlauncher
+Icon=xivlauncher
+Terminal=false
+Type=Application
+Categories=Game;
+StartupWMClass=XIVLauncher.Core
