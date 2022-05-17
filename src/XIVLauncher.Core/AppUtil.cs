@@ -52,7 +52,7 @@ public static partial class AppUtil
 
     public static void OpenBrowser(string url)
     {
-        if (Program.IsSteamDeck && Program.Steam != null && Program.Steam.IsValid)
+        if (Program.IsSteamDeckHardware && Program.Steam != null && Program.Steam.IsValid)
         {
             Program.Steam.ActivateGameOverlayToWebPage(url);
         }

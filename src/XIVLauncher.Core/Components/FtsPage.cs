@@ -19,13 +19,13 @@ public class FtsPage : Page
 
     public void OpenFtsIfNeeded()
     {
-        if (!(App.Settings.CompletedFts ?? false) && Program.IsSteamDeck)
+        if (!(App.Settings.CompletedFts ?? false) && Program.IsSteamDeckHardware)
         {
             App.State = LauncherApp.LauncherState.Fts;
             return;
         }
 
-        if (Program.IsSteamDeck && (Program.Steam == null || !Program.Steam.IsValid))
+        if (Program.IsSteamDeckHardware && (Program.Steam == null || !Program.Steam.IsValid))
         {
             App.State = LauncherApp.LauncherState.Fts;
             this.isSteamDeckAppIdError = true;

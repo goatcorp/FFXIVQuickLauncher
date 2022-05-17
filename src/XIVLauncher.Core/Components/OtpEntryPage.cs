@@ -39,7 +39,7 @@ public class OtpEntryPage : Page
 
         // TODO(goat): This doesn't work if you call it right after starting the app... Steam probably takes a little while to initialize. Might be annoying for autologin.
         // BUG: We have to turn this off when using OTP server, because there's no way to dismiss open keyboards
-        if (Program.Steam != null && Program.Steam.IsValid && Program.IsSteamDeck && App.Settings.IsOtpServer is false)
+        if (Program.Steam != null && Program.Steam.IsValid && Program.IsSteamDeckHardware && App.Settings.IsOtpServer is false)
         {
             var success = Program.Steam.ShowGamepadTextInput(false, false, "Please enter your OTP", 6, string.Empty);
             Log.Verbose("ShowGamepadTextInput: {Success}", success);

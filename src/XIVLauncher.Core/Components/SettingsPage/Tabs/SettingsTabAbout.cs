@@ -30,6 +30,16 @@ public class SettingsTabAbout : SettingsTab
         ImGui.TextColored(ImGuiColors.DalamudRed, "THIS IS A FLATPAK!!!");
 #endif
 
+        ImGui.Dummy(new Vector2(5));
+
+        if (Program.IsSteamDeckHardware)
+            ImGui.Text("Is Steam Deck hardware");
+
+        if (Program.IsSteamDeckGamingMode)
+            ImGui.Text("Is Steam Deck");
+
+        ImGui.Dummy(new Vector2(5));
+
         if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             AppUtil.OpenBrowser("https://github.com/goaaats");
 

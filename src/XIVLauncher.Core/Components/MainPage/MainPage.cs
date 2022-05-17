@@ -744,7 +744,7 @@ public class MainPage : Page
             throw new NotImplementedException();
         }
 
-        if (!Program.IsSteamDeck)
+        if (!Program.IsSteamDeckHardware)
         {
             Hide();
         }
