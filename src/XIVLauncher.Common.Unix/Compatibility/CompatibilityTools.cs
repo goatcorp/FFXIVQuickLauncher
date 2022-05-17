@@ -116,6 +116,8 @@ public class CompatibilityTools
     {
         var psi = new ProcessStartInfo(Wine64Path);
         psi.Arguments = command;
+
+        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, command);
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
 
@@ -125,6 +127,7 @@ public class CompatibilityTools
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
+        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
     }
 
@@ -203,8 +206,6 @@ public class CompatibilityTools
             }
         }
 #endif
-
-        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi;

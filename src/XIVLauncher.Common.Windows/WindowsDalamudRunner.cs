@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Serilog;
@@ -12,58 +13,66 @@ namespace XIVLauncher.Common.Windows;
 
 public class WindowsDalamudRunner : IDalamudRunner
 {
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool SetDllDirectory(string lpPathName);
-
-    [DllImport("Dalamud.Boot.dll")]
-    private static extern int RewriteRemoteEntryPointW(IntPtr hProcess, [MarshalAs(UnmanagedType.LPWStr)] string gamePath, [MarshalAs(UnmanagedType.LPWStr)] string loadInfoJson);
-
-    public void Run(Int32 gameProcessID, FileInfo runner, DalamudStartInfo startInfo, DirectoryInfo gamePath, DalamudLoadMethod loadMethod)
+    public Process? Run(FileInfo runner, bool fakeLogin, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo startInfo)
     {
-        var gameProcess = Process.GetProcessById(gameProcessID);
-        switch (loadMethod)
+        var handleOwner = Process.GetCurrentProcess().Handle;
+
+        var launchArguments = new List<string> { "launch",
+            $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
+            $"--handle-owner={(long)handleOwner}",
+            $"--game='{gameExe.FullName}'",
+            $"--dalamud-working-directory='{startInfo.WorkingDirectory}'",
+            $"--dalamud-configuration-path='{startInfo.ConfigurationPath}'",
+            $"--dalamud-plugin-directory='{startInfo.PluginDirectory}'",
+            $"--dalamud-dev-plugin-directory='{startInfo.DefaultPluginDirectory}'",
+            $"--dalamud-asset-directory='{startInfo.AssetDirectory}'",
+            $"--dalamud-client-language={(int)startInfo.Language}",
+            $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
+            };
+
+        if (loadMethod == DalamudLoadMethod.ACLonly)
+            launchArguments.Add("--without-dalamud");
+
+        if (fakeLogin)
+            launchArguments.Add("--fake-arguments");
+
+        launchArguments.Add("--");
+        launchArguments.Add(gameArgs);
+
+        var psi = new ProcessStartInfo(runner.FullName);
+        psi.Arguments = string.Join(" ", launchArguments);
+
+        foreach (var keyValuePair in environment)
         {
-            case DalamudLoadMethod.EntryPoint:
-                SetDllDirectory(runner.DirectoryName);
+            if (psi.EnvironmentVariables.ContainsKey(keyValuePair.Key))
+                psi.EnvironmentVariables[keyValuePair.Key] = keyValuePair.Value;
+            else
+                psi.EnvironmentVariables.Add(keyValuePair.Key, keyValuePair.Value);
+        }
 
-                try
-                {
-                    if (0 != RewriteRemoteEntryPointW(gameProcess.Handle,
-                            Path.Combine(gamePath.FullName, "game", gameProcess.ProcessName + ".exe"),
-                            JsonConvert.SerializeObject(startInfo)))
-                    {
-                        Log.Error("[HOOKS] RewriteRemoteEntryPointW failed");
-                        throw new DalamudRunnerException("RewriteRemoteEntryPointW failed");
-                    }
-                }
-                catch (DllNotFoundException ex)
-                {
-                    Log.Error(ex, "[HOOKS] Dalamud entrypoint DLL not found");
-                    throw new DalamudRunnerException("DLL not found");
-                }
+        psi.RedirectStandardOutput = true;
+        psi.UseShellExecute = false;
 
-                break;
+        var dalamudProcess = Process.Start(psi);
+        var output = dalamudProcess.StandardOutput.ReadLine();
 
-            case DalamudLoadMethod.DllInject:
-            {
-                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
+        if (output == null)
+            throw new DalamudRunnerException("An internal Dalamud error has occured");
 
-                var process = new Process
-                {
-                    StartInfo =
-                    {
-                        FileName = runner.FullName, WindowStyle = ProcessWindowStyle.Hidden, CreateNoWindow = true,
-                        Arguments = gameProcess.Id + " " + parameters, WorkingDirectory = runner.DirectoryName!
-                    }
-                };
+        try
+        {
+            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+            var gameProcess = Process.GetProcessById(dalamudConsoleOutput.pid);
 
-                process.Start();
-                break;
-            }
+            if (gameProcess.Handle != (IntPtr)dalamudConsoleOutput.handle)
+                Log.Warning($"Internal process handle [{(long)gameProcess.Handle}] does not match Dalamud provided one [{dalamudConsoleOutput.handle}]");
 
-            default:
-                // should not reach
-                throw new ArgumentOutOfRangeException();
+            return gameProcess;
+        }
+        catch (JsonReaderException ex)
+        {
+            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
+            return null;
         }
     }
 }

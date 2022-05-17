@@ -8,5 +8,5 @@ namespace XIVLauncher.Common.PlatformAbstractions;
 
 public interface IDalamudRunner
 {
-    Process? Run(FileInfo runner, bool fakeLogin, DirectoryInfo gamePath, string[] gameArgs, DalamudLoadMethod loadMethod, DalamudStartInfo startInfo, IDictionary<string, string> environment);
+    Process? Run(FileInfo runner, bool fakeLogin, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo startInfo);
 }

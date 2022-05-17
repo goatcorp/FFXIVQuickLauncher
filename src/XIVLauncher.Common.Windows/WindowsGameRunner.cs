@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
@@ -10,32 +13,41 @@ public class WindowsGameRunner : IGameRunner
 {
     private readonly DalamudLauncher dalamudLauncher;
     private readonly bool dalamudOk;
-    private readonly DalamudLoadMethod loadMethod;
 
-    public WindowsGameRunner(DalamudLauncher dalamudLauncher, bool dalamudOk, DalamudLoadMethod loadMethod)
+    public WindowsGameRunner(DalamudLauncher dalamudLauncher, bool dalamudOk)
     {
         this.dalamudLauncher = dalamudLauncher;
         this.dalamudOk = dalamudOk;
-        this.loadMethod = loadMethod;
     }
 
-    public object? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
+    public Process Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
-        var gameProcess = NativeAclFix.LaunchGame(workingDirectory, path, arguments, environment, dpiAwareness, process =>
+        var compat = "RunAsInvoker ";
+        compat += dpiAwareness switch
         {
-            if (this.dalamudOk && this.loadMethod == DalamudLoadMethod.EntryPoint)
-            {
-                Log.Verbose("[WindowsGameRunner] Now running OEP rewrite");
-                this.dalamudLauncher.Run(process.Id);
-            }
-        });
+            DpiAwareness.Aware => "HighDPIAware",
+            DpiAwareness.Unaware => "DPIUnaware",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        environment.Add("__COMPAT_LAYER", compat);
 
-        if (this.dalamudOk && this.loadMethod == DalamudLoadMethod.DllInject)
+
+        if (dalamudOk)
         {
-            Log.Verbose("[WindowsGameRunner] Now running DLL inject");
-            this.dalamudLauncher.Run(gameProcess.Id);
+            return this.dalamudLauncher.Run(new FileInfo(path), arguments, environment);
         }
-
-        return gameProcess;
+        else
+        {
+            var psi = new ProcessStartInfo(path);
+            psi.Arguments = arguments;
+            foreach (var keyValuePair in environment)
+            {
+                if (psi.EnvironmentVariables.ContainsKey(keyValuePair.Key))
+                    psi.EnvironmentVariables[keyValuePair.Key] = keyValuePair.Value;
+                else
+                    psi.EnvironmentVariables.Add(keyValuePair.Key, keyValuePair.Value);
+            }
+            return Process.Start(psi);
+        }
     }
 }
