@@ -37,6 +37,8 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
-        <PackageReference Include="Facepunch.Steamworks" Version="2.3.3" />
+
+        <!-- Custom steamworks, based on the chippy branch of Facepunch.Steamworks -->
+        <PackageReference Include="goaaats.Steamworks" Version="2.3.4" />
     </ItemGroup>
 </Project>
