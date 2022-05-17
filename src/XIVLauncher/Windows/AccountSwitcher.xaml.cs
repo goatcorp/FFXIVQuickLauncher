@@ -225,5 +225,18 @@ namespace XIVLauncher.Windows
             account.SavePassword = true;
             _accountManager.Save();
         }
+
+        private void ModifyOtpUri_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+                return;
+
+            var otpDialog = new OtpUriSetupWindow(selectedEntry.Account.OtpUri);
+            otpDialog.ShowDialog();
+
+            var account = _accountManager.Accounts.First(a => a.Id == selectedEntry.Account.Id);
+            account.OtpUri = otpDialog.Result;
+            _accountManager.Save();
+        }
     }
 }
