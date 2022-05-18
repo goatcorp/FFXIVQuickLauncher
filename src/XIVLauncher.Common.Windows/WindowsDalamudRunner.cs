@@ -38,8 +38,12 @@ public class WindowsDalamudRunner : IDalamudRunner
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
 
-        var psi = new ProcessStartInfo(runner.FullName);
-        psi.Arguments = string.Join(" ", launchArguments);
+        var psi = new ProcessStartInfo(runner.FullName) {
+            Arguments = string.Join(" ", launchArguments),
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
 
         foreach (var keyValuePair in environment)
         {
@@ -48,9 +52,6 @@ public class WindowsDalamudRunner : IDalamudRunner
             else
                 psi.EnvironmentVariables.Add(keyValuePair.Key, keyValuePair.Value);
         }
-
-        psi.RedirectStandardOutput = true;
-        psi.UseShellExecute = false;
 
         var dalamudProcess = Process.Start(psi);
         var output = dalamudProcess.StandardOutput.ReadLine();
