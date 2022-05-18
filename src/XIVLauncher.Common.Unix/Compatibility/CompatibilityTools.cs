@@ -260,7 +260,8 @@ public class CompatibilityTools
 
     public string UnixToWinePath(string unixPath)
     {
-        var winePath = RunInPrefix($"winepath --windows {unixPath}", redirectOutput: true);
+        var launchArguments = new string[] { "winepath", "--windows", unixPath };
+        var winePath = RunInPrefix(launchArguments, redirectOutput: true);
         var output = winePath.StandardOutput.ReadToEnd();
         return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
