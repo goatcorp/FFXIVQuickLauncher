@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Serilog;
 using XIVLauncher.Common.Dalamud;
-using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.Common.Windows;
