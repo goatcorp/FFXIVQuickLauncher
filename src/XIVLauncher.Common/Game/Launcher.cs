@@ -249,7 +249,7 @@ public class Launcher
         {
             var regex = new Regex(@"\s*(?<key>[^\s=]+)\s*=\s*(?<value>([^=]*$|[^=]*\s(?=[^\s=]+)))\s*", RegexOptions.Compiled);
             foreach (Match match in regex.Matches(additionalArguments))
-                argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value);
+                argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value.Trim());
         }
 
         if (!File.Exists(exePath))

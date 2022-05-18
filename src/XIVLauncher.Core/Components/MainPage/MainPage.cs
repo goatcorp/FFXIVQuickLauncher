@@ -742,7 +742,7 @@ public class MainPage : Page
 
             runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk);
 
-            gameArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
+            gameArgs += $" UserPath=\"{Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}\"";
             gameArgs = gameArgs.Trim();
         }
         else
