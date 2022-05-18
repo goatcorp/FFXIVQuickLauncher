@@ -18,8 +18,6 @@ public class UnixGameRunner : IGameRunner
     private readonly DalamudLauncher dalamudLauncher;
     private readonly bool dalamudOk;
 
-    public static readonly Regex ArgumentRegex = new(@"(\/\/\*\*sqex[^\s]+|\s*[^\s=]+\s*=\s*([^=]*$|[^=]*\s(?=[^\s=]+))\s*)", RegexOptions.Compiled);
-
     public UnixGameRunner(CompatibilityTools compatibility, DalamudLauncher dalamudLauncher, bool dalamudOk)
     {
         this.compatibility = compatibility;
@@ -35,13 +33,7 @@ public class UnixGameRunner : IGameRunner
         }
         else
         {
-            var launchArguments = new List<string> { path };
-
-            // Ideally game arguments would already be an array
-            foreach (Match match in ArgumentRegex.Matches(arguments))
-                launchArguments.Add(match.Value);
-
-            return compatibility.RunInPrefix(launchArguments.ToArray(), workingDirectory, environment);
+            return compatibility.RunInPrefix(path + " " + arguments, workingDirectory, environment);
         }
     }
 }

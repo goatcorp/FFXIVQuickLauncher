@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
@@ -78,7 +76,7 @@ public class WindowsDalamudRunner : IDalamudRunner
     /// DUPLICATE_* values for DuplicateHandle's dwDesiredAccess.
     /// </summary>
     [Flags]
-    public enum DuplicateOptions : uint {
+    private enum DuplicateOptions : uint {
         /// <summary>
         /// Closes the source handle. This occurs regardless of any error status returned.
         /// </summary>
@@ -141,7 +139,7 @@ public class WindowsDalamudRunner : IDalamudRunner
     /// </remarks>
     [DllImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool DuplicateHandle(
+    private static extern bool DuplicateHandle(
         IntPtr hSourceProcessHandle,
         IntPtr hSourceHandle,
         IntPtr hTargetProcessHandle,

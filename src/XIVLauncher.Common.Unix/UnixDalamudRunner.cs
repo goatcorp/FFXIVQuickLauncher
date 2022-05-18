@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
@@ -28,14 +25,14 @@ public class UnixDalamudRunner : IDalamudRunner
     {
         environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(dotnetRuntime.FullName));
 
-        var launchArguments = new List<string> { runner.FullName, "launch",
+        var launchArguments = new List<string> { $"\"{runner.FullName}\"", "launch",
             $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
-            $"--game={compatibility.UnixToWinePath(gameExe.FullName)}",
-            $"--dalamud-working-directory={compatibility.UnixToWinePath(startInfo.WorkingDirectory)}",
-            $"--dalamud-configuration-path={compatibility.UnixToWinePath(startInfo.ConfigurationPath)}",
-            $"--dalamud-plugin-directory={compatibility.UnixToWinePath(startInfo.PluginDirectory)}",
-            $"--dalamud-dev-plugin-directory={compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory)}",
-            $"--dalamud-asset-directory={compatibility.UnixToWinePath(startInfo.AssetDirectory)}",
+            $"--game=\"{compatibility.UnixToWinePath(gameExe.FullName)}\"",
+            $"--dalamud-working-directory=\"{compatibility.UnixToWinePath(startInfo.WorkingDirectory)}\"",
+            $"--dalamud-configuration-path=\"{compatibility.UnixToWinePath(startInfo.ConfigurationPath)}\"",
+            $"--dalamud-plugin-directory=\"{compatibility.UnixToWinePath(startInfo.PluginDirectory)}\"",
+            $"--dalamud-dev-plugin-directory=\"{compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory)}\"",
+            $"--dalamud-asset-directory=\"{compatibility.UnixToWinePath(startInfo.AssetDirectory)}\"",
             $"--dalamud-client-language={(int)startInfo.Language}",
             $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
             };
@@ -47,12 +44,9 @@ public class UnixDalamudRunner : IDalamudRunner
             launchArguments.Add("--fake-arguments");
 
         launchArguments.Add("--");
+        launchArguments.Add(gameArgs);
 
-        // Ideally gameArgs would already be an array
-        foreach (Match match in UnixGameRunner.ArgumentRegex.Matches(gameArgs))
-            launchArguments.Add(match.Value);
-
-        var dalamudProcess = compatibility.RunInPrefix(launchArguments.ToArray(), environment: environment, redirectOutput: true);
+        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true);
         var output = dalamudProcess.StandardOutput.ReadLine();
 
         if (output == null)
