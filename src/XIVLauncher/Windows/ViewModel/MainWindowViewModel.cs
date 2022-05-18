@@ -1014,7 +1014,7 @@ namespace XIVLauncher.Windows.ViewModel
                 }
             }
 
-            var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
+            var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk);
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
             var launched = this.Launcher.LaunchGame(gameRunner,

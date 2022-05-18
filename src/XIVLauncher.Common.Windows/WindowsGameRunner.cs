@@ -40,6 +40,8 @@ public class WindowsGameRunner : IGameRunner
         {
             var psi = new ProcessStartInfo(path);
             psi.Arguments = arguments;
+            psi.UseShellExecute = false;
+
             foreach (var keyValuePair in environment)
             {
                 if (psi.EnvironmentVariables.ContainsKey(keyValuePair.Key))
