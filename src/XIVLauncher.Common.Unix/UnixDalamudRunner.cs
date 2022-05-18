@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.Dalamud;
@@ -23,16 +23,29 @@ public class UnixDalamudRunner : IDalamudRunner
 
     public Process? Run(FileInfo runner, bool fakeLogin, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo startInfo)
     {
-        environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(dotnetRuntime.FullName));
+        var gameExePath = "";
+        var dotnetRuntimePath = "";
+
+        Parallel.Invoke(
+            () => { gameExePath = compatibility.UnixToWinePath(gameExe.FullName); },
+            () => { dotnetRuntimePath = compatibility.UnixToWinePath(dotnetRuntime.FullName); },
+            () => { startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory); },
+            () => { startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath); },
+            () => { startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory); },
+            () => { startInfo.DefaultPluginDirectory = compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory); },
+            () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory); }
+        );
+
+        environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
 
         var launchArguments = new List<string> { $"\"{runner.FullName}\"", "launch",
             $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
-            $"--game=\"{compatibility.UnixToWinePath(gameExe.FullName)}\"",
-            $"--dalamud-working-directory=\"{compatibility.UnixToWinePath(startInfo.WorkingDirectory)}\"",
-            $"--dalamud-configuration-path=\"{compatibility.UnixToWinePath(startInfo.ConfigurationPath)}\"",
-            $"--dalamud-plugin-directory=\"{compatibility.UnixToWinePath(startInfo.PluginDirectory)}\"",
-            $"--dalamud-dev-plugin-directory=\"{compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory)}\"",
-            $"--dalamud-asset-directory=\"{compatibility.UnixToWinePath(startInfo.AssetDirectory)}\"",
+            $"--game=\"{gameExePath}\"",
+            $"--dalamud-working-directory=\"{startInfo.WorkingDirectory}\"",
+            $"--dalamud-configuration-path=\"{startInfo.ConfigurationPath}\"",
+            $"--dalamud-plugin-directory=\"{startInfo.PluginDirectory}\"",
+            $"--dalamud-dev-plugin-directory=\"{startInfo.DefaultPluginDirectory}\"",
+            $"--dalamud-asset-directory=\"{startInfo.AssetDirectory}\"",
             $"--dalamud-client-language={(int)startInfo.Language}",
             $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
             };
