@@ -52,15 +52,14 @@ public class ShandaLauncher : ILauncher
     private const string PATCHER_USER_AGENT = "FFXIV_Patch";
     private const int CURRENT_EXPANSION_LEVEL = 4;
 
-    public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
+    public async Task<LoginResult> Login(string userName, string password, string otp, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
     {
         throw new NotImplementedException();
     }
 
     public object? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                              bool isSteamServiceAccount, string additionalArguments,
-                              DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-                              bool encryptArguments, DpiAwareness dpiAwareness)
+                              string additionalArguments, DirectoryInfo gamePath, bool isDx11,
+                              ClientLanguage language, bool encryptArguments, DpiAwareness dpiAwareness)
     {
         throw new NotImplementedException();
     }

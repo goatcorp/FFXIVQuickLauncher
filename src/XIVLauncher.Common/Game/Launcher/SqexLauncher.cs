@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -27,17 +26,14 @@ namespace XIVLauncher.Common.Game.Launcher;
 
 public class SqexLauncher : ILauncher
 {
-    private readonly ISteam? steam;
-    private readonly byte[]? steamTicket;
     private readonly IUniqueIdCache uniqueIdCache;
     private readonly ISettings settings;
     private readonly HttpClient client;
     private OauthLoginResult? oauthLoginResult;
     private string? uniqueId;
 
-    public SqexLauncher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings)
+    public SqexLauncher(IUniqueIdCache uniqueIdCache, ISettings settings)
     {
-        this.steam = steam;
         this.uniqueIdCache = uniqueIdCache;
         this.settings = settings;
 
@@ -64,12 +60,6 @@ public class SqexLauncher : ILauncher
         this.client = new HttpClient(handler);
     }
 
-    public SqexLauncher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings)
-        : this(steam: null, uniqueIdCache, settings)
-    {
-        this.steamTicket = steamTicket;
-    }
-
     // The user agent for frontier pages. {0} has to be replaced by a unique computer id and its checksum
     private const string USER_AGENT_TEMPLATE = "SQEXAuthor/2.0.0(Windows 6.2; ja-jp; {0})";
     private readonly string _userAgent = GenerateUserAgent();
@@ -84,69 +74,17 @@ public class SqexLauncher : ILauncher
         "ffxivupdater64.exe"
     };
 
-    public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
+    public virtual async Task<LoginResult> Login(string userName, string password, string otp, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
     {
         PatchListEntry[] pendingPatches = Array.Empty<PatchListEntry>();
 
         LoginState loginState;
 
-        Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteam, useCache);
-
-        Ticket? steamTicket = null;
-
-        if (isSteam)
-        {
-            if (this.steamTicket != null)
-            {
-                steamTicket = Ticket.EncryptAuthSessionTicket(this.steamTicket, (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-                Log.Information("Using predefined steam ticket");
-            }
-            else
-            {
-                Debug.Assert(this.steam != null);
-
-                try
-                {
-                    if (!this.steam.IsValid)
-                    {
-                        this.steam.Initialize(isFreeTrial ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Could not initialize Steam");
-                    throw new SteamException("SteamAPI_Init() failed.", ex);
-                }
-
-                if (!this.steam.IsValid)
-                {
-                    throw new SteamException("Steam did not initialize successfully. Please restart Steam and try again.");
-                }
-
-                if (!this.steam.BLoggedOn)
-                {
-                    throw new SteamException("Not logged into Steam, or Steam is running in offline mode. Please log in and try again.");
-                }
-
-                try
-                {
-                    steamTicket = await Ticket.Get(steam).ConfigureAwait(true);
-                }
-                catch (Exception ex)
-                {
-                    throw new SteamException("Could not request auth ticket.", ex);
-                }
-            }
-
-            if (steamTicket == null)
-            {
-                throw new SteamException("Steam auth ticket was null.");
-            }
-        }
+        Log.Information("SqexLauncher::Login(cache:{UseCache})", useCache);
 
         if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
         {
-            this.oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
+            this.oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, 3);
 
             Log.Information(
                 $"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
@@ -203,14 +141,18 @@ public class SqexLauncher : ILauncher
             UniqueId = this.uniqueId
         };
     }
+    
+    protected virtual void ModifyGameLaunchOptions(Dictionary<string, string> environment, ArgumentBuilder argumentBuilder)
+    {
+        // no-op for SqexLauncher, overridden by SteamSqexLauncher
+    }
 
     public object? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                              bool isSteamServiceAccount, string additionalArguments,
-                              DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-                              bool encryptArguments, DpiAwareness dpiAwareness)
+                              string additionalArguments, DirectoryInfo gamePath, bool isDx11,
+                              ClientLanguage language, bool encryptArguments, DpiAwareness dpiAwareness)
     {
         Log.Information(
-            $"XivGame::LaunchGame(steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
+            $"SqexLauncher::LaunchGame(args:{additionalArguments})");
 
         var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
         if (!isDx11)
@@ -228,12 +170,7 @@ public class SqexLauncher : ILauncher
                               .Append("resetConfig", "0")
                               .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
-        if (isSteamServiceAccount)
-        {
-            // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
-            environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
-            argumentBuilder.Append("IsSteam", "1");
-        }
+        ModifyGameLaunchOptions(environment, argumentBuilder);
 
         // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
         if (!string.IsNullOrEmpty(additionalArguments))
@@ -368,7 +305,7 @@ public class SqexLauncher : ILauncher
         return await resp.Content.ReadAsStringAsync();
     }
 
-    private async Task<(string Stored, string? SteamLinkedId)> GetOauthTop(string url, bool isSteam)
+    protected virtual async Task<(string Stored, string Text)> GetOauthTop(string url)
     {
         // This is needed to be able to access the login site correctly
         var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -386,10 +323,7 @@ public class SqexLauncher : ILauncher
 
         if (text.Contains("window.external.user(\"restartup\");"))
         {
-            if (isSteam)
-                throw new SteamLinkNeededException();
-
-            throw new InvalidResponseException("restartup, but not isSteam?", text);
+            throw new SteamLinkNeededException(text);
         }
 
         var storedRegex = new Regex(@"\t<\s*input .* name=""_STORED_"" value=""(?<stored>.*)"">");
@@ -401,49 +335,31 @@ public class SqexLauncher : ILauncher
             throw new InvalidResponseException("Could not get STORED.", text);
         }
 
-        string? steamUsername = null;
-
-        if (isSteam)
-        {
-            var steamRegex = new Regex(@"<input name=""sqexid"" type=""hidden"" value=""(?<sqexid>.*)""\/>");
-            var steamMatches = steamRegex.Matches(text);
-
-            if (steamMatches.Count == 0)
-            {
-                Log.Error(text);
-                throw new InvalidResponseException("Could not get steam username.", text);
-            }
-
-            steamUsername = steamMatches[0].Groups["sqexid"].Value;
-        }
-
-        return (matches[0].Groups["stored"].Value, steamUsername);
+        return (matches[0].Groups["stored"].Value, text);
     }
 
-    private static string GetOauthTopUrl(int region, bool isFreeTrial, bool isSteam, Ticket steamTicket)
+    protected virtual string GetOauthTopUrl(int region, bool isFreeTrial)
     {
-        var url =
-            $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft={(isFreeTrial ? "1" : "0")}&cssmode=1&isnew=1&launchver=3";
-
-        if (isSteam)
-        {
-            url += "&issteam=1";
-
-            url += $"&session_ticket={steamTicket.Text}";
-            url += $"&ticket_size={steamTicket.Length}";
-        }
-
-        return url;
+        return $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft={(isFreeTrial ? "1" : "0")}&cssmode=1&isnew=1&launchver=3";
     }
 
-    private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket)
+    protected virtual async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, int region)
     {
-        if (isSteam && steamTicket == null)
-            throw new ArgumentNullException(nameof(steamTicket), "isSteam, but steamTicket == null");
+        var topUrl = GetOauthTopUrl(region, isFreeTrial);
+        var topResult = await GetOauthTop(topUrl);
 
-        var topUrl = GetOauthTopUrl(region, isFreeTrial, isSteam, steamTicket);
-        var topResult = await GetOauthTop(topUrl, isSteam);
+        try
+        {
+            return await DoOauthLogin(topResult.Stored, topUrl, userName, password, otp);
+        }
+        catch (SteamLinkNeededException ex)
+        {
+            throw new InvalidResponseException("restartup, but not isSteam?", ex.Document);
+        }
+    }
 
+    protected async Task<OauthLoginResult> DoOauthLogin(string stored, string topUrl, string userName, string password, string otp)
+    {
         var request = new HttpRequestMessage(HttpMethod.Post,
             "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
 
@@ -458,18 +374,10 @@ public class SqexLauncher : ILauncher
         request.Headers.AddWithoutValidation("Cache-Control", "no-cache");
         request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
-        if (isSteam)
-        {
-            if (!String.Equals(userName, topResult.SteamLinkedId, StringComparison.OrdinalIgnoreCase))
-                throw new SteamWrongAccountException(userName, topResult.SteamLinkedId);
-
-            userName = topResult.SteamLinkedId;
-        }
-
         request.Content = new FormUrlEncodedContent(
             new Dictionary<string, string>()
             {
-                { "_STORED_", topResult.Stored },
+                { "_STORED_", stored },
                 { "sqexid", userName },
                 { "password", password },
                 { "otppw", otp },

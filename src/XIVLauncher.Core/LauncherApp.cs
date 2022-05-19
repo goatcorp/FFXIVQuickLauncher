@@ -107,7 +107,7 @@ public class LauncherApp : Component
     };
 
     public ILauncherConfig Settings => Program.Config;
-    public ILauncher Launcher { get; private set; }
+    public ILauncher Launcher { get; set; }
     public ISteam? Steam => Program.Steam;
     public Storage Storage { get; private set; }
 
@@ -131,7 +131,9 @@ public class LauncherApp : Component
 
         this.Accounts = new AccountManager(this.Storage.GetFile("accounts.json"));
         this.UniqueIdCache = new CommonUniqueIdCache(this.Storage.GetFile("uidCache.json"));
-        this.Launcher = new SqexLauncher(Program.Steam, UniqueIdCache, Program.CommonSettings);
+
+        // Initialise as a regular SqexLauncher to start
+        this.Launcher = new SqexLauncher(UniqueIdCache, Program.CommonSettings);
 
         this.mainPage = new MainPage(this);
         this.setPage = new SettingsPage(this);
@@ -153,6 +155,20 @@ public class LauncherApp : Component
 #if DEBUG
         IsDebug = true;
 #endif
+    }
+
+    public void EnsureLauncherAffinity(bool isSteam)
+    {
+        var isSteamLauncher = Launcher is SteamSqexLauncher;
+
+        if (isSteamLauncher && !isSteam)
+        {
+            Launcher = new SqexLauncher(UniqueIdCache, Program.CommonSettings);
+        }
+        else if (!isSteamLauncher && isSteam)
+        {
+            Launcher = new SteamSqexLauncher(Program.Steam, UniqueIdCache, Program.CommonSettings);
+        }
     }
 
     public void ShowMessage(string text, string title)

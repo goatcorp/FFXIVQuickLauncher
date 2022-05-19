@@ -11,14 +11,12 @@ public interface ILauncher
 
     public Task<PatchListEntry[]> CheckGameVersion(DirectoryInfo gamePath, bool forceBaseVersion = false);
 
-    // TODO(Ava): KR/CN probably don't need isSteam or isFreeTrial, figure out how to abstract this better
-    public Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial);
+    // TODO(Ava): KR/CN probably don't need isFreeTrial, figure out how to abstract this better
+    public Task<LoginResult> Login(string userName, string password, string otp, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial);
 
-    // TODO(Ava): same as above for isSteamServiceAccount
     public object? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                              bool isSteamServiceAccount, string additionalArguments,
-                              DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-                              bool encryptArguments, DpiAwareness dpiAwareness);
+                              string additionalArguments, DirectoryInfo gamePath, bool isDx11,
+                              ClientLanguage language, bool encryptArguments, DpiAwareness dpiAwareness);
 
     public Task<GateStatus> GetGateStatus(ClientLanguage language);
 

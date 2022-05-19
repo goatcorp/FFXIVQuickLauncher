@@ -39,14 +39,13 @@ namespace XIVLauncher.Windows
         private AccountManager _accountManager;
 
         private MainWindowViewModel Model => this.DataContext as MainWindowViewModel;
-        private readonly ILauncher _launcher;
+        private ILauncher Launcher => Model.Launcher;
 
         public MainWindow()
         {
             InitializeComponent();
 
             this.DataContext = new MainWindowViewModel(this);
-            _launcher = Model.Launcher;
 
             Closed += Model.OnWindowClosed;
             Closing += Model.OnWindowClosing;
@@ -109,13 +108,13 @@ namespace XIVLauncher.Windows
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = await Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                _headlines = await Headlines.Get(Launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
 
                 for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
-                    var imageBytes = await _launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                    var imageBytes = await Launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                     using var stream = new MemoryStream(imageBytes);
 
@@ -242,7 +241,7 @@ namespace XIVLauncher.Windows
             // grey out world status icon while deferred check is running
             WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(38, 38, 38));
 
-            _launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ContinueWith((resultTask) =>
+            Launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ContinueWith((resultTask) =>
             {
                 try
                 {
@@ -413,13 +412,13 @@ namespace XIVLauncher.Windows
 
         private async void OnMaintenanceQueueTimerEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
-            var bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);
+            var bootPatches = await Launcher.CheckBootVersion(App.Settings.GamePath);
 
             var gateStatus = false;
 
             try
             {
-                gateStatus = Task.Run(() => _launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English))).Result.Status;
+                gateStatus = Task.Run(() => Launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English))).Result.Status;
             }
             catch
             {

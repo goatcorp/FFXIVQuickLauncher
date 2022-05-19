@@ -67,9 +67,24 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoDalamudCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.StartWithoutDalamud), () => !IsLoggingIn);
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
-            Launcher = App.GlobalSteamTicket == null ?
-                new SqexLauncher(App.Steam, App.UniqueIdCache, CommonSettings.Instance) :
-                new SqexLauncher(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance);
+            // Initialise as a regular SqexLauncher to start
+            Launcher = new SqexLauncher(App.UniqueIdCache, CommonSettings.Instance);
+        }
+
+        public void EnsureLauncherAffinity(bool isSteam)
+        {
+            var isSteamLauncher = Launcher is SteamSqexLauncher;
+
+            if (isSteamLauncher && !isSteam)
+            {
+                Launcher = new SqexLauncher(App.UniqueIdCache, CommonSettings.Instance);
+            }
+            else if (!isSteamLauncher && isSteam)
+            {
+                Launcher = App.GlobalSteamTicket == null
+                    ? new SteamSqexLauncher(App.Steam, App.UniqueIdCache, CommonSettings.Instance)
+                    : new SteamSqexLauncher(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance);
+            }
         }
 
         private Action<object> GetLoginFunc(AfterLoginAction action)
@@ -361,10 +376,11 @@ namespace XIVLauncher.Windows.ViewModel
                 var enableUidCache = App.Settings.UniqueIdCacheEnabled;
                 var gamePath = App.Settings.GamePath;
 
+                EnsureLauncherAffinity(isSteam);
                 if (action == AfterLoginAction.Repair)
-                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
                 else
-                    return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -1023,7 +1039,6 @@ namespace XIVLauncher.Windows.ViewModel
                 loginResult.UniqueId,
                 loginResult.OauthLogin.Region,
                 loginResult.OauthLogin.MaxExpansion,
-                isSteam,
                 App.Settings.AdditionalLaunchArgs,
                 App.Settings.GamePath,
                 App.Settings.IsDx11,
