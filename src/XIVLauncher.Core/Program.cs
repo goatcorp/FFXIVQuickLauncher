@@ -34,7 +34,6 @@ class Program
     public static ILauncherConfig Config { get; private set; }
     public static CommonSettings CommonSettings => new(Config);
     public static ISteam? Steam { get; private set; }
-    public static bool UsesFallbackSteamAppId { get; private set; }
     public static DalamudUpdater DalamudUpdater { get; private set; }
     public static DalamudOverlayInfoProxy DalamudLoadInfo { get; private set; }
     public static CompatibilityTools CompatibilityTools { get; private set; }
@@ -47,13 +46,14 @@ class Program
     private static Storage storage;
     public static DirectoryInfo DotnetRuntime => storage.GetFolder("runtime");
 
+    // TODO: We don't have the steamworks api for this yet.
+    public static bool IsSteamDeckHardware => Directory.Exists("/home/deck");
+    public static bool IsSteamDeckGamingMode => Steam != null && Steam.IsValid && Steam.IsRunningOnSteamDeck();
+
     private const string APP_NAME = "xlcore";
 
     private static uint invalidationFrames = 0;
     private static Vector2 lastMousePosition;
-
-    private static bool lastFrameTextInput = false;
-    public static bool DoAutoSoftwareKbd { get; set; } = true;
 
     public static void Invalidate(uint frames = 100)
     {
@@ -69,6 +69,9 @@ class Program
                      .WriteTo.Debug()
                      .MinimumLevel.Verbose()
                      .CreateLogger();
+
+        Log.Information("========================================================");
+        Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
     }
 
     private static void LoadConfig(Storage storage)
@@ -90,6 +93,9 @@ class Program
         Config.ClientLanguage ??= ClientLanguage.English;
         Config.DpiAwareness ??= DpiAwareness.Unaware;
         Config.IsAutologin ??= false;
+        Config.CompletedFts ??= false;
+        Config.DoVersionCheck ??= true;
+        Config.FontPxSize ??= 22.0f;
 
         Config.IsDx11 ??= true;
         Config.IsEncryptArgs ??= true;
@@ -116,7 +122,6 @@ class Program
 
     public const uint STEAM_APP_ID = 39210;
     public const uint STEAM_APP_ID_FT = 312060;
-    public const uint STEAM_APP_SSDK = 243750;
 
     private static void Main(string[] args)
     {
@@ -148,15 +153,11 @@ class Program
             {
                 var appId = Config.IsFt == true ? STEAM_APP_ID_FT : STEAM_APP_ID;
                 Steam.Initialize(appId);
-
-                UsesFallbackSteamAppId = false;
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Couldn't init Steam with game AppIds, trying Source SDK");
-                Steam.Initialize(STEAM_APP_SSDK);
-
-                UsesFallbackSteamAppId = true;
+                Log.Error(ex, "Couldn't init Steam with game AppIds, trying FT");
+                Steam.Initialize(STEAM_APP_ID_FT);
             }
         }
         catch (Exception ex)
@@ -171,7 +172,7 @@ class Program
         };
         DalamudUpdater.Run();
 
-        UpdateCompatibilityTools();
+        CreateCompatToolsInstance();
 
         Log.Debug("Creating Veldrid devices...");
 
@@ -183,7 +184,7 @@ class Program
 
         // Create window, GraphicsDevice, and all resources necessary for the demo.
         VeldridStartup.CreateWindowAndGraphicsDevice(
-            new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, $"XIVLauncher {version}"),
+            new WindowCreateInfo(50, 50, 1280, 800, WindowState.Normal, $"XIVLauncher {version}"),
             new GraphicsDeviceOptions(false, null, true, ResourceBindingModel.Improved, true, true),
             out window,
             out gd);
@@ -197,13 +198,23 @@ class Program
         cl = gd.ResourceFactory.CreateCommandList();
         Log.Debug("Veldrid OK!");
 
-        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
+        bindings = new ImGuiBindings(gd, gd.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height, storage.GetFile("launcherUI.ini"), Config.FontPxSize ?? 21.0f);
         Log.Debug("ImGui OK!");
 
         StyleModelV1.DalamudStandard.Apply();
         ImGui.GetIO().FontGlobalScale = Config.GlobalScale ?? 1.0f;
 
-        launcherApp = new LauncherApp(storage);
+        var needUpdate = false;
+
+        if (Config.DoVersionCheck ?? false)
+        {
+            var versionCheckResult = UpdateCheck.CheckForUpdate().GetAwaiter().GetResult();
+
+            if (versionCheckResult.Success)
+                needUpdate = versionCheckResult.NeedUpdate;
+        }
+
+        launcherApp = new LauncherApp(storage, needUpdate);
 
         Invalidate(20);
 
@@ -244,23 +255,6 @@ class Program
 
             launcherApp.Draw();
 
-            var wantTextInput = ImGui.GetIO().WantTextInput;
-
-            if (wantTextInput && !lastFrameTextInput && DoAutoSoftwareKbd && Steam.IsRunningOnSteamDeck())
-            {
-                Steam.ShowFloatingGamepadTextInput(ISteam.EFloatingGamepadTextInputMode.EnterDismisses, 0, 0, 100, 100);
-                Log.Verbose("Show kbd");
-                lastFrameTextInput = true;
-            }
-            else if (wantTextInput)
-            {
-                lastFrameTextInput = true;
-            }
-            else
-            {
-                lastFrameTextInput = false;
-            }
-
             cl.Begin();
             cl.SetFramebuffer(gd.MainSwapchain.Framebuffer);
             cl.ClearColorTarget(0, new RgbaFloat(clearColor.X, clearColor.Y, clearColor.Z, 1f));
@@ -277,7 +271,7 @@ class Program
         gd.Dispose();
     }
 
-    public static void UpdateCompatibilityTools()
+    public static void CreateCompatToolsInstance()
     {
         var wineLogFile = new FileInfo(Path.Combine(storage.GetFolder("logs").FullName, "wine.log"));
         var winePrefix = storage.GetFolder("wineprefix");

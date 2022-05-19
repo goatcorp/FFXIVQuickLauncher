@@ -14,6 +14,7 @@ using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Common.Unix;
 using XIVLauncher.Common.Unix.Compatibility;
+using XIVLauncher.Common.Unix.Compatibility.GameFixes;
 using XIVLauncher.Core.Accounts;
 
 namespace XIVLauncher.Core.Components.MainPage;
@@ -48,6 +49,14 @@ public class MainPage : Page
     }
 
     public AccountSwitcher AccountSwitcher { get; private set; }
+
+    public void DoAutoLoginIfApplicable()
+    {
+        Debug.Assert(App.State == LauncherApp.LauncherState.Main);
+
+        if ((App.Settings.IsAutologin ?? false) && !string.IsNullOrEmpty(this.loginFrame.Username) && !string.IsNullOrEmpty(this.loginFrame.Password))
+            ProcessLogin(LoginAction.Game);
+    }
 
     public override void Draw()
     {
@@ -92,10 +101,10 @@ public class MainPage : Page
         if (this.IsLoggingIn)
             return;
 
-        this.App.StartLoading("Logging in...");
+        this.App.StartLoading("Logging in...", canDisableAutoLogin: true);
 
-        if (Program.UsesFallbackSteamAppId && this.loginFrame.IsSteam)
-            throw new Exception("Doesn't own Steam AppId on this account.");
+        // if (Program.UsesFallbackSteamAppId && this.loginFrame.IsSteam)
+        //     throw new Exception("Doesn't own Steam AppId on this account.");
 
         Task.Run(async () =>
         {
@@ -120,27 +129,39 @@ public class MainPage : Page
 
             IsLoggingIn = true;
 
-            await this.Login(this.loginFrame.Username, this.loginFrame.Password, this.loginFrame.IsOtp, this.loginFrame.IsSteam, false, action);
+            App.Settings.IsAutologin = this.loginFrame.IsAutoLogin;
+
+            var result = await Login(loginFrame.Username, loginFrame.Password, loginFrame.IsOtp, loginFrame.IsSteam, false, action).ConfigureAwait(false);
+
+            if (result)
+            {
+                Environment.Exit(0);
+            }
+            else
+            {
+                Log.Verbose("Reactivated after Login() != true");
+                this.Reactivate();
+            }
         }).ContinueWith(t =>
         {
-            if (!App.HandleContinationBlocking(t))
+            if (!App.HandleContinuationBlocking(t))
                 this.Reactivate();
         });
     }
 
-    public async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
+    public async Task<bool> Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
     {
         if (action == LoginAction.Fake)
         {
             App.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 1, 2, false, "", App.Settings.GamePath, true, ClientLanguage.Japanese, true,
                 DpiAwareness.Unaware);
-            return;
+            return true;
         }
 
         var bootRes = await HandleBootCheck().ConfigureAwait(false);
 
         if (!bootRes)
-            return;
+            return false;
 
         var otp = string.Empty;
 
@@ -148,18 +169,20 @@ public class MainPage : Page
         {
             App.AskForOtp();
             otp = App.WaitForOtp();
+
+            // Make sure we are loading again
+            App.State = LauncherApp.LauncherState.Loading;
+            Program.Invalidate(10);
         }
 
         if (otp == null)
-            return;
+            return false;
 
         PersistAccount(username, password, isOtp, isSteam);
 
         var loginResult = await TryLoginToGame(username, password, otp, isSteam, action).ConfigureAwait(false);
 
-        var result = await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false);
-        if (result)
-            Environment.Exit(0);
+        return await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false);
     }
 
     private async Task<LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, LoginAction action)
@@ -633,6 +656,7 @@ public class MainPage : Page
         {
             try
             {
+                App.StartLoading("Waiting for Dalamud to be ready...", "This may take a little while. Please hold!");
                 dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
             }
             catch (DalamudRunnerException ex)
@@ -671,11 +695,25 @@ public class MainPage : Page
             var signal = new ManualResetEvent(false);
             var isFailed = false;
 
-            if (App.Settings.WineStartupType == WineStartupType.Managed) {
+            if (App.Settings.WineStartupType == WineStartupType.Managed)
+            {
                 var _ = Task.Run(async () =>
                 {
-                    await Program.CompatibilityTools.EnsureTool().ConfigureAwait(false);
-                    Program.CompatibilityTools.EnsureGameFixes(Program.Config.GameConfigPath);
+                    var tempPath = App.Storage.GetFolder("temp");
+
+                    await Program.CompatibilityTools.EnsureTool(tempPath).ConfigureAwait(false);
+
+                    var gameFixApply = new GameFixApply(App.Settings.GamePath, App.Settings.GameConfigPath, Program.CompatibilityTools.Settings.Prefix, tempPath);
+                    gameFixApply.UpdateProgress += (text, hasProgress, progress) =>
+                    {
+                        App.LoadingPage.Line1 = "Applying game-specific fixes...";
+                        App.LoadingPage.Line2 = text;
+                        App.LoadingPage.Line3 = "This may take a little while. Please hold!";
+                        App.LoadingPage.IsIndeterminate = !hasProgress;
+                        App.LoadingPage.Progress = progress;
+                    };
+
+                    gameFixApply.Run();
                 }).ContinueWith(t =>
                 {
                     isFailed = t.IsFaulted || t.IsCanceled;
@@ -686,13 +724,15 @@ public class MainPage : Page
                     signal.Set();
                 });
 
-                App.StartLoading("Ensuring compatibility tool...");
+                App.StartLoading("Ensuring compatibility tool...", "This may take a little while. Please hold!");
                 signal.WaitOne();
                 signal.Dispose();
 
                 if (isFailed)
                     return null;
             }
+
+            App.StartLoading("Starting game...", "Have fun!");
 
             runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod, Program.DotnetRuntime, App.Storage);
 
@@ -704,7 +744,14 @@ public class MainPage : Page
             throw new NotImplementedException();
         }
 
-        Hide();
+        if (!Program.IsSteamDeckHardware)
+        {
+            Hide();
+        }
+        else
+        {
+            App.State = LauncherApp.LauncherState.SteamDeckPrompt;
+        }
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
         var launched = App.Launcher.LaunchGame(runner,
@@ -861,7 +908,7 @@ public class MainPage : Page
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Unable to check boot version.");
+                Log.Error(ex, "Unable to check boot version");
                 App.ShowMessage(
                     Loc.Localize("CheckBootVersionError",
                         "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."),
@@ -896,6 +943,8 @@ public class MainPage : Page
 
     private async Task<bool> TryHandlePatchAsync(Repository repository, PatchListEntry[] pendingPatches, string sid)
     {
+        // BUG(goat): This check only behaves correctly on Windows - the mutex doesn't seem to disappear on Linux, .NET issue?
+#if WIN32
         using var mutex = new Mutex(false, "XivLauncherIsPatching");
 
         if (!mutex.WaitOne(0, false))
@@ -905,6 +954,7 @@ public class MainPage : Page
             Environment.Exit(0);
             return false; // This line will not be run.
         }
+#endif
 
         if (Util.CheckIsGameOpen())
         {
@@ -1014,6 +1064,7 @@ public class MainPage : Page
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error during patching");
             App.ShowExceptionBlocking(ex, "HandlePatchAsync");
         }
         finally

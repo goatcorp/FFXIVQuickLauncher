@@ -10,6 +10,7 @@ public class LoadingPage : Page
 
     public bool IsIndeterminate { get; set; }
     public bool CanCancel { get; set; } = true;
+    public bool CanDisableAutoLogin { get; set; }= false;
     public float Progress { get; set; }
 
     public string Line1 { get; set; } = "Loading text line 1";
@@ -20,6 +21,9 @@ public class LoadingPage : Page
 
     private Spinner spinner;
     private Button cancelButton = new("Cancel");
+    private Button disableAutoLoginButton = new("Disable auto login");
+
+    private bool hasDisabledAutoLogin = false;
 
     public event Action? Cancelled;
 
@@ -28,6 +32,17 @@ public class LoadingPage : Page
     {
         this.spinner = new Spinner(SPINNER_RADIUS, 5, ImGui.GetColorU32(ImGuiCol.ButtonActive));
         this.cancelButton.Click += () => this.Cancelled?.Invoke();
+
+        this.disableAutoLoginButton.Click += () =>
+        {
+            this.hasDisabledAutoLogin = true;
+            App.Settings.IsAutologin = false;
+        };
+    }
+
+    public void Reset()
+    {
+        this.hasDisabledAutoLogin = false;
     }
 
     public override void Draw()
@@ -51,6 +66,31 @@ public class LoadingPage : Page
             ImGuiHelpers.CenteredText(Line3);
         }
 
+        var isDrawDisableAutoLogin = CanDisableAutoLogin && (App.Settings.IsAutologin ?? false);
+
+        if (CanCancel || isDrawDisableAutoLogin)
+        {
+            ImGui.Dummy(new Vector2(20));
+        }
+
+        if (CanCancel)
+        {
+            this.cancelButton.Width = (int)vp.X / 4;
+            ImGuiHelpers.CenterCursorFor(this.cancelButton.Width.Value);
+            this.cancelButton.Draw();
+        }
+
+        if (isDrawDisableAutoLogin)
+        {
+            this.disableAutoLoginButton.Width = (int)vp.X / 4;
+            ImGuiHelpers.CenterCursorFor(this.disableAutoLoginButton.Width.Value);
+            this.disableAutoLoginButton.Draw();
+        }
+        else if (this.hasDisabledAutoLogin)
+        {
+            ImGuiHelpers.CenteredText("Auto login disabled on next start!");
+        }
+
         ImGui.Dummy(new Vector2(20));
 
         if (IsIndeterminate)
@@ -63,13 +103,6 @@ public class LoadingPage : Page
             var width = vp.X / 3;
             ImGuiHelpers.CenterCursorFor((int)width);
             ImGui.ProgressBar(Progress, new Vector2(width, 20), ProgressText);
-        }
-
-        if (CanCancel)
-        {
-            this.cancelButton.Width = (int)vp.X / 4;
-            ImGuiHelpers.CenterCursorFor(this.cancelButton.Width.Value);
-            this.cancelButton.Draw();
         }
 
         Program.Invalidate(10);

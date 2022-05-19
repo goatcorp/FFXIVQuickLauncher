@@ -67,13 +67,14 @@ namespace XIVLauncher.Common.Unix
             return false;
         }
 
-        public bool IsRunningOnSteamDeck()
-        {
-            //TODO(goat): Facepunch.Steamworks NuGet doesn't have this yet...
-            return true;
-        }
+        public bool IsRunningOnSteamDeck() => SteamUtils.IsRunningOnSteamDeck;
 
         public uint GetServerRealTime() => (uint)((DateTimeOffset)SteamUtils.SteamServerTime).ToUnixTimeSeconds();
+
+        public void ActivateGameOverlayToWebPage(string url, bool modal = false)
+        {
+            SteamFriends.OpenWebOverlay(url, modal);
+        }
 
         public event Action<bool> OnGamepadTextInputDismissed;
     }

@@ -68,12 +68,14 @@ namespace XIVLauncher.Common.Windows
             return false;
         }
 
-        public bool IsRunningOnSteamDeck()
-        {
-            return false;
-        }
+        public bool IsRunningOnSteamDeck() => SteamUtils.IsRunningOnSteamDeck;
 
         public uint GetServerRealTime() => (uint)((DateTimeOffset)SteamUtils.SteamServerTime).ToUnixTimeSeconds();
+
+        public void ActivateGameOverlayToWebPage(string url, bool modal = false)
+        {
+            SteamFriends.OpenWebOverlay(url, modal);
+        }
 
         public event Action<bool> OnGamepadTextInputDismissed;
     }

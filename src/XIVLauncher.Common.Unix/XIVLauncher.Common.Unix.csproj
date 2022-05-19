@@ -43,6 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Facepunch.Steamworks" Version="2.3.3" />
+        <!-- Custom steamworks, based on the chippy branch of Facepunch.Steamworks -->
+        <PackageReference Include="goaaats.Steamworks" Version="2.3.4" />
     </ItemGroup>
 </Project>

@@ -31,18 +31,18 @@ public class SettingsTabAbout : SettingsTab
 #endif
 
         if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-            Util.OpenBrowser("https://github.com/goaaats");
+            AppUtil.OpenBrowser("https://github.com/goaaats");
 
         ImGui.Dummy(new Vector2(20));
 
         if (ImGui.Button("Open GitHub"))
         {
-            Util.OpenBrowser("https://github.com/goatcorp/FFXIVQuickLauncher");
+            AppUtil.OpenBrowser("https://github.com/goatcorp/FFXIVQuickLauncher");
         }
 
         if (ImGui.Button("Join our Discord"))
         {
-            Util.OpenBrowser("https://discord.gg/3NMcUV5");
+            AppUtil.OpenBrowser("https://discord.gg/3NMcUV5");
         }
 
         if (ImGui.Button("See software licenses"))

@@ -1,11 +1,14 @@
 ﻿using ImGuiNET;
 using System.Numerics;
+using Serilog;
 
 namespace XIVLauncher.Core.Components.Common;
 
 public class Input : Component
 {
     private string inputBacking = string.Empty;
+
+    private volatile bool isSteamDeckInputActive = false;
 
     public string Label { get; }
 
@@ -17,6 +20,10 @@ public class Input : Component
 
     public bool IsEnabled { get; set; } = true;
     public Vector2 Spacing { get; }
+
+    public bool HasSteamDeckInput { get; set; }
+
+    public string SteamDeckPrompt { get; set; }
 
     public string Value
     {
@@ -38,6 +45,22 @@ public class Input : Component
         Flags = flags;
         IsEnabled = isEnabled;
         Spacing = spacing ?? Vector2.Zero;
+
+        SteamDeckPrompt = hint;
+
+        if (Program.Steam != null)
+        {
+            Program.Steam.OnGamepadTextInputDismissed += this.SteamOnOnGamepadTextInputDismissed;
+            HasSteamDeckInput = Program.IsSteamDeckHardware;
+        }
+    }
+
+    private void SteamOnOnGamepadTextInputDismissed(bool success)
+    {
+        if (success && this.isSteamDeckInputActive)
+            this.inputBacking = Program.Steam!.GetEnteredGamepadText();
+
+        this.isSteamDeckInputActive = false;
     }
 
     public override void Draw()
@@ -52,7 +75,7 @@ public class Input : Component
 
         ImGui.Text(Label);
 
-        if (!this.IsEnabled)
+        if (!this.IsEnabled || this.isSteamDeckInputActive)
             ImGui.BeginDisabled();
 
         var ww = ImGui.GetWindowWidth();
@@ -61,9 +84,16 @@ public class Input : Component
         ImGui.PopStyleColor();
 
         ImGui.InputTextWithHint($"###{Id}", Hint, ref inputBacking, MaxLength, Flags);
+
+        if (ImGui.IsItemActivated() && HasSteamDeckInput && Program.Steam != null && Program.Steam.IsValid)
+        {
+            this.isSteamDeckInputActive = Program.Steam?.ShowGamepadTextInput(Flags.HasFlag(ImGuiInputTextFlags.Password), false, SteamDeckPrompt, (int)MaxLength, this.inputBacking) ?? false;
+            Log.Information("SteamDeck Input Active({Name}): {IsActive}", this.Label, this.isSteamDeckInputActive);
+        }
+
         ImGui.Dummy(Spacing);
 
-        if (!this.IsEnabled)
+        if (!this.IsEnabled || this.isSteamDeckInputActive)
             ImGui.EndDisabled();
 
         ImGui.PopStyleVar(2);

@@ -37,6 +37,8 @@ public class ImGuiBindings : IDisposable
     private bool _altDown;
     private bool _winKeyDown;
 
+    private IntPtr _iniPathPtr;
+
     private int _windowWidth;
     private int _windowHeight;
     private Vector2 _scaleFactor = Vector2.One;
@@ -63,7 +65,7 @@ public class ImGuiBindings : IDisposable
     /// <summary>
     /// Constructs a new ImGuiController.
     /// </summary>
-    public ImGuiBindings(GraphicsDevice gd, OutputDescription outputDescription, int width, int height)
+    public ImGuiBindings(GraphicsDevice gd, OutputDescription outputDescription, int width, int height, FileInfo iniPath, float fontPxSize)
     {
         _gd = gd;
         _windowWidth = width;
@@ -77,6 +79,8 @@ public class ImGuiBindings : IDisposable
         ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad;
         ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.HasGamepad;
 
+        SetIniPath(iniPath.FullName);
+
         _setText = new SetClipboardTextDelegate(SetClipboardText);
         _getText = new GetClipboardTextDelegate(GetClipboardText);
 
@@ -85,13 +89,28 @@ public class ImGuiBindings : IDisposable
         io.GetClipboardTextFn = Marshal.GetFunctionPointerForDelegate(_getText);
         io.ClipboardUserData = IntPtr.Zero;
 
-        CreateDeviceResources(gd, outputDescription);
+        CreateDeviceResources(gd, outputDescription, fontPxSize);
         SetKeyMappings();
 
         SetPerFrameImGuiData(1f / 60f);
 
         ImGui.NewFrame();
         _frameBegun = true;
+    }
+
+    private void SetIniPath(string iniPath)
+    {
+        if (_iniPathPtr != IntPtr.Zero)
+        {
+            Marshal.FreeHGlobal(_iniPathPtr);
+        }
+
+        _iniPathPtr = Marshal.StringToHGlobalAnsi(iniPath);
+
+        unsafe
+        {
+            ImGui.GetIO().NativePtr->IniFilename = (byte*)_iniPathPtr.ToPointer();
+        }
     }
 
     private static void SetClipboardText(IntPtr userData, string text)
@@ -116,7 +135,7 @@ public class ImGuiBindings : IDisposable
         Dispose();
     }
 
-    public void CreateDeviceResources(GraphicsDevice gd, OutputDescription outputDescription)
+    public void CreateDeviceResources(GraphicsDevice gd, OutputDescription outputDescription, float fontPxSize)
     {
         _gd = gd;
         ResourceFactory factory = gd.ResourceFactory;
@@ -124,8 +143,9 @@ public class ImGuiBindings : IDisposable
         _vertexBuffer.Name = "ImGui.NET Vertex Buffer";
         _indexBuffer = factory.CreateBuffer(new BufferDescription(2000, BufferUsage.IndexBuffer | BufferUsage.Dynamic));
         _indexBuffer.Name = "ImGui.NET Index Buffer";
+
         var fontMr = new FontManager();
-        fontMr.SetupFonts();
+        fontMr.SetupFonts(fontPxSize);
         RecreateFontDeviceTexture(gd);
         Log.Debug("Fonts OK!");
 

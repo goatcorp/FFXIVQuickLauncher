@@ -9,11 +9,16 @@ public class Background : Component
 
     public Background()
     {
-        this.bgTexture = TextureWrap.Load(AppUtil.GetEmbeddedResourceBytes("bg1.jpg"));
+        this.bgTexture = TextureWrap.Load(AppUtil.GetEmbeddedResourceBytes("bg_logo.png"));
     }
 
     public override void Draw()
     {
+        ImGui.SetCursorPos(new Vector2(0, ImGuiHelpers.ViewportSize.Y - bgTexture.Height));
+
+        ImGui.Image(bgTexture.ImGuiHandle, new Vector2(bgTexture.Width, bgTexture.Height));
+
+        /*
         ImGui.SetCursorPos(new Vector2());
 
         var vpSize = ImGuiHelpers.ViewportSize;
@@ -33,6 +38,7 @@ public class Background : Component
         }
 
         ImGui.Image(this.bgTexture.ImGuiHandle, new Vector2(width, height));
+        */
 
         base.Draw();
     }
