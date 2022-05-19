@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using XIVLauncher.Common.Game.Exceptions;
 
 namespace XIVLauncher.Common
 {
@@ -39,7 +40,8 @@ namespace XIVLauncher.Common
             return Directory.Exists(Path.Combine(path, "game")) && Directory.Exists(Path.Combine(path, "boot"));
         }
 
-        public static bool CanFfxivMightNotBeInternationalClient(string path) {
+        public static bool CanFfxivMightNotBeInternationalClient(string path)
+        {
             if (Directory.Exists(Path.Combine(path, "sdo")))
                 return true;
             if (File.Exists(Path.Combine(path, "boot", "FFXIV_Boot.exe")))
@@ -356,6 +358,44 @@ namespace XIVLauncher.Common
 
             if (tarProcess.ExitCode != 0)
                 throw new Exception("Could not untar.");
+        }
+
+        /// <summary>
+        /// Check ver & bck files for sanity.
+        /// </summary>
+        /// <param name="gamePath"></param>
+        /// <param name="exLevel"></param>
+        public static void EnsureVersionSanity(DirectoryInfo gamePath, int exLevel)
+        {
+            var failed = string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath));
+            failed &= string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath, true));
+
+            if (exLevel >= 1)
+            {
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath));
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath, true));
+            }
+
+            if (exLevel >= 2)
+            {
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath));
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath, true));
+            }
+
+            if (exLevel >= 3)
+            {
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath));
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath, true));
+            }
+
+            if (exLevel >= 4)
+            {
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath));
+                failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath, true));
+            }
+
+            if (failed)
+                throw new InvalidVersionFilesException();
         }
     }
 }

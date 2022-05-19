@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using XIVLauncher.Common.Game.Launcher;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
@@ -41,7 +42,7 @@ namespace XIVLauncher.Common.Game.Patch
         private readonly DirectoryInfo gamePath;
         private readonly DirectoryInfo patchStore;
         private readonly PatchInstaller installer;
-        private readonly Launcher launcher;
+        private readonly ILauncher launcher;
         private readonly string sid;
 
         public readonly IReadOnlyList<PatchDownload> Downloads;
@@ -77,7 +78,7 @@ namespace XIVLauncher.Common.Game.Patch
             HashCheck,
         }
 
-        public PatchManager(AcquisitionMethod acquisitionMethod, long speedLimitBytes, Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, Launcher launcher, string sid)
+        public PatchManager(AcquisitionMethod acquisitionMethod, long speedLimitBytes, Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, ILauncher launcher, string sid)
         {
             Debug.Assert(patches != null, "patches != null ASSERTION FAILED");
 

@@ -16,6 +16,7 @@ using XIVLauncher.Accounts;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Game.Launcher;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
@@ -38,14 +39,13 @@ namespace XIVLauncher.Windows
         private AccountManager _accountManager;
 
         private MainWindowViewModel Model => this.DataContext as MainWindowViewModel;
-        private readonly Launcher _launcher;
+        private ILauncher Launcher => Model.Launcher;
 
         public MainWindow()
         {
             InitializeComponent();
 
             this.DataContext = new MainWindowViewModel(this);
-            _launcher = Model.Launcher;
 
             Closed += Model.OnWindowClosed;
             Closing += Model.OnWindowClosing;
@@ -108,13 +108,13 @@ namespace XIVLauncher.Windows
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = await Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                _headlines = await Headlines.Get(Launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
 
                 for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
-                    var imageBytes = await _launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                    var imageBytes = await Launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                     using var stream = new MemoryStream(imageBytes);
 
@@ -241,7 +241,7 @@ namespace XIVLauncher.Windows
             // grey out world status icon while deferred check is running
             WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(38, 38, 38));
 
-            _launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ContinueWith((resultTask) =>
+            Launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ContinueWith((resultTask) =>
             {
                 try
                 {
@@ -412,13 +412,13 @@ namespace XIVLauncher.Windows
 
         private async void OnMaintenanceQueueTimerEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
-            var bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);
+            var bootPatches = await Launcher.CheckBootVersion(App.Settings.GamePath);
 
             var gateStatus = false;
 
             try
             {
-                gateStatus = Task.Run(() => _launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English))).Result.Status;
+                gateStatus = Task.Run(() => Launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English))).Result.Status;
             }
             catch
             {
@@ -427,7 +427,7 @@ namespace XIVLauncher.Windows
 
             if (gateStatus || bootPatches != null)
             {
-                if (bootPatches != null)
+                if (bootPatches.Length > 0)
                 {
                     CustomMessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
                         "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher", parentWindow: this);
@@ -519,9 +519,9 @@ namespace XIVLauncher.Windows
 
         private void FakeStart_OnClick(object sender, RoutedEventArgs e)
         {
-            _ = Model.StartGameAndAddon(new Launcher.LoginResult
+            _ = Model.StartGameAndAddon(new LoginResult
             {
-                OauthLogin = new Launcher.OauthLoginResult
+                OauthLogin = new OauthLoginResult
                 {
                     MaxExpansion = 4,
                     Playable = true,
@@ -529,7 +529,7 @@ namespace XIVLauncher.Windows
                     SessionId = "0",
                     TermsAccepted = true
                 },
-                State = Launcher.LoginState.Ok,
+                State = LoginState.Ok,
                 UniqueId = "0"
             }, false, false).ConfigureAwait(false);
         }

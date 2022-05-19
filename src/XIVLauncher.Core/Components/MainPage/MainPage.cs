@@ -7,6 +7,7 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Game.Launcher;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
@@ -148,13 +149,13 @@ public class MainPage : Page
                 this.Reactivate();
         });
     }
-
+    
     public async Task<bool> Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, LoginAction action)
     {
         if (action == LoginAction.Fake)
         {
-            App.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 1, 2, false, "", App.Settings.GamePath, true, ClientLanguage.Japanese, true,
-                DpiAwareness.Unaware);
+            App.EnsureLauncherAffinity(false);
+            App.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 1, 2, "", App.Settings.GamePath, true, ClientLanguage.Japanese, true, DpiAwareness.Unaware);
             return true;
         }
 
@@ -185,7 +186,7 @@ public class MainPage : Page
         return await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false);
     }
 
-    private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, LoginAction action)
+    private async Task<LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, LoginAction action)
     {
         bool? gateStatus = null;
 
@@ -239,10 +240,11 @@ public class MainPage : Page
             var enableUidCache = App.Settings.IsUidCacheEnabled ?? false;
             var gamePath = App.Settings.GamePath;
 
+            App.EnsureLauncherAffinity(isSteam);
             if (action == LoginAction.Repair)
-                return await App.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                return await App.Launcher.Login(username, password, otp, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
             else
-                return await App.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                return await App.Launcher.Login(username, password, otp, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -251,9 +253,9 @@ public class MainPage : Page
         }
     }
 
-    private async Task<bool> TryProcessLoginResult(Launcher.LoginResult loginResult, bool isSteam, LoginAction action)
+    private async Task<bool> TryProcessLoginResult(LoginResult loginResult, bool isSteam, LoginAction action)
     {
-        if (loginResult.State == Launcher.LoginState.NoService)
+        if (loginResult.State == LoginState.NoService)
         {
             /*
             CustomMessageBox.Show(
@@ -268,7 +270,7 @@ public class MainPage : Page
             return false;
         }
 
-        if (loginResult.State == Launcher.LoginState.NoTerms)
+        if (loginResult.State == LoginState.NoTerms)
         {
             /*
             CustomMessageBox.Show(
@@ -294,7 +296,7 @@ public class MainPage : Page
          * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
          * complexity and if boot is fucked game probably is too.
          */
-        if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
+        if (loginResult.State == LoginState.NeedsPatchBoot)
         {
             /*
             CustomMessageBox.Show(
@@ -312,12 +314,12 @@ public class MainPage : Page
         {
             try
             {
-                if (loginResult.State == Launcher.LoginState.NeedsPatchGame)
+                if (loginResult.State == LoginState.NeedsPatchGame)
                 {
                     if (!await RepairGame(loginResult).ConfigureAwait(false))
                         return false;
 
-                    loginResult.State = Launcher.LoginState.Ok;
+                    loginResult.State = LoginState.Ok;
                     action = LoginAction.Game;
                 }
                 else
@@ -347,7 +349,7 @@ public class MainPage : Page
             }
         }
 
-        if (loginResult.State == Launcher.LoginState.NeedsPatchGame)
+        if (loginResult.State == LoginState.NeedsPatchGame)
         {
             if (!await InstallGamePatch(loginResult).ConfigureAwait(false))
             {
@@ -355,7 +357,7 @@ public class MainPage : Page
                 return false;
             }
 
-            loginResult.State = Launcher.LoginState.Ok;
+            loginResult.State = LoginState.Ok;
             action = LoginAction.Game;
         }
 
@@ -368,7 +370,7 @@ public class MainPage : Page
             return false;
         }
 
-        Debug.Assert(loginResult.State == Launcher.LoginState.Ok);
+        Debug.Assert(loginResult.State == LoginState.Ok);
 
         while (true)
         {
@@ -599,7 +601,7 @@ public class MainPage : Page
         }
     }
 
-    public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud)
+    public async Task<Process> StartGameAndAddon(LoginResult loginResult, bool isSteam, bool forceNoDalamud)
     {
         var dalamudOk = false;
 
@@ -758,7 +760,6 @@ public class MainPage : Page
             loginResult.UniqueId,
             loginResult.OauthLogin.Region,
             loginResult.OauthLogin.MaxExpansion,
-            isSteam,
             gameArgs,
             App.Settings.GamePath,
             App.Settings.IsDx11 ?? true,
@@ -917,7 +918,7 @@ public class MainPage : Page
                 return false;
             }
 
-            if (bootPatches == null)
+            if (bootPatches.Length == 0)
                 return true;
 
             return await TryHandlePatchAsync(Repository.Boot, bootPatches, null).ConfigureAwait(false);
@@ -931,10 +932,10 @@ public class MainPage : Page
         }
     }
 
-    private Task<bool> InstallGamePatch(Launcher.LoginResult loginResult)
+    private Task<bool> InstallGamePatch(LoginResult loginResult)
     {
-        Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
-            "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+        Debug.Assert(loginResult.State == LoginState.NeedsPatchGame,
+            "loginResult.State == LoginState.NeedsPatchGame ASSERTION FAILED");
 
         Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
 
@@ -1106,7 +1107,7 @@ public class MainPage : Page
         Environment.Exit(0);
     }
 
-    private async Task<bool> RepairGame(Launcher.LoginResult loginResult)
+    private async Task<bool> RepairGame(LoginResult loginResult)
     {
         var doLogin = false;
         var mutex = new Mutex(false, "XivLauncherIsPatching");
