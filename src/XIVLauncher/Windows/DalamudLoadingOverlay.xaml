@@ -13,10 +13,10 @@
         AllowsTransparency="True"
         Background="Transparent" ShowInTaskbar="False"
         Topmost="True"
-        WindowStyle="None" Height="170.088" Width="270"
+        WindowStyle="None" Height="186.088" Width="270"
         Loaded="DalamudLoadingOverlay_OnLoaded">
     <Grid Margin="0,0,0,0">
-        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="107" Margin="0,0,56,0">
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="124" Margin="0,0,56,0">
             <StackPanel Margin="16,16,16,0">
                 <TextBlock Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding DalamudUpdateLoc}" x:Name="UpdateText"/>
 
@@ -26,6 +26,7 @@
                     IsIndeterminate="True" Margin="0,20,0,0" x:Name="ProgressBar"/>
 
                 <TextBlock Foreground="DarkGray" Margin="0, 16,0,0" TextAlignment="Center" x:Name="ProgressTextBlock"/>
+                <TextBlock Foreground="DarkGray" Margin="0, 4,0,0" TextAlignment="Center" x:Name="PercentageTextBlock"/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

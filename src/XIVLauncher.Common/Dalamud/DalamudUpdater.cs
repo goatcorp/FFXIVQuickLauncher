@@ -64,25 +64,22 @@ namespace XIVLauncher.Common.Dalamud
 
         public void SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep progress)
         {
-            //Overlay?.Dispatcher.Invoke(() => Overlay.SetProgress(progress));
             Overlay.SetStep(progress);
         }
 
         public void ShowOverlay()
         {
-            //Overlay?.Dispatcher.Invoke(() => Overlay.SetVisible());
             Overlay.SetVisible();
         }
 
         public void CloseOverlay()
         {
-            //Overlay?.Dispatcher.Invoke(() => Overlay.Close());
             Overlay.SetInvisible();
         }
 
-        private void ReportOverlayProgress(double? progress)
+        private void ReportOverlayProgress(long? size, long downloaded, double? progress)
         {
-            Overlay.ReportProgress(progress);
+            Overlay.ReportProgress(size, downloaded, progress);
         }
 
         public void Run()
@@ -231,7 +228,7 @@ namespace XIVLauncher.Common.Dalamud
             try
             {
                 this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
-                this.ReportOverlayProgress(null);
+                this.ReportOverlayProgress(null, 0, null);
                 AssetDirectory = await AssetManager.EnsureAssets(this.assetDirectory).ConfigureAwait(true);
             }
             catch (Exception ex)
@@ -410,8 +407,8 @@ namespace XIVLauncher.Common.Dalamud
                 runtimePath.Create();
             }
 
-            var dotnetUrl = $"https://dotnetcli.azureedge.net/dotnet/Runtime/{version}/dotnet-runtime-{version}-win-x64.zip";
-            var desktopUrl = $"https://dotnetcli.azureedge.net/dotnet/WindowsDesktop/{version}/windowsdesktop-runtime-{version}-win-x64.zip";
+            var dotnetUrl = $"https://kamori.goats.dev/Dalamud/Release/Runtime/DotNet/{version}";
+            var desktopUrl = $"https://kamori.goats.dev/Dalamud/Release/Runtime/WindowsDesktop/{version}";
 
             var downloadPath = PlatformHelpers.GetTempFileName();
 
@@ -430,7 +427,7 @@ namespace XIVLauncher.Common.Dalamud
         private async Task DownloadFile(string url, string path, TimeSpan timeout)
         {
             using var downloader = new HttpClientDownloadWithProgress(url, path);
-            downloader.ProgressChanged += (size, downloaded, percentage) => { this.ReportOverlayProgress(percentage); };
+            downloader.ProgressChanged += this.ReportOverlayProgress;
 
             await downloader.Download().ConfigureAwait(false);
         }
