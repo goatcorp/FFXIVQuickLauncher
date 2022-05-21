@@ -1013,6 +1013,20 @@ namespace XIVLauncher.Windows.ViewModel
                                     .WithParentWindow(_window)
                                     .Show();
                 }
+
+                if (!dalamudOk)
+                {
+                    var ensurementErrorMessage = Loc.Localize("DalamudEnsurementError",
+                        "Could not download necessary data files to use Dalamud and plugins.\nThis is likely a problem with your internet connection - the game will start, but you will not be able to use plugins.");
+
+                    CustomMessageBox.Builder
+                                    .NewFrom(ensurementErrorMessage)
+                                    .WithImage(MessageBoxImage.Warning)
+                                    .WithButtons(MessageBoxButton.OK)
+                                    .WithShowHelpLinks()
+                                    .WithParentWindow(_window)
+                                    .Show();
+                }
             }
 
             var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk);

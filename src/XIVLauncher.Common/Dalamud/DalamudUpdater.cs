@@ -22,6 +22,9 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo assetDirectory;
         private readonly DirectoryInfo configDirectory;
         private readonly IUniqueIdCache? cache;
+
+        private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(25);
+
         public DownloadState State { get; private set; } = DownloadState.Unknown;
         public bool IsStaging { get; private set; } = false;
 
@@ -110,11 +113,11 @@ namespace XIVLauncher.Common.Dalamud
         private static string GetBetaTrackName(DalamudSettings settings) =>
             string.IsNullOrEmpty(settings.DalamudBetaKind) ? "staging" : settings.DalamudBetaKind;
 
-        private static async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(DalamudSettings settings)
+        private async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(DalamudSettings settings)
         {
             using var client = new HttpClient
             {
-                Timeout = TimeSpan.FromMinutes(5),
+                Timeout = this.defaultTimeout,
             };
 
             client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
@@ -361,12 +364,7 @@ namespace XIVLauncher.Common.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            using var client = new HttpClient
-            {
-                Timeout = TimeSpan.FromMinutes(25),
-            };
-
-            await this.DownloadFile(version.DownloadUrl, downloadPath, TimeSpan.FromMinutes(25)).ConfigureAwait(false);
+            await this.DownloadFile(version.DownloadUrl, downloadPath, this.defaultTimeout).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
 
             File.Delete(downloadPath);
@@ -415,10 +413,10 @@ namespace XIVLauncher.Common.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            await this.DownloadFile(dotnetUrl, downloadPath, TimeSpan.FromMinutes(25)).ConfigureAwait(false);
+            await this.DownloadFile(dotnetUrl, downloadPath, this.defaultTimeout).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
-            await this.DownloadFile(desktopUrl, downloadPath, TimeSpan.FromMinutes(25)).ConfigureAwait(false);
+            await this.DownloadFile(desktopUrl, downloadPath, this.defaultTimeout).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
             File.Delete(downloadPath);
