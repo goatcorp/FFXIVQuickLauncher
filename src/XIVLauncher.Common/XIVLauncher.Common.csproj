@@ -51,5 +51,6 @@
         <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
         <PackageReference Include="SharedMemory" Version="2.3.2" />
         <PackageReference Include="System.Memory" Version="4.5.4" />
+        <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
     </ItemGroup>
 </Project>

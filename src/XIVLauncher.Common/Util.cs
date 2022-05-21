@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Text;
 
 namespace XIVLauncher.Common
@@ -356,6 +357,23 @@ namespace XIVLauncher.Common
 
             if (tarProcess.ExitCode != 0)
                 throw new Exception("Could not untar.");
+        }
+
+        [DllImport("libc")]
+        private static extern uint geteuid();
+
+        public static bool IsElevated()
+        {
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.Win32NT:
+                    return new WindowsPrincipal(WindowsIdentity.GetCurrent())
+                        .IsInRole(WindowsBuiltInRole.Administrator);
+                case PlatformID.Unix:
+                    return geteuid() == 0;
+                default:
+                    return false;
+            }
         }
     }
 }

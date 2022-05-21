@@ -46,6 +46,9 @@ public class MainPage : Page
         var savedAccount = App.Accounts.CurrentAccount;
 
         if (savedAccount != null) this.SwitchAccount(savedAccount, false);
+
+        if (Util.IsElevated())
+            App.ShowMessage("XIVLauncher is running as administrator/root user.\nThis can cause various issues, including but not limited to addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher with elevated privileges", "XIVLauncher");
     }
 
     public AccountSwitcher AccountSwitcher { get; private set; }
