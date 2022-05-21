@@ -22,9 +22,10 @@ public class HttpClientDownloadWithProgress : IDisposable
         this.destinationFilePath = destinationFilePath;
     }
 
-    public async Task StartDownload()
+    public async Task Download(TimeSpan? timeout = null)
     {
-        this.httpClient = new HttpClient { Timeout = TimeSpan.FromDays(1) };
+        timeout ??= TimeSpan.FromDays(1);
+        this.httpClient = new HttpClient { Timeout = timeout.Value };
 
         using var response = await this.httpClient.GetAsync(this.downloadUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         await this.DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);

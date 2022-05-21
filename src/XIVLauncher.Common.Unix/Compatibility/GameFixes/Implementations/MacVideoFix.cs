@@ -34,7 +34,7 @@ public class MacVideoFix : GameFix
             }
         };
 
-        client.StartDownload().GetAwaiter().GetResult();
+        client.Download().GetAwaiter().GetResult();
 
         var tempMacExtract = Path.Combine(TempDir.FullName, "xlcore-macTempExtract");
         ZipFile.ExtractToDirectory(zipFilePath, tempMacExtract);

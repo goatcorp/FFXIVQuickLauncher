@@ -92,6 +92,25 @@ namespace XIVLauncher.Windows
             });
         }
 
+        public void ReportProgress(double? progress)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (IsClosed)
+                    return;
+
+                if (progress == null)
+                {
+                    this.ProgressBar.IsIndeterminate = true;
+                }
+                else
+                {
+                    this.ProgressBar.IsIndeterminate = false;
+                    this.ProgressBar.Value = progress.Value;
+                }
+            });
+        }
+
         private void DalamudLoadingOverlay_OnLoaded(object sender, RoutedEventArgs e)
         {
             HideFromWindowSwitcher.Hide(this);

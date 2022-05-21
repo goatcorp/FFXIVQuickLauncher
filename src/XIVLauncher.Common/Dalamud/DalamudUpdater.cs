@@ -80,6 +80,11 @@ namespace XIVLauncher.Common.Dalamud
             Overlay.SetInvisible();
         }
 
+        private void ReportOverlayProgress(double? progress)
+        {
+            Overlay.ReportProgress(progress);
+        }
+
         public void Run()
         {
             Log.Information("[DUPDATE] Starting...");
@@ -178,7 +183,7 @@ namespace XIVLauncher.Common.Dalamud
 
                 try
                 {
-                    await Download(currentVersionPath, settings, remoteVersionInfo).ConfigureAwait(true);
+                    await DownloadDalamud(currentVersionPath, remoteVersionInfo).ConfigureAwait(true);
                     CleanUpOld(addonPath, remoteVersionInfo.AssemblyVersion);
 
                     // This is a good indicator that we should clear the UID cache
@@ -210,7 +215,7 @@ namespace XIVLauncher.Common.Dalamud
 
                     try
                     {
-                        await DownloadRuntime(this.runtimeDirectory, remoteVersionInfo.RuntimeVersion);
+                        await DownloadRuntime(this.runtimeDirectory, remoteVersionInfo.RuntimeVersion).ConfigureAwait(false);
                         File.WriteAllText(versionFile.FullName, remoteVersionInfo.RuntimeVersion);
                     }
                     catch (Exception ex)
@@ -225,8 +230,9 @@ namespace XIVLauncher.Common.Dalamud
 
             try
             {
-                SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
-                AssetDirectory = await AssetManager.EnsureAssets(assetDirectory).ConfigureAwait(true);
+                this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
+                this.ReportOverlayProgress(null);
+                AssetDirectory = await AssetManager.EnsureAssets(this.assetDirectory).ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -342,7 +348,7 @@ namespace XIVLauncher.Common.Dalamud
             File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
         }
 
-        private static async Task Download(DirectoryInfo addonPath, DalamudSettings settings, DalamudVersionInfo version)
+        private async Task DownloadDalamud(DirectoryInfo addonPath, DalamudVersionInfo version)
         {
             // Ensure directory exists
             if (!addonPath.Exists)
@@ -363,14 +369,7 @@ namespace XIVLauncher.Common.Dalamud
                 Timeout = TimeSpan.FromMinutes(25),
             };
 
-            client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true,
-            };
-
-            var bytes = await client.GetByteArrayAsync(version.DownloadUrl).ConfigureAwait(true);
-            File.WriteAllBytes(downloadPath, bytes);
-
+            await this.DownloadFile(version.DownloadUrl, downloadPath, TimeSpan.FromMinutes(25)).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
 
             File.Delete(downloadPath);
@@ -398,7 +397,7 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        private static async Task DownloadRuntime(DirectoryInfo runtimePath, string version)
+        private async Task DownloadRuntime(DirectoryInfo runtimePath, string version)
         {
             // Ensure directory exists
             if (!runtimePath.Exists)
@@ -419,20 +418,21 @@ namespace XIVLauncher.Common.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            using var client = new HttpClient
-            {
-                Timeout = TimeSpan.FromMinutes(25),
-            };
-
-            var bytesDn = await client.GetByteArrayAsync(dotnetUrl);
-            File.WriteAllBytes(downloadPath, bytesDn);
+            await this.DownloadFile(dotnetUrl, downloadPath, TimeSpan.FromMinutes(25)).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
-            var bytesDesktop = await client.GetByteArrayAsync(desktopUrl);
-            File.WriteAllBytes(downloadPath, bytesDesktop);
+            await this.DownloadFile(desktopUrl, downloadPath, TimeSpan.FromMinutes(25)).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
             File.Delete(downloadPath);
+        }
+
+        private async Task DownloadFile(string url, string path, TimeSpan timeout)
+        {
+            using var downloader = new HttpClientDownloadWithProgress(url, path);
+            downloader.ProgressChanged += (size, downloaded, percentage) => { this.ReportOverlayProgress(percentage); };
+
+            await downloader.Download().ConfigureAwait(false);
         }
     }
 }

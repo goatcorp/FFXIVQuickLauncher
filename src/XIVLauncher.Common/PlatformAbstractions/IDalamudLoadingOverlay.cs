@@ -15,4 +15,6 @@ public interface IDalamudLoadingOverlay
     public void SetVisible();
 
     public void SetInvisible();
+
+    public void ReportProgress(double? progress);
 }
