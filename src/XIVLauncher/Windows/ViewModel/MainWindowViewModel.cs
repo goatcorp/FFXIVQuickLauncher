@@ -23,6 +23,7 @@ using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Game;
 using XIVLauncher.PlatformAbstractions;
@@ -66,9 +67,9 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoDalamudCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.StartWithoutDalamud), () => !IsLoggingIn);
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
-            Launcher = App.GlobalSteamTicket == null ?
-                new(App.Steam, App.UniqueIdCache, CommonSettings.Instance) :
-                new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance);
+            Launcher = App.GlobalSteamTicket == null
+                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance)
+                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance);
         }
 
         private Action<object> GetLoginFunc(AfterLoginAction action)
@@ -88,7 +89,7 @@ namespace XIVLauncher.Windows.ViewModel
                     App.Settings.HasShownAutoLaunchDisclaimer = true;
                 }
 
-                if (Util.CheckIsGameOpen() && action == AfterLoginAction.Repair)
+                if (GameHelpers.CheckIsGameOpen() && action == AfterLoginAction.Repair)
                 {
                     CustomMessageBox.Builder
                                     .NewFrom(Loc.Localize("GameIsOpenRepairError", "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again."))
@@ -1166,6 +1167,7 @@ namespace XIVLauncher.Windows.ViewModel
         private async Task<bool> TryHandlePatchAsync(Repository repository, PatchListEntry[] pendingPatches, string sid)
         {
             using var mutex = new Mutex(false, "XivLauncherIsPatching");
+
             if (!mutex.WaitOne(0, false))
             {
                 CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
@@ -1173,7 +1175,7 @@ namespace XIVLauncher.Windows.ViewModel
                 return false; // This line will not be run.
             }
 
-            if (Util.CheckIsGameOpen())
+            if (GameHelpers.CheckIsGameOpen())
             {
                 CustomMessageBox.Show(
                     Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
@@ -1215,17 +1217,23 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (NotEnoughSpaceException sex)
             {
+                var bytesRequired = ApiHelpers.BytesToString(sex.BytesRequired);
+                var bytesFree = ApiHelpers.BytesToString(sex.BytesFree);
+
                 switch (sex.Kind)
                 {
                     case NotEnoughSpaceException.SpaceKind.Patches:
-                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(sex.BytesRequired), Util.BytesToString(sex.BytesFree)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
+                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceError", "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}"), bytesRequired, bytesFree), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
                         break;
+
                     case NotEnoughSpaceException.SpaceKind.AllPatches:
-                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceErrorAll", "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(sex.BytesRequired), Util.BytesToString(sex.BytesFree)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
+                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceErrorAll", "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}"), bytesRequired, bytesFree), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
                         break;
+
                     case NotEnoughSpaceException.SpaceKind.Game:
-                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceGameError", "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}"), Util.BytesToString(sex.BytesRequired), Util.BytesToString(sex.BytesFree)), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
+                        CustomMessageBox.Show(string.Format(Loc.Localize("FreeSpaceGameError", "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}"), bytesRequired, bytesFree), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
                         break;
+
                     default:
                         Debug.Assert(false, "HandlePatchAsync:Invalid NotEnoughSpaceException.SpaceKind value.");
                         break;
@@ -1234,8 +1242,8 @@ namespace XIVLauncher.Windows.ViewModel
             catch (Exception ex)
             {
                 CustomMessageBox.Builder.NewFromUnexpectedException(ex, "HandlePatchAsync")
-                    .WithParentWindow(_window)
-                    .Show();
+                                .WithParentWindow(_window)
+                                .Show();
             }
             finally
             {

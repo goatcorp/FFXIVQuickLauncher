@@ -48,7 +48,7 @@ public class UnixDalamudRunner : IDalamudRunner
             $"--dalamud-asset-directory=\"{startInfo.AssetDirectory}\"",
             $"--dalamud-client-language={(int)startInfo.Language}",
             $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
-            };
+        };
 
         if (loadMethod == DalamudLoadMethod.ACLonly)
             launchArguments.Add("--without-dalamud");
@@ -68,12 +68,14 @@ public class UnixDalamudRunner : IDalamudRunner
         try
         {
             var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.pid);
+            var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
+
             if (unixPid == 0)
             {
                 Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
                 return null;
             }
+
             var gameProcess = Process.GetProcessById(unixPid);
             var handle = gameProcess.Handle;
             return gameProcess;

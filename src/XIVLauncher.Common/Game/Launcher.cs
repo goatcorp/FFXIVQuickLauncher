@@ -1,3 +1,7 @@
+
+
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,8 +24,7 @@ using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Encryption;
 using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.PlatformAbstractions;
-
-#nullable enable
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game;
 
@@ -214,9 +217,9 @@ public class Launcher
     }
 
     public Process? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                              bool isSteamServiceAccount, string additionalArguments,
-                              DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
-                              bool encryptArguments, DpiAwareness dpiAwareness)
+                               bool isSteamServiceAccount, string additionalArguments,
+                               DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
+                               bool encryptArguments, DpiAwareness dpiAwareness)
     {
         Log.Information(
             $"XivGame::LaunchGame(steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
@@ -568,7 +571,7 @@ public class Launcher
         {
             var reply = Encoding.UTF8.GetString(
                 await DownloadAsLauncher(
-                    $"https://frontier.ffxiv.com/worldStatus/gate_status.json?lang={language.GetLangCode()}&_={Util.GetUnixMillis()}", language).ConfigureAwait(true));
+                    $"https://frontier.ffxiv.com/worldStatus/gate_status.json?lang={language.GetLangCode()}&_={ApiHelpers.GetUnixMillis()}", language).ConfigureAwait(true));
 
             return JsonConvert.DeserializeObject<GateStatus>(reply);
         }
@@ -584,7 +587,7 @@ public class Launcher
         {
             var reply = Encoding.UTF8.GetString(
                 await DownloadAsLauncher(
-                    $"https://frontier.ffxiv.com/worldStatus/login_status.json?_={Util.GetUnixMillis()}", ClientLanguage.English).ConfigureAwait(true));
+                    $"https://frontier.ffxiv.com/worldStatus/login_status.json?_={ApiHelpers.GetUnixMillis()}", ClientLanguage.English).ConfigureAwait(true));
 
             return Convert.ToBoolean(int.Parse(reply[10].ToString()));
         }

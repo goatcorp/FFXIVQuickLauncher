@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Serilog;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Encryption
 {
@@ -19,10 +20,12 @@ namespace XIVLauncher.Common.Encryption
         private static char DeriveChecksum(uint key)
         {
             var index = (key & 0x000F_0000) >> 16;
+
             try
             {
                 return checksumTable[index];
-            } catch (IndexOutOfRangeException)
+            }
+            catch (IndexOutOfRangeException)
             {
                 return '!'; // Conceivably, this shouldn't happen...
             }
@@ -75,7 +78,7 @@ namespace XIVLauncher.Common.Encryption
 
             var blowfish = new LegacyBlowfish(GetKeyBytes(key));
             var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
-            var base64Str = Util.ToMangledSeBase64(ciphertext);
+            var base64Str = GameHelpers.ToMangledSeBase64(ciphertext);
             var checksum = DeriveChecksum(key);
 
             Log.Information("ArgumentBuilder::BuildEncrypted() checksum:{0}", checksum);

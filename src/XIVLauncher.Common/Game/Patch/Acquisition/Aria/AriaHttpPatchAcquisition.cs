@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AriaNet;
 using Serilog;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 {
@@ -50,7 +51,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
                     ariaPath = "aria2c";
                 }
 
-                var ariaPort = Util.GetAvailablePort();
+                var ariaPort = PlatformHelpers.GetAvailablePort();
                 var ariaHost = $"http://localhost:{ariaPort}/jsonrpc";
 
                 var ariaArgs =

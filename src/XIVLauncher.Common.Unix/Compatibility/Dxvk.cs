@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 
@@ -35,7 +36,7 @@ public static class Dxvk
         var tempPath = Path.GetTempFileName();
 
         File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(DXVK_DOWNLOAD));
-        Util.Untar(tempPath, installDirectory.FullName);
+        PlatformHelpers.Untar(tempPath, installDirectory.FullName);
 
         File.Delete(tempPath);
     }

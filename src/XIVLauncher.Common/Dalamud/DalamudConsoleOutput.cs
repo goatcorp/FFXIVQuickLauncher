@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
 namespace XIVLauncher.Common.Dalamud
 {
     public sealed class DalamudConsoleOutput
     {
-        public Int32 pid;
-        public Int64 handle;
+        [JsonProperty("pid")]
+        public int Pid { get; set; }
+
+        [JsonProperty("handle")]
+        public long Handle { get; set; }
     }
 }
-

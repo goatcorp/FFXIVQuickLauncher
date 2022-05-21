@@ -4,9 +4,9 @@ using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using XIVLauncher.Common;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Game.Patch.Acquisition;
+using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
 using Brushes = System.Windows.Media.Brushes;
 
@@ -76,7 +76,7 @@ namespace XIVLauncher.Windows
                     {
                         var pct = Math.Round((double) (100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
                         SetPatchProgress(i,
-                            $"{activePatch.Patch} ({pct:#0.0}%, {Util.BytesToString(_manager.Speeds[i])}/s)",
+                            $"{activePatch.Patch} ({pct:#0.0}%, {ApiHelpers.BytesToString(_manager.Speeds[i])}/s)",
                             pct, this._manager.DownloadServices[i] is TorrentPatchAcquisition, false);
                     }
                 }
@@ -102,7 +102,7 @@ namespace XIVLauncher.Windows
 
         public void SetLeft(long left, double rate)
         {
-            BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, Util.BytesToString(left), Util.BytesToString(rate));
+            BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, ApiHelpers.BytesToString(left), ApiHelpers.BytesToString(rate));
         }
 
         public void SetPatchProgress(int index, string patchName, double pct, bool torrent, bool indeterminate)

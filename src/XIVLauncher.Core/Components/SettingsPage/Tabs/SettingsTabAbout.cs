@@ -1,6 +1,7 @@
 using System.Numerics;
 using ImGuiNET;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
@@ -47,7 +48,7 @@ public class SettingsTabAbout : SettingsTab
 
         if (ImGui.Button("See software licenses"))
         {
-            Util.OpenBrowser(Path.Combine(AppContext.BaseDirectory, "license.txt"));
+            PlatformHelpers.OpenBrowser(Path.Combine(AppContext.BaseDirectory, "license.txt"));
         }
 
         ImGui.Dummy(new Vector2(20));

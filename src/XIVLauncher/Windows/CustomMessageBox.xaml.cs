@@ -12,6 +12,7 @@ using CheapLoc;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Util;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 using XIVLauncher.Xaml;
@@ -205,7 +206,7 @@ namespace XIVLauncher.Windows
 
         private void OfficialLauncherButton_Click(object sender, RoutedEventArgs e)
         {
-            if (App.Settings.GamePath == null || !Util.GetOfficialLauncherPath(App.Settings.GamePath).Exists)
+            if (App.Settings.GamePath == null || !GameHelpers.GetOfficialLauncherPath(App.Settings.GamePath).Exists)
             {
                 CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherNotPresentError", "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher."), "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
                 return;
@@ -230,7 +231,7 @@ namespace XIVLauncher.Windows
 
                         Thread.Sleep(5000);
 
-                        Util.StartOfficialLauncher(App.Settings.GamePath, true, App.Settings.IsFt.GetValueOrDefault(false));
+                        GameHelpers.StartOfficialLauncher(App.Settings.GamePath, true, App.Settings.IsFt.GetValueOrDefault(false));
                     }
                     catch (Exception)
                     {
@@ -241,7 +242,7 @@ namespace XIVLauncher.Windows
                     break;
 
                 case MessageBoxResult.No:
-                    Util.StartOfficialLauncher(App.Settings.GamePath, false, App.Settings.IsFt.GetValueOrDefault(false));
+                    GameHelpers.StartOfficialLauncher(App.Settings.GamePath, false, App.Settings.IsFt.GetValueOrDefault(false));
                     break;
 
                 case MessageBoxResult.Cancel:

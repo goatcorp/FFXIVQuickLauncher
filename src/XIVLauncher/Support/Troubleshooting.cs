@@ -6,6 +6,7 @@ using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Support
 {
@@ -103,7 +104,7 @@ namespace XIVLauncher.Support
                 LauncherHash = AppUtil.GetGitHash(),
                 Official = AppUtil.GetBuildOrigin() == "goatcorp/FFXIVQuickLauncher",
                 DpiAwareness = App.Settings.DpiAwareness.GetValueOrDefault(),
-                Platform = Util.GetPlatform(),
+                Platform = PlatformHelpers.GetPlatform(),
 
                 ObservedGameVersion = ffxivVer,
                 ObservedEx1Version = ex1Ver,

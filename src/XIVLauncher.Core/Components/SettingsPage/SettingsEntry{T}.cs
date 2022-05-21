@@ -1,5 +1,6 @@
 using ImGuiNET;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Core.Components.SettingsPage;
 

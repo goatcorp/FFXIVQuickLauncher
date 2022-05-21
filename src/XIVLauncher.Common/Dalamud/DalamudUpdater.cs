@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Dalamud
 {
@@ -352,7 +353,7 @@ namespace XIVLauncher.Common.Dalamud
                 addonPath.Create();
             }
 
-            var downloadPath = Util.GetTempFileName();
+            var downloadPath = PlatformHelpers.GetTempFileName();
 
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
@@ -413,7 +414,7 @@ namespace XIVLauncher.Common.Dalamud
             var dotnetUrl = $"https://dotnetcli.azureedge.net/dotnet/Runtime/{version}/dotnet-runtime-{version}-win-x64.zip";
             var desktopUrl = $"https://dotnetcli.azureedge.net/dotnet/WindowsDesktop/{version}/windowsdesktop-runtime-{version}-win-x64.zip";
 
-            var downloadPath = Util.GetTempFileName();
+            var downloadPath = PlatformHelpers.GetTempFileName();
 
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);

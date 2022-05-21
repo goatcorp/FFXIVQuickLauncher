@@ -62,7 +62,7 @@ public class WindowsDalamudRunner : IDalamudRunner
         try
         {
             var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            var gameProcess = new ExistingProcess((IntPtr)dalamudConsoleOutput.handle);
+            var gameProcess = new ExistingProcess((IntPtr)dalamudConsoleOutput.Handle);
 
             return gameProcess;
         }

@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
 using ImGuiNET;
-using XIVLauncher.Common;
 using XIVLauncher.Common.Unix.Compatibility;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
@@ -77,7 +77,7 @@ public class SettingsTabWine : SettingsTab
 
         if (ImGui.Button("Open prefix"))
         {
-            Util.OpenBrowser(Program.CompatibilityTools.Settings.Prefix.FullName);
+            PlatformHelpers.OpenBrowser(Program.CompatibilityTools.Settings.Prefix.FullName);
         }
 
         ImGui.SameLine();

@@ -14,6 +14,7 @@ using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Common.Unix;
 using XIVLauncher.Common.Unix.Compatibility;
+using XIVLauncher.Common.Util;
 using XIVLauncher.Core.Accounts.Secrets;
 using XIVLauncher.Core.Accounts.Secrets.Providers;
 using XIVLauncher.Core.Components.LoadingPage;
@@ -85,7 +86,7 @@ class Program
 
         if (string.IsNullOrEmpty(Config.AcceptLanguage))
         {
-            Config.AcceptLanguage = Util.GenerateAcceptLanguage();
+            Config.AcceptLanguage = ApiHelpers.GenerateAcceptLanguage();
         }
 
         Config.GamePath ??= storage.GetFolder("ffxiv");

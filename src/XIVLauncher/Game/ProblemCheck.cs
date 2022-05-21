@@ -8,6 +8,7 @@ using CheapLoc;
 using Microsoft.Win32;
 using Serilog;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Util;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher.Game
@@ -57,7 +58,7 @@ namespace XIVLauncher.Game
                 App.Settings.HasComplainedAboutAdmin = true;
             }
 
-            if (Util.IsElevated() && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
+            if (PlatformHelpers.IsElevated() && !App.Settings.HasComplainedAboutAdmin.GetValueOrDefault(false) && !EnvironmentSettings.IsWine)
             {
                 CustomMessageBox.Show(
                     Loc.Localize("AdminCheckNag",

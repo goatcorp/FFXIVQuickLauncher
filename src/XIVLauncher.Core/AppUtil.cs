@@ -1,5 +1,5 @@
 using System.Reflection;
-using XIVLauncher.Common;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Core;
 
@@ -58,7 +58,7 @@ public static partial class AppUtil
         }
         else
         {
-            Util.OpenBrowser(url);
+            PlatformHelpers.OpenBrowser(url);
         }
     }
 }

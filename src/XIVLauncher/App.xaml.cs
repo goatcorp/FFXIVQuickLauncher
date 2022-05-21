@@ -15,6 +15,7 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Settings;
@@ -206,7 +207,7 @@ namespace XIVLauncher
 
             if (string.IsNullOrEmpty(Settings.AcceptLanguage))
             {
-                Settings.AcceptLanguage = Util.GenerateAcceptLanguage();
+                Settings.AcceptLanguage = ApiHelpers.GenerateAcceptLanguage();
             }
 
             UniqueIdCache = new CommonUniqueIdCache(new FileInfo(Path.Combine(Paths.RoamingPath, "uidCache.json")));

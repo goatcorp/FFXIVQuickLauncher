@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Serilog;
 using XIVLauncher.Common.Encryption.BlockCipher;
 using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Encryption;
 
@@ -45,8 +46,6 @@ public class Ticket
         var rawTicket = new byte[rawTicketBytes.Length + 1];
         Array.Copy(rawTicketBytes, rawTicket, rawTicketBytes.Length);
         rawTicket[rawTicket.Length - 1] = 0;
-
-        Log.Debug(Util.ByteArrayToHex(rawTicket));
 
         var blowfishKey = $"{time:x08}#un@e=x>";
 
@@ -98,20 +97,15 @@ public class Ticket
         finalBytes[1] = t;
 
         var keyBytes = Encoding.ASCII.GetBytes(blowfishKey);
-        Log.Debug(Util.ByteArrayToHex(keyBytes));
 
         var blowfish = new Blowfish(keyBytes);
         var ecb = new Ecb<Blowfish>(blowfish);
-
-        Log.Debug(Util.ByteArrayToHex(finalBytes));
 
         var encBytes = new byte[finalBytes.Length];
         Debug.Assert(encBytes.Length % 8 == 0);
 
         ecb.Encrypt(finalBytes, encBytes);
-        var encString = Util.ToMangledSeBase64(encBytes);
-
-        Log.Debug(Util.ByteArrayToHex(encBytes));
+        var encString = GameHelpers.ToMangledSeBase64(encBytes);
 
         const int SPLIT_SIZE = 300;
         var parts = ChunksUpto(encString, SPLIT_SIZE).ToArray();

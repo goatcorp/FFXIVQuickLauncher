@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
+using XIVLauncher.Common.Util;
 
 #if FLATPAK
 #warning THIS IS A FLATPAK BUILD!!!
@@ -89,7 +90,7 @@ public class CompatibilityTools
 
         await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false)).ConfigureAwait(false);
 
-        Util.Untar(tempFilePath, this.toolDirectory.FullName);
+        PlatformHelpers.Untar(tempFilePath, this.toolDirectory.FullName);
 
         Log.Information("Compatibility tool successfully extracted to {Path}", this.toolDirectory.FullName);
 

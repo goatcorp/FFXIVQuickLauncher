@@ -11,6 +11,7 @@ using Serilog;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game.Patch
 {
@@ -106,7 +107,7 @@ namespace XIVLauncher.Common.Game.Patch
         {
             if (!EnvironmentSettings.IsIgnoreSpaceRequirements)
             {
-                var freeSpaceDownload = Util.GetDiskFreeSpace(this.patchStore);
+                var freeSpaceDownload = PlatformHelpers.GetDiskFreeSpace(this.patchStore);
 
                 if (Downloads.Any(x => x.Patch.Length > freeSpaceDownload))
                 {
@@ -121,7 +122,7 @@ namespace XIVLauncher.Common.Game.Patch
                         freeSpaceDownload);
                 }
 
-                var freeSpaceGame = Util.GetDiskFreeSpace(this.gamePath);
+                var freeSpaceGame = PlatformHelpers.GetDiskFreeSpace(this.gamePath);
 
                 if (freeSpaceGame < AllDownloadsLength)
                 {

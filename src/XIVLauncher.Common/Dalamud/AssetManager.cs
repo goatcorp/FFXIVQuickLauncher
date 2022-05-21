@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Serilog;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Dalamud
 {
@@ -167,7 +168,7 @@ namespace XIVLauncher.Common.Dalamud
 
         private static void CleanUpOld(DirectoryInfo baseDir, int version)
         {
-            if (Util.CheckIsGameOpen())
+            if (GameHelpers.CheckIsGameOpen())
                 return;
 
             var toDelete = Path.Combine(baseDir.FullName, version.ToString());

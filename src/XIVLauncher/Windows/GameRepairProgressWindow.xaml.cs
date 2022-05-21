@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using XIVLauncher.Common;
 using XIVLauncher.Common.Game.Patch;
+using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
 using XIVLauncher.Xaml;
 
@@ -80,8 +80,8 @@ namespace XIVLauncher.Windows
                 case PatchVerifier.VerifyState.DownloadMeta:
                     CurrentStepText.Text = ViewModel.DownloadingMetaLoc;
                     InfoTextBlock.Text = $"{_verify.CurrentFile}";
-                    StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
-                    SpeedTextBlock.Text = string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed));
+                    StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {ApiHelpers.BytesToString(this._verify.Progress)}/{ApiHelpers.BytesToString(_verify.Total)}";
+                    SpeedTextBlock.Text = string.Format(ViewModel.SpeedUnitPerSecLoc, ApiHelpers.BytesToString(_verify.Speed));
                     EstimatedTimeTextBlock.Text = ViewModel.FormatEstimatedTime(_verify.Total - _verify.Progress, _verify.Speed);
                     this.Progress.Value = _verify.Total != 0 ? 100.0 * _verify.Progress / _verify.Total : 0;
                     break;
@@ -95,14 +95,14 @@ namespace XIVLauncher.Windows
 
                     InfoTextBlock.Text = $"{_verify.CurrentFile}";
 
-                    StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {Math.Min(_verify.TaskIndex + 1, _verify.TaskCount)}/{_verify.TaskCount} - {Util.BytesToString(this._verify.Progress)}/{Util.BytesToString(_verify.Total)}";
+                    StatusTextBlock.Text = $"{Math.Min(_verify.PatchSetIndex + 1, _verify.PatchSetCount)}/{_verify.PatchSetCount} - {Math.Min(_verify.TaskIndex + 1, _verify.TaskCount)}/{_verify.TaskCount} - {ApiHelpers.BytesToString(this._verify.Progress)}/{ApiHelpers.BytesToString(_verify.Total)}";
 
                     SpeedTextBlock.Text = _verify.CurrentMetaInstallState switch
                     {
                         Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.WaitingForReattempt => ViewModel.ReattemptWaitingLoc,
                         Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Connecting => ViewModel.ConnectingLoc,
                         Common.Patching.IndexedZiPatch.IndexedZiPatchInstaller.InstallTaskState.Finishing => ViewModel.FinishingLoc,
-                        _ => string.Format(ViewModel.SpeedUnitPerSecLoc, Util.BytesToString(_verify.Speed)),
+                        _ => string.Format(ViewModel.SpeedUnitPerSecLoc, ApiHelpers.BytesToString(_verify.Speed)),
                     };
 
                     EstimatedTimeTextBlock.Text = _verify.CurrentMetaInstallState switch

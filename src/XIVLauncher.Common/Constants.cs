@@ -1,4 +1,5 @@
 using System;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common
 {
@@ -9,7 +10,7 @@ namespace XIVLauncher.Common
         public const uint STEAM_APP_ID = 39210;
         public const uint STEAM_FT_APP_ID = 312060;
 
-        public static string PatcherUserAgent => GetPatcherUserAgent(Util.GetPlatform());
+        public static string PatcherUserAgent => GetPatcherUserAgent(PlatformHelpers.GetPlatform());
 
         private static string GetPatcherUserAgent(Platform platform)
         {

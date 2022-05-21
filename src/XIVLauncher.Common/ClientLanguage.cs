@@ -1,4 +1,6 @@
-﻿namespace XIVLauncher.Common
+﻿using XIVLauncher.Common.Util;
+
+namespace XIVLauncher.Common
 {
     public enum ClientLanguage
     {
@@ -17,7 +19,7 @@
                 case ClientLanguage.Japanese:
                     return "ja";
 
-                case ClientLanguage.English when Util.IsRegionNorthAmerica():
+                case ClientLanguage.English when GameHelpers.IsRegionNorthAmerica():
                     return "en-us";
 
                 case ClientLanguage.English:
