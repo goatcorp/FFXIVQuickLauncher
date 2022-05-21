@@ -745,7 +745,12 @@ public class MainPage : Page
 
             runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk);
 
-            gameArgs += $" UserPath=\"{Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}\"";
+            var userPath = Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName);
+            if (App.Settings.IsEncryptArgs.GetValueOrDefault(true))
+                gameArgs += $" UserPath={userPath}";
+            else
+                gameArgs += $" UserPath=\"{userPath}\"";
+
             gameArgs = gameArgs.Trim();
         }
         else
