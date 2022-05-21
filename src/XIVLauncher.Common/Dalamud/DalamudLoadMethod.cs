@@ -7,5 +7,8 @@
 
         [SettingsDescription("DLL Injection", "dummy")]
         DllInject,
+
+        [SettingsDescription("ACL-only fix", "dummy")]
+        ACLonly,
     };
 }

@@ -213,7 +213,7 @@ public class Launcher
         };
     }
 
-    public object? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
+    public Process? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
                               bool isSteamServiceAccount, string additionalArguments,
                               DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
                               bool encryptArguments, DpiAwareness dpiAwareness)
@@ -247,9 +247,9 @@ public class Launcher
         // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
         if (!string.IsNullOrEmpty(additionalArguments))
         {
-            var regex = new Regex(@"\s*(?<key>[^=]+)\s*=\s*(?<value>[^\s]+)\s*", RegexOptions.Compiled);
+            var regex = new Regex(@"\s*(?<key>[^\s=]+)\s*=\s*(?<value>([^=]*$|[^=]*\s(?=[^\s=]+)))\s*", RegexOptions.Compiled);
             foreach (Match match in regex.Matches(additionalArguments))
-                argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value);
+                argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value.Trim());
         }
 
         if (!File.Exists(exePath))

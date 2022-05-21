@@ -99,13 +99,6 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(RuntimeIdentifier)' != 'win10-x64'">
-    <Resource Remove="Resources/binaries/DalamudWineHelper.exe" />
-    <Content Include="Resources/binaries/DalamudWineHelper.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
     <ProjectReference Include="..\XIVLauncher.Common.Unix\XIVLauncher.Common.Unix.csproj" />

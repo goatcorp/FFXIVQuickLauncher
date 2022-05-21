@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -17,8 +19,9 @@ namespace XIVLauncher.Common.Dalamud
         private readonly IDalamudRunner runner;
         private readonly DalamudUpdater updater;
         private readonly int injectionDelay;
+        private readonly bool fakeLogin;
 
-        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, ClientLanguage clientLanguage, int injectionDelay)
+        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin = false)
         {
             this.runner = runner;
             this.updater = updater;
@@ -27,6 +30,7 @@ namespace XIVLauncher.Common.Dalamud
             this.configDirectory = configDirectory;
             this.language = clientLanguage;
             this.injectionDelay = injectionDelay;
+            this.fakeLogin = fakeLogin;
         }
 
         public const string REMOTE_BASE = "https://kamori.goats.dev/Dalamud/Release/VersionInfo?track=";
@@ -70,9 +74,9 @@ namespace XIVLauncher.Common.Dalamud
             return true;
         }
 
-        public void Run(Int32 gameProcessId)
+        public Process Run(FileInfo gameExe, string gameArgs, IDictionary<string, string> environment)
         {
-            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1}, pid:{2})", this.gamePath.FullName, this.language, gameProcessId);
+            Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1})", this.gamePath.FullName, this.language);
 
             var ingamePluginPath = Path.Combine(this.configDirectory.FullName, "installedPlugins");
             var defaultPluginPath = Path.Combine(this.configDirectory.FullName, "devPlugins");
@@ -92,13 +96,30 @@ namespace XIVLauncher.Common.Dalamud
                 DelayInitializeMs = this.injectionDelay,
             };
 
-            Log.Information("[HOOKS] DelayInitializeMs: {0}", startInfo.DelayInitializeMs);
+            if (this.loadMethod != DalamudLoadMethod.ACLonly)
+                Log.Information("[HOOKS] DelayInitializeMs: {0}", startInfo.DelayInitializeMs);
 
-            this.runner.Run(gameProcessId, this.updater.Runner, startInfo, this.gamePath, this.loadMethod);
+            switch (this.loadMethod)
+            {
+                case DalamudLoadMethod.EntryPoint:
+                    Log.Verbose("[HOOKS] Now running OEP rewrite");
+                    break;
+                case DalamudLoadMethod.DllInject:
+                    Log.Verbose("[HOOKS] Now running DLL inject");
+                    break;
+                case DalamudLoadMethod.ACLonly:
+                    Log.Verbose("[HOOKS] Now running ACL-only fix without injection");
+                    break;
+            }
+
+            var process = this.runner.Run(this.updater.Runner, this.fakeLogin, gameExe, gameArgs, environment, this.loadMethod, startInfo);
 
             this.updater.CloseOverlay();
 
-            Log.Information("[HOOKS] Started dalamud!");
+            if (this.loadMethod != DalamudLoadMethod.ACLonly)
+                Log.Information("[HOOKS] Started dalamud!");
+
+            return process;
         }
 
         private bool ReCheckVersion(DirectoryInfo gamePath)

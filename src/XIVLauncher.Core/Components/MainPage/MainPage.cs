@@ -153,9 +153,15 @@ public class MainPage : Page
     {
         if (action == LoginAction.Fake)
         {
-            App.Launcher.LaunchGame(new WindowsGameRunner(null, false, DalamudLoadMethod.DllInject), "0", 1, 2, false, "", App.Settings.GamePath, true, ClientLanguage.Japanese, true,
-                DpiAwareness.Unaware);
-            return true;
+            IGameRunner gameRunner;
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                gameRunner = new WindowsGameRunner(null, false);
+            else
+                gameRunner = new UnixGameRunner(Program.CompatibilityTools, null, false);
+
+            App.Launcher.LaunchGame(gameRunner, "0", 1, 2, false, "", App.Settings.GamePath!, true, ClientLanguage.Japanese, true, DpiAwareness.Unaware);
+
+            return false;
         }
 
         var bootRes = await HandleBootCheck().ConfigureAwait(false);
@@ -685,7 +691,7 @@ public class MainPage : Page
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            runner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject));
+            runner = new WindowsGameRunner(dalamudLauncher, dalamudOk);
         }
         else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
@@ -734,9 +740,9 @@ public class MainPage : Page
 
             App.StartLoading("Starting game...", "Have fun!");
 
-            runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk, App.Settings.DalamudLoadMethod, Program.DotnetRuntime, App.Storage);
+            runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk);
 
-            gameArgs += $" UserPath={Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}";
+            gameArgs += $" UserPath=\"{Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}\"";
             gameArgs = gameArgs.Trim();
         }
         else
@@ -754,7 +760,7 @@ public class MainPage : Page
         }
 
         // We won't do any sanity checks here anymore, since that should be handled in StartLogin
-        var launched = App.Launcher.LaunchGame(runner,
+        var launchedProcess = App.Launcher.LaunchGame(runner,
             loginResult.UniqueId,
             loginResult.OauthLogin.Region,
             loginResult.OauthLogin.MaxExpansion,
@@ -766,25 +772,11 @@ public class MainPage : Page
             App.Settings.IsEncryptArgs.GetValueOrDefault(true),
             App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware));
 
-        if (launched == null)
+        if (launchedProcess == null)
         {
             Log.Information("GameProcess was null...");
             IsLoggingIn = false;
             return null;
-        }
-
-        // This is a Windows process handle on Windows, a Wine pid on Unix-like systems
-        var gamePid = 0;
-        Process? process = null;
-
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-        {
-            process = launched as Process;
-            gamePid = process!.Id;
-        }
-        else if (Environment.OSVersion.Platform == PlatformID.Unix)
-        {
-            gamePid = (int)launched;
         }
 
         var addonMgr = new AddonManager();
@@ -795,7 +787,7 @@ public class MainPage : Page
 
             var addons = App.Settings.Addons.Where(x => x.IsEnabled).Select(x => x.Addon).Cast<IAddon>().ToList();
 
-            addonMgr.RunAddons(gamePid, addons);
+            addonMgr.RunAddons(launchedProcess.Id, addons);
         }
         catch (Exception ex)
         {
@@ -817,33 +809,7 @@ public class MainPage : Page
 
         Log.Debug("Waiting for game to exit");
 
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-        {
-            await Task.Run(() => process!.WaitForExit()).ConfigureAwait(false);
-        }
-        else if (Environment.OSVersion.Platform == PlatformID.Unix)
-        {
-            Int32 unixPid = Program.CompatibilityTools.GetUnixProcessId(gamePid);
-            if (unixPid == 0)
-            {
-                Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
-                while (Program.CompatibilityTools.GetProcessIds("ffxiv_dx11.exe").Contains(gamePid))
-                    Thread.Sleep(5000);
-            }
-            else
-            {
-                process = Process.GetProcessById(unixPid);
-                var handle = process.Handle;
-                await Task.Run(() => process!.WaitForExit()).ConfigureAwait(false);
-            }
-
-            UnixGameRunner.RunningPids.Remove(gamePid);
-        }
-        else
-        {
-            Environment.Exit(0);
-            return null;
-        }
+        await Task.Run(() => launchedProcess!.WaitForExit()).ConfigureAwait(false);
 
         Log.Verbose("Game has exited");
 
@@ -862,7 +828,7 @@ public class MainPage : Page
             Log.Error(ex, "Could not shut down Steam");
         }
 
-        return process!;
+        return launchedProcess!;
     }
 
     private void PersistAccount(string username, string password, bool isOtp, bool isSteam)

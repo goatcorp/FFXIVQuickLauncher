@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Unix.Compatibility;
@@ -20,34 +21,67 @@ public class UnixDalamudRunner : IDalamudRunner
         this.dotnetRuntime = dotnetRuntime;
     }
 
-    public void Run(Int32 gameProcessID, FileInfo runner, DalamudStartInfo startInfo, DirectoryInfo gamePath, DalamudLoadMethod loadMethod)
+    public Process? Run(FileInfo runner, bool fakeLogin, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo startInfo)
     {
-        // Wine wants Windows paths here, so we need to fix up the startinfo dirs
-        startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory);
-        startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath);
-        startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory);
-        startInfo.DefaultPluginDirectory = compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory);
-        startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory);
+        var gameExePath = "";
+        var dotnetRuntimePath = "";
 
-        switch (loadMethod)
+        Parallel.Invoke(
+            () => { gameExePath = compatibility.UnixToWinePath(gameExe.FullName); },
+            () => { dotnetRuntimePath = compatibility.UnixToWinePath(dotnetRuntime.FullName); },
+            () => { startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory); },
+            () => { startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath); },
+            () => { startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory); },
+            () => { startInfo.DefaultPluginDirectory = compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory); },
+            () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory); }
+        );
+
+        environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
+
+        var launchArguments = new List<string> { $"\"{runner.FullName}\"", "launch",
+            $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
+            $"--game=\"{gameExePath}\"",
+            $"--dalamud-working-directory=\"{startInfo.WorkingDirectory}\"",
+            $"--dalamud-configuration-path=\"{startInfo.ConfigurationPath}\"",
+            $"--dalamud-plugin-directory=\"{startInfo.PluginDirectory}\"",
+            $"--dalamud-dev-plugin-directory=\"{startInfo.DefaultPluginDirectory}\"",
+            $"--dalamud-asset-directory=\"{startInfo.AssetDirectory}\"",
+            $"--dalamud-client-language={(int)startInfo.Language}",
+            $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
+            };
+
+        if (loadMethod == DalamudLoadMethod.ACLonly)
+            launchArguments.Add("--without-dalamud");
+
+        if (fakeLogin)
+            launchArguments.Add("--fake-arguments");
+
+        launchArguments.Add("--");
+        launchArguments.Add(gameArgs);
+
+        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true);
+        var output = dalamudProcess.StandardOutput.ReadLine();
+
+        if (output == null)
+            throw new DalamudRunnerException("An internal Dalamud error has occured");
+
+        try
         {
-            case DalamudLoadMethod.EntryPoint:
-                throw new NotImplementedException();
-                break;
-
-            case DalamudLoadMethod.DllInject:
+            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+            var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.pid);
+            if (unixPid == 0)
             {
-                var parameters = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(startInfo)));
-                var launchArguments = new string[] { runner.FullName, gameProcessID.ToString(), parameters };
-                var environment = new Dictionary<string, string>();
-                environment.Add("DALAMUD_RUNTIME", compatibility.UnixToWinePath(dotnetRuntime.FullName));
-                compatibility.RunInPrefix(launchArguments, environment: environment);
-                break;
+                Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
+                return null;
             }
-
-            default:
-                // should not reach
-                throw new ArgumentOutOfRangeException();
+            var gameProcess = Process.GetProcessById(unixPid);
+            var handle = gameProcess.Handle;
+            return gameProcess;
+        }
+        catch (JsonReaderException ex)
+        {
+            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
+            return null;
         }
     }
 }
