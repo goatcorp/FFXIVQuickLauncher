@@ -112,7 +112,7 @@ public class MainPage : Page
 
         Task.Run(async () =>
         {
-            if (Util.CheckIsGameOpen() && action == LoginAction.Repair)
+            if (GameHelpers.CheckIsGameOpen() && action == LoginAction.Repair)
             {
                 App.ShowMessageBlocking("The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.", "XIVLauncher");
 

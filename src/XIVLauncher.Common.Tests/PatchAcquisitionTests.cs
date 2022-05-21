@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Tests
 {
@@ -75,7 +76,7 @@ namespace XIVLauncher.Common.Tests
 
             acquisition.ProgressChanged += (sender, progress) =>
             {
-                Debug.WriteLine($"[{acquisition.GetType().FullName}] recv: {progress.Progress} - speed: {Util.BytesToString(progress.BytesPerSecondSpeed)}");
+                Debug.WriteLine($"[{acquisition.GetType().FullName}] recv: {progress.Progress} - speed: {ApiHelpers.BytesToString(progress.BytesPerSecondSpeed)}");
             };
 
             await acquisition.StartDownloadAsync(testPatch.Url, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));
