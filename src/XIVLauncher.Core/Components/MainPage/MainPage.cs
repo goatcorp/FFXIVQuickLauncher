@@ -746,7 +746,14 @@ public class MainPage : Page
 
             runner = new UnixGameRunner(Program.CompatibilityTools, dalamudLauncher, dalamudOk);
 
-            gameArgs += $" UserPath=\"{Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName)}\"";
+            // SE has its own way of encoding spaces when encrypting arguments, which interferes 
+            // with quoting, but they are necessary when passing paths unencrypted
+            var userPath = Program.CompatibilityTools.UnixToWinePath(App.Settings.GameConfigPath.FullName);
+            if (App.Settings.IsEncryptArgs.GetValueOrDefault(true))
+                gameArgs += $" UserPath={userPath}";
+            else
+                gameArgs += $" UserPath=\"{userPath}\"";
+
             gameArgs = gameArgs.Trim();
         }
         else
