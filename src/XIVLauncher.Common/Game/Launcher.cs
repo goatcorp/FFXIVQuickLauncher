@@ -554,7 +554,7 @@ public class Launcher
     {
         var bytes = File.ReadAllBytes(file);
 
-        var hash = new SHA1Managed().ComputeHash(bytes);
+        var hash = SHA1.Create().ComputeHash(bytes);
         var hashstring = string.Join("", hash.Select(b => b.ToString("x2")).ToArray());
 
         var length = new FileInfo(file).Length;
