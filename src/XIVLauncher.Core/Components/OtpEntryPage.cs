@@ -103,12 +103,11 @@ public class OtpEntryPage : Page
             }
 
             var doEnter = ImGui.InputText("###otpInput", ref this.otp, 6, ImGuiInputTextFlags.CharsDecimal | ImGuiInputTextFlags.EnterReturnsTrue);
-            var numpadEnter = ImGui.IsKeyPressed(ImGuiKey.KeypadEnter);
 
             var buttonSize = new Vector2(INPUT_WIDTH, 30);
             ImGuiHelpers.CenterCursorFor(INPUT_WIDTH);
 
-            if (ImGui.Button("OK", buttonSize) || doEnter || numpadEnter)
+            if (ImGui.Button("OK", buttonSize) || doEnter)
             {
                 TryAcceptOtp(this.otp);
             }
