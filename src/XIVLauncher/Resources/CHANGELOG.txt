@@ -1,4 +1,4 @@
-﻿• Further improvements to GShade compatibility checks (thanks to Mortalitas!)
-• Further improvements to Dalamud compatibility checks (thanks to Franz!)
-• Some small performance improvements
+﻿• Shows the download progress for Dalamud and dependencies when starting the game
+• Tweaks to prevent the download for Dalamud and dependencies from getting stuck
+• Warn users if the Chinese or Korean version of the game is selected (by Kizer)
 • Updated the localization files
