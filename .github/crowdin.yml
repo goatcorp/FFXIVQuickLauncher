@@ -2,5 +2,5 @@ project_id_env: CROWDIN_PROJECT_ID
 api_token_env: CROWDIN_PERSONAL_TOKEN
 preserve_hierarchy: false
 files:
-  - source: src/XIVLauncher/Resources/Loc/XIVLauncher_Localizable.json
-    translation: src/XIVLauncher/Resources/Loc/xl/xl_%two_letters_code%.json
+  - source: /src/XIVLauncher/Resources/Loc/XIVLauncher_Localizable.json
+    translation: /src/XIVLauncher/Resources/Loc/xl/xl_%two_letters_code%.json
