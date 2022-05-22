@@ -16,7 +16,9 @@ public class WindowsDalamudRunner : IDalamudRunner
     {
         var inheritableCurrentProcess = GetInheritableCurrentProcessHandle();
 
-        var launchArguments = new List<string> { "launch",
+        var launchArguments = new List<string>
+        {
+            "launch",
             $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
             $"--handle-owner={(long)inheritableCurrentProcess.Handle}",
             $"--game=\"{gameExe.FullName}\"",
@@ -27,7 +29,7 @@ public class WindowsDalamudRunner : IDalamudRunner
             $"--dalamud-asset-directory=\"{startInfo.AssetDirectory}\"",
             $"--dalamud-client-language={(int)startInfo.Language}",
             $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
-            };
+        };
 
         if (loadMethod == DalamudLoadMethod.ACLonly)
             launchArguments.Add("--without-dalamud");

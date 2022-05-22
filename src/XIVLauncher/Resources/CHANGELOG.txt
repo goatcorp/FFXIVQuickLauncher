@@ -2,3 +2,4 @@
 • Tweaks to prevent the download for Dalamud and dependencies from getting stuck
 • Warn users if the Chinese or Korean version of the game is selected (by Kizer)
 • Updated the localization files
+    => Big thanks to all volunteer translators!
