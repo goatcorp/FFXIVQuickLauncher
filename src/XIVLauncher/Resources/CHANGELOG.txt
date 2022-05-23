@@ -1,5 +1,3 @@
-﻿• Shows the download progress for Dalamud and dependencies when starting the game
-• Tweaks to prevent the download for Dalamud and dependencies from getting stuck
-• Warn users if the Chinese or Korean version of the game is selected (by Kizer)
+﻿• Fixed various cases wherein the game could not start correctly
 • Updated the localization files
     => Big thanks to all volunteer translators!
