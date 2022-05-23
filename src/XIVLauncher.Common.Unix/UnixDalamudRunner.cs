@@ -38,7 +38,10 @@ public class UnixDalamudRunner : IDalamudRunner
 
         environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
 
-        var launchArguments = new List<string> { $"\"{runner.FullName}\"", "launch",
+        var launchArguments = new List<string> 
+        { 
+            $"\"{runner.FullName}\"", 
+            "launch",
             $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
             $"--game=\"{gameExePath}\"",
             $"--dalamud-working-directory=\"{startInfo.WorkingDirectory}\"",
@@ -77,7 +80,7 @@ public class UnixDalamudRunner : IDalamudRunner
             }
 
             var gameProcess = Process.GetProcessById(unixPid);
-            var handle = gameProcess.Handle;
+            Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
             return gameProcess;
         }
         catch (JsonReaderException ex)
