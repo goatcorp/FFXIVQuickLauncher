@@ -600,6 +600,9 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     using var process = await StartGameAndAddon(loginResult, isSteam, action == AfterLoginAction.StartWithoutDalamud).ConfigureAwait(false);
 
+                    if (process == null)
+                        return false;
+
                     if (process.ExitCode != 0 && (App.Settings.TreatNonZeroExitCodeAsFailure ?? false))
                     {
                         switch (new CustomMessageBox.Builder()
@@ -957,7 +960,7 @@ namespace XIVLauncher.Windows.ViewModel
             Environment.Exit(0);
         }
 
-        public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud)
+        public async Task<Process?> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud)
         {
             var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
                 App.Settings.GamePath,
