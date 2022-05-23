@@ -3,6 +3,9 @@ contact_links:
   - name: XIVLauncher FAQ
     url: https://goatcorp.github.io/faq/
     about: Help and more information about XIVLauncher and potential issues you might be encountering. Please check this first.
+  - name: XIVLauncher disappeared after an update!
+    url: https://goatcorp.github.io/faq/xl_troubleshooting#q-how-do-i-whitelist-xivlauncher-and-dalamud-so-my-antivirus-leaves-them-alone
+    about: Your antivirus wrongly detected XIVLauncher as a virus and removed it. You need to manually add it to its whitelist and reinstall XIVLauncher.
   - name: XIVLauncher Discord
     url: https://discord.gg/aSuNjps
-    about: Discussion about XIVLauncher and it's development - we'll do our best to answer your question if you can't find an answer in the FAQ!
+    about: Discussion about XIVLauncher and its development - we will do our best to answer your question if you can't find an answer in the FAQ!
