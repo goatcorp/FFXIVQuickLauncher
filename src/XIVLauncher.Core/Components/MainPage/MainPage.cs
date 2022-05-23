@@ -159,7 +159,7 @@ public class MainPage : Page
         {
             IGameRunner gameRunner;
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                gameRunner = new WindowsGameRunner(null, false);
+                gameRunner = new WindowsGameRunner(null, false, Program.DalamudUpdater.Runtime);
             else
                 gameRunner = new UnixGameRunner(Program.CompatibilityTools, null, false);
 
@@ -695,7 +695,7 @@ public class MainPage : Page
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
-            runner = new WindowsGameRunner(dalamudLauncher, dalamudOk);
+            runner = new WindowsGameRunner(dalamudLauncher, dalamudOk, Program.DalamudUpdater.Runtime);
         }
         else if (Environment.OSVersion.Platform == PlatformID.Unix)
         {

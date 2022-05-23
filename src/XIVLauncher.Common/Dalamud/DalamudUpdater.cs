@@ -42,6 +42,8 @@ namespace XIVLauncher.Common.Dalamud
             private set => runnerInternal = value;
         }
 
+        public DirectoryInfo Runtime => this.runtimeDirectory;
+
         public FileInfo RunnerOverride { get; set; }
 
         public DirectoryInfo AssetDirectory { get; private set; }

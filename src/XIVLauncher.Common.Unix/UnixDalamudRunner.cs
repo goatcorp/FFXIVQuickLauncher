@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -36,7 +37,9 @@ public class UnixDalamudRunner : IDalamudRunner
             () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory); }
         );
 
-        environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
+        var prevDalamudRuntime = Environment.GetEnvironmentVariable("DALAMUD_RUNTIME");
+        if (string.IsNullOrWhiteSpace(prevDalamudRuntime))
+            environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
 
         var launchArguments = new List<string> 
         { 
