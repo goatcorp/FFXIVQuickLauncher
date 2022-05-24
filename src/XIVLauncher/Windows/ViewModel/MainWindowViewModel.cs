@@ -997,9 +997,13 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (App.Settings.InGameAddonEnabled && !forceNoDalamud && App.Settings.IsDx11)
             {
+                var showEnsurementWarning = false;
+
                 try
                 {
-                    dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
+                    var dalamudStatus = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
+                    dalamudOk = dalamudStatus == DalamudLauncher.DalamudInstallState.Ok;
+                    showEnsurementWarning = dalamudStatus == DalamudLauncher.DalamudInstallState.Failed;
                 }
                 catch (DalamudRunnerException ex)
                 {
@@ -1017,7 +1021,7 @@ namespace XIVLauncher.Windows.ViewModel
                                     .Show();
                 }
 
-                if (!dalamudOk)
+                if (showEnsurementWarning)
                 {
                     var ensurementErrorMessage = Loc.Localize("DalamudEnsurementError",
                         "Could not download necessary data files to use Dalamud and plugins.\nThis is likely a problem with your internet connection - the game will start, but you will not be able to use plugins.");

@@ -667,7 +667,7 @@ public class MainPage : Page
             try
             {
                 App.StartLoading("Waiting for Dalamud to be ready...", "This may take a little while. Please hold!");
-                dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
+                dalamudOk = dalamudLauncher.HoldForUpdate(App.Settings.GamePath) == DalamudLauncher.DalamudInstallState.Ok;
             }
             catch (DalamudRunnerException ex)
             {

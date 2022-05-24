@@ -322,6 +322,7 @@ namespace XIVLauncher.Common.Game
             }
 
             var secDesc = new PInvoke.SECURITY_DESCRIPTOR();
+
             if (!PInvoke.InitializeSecurityDescriptor(out secDesc, PInvoke.SECURITY_DESCRIPTOR_REVISION))
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -335,9 +336,9 @@ namespace XIVLauncher.Common.Game
             var psecDesc = Marshal.AllocHGlobal(Marshal.SizeOf<PInvoke.SECURITY_DESCRIPTOR>());
             Marshal.StructureToPtr<PInvoke.SECURITY_DESCRIPTOR>(secDesc, psecDesc, true);
 
-
             var lpProcessInformation = new PInvoke.PROCESS_INFORMATION();
             var lpEnvironment = IntPtr.Zero;
+
             try
             {
                 if (envVars.Count > 0)
@@ -377,7 +378,7 @@ namespace XIVLauncher.Common.Game
                         IntPtr.Zero,
                         false,
                         PInvoke.CREATE_SUSPENDED,
-                        IntPtr.Zero,
+                        lpEnvironment,
                         workingDir,
                         ref lpStartupInfo,
                         out lpProcessInformation))

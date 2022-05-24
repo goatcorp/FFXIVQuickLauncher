@@ -20,6 +20,13 @@ namespace XIVLauncher.Common.Dalamud
         private readonly int injectionDelay;
         private readonly bool fakeLogin;
 
+        public enum DalamudInstallState
+        {
+            Ok,
+            Failed,
+            OutOfDate,
+        }
+
         public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin = false)
         {
             this.runner = runner;
@@ -34,7 +41,7 @@ namespace XIVLauncher.Common.Dalamud
 
         public const string REMOTE_BASE = "https://kamori.goats.dev/Dalamud/Release/VersionInfo?track=";
 
-        public bool HoldForUpdate(DirectoryInfo gamePath)
+        public DalamudInstallState HoldForUpdate(DirectoryInfo gamePath)
         {
             Log.Information("[HOOKS] DalamudLauncher::HoldForUpdate(gp:{0})", gamePath.FullName);
 
@@ -46,7 +53,7 @@ namespace XIVLauncher.Common.Dalamud
                 if (this.updater.State == DalamudUpdater.DownloadState.Failed)
                 {
                     this.updater.CloseOverlay();
-                    return false;
+                    return DalamudInstallState.Failed;
                 }
 
                 if (this.updater.State == DalamudUpdater.DownloadState.NoIntegrity)
@@ -67,10 +74,10 @@ namespace XIVLauncher.Common.Dalamud
                 this.updater.ShowOverlay();
                 Log.Error("[HOOKS] ReCheckVersion fail");
 
-                return false;
+                return DalamudInstallState.OutOfDate;
             }
 
-            return true;
+            return DalamudInstallState.Ok;
         }
 
         public Process Run(FileInfo gameExe, string gameArgs, IDictionary<string, string> environment)
