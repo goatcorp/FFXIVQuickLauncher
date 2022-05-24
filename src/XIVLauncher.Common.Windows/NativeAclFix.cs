@@ -378,7 +378,7 @@ namespace XIVLauncher.Common.Game
                         IntPtr.Zero,
                         false,
                         PInvoke.CREATE_SUSPENDED,
-                        lpEnvironment,
+                        IntPtr.Zero,
                         workingDir,
                         ref lpStartupInfo,
                         out lpProcessInformation))
