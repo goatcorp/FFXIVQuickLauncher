@@ -209,9 +209,11 @@ namespace XIVLauncher.Common.Dalamud
                 if (versionFile.Exists)
                     localVersion = File.ReadAllText(versionFile.FullName);
 
-                if (runtimePaths.Any(p => !p.Exists) || localVersion != remoteVersionInfo.RuntimeVersion)
+                var integrity = await CheckRuntimeHashes(runtimeDirectory, localVersion).ConfigureAwait(false);
+
+                if (runtimePaths.Any(p => !p.Exists) || localVersion != remoteVersionInfo.RuntimeVersion || !integrity)
                 {
-                    Log.Information("[DUPDATE] Not found or outdated: {LocalVer} - {RemoteVer}", localVersion, remoteVersionInfo.RuntimeVersion);
+                    Log.Information("[DUPDATE] Not found, outdated or no integrity: {LocalVer} - {RemoteVer}", localVersion, remoteVersionInfo.RuntimeVersion);
 
                     SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Runtime);
 
@@ -297,11 +299,26 @@ namespace XIVLauncher.Common.Dalamud
                     return false;
                 }
 
-                var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(hashesPath));
+                return CheckIntegrity(addonPath, File.ReadAllText(hashesPath));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[DUPDATE] No dalamud integrity");
+                return false;
+            }
+        }
+
+        private static bool CheckIntegrity(DirectoryInfo directory, string hashesJson)
+        {
+            try
+            {
+                Log.Verbose("[DUPDATE] Checking integrity of {Directory}", directory.FullName);
+
+                var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashesJson);
 
                 foreach (var hash in hashes)
                 {
-                    var file = Path.Combine(addonPath.FullName, hash.Key.Replace("\\", "/"));
+                    var file = Path.Combine(directory.FullName, hash.Key.Replace("\\", "/"));
                     using var fileStream = File.OpenRead(file);
                     using var md5 = MD5.Create();
 
@@ -318,7 +335,7 @@ namespace XIVLauncher.Common.Dalamud
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[DUPDATE] No dalamud integrity");
+                Log.Error(ex, "[DUPDATE] Integrity check failed");
                 return false;
             }
 
@@ -392,6 +409,28 @@ namespace XIVLauncher.Common.Dalamud
             {
                 Log.Error(ex, "[DUPDATE] Could not copy to dev folder.");
             }
+        }
+
+        private async Task<bool> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
+        {
+            var hashesFile = new FileInfo(Path.Combine(runtimePath.FullName, $"hashes-{version}.json"));
+            string? runtimeHashes = null;
+
+            if (!hashesFile.Exists)
+            {
+                Log.Verbose("Hashes file does not exist, redownloading...");
+
+                using var client = new HttpClient();
+                runtimeHashes = await client.GetStringAsync($"https://kamori.goats.dev/Dalamud/Release/Runtime/Hashes/{version}").ConfigureAwait(false);
+
+                File.WriteAllText(hashesFile.FullName, runtimeHashes);
+            }
+            else
+            {
+                runtimeHashes = File.ReadAllText(hashesFile.FullName);
+            }
+
+            return CheckIntegrity(runtimePath, runtimeHashes);
         }
 
         private async Task DownloadRuntime(DirectoryInfo runtimePath, string version)
