@@ -1,3 +1,4 @@
 ﻿• Fixed various cases wherein the game could not start correctly
+• Fixed an issue wherein XIVLauncher would warn about Dalamud files not being downloaded after a game patch
 • Updated the localization files
     => Big thanks to all volunteer translators!
