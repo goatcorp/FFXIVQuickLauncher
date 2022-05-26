@@ -9,11 +9,6 @@ public class Storage
 
     public Storage(string appName, string? overridePath = null)
     {
-        if (!string.IsNullOrEmpty(overridePath))
-        {
-            this.Root = new DirectoryInfo(overridePath);
-        }
-
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
         {
             this.Root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName));
@@ -21,6 +16,11 @@ public class Storage
         else
         {
             this.Root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $".{appName}"));
+        }
+
+        if (!string.IsNullOrEmpty(overridePath))
+        {
+            this.Root = new DirectoryInfo(overridePath);
         }
 
         if (!this.Root.Exists)
