@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Patching.IndexedZiPatch
 {
-    public class IndexedZiPatchIndexRemoteInstaller : IDisposable
+    public class IndexedZiPatchIndexRemoteInstaller : IIndexedZiPatchIndexInstaller
     {
         private readonly Process workerProcess;
         private readonly RpcBuffer subprocessBuffer;

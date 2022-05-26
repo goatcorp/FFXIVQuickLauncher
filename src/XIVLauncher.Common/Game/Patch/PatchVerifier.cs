@@ -22,6 +22,7 @@ namespace XIVLauncher.Common.Game.Patch
     {
         private readonly ISettings _settings;
         private readonly int _maxExpansionToCheck;
+        private readonly bool _external;
         private HttpClient _client;
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -103,12 +104,13 @@ namespace XIVLauncher.Common.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
 
-        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion)
+        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion, bool external = true)
         {
             this._settings = settings;
             _client = new HttpClient();
             ProgressUpdateInterval = progressUpdateInterval;
             _maxExpansionToCheck = maxExpansion;
+            _external = external;
 
             SetLoginState(loginResult);
         }
@@ -201,12 +203,17 @@ namespace XIVLauncher.Common.Game.Patch
         {
             State = VerifyState.NotStarted;
             LastException = null;
+            IIndexedZiPatchIndexInstaller indexedZiPatchIndexInstaller = null;
             try
             {
                 var assemblyLocation = AppContext.BaseDirectory;
-                using var remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
-                    AdminAccessRequired(_settings.GamePath.FullName));
-                await remote.SetWorkerProcessPriority(ProcessPriorityClass.Idle).ConfigureAwait(false);
+                if (_external)
+                    indexedZiPatchIndexInstaller = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
+                   AdminAccessRequired(_settings.GamePath.FullName));
+                else
+                    indexedZiPatchIndexInstaller = new IndexedZiPatchIndexLocalInstaller();
+
+                await indexedZiPatchIndexInstaller.SetWorkerProcessPriority(ProcessPriorityClass.Idle).ConfigureAwait(false);
 
                 while (!_cancellationTokenSource.IsCancellationRequested && State != VerifyState.Done)
                 {
@@ -259,9 +266,9 @@ namespace XIVLauncher.Common.Game.Patch
 
                                 try
                                 {
-                                    remote.OnVerifyProgress += UpdateVerifyProgress;
-                                    remote.OnInstallProgress += UpdateInstallProgress;
-                                    await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval).ConfigureAwait(false);
+                                    indexedZiPatchIndexInstaller.OnVerifyProgress += UpdateVerifyProgress;
+                                    indexedZiPatchIndexInstaller.OnInstallProgress += UpdateInstallProgress;
+                                    await indexedZiPatchIndexInstaller.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval).ConfigureAwait(false);
 
                                     var fileBroken = new bool[patchIndex.Length].ToList();
                                     var repaired = false;
@@ -275,11 +282,11 @@ namespace XIVLauncher.Common.Game.Patch
 
                                         var adjustedGamePath = Path.Combine(_settings.GamePath.FullName, patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot" : "game");
 
-                                        await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath).ConfigureAwait(false);
+                                        await indexedZiPatchIndexInstaller.SetTargetStreamsFromPathReadOnly(adjustedGamePath).ConfigureAwait(false);
                                         // TODO: check one at a time if random access is slow?
-                                        await remote.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, _cancellationTokenSource.Token).ConfigureAwait(false);
+                                        await indexedZiPatchIndexInstaller.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, _cancellationTokenSource.Token).ConfigureAwait(false);
 
-                                        var missingPartIndicesPerTargetFile = await remote.GetMissingPartIndicesPerTargetFile().ConfigureAwait(false);
+                                        var missingPartIndicesPerTargetFile = await indexedZiPatchIndexInstaller.GetMissingPartIndicesPerTargetFile().ConfigureAwait(false);
                                         if ((repaired = missingPartIndicesPerTargetFile.All(x => !x.Any())))
                                             break;
                                         else if (attemptIndex == 1)
@@ -292,9 +299,9 @@ namespace XIVLauncher.Common.Game.Patch
                                         TaskCount = patchIndex.Sources.Count;
                                         Progress = Total = TaskIndex = 0;
                                         _reportedProgresses.Clear();
-                                        var missing = await remote.GetMissingPartIndicesPerPatch().ConfigureAwait(false);
+                                        var missing = await indexedZiPatchIndexInstaller.GetMissingPartIndicesPerPatch().ConfigureAwait(false);
 
-                                        await remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath).ConfigureAwait(false);
+                                        await indexedZiPatchIndexInstaller.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath).ConfigureAwait(false);
                                         var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                                         for (var i = 0; i < patchIndex.Sources.Count; i++)
                                         {
@@ -310,33 +317,33 @@ namespace XIVLauncher.Common.Game.Patch
 
                                             // We might be trying again because local copy of the patch file might be corrupt, so refer to the local copy only for the first attempt.
                                             if (attemptIndex == 0 && source.FileInfo.Exists)
-                                                await remote.QueueInstall(i, source.FileInfo, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
+                                                await indexedZiPatchIndexInstaller.QueueInstall(i, source.FileInfo, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
                                             else
-                                                await remote.QueueInstall(i, source.Uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
+                                                await indexedZiPatchIndexInstaller.QueueInstall(i, source.Uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
                                         }
 
                                         CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.Connecting;
                                         try
                                         {
-                                            await remote.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
-                                            await remote.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
+                                            await indexedZiPatchIndexInstaller.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
+                                            await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
                                         }
                                         catch (Exception e)
                                         {
-                                            Log.Error(e, "remote.Install");
+                                            Log.Error(e, "IndexedZiPatchIndexInstaller.Install");
                                             if (attemptIndex == REATTEMPT_COUNT - 1)
                                                 throw;
                                         }
                                     }
                                     if (!repaired)
-                                        throw new IOException("Failed to repair after 5 attempts");
+                                        throw new IOException($"Failed to repair after {REATTEMPT_COUNT} attempts");
                                     NumBrokenFiles += fileBroken.Where(x => x).Count();
                                     PatchSetIndex++;
                                 }
                                 finally
                                 {
-                                    remote.OnVerifyProgress -= UpdateVerifyProgress;
-                                    remote.OnInstallProgress -= UpdateInstallProgress;
+                                    indexedZiPatchIndexInstaller.OnVerifyProgress -= UpdateVerifyProgress;
+                                    indexedZiPatchIndexInstaller.OnInstallProgress -= UpdateInstallProgress;
                                 }
                             }
 
@@ -371,6 +378,10 @@ namespace XIVLauncher.Common.Game.Patch
                     LastException = ex;
                     State = VerifyState.Error;
                 }
+            }
+            finally
+            {
+                indexedZiPatchIndexInstaller?.Dispose();
             }
         }
 

@@ -108,6 +108,7 @@ public class SettingsTabWine : SettingsTab
     public override void Save()
     {
         base.Save();
-        Program.CreateCompatToolsInstance();
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            Program.CreateCompatToolsInstance();
     }
 }
