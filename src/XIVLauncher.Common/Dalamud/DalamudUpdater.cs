@@ -23,7 +23,9 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo configDirectory;
         private readonly IUniqueIdCache? cache;
 
-        private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(25);
+        private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(15);
+
+        private bool forceProxy = false;
 
         public DownloadState State { get; private set; } = DownloadState.Unknown;
         public bool IsStaging { get; private set; } = false;
@@ -50,6 +52,8 @@ namespace XIVLauncher.Common.Dalamud
 
         public IDalamudLoadingOverlay Overlay { get; set; }
 
+        public string RolloutBucket { get; set; }
+
         public enum DownloadState
         {
             Unknown,
@@ -58,13 +62,21 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity
         }
 
-        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, DirectoryInfo configDirectory, IUniqueIdCache? cache)
+        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, DirectoryInfo configDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
         {
             this.addonDirectory = addonDirectory;
             this.runtimeDirectory = runtimeDirectory;
             this.assetDirectory = assetDirectory;
             this.configDirectory = configDirectory;
             this.cache = cache;
+
+            this.RolloutBucket = dalamudRolloutBucket;
+
+            if (this.RolloutBucket == null)
+            {
+                var rng = new Random();
+                this.RolloutBucket = rng.Next(0, 9) >= 7 ? "Canary" : "Control";
+            }
         }
 
         public void SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep progress)
@@ -105,6 +117,7 @@ namespace XIVLauncher.Common.Dalamud
                     catch (Exception ex)
                     {
                         Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries, MAX_TRIES);
+                        this.forceProxy = true;
                     }
                 }
 
@@ -127,7 +140,7 @@ namespace XIVLauncher.Common.Dalamud
                 NoCache = true,
             };
 
-            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "release").ConfigureAwait(false);
+            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}").ConfigureAwait(false);
 
             DalamudVersionInfo versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
 
@@ -236,7 +249,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
                 this.ReportOverlayProgress(null, 0, null);
-                AssetDirectory = await AssetManager.EnsureAssets(this.assetDirectory).ConfigureAwait(true);
+                AssetDirectory = await AssetManager.EnsureAssets(this.assetDirectory, this.forceProxy).ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -465,10 +478,15 @@ namespace XIVLauncher.Common.Dalamud
 
         private async Task DownloadFile(string url, string path, TimeSpan timeout)
         {
+            if (this.forceProxy && url.Contains("/File/Get/"))
+            {
+                url = url.Replace("/File/Get/", "/File/GetProxy/");
+            }
+
             using var downloader = new HttpClientDownloadWithProgress(url, path);
             downloader.ProgressChanged += this.ReportOverlayProgress;
 
-            await downloader.Download().ConfigureAwait(false);
+            await downloader.Download(timeout).ConfigureAwait(false);
         }
     }
 }
