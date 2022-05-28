@@ -1,8 +1,7 @@
 ﻿using System.Numerics;
-using System.Runtime.InteropServices;
 using ImGuiNET;
+using XIVLauncher.Common;
 using XIVLauncher.Common.Unix.Compatibility;
-using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
@@ -24,10 +23,8 @@ public class SettingsTabWine : SettingsTab
                 CheckVisibility = () => startupTypeSetting.Value == WineStartupType.Custom
             },
 
-#if !FLATPAK
-            new SettingsEntry<bool>("Enable Feral's GameMode", "Enable launching with Feral Interactive's GameMode CPU optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b)
+            new SettingsEntry<bool>("Enable GameMode", "Enable launching with GameMode optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b)
             {
-                CheckVisibility = () => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
                 CheckValidity = b =>
                 {
                     if (b == true && !File.Exists("/usr/lib/libgamemodeauto.so.0"))
@@ -36,25 +33,19 @@ public class SettingsTabWine : SettingsTab
                     return null;
                 }
             },
-#endif
-
-            new SettingsEntry<bool>("Enable DXVK ASYNC", "Enable DXVK ASYNC patch.", () => Program.Config.DxvkAsyncEnabled ?? true, b => Program.Config.DxvkAsyncEnabled = b),
+            new SettingsEntry<bool>("Enable DXVK ASYNC", "Enable PROTON DXVK ASYNC patch.", () => Program.Config.DxvkAsyncEnabled ?? true, b => Program.Config.DxvkAsyncEnabled = b),
             new SettingsEntry<bool>("Enable ESync", "Enable eventfd-based synchronization.", () => Program.Config.ESyncEnabled ?? true, b => Program.Config.ESyncEnabled = b),
             new SettingsEntry<bool>("Enable FSync", "Enable fast user mutex (futex2).", () => Program.Config.FSyncEnabled ?? true, b => Program.Config.FSyncEnabled = b)
             {
-                CheckVisibility = () => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
                 CheckValidity = b =>
                 {
                     if (b == true && (Environment.OSVersion.Version.Major < 5 && (Environment.OSVersion.Version.Minor < 16 || Environment.OSVersion.Version.Major < 6)))
-                        return "Linux kernel 5.16 or higher is required for FSync.";
+                        return "Kernel 5.16 or higher is required for FSync.";
 
                     return null;
                 }
             },
-            new SettingsEntry<string>("Frame Limit", "Limit DXVK FPS (0 to disable).", () => Program.Config.DxvkFrameRate ?? "0", s => Program.Config.DxvkFrameRate = s)
-            {
-                CheckValidity = s => Regex.IsMatch(s, @"^\d{1,3}$") ? null : "Please specify a valid integer below 999."
-            },
+
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
             new SettingsEntry<string>("WINEDEBUG Variables", "Configure debug logging for wine. Useful for troubleshooting.", () => Program.Config.WineDebugVars ?? string.Empty, s => Program.Config.WineDebugVars = s)
         };
@@ -80,7 +71,7 @@ public class SettingsTabWine : SettingsTab
 
         if (ImGui.Button("Open prefix"))
         {
-            PlatformHelpers.OpenBrowser(Program.CompatibilityTools.Settings.Prefix.FullName);
+            Util.OpenBrowser(Program.CompatibilityTools.Settings.Prefix.FullName);
         }
 
         ImGui.SameLine();
@@ -111,6 +102,6 @@ public class SettingsTabWine : SettingsTab
     public override void Save()
     {
         base.Save();
-        Program.CreateCompatToolsInstance();
+        Program.UpdateCompatibilityTools();
     }
 }
