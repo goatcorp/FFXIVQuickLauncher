@@ -19,15 +19,18 @@ public class WineSettings
     public string EsyncOn { get; private set; }
     public string FsyncOn { get; private set; }
 
+    public string DxvkFPSLimit { get; private set; }
+
     public string DebugVars { get; private set; }
     public FileInfo LogFile { get; private set; }
 
     public DirectoryInfo Prefix { get; private set; }
 
-    public WineSettings(WineStartupType? startupType, string customBinPath, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
+    public WineSettings(WineStartupType? startupType, string customBinPath, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn, string dxvkFPSLimit)
     {
         this.StartupType = startupType ?? WineStartupType.Custom;
         this.CustomBinPath = customBinPath;
+        this.DxvkFPSLimit = dxvkFPSLimit;
         this.EsyncOn = (esyncOn ?? false) ? "1" : "0";
         this.FsyncOn = (fsyncOn ?? false) ? "1" : "0";
         this.DebugVars = debugVars;

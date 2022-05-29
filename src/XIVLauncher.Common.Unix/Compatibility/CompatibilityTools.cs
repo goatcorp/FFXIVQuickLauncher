@@ -44,6 +44,7 @@ public class CompatibilityTools
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
+    private readonly string dxvkFPSLimit;
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
@@ -183,6 +184,7 @@ public class CompatibilityTools
 
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
         wineEnviromentVariables.Add("DXVK_ASYNC", dxvkAsyncOn);
+        wineEnviromentVariables.Add("DXVK_FRAME_RATE", Settings.DxvkFPSLimit);
         wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);
         wineEnviromentVariables.Add("WINEFSYNC", Settings.FsyncOn);
 
