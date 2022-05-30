@@ -59,11 +59,14 @@ public class CompatibilityTools
 
         this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
-        if (!this.toolDirectory.Exists)
-            this.toolDirectory.Create();
+        if (wineSettings.StartupType == WineStartupType.Managed)
+        {
+            if (!this.toolDirectory.Exists)
+                this.toolDirectory.Create();
 
-        if (!this.dxvkDirectory.Exists)
-            this.dxvkDirectory.Create();
+            if (!this.dxvkDirectory.Exists)
+                this.dxvkDirectory.Create();
+        }
 
         if (!wineSettings.Prefix.Exists)
             wineSettings.Prefix.Create();

@@ -1112,13 +1112,40 @@ public class MainPage : Page
 
         for (bool doVerify = true; doVerify;)
         {
-            // TODO: show progress here
-            this.App.StartLoading($"Now repairing...", canCancel: false, isIndeterminate: true);
+            this.App.StartLoading($"Now repairing...", canCancel: false, isIndeterminate: false);
 
             verify.Start();
-            await verify.WaitForCompletion().ConfigureAwait(false);
 
-            App.State = LauncherApp.LauncherState.Main;
+            var timer = new Timer(new TimerCallback((object? obj) =>
+            {
+                switch (verify.State)
+                {
+                    // TODO: show more progress info here
+                    case PatchVerifier.VerifyState.DownloadMeta:
+                        this.App.LoadingPage.Line2 = $"{verify.CurrentFile}";
+                        this.App.LoadingPage.Line3 = $"{Math.Min(verify.PatchSetIndex + 1, verify.PatchSetCount)}/{verify.PatchSetCount} - {ApiHelpers.BytesToString(verify.Progress)}/{ApiHelpers.BytesToString(verify.Total)}";
+                        this.App.LoadingPage.Progress = (float)(verify.Total != 0 ? (float)verify.Progress / (float)verify.Total : 0.0);
+                        break;
+
+                    case PatchVerifier.VerifyState.VerifyAndRepair:
+                        this.App.LoadingPage.Line2 = $"{verify.CurrentFile}";
+                        this.App.LoadingPage.Line3 = $"{Math.Min(verify.PatchSetIndex + 1, verify.PatchSetCount)}/{verify.PatchSetCount} - {Math.Min(verify.TaskIndex + 1, verify.TaskCount)}/{verify.TaskCount} - {ApiHelpers.BytesToString(verify.Progress)}/{ApiHelpers.BytesToString(verify.Total)}";
+                        this.App.LoadingPage.Progress = (float)(verify.Total != 0 ? (float)verify.Progress / (float)verify.Total : 0);
+                        break;
+
+                    default:
+                        this.App.LoadingPage.Line2 = "";
+                        this.App.LoadingPage.Line3 = $"{Math.Min(verify.TaskIndex + 1, verify.TaskCount)}/{verify.TaskCount}";
+                        this.App.LoadingPage.Progress = (float)(verify.State == PatchVerifier.VerifyState.Done ? 1.0 : 0);
+                        break;
+                }
+            }
+            ));
+            timer.Change(0, 250);
+
+            await verify.WaitForCompletion().ConfigureAwait(false);
+            timer.Dispose();
+            this.App.StopLoading();
 
             switch (verify.State)
             {

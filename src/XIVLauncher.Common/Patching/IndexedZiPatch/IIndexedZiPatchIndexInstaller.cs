@@ -43,5 +43,11 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public Task<SortedSet<int>> GetSizeMismatchTargetFileIndices(CancellationToken? cancellationToken = null);
 
         public Task SetWorkerProcessPriority(ProcessPriorityClass subprocessPriority, CancellationToken? cancellationToken = null);
+
+        public Task MoveFile(string sourceFile, string targetFile, CancellationToken? cancellationToken = null);
+
+        public Task CreateDirectory(string dir, CancellationToken? cancellationToken = null);
+
+        public Task RemoveDirectory(string dir, bool recursive = false, CancellationToken? cancellationToken = null);
     }
 }

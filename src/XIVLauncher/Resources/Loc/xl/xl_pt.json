@@ -64,11 +64,11 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidConfirm": {
-    "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.\nContinue?",
+    "message": "A pasta selecionada não tem instalações do FFXIV. O XIVLauncher irá instalar FFXIV na primeira vez que você logar.\nContinuar?",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathRegionConfirm": {
-    "message": "The folder you selected might be the Chinese or Korean release of the game. XIVLauncher only supports international release of the game.\nIs the folder you've selected indeed for the international version?",
+    "message": "A pasta selecionada pode ser da versão chinesa ou coreana do jogo. O XIV Launcher só suporta a versão internacional do jogo.\nA pasta que você selecionou é mesmo a da versão internacional?",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "NewsLoading": {
@@ -120,7 +120,7 @@
     "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckNetworkError": {
-    "message": "Failed to download reference files for checking integrity. Check your internet connection and try again.",
+    "message": "Falha ao baixar arquivos de referência para verificação de integridade. Verifique sua conexão com a internet e tente novamente.",
     "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckFailed": {
@@ -272,7 +272,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "NowDownloadingMeta": {
-    "message": "Downloading meta files...",
+    "message": "Baixando arquivos...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowVerifying": {
@@ -436,11 +436,11 @@
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GateUnreachable": {
-    "message": "The login servers could not be reached. This usually indicates that the game is under maintenance, or that your connection to the login servers is unstable.\n\nPlease try again later.",
+    "message": "Não foi possível acessar os servidores de login. Isto geralmente indica que o jogo está em manutenção, ou que sua conexão com os servidores de login é instável.\n\nPor favor, tente novamente mais tarde.",
     "description": "<CheckGateStatus>d__23.MoveNext"
   },
   "GateClosed": {
-    "message": "FFXIV is currently under maintenance. Please try again later or see official sources for more information.",
+    "message": "O FFXIV está em manutenção no momento. Tente novamente mais tarde ou consulte as fontes oficiais para obter mais informações.",
     "description": "<CheckGateStatus>d__23.MoveNext"
   },
   "CheckBootVersionError": {
@@ -520,7 +520,7 @@
     "description": "<StartGameAndAddon>d__30.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis is likely a problem with your internet connection - the game will start, but you will not be able to use plugins.",
+    "message": "Não foi possível baixar os arquivos necessários para utilizar Dalamud e os plugins.\nIsto provavelmente é um problema com sua conexão de internet - o jogo será iniciado, mas você não poderá usar plugins.",
     "description": "<StartGameAndAddon>d__30.MoveNext"
   },
   "AddonLoadError": {
@@ -556,7 +556,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game.",
+    "message": "As informações de versão do seu jogo não pôde ser lidas de seus arquivos.\n\nVocê precisa reinstalar ou reparar o jogo.",
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginSteamIssue": {
@@ -596,7 +596,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginNoServiceMessage": {
-    "message": "This Square Enix account cannot play FINAL FANTASY XIV. Please make sure that you have an active subscription and that it is paid up.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.",
+    "message": "Esta conta Square Enix não tem acesso a FINAL FANTASY XIV. Por favor, certifique-se que você possui uma assinatura ativa.",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "LoginAcceptTermsMessage": {
@@ -608,7 +608,7 @@
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "LoginRepairResponseIsNotNeedsPatchGame": {
-    "message": "The server sent an incorrect response - the repair cannot proceed.",
+    "message": "O servidor enviou uma resposta incorreta - o reparo não pode prosseguir.",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "PatchInstallDisclaimer": {
@@ -748,7 +748,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "GamePathSafeguardRegionWarning": {
-    "message": "XIVLauncher does not support Chinese or Korean version of the game. Make sure this path indeed is for the international version.",
+    "message": "XIVLauncher não suporta as versões chinesas ou coreanas do jogo. Verifique se este caminho é de fato correspondente a versão internacional.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpServerCheckBox": {
@@ -1024,7 +1024,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeSymlinks": {
-    "message": "GShade symbolic links are corrupted.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "message": "As ligações simbólicas do GShade estão corrompidas.\n\nO jogo não pôde iniciar. Você deseja que o XIVLauncher resolva isso? O GShade precisará ser reinstalado.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
@@ -1032,7 +1032,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeWrongMode": {
-    "message": "You installed GShade in a mode that isn't optimal for use together with XIVLauncher. Do you want XIVLauncher to fix this for you?\n\nThis will not change your presets or settings, it will merely improve compatibility with XIVLauncher features.",
+    "message": "Suas configurações atuais do GShade não estão otimizadas para uso em conjunto com o XIVLauncher. Você deseja que o XIVLauncher resolva isso para você?\n\nIsto não irá alterar suas predefinições ou configurações, mas melhorar a compatibilidade com as funcionalidades do XIVLauncher.",
     "description": "ProblemCheck.RunCheck"
   }
 }

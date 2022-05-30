@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,14 @@ namespace XIVLauncher.Windows
         private Headlines _headlines;
         private BitmapImage[] _bannerBitmaps;
         private int _currentBannerIndex;
+
+        class BannerDotInfo
+        {
+            public bool Active { get; set; }
+            public int Index { get; set; }
+        }
+
+        private ObservableCollection<BannerDotInfo> _bannerDotList;
 
         private Timer _maintenanceQueueTimer;
 
@@ -112,6 +121,7 @@ namespace XIVLauncher.Windows
                 _headlines = await Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
+                _bannerDotList = new();
 
                 for (var i = 0; i < _headlines.Banner.Length; i++)
                 {
@@ -127,22 +137,34 @@ namespace XIVLauncher.Windows
                     bitmapImage.Freeze();
 
                     _bannerBitmaps[i] = bitmapImage;
+                    _bannerDotList.Add(new() { Index = i });
                 }
 
-                Dispatcher.BeginInvoke(new Action(() => { BannerImage.Source = _bannerBitmaps[0]; }));
+                _bannerDotList[0].Active = true;
+
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    BannerImage.Source = _bannerBitmaps[0];
+                    BannerDot.ItemsSource = _bannerDotList;
+                }));
 
                 _bannerChangeTimer = new Timer {Interval = 5000};
 
                 _bannerChangeTimer.Elapsed += (o, args) =>
                 {
+                    _bannerDotList.ToList().ForEach(x => x.Active = false);
+
                     if (_currentBannerIndex + 1 > _headlines.Banner.Length - 1)
                         _currentBannerIndex = 0;
                     else
                         _currentBannerIndex++;
 
+                    _bannerDotList[_currentBannerIndex].Active = true;
+
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         BannerImage.Source = _bannerBitmaps[_currentBannerIndex];
+                        BannerDot.ItemsSource = _bannerDotList.ToList();
                     }));
                 };
 
@@ -540,6 +562,20 @@ namespace XIVLauncher.Windows
         {
             if (this.DataContext != null)
                 ((MainWindowViewModel)this.DataContext).Password = ((PasswordBox)sender).Password;
+        }
+
+        private void RadioButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ((RadioButton)sender).IsChecked = true;
+            _currentBannerIndex = _bannerDotList.FirstOrDefault(x => x.Active)?.Index ?? _currentBannerIndex;
+            Dispatcher.BeginInvoke(new Action(() => BannerImage.Source = _bannerBitmaps[_currentBannerIndex]));
+
+            _bannerChangeTimer.Stop();
+        }
+
+        private void RadioButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _bannerChangeTimer.Start();
         }
     }
 }

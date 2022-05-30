@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using Serilog;
 using XIVLauncher.Common.Util;
+using System.Runtime.InteropServices;
 
 namespace XIVLauncher.Common.Encryption
 {
@@ -96,6 +97,17 @@ namespace XIVLauncher.Common.Encryption
         private uint DeriveKey()
         {
             var rawTickCount = (uint)Environment.TickCount;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                [System.Runtime.InteropServices.DllImport("c")]
+                static extern ulong clock_gettime_nsec_np(int clock_id);
+
+                const int CLOCK_MONOTONIC_RAW = 4;
+                var rawTickCountFixed = (clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) / 1000000);
+                Log.Information("ArgumentBuilder::DeriveKey() fixing up rawTickCount from {0} to {1} on macOS", rawTickCount, rawTickCountFixed);
+                rawTickCount = (uint)rawTickCountFixed;
+            }
 
             var ticks = rawTickCount & 0xFFFF_FFFFu;
             var key = ticks & 0xFFFF_0000u;

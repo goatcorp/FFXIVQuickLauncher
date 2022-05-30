@@ -124,6 +124,32 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public Task SetWorkerProcessPriority(ProcessPriorityClass subprocessPriority, CancellationToken? cancellationToken = null)
         {
+            return Task.CompletedTask; // is a no-op locally
+        }
+
+        public Task MoveFile(string sourceFile, string targetFile, CancellationToken? cancellationToken = null)
+        {
+            var sourceParentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFile));
+            var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFile));
+
+            targetParentDir.Create();
+            new FileInfo(sourceFile).MoveTo(targetFile);
+
+            if (!sourceParentDir.GetFileSystemInfos().Any())
+                sourceParentDir.Delete(false);
+
+            return Task.CompletedTask;
+        }
+
+        public Task CreateDirectory(string dir, CancellationToken? cancellationToken = null)
+        {
+            new DirectoryInfo(dir).Create();
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveDirectory(string dir, bool recursive = false, CancellationToken? cancellationToken = null)
+        {
+            new DirectoryInfo(dir).Delete(recursive);
             return Task.CompletedTask;
         }
     }
