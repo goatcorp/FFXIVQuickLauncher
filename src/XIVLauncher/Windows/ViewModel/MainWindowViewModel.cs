@@ -851,8 +851,8 @@ namespace XIVLauncher.Windows.ViewModel
                                 .WithAppendText(verify.MovedFiles.Count switch
                                 {
                                     0 => "",
-                                    1 => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMoved1", "Additionally, 1 file that did not come with the original game installation has been moved to {0}."), verify.MovedFileToDir),
-                                    _ => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMovedPlural", "Additionally, {0} files that did not come with the original game installation have been moved to {1}."), verify.MovedFiles.Count, verify.MovedFileToDir),
+                                    1 => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMoved1", "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it."), verify.MovedFileToDir),
+                                    _ => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMovedPlural", "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it."), verify.MovedFiles.Count, verify.MovedFileToDir),
                                 })
                                 .WithDescription(verify.MovedFiles.Any() ? string.Join("\n", verify.MovedFiles.Select(x => $"* {x}")) : null)
                                 .WithImage(MessageBoxImage.Information)
