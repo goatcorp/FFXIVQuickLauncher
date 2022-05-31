@@ -391,7 +391,7 @@ namespace XIVLauncher.Windows.ViewModel
                 else if (ex is InvalidVersionFilesException)
                 {
                     msgbox.WithTextFormatted(Loc.Localize("LoginInvalidVersionFiles",
-                        "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game."), ex.Message);
+                        "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\"."), ex.Message);
                 }
                 else if (ex is SteamException)
                 {
