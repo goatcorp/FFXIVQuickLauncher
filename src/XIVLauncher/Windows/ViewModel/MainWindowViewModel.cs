@@ -670,8 +670,10 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     switch (exception)
                     {
+                        case DalamudRunnerException:
                         case GameExitedException:
                             var count = 0;
+
                             foreach (var processName in new string[] { "ffxiv_dx11", "ffxiv" })
                             {
                                 foreach (var process in Process.GetProcessesByName(processName))
@@ -692,13 +694,13 @@ namespace XIVLauncher.Windows.ViewModel
                                 descriptions.Add(null);
 
                                 builder.WithButtons(MessageBoxButton.YesNoCancel)
-                                    .WithDefaultResult(MessageBoxResult.Yes)
-                                    .WithCancelButtonText(Loc.Localize("LaunchGameKillThenRetry", "_Kill then try again"));
+                                       .WithDefaultResult(MessageBoxResult.Yes)
+                                       .WithCancelButtonText(Loc.Localize("LaunchGameKillThenRetry", "_Kill then try again"));
                             }
                             else
                             {
                                 summaries.Add(Loc.Localize("GameExitedPrematurelyErrorSummary",
-                                    "XIVLauncher could not detect that the game started correctly."));
+                                    "XIVLauncher could not start the game correctly."));
                                 actionables.Add(Loc.Localize("GameExitedPrematurelyErrorActionable",
                                     "This may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid."));
                                 descriptions.Add(null);
@@ -747,11 +749,12 @@ namespace XIVLauncher.Windows.ViewModel
                 if (exceptions.Count == 1)
                 {
                     builder.WithText($"{summaries[0]}\n\n{actionables[0]}")
-                        .WithDescription(descriptions[0]);
+                           .WithDescription(descriptions[0]);
                 }
                 else
                 {
                     builder.WithText(Loc.Localize("MultipleErrors", "Multiple errors have occurred."));
+
                     for (var i = 0; i < summaries.Count; i++)
                     {
                         builder.WithAppendText($"\n{i + 1}. {summaries[i]}\n    => {actionables[i]}");
@@ -776,11 +779,13 @@ namespace XIVLauncher.Windows.ViewModel
                         for (var pass = 0; pass < 8; pass++)
                         {
                             var allKilled = true;
+
                             foreach (var processName in new string[] { "ffxiv_dx11", "ffxiv" })
                             {
                                 foreach (var process in Process.GetProcessesByName(processName))
                                 {
                                     allKilled = false;
+
                                     try
                                     {
                                         process.Kill();
