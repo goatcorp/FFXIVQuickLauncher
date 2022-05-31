@@ -383,7 +383,7 @@ namespace XIVLauncher.Windows
                 return;
             }
 
-            if (PluginListView.SelectedValue.ToString().Contains("(disabled)")) //If it's disabled...
+            if (PluginListView.SelectedValue.ToString().Contains(Loc.Localize("DisabledPlugin","(disabled)"))) //If it's disabled...
             {
                 if (File.Exists(Path.Combine(pluginVersionPath, ".disabled")))
                 {
