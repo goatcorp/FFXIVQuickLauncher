@@ -97,7 +97,7 @@ namespace XIVLauncher.Common.Dalamud
 
                     Log.Verbose("[DASSET] Downloading {0} to {1}...", url, entry.FileName);
 
-                    var request = await client.GetAsync(url + "?t=" + DateTime.Now.Ticks).ConfigureAwait(true);
+                    var request = await client.GetAsync(url).ConfigureAwait(true);
                     request.EnsureSuccessStatusCode();
                     File.WriteAllBytes(filePath, await request.Content.ReadAsByteArrayAsync().ConfigureAwait(true));
 
