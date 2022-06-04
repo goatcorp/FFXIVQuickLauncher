@@ -54,7 +54,6 @@ public class SettingsTabWine : SettingsTab
             },
             new SettingsEntry<string>("DXVK Frame Limit", "Configure how many frames DXVK should be limited to. Set to 0 for unlimited.", () => Program.Config.DxvkFrameRate ?? "0", s => Program.Config.DxvkFrameRate = s)
             {
-                CheckVisibility = () => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
                 CheckValidity = s => Regex.IsMatch(s, @"^\d{1,3}$") ? null : "Please specify a valid integer below 999."
             },
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
