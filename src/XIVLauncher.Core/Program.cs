@@ -112,6 +112,7 @@ class Program
         Config.GlobalScale ??= 1.0f;
 
         Config.GameModeEnabled ??= false;
+        Config.MangoHudEnabled ??= false;
         Config.DxvkAsyncEnabled ??= true;
         Config.ESyncEnabled ??= true;
         Config.FSyncEnabled ??= false;
@@ -278,7 +279,7 @@ class Program
         var winePrefix = storage.GetFolder("wineprefix");
         var wineSettings = new WineSettings(Config.WineStartupType, Config.WineBinaryPath, Config.WineDebugVars, wineLogFile, winePrefix, Config.ESyncEnabled, Config.FSyncEnabled);
         var toolsFolder = storage.GetFolder("compatibilitytool");
-        CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, Config.GameModeEnabled, Config.DxvkAsyncEnabled, toolsFolder);
+        CompatibilityTools = new CompatibilityTools(wineSettings, Config.DxvkHudType, Config.MangoHudEnabled, Config.GameModeEnabled, Config.DxvkAsyncEnabled, toolsFolder);
     }
 
     public static void ShowWindow()
