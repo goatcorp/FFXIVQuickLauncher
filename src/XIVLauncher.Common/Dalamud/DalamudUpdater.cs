@@ -23,7 +23,9 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo configDirectory;
         private readonly IUniqueIdCache? cache;
 
-        private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(25);
+        private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(15);
+
+        private bool forceProxy = false;
 
         public DownloadState State { get; private set; } = DownloadState.Unknown;
         public bool IsStaging { get; private set; } = false;
@@ -50,6 +52,8 @@ namespace XIVLauncher.Common.Dalamud
 
         public IDalamudLoadingOverlay Overlay { get; set; }
 
+        public string RolloutBucket { get; set; }
+
         public enum DownloadState
         {
             Unknown,
@@ -58,13 +62,21 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity
         }
 
-        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, DirectoryInfo configDirectory, IUniqueIdCache? cache)
+        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, DirectoryInfo configDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
         {
             this.addonDirectory = addonDirectory;
             this.runtimeDirectory = runtimeDirectory;
             this.assetDirectory = assetDirectory;
             this.configDirectory = configDirectory;
             this.cache = cache;
+
+            this.RolloutBucket = dalamudRolloutBucket;
+
+            if (this.RolloutBucket == null)
+            {
+                var rng = new Random();
+                this.RolloutBucket = rng.Next(0, 9) >= 7 ? "Canary" : "Control";
+            }
         }
 
         public void SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep progress)
@@ -105,6 +117,7 @@ namespace XIVLauncher.Common.Dalamud
                     catch (Exception ex)
                     {
                         Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries, MAX_TRIES);
+                        this.forceProxy = true;
                     }
                 }
 
@@ -127,7 +140,7 @@ namespace XIVLauncher.Common.Dalamud
                 NoCache = true,
             };
 
-            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + "release").ConfigureAwait(false);
+            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}").ConfigureAwait(false);
 
             DalamudVersionInfo versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
 
@@ -209,9 +222,14 @@ namespace XIVLauncher.Common.Dalamud
                 if (versionFile.Exists)
                     localVersion = File.ReadAllText(versionFile.FullName);
 
-                if (runtimePaths.Any(p => !p.Exists) || localVersion != remoteVersionInfo.RuntimeVersion)
+                if (!this.runtimeDirectory.Exists)
+                    Directory.CreateDirectory(this.runtimeDirectory.FullName);
+
+                var integrity = await CheckRuntimeHashes(runtimeDirectory, localVersion).ConfigureAwait(false);
+
+                if (runtimePaths.Any(p => !p.Exists) || localVersion != remoteVersionInfo.RuntimeVersion || !integrity)
                 {
-                    Log.Information("[DUPDATE] Not found or outdated: {LocalVer} - {RemoteVer}", localVersion, remoteVersionInfo.RuntimeVersion);
+                    Log.Information("[DUPDATE] Not found, outdated or no integrity: {LocalVer} - {RemoteVer}", localVersion, remoteVersionInfo.RuntimeVersion);
 
                     SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Runtime);
 
@@ -234,7 +252,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
                 this.ReportOverlayProgress(null, 0, null);
-                AssetDirectory = await AssetManager.EnsureAssets(this.assetDirectory).ConfigureAwait(true);
+                AssetDirectory = await AssetManager.EnsureAssets(this.assetDirectory, this.forceProxy).ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -297,11 +315,26 @@ namespace XIVLauncher.Common.Dalamud
                     return false;
                 }
 
-                var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(hashesPath));
+                return CheckIntegrity(addonPath, File.ReadAllText(hashesPath));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[DUPDATE] No dalamud integrity");
+                return false;
+            }
+        }
+
+        private static bool CheckIntegrity(DirectoryInfo directory, string hashesJson)
+        {
+            try
+            {
+                Log.Verbose("[DUPDATE] Checking integrity of {Directory}", directory.FullName);
+
+                var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashesJson);
 
                 foreach (var hash in hashes)
                 {
-                    var file = Path.Combine(addonPath.FullName, hash.Key.Replace("\\", "/"));
+                    var file = Path.Combine(directory.FullName, hash.Key.Replace("\\", "/"));
                     using var fileStream = File.OpenRead(file);
                     using var md5 = MD5.Create();
 
@@ -318,7 +351,7 @@ namespace XIVLauncher.Common.Dalamud
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[DUPDATE] No dalamud integrity");
+                Log.Error(ex, "[DUPDATE] Integrity check failed");
                 return false;
             }
 
@@ -394,6 +427,28 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
+        private async Task<bool> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
+        {
+            var hashesFile = new FileInfo(Path.Combine(runtimePath.FullName, $"hashes-{version}.json"));
+            string? runtimeHashes = null;
+
+            if (!hashesFile.Exists)
+            {
+                Log.Verbose("Hashes file does not exist, redownloading...");
+
+                using var client = new HttpClient();
+                runtimeHashes = await client.GetStringAsync($"https://kamori.goats.dev/Dalamud/Release/Runtime/Hashes/{version}").ConfigureAwait(false);
+
+                File.WriteAllText(hashesFile.FullName, runtimeHashes);
+            }
+            else
+            {
+                runtimeHashes = File.ReadAllText(hashesFile.FullName);
+            }
+
+            return CheckIntegrity(runtimePath, runtimeHashes);
+        }
+
         private async Task DownloadRuntime(DirectoryInfo runtimePath, string version)
         {
             // Ensure directory exists
@@ -426,10 +481,15 @@ namespace XIVLauncher.Common.Dalamud
 
         private async Task DownloadFile(string url, string path, TimeSpan timeout)
         {
+            if (this.forceProxy && url.Contains("/File/Get/"))
+            {
+                url = url.Replace("/File/Get/", "/File/GetProxy/");
+            }
+
             using var downloader = new HttpClientDownloadWithProgress(url, path);
             downloader.ProgressChanged += this.ReportOverlayProgress;
 
-            await downloader.Download().ConfigureAwait(false);
+            await downloader.Download(timeout).ConfigureAwait(false);
         }
     }
 }

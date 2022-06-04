@@ -1,4 +1,7 @@
-﻿• Fixed various cases wherein the game could not start correctly
-• Fixed an issue wherein XIVLauncher would warn about Dalamud files not being downloaded after a game patch
+﻿This is a hotfix for a previous release.
+
+• Added a switcher to the news banners (by MapleRecall)
+• Game repair will now move all non-standard game files into a special folder, e.g. XivMods.json (by kizer)
+• Further improvements to prevent crashes after Dalamud updates and better error messages
 • Updated the localization files
     => Big thanks to all volunteer translators!

@@ -236,7 +236,10 @@ namespace XIVLauncher
                         new DirectoryInfo(Path.Combine(Paths.RoamingPath, "runtime")),
                         new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets")),
                         new DirectoryInfo(Paths.RoamingPath),
-                        UniqueIdCache);
+                        UniqueIdCache,
+                        Settings.DalamudRolloutBucket);
+
+                    Settings.DalamudRolloutBucket = DalamudUpdater.RolloutBucket;
 
                     var dalamudWindowThread = new Thread(DalamudOverlayThreadStart);
                     dalamudWindowThread.SetApartmentState(ApartmentState.STA);
