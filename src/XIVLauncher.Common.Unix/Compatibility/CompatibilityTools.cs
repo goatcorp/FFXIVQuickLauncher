@@ -116,23 +116,23 @@ public class CompatibilityTools
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
-    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
+    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false)
     {
         var psi = new ProcessStartInfo(Wine64Path);
         psi.Arguments = command;
 
         Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, command);
-        return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog);
     }
 
-    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
+    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false)
     {
         var psi = new ProcessStartInfo(Wine64Path);
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
         Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
-        return RunInPrefix(psi, workingDirectory, environment, redirectOutput);
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog);
     }
 
     private void MergeDictionaries(StringDictionary a, IDictionary<string, string> b)
@@ -149,10 +149,10 @@ public class CompatibilityTools
         }
     }
 
-    private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false)
+    private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string> environment, bool redirectOutput, bool writeLog)
     {
         psi.RedirectStandardOutput = redirectOutput;
-        psi.RedirectStandardError = true;
+        psi.RedirectStandardError = writeLog;
         psi.UseShellExecute = false;
         psi.WorkingDirectory = workingDirectory;
 
@@ -221,6 +221,7 @@ public class CompatibilityTools
             try
             {
                 logWriter.WriteLine(errLine.Data);
+                Console.Error.WriteLine(errLine.Data);
             }
             catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
                                        ex is OverflowException ||
@@ -233,7 +234,9 @@ public class CompatibilityTools
         });
 
         helperProcess.Start();
-        helperProcess.BeginErrorReadLine();
+        if (writeLog)
+            helperProcess.BeginErrorReadLine();
+
         return helperProcess;
     }
 
