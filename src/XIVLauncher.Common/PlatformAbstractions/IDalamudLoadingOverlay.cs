@@ -7,7 +7,8 @@ public interface IDalamudLoadingOverlay
         Dalamud,
         Assets,
         Runtime,
-        Unavailable
+        Unavailable,
+        Starting,
     }
 
     public void SetStep(DalamudUpdateStep step);

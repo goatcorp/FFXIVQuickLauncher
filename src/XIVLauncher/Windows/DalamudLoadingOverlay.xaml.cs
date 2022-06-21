@@ -45,6 +45,10 @@ namespace XIVLauncher.Windows
                         ProgressTextBlock.Text = Loc.Localize("DalamudUpdateRuntime", "Updating runtime...");
                         break;
 
+                    case IDalamudLoadingOverlay.DalamudUpdateStep.Starting:
+                        ProgressTextBlock.Text = Loc.Localize("DalamudNowStarting", "Starting...");
+                        break;
+
                     case IDalamudLoadingOverlay.DalamudUpdateStep.Unavailable:
                         ProgressTextBlock.Text = Loc.Localize("DalamudUnavailable",
                             "Plugins are currently unavailable\ndue to a game update.");

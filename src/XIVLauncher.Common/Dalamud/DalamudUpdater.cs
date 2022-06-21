@@ -276,6 +276,7 @@ namespace XIVLauncher.Common.Dalamud
             Runner = new FileInfo(Path.Combine(currentVersionPath.FullName, "Dalamud.Injector.exe"));
 
             State = DownloadState.Done;
+            SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Starting);
         }
 
         private static bool CanRead(FileInfo info)
