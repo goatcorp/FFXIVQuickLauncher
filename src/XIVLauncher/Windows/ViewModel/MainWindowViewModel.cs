@@ -166,6 +166,23 @@ namespace XIVLauncher.Windows.ViewModel
             if (!bootRes)
                 return;
 
+            /* ============== 6.18 DC TRAVEL UPDATE ============== */
+            var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
+            var ver615 = SeVersion.Parse("2022.03.25.0000.0001");
+
+            if (bootver > ver615)
+            {
+                CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
+                                                                     "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
+                                                                     "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
+                                                                     "\n")
+                    , "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
+
+                Environment.Exit(0);
+                return;
+            }
+            /* =================================================== */
+
             if (string.IsNullOrEmpty(username))
             {
                 CustomMessageBox.Show(
