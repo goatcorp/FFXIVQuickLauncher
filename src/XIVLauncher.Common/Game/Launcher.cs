@@ -380,7 +380,15 @@ public class Launcher
 
         Log.Verbose("Boot patching is needed... List:\n{PatchList}", resp);
 
-        return PatchListParser.Parse(text);
+        try
+        {
+            return PatchListParser.Parse(text);
+        }
+        catch (PatchListParseException ex)
+        {
+            Log.Information("Patch list:\n{PatchList}", ex.List);
+            throw;
+        }
     }
 
     private async Task<(string Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
@@ -401,8 +409,11 @@ public class Launcher
         if (resp.StatusCode == HttpStatusCode.Conflict)
             return (null, LoginState.NeedsPatchBoot, null);
 
+        if (resp.StatusCode == HttpStatusCode.Gone)
+            throw new InvalidResponseException("The server indicated that the version requested is no longer being serviced or not present.", text);
+
         if (!resp.Headers.TryGetValues("X-Patch-Unique-Id", out var uidVals))
-            throw new InvalidResponseException("Could not get X-Patch-Unique-Id.", text);
+            throw new InvalidResponseException($"Could not get X-Patch-Unique-Id. ({resp.StatusCode})", text);
 
         var uid = uidVals.First();
 
