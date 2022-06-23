@@ -21,7 +21,8 @@ namespace XIVLauncher.Common.Game.Patch
 {
     public class PatchVerifier : IDisposable
     {
-        private const string RepairRecyclerDirectory = "repair_recycler";
+        private const string REPAIR_RECYCLER_DIRECTORY = "repair_recycler";
+
         private static readonly Regex[] GameIgnoreUnnecessaryFilePatterns = new Regex[]
         {
             // Base game version files.
@@ -33,7 +34,7 @@ namespace XIVLauncher.Common.Game.Patch
             // Under WINE, since .dat files are actually WMV videos, the game will become unusable.
             // Bink videos will be used instead in those cases.
             new Regex(@"^movie/ffxiv/0000[0-3]\.bk2$", RegexOptions.IgnoreCase),
-            
+
             // DXVK can deal with corrupted cache files by itself, so let it do the job by itself.
             new Regex(@"^ffxiv_dx11\.dxvk-cache$", RegexOptions.IgnoreCase),
 
@@ -222,7 +223,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public async Task MoveUnnecessaryFiles(IndexedZiPatchIndexRemoteInstaller remote, string gamePath, HashSet<string> targetRelativePaths)
         {
-            this.MovedFileToDir = Path.Combine(gamePath, RepairRecyclerDirectory, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+            this.MovedFileToDir = Path.Combine(gamePath, REPAIR_RECYCLER_DIRECTORY, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
             var rootPathInfo = new DirectoryInfo(gamePath);
             gamePath = rootPathInfo.FullName;
