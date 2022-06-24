@@ -265,14 +265,6 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
-        private void ShowInternetError()
-        {
-            CustomMessageBox.Show(
-                Loc.Localize("LoginWebExceptionContent",
-                    "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later."),
-                Loc.Localize("LoginNoOauthTitle", "Login issue"), MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-        }
-
         private async Task<bool> CheckGateStatus()
         {
             GateStatus? gateStatus = null;
@@ -431,7 +423,8 @@ namespace XIVLauncher.Windows.ViewModel
                 else if (ex is OauthLoginException oauthLoginException)
                 {
                     disableAutoLogin = true;
-                    if (oauthLoginException.OauthErrorMessage == null)
+
+                    if (string.IsNullOrWhiteSpace(oauthLoginException.OauthErrorMessage))
                     {
                         msgbox.WithText(Loc.Localize("LoginGenericError",
                             "Could not log into your SE account.\nPlease check your username and password."));
@@ -439,8 +432,8 @@ namespace XIVLauncher.Windows.ViewModel
                     else
                     {
                         msgbox.WithText(oauthLoginException.OauthErrorMessage
-                            .Replace("\\r\\n", "\n")
-                            .Replace("\r\n", "\n"));
+                                                           .Replace("\\r\\n", "\n")
+                                                           .Replace("\r\n", "\n"));
                     }
 
                     msgbox.WithAppendText("\n\n");
@@ -454,7 +447,8 @@ namespace XIVLauncher.Windows.ViewModel
                 // If GateStatus is not set (even gate server could not be contacted) or GateStatus is true (gate server says everything's fine but could not contact login servers)
                 else if (ex is HttpRequestException || ex is TaskCanceledException || ex is WebException)
                 {
-                    ShowInternetError();
+                    msgbox.WithText(Loc.Localize("LoginWebExceptionContent",
+                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later."));
                 }
                 else if (ex is InvalidResponseException iex)
                 {
