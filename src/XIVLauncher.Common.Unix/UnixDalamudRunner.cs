@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
@@ -65,11 +66,24 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
 
-        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true);
+        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
         var output = dalamudProcess.StandardOutput.ReadLine();
 
         if (output == null)
             throw new DalamudRunnerException("An internal Dalamud error has occured");
+
+        Console.WriteLine(output);
+
+        new Thread(() =>
+        {
+            while (!dalamudProcess.StandardOutput.EndOfStream)
+            {
+                var output = dalamudProcess.StandardOutput.ReadLine();
+                if (output != null)
+                    Console.WriteLine(output);
+            }
+
+        }).Start();
 
         try
         {
