@@ -160,6 +160,8 @@ namespace XIVLauncher.Windows.ViewModel
             ExitLauncherAfterGameExitLoc = Loc.Localize("ExitLauncherAfterGameExitLoc", "Exit XIVLauncher after game exit");
             TreatNonZeroExitCodeAsFailureLoc = Loc.Localize("TreatNonZeroExitCodeAsFailureLoc", "Treat non-zero game exit code as failure");
             IsFreeTrialLoc = Loc.Localize("IsFreeTrial", "Start in free trial mode");
+
+            PluginDisabledTagLoc = Loc.Localize("DisabledPlugin", " (disabled)");
         }
 
         public string OpenPluginsFolderLoc { get; private set; }
@@ -241,5 +243,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string ExitLauncherAfterGameExitLoc { get; private set; }
         public string TreatNonZeroExitCodeAsFailureLoc { get; private set; }
         public string IsFreeTrialLoc { get; private set; }
+
+        public string PluginDisabledTagLoc { get; private set; }
     }
 }

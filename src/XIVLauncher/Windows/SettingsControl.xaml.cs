@@ -383,7 +383,7 @@ namespace XIVLauncher.Windows
                 return;
             }
 
-            if (PluginListView.SelectedValue.ToString().Contains(Loc.Localize("DisabledPlugin","(disabled)"))) //If it's disabled...
+            if (PluginListView.SelectedValue.ToString().Contains(ViewModel.PluginDisabledTagLoc)) //If it's disabled...
             {
                 if (File.Exists(Path.Combine(pluginVersionPath, ".disabled")))
                 {
@@ -472,8 +472,7 @@ namespace XIVLauncher.Windows
 
                     if (isDisabled)
                     {
-                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion +
-                                                 Loc.Localize("DisabledPlugin", " (disabled)"));
+                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion + ViewModel.PluginDisabledTagLoc);
                     }
                     else
                     {
