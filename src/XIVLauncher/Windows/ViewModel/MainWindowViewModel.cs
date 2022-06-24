@@ -668,21 +668,22 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 var builder = new CustomMessageBox.Builder()
-                    .WithImage(MessageBoxImage.Error)
-                    .WithShowHelpLinks(true)
-                    .WithShowDiscordLink(true)
-                    .WithShowNewGitHubIssue(true)
-                    .WithButtons(MessageBoxButton.YesNo)
-                    .WithDefaultResult(MessageBoxResult.No)
-                    .WithCancelResult(MessageBoxResult.No)
-                    .WithYesButtonText(Loc.Localize("LaunchGameRetry", "_Try again"))
-                    .WithNoButtonText(Loc.Localize("LaunchGameClose", "_Close"))
-                    .WithParentWindow(_window);
+                              .WithImage(MessageBoxImage.Error)
+                              .WithShowHelpLinks(true)
+                              .WithShowDiscordLink(true)
+                              .WithShowNewGitHubIssue(true)
+                              .WithButtons(MessageBoxButton.YesNo)
+                              .WithDefaultResult(MessageBoxResult.No)
+                              .WithCancelResult(MessageBoxResult.No)
+                              .WithYesButtonText(Loc.Localize("LaunchGameRetry", "_Try again"))
+                              .WithNoButtonText(Loc.Localize("LaunchGameClose", "_Close"))
+                              .WithParentWindow(_window);
 
                 //NOTE(goat): This HAS to handle all possible exceptions from StartGameAndAddon!!!!!
                 List<string> summaries = new();
                 List<string> actionables = new();
                 List<string> descriptions = new();
+
                 foreach (var exception in exceptions)
                 {
                     switch (exception)
@@ -719,9 +720,11 @@ namespace XIVLauncher.Windows.ViewModel
                                 summaries.Add(Loc.Localize("GameExitedPrematurelyErrorSummary",
                                     "XIVLauncher could not start the game correctly."));
                                 actionables.Add(Loc.Localize("GameExitedPrematurelyErrorActionable",
-                                    "This may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid."));
+                                    "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\"."));
                                 descriptions.Add(null);
                             }
+
+                            builder.WithShowNewGitHubIssue(false);
 
                             break;
 
