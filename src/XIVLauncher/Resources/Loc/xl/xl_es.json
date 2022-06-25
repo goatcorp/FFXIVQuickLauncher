@@ -51,6 +51,10 @@
     "message": "Actualizando tiempo de ejecución...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
+  "DalamudNowStarting": {
+    "message": "Iniciando...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
   "DalamudUnavailable": {
     "message": "Los plugins no están disponibles actualmente\ndebido a una actualización del juego.",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
@@ -77,11 +81,11 @@
   },
   "NewsDlFailed": {
     "message": "No se han podido descargar las noticias.",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
+    "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "Se detectó un parche para el launcher de FFXIV.\nEsto suele significar que también hay un parche para el juego.\n\nAhora iniciarás sesión.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "Las rutas de descarga de juegos y parches no puede ser la misma.\nPor favor, asegúrate de elegir rutas de descarga de juegos y parches distintas.",
@@ -110,10 +114,6 @@
   "GameIsOpenPluginLocked": {
     "message": "El juego está abierto, por favor ciérralo e inténtalo de nuevo.",
     "description": "SettingsControl.DeletePlugin_OnClick"
-  },
-  "DisabledPlugin": {
-    "message": " (desactivado)",
-    "description": "SettingsControl.ReloadPluginList"
   },
   "IntegrityCheckImpossible": {
     "message": "Aún no hay un informe de referencia para esta versión del juego. Por favor inténtalo de nuevo más tarde.",
@@ -451,6 +451,10 @@
     "message": "No se ha podido parchear el boot.",
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
+  "KillswitchText": {
+    "message": "XIVLauncher no puede iniciar el juego en este momento, ya que Square Enix ha realizado cambios en el proceso de inicio de sesión.\nNecesitamos ajustarnos a estos cambios y verificar que nuestros cambios son seguros antes de poder rehabilitar el launcher. Por favor, prueba de nuevo más tarde.\n\nPedimos disculpas por estas circunstancias.\n\nPuedes utilizar el botón de \"Launcher oficial\" de abajo para iniciar el launcher oficial.\n",
+    "description": "<Login>d__21.MoveNext"
+  },
   "EmptyUsernameError": {
     "message": "Por favor introduce un usuario.",
     "description": "<Login>d__21.MoveNext"
@@ -477,6 +481,14 @@
   },
   "GameRepairSuccessPlural": {
     "message": "XIVLauncher ha logrado reparar con éxito {0} archivos del juego.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Adicionalmente, 1 archivo que no venía con la instalación original del juego ha sido movido a {0}.\nSi usabas GShade, tendrás que reinstalarlo.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Adicionalmente, {0} archivos que no venían con la instalación original del juego han sido movidos a {1}.\nSi usabas GShade, tendrás que reinstalarlo.",
     "description": "<RepairGame>d__26.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -556,7 +568,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "No se ha podido obtener información de versión de tus archivos del juego.\n\nNecesitas reinstalar o reparar el juego.",
+    "message": "No se ha podido leer la información de versión desde tus archivos del juego.\n\nNecesitas reinstalar o reparar los archivos del juego. Haz click derecho en el botón de iniciar sesión en XIVLauncher y elige \"Reparar Juego\".",
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginSteamIssue": {
@@ -652,11 +664,11 @@
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher no ha podido detectar que el juego se haya iniciado correctamente.",
+    "message": "XIVLauncher no ha podido iniciar el juego correctamente.",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "Esto podría ser un problema temporal. Por favor, prueba a reiniciar tu PC. Es posible que la instalación del juego no sea válida.",
+    "message": "Podría tratarse de un problema temporal. Por favor, prueba a reiniciar tu PC.\nEs posible que tu instalación del juego no sea válida - puedes reparar los archivos del juego haciendo click derecho en el botón de iniciar sesión y seleccionando \"Reparar Juego\".",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -993,6 +1005,10 @@
   },
   "IsFreeTrial": {
     "message": "Comenzar en modo prueba gratuita",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " (desactivado)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {

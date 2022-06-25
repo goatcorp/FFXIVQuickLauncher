@@ -51,6 +51,10 @@
     "message": "Uppdaterar körning...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
+  "DalamudNowStarting": {
+    "message": "Startar...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
   "DalamudUnavailable": {
     "message": "Tillägg är för närvarande otillgängligt\npå grund av en speluppdatering.",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
@@ -77,11 +81,11 @@
   },
   "NewsDlFailed": {
     "message": "Kunde inte ladda ner nyhetsdata.",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
+    "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "En uppdatering för FFXIV-startaren hittades.\nDetta betyder oftast att det även finns en uppdatering för spelet.\n\nDu kommer nu att loggas in.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "Spel- och uppdateringssökvägen kan inte vara det samma.\nVänligen se till att separera sökvägarna för spelet och uppdateringar.",
@@ -110,10 +114,6 @@
   "GameIsOpenPluginLocked": {
     "message": "Spelet är öppet, vänligen stäng det och försök igen.",
     "description": "SettingsControl.DeletePlugin_OnClick"
-  },
-  "DisabledPlugin": {
-    "message": " (inaktiverad)",
-    "description": "SettingsControl.ReloadPluginList"
   },
   "IntegrityCheckImpossible": {
     "message": "Det finns ingen referensrapport för denna spelversion än. Vänligen försök igen senare.",
@@ -451,6 +451,10 @@
     "message": "Kunde inte uppdatera styrprogrammet.",
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
+  "KillswitchText": {
+    "message": "XIVLauncher kan inte starta spelet för närvarande då Square Enix har gjort ändringar i inloggningsprocessen.\nVi behöver anpassa oss till dessa ändringar och verifiera våra justeringar är säkra innan vi kan aktivera spelstartaren igen. Vänligen försök igen senare.\n\nVi ber om ursäkt för dessa omständigheter.\n\nDu kan använda knappen \"Officiella startprogrammet\" för att använda den officiella startaren.\n",
+    "description": "<Login>d__21.MoveNext"
+  },
   "EmptyUsernameError": {
     "message": "Ange ett användarnamn.",
     "description": "<Login>d__21.MoveNext"
@@ -477,6 +481,14 @@
   },
   "GameRepairSuccessPlural": {
     "message": "XIVLauncher har reparerat {0} spelfiler.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Dessutom har 1 fil som inte kom med den ursprungliga spelinstallationen flyttats till {0}.\nOm du använder GShade behöver du ominstallera det.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Dessutom har {0} filer som inte kom med den ursprungliga spelinstallationen flyttats till {1}.\nOm du använder GShade behöver du ominstallera det.",
     "description": "<RepairGame>d__26.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -556,7 +568,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "Versionsinformationen kunde inte läsas från dina spelfiler.\n\nDu måste ominstallera eller reparera spelet.",
+    "message": "Versionsinformationen kunde inte läsas från dina spelfiler.\n\nDu måste ominstallera eller reparera spelfilerna. Högerklicka inloggningsknappen i XIVLauncher, och välj \"Reparera spelfiler\".",
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginSteamIssue": {
@@ -652,11 +664,11 @@
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher kunde inte upptäcka om spelet startade ordentligt.",
+    "message": "XIVLauncher kunde inte starta spelet rätt.",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "Detta kan vara ett tillfälligt problem. Försök att starta om din dator. Det är möjligt att din spelinstallation inte är giltig.",
+    "message": "Detta kan vara ett tillfälligt problem. Vänligen försök att starta om din dator.\nDet är möjligt att din spelinstallation inte är giltig - du kan reparera din spelinstallation genom att högerklicka inloggningsknappen och välja \"Reparera spelfiler\".",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -993,6 +1005,10 @@
   },
   "IsFreeTrial": {
     "message": "Starta i Free Trial-läge",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " (inaktiverad)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {
