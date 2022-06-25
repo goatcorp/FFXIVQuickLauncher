@@ -51,6 +51,10 @@
     "message": "ランタイムを更新中...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
+  "DalamudNowStarting": {
+    "message": "起動しています",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
   "DalamudUnavailable": {
     "message": "ゲーム本体のアップデートにより一時的にプラグインが利用できません。",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
@@ -77,11 +81,11 @@
   },
   "NewsDlFailed": {
     "message": "最新ニュースを取得できませんでした。",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
+    "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "FFXIVランチャーのパッチが検出されました。\nこれは通常、ゲームにパッチがあることを意味します。\n\nこれでログインします。",
-    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "ゲームとパッチのダウンロード保存先は同じにはできません。\nゲームとパッチのダウンロード保存先を別々に選択してください。",
@@ -110,10 +114,6 @@
   "GameIsOpenPluginLocked": {
     "message": "ゲームが実行中です。終了させてもう一度実行してください。",
     "description": "SettingsControl.DeletePlugin_OnClick"
-  },
-  "DisabledPlugin": {
-    "message": " (無効化)",
-    "description": "SettingsControl.ReloadPluginList"
   },
   "IntegrityCheckImpossible": {
     "message": "このゲームバージョンはまだ参照レポートがありません。後ほど再度お試し下さい。",
@@ -451,6 +451,10 @@
     "message": "ブートにパッチを適用できませんでした。",
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
+  "KillswitchText": {
+    "message": "スクウェア・エニックスがログイン方法を変更したため、XIVLauncherでゲームを起動することができなくなりました。\nXIVLauncherチームは、安全にランチャーを再有効化する前に、調整を行う必要があります。後ほど、再度お試しください。\n\nこのような状況になってしまい、誠に申し訳ございません。\n\n下の「公式ランチャー」ボタンから、公式ランチャーを起動することができます。\n",
+    "description": "<Login>d__21.MoveNext"
+  },
   "EmptyUsernameError": {
     "message": "ユーザー名を入力してください。",
     "description": "<Login>d__21.MoveNext"
@@ -477,6 +481,14 @@
   },
   "GameRepairSuccessPlural": {
     "message": "XIVLauncherは {0} のゲームファイルを正常に修復しました。",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it.",
     "description": "<RepairGame>d__26.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -556,7 +568,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "バージョン情報をゲームファイルから読み取れませんでした。\n\nゲームを再インストールまたは修復する必要があります。",
+    "message": "バージョン情報をゲームファイルから読み取れませんでした。\n\nゲームファイルを再インストールまたは修復する必要があります。 XIVLauncherのログインボタンを右クリックし、「ゲームを修復」を選択します。",
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginSteamIssue": {
@@ -652,11 +664,11 @@
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncherは、ゲームが正しく開始されたことを検出できませんでした。",
+    "message": "XIVLauncher が正しくゲームを開始できませんでした。",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "これは一時的な問題かもしれません。PCを再起動してみてください。ゲームのインストールが有効でない可能性があります。",
+    "message": "これは一時的な問題かもしれません。PCを再起動してみてください。\nゲームファイルが正常でない可能性があります - ログインボタンを右クリックして「ゲームを修復」を選択することで、ゲームを修復できます。",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -993,6 +1005,10 @@
   },
   "IsFreeTrial": {
     "message": "フリートライアルモードで開始",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " (無効化)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {

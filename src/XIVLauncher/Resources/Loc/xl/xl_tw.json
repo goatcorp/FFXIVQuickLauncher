@@ -51,6 +51,10 @@
     "message": "正在更新運行時...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
+  "DalamudNowStarting": {
+    "message": "Starting...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
   "DalamudUnavailable": {
     "message": "由於遊戲更新，暫時無法使用外掛程式。",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
@@ -77,11 +81,11 @@
   },
   "NewsDlFailed": {
     "message": "無法獲取公告信息",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
+    "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "檢測到啟動器更新。\n這通常代表遊戲也有更新。\n\n即將為您啟動遊戲。",
-    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "遊戲和更新包的下載路徑不能相同。\n請選擇不同的遊戲和更新包下載路徑。",
@@ -110,10 +114,6 @@
   "GameIsOpenPluginLocked": {
     "message": "遊戲正在執行中，請先關閉遊戲後再試。",
     "description": "SettingsControl.DeletePlugin_OnClick"
-  },
-  "DisabledPlugin": {
-    "message": " （已禁用）",
-    "description": "SettingsControl.ReloadPluginList"
   },
   "IntegrityCheckImpossible": {
     "message": "此遊戲版本尚無參考報告。我們無法為您執行完整性檢查，請稍後再試。",
@@ -451,6 +451,10 @@
     "message": "Could not patch boot.",
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
+  "KillswitchText": {
+    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "description": "<Login>d__21.MoveNext"
+  },
   "EmptyUsernameError": {
     "message": "請輸入您的賬號。",
     "description": "<Login>d__21.MoveNext"
@@ -477,6 +481,14 @@
   },
   "GameRepairSuccessPlural": {
     "message": "XIVLauncher 已成功修復 {0} 個遊戲檔案。",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it.",
     "description": "<RepairGame>d__26.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -556,7 +568,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game.",
+    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\".",
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginSteamIssue": {
@@ -652,11 +664,11 @@
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher 無法檢測到遊戲正確啟動。",
+    "message": "XIVLauncher could not start the game correctly.",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "這可能是暫時的問題。請嘗試重啟您的電腦。這有可能是你的遊戲安裝無效。",
+    "message": "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\".",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -993,6 +1005,10 @@
   },
   "IsFreeTrial": {
     "message": "在免費試用模式下啟動",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " （已禁用）",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {

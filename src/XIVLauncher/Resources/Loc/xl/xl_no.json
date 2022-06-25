@@ -51,6 +51,10 @@
     "message": "Oppdaterer kjøreomgivelser …",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
+  "DalamudNowStarting": {
+    "message": "Starting...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
   "DalamudUnavailable": {
     "message": "Programtillegg er ikke tilgjengelig på grunn av en spilloppdatering.",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
@@ -77,11 +81,11 @@
   },
   "NewsDlFailed": {
     "message": "Kunne ikke laste ned nyhetsdata.",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
+    "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "Det er en oppdatering tillgjengelig for oppstartsprogrammet til FFXIV.\nDette betyr vanligvis at det også er en tilgjengelig oppdatering for spillet.\n\nDu vil nå bli logget inn.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "Du må bruke forskjellige filstier for oppdateringer og selve spillet.",
@@ -110,10 +114,6 @@
   "GameIsOpenPluginLocked": {
     "message": "Spillet er åpent, vennligst lukk spillet og prøv igjen.",
     "description": "SettingsControl.DeletePlugin_OnClick"
-  },
-  "DisabledPlugin": {
-    "message": " (deaktivert)",
-    "description": "SettingsControl.ReloadPluginList"
   },
   "IntegrityCheckImpossible": {
     "message": "Det er ingen referanserapport for denne spillversjonen ennå. Vennligst prøv igjen senere.",
@@ -451,6 +451,10 @@
     "message": "Klarte ikke å oppdatere oppstartsprosedyren.",
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
+  "KillswitchText": {
+    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "description": "<Login>d__21.MoveNext"
+  },
   "EmptyUsernameError": {
     "message": "Vennligst skriv inn et brukernavn.",
     "description": "<Login>d__21.MoveNext"
@@ -477,6 +481,14 @@
   },
   "GameRepairSuccessPlural": {
     "message": "XIVLauncher reparerte {0} spillfiler.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it.",
     "description": "<RepairGame>d__26.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -556,7 +568,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game.",
+    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\".",
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginSteamIssue": {
@@ -652,11 +664,11 @@
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher klarte ikke å se om spillet startet uten feil.",
+    "message": "XIVLauncher could not start the game correctly.",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "Dette kan være en midlertidig feil. Prøv å starte PC-en din på nytt. Det er mulig at spillinstallasjonen din ikke er gyldig.",
+    "message": "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\".",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -993,6 +1005,10 @@
   },
   "IsFreeTrial": {
     "message": "Start i prøveperiodemodus",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " (deaktivert)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {
