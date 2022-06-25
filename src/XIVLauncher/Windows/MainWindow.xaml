@@ -80,7 +80,7 @@
                                         </TransformGroup>
                                     </ItemsControl.LayoutTransform>
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="BannerDotInfo">
+                                        <DataTemplate>
                                             <RadioButton GroupName="banner" IsChecked="{Binding Active}" RenderTransformOrigin="0.5,0.5" MouseEnter="RadioButton_MouseEnter" MouseLeave="RadioButton_MouseLeave">
                                                 <RadioButton.RenderTransform>
                                                     <TransformGroup>
