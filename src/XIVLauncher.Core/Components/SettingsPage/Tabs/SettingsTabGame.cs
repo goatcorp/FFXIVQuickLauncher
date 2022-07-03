@@ -1,4 +1,9 @@
+using CheapLoc;
+using ImGuiNET;
+using Serilog;
+using System.Numerics;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Game;
 
 namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
@@ -16,9 +21,84 @@ public class SettingsTabGame : SettingsTab
                 if (x.Name == "game" || x.Name == "boot")
                     return "Please select the path containing the folders \"game\" and \"boot\", not the folders itself.";
 
+                string saveIntegrityPath = Path.Combine(Program.storage.Root.ToString(), "integrityreport.txt");
+
+                if (ImGui.Button("Run Integrity Check"))
+                {                    
+                    #if DEBUG
+                    Log.Information("Saving integrity to " + saveIntegrityPath);
+                    #endif
+                    
+                    ImGui.OpenPopup("IntegrityCheck");
+                    // Always center this window when appearing
+                    Vector2 center = ImGui.GetMainViewport().GetCenter();
+                    ImGui.SetNextWindowPos(center, ImGuiCond.Always, new Vector2(0.5f, 0.5f));
+                }
+
+                bool open = true;
+                if (ImGui.BeginPopupModal("IntegrityCheck", ref open,
+                    ImGuiWindowFlags.AlwaysAutoResize))
+                {
+                    ImGui.Text($"Begin integrity check?\n\nIt will take 5-10 minutes.");
+
+                    if (ImGui.Button("Start"))
+                    {
+                        Log.Information("Running integrity check.");
+                        var progress = new Progress<IntegrityCheck.IntegrityCheckProgress>();
+                        progress.ProgressChanged += (sender, checkProgress) =>
+                        {
+                            #if DEBUG
+                            Log.Debug($"Checking: {checkProgress.CurrentFile}");
+                            #endif
+                        };
+
+                        string res = "";
+                        Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, Program.Config.GamePath)).ContinueWith(task =>
+                        {
+                            Log.Debug("Integrity check complete");
+                            File.WriteAllText(saveIntegrityPath, task.Result.report);
+
+                           
+                            switch (task.Result.compareResult)
+                            {
+                                case IntegrityCheck.CompareResult.ReferenceNotFound:
+                                    res = Loc.Localize("IntegrityCheckImpossible",
+                                            "There is no reference report yet for this game version. Please try again later.");
+                                    break;
+
+                                case IntegrityCheck.CompareResult.ReferenceFetchFailure:
+                                    res = Loc.Localize("IntegrityCheckNetworkError",
+                                            "Failed to download reference files for checking integrity. Check your internet connection and try again.");
+                                    break;
+
+                                case IntegrityCheck.CompareResult.Invalid:
+                                    res = Loc.Localize("IntegrityCheckFailed",
+                                            "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".");
+                                    break;
+
+                                case IntegrityCheck.CompareResult.Valid:
+                                    res = Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid."); 
+                                    break;
+                            }
+                            
+                        }).Wait();
+                        ImGui.CloseCurrentPopup();
+
+                        Log.Information(res);
+
+                    }
+                    ImGui.SameLine();
+                    if (ImGui.Button("Cancel"))
+                    {
+                        ImGui.CloseCurrentPopup();
+                    }
+                    ImGui.EndPopup();
+                }
+
                 return null;
             }
         },
+
 
         new SettingsEntry<DirectoryInfo>("Game Config Path", "Where the user config files will be stored.", () => Program.Config.GameConfigPath, x => Program.Config.GameConfigPath = x)
         {
@@ -45,5 +125,7 @@ public class SettingsTabGame : SettingsTab
     public override void Draw()
     {
         base.Draw();
+
+        
     }
 }
