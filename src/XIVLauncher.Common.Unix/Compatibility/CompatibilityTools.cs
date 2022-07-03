@@ -116,23 +116,23 @@ public class CompatibilityTools
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
-    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false)
+    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
         var psi = new ProcessStartInfo(Wine64Path);
         psi.Arguments = command;
 
         Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, command);
-        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog);
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
-    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false)
+    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
         var psi = new ProcessStartInfo(Wine64Path);
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
         Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
-        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog);
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
     private void MergeDictionaries(StringDictionary a, IDictionary<string, string> b)
@@ -149,7 +149,7 @@ public class CompatibilityTools
         }
     }
 
-    private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string> environment, bool redirectOutput, bool writeLog)
+    private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string> environment, bool redirectOutput, bool writeLog, bool wineD3D)
     {
         psi.RedirectStandardOutput = redirectOutput;
         psi.RedirectStandardError = writeLog;
@@ -158,7 +158,7 @@ public class CompatibilityTools
 
         var wineEnviromentVariables = new Dictionary<string, string>();
         wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
-        wineEnviromentVariables.Add("WINEDLLOVERRIDES", "d3d9,d3d11,d3d10core,dxgi,mscoree=n");
+        wineEnviromentVariables.Add("WINEDLLOVERRIDES", $"mscoree=n;d3d9,d3d11,d3d10core,dxgi={(wineD3D ? "b" : "n")}");
 
         if (!string.IsNullOrEmpty(Settings.DebugVars))
         {
