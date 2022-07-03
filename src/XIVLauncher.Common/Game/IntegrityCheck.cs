@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game
 {
@@ -110,7 +111,7 @@ namespace XIVLauncher.Common.Game
                 var relativePath = file.FullName.Substring(rootDirectory.Length);
 
                 // for unix compatibility with windows-generated integrity
-                if (!OperatingSystem.IsWindows())
+                if (PlatformHelpers.GetPlatform() == Platform.Win32 || PlatformHelpers.GetPlatform() ==  Platform.Win32OnLinux)
                 {
 #if DEBUG
                     Log.Debug($"{relativePath} swapping to {relativePath.Replace("/", "\\")}");
