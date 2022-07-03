@@ -139,7 +139,10 @@ namespace XIVLauncher.Common.Game
             }
 
             foreach (var dir in directory.GetDirectories())
-                CheckDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
+            {
+                if (!dir.FullName.ToLower().Contains("shade"))
+                    CheckDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
+            }
         }
     }
 }
