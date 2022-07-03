@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace XIVLauncher.Common.Game
 {
@@ -58,9 +59,9 @@ namespace XIVLauncher.Common.Game
                 if (onlyIndex && (!hashEntry.Key.EndsWith(".index") && !hashEntry.Key.EndsWith(".index2")))
                     continue;
 
-                if (localIntegrity.Hashes.Any(h => h.Key == hashEntry.Key))
+                if (localIntegrity.Hashes.Any(h => h.Key.Replace("/", "\\") == hashEntry.Key))
                 {
-                    if (localIntegrity.Hashes.First(h => h.Key == hashEntry.Key).Value != hashEntry.Value)
+                    if (localIntegrity.Hashes.First(h => h.Key.Replace("/", "\\") == hashEntry.Key).Value != hashEntry.Value)
                     {
                         report += $"Mismatch: {hashEntry.Key}\n";
                         failed = true;
@@ -107,6 +108,16 @@ namespace XIVLauncher.Common.Game
             foreach (var file in directory.GetFiles())
             {
                 var relativePath = file.FullName.Substring(rootDirectory.Length);
+
+                // for unix compatibility with windows-generated integrity
+                if (!OperatingSystem.IsWindows())
+                {
+#if DEBUG
+                    Log.Debug($"{relativePath} swapping to {relativePath.Replace("/", "\\")}");
+#endif
+                    relativePath = relativePath.Replace("/", "\\");
+                }
+                
 
                 if (!relativePath.StartsWith("\\"))
                     relativePath = "\\" + relativePath;

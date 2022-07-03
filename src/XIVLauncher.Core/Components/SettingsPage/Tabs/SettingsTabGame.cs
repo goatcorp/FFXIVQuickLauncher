@@ -9,6 +9,21 @@ namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
 public class SettingsTabGame : SettingsTab
 {
+
+    const float BUTTON_WIDTH = 120f;
+
+    static bool runningIntegrity = false;
+
+    #region Modal State
+
+    private static bool isModalDrawing = false;
+    private static bool modalOnNextFrame = false;
+    private static string modalText = string.Empty;
+    private static string modalTitle = string.Empty;
+    private static readonly ManualResetEvent modalWaitHandle = new(false);
+
+    #endregion
+
     public override SettingsEntry[] Entries { get; } =
     {
         new SettingsEntry<DirectoryInfo>("Game Path", "Where the game is installed to.", () => Program.Config.GamePath, x => Program.Config.GamePath = x)
@@ -25,75 +40,16 @@ public class SettingsTabGame : SettingsTab
 
                 if (ImGui.Button("Run Integrity Check"))
                 {                    
-                    #if DEBUG
+#if DEBUG
                     Log.Information("Saving integrity to " + saveIntegrityPath);
-                    #endif
+#endif
                     
-                    ImGui.OpenPopup("IntegrityCheck");
-                    // Always center this window when appearing
-                    Vector2 center = ImGui.GetMainViewport().GetCenter();
-                    ImGui.SetNextWindowPos(center, ImGuiCond.Always, new Vector2(0.5f, 0.5f));
+                    runningIntegrity = true;
+                    ShowMessage("Running Integrity Check", "Integrity Check");
+                    Log.Information("Running integrity check.");
+                    RunIntegrity(saveIntegrityPath);
                 }
-
-                bool open = true;
-                if (ImGui.BeginPopupModal("IntegrityCheck", ref open,
-                    ImGuiWindowFlags.AlwaysAutoResize))
-                {
-                    ImGui.Text($"Begin integrity check?\n\nIt will take 5-10 minutes.");
-
-                    if (ImGui.Button("Start"))
-                    {
-                        Log.Information("Running integrity check.");
-                        var progress = new Progress<IntegrityCheck.IntegrityCheckProgress>();
-                        progress.ProgressChanged += (sender, checkProgress) =>
-                        {
-                            #if DEBUG
-                            Log.Debug($"Checking: {checkProgress.CurrentFile}");
-                            #endif
-                        };
-
-                        string res = "";
-                        Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, Program.Config.GamePath)).ContinueWith(task =>
-                        {
-                            Log.Debug("Integrity check complete");
-                            File.WriteAllText(saveIntegrityPath, task.Result.report);
-
-                           
-                            switch (task.Result.compareResult)
-                            {
-                                case IntegrityCheck.CompareResult.ReferenceNotFound:
-                                    res = Loc.Localize("IntegrityCheckImpossible",
-                                            "There is no reference report yet for this game version. Please try again later.");
-                                    break;
-
-                                case IntegrityCheck.CompareResult.ReferenceFetchFailure:
-                                    res = Loc.Localize("IntegrityCheckNetworkError",
-                                            "Failed to download reference files for checking integrity. Check your internet connection and try again.");
-                                    break;
-
-                                case IntegrityCheck.CompareResult.Invalid:
-                                    res = Loc.Localize("IntegrityCheckFailed",
-                                            "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".");
-                                    break;
-
-                                case IntegrityCheck.CompareResult.Valid:
-                                    res = Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid."); 
-                                    break;
-                            }
-                            
-                        }).Wait();
-                        ImGui.CloseCurrentPopup();
-
-                        Log.Information(res);
-
-                    }
-                    ImGui.SameLine();
-                    if (ImGui.Button("Cancel"))
-                    {
-                        ImGui.CloseCurrentPopup();
-                    }
-                    ImGui.EndPopup();
-                }
+                
 
                 return null;
             }
@@ -120,12 +76,125 @@ public class SettingsTabGame : SettingsTab
         new SettingsEntry<bool>("Use XIVLauncher authenticator/OTP macros", "Check this if you want to use the XIVLauncher authenticator app or macros.", () => Program.Config.IsOtpServer ?? false, x => Program.Config.IsOtpServer = x),
     };
 
+    private static void RunIntegrity(string saveIntegrityPath)
+    {
+        var progress = new Progress<IntegrityCheck.IntegrityCheckProgress>();
+        progress.ProgressChanged += (sender, checkProgress) =>
+        {
+#if DEBUG
+            Log.Debug($"Checking: {checkProgress.CurrentFile}");
+#endif
+
+            modalText = $"Checking: {checkProgress.CurrentFile}";
+        };
+
+        string res = "";
+        Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, Program.Config.GamePath)).ContinueWith(task =>
+        {
+            Log.Information("Integrity check completed");
+            File.WriteAllText(saveIntegrityPath, task.Result.report);
+
+
+            switch (task.Result.compareResult)
+            {
+                case IntegrityCheck.CompareResult.ReferenceNotFound:
+                    res = Loc.Localize("IntegrityCheckImpossible",
+                            "There is no reference report yet for this game version. Please try again later.");
+                    break;
+
+                case IntegrityCheck.CompareResult.ReferenceFetchFailure:
+                    res = Loc.Localize("IntegrityCheckNetworkError",
+                            "Failed to download reference files for checking integrity. Check your internet connection and try again.");
+                    break;
+
+                case IntegrityCheck.CompareResult.Invalid:
+                    res = Loc.Localize("IntegrityCheckFailed",
+                            "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".");
+                    break;
+
+                case IntegrityCheck.CompareResult.Valid:
+                    res = Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid.");
+                    break;
+            }
+
+        }).Wait();
+
+        Log.Information(res);
+        runningIntegrity = false;
+        modalText = res;
+        modalTitle = "Integrity Check Complete";
+    }
+
     public override string Title => "Game";
 
     public override void Draw()
     {
         base.Draw();
 
-        
+        DrawModal();
+    }
+
+    private static void DrawModal()
+    {
+        ImGui.SetNextWindowSize(new Vector2(450, 300));
+
+        if (ImGui.BeginPopupModal(modalTitle + "###xl_sp_modal", ref isModalDrawing, 
+            ImGuiWindowFlags.AlwaysAutoResize | 
+            ImGuiWindowFlags.NoScrollbar  |
+            ImGuiWindowFlags.NoTitleBar
+            )
+        )
+        {
+            if (ImGui.BeginChild("###xl_modal_scrolling", new Vector2(0, -ImGui.GetTextLineHeightWithSpacing() * 2)))
+            {
+                ImGui.TextWrapped(modalText);
+            }
+
+            ImGui.EndChild();
+
+            const float BUTTON_WIDTH = 120f;
+            ImGui.SetCursorPosX((ImGui.GetWindowWidth() - BUTTON_WIDTH) / 2);
+
+            
+            if (!runningIntegrity)
+            {
+                if (ImGui.Button("OK", new Vector2(BUTTON_WIDTH, 40)))
+                {
+                    ImGui.CloseCurrentPopup();
+                    isModalDrawing = false;
+                    modalWaitHandle.Set();
+                }
+            }
+
+            ImGui.EndPopup();
+        }
+
+        if (modalOnNextFrame)
+        {
+            ImGui.OpenPopup("###xl_sp_modal");
+            modalOnNextFrame = false;
+            isModalDrawing = true;
+        }
+    }
+
+    public static void ShowMessage(string text, string title)
+    {
+        if (isModalDrawing)
+            throw new InvalidOperationException("Cannot open modal while another modal is open");
+
+        modalText = text;
+        modalTitle = title;
+        isModalDrawing = true;
+        modalOnNextFrame = true;
+    }
+
+    public static void ShowMessageBlocking(string text, string title)
+    {
+        if (isModalDrawing)
+            throw new InvalidOperationException("Cannot open modal while another modal is open");
+
+        modalWaitHandle.Reset();
+        ShowMessage(text, title);
+        modalWaitHandle.WaitOne();
     }
 }
