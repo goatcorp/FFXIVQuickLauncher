@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -57,7 +57,14 @@ public class CompatibilityTools
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
         this.dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
 
-        this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
+        try
+        {
+            this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
+        }
+        catch (IOException e)
+        {
+            // For some reason, this is called on Windows, and then it crashes xlcore because wine.log is considered open by another process already.
+        }
 
         if (wineSettings.StartupType == WineStartupType.Managed)
         {
