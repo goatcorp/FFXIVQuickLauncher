@@ -60,9 +60,9 @@ namespace XIVLauncher.Common.Game
                 if (onlyIndex && (!hashEntry.Key.EndsWith(".index") && !hashEntry.Key.EndsWith(".index2")))
                     continue;
 
-                if (localIntegrity.Hashes.Any(h => h.Key.Replace("/", "\\") == hashEntry.Key))
+                if (localIntegrity.Hashes.Any(h => h.Key == hashEntry.Key))
                 {
-                    if (localIntegrity.Hashes.First(h => h.Key.Replace("/", "\\") == hashEntry.Key).Value != hashEntry.Value)
+                    if (localIntegrity.Hashes.First(h => h.Key == hashEntry.Key).Value != hashEntry.Value)
                     {
                         report += $"Mismatch: {hashEntry.Key}\n";
                         failed = true;
@@ -89,6 +89,9 @@ namespace XIVLauncher.Common.Game
         public static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gamePath,
             IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
         {
+#if DEBUG
+            Log.Debug($"Platform identified as {PlatformHelpers.GetPlatform()}");
+#endif
             var hashes = new Dictionary<string, string>();
 
             using (var sha1 = new SHA1Managed())
@@ -110,14 +113,12 @@ namespace XIVLauncher.Common.Game
             {
                 var relativePath = file.FullName.Substring(rootDirectory.Length);
 
-                // for unix compatibility with windows-generated integrity
-                if (PlatformHelpers.GetPlatform() == Platform.Win32 || PlatformHelpers.GetPlatform() ==  Platform.Win32OnLinux)
-                {
+
 #if DEBUG
-                    Log.Debug($"{relativePath} swapping to {relativePath.Replace("/", "\\")}");
+                Log.Debug($"{relativePath} swapping to {relativePath.Replace("/", "\\")}");
 #endif
-                    relativePath = relativePath.Replace("/", "\\");
-                }
+                // for unix compatibility with windows-generated integrity files.
+                relativePath = relativePath.Replace("/", "\\");
                 
 
                 if (!relativePath.StartsWith("\\"))
