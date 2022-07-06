@@ -208,7 +208,7 @@ namespace XIVLauncher.Windows
         {
             if (App.Settings.GamePath == null || !GameHelpers.GetOfficialLauncherPath(App.Settings.GamePath).Exists)
             {
-                CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherNotPresentError", "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher."), "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
+                CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherNotPresentError", "You don't have a game installation set up. XIVLauncher can't start the official launcher."), "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
                 return;
             }
 
@@ -235,7 +235,7 @@ namespace XIVLauncher.Windows
                     }
                     catch (Exception)
                     {
-                        CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherSteamError", "Steam couldn't be loaded. Please start FFXIV directly via Steam."), "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
+                        CustomMessageBox.Show(Loc.Localize("RunOfficialLauncherSteamError", "Steam couldn't be loaded. Please start the game directly via Steam."), "Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
                         return;
                     }
 

@@ -172,7 +172,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (bootver > ver615)
             {
-                CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process." +
+                CustomMessageBox.Show(Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as there were changes to the login process during a recent patch." +
                                                                      "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
                                                                      "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
                                                                      "\n")
@@ -219,7 +219,7 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 CustomMessageBox.Show(
                     Loc.Localize("UidCacheInstallError",
-                        "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall FFXIV.\n\nIf you want to reinstall FFXIV, please take care to disable it first."),
+                        "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall the game.\n\nIf you want to reinstall the game, please take care to disable it first."),
                     "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
 
                 return;
@@ -293,7 +293,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (!gateStatus.Status)
             {
-                var message = Loc.Localize("GateClosed", "FFXIV is currently under maintenance. Please try again later or see official sources for more information.");
+                var message = Loc.Localize("GateClosed", "The game is currently under maintenance. Please try again later or see official sources for more information.");
 
                 if (gateStatus.Message != null)
                 {
@@ -354,7 +354,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (loginStatus == false)
             {
-                CustomMessageBox.Builder.NewFrom(Loc.Localize("GateClosed", "FFXIV is currently under maintenance. Please try again later or see official sources for more information."))
+                CustomMessageBox.Builder.NewFrom(Loc.Localize("GateClosed", "The game is currently under maintenance. Please try again later or see official sources for more information."))
                                 .WithImage(MessageBoxImage.Asterisk)
                                 .WithButtons(MessageBoxButton.OK)
                                 .WithCaption("XIVLauncher")
@@ -405,7 +405,7 @@ namespace XIVLauncher.Windows.ViewModel
                 else if (ex is SteamException)
                 {
                     msgbox.WithTextFormatted(Loc.Localize("LoginSteamIssue",
-                        "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the FFXIV Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}"), ex.Message);
+                        "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}"), ex.Message);
 
                     if (ex.InnerException != null)
                         msgbox.WithAppendDescription(ex.InnerException.ToString());
@@ -486,7 +486,7 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 CustomMessageBox.Show(
                     Loc.Localize("LoginNoServiceMessage",
-                        "This Square Enix account cannot play FINAL FANTASY XIV. Please make sure that you have an active subscription and that it is paid up.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
+                        "This account isn't eligible to play the game. Please make sure that you have an active subscription and that it is paid up.\n\nIf you bought the game on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings."),
                     "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error, showHelpLinks: false, showDiscordLink: false, parentWindow: _window);
 
@@ -497,7 +497,7 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 CustomMessageBox.Show(
                     Loc.Localize("LoginAcceptTermsMessage",
-                        "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher."),
+                        "Please accept the Terms of Use in the official launcher."),
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error, showOfficialLauncher: true, parentWindow: _window);
 
                 return false;
@@ -1423,7 +1423,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void SetupLoc()
         {
-            LoginUsernameLoc = Loc.Localize("LoginBoxUsername", "Square Enix ID");
+            LoginUsernameLoc = Loc.Localize("LoginBoxUsername", "Username");
             LoginPasswordLoc = Loc.Localize("LoginBoxPassword", "Password");
             AutoLoginLoc = Loc.Localize("LoginBoxAutoLogin", "Log in automatically");
             OtpLoc = Loc.Localize("LoginBoxOtp", "Use One-Time-Passwords");

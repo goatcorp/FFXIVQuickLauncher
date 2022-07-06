@@ -639,7 +639,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 };
                 var maxConcurrentConnectionsForPatchSet = 1;
 
-                // var baseDir = @"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn";
                 var baseDir = @"Z:\tgame";
                 var rootAndPatchPairs = new List<Tuple<string, string>>() {
                     Tuple.Create(@$"{baseDir}\boot", @"Z:\patch-dl.ffxiv.com\boot\2b5cbc63\D2021.11.16.0000.0001.patch.index"),

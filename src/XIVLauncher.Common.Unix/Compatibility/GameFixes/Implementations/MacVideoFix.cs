@@ -38,8 +38,7 @@ public class MacVideoFix : GameFix
 
         client.Download().GetAwaiter().GetResult();
 
-        var zipMovieFileNames = movieFileNames.Select(movie => Path.Combine("FINAL FANTASY XIV ONLINE.app", "Contents", "SharedSupport", "finalfantasyxiv", "support",
-            "published_Final_Fantasy", "drive_c", "Program Files (x86)", "SquareEnix", "FINAL FANTASY XIV - A Realm Reborn", "game", "movie", "ffxiv", movie));
+        var zipMovieFileNames = movieFileNames.Select(movie => Path.Combine("game", "movie", "ffxiv", movie));
 
         using (ZipArchive archive = ZipFile.OpenRead(zipFilePath))
         {

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Product>XIVLauncher</Product>
     <AssemblyTitle>XIVLauncher</AssemblyTitle>
-    <Description>Custom launcher for FFXIV.</Description>
+    <Description>Custom launcher for the most critically acclaimed MMO.</Description>
     <VersionPrefix>6.2.43</VersionPrefix>
   </PropertyGroup>
 
