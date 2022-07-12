@@ -15,7 +15,8 @@ namespace XIVLauncher.Common
         Norwegian,
         Russian,
         SimplifiedChinese,
-        TraditionalChinese
+        TraditionalChinese,
+        Maltese
     }
 
     public static class LauncherLanguageExtensions
@@ -36,7 +37,8 @@ namespace XIVLauncher.Common
                 { LauncherLanguage.Norwegian, "no" },
                 { LauncherLanguage.Russian, "ru" },
                 { LauncherLanguage.SimplifiedChinese, "zh" },
-                { LauncherLanguage.TraditionalChinese, "tw" }
+                { LauncherLanguage.TraditionalChinese, "tw" },
+                { LauncherLanguage.Maltese, "mt" }
             };
         }
 
