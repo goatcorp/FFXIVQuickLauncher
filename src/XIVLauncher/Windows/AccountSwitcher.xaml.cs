@@ -171,7 +171,7 @@ namespace XIVLauncher.Windows
             var shell = new WshShell();
             var shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + $@"\XIVLauncher - {selectedEntry.Account.UserName} {(selectedEntry.Account.UseSteamServiceAccount ? "(Steam)" : "")}.lnk";
             var shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = $"Open XIVLauncher with the {selectedEntry.Account.UserName} Square Enix account.";
+            shortcut.Description = $"Open XIVLauncher with the \"{selectedEntry.Account.UserName}\" account.";
             shortcut.TargetPath = Path.Combine(new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName, "XIVLauncher.exe");
             shortcut.Arguments = $"--account={selectedEntry.Account.Id}";
             shortcut.WorkingDirectory = Environment.CurrentDirectory;

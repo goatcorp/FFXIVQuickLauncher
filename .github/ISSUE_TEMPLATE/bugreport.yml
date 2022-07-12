@@ -12,9 +12,9 @@ body:
     id: terms
     attributes:
       label: Update disclaimer
-      description: If FFXIV recently updated, XIVLauncher and plugins will not work. They need to be updated first. You can get notified about updates on our Discord.
+      description: If the game recently updated, XIVLauncher and plugins will not work. They need to be updated first. You can get notified about updates on our Discord.
       options:
-        - label: Yes, I have checked and my issue is not related to FFXIV updating and plugins not working correctly.
+        - label: Yes, I have checked and my issue is not related to the game updating and plugins not working correctly.
           required: true
   - type: textarea
     id: what-happened

@@ -29,7 +29,7 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        public static async Task<DirectoryInfo> EnsureAssets(DirectoryInfo baseDir)
+        public static async Task<DirectoryInfo> EnsureAssets(DirectoryInfo baseDir, bool forceProxy)
         {
             using var client = new HttpClient
             {
@@ -88,9 +88,16 @@ namespace XIVLauncher.Common.Dalamud
 
                 if (!File.Exists(filePath) || isRefreshNeeded || refreshFile)
                 {
-                    Log.Verbose("[DASSET] Downloading {0} to {1}...", entry.Url, entry.FileName);
+                    var url = entry.Url;
 
-                    var request = await client.GetAsync(entry.Url + "?t=" + DateTime.Now.Ticks).ConfigureAwait(true);
+                    if (forceProxy && url.Contains("/File/Get/"))
+                    {
+                        url = url.Replace("/File/Get/", "/File/GetProxy/");
+                    }
+
+                    Log.Verbose("[DASSET] Downloading {0} to {1}...", url, entry.FileName);
+
+                    var request = await client.GetAsync(url).ConfigureAwait(true);
                     request.EnsureSuccessStatusCode();
                     File.WriteAllBytes(filePath, await request.Content.ReadAsByteArrayAsync().ConfigureAwait(true));
 

@@ -55,47 +55,54 @@ public class WindowsDalamudRunner : IDalamudRunner
                 psi.EnvironmentVariables.Add(keyValuePair.Key, keyValuePair.Value);
         }
 
-        var dalamudProcess = Process.Start(psi);
-        var output = dalamudProcess.StandardOutput.ReadLine();
-
-        if (output == null)
-            throw new DalamudRunnerException("An internal Dalamud error has occured");
-
         try
         {
-            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            Process gameProcess;
+            var dalamudProcess = Process.Start(psi);
+            var output = dalamudProcess.StandardOutput.ReadLine();
 
-            if (dalamudConsoleOutput.Handle == 0) 
-            {
-                Log.Warning($"Dalamud returned NULL process handle, attempting to recover by creating a new one from pid {dalamudConsoleOutput.Pid}...");
-                gameProcess = Process.GetProcessById(dalamudConsoleOutput.Pid);
-            }
-            else 
-            {
-                gameProcess = new ExistingProcess((IntPtr)dalamudConsoleOutput.Handle);
-            }
+            if (output == null)
+                throw new DalamudRunnerException("An internal Dalamud error has occured");
 
-            try 
+            try
             {
-                Log.Verbose($"Got game process handle {gameProcess.Handle} with pid {gameProcess.Id}");
+                var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+                Process gameProcess;
+
+                if (dalamudConsoleOutput.Handle == 0)
+                {
+                    Log.Warning($"Dalamud returned NULL process handle, attempting to recover by creating a new one from pid {dalamudConsoleOutput.Pid}...");
+                    gameProcess = Process.GetProcessById(dalamudConsoleOutput.Pid);
+                }
+                else
+                {
+                    gameProcess = new ExistingProcess((IntPtr)dalamudConsoleOutput.Handle);
+                }
+
+                try
+                {
+                    Log.Verbose($"Got game process handle {gameProcess.Handle} with pid {gameProcess.Id}");
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Log.Error(ex, $"Dalamud returned invalid process handle {gameProcess.Handle}, attempting to recover by creating a new one from pid {dalamudConsoleOutput.Pid}...");
+                    gameProcess = Process.GetProcessById(dalamudConsoleOutput.Pid);
+                    Log.Warning($"Recovered with process handle {gameProcess.Handle}");
+                }
+
+                if (gameProcess.Id != dalamudConsoleOutput.Pid)
+                    Log.Warning($"Internal Process ID {gameProcess.Id} does not match Dalamud provided one {dalamudConsoleOutput.Pid}");
+
+                return gameProcess;
             }
-            catch (InvalidOperationException ex) 
+            catch (JsonReaderException ex)
             {
-                Log.Error(ex, $"Dalamud returned invalid process handle {gameProcess.Handle}, attempting to recover by creating a new one from pid {dalamudConsoleOutput.Pid}...");
-                gameProcess = Process.GetProcessById(dalamudConsoleOutput.Pid);
-                Log.Warning($"Recovered with process handle {gameProcess.Handle}");
+                Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
+                return null;
             }
-
-            if (gameProcess.Id != dalamudConsoleOutput.Pid)
-                Log.Warning($"Internal Process ID {gameProcess.Id} does not match Dalamud provided one {dalamudConsoleOutput.Pid}");
-
-            return gameProcess;
         }
-        catch (JsonReaderException ex)
+        catch (Exception ex)
         {
-            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
-            return null;
+            throw new DalamudRunnerException("Error trying to start Dalamud.", ex);
         }
     }
 

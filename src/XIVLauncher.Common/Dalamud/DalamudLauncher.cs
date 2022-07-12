@@ -110,9 +110,11 @@ namespace XIVLauncher.Common.Dalamud
                 case DalamudLoadMethod.EntryPoint:
                     Log.Verbose("[HOOKS] Now running OEP rewrite");
                     break;
+
                 case DalamudLoadMethod.DllInject:
                     Log.Verbose("[HOOKS] Now running DLL inject");
                     break;
+
                 case DalamudLoadMethod.ACLonly:
                     Log.Verbose("[HOOKS] Now running ACL-only fix without injection");
                     break;

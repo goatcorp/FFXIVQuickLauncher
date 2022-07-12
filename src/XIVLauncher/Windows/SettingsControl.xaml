@@ -99,6 +99,7 @@
                         <ComboBoxItem>русский</ComboBoxItem>
                         <ComboBoxItem>简体中文</ComboBoxItem>
                         <ComboBoxItem>繁體中文</ComboBoxItem>
+                        <ComboBoxItem>svenska</ComboBoxItem>
                     </ComboBox>
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 20, 0, 0"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding LauncherLanguageHelpCtaLoc}" TextDecorations="Underline" MouseLeftButtonUp="OpenI18nLabel_OnClick" Cursor="Hand"/>

@@ -1,0 +1,1054 @@
+{
+  "updatefailureerror": {
+    "message": "XIVLauncher kunde inte söka efter uppdateringar. Detta kan bero på anslutningsproblem med GitHub. Vänta ett par minuter och försök igen.\nOm du använder ett VPN, stäng av det. Du kan även behöva utesluta XIVLauncher från ditt antivirus.\nOm problemen kvarstår efter flera minuter, vänligen se vår FAQ.",
+    "description": "<Run>d__3.MoveNext"
+  },
+  "RunOfficialLauncherNotPresentError": {
+    "message": "Du har inte installerat FFXIV. XIVLauncher kan inte köra den officiella spelstartaren.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherConfirmSteam": {
+    "message": "Är ditt spelkonto kopplat till ett Steam-konto? Då behöver Steam vara installerat för att fortsätta.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherSteamError": {
+    "message": "Steam kunde inte laddas. Vänligen starta FFXIV direkt via steam.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "ErrorAssertionFailed": {
+    "message": "Något som inte ska hända hände precis.",
+    "description": "CustomMessageBox.AssertOrShowError"
+  },
+  "ErrorExplanation": {
+    "message": "Ett fel inträffade i XIVLauncher. Vänligen läs vår FAQ. Om problemet kvarstår, vänligen rapportera det på GitHub genom att klicka på knappen nedan. Beskriv problemet och kopiera texten som står här.",
+    "description": "CustomMessageBox..cctor"
+  },
+  "Restart": {
+    "message": "_Starta om",
+    "description": "Builder.NewFrom"
+  },
+  "Exit": {
+    "message": "_Avsluta",
+    "description": "Builder.NewFrom"
+  },
+  "UnexpectedErrorSummary": {
+    "message": "Ett oväntat fel har inträffat. ({0})",
+    "description": "Builder.NewFromUnexpectedException"
+  },
+  "UnexpectedErrorActionable": {
+    "message": "Vänligen rapportera detta fel.",
+    "description": "Builder.NewFromUnexpectedException"
+  },
+  "DalamudUpdateDalamud": {
+    "message": "Uppdaterar kärna...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUpdateAssets": {
+    "message": "Uppdaterar resurser...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUpdateRuntime": {
+    "message": "Uppdaterar körning...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudNowStarting": {
+    "message": "Startar...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUnavailable": {
+    "message": "Tillägg är för närvarande otillgängligt\npå grund av en speluppdatering.",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "GamePathEmptyError": {
+    "message": "Vänligen ange sökvägen till spelet.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathSafeguardError": {
+    "message": "Vänligen ange ej \"game\"- eller \"boot\"-mappen av din FFXIV-installation, utan ange istället mappen som innehåller detta.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathInvalidConfirm": {
+    "message": "Mappen du angav har ingen FFXIV-installation.\nXIVLauncher kommer att installera FFXIV efter din första inloggning.\nVill du fortsätta?",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathRegionConfirm": {
+    "message": "Mappen du angav kan vara den kinesiska eller koreanska utgåvan av spelet. XIVLauncher stöder endast den internationella utgåvan av spelet.\nÄr mappen du angav faktiskt den internationella utgåvan?",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "NewsLoading": {
+    "message": "Laddar...",
+    "description": "MainWindow..ctor"
+  },
+  "NewsDlFailed": {
+    "message": "Kunde inte ladda ner nyhetsdata.",
+    "description": "MainWindow.<SetupHeadlines>b__12_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "En uppdatering för FFXIV-startaren hittades.\nDetta betyder oftast att det även finns en uppdatering för spelet.\n\nDu kommer nu att loggas in.",
+    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
+  },
+  "SettingsGamePatchPathError": {
+    "message": "Spel- och uppdateringssökvägen kan inte vara det samma.\nVänligen se till att separera sökvägarna för spelet och uppdateringar.",
+    "description": "SettingsControl.AcceptButton_Click"
+  },
+  "LaunchAsSteam": {
+    "message": "Kör som Steam-användare?",
+    "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "IntegrityCheckBase": {
+    "message": "Spelet är inte installerat i den angivna sökvägen.\nVänligen installera spelet innan du kör en integritetskoll.",
+    "description": "SettingsControl.RunIntegrityCheck_OnClick"
+  },
+  "DalamudIncompatible": {
+    "message": "Dalamud är inte uppdaterad till din nuvarande FFXIV-version.\nDetta är vanligt efter speluppdateringar. Var god vänta, eller fråga i vår Discord hur det går!",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "DalamudCompatCheckFailed": {
+    "message": "Kunde inte kontakta servern för den nuvarande versionen av Dalamud som passar din version av FFXIV. Detta kan betyda att din .NET-installation är föråldrad.\nVänligen kolla vår Discord för mer information.",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "PluginPathNotFound": {
+    "message": "Kunde inte hitta mappen för tillägg.",
+    "description": "SettingsControl.TogglePlugin_OnClick"
+  },
+  "GameIsOpenPluginLocked": {
+    "message": "Spelet är öppet, vänligen stäng det och försök igen.",
+    "description": "SettingsControl.DeletePlugin_OnClick"
+  },
+  "IntegrityCheckImpossible": {
+    "message": "Det finns ingen referensrapport för denna spelversion än. Vänligen försök igen senare.",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckNetworkError": {
+    "message": "Kunde inte ladda ner referensfiler för integritetskoll. Vänligen kolla din internetuppkoppling och försök igen.",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckFailed": {
+    "message": "Vissa spelfiler ser ut att vara ändrade eller korrupta. \n\nAnvänder du TexTools-modifieringar är detta förväntat.\n\nOm du inte använder modifieringar, högerklicka \"Logga in\"-knappen på XIVLaunchers startsida och välj \"Reparera spel\".",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckValid": {
+    "message": "Din spelinstallation ser ut att vara giltig.",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "AccountSwitcherSetProfilePic": {
+    "message": "Välj profilbild",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherCreateShortcut": {
+    "message": "Skapa skrivbordsgenväg",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "Remove": {
+    "message": "Ta bort",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherDontSavePassword": {
+    "message": "Spara inte lösenord",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "UpdateNotice": {
+    "message": "XIVLauncher har uppdaterats till version {0}.",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoading": {
+    "message": "Laddar ändringslogg...",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoadingError": {
+    "message": "Kunde inte ladda ändringslogg. Vänligen kolla GitHub eller vår Discord istället!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "JoinDiscord": {
+    "message": "Gå med i Discord",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "SendEmail": {
+    "message": "Skicka e-post",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "EmailInfo": {
+    "message": "XIVLauncher är gratis och använder öppen källkod. Det använder inte telemetri eller analysverktyg för att samla din data, men det hjälper om du kan skicka mig en kort e-post med ditt operativsystem, varför du använder XIVLauncher och ifall det behövs, kritik eller återkoppling på saker vi kan göra bättre. Ditt meddelande kommer omedelbart att raderas efter utvärderingen och jag kommer aldrig att kontakta dig.\n\nTusen tack för att du använder XIVLauncher!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogThanks": {
+    "message": "XIVLauncher är gratis och använder öppen källkod av folk från hela världen.\nTack för att du är här!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChatChannelSetupTitle": {
+    "message": "Konfigurera chattkanal",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "ChatChannelSetupDescription": {
+    "message": "Vänligen uppge om XIVLauncher ska skicka meddelanden i en serverkanal eller till en användare genom DM,\noch de respektive ID:n.",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "HowToHint": {
+    "message": "Hur sätter jag upp det här?",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "StartOfficialLauncher": {
+    "message": "Officiella startprogrammet",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "Öppna integritetsrapport",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "OpenFaq": {
+    "message": "Öppna FAQ",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "ReportError": {
+    "message": "Rapportera fel",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Yes": {
+    "message": "_Ja",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "No": {
+    "message": "_Nej",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Cancel": {
+    "message": "_Avbryt",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Copy": {
+    "message": "_Kopiera",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "Uppdaterar Dalamud...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
+  },
+  "ChooseGamePathFTS": {
+    "message": "Vänligen välj mappen ditt spel är installerat i.\nMapparna \"game\" och \"boot\" borde finnas i den.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamNotice": {
+    "message": "Kryssa denna ruta om du kör spelet genom Steam.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamCheckBox": {
+    "message": "Aktivera Steam-integrering",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseDirectXFTS": {
+    "message": "Var god välj vilken DirectX-version du vill använda.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "DirectX9NoticeFTS": {
+    "message": "DirectX 9-läget stöds inte längre. Det kommer att starta, men du kommer inte att få något stöd från SE för tekniska fel. Ytterligare funktioner i XIVLauncher som Rich Presence och Dalamud kommer inte att fungera.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseLanguageFTS": {
+    "message": "Välj vilket språk du vill starta spelet i.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunch": {
+    "message": "Advanced Combat Tracker (ACT) är installerat på din dator.\nVill du starta det automatiskt när du startar ditt spel?",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunchCheckBox": {
+    "message": "Aktivera ACT Auto-start",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "Next": {
+    "message": "Nästa",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudNotice": {
+    "message": "Vill du aktivera Dalamud?\nDetta ger dig tillgång till funktioner som RMT-filtrering i chatten och Discordnotifieringar för chattmeddelanden och Duty Finder-larm.\n\nFör att konfigurera dessa inställningar, öppna XIVLaunchers inställningsmeny och tryck på \"Dalamud\"-tabben.\nEmellertid kan detta orsaka ett falskt positiv i ditt antivirus. Vänligen kolla dina antivirus-inställningar och lägg till undantag i fall du stöter på något problem.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudCheckBox": {
+    "message": "Aktivera Dalamud",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "NowDownloadingMeta": {
+    "message": "Hämtar metafiler...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowVerifying": {
+    "message": "Verifierar spelfiler...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairing": {
+    "message": "Reparera spelfiler...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingConnecting": {
+    "message": "Ansluter...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingReattemptWaiting": {
+    "message": "Försöker igen om en stund...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingFinishing": {
+    "message": "Fulländar...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "SpeedUnitPerSecLoc": {
+    "message": "{0}/s",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDuration": {
+    "message": "{0:00}:{1:00} kvarstår",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDurationWithHours": {
+    "message": "{0:00}:{1:00}:{2:00} kvarstår",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "GenericAddonSetupTitle": {
+    "message": "Konfigurera Auto-start",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "GenericAddonSetupDescription": {
+    "message": "Var god ange applikationen som ska startas, eventuella parametrar och\nom det ska köras som administratör.",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "CommandLineParameters": {
+    "message": "Kommandotolks-parametrar",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "RunAsAdminLoc": {
+    "message": "Kör som administratör",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "RunOnCloseLoc": {
+    "message": "Kör när spelet stängs",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "KillAfterCloseLoc": {
+    "message": "Avsluta efter spelet stängs",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "IntegrityCheckRunning": {
+    "message": "Kör integritetskoll...",
+    "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
+  },
+  "LoginWebExceptionContent": {
+    "message": "XIVLauncher kunde inte upprätta en anslutning till spelservrarna.\n\nDetta kan vara ett tillfälligt fel eller ett fel med din internetuppkoppling. Vänligen försök igen senare.",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Inloggningsproblem",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher kunde inte verifiera de hämtade spelfilerna. Vänligen starta om och försök igen.\n\nDetta beror oftast på ett problem med din internetuppkoppling.\nOm felet kvarstår, försök att använda ett VPN-uppkoppling till Japan.\n\nKontext: {0}\n{1}",
+    "description": "MainWindowViewModel.PatcherOnFail"
+  },
+  "PatchInstallerInstallFailed": {
+    "message": "Ett fel inträffade i uppdateringsinstallatören.\nVänligen rapportera felet.\n\nFörsök igen eller använd den officiella spelstartaren.",
+    "description": "MainWindowViewModel.InstallerOnFail"
+  },
+  "LoginBoxUsername": {
+    "message": "Square Enix ID",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxPassword": {
+    "message": "Lösenord",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxAutoLogin": {
+    "message": "Logga in automatiskt",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxOtp": {
+    "message": "Använd engångslösenord",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxSteam": {
+    "message": "Använd Steam-tjänstkonto",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLogin": {
+    "message": "Logga in",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoStartLogin": {
+    "message": "Uppdatera utan att starta",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxRepairLogin": {
+    "message": "Reparera spelfiler",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoDalamudLogin": {
+    "message": "Starta utan Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLoginTooltip": {
+    "message": "Logga in med den angivna informationen",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxWaitingForMaint": {
+    "message": "Väntar på att underhållet ska slutföras...",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "CancelWithShortcut": {
+    "message": "_Avbryt",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "OpenAccountSwitcher": {
+    "message": "Öppna kontoväxlare",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "Settings": {
+    "message": "Inställningar",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "WorldStatus": {
+    "message": "Världsstatus",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "MaintenanceQueue": {
+    "message": "Vänta tills underhållet är färdigt",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoadingDialogIsLoggingIn": {
+    "message": "Loggar in...",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "DuplicateOtpAfterSuccess": {
+    "message": "Detta engångslösenord har redan använts.\nDet kan ta upp till 30 sekunder för att få ett nytt.",
+    "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "AutoLoginIntro": {
+    "message": "Du aktiverar nu automatisk inloggning.\nDetta betyder att XIVLauncher alltid kommer att logga in dig med det nuvarande kontot och du kommer inte se detta fönster.\n\nFör att ändra inställningar och konton behöver du hålla ned Shift-knappen på ditt tangentbord medan du kör XIVLauncher.",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GameIsOpenRepairError": {
+    "message": "Spelet och/eller den officiella spelstartaren är öppet. XIVLauncher kan inte reparera spelet på grund av detta.\nVänligen stäng dem och försök igen.",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GameRepairDisclaimer": {
+    "message": "XIVLauncher kommer nu att försöka hitta korrputa spelfiler och reparera dem.\nOm du använder TexTools-modifieringar kommer detta att ersätta dem och återställa spelets ursprungliga filer.\n\nVill du fortsätta?",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GateUnreachable": {
+    "message": "Inloggningsservrarna kunde inte nås. Detta beror oftast på att spelet genomgår underhåll eller att din uppkoppling till spelservrarna är ostabil.\n\nVänligen försök igen senare.",
+    "description": "<CheckGateStatus>d__23.MoveNext"
+  },
+  "GateClosed": {
+    "message": "FFXIV pågår just nu underhåll. Vänligen försök igen senare eller kolla officiella informationskällor.",
+    "description": "<CheckGateStatus>d__23.MoveNext"
+  },
+  "CheckBootVersionError": {
+    "message": "XIVLauncher kunde inte kolla uppstartsversionen för den angivna spelinstallationen. Detta kan hända om underhåll pågår eller om din uppkoppling till versionskoll-servern inte är tillgänglig. Vänligen rapportera detta fel om du kan logga in med den officiella spelstartaren, men inte XIVLauncher.",
+    "description": "<HandleBootCheck>d__34.MoveNext"
+  },
+  "BootPatchFailure": {
+    "message": "Kunde inte uppdatera styrprogrammet.",
+    "description": "<HandleBootCheck>d__34.MoveNext"
+  },
+  "KillswitchText": {
+    "message": "XIVLauncher kan inte starta spelet för närvarande då Square Enix har gjort ändringar i inloggningsprocessen.\nVi behöver anpassa oss till dessa ändringar och verifiera våra justeringar är säkra innan vi kan aktivera spelstartaren igen. Vänligen försök igen senare.\n\nVi ber om ursäkt för dessa omständigheter.\n\nDu kan använda knappen \"Officiella startprogrammet\" för att använda den officiella startaren.\n",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmptyUsernameError": {
+    "message": "Ange ett användarnamn.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmailUsernameError": {
+    "message": "Ange ditt SE-användarnamn, inte din e-postadress.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmptyPasswordError": {
+    "message": "Ange ett lösenord.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "UidCacheInstallError": {
+    "message": "Du har aktiverat UID-cachen i uppdateringsinställningarna.\nDenna inställning tillåter inte dig att ominstallera FFXIV.\n\nOm du vill ominstallera FFXIV behöver du avaktivera det först.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "GameRepairSuccess0": {
+    "message": "Alla spelfiler ser ut att vara giltiga.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess1": {
+    "message": "XIVLauncher har reparerat 1 spelfil.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessPlural": {
+    "message": "XIVLauncher har reparerat {0} spelfiler.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Dessutom har 1 fil som inte kom med den ursprungliga spelinstallationen flyttats till {0}.\nOm du använder GShade behöver du ominstallera det.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Dessutom har {0} filer som inte kom med den ursprungliga spelinstallationen flyttats till {1}.\nOm du använder GShade behöver du ominstallera det.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_LaunchGame": {
+    "message": "_Starta spel",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_VerifyAgain": {
+    "message": "_Verifiera igen",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_Close": {
+    "message": "_Stäng",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "NoVersionReferenceError": {
+    "message": "Versionen av spelet du har just nu kan inte repareras av XIVLauncher då referensinformationen ännu inte är tillgänglig.\nVänligen försök igen senare.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_TryAgain": {
+    "message": "_Försök igen",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairError": {
+    "message": "Ett fel inträffade under reparationen.\nDu kan behöva ominstallera spelet.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher håller redan på att uppdatera ditt spel någon annanstans. Kolla om XIVLauncher fortfarande är öppet.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "XIVLaunchers speltillägg behöver de omfördelbara paketen för Microsoft Visual C++ 2015-2019 att vara installerade för att fortsätta. Var god installera dem från Microsofts hemsida.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "DalamudArchError": {
+    "message": "Dalamud kan inte köra på din dators arkitektur. Var god se till att du kör på en 64-bitsutgåva av Windows.\nOm du använder Windows på ARM behöver du se till att x64-emulering är aktiverat för XIVLauncher.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "DalamudRunnerError": {
+    "message": "Det gick inte att köra Dalamud. Detta kan bero på ditt antivirus.\nFör att förhindra detta behöver du lägga till ett undantag för mappen \"%AppData%\\XIVLauncher\\addons\".",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "DalamudEnsurementError": {
+    "message": "Det gick inte att ladda ner nödvändiga datafiler för att använda Dalamud och tillägg.\nDetta kan bero på ett problem med din internetuppkoppling. Spelet kommer att starta, men tillägg kommer inte vara tillgängliga.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "AddonLoadError": {
+    "message": "Detta kan bero på ditt antivirus, var god kontrollera dess loggar och lägg till undantag vid behov.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "GameIsOpenError": {
+    "message": "Spelet och/eller den officiella spelstartaren är öppet. XIVLauncher kan inte uppdatera spelet på grund av detta.\nVar god stäng den officiella spelstartaren och försök igen.",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "PatchManNoInstaller": {
+    "message": "Det gick inte att starta uppdateringsinstallatören.\n{0}\n\nOm du har nekat åtkomst till den, försök igen. Om detta problem kvarstår kontaktar du oss genom Discord.",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "FreeSpaceError": {
+    "message": "Det finns inte tillräckligt med utrymme på din enhet för att hämta uppdateringar.\n\nDu kan ändra platsen som uppdateringar hämtas till i inställningarna.\n\nNödvändigt:{0}\nLedig:{1}",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "FreeSpaceErrorAll": {
+    "message": "Det finns inte tillräckligt utrymme på din enhet för att hämta alla uppdateringar.\n\nDu kan ändra platsen som uppdateringar hämtas till i inställningarna.\n\nNödvändigt:{0}\nLedig:{1}",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "FreeSpaceGameError": {
+    "message": "Det finns inte tillräckligt med utrymme på din enhet för att installera uppdateringar.\n\nDu kan ändra platsen som uppdateringar hämtas till i inställningarna.\n\nNödvändigt:{0}\nLedig:{1}",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "LoginIoErrorSummary": {
+    "message": "Det gick inte att hitta speldatafilerna.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginIoErrorActionable": {
+    "message": "Detta kan betyda att sökvägen för XIVLauncher inte är förinställt, t.ex. en frånkopplad enhet eller nätverkslagring. Var god kontrollera sökvägen till spelet i XIVLaunchers inställningar.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginInvalidVersionFiles": {
+    "message": "Versionsinformationen kunde inte läsas från dina spelfiler.\n\nDu måste ominstallera eller reparera spelfilerna. Högerklicka inloggningsknappen i XIVLauncher, och välj \"Reparera spelfiler\".",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginSteamIssue": {
+    "message": "Kunde inte autentisera med Steam. Se till att Steam körs och att du är inloggad med kontot kopplat till ditt Square Enix-konto.\nOm du spelar Free Trial-versionen av FFXIV, var god kryssa \"Free Trial-läge\"-rutan i \"Om\"-fliken i XIVLaunchers inställningar.\n\nKontext: {0}",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginSteamWrongAccount": {
+    "message": "Kontot du försöker logga in med är INTE det som är kopplat till ditt Steam-konto på din dator. Du kan endast logga in med kontot länkat till ditt Square Enix-ID när du använder detta Steam-konto.\n\nVar god logga in med matchande konton.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginSteamLinkNeeded": {
+    "message": "Innan du startar spelet med detta konto behöver du länka det med ditt Steam-konto genom den officiella spelstartaren.\nVar god länka dina konton och försök igen. Du kan göra det genom den \"Officiella startprogrammet\"-knappen.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericError": {
+    "message": "Det gick inte att logga in till ditt Square Enix-konto.\nKontrollera ditt användarnamn och lösenord.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericErrorCheckOtpUse": {
+    "message": "Om du använder engångslösenord behöver du kryssa \"{0}\" innan du försöker igen.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericErrorCheckOtp": {
+    "message": "Dubbelkolla om klockan för din enhet för engångslösenord stämmer.\nOm du nyligen har loggat in, försök logga in igen om 30 sekunder.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "Servern har skickat ett ogiltigt svar. Detta kan inträffa under avbrott eller när servrarna är under tung belastning.\nVänligen vänta en minut och försök igen, eller försök logga in med den officiella spelstartaren.\n\nDu kan lära dig mer om avbrott på Lodestone.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "CheckLoginInfoNotAdditionally": {
+    "message": "Var god kontrollera dina inloggningsuppgifter eller försök igen.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nAutomatisk inloggning har inaktiverats.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Detta Square Enix-konto kan inte spela FINAL FANTASY XIV. Se till att du har en aktiv prenumerering och att den betalats.\n\nOm du har köpt FINAL FANTASY XIV på Steam behöver rutan \"Använd Använd Steam-tjänstkonto\" kryssas när du loggar in.\nOm automatisk inloggning är aktiverad, håll ned Shift-knappen medan du kör XIVLauncher för att komma åt inställningarna.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "Vänligen acceptera FINAL FANTASY XIVs användarvillkor i den officiella spelstartaren.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Vissa viktiga spelfiler ändrades eller korrupterades av en tredje part och spelet kan varken uppdatera eller starta.\nDu måste ominstallera spelet för att fortsätta.\n\nOm detta fortsätter att hända kontaktar du oss genom Discord.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LoginRepairResponseIsNotNeedsPatchGame": {
+    "message": "Servern har skickat ett felaktigt svar och reparationen kan inte fortsätta.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "En ny uppdatering har hittats som måste installeras innan du kan spela.\nVill du att XIVLauncher ska installera den?",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "En uppdateringskoll utfördes och alla väntande uppdateringar har installerats.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LaunchGameNonZeroExitCode": {
+    "message": "Det verkar som att spelet har avslutats med ett allvarligt fel. Vill du starta om spelet?\n\nAvslutskod: 0x{0:X8}",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LaunchGameRelaunch": {
+    "message": "_Starta om",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LaunchGameClose": {
+    "message": "_Stäng",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LaunchGameDoNotAskAgain": {
+    "message": "_Fråga inte igen",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LaunchGameRetry": {
+    "message": "_Försök igen",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "MultiboxDeniedWarningSummary": {
+    "message": "Du kan inte köra mer än två fönster av spelet samtidigt som standard.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "MultiboxDeniedWarningActionable": {
+    "message": "Var god kontrollera om det finns ett spelfönster som inte avslutats ordentligt. (Hittade: {0})",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "LaunchGameKillThenRetry": {
+    "message": "_Avsluta och försök igen",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "GameExitedPrematurelyErrorSummary": {
+    "message": "XIVLauncher kunde inte starta spelet rätt.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "GameExitedPrematurelyErrorActionable": {
+    "message": "Detta kan vara ett tillfälligt problem. Vänligen försök att starta om din dator.\nDet är möjligt att din spelinstallation inte är giltig - du kan reparera din spelinstallation genom att högerklicka inloggningsknappen och välja \"Reparera spelfiler\".",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "BinaryNotPresentErrorSummary": {
+    "message": "Kunde inte hitta spelprogrammet.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "BinaryNotPresentErrorActionable": {
+    "message": "Detta kan orsakas av ditt antivirus. Du kan behöva ominstallera spelet.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "MultipleErrors": {
+    "message": "Flera fel har inträffat.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
+  "OtpInputPrompt": {
+    "message": "Ange ditt engångslösenord.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "OtpOneClickHint": {
+    "message": "Du kan även använda appen!\nKlicka här för mer information!",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "OtpInputPromptBad": {
+    "message": "Ange ett giltigt engångslösenord.\nDen är 6 siffror lång.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PatchPreparing": {
+    "message": "Förbereder...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchGeneralStatus": {
+    "message": "Installerar {0} uppdateringar...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchChecking": {
+    "message": "Kontrollerar...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchDone": {
+    "message": "Nedladdningen är klar!",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstalling": {
+    "message": "Installerar...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingFormatted": {
+    "message": "Installerar #{0}...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingIdle": {
+    "message": "Väntar på nedladdning...",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchEta": {
+    "message": "{0} kvar att hämta runt {1}/s.",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "ProfilePictureInputTitle": {
+    "message": "Ändra profilbild",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "ProfilePictureInputDescription": {
+    "message": "Ange en karaktärs namn och värld.",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "CharacterName": {
+    "message": "Karaktärsnamn",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "WorldName": {
+    "message": "Världsnamn",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "OpenPluginsFolder": {
+    "message": "Öppna tilläggsmappen",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SaveSettings": {
+    "message": "Spara inställningar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsGame": {
+    "message": "Spel",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseGamePath": {
+    "message": "Vänligen välj mappen ditt spel är installerat i.\nMapparna \"game\" och \"boot\" borde finnas i den.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "GamePathSafeguardRegionWarning": {
+    "message": "XIVLauncher stöder inte den kinesiska eller koreanska utgåvan av spelet. Se till att denna sökväg leder till den internationella utgåvan.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpServerCheckBox": {
+    "message": "Aktivera XL Authenticator-appen eller engångslösenords-macro",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AdditionalArguments": {
+    "message": "Ytterligare startargument",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDpiAwareness": {
+    "message": "Stöd för DPI-skalning",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessAware": {
+    "message": "Aktiverat",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessUnaware": {
+    "message": "Avaktiverat",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDpiAwarenessHint": {
+    "message": "Prova denna inställning om spelets skalning ser fel ut när du använder XIVLauncher.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "RunIntegrityCheck": {
+    "message": "Kör integritetskoll",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "RunIntegrityCheckTooltip": {
+    "message": "Kör integritetskoll på spelfiler.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsGameSettings": {
+    "message": "Spelinställningar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDirectX": {
+    "message": "Ange vilken DirectX-version du vill använda.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DirectX9Notice": {
+    "message": "DirectX 9-läget stöds inte längre. Det kommer att starta, men du kommer inte att få något stöd från SE för tekniska fel. Ytterligare funktioner i XIVLauncher som Rich Presence och speltillägg kommer inte att fungera.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLanguage": {
+    "message": "Välj vilket språk du vill starta spelet i.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLauncherLanguage": {
+    "message": "Ange vilket språk startaren ska köras i, kräver omstart.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageHelpCtaLoc": {
+    "message": "Har du märkt ett fel i översättningen? Du kan hjälpa oss med den! Bara tryck här!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageNotice": {
+    "message": "En omstart krävs för att tillämpa språkinställningen.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsAutoLaunch": {
+    "message": "Auto-start",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoLaunchHint": {
+    "message": "Detta är applikationer som körs så fort spelet startas.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AddNew": {
+    "message": "Lägg till ny",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoLaunchAddNewToolTip": {
+    "message": "Lägger till ett nytt Auto-startsinlägg som låter dig köra vilket program som helst.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsInGame": {
+    "message": "Dalamud",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonDescription": {
+    "message": "Dessa inställningar påverkar funktioner i spelet som tillhandahålls av Dalamud. Dessa funktioner är aktiverade automatiskt om du kör DirectX 11-versionen av spelet, spelversionen är kompatibel och rutan nedan är ikryssad.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonCommandHint": {
+    "message": "När aktiverad, skriv \"/xlhelp\" i spelet för att see andra tillgängliga kommandon.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonEnabledCheckBox": {
+    "message": "Aktivera Dalamud",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChatSettings": {
+    "message": "Chattinställningar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DiscordBotToken": {
+    "message": "Token för Discordbot",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AddChatChannel": {
+    "message": "Lägg till chattkanal",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetCfChannel": {
+    "message": "Ange kanal för Duty Finder-larm",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetRouletteChannel": {
+    "message": "Ange kanal för Roulettebonus-notifieringar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetRetainerChannel": {
+    "message": "Ange kanal för retainerförsäljningar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonChatDelay": {
+    "message": "Fördröjning av chattmeddelanden",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonChatDelayDescription": {
+    "message": "Kontrollera nyligen skickade meddelanden för att undvika dubbla meddelanden.\nDetta tillåter flera användare att använda samma kanal som chattlogg.\nVar god ange en lämplig fördröjning i millisekunder nedan (t.ex. 1000).",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayLoc": {
+    "message": "Fördröjning för tilläggsinjektion",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayDescriptionLoc": {
+    "message": "Fördröjer injektionen av speltillägget. Detta tillåter dig att gömma det från t.ex. OBS och Discord, då de injicerar innan speltillägget.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodLoc": {
+    "message": "Välj hur Dalamud ska laddas.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodEntryPointLoc": {
+    "message": "Nytt: förbättrar kompabiliteten med annan mjukvara och tillägg som behöver laddas tidigt.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectLoc": {
+    "message": "Gammal: den äldre versionen av Dalamuds injektionssystem som kan vara mer stabilt.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodEntryPointDescriptionLoc": {
+    "message": "Denna metod använder \"Entry-Point\"-omskrivning för att ladda Dalamud, som kan vara mer kompatibelt med annan mjukvara som antivirusverktyg.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectDescriptionLoc": {
+    "message": "Denna metod laddar Dalamud genom DLL-injicering som kan vara mer stabilt på vissa system.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UniversalisHint": {
+    "message": "Marknadstavledata tillhandahålls i samarbete med Universalis.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UniversalisOptOut": {
+    "message": "Välj bort att anonymt bidra till grupproducerad information om marknadstavlan",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PluginsDescriptionLoc": {
+    "message": "Detta är alla tillägg du har installerade på din dator just nu.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Toggle": {
+    "message": "Växla",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Delete": {
+    "message": "Radera",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PluginsInstallHint": {
+    "message": "Välj \"Installera tillägg\" eller använd kommandot /xlplugins i spelet för att installera mer tillägg.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsPatching": {
+    "message": "Uppdaterar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AskBeforePatch": {
+    "message": "Fråga innan installering av speluppdatering",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchPath": {
+    "message": "Uppdateringsmapp",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchSpeedLimit": {
+    "message": "Nedladdningshastighet",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "KeepPatches": {
+    "message": "Behåll nedladdade uppdateringar för framtida ominstalleringar",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchAcquisitionMethod": {
+    "message": "Välj den metod som används för att hämta uppdateringar. Vi rekommenderar \"ARIA(HTTP)\".",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsAbout": {
+    "message": "Om",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Credits": {
+    "message": "Skapat av goat. Särskilt tack till Mino, sky, LeonBlade, Wintermute, Zyian, \nRoy, Meli, Aida Enna, Aireil, kizer och the angry paissa artist!\n\nHar du frågor eller idéer? Gå med i vår Discord eller skapa en issue på GitHub!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "License": {
+    "message": "Licensierad under GPLv3 eller senare. Klicka här för mer information.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "StartBackupTool": {
+    "message": "Starta Backupverktyget",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "StartOriginalLauncher": {
+    "message": "Starta Officiella Spelstartaren",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "EnabledUidCache": {
+    "message": "Aktivera experimentell UID-cache (speluppdateringar kommer ha sönder detta!)",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ResetUidCacheTip": {
+    "message": "Håll Ctrl-knappen när du startar XIVLauncher för att återställa UID-cachen",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "EnableEncryption": {
+    "message": "Aktivera kryptering av argument till klienten",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "Avsluta XIVLauncher efter att spelet avslutats",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "Behandla avslutskoder som inte är noll som ett fel",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "IsFreeTrial": {
+    "message": "Starta i Free Trial-läge",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " (inaktiverad)",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UpdateCheckMsg": {
+    "message": "Söker efter uppdateringar...",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "AutoLoginHint": {
+    "message": "Håll Shift-knappen för att ändra inställningar!",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "ResetUidCacheHint": {
+    "message": "Håll Ctrl-knappen för att återställa UID-cachen!",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "AdminCheck": {
+    "message": "XIVLauncher och/eller FINAL FANTASY XIV är inställda att köras som administratör.\nDetta kan orsaka flera fel, t.ex. tillägg som inte körs och att snabbtangentsprogram inte svarar.\n\nVill du fixa detta automatiskt?",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "AdminCheckNag": {
+    "message": "XIVLauncher körs just nu som administratör.\nDetta kan orsaka flera fel, t.ex. tillägg som inte körs och att snabbtangentsprogram inte svarar.\n\nVar noga med att inte köra XIVLauncher som administratör.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "MacTypeNag": {
+    "message": "MacType hittades på den här datorn.\nDetta kan orsaka problem med FFXIV både i den officiella spelstartaren och XIVLauncher.\n\nVänligen undanta XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater och ffxiv_dx11 från MacType.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "MyGamesWriteAccessNag": {
+    "message": "Du har inte behörighet att ändra filer i FFXIVs \"My Games\"-mapp.\nDetta kommer att förhindra skärmdumpar och viss karaktärsdata från att sparas.\n\nDetta kan orsakas av antingen ditt antivirus eller ett behörighetsfel. Vänligen kontrollera behörigheterna för \"My Games\"-mappen.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "GShadeSymlinks": {
+    "message": "Symboliska länkar till GShade är korrupta.\n\nSpelet kan inte starta. Vill du att XIVLauncher ska åtgärda detta? Du måste ominstallera GShade.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "GShadeError": {
+    "message": "En trasig installation av GShade hittades.\n\nSpelet kan inte starta. Vill du att XIVLauncher ska åtgärda detta? Du måste ominstallera GShade.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "GShadeWrongMode": {
+    "message": "Du installerade GShade i ett läge som inte är optimalt för användning tillsammans med XIVLauncher. Vill du att XIVLauncher ska åtgärda detta?\n\nDetta kommer inte att ändra dina presets eller inställningar utan endast förbättra kompatibiliteten med XIVLaunchers funktioner.",
+    "description": "ProblemCheck.RunCheck"
+  }
+}

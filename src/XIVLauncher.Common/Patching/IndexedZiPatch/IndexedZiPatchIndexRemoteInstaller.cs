@@ -318,6 +318,26 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             await WaitForResult(writer, cancellationToken);
         }
 
+        public async Task MoveFile(string sourceFile, string targetFile, CancellationToken? cancellationToken = null) {
+            var writer = GetRequestCreator(WorkerInboundOpcode.MoveFile, cancellationToken);
+            writer.Write(sourceFile);
+            writer.Write(targetFile);
+            await WaitForResult(writer, cancellationToken);
+        }
+
+        public async Task CreateDirectory(string dir, CancellationToken? cancellationToken = null) {
+            var writer = GetRequestCreator(WorkerInboundOpcode.CreateDirectory, cancellationToken);
+            writer.Write(dir);
+            await WaitForResult(writer, cancellationToken);
+        }
+
+        public async Task RemoveDirectory(string dir, bool recursive = false, CancellationToken? cancellationToken = null) {
+            var writer = GetRequestCreator(WorkerInboundOpcode.RemoveDirectory, cancellationToken);
+            writer.Write(dir);
+            writer.Write(recursive);
+            await WaitForResult(writer, cancellationToken);
+        }
+
         public class WorkerSubprocessBody : IDisposable
         {
             private readonly object progressUpdateSync = new();
@@ -451,6 +471,34 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                 Process.GetCurrentProcess().PriorityClass = (ProcessPriorityClass)reader.ReadInt32();
                                 break;
 
+                            case WorkerInboundOpcode.MoveFile:
+                                {
+                                    var sourceFileName = reader.ReadString();
+                                    var targetFileName = reader.ReadString();
+
+                                    var sourceParentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFileName));
+                                    var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFileName));
+
+                                    targetParentDir.Create();
+                                    new FileInfo(sourceFileName).MoveTo(targetFileName);
+
+                                    if (!sourceParentDir.GetFileSystemInfos().Any())
+                                        sourceParentDir.Delete(false);
+                                    break;
+                                }
+
+                            case WorkerInboundOpcode.CreateDirectory:
+                                new DirectoryInfo(reader.ReadString()).Create();
+                                break;
+
+                            case WorkerInboundOpcode.RemoveDirectory:
+                                {
+                                    var dir = new DirectoryInfo(reader.ReadString());
+                                    var recursive = reader.ReadBoolean();
+                                    dir.Delete(recursive);
+                                    break;
+                                }
+
                             default:
                                 throw new InvalidOperationException("Invalid WorkerInboundOpcode");
                         }
@@ -572,6 +620,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             GetMissingPartIndicesPerTargetFile,
             GetSizeMismatchTargetFileIndices,
             SetWorkerProcessPriority,
+            MoveFile,
+            CreateDirectory,
+            RemoveDirectory,
         }
 
         public static void Test()
@@ -588,7 +639,6 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 };
                 var maxConcurrentConnectionsForPatchSet = 1;
 
-                // var baseDir = @"C:\Program Files (x86)\SquareEnix\FINAL FANTASY XIV - A Realm Reborn";
                 var baseDir = @"Z:\tgame";
                 var rootAndPatchPairs = new List<Tuple<string, string>>() {
                     Tuple.Create(@$"{baseDir}\boot", @"Z:\patch-dl.ffxiv.com\boot\2b5cbc63\D2021.11.16.0000.0001.patch.index"),

@@ -294,35 +294,52 @@ public class Launcher
     /// <param name="exLevel"></param>
     private static void EnsureVersionSanity(DirectoryInfo gamePath, int exLevel)
     {
-        var failed = string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath));
-        failed &= string.IsNullOrWhiteSpace(Repository.Ffxiv.GetVer(gamePath, true));
+        var failed = IsBadVersionSanity(gamePath, Repository.Ffxiv);
+        failed |= IsBadVersionSanity(gamePath, Repository.Ffxiv, true);
 
         if (exLevel >= 1)
         {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex1.GetVer(gamePath, true));
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex1);
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex1, true);
         }
 
         if (exLevel >= 2)
         {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex2.GetVer(gamePath, true));
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex2);
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex2, true);
         }
 
         if (exLevel >= 3)
         {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex3.GetVer(gamePath, true));
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex3);
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex3, true);
         }
 
         if (exLevel >= 4)
         {
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath));
-            failed &= string.IsNullOrWhiteSpace(Repository.Ex4.GetVer(gamePath, true));
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex4);
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex4, true);
         }
 
         if (failed)
             throw new InvalidVersionFilesException();
+    }
+
+    private static bool IsBadVersionSanity(DirectoryInfo gamePath, Repository repo, bool isBck = false)
+    {
+        var text = repo.GetVer(gamePath, isBck);
+
+        var nullOrWhitespace = string.IsNullOrWhiteSpace(text);
+        var containsNewline = text.Contains("\n");
+        var allNullBytes = Encoding.UTF8.GetBytes(text).All(x => x == 0x00);
+
+        if (nullOrWhitespace || containsNewline || allNullBytes)
+        {
+            Log.Error("Sanity check failed for {repo}/{isBck}: {NullOrWhitespace}, {ContainsNewline}, {AllNullBytes}", repo, isBck, nullOrWhitespace, containsNewline, allNullBytes);
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -363,7 +380,15 @@ public class Launcher
 
         Log.Verbose("Boot patching is needed... List:\n{PatchList}", resp);
 
-        return PatchListParser.Parse(text);
+        try
+        {
+            return PatchListParser.Parse(text);
+        }
+        catch (PatchListParseException ex)
+        {
+            Log.Information("Patch list:\n{PatchList}", ex.List);
+            throw;
+        }
     }
 
     private async Task<(string Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
@@ -384,8 +409,11 @@ public class Launcher
         if (resp.StatusCode == HttpStatusCode.Conflict)
             return (null, LoginState.NeedsPatchBoot, null);
 
+        if (resp.StatusCode == HttpStatusCode.Gone)
+            throw new InvalidResponseException("The server indicated that the version requested is no longer being serviced or not present.", text);
+
         if (!resp.Headers.TryGetValues("X-Patch-Unique-Id", out var uidVals))
-            throw new InvalidResponseException("Could not get X-Patch-Unique-Id.", text);
+            throw new InvalidResponseException($"Could not get X-Patch-Unique-Id. ({resp.StatusCode})", text);
 
         var uid = uidVals.First();
 

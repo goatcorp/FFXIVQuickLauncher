@@ -51,6 +51,10 @@
     "message": "Updating runtime...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
+  "DalamudNowStarting": {
+    "message": "Starting...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
   "DalamudUnavailable": {
     "message": "Plugins are currently unavailable\ndue to a game update.",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
@@ -77,11 +81,11 @@
   },
   "NewsDlFailed": {
     "message": "Could not download news data.",
-    "description": "MainWindow.<SetupHeadlines>b__10_3"
+    "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "Game and patch download paths cannot be the same.\nPlease make sure to choose distinct game and patch download paths.",
@@ -110,10 +114,6 @@
   "GameIsOpenPluginLocked": {
     "message": "The game is open, please close it and try again.",
     "description": "SettingsControl.DeletePlugin_OnClick"
-  },
-  "DisabledPlugin": {
-    "message": " (disabled)",
-    "description": "SettingsControl.ReloadPluginList"
   },
   "IntegrityCheckImpossible": {
     "message": "There is no reference report yet for this game version. Please try again later.",
@@ -451,6 +451,10 @@
     "message": "Could not patch boot.",
     "description": "<HandleBootCheck>d__34.MoveNext"
   },
+  "KillswitchText": {
+    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "description": "<Login>d__21.MoveNext"
+  },
   "EmptyUsernameError": {
     "message": "Please enter an username.",
     "description": "<Login>d__21.MoveNext"
@@ -477,6 +481,14 @@
   },
   "GameRepairSuccessPlural": {
     "message": "XIVLauncher has successfully repaired {0} game files.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it.",
     "description": "<RepairGame>d__26.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -556,7 +568,7 @@
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game.",
+    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\".",
     "description": "<TryLoginToGame>d__24.MoveNext"
   },
   "LoginSteamIssue": {
@@ -652,11 +664,11 @@
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher could not detect that the game started correctly.",
+    "message": "XIVLauncher could not start the game correctly.",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "This may be a temporary issue. Please try restarting your PC. It is possible that your game installation is not valid.",
+    "message": "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\".",
     "description": "<TryProcessLoginResult>d__25.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -993,6 +1005,10 @@
   },
   "IsFreeTrial": {
     "message": "Start in free trial mode",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " (disabled)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {

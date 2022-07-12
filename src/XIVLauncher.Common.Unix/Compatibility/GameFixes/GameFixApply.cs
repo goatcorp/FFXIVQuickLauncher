@@ -15,7 +15,6 @@ public class GameFixApply
     {
         this.fixes = new GameFix[]
         {
-            new DefaultConfigGameFix(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory),
             new MacVideoFix(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory),
         };
     }

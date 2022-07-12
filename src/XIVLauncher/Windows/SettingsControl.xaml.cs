@@ -330,17 +330,17 @@ namespace XIVLauncher.Windows
         {
             try
             {
-                if (!string.IsNullOrEmpty(ViewModel.GamePath) && GameHelpers.IsValidFfxivPath(ViewModel.GamePath) && !DalamudLauncher.CanRunDalamud(new DirectoryInfo(ViewModel.GamePath)))
+                if (!string.IsNullOrEmpty(ViewModel.GamePath) && GameHelpers.IsValidGamePath(ViewModel.GamePath) && !DalamudLauncher.CanRunDalamud(new DirectoryInfo(ViewModel.GamePath)))
                 {
                     CustomMessageBox.Show(
-                        Loc.Localize("DalamudIncompatible", "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
+                        Loc.Localize("DalamudIncompatible", "Dalamud was not yet updated for your current game version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),
                         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
                 }
             }
             catch (Exception exc)
             {
                 CustomMessageBox.Show(Loc.Localize("DalamudCompatCheckFailed",
-                    "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Hand, parentWindow: Window.GetWindow(this));
+                    "Could not contact the server to get the current compatible game version for Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information."), "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Hand, parentWindow: Window.GetWindow(this));
 
                 Log.Error(exc, "Couldn't check dalamud compatibility.");
             }
@@ -383,7 +383,7 @@ namespace XIVLauncher.Windows
                 return;
             }
 
-            if (PluginListView.SelectedValue.ToString().Contains("(disabled)")) //If it's disabled...
+            if (PluginListView.SelectedValue.ToString().Contains(ViewModel.PluginDisabledTagLoc)) //If it's disabled...
             {
                 if (File.Exists(Path.Combine(pluginVersionPath, ".disabled")))
                 {
@@ -472,8 +472,7 @@ namespace XIVLauncher.Windows
 
                     if (isDisabled)
                     {
-                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion +
-                                                 Loc.Localize("DisabledPlugin", " (disabled)"));
+                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion + ViewModel.PluginDisabledTagLoc);
                     }
                     else
                     {
@@ -518,7 +517,7 @@ namespace XIVLauncher.Windows
             try
             {
                 isBootOrGame = !GameHelpers.LetChoosePath(ViewModel.GamePath);
-                mightBeNonInternationalVersion = GameHelpers.CanFfxivMightNotBeInternationalClient(ViewModel.GamePath);
+                mightBeNonInternationalVersion = GameHelpers.CanMightNotBeInternationalClient(ViewModel.GamePath);
             }
             catch (Exception ex)
             {

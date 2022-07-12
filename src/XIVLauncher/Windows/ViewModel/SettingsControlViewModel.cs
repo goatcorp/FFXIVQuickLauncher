@@ -64,7 +64,7 @@ namespace XIVLauncher.Windows.ViewModel
             GamePathLoc = Loc.Localize("ChooseGamePath",
                 "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".");
             GamePathSafeguardLoc = Loc.Localize("GamePathSafeguardError",
-                "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead.");
+                "Please do not select the \"game\" or \"boot\" folder of your game installation, and choose the folder that contains these instead.");
             GamePathSafeguardRegionLoc = Loc.Localize("GamePathSafeguardRegionWarning",
                 "XIVLauncher does not support Chinese or Korean version of the game. Make sure this path indeed is for the international version.");
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
@@ -160,6 +160,8 @@ namespace XIVLauncher.Windows.ViewModel
             ExitLauncherAfterGameExitLoc = Loc.Localize("ExitLauncherAfterGameExitLoc", "Exit XIVLauncher after game exit");
             TreatNonZeroExitCodeAsFailureLoc = Loc.Localize("TreatNonZeroExitCodeAsFailureLoc", "Treat non-zero game exit code as failure");
             IsFreeTrialLoc = Loc.Localize("IsFreeTrial", "Start in free trial mode");
+
+            PluginDisabledTagLoc = Loc.Localize("DisabledPlugin", " (disabled)");
         }
 
         public string OpenPluginsFolderLoc { get; private set; }
@@ -241,5 +243,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string ExitLauncherAfterGameExitLoc { get; private set; }
         public string TreatNonZeroExitCodeAsFailureLoc { get; private set; }
         public string IsFreeTrialLoc { get; private set; }
+
+        public string PluginDisabledTagLoc { get; private set; }
     }
 }

@@ -83,21 +83,21 @@ namespace XIVLauncher.Windows
 
                 if (!GameHelpers.LetChoosePath(GamePathEntry.Text))
                 {
-                    CustomMessageBox.Show(Loc.Localize("GamePathSafeguardError", "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead."), "Error",
+                    CustomMessageBox.Show(Loc.Localize("GamePathSafeguardError", "Please do not select the \"game\" or \"boot\" folder of your game installation, and choose the folder that contains these instead."), "Error",
                         MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: this);
                     return;
                 }
 
-                if (!GameHelpers.IsValidFfxivPath(GamePathEntry.Text))
+                if (!GameHelpers.IsValidGamePath(GamePathEntry.Text))
                 {
-                    if (CustomMessageBox.Show(Loc.Localize("GamePathInvalidConfirm", "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.\nContinue?"), "XIVLauncher",
+                    if (CustomMessageBox.Show(Loc.Localize("GamePathInvalidConfirm", "The folder you selected has no installation of the game.\nXIVLauncher will install the game the first time you log in.\nContinue?"), "XIVLauncher",
                             MessageBoxButton.YesNo, MessageBoxImage.Information, parentWindow: this) != MessageBoxResult.Yes)
                     {
                         return;
                     }
                 }
 
-                if (GameHelpers.CanFfxivMightNotBeInternationalClient(GamePathEntry.Text))
+                if (GameHelpers.CanMightNotBeInternationalClient(GamePathEntry.Text))
                 {
                     if (CustomMessageBox.Show(Loc.Localize("GamePathRegionConfirm", "The folder you selected might be the Chinese or Korean release of the game. XIVLauncher only supports international release of the game.\nIs the folder you've selected indeed for the international version?"), "XIVLauncher",
                             MessageBoxButton.YesNo, MessageBoxImage.Warning, parentWindow: this) != MessageBoxResult.Yes)
