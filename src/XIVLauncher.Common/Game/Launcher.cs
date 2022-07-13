@@ -103,7 +103,7 @@ public class Launcher
         public string UniqueId { get; set; }
     }
 
-    public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
+    public async Task<LoginResult> Login(string userName, string password, string otp, bool shouldGetSteamLogin, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
     {
         string uid;
         PatchListEntry[] pendingPatches = null;
@@ -112,11 +112,11 @@ public class Launcher
 
         LoginState loginState;
 
-        Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", isSteam, useCache);
+        Log.Information("XivGame::Login(steamServiceAccount:{IsSteam}, cache:{UseCache})", shouldGetSteamLogin, useCache);
 
         Ticket? steamTicket = null;
 
-        if (isSteam)
+        if (shouldGetSteamLogin)
         {
             if (this.steamTicket != null)
             {
@@ -168,7 +168,7 @@ public class Launcher
 
         if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
         {
-            oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
+            oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, shouldGetSteamLogin, 3, steamTicket);
 
             Log.Information($"OAuth login successful - playable:{oauthLoginResult.Playable} terms:{oauthLoginResult.TermsAccepted} region:{oauthLoginResult.Region} expack:{oauthLoginResult.MaxExpansion}");
 
@@ -218,7 +218,7 @@ public class Launcher
     }
 
     public Process? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
-                               bool isSteamServiceAccount, string additionalArguments,
+                               bool isSteamServiceAccount, bool ignoreIsSteamArgument, string additionalArguments,
                                DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
                                bool encryptArguments, DpiAwareness dpiAwareness)
     {
@@ -245,7 +245,11 @@ public class Launcher
         {
             // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
             environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
-            argumentBuilder.Append("IsSteam", "1");
+
+            if (!ignoreIsSteamArgument)
+            {
+                argumentBuilder.Append("IsSteam", "1");
+            }
         }
 
         // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
@@ -443,7 +447,7 @@ public class Launcher
         return await resp.Content.ReadAsStringAsync();
     }
 
-    private async Task<(string Stored, string? SteamLinkedId)> GetOauthTop(string url, bool isSteam)
+    private async Task<(string Stored, string? SteamLinkedId)> GetOauthTop(string url, bool shouldGetSteamLogin)
     {
         // This is needed to be able to access the login site correctly
         var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -461,7 +465,7 @@ public class Launcher
 
         if (text.Contains("window.external.user(\"restartup\");"))
         {
-            if (isSteam)
+            if (shouldGetSteamLogin)
                 throw new SteamLinkNeededException();
 
             throw new InvalidResponseException("restartup, but not isSteam?", text);
@@ -478,7 +482,7 @@ public class Launcher
 
         string? steamUsername = null;
 
-        if (isSteam)
+        if (shouldGetSteamLogin)
         {
             var steamRegex = new Regex(@"<input name=""sqexid"" type=""hidden"" value=""(?<sqexid>.*)""\/>");
             var steamMatches = steamRegex.Matches(text);
@@ -504,12 +508,12 @@ public class Launcher
         public int MaxExpansion { get; set; }
     }
 
-    private static string GetOauthTopUrl(int region, bool isFreeTrial, bool isSteam, Ticket steamTicket)
+    private static string GetOauthTopUrl(int region, bool isFreeTrial, bool shouldGetSteamLogin, Ticket steamTicket)
     {
         var url =
             $"https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/top?lng=en&rgn={region}&isft={(isFreeTrial ? "1" : "0")}&cssmode=1&isnew=1&launchver=3";
 
-        if (isSteam)
+        if (shouldGetSteamLogin)
         {
             url += "&issteam=1";
 
@@ -520,13 +524,13 @@ public class Launcher
         return url;
     }
 
-    private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket)
+    private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool shouldGetSteamLogin, int region, Ticket? steamTicket)
     {
-        if (isSteam && steamTicket == null)
+        if (shouldGetSteamLogin && steamTicket == null)
             throw new ArgumentNullException(nameof(steamTicket), "isSteam, but steamTicket == null");
 
-        var topUrl = GetOauthTopUrl(region, isFreeTrial, isSteam, steamTicket);
-        var topResult = await GetOauthTop(topUrl, isSteam);
+        var topUrl = GetOauthTopUrl(region, isFreeTrial, shouldGetSteamLogin, steamTicket);
+        var topResult = await GetOauthTop(topUrl, shouldGetSteamLogin);
 
         var request = new HttpRequestMessage(HttpMethod.Post,
             "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
@@ -542,7 +546,7 @@ public class Launcher
         request.Headers.AddWithoutValidation("Cache-Control", "no-cache");
         request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
-        if (isSteam)
+        if (shouldGetSteamLogin)
         {
             if (!String.Equals(userName, topResult.SteamLinkedId, StringComparison.OrdinalIgnoreCase))
                 throw new SteamWrongAccountException(userName, topResult.SteamLinkedId);
