@@ -293,6 +293,8 @@
                                                                       Command="{Binding Path=LoginRepairCommand}" />
                                                             <MenuItem Header="{Binding LoginNoDalamudLoc}"
                                                                       Command="{Binding Path=LoginNoDalamudCommand}" />
+                                                            <MenuItem Header="{Binding LoginNoThirdLoc}"
+                                                                      Command="{Binding Path=LoginNoThirdCommand}" />
                                                             <MenuItem Header="{Binding LoginNoStartLoc}"
                                                                       Command="{Binding Path=LoginNoStartCommand}" />
                                                         </ContextMenu>

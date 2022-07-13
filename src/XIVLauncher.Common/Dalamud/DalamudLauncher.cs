@@ -19,6 +19,8 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DalamudUpdater updater;
         private readonly int injectionDelay;
         private readonly bool fakeLogin;
+        private readonly bool noPlugin;
+        private readonly bool noThirdPlugin;
 
         public enum DalamudInstallState
         {
@@ -27,7 +29,7 @@ namespace XIVLauncher.Common.Dalamud
             OutOfDate,
         }
 
-        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin = false)
+        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin, bool noPlugin, bool noThirdPlugin)
         {
             this.runner = runner;
             this.updater = updater;
@@ -37,6 +39,8 @@ namespace XIVLauncher.Common.Dalamud
             this.language = clientLanguage;
             this.injectionDelay = injectionDelay;
             this.fakeLogin = fakeLogin;
+            this.noPlugin = noPlugin;
+            this.noThirdPlugin = noThirdPlugin;
         }
 
         public const string REMOTE_BASE = "https://kamori.goats.dev/Dalamud/Release/VersionInfo?track=";
@@ -120,7 +124,7 @@ namespace XIVLauncher.Common.Dalamud
                     break;
             }
 
-            var process = this.runner.Run(this.updater.Runner, this.fakeLogin, gameExe, gameArgs, environment, this.loadMethod, startInfo);
+            var process = this.runner.Run(this.updater.Runner, this.fakeLogin, this.noPlugin, this.noThirdPlugin, gameExe, gameArgs, environment, this.loadMethod, startInfo);
 
             this.updater.CloseOverlay();
 

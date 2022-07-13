@@ -555,7 +555,7 @@ namespace XIVLauncher.Windows
                 },
                 State = Launcher.LoginState.Ok,
                 UniqueId = "0"
-            }, false, false).ConfigureAwait(false);
+            }, false, false, false).ConfigureAwait(false);
         }
 
         private void LoginPassword_OnPasswordChanged(object sender, RoutedEventArgs e)
