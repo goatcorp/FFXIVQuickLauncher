@@ -38,6 +38,7 @@ public class SettingsTabGame : SettingsTab
         new SettingsEntry<DpiAwareness>("Game DPI Awareness", "Select the game's DPI Awareness. Change this if the game's scaling looks wrong.", () => Program.Config.DpiAwareness ?? DpiAwareness.Unaware, x => Program.Config.DpiAwareness = x),
         new SettingsEntry<bool>("Free trial account", "Check this if you are using a free trial account.", () => Program.Config.IsFt ?? false, x => Program.Config.IsFt = x),
         new SettingsEntry<bool>("Use XIVLauncher authenticator/OTP macros", "Check this if you want to use the XIVLauncher authenticator app or macros.", () => Program.Config.IsOtpServer ?? false, x => Program.Config.IsOtpServer = x),
+        new SettingsEntry<bool>("Ignore default 'IsSteam' argument for Steam", "Check this if you want to ignore the 'IsSteam' at startup because you use Steam with a Windows License.", () => Program.Config.IgnoreIsSteamArgument ?? false, x => Program.Config.IgnoreIsSteamArgument = x),
     };
 
     public override string Title => "Game";

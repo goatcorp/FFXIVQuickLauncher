@@ -45,6 +45,7 @@ public interface ILauncherConfig
     public bool? IsFt { get; set; }
 
     public bool? IsOtpServer { get; set; }
+    public bool? IgnoreIsSteamArgument { get; set; }
 
     #region Patching
 

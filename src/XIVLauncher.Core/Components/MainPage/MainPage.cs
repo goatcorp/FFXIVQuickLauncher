@@ -761,7 +761,7 @@ public class MainPage : Page
             loginResult.OauthLogin.Region,
             loginResult.OauthLogin.MaxExpansion,
             isSteam,
-            false,
+            App.Settings.IgnoreIsSteamArgument.GetValueOrDefault(false),
             gameArgs,
             App.Settings.GamePath,
             App.Settings.IsDx11 ?? true,
