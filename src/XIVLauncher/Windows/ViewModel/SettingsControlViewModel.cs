@@ -174,6 +174,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string GamePathSafeguardRegionLoc { get; private set; }
         public string SteamCheckBoxLoc { get; private set; }
         public string OtpServerCheckBoxLoc { get; private set; }
+        public string IgnoreIsSteamArgumentCheckBoxLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
         public string ChooseDpiAwarenessLoc { get; private set; }
         public string ChooseDpiAwarenessHintLoc { get; private set; }
@@ -258,9 +259,5 @@ namespace XIVLauncher.Windows.ViewModel
 
             return false;
         }
-
-        private object ignoreIsSteamArgumentCheckBoxLoc;
-
-        public object IgnoreIsSteamArgumentCheckBoxLoc { get => ignoreIsSteamArgumentCheckBoxLoc; set => SetProperty(ref ignoreIsSteamArgumentCheckBoxLoc, value); }
     }
 }
