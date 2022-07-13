@@ -248,11 +248,12 @@ public class MainPage : Page
         {
             var enableUidCache = App.Settings.IsUidCacheEnabled ?? false;
             var gamePath = App.Settings.GamePath;
+            var shouldGetSteamLogin = isSteam && !App.Settings.IgnoreIsSteamArgument.GetValueOrDefault(false);
 
             if (action == LoginAction.Repair)
-                return await App.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                return await App.Launcher.Login(username, password, otp, shouldGetSteamLogin, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
             else
-                return await App.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                return await App.Launcher.Login(username, password, otp, shouldGetSteamLogin, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
