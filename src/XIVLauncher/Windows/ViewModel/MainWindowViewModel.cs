@@ -373,11 +373,12 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 var enableUidCache = App.Settings.UniqueIdCacheEnabled;
                 var gamePath = App.Settings.GamePath;
+                var shouldGetSteamLogin = isSteam && !App.Settings.IgnoreIsSteamArgumentEnabled;
 
                 if (action == AfterLoginAction.Repair)
-                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, shouldGetSteamLogin, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
                 else
-                    return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, shouldGetSteamLogin, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -1073,7 +1074,8 @@ namespace XIVLauncher.Windows.ViewModel
                 loginResult.UniqueId,
                 loginResult.OauthLogin.Region,
                 loginResult.OauthLogin.MaxExpansion,
-                isSteam,
+                isSteam, 
+                App.Settings.IgnoreIsSteamArgumentEnabled,
                 App.Settings.AdditionalLaunchArgs,
                 App.Settings.GamePath,
                 App.Settings.IsDx11,

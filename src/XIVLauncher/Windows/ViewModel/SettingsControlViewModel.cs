@@ -69,6 +69,7 @@ namespace XIVLauncher.Windows.ViewModel
                 "XIVLauncher does not support Chinese or Korean version of the game. Make sure this path indeed is for the international version.");
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
             OtpServerCheckBoxLoc = Loc.Localize("OtpServerCheckBox", "Enable XL Authenticator app/OTP macro support");
+            IgnoreIsSteamArgumentCheckBoxLoc = Loc.Localize("IgnoreIsSteamArgumentCheckBox", "Ignore the default 'IsSteam' startup argument to use the windows version with Steam");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
             ChooseDpiAwarenessLoc = Loc.Localize("ChooseDpiAwareness", "Game DPI Awareness");
             DpiAwarenessAwareLoc = Loc.Localize("DpiAwarenessAware", "Aware");
@@ -245,5 +246,21 @@ namespace XIVLauncher.Windows.ViewModel
         public string IsFreeTrialLoc { get; private set; }
 
         public string PluginDisabledTagLoc { get; private set; }
+
+        protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        {
+            if (!Equals(field, newValue))
+            {
+                field = newValue;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                return true;
+            }
+
+            return false;
+        }
+
+        private object ignoreIsSteamArgumentCheckBoxLoc;
+
+        public object IgnoreIsSteamArgumentCheckBoxLoc { get => ignoreIsSteamArgumentCheckBoxLoc; set => SetProperty(ref ignoreIsSteamArgumentCheckBoxLoc, value); }
     }
 }

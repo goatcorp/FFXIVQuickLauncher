@@ -89,6 +89,7 @@ namespace XIVLauncher.Windows
             this.EnableHooksCheckBox.Checked += this.EnableHooksCheckBox_OnChecked;
 
             OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
+            IgnoreIsSteamArgumentCheckBox.IsChecked = App.Settings.IgnoreIsSteamArgumentEnabled;
 
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
@@ -141,6 +142,8 @@ namespace XIVLauncher.Windows
                 App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.EntryPoint;
 
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
+
+            App.Settings.IgnoreIsSteamArgumentEnabled = IgnoreIsSteamArgumentCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 

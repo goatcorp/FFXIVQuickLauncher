@@ -767,6 +767,10 @@
     "message": "XL Authentikator App/OTP-Makro Unterstützung aktivieren",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "IgnoreIsSteamArgumentCheckBox": {
+    "message": "Standard 'IsSteam' Parameter ignorieren um die Windows Version mit Steam zu nutzen",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "Zusätzliche Parameter",
     "description": "SettingsControlViewModel.SetupLoc"

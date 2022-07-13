@@ -40,6 +40,9 @@
                     <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
                               x:Name="OtpServerCheckBox" Margin="0,15,0,0" Content="{Binding OtpServerCheckBoxLoc}" />
 
+                    <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
+                              x:Name="IgnoreIsSteamArgumentCheckBox" Margin="0,15,0,0" Content="{Binding IgnoreIsSteamArgumentCheckBoxLoc}" />
+
                     <TextBox Width="500" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
                              Margin="0,10,0,0" x:Name="LaunchArgsTextBox" materialDesign:HintAssist.Hint="{Binding AdditionalArgumentsLoc}" materialDesign:HintAssist.IsFloating="True"/>
