@@ -127,6 +127,7 @@ public class Launcher
             {
                 Debug.Assert(this.steam != null);
 
+
                 try
                 {
                     if (!this.steam.IsValid)
