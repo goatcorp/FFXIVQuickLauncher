@@ -320,7 +320,6 @@ namespace XIVLauncher.Windows
                 directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks")));
                 directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets")));
                 directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "pluginConfigs")));
-                directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets")));
                 foreach (var directory in directoriesToDelete)
                 {
                     if (directory.Exists)
