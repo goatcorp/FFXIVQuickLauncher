@@ -1,178 +1,178 @@
 {
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "message": "XIVLauncher kon niet controleren op updates. Dit kan worden veroorzaakt door verbindingsproblemen met GitHub. Wacht een paar minuten en probeer het opnieuw.\nSchakel uw VPN uit, als u die heeft. Mogelijk moet u XIVLauncher ook uitsluiten van uw antivirusprogramma.\nAls dit na enkele minuten nog steeds niet lukt, raadpleeg dan de veelgestelde vragen.",
     "description": "<Run>d__3.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
-    "message": "You don't have a FFXIV game installation set up. XIVLauncher can't start the official launcher.",
+    "message": "U hebt geen spel installatie ingesteld. XIVLauncher kan de officiële launcher niet starten.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherConfirmSteam": {
-    "message": "Do you have your game account associated with a Steam account? If so, Steam must be installed to continue.",
+    "message": "Heb je je spel account gekoppeld aan een Steam account? Als dit het geval is, moet Steam zijn geïnstalleerd om door te gaan.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
-    "message": "Steam couldn't be loaded. Please start FFXIV directly via Steam.",
+    "message": "Steam kan niet worden geladen. Start het spel rechtstreeks via Steam.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "ErrorAssertionFailed": {
-    "message": "Something that cannot happen happened.",
+    "message": "Wat niet kan gebeuren, is gebeurd.",
     "description": "CustomMessageBox.AssertOrShowError"
   },
   "ErrorExplanation": {
-    "message": "An error in XIVLauncher occurred. Please consult the FAQ. If this issue persists, please report\r\nit on GitHub by clicking the button below, describing the issue and copying the text in the box.",
+    "message": "Er is een fout opgetreden in XIVLauncher. Raadpleeg de FAQ. Als dit probleem zich blijft voordoen, rapporteer het dan op GitHub door op de knop hieronder te klikken, het probleem beschrijven en de tekst in het vak kopiëren.",
     "description": "CustomMessageBox..cctor"
   },
   "Restart": {
-    "message": "_Restart",
+    "message": "_Herstarten",
     "description": "Builder.NewFrom"
   },
   "Exit": {
-    "message": "_Exit",
+    "message": "_Afsluiten",
     "description": "Builder.NewFrom"
   },
   "UnexpectedErrorSummary": {
-    "message": "Unexpected error has occurred. ({0})",
+    "message": "Onverwachte fout opgetreden ({0})",
     "description": "Builder.NewFromUnexpectedException"
   },
   "UnexpectedErrorActionable": {
-    "message": "Please report this error.",
+    "message": "Gelieve deze fout te melden.",
     "description": "Builder.NewFromUnexpectedException"
   },
   "DalamudUpdateDalamud": {
-    "message": "Updating core...",
+    "message": "Kern bijwerken...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudUpdateAssets": {
-    "message": "Updating assets...",
+    "message": "Bestanden bijwerken...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudUpdateRuntime": {
-    "message": "Updating runtime...",
+    "message": "Runtime bijwerken...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudNowStarting": {
-    "message": "Starting...",
+    "message": "Starten...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudUnavailable": {
-    "message": "Plugins are currently unavailable\ndue to a game update.",
+    "message": "Plugins zijn momenteel niet beschikbaar\nvanwege een spel update.",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "GamePathEmptyError": {
-    "message": "Please select a game path.",
+    "message": "Selecteer een spelpad.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
-    "message": "Please do not select the \"game\" or \"boot\" folder of your FFXIV installation, and choose the folder that contains these instead.",
+    "message": "Selecteer niet de folder \"game\" of \"boot\" van je spel installatie, maar kies in plaats daarvan de folder die deze bevat.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidConfirm": {
-    "message": "The folder you selected has no FFXIV installation.\nXIVLauncher will install FFXIV the first time you log in.\nContinue?",
+    "message": "De folder die je hebt geselecteerd heeft geen installatie van het spel.\nXIVLauncher zal de game installeren als je voor de eerste keer inlogt.\nDoorgaan?",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathRegionConfirm": {
-    "message": "The folder you selected might be the Chinese or Korean release of the game. XIVLauncher only supports international release of the game.\nIs the folder you've selected indeed for the international version?",
+    "message": "De folder die u selecteerde zou de Chinese of Koreaanse release van het spel kunnen zijn. XIVLauncher ondersteunt alleen de internationale release van het spel.\nIs de map die je hebt geselecteerd inderdaad voor de internationale versie?",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "NewsLoading": {
-    "message": "Loading...",
+    "message": "Laden...",
     "description": "MainWindow..ctor"
   },
   "NewsDlFailed": {
-    "message": "Could not download news data.",
+    "message": "Kon de nieuwsgegevens niet downloaden.",
     "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
-    "message": "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
+    "message": "Er is een patch voor de officiële launcher gedetecteerd.\nDit betekent meestal dat er ook een patch voor het spel is.\n\nU wordt nu ingelogd.",
     "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
-    "message": "Game and patch download paths cannot be the same.\nPlease make sure to choose distinct game and patch download paths.",
+    "message": "Spel en patch download paden kunnen niet hetzelfde zijn.\nZorg ervoor dat je verschillende game en patch download paden kiest.",
     "description": "SettingsControl.AcceptButton_Click"
   },
   "LaunchAsSteam": {
-    "message": "Launch as a steam user?",
+    "message": "Als een Steam gebruiker starten?",
     "description": "SettingsControl.OriginalLauncherButton_OnClick"
   },
   "IntegrityCheckBase": {
-    "message": "The game is not installed to the path you specified.\nPlease install the game before running an integrity check.",
+    "message": "Het spel is niet geïnstalleerd op het pad dat je hebt opgegeven.\nInstalleer het spel voordat je een integriteitscontrole uitvoert.",
     "description": "SettingsControl.RunIntegrityCheck_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud was not yet updated for your current FFXIV version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
+    "message": "Dalamud is nog niet bijgewerkt voor je huidige spel versie.\nDit komt vaak voor na patches, dus wees geduldig of vraag op Discord om een statusupdate!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Could not contact the server to get the current compatible FFXIV version Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
+    "message": "Kan geen contact opnemen met de server om de huidige compatibele spel versie voor Dalamud op te halen. Dit kan betekenen dat uw .NET installatie te oud is.\nRaadpleeg de Discord voor meer informatie.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
-    "message": "Couldn't find plugin directory path.",
+    "message": "Kan plugin pad niet vinden.",
     "description": "SettingsControl.TogglePlugin_OnClick"
   },
   "GameIsOpenPluginLocked": {
-    "message": "The game is open, please close it and try again.",
+    "message": "Het spel is geopend, sluit het alstublieft en probeer het opnieuw.",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "IntegrityCheckImpossible": {
-    "message": "There is no reference report yet for this game version. Please try again later.",
+    "message": "Er is nog geen referentie rapport voor deze spel versie. Probeer het later opnieuw.",
     "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckNetworkError": {
-    "message": "Failed to download reference files for checking integrity. Check your internet connection and try again.",
+    "message": "Kan geen referentiebestanden downloaden om de integriteit te controleren. Controleer je internetverbinding en probeer het opnieuw.",
     "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckFailed": {
-    "message": "Some game files seem to be modified or corrupted. \n\nIf you use TexTools mods, this is an expected result.\n\nIf you do not use mods, right click the \"Login\" button on the XIVLauncher start page and choose \"Repair game\".",
+    "message": "Sommige spelbestanden lijken gewijzigd of beschadigd te zijn. \n\nAls je gebruik maakt van TexTools mods, is dit een verwacht resultaat.\n\nAls je geen mods gebruikt, klik dan met de rechtermuisknop op de XIVLauncher startpagina en kies \"Repair game\".",
     "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckValid": {
-    "message": "Your game install seems to be valid.",
+    "message": "Je spelinstallatie lijkt geldig te zijn.",
     "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "AccountSwitcherSetProfilePic": {
-    "message": "Set profile picture",
+    "message": "Profielfoto instellen",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AccountSwitcherCreateShortcut": {
-    "message": "Create desktop shortcut",
+    "message": "Maak bureaublad snelkoppeling",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "Remove": {
-    "message": "Remove",
+    "message": "Verwijderen",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AccountSwitcherDontSavePassword": {
-    "message": "Don't save password",
+    "message": "Wachtwoord niet opslaan",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "UpdateNotice": {
-    "message": "XIVLauncher has been updated to version {0}.",
+    "message": "XIVLauncher is bijgewerkt naar versie {0}.",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoading": {
-    "message": "Loading changelog...",
+    "message": "Veranderingen laden...",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoadingError": {
-    "message": "Could not load changelog. Please check GitHub or Discord instead!",
+    "message": "Kon wijzigingslog niet laden. Controleer GitHub of Discord!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
-    "message": "Join Discord",
+    "message": "Word lid van de Discord",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "SendEmail": {
-    "message": "Send Email",
+    "message": "E-mail verzenden",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher is free, open-source software - it doesn't use any telemetry or analysis tools to collect your data, but it would help a lot if you could send me a short email with your operating system, why you use XIVLauncher and, if needed, any criticism or things we can do better. Your email will be deleted immediately after evaluation and I won't ever contact you.\n\nThank you very much for using XIVLauncher!",
+    "message": "XIVLauncher is gratis, open-source software - het gebruikt geen telemetrie of analysetools om uw gegevens te verzamelen, maar het zou veel helpen als u mij een korte e-mail met uw besturingssysteem zou kunnen sturen waarom je XIVLauncher gebruikt en, indien nodig, kritiek of dingen die we beter kunnen doen. Je e-mail wordt onmiddellijk na evaluatie verwijderd en ik zal nooit contact met je opnemen.\n\nBedankt voor het gebruik van XIVLauncher!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogThanks": {
-    "message": "XIVLauncher is free, open-source software supported by a variety of people from all over the world.\nThank you for sticking around!",
+    "message": "XIVLauncher is gratis, open-source software ondersteund door een groot aantal mensen over de hele wereld.\nBedankt voor het blijven!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "OK": {
@@ -180,23 +180,23 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
-    "message": "Configure chat channel",
+    "message": "Chat-kanaal configureren",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "ChatChannelSetupDescription": {
-    "message": "Please enter if XIVLauncher should post to a channel in a server or to an user in DMs,\r\nand their respective IDs.",
+    "message": "Geef aan of XIVLauncher een kanaal in een server of een gebruiker in DMs,\nen hun respectievelijke ID's moet posten.",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "HowToHint": {
-    "message": "How do I set this up?",
+    "message": "Hoe stel ik dit in?",
     "description": "ChatChannelSetupViewModel.SetupLoc"
   },
   "StartOfficialLauncher": {
-    "message": "Official Launcher",
+    "message": "Officiële Launcher",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "OpenIntegrityReport": {
-    "message": "Open Integrity Report",
+    "message": "Open integriteitsrapport",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "OpenFaq": {
@@ -204,95 +204,95 @@
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "ReportError": {
-    "message": "Report error",
+    "message": "Rapporteer fout",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Yes": {
-    "message": "_Yes",
+    "message": "_Ja",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "No": {
-    "message": "_No",
+    "message": "_Nee",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Cancel": {
-    "message": "_Cancel",
+    "message": "_Annuleer",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Copy": {
-    "message": "_Copy",
+    "message": "_Kopiëren",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "DalamudUpdate": {
-    "message": "Updating Dalamud...",
+    "message": "Dalamud bijwerken...",
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".",
+    "message": "Selecteer de map waarin het spel is geïnstalleerd.\nHet moet de mappen \"game\" en \"boot\" bevatten.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Please check this box if you are usually launching the game using Steam.",
+    "message": "Vink dit vakje aan als je meestal het spel start met behulp van Steam.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
-    "message": "Enable Steam integration",
+    "message": "Steam-integratie inschakelen",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectXFTS": {
-    "message": "Please select which DirectX version you want to use.",
+    "message": "Selecteer welke DirectX versie u wilt gebruiken.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and Dalamud will not work.",
+    "message": "DirectX 9-modus wordt niet meer ondersteund. Het zal nog steeds starten, maar je krijgt geen ondersteuning van SE voor technische problemen. Extra XIVLauncher-functies zoals Rich Presence en Dalamud zullen niet werken.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
-    "message": "Please select which language you want to load the game with.",
+    "message": "Selecteer de taal waarmee je het spel wilt laden.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
-    "message": "Advanced Combat Tracker is installed on your computer.\r\nDo you want to launch it automatically when launching the game?",
+    "message": "Advanced Combat Tracker is geïnstalleerd op uw computer.\nWilt u het automatisch starten bij het starten van het spel?",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunchCheckBox": {
-    "message": "Enable ACT Auto-Launch",
+    "message": "ACT Auto-Start Inschakelen",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "Next": {
-    "message": "Next",
+    "message": "Volgende",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "Do you want to enable Dalamud?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.",
+    "message": "Wil je Dalamud inschakelen?\nDit voegt wat extra functionaliteit toe aan je game, zoals RMT-chatfiltering en Discord-meldingen voor chatberichten of Duty Finder-pops.\n\nOm deze instellingen te configureren, gebruikt u het XIVLauncher-instellingenmenu en schakelt u over naar het tabblad \"Dalamud\".\nAls u dit inschakelt, kan dit echter een vals positief resultaat in uw antivirussoftware veroorzaken. Controleer de instellingen en voeg eventuele uitsluitingen toe als u problemen ondervindt.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Dalamud inschakelen",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "NowDownloadingMeta": {
-    "message": "Downloading meta files...",
+    "message": "Meta-bestanden downloaden...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowVerifying": {
-    "message": "Verifying game files...",
+    "message": "Spelbestanden controleren...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairing": {
-    "message": "Repairing game files...",
+    "message": "Spelbestanden repareren...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingConnecting": {
-    "message": "Connecting...",
+    "message": "Verbinden...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingReattemptWaiting": {
-    "message": "Waiting before trying again...",
+    "message": "Wachten voor het opnieuw proberen...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowRepairingFinishing": {
-    "message": "Finishing...",
+    "message": "Afronden...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "SpeedUnitPerSecLoc": {
@@ -300,447 +300,447 @@
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "EstimatedRemainingDuration": {
-    "message": "{0:00}:{1:00} remaining",
+    "message": "{0:00}:{1:00} resterend",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "EstimatedRemainingDurationWithHours": {
-    "message": "{0:00}:{1:00}:{2:00} remaining",
+    "message": "{0:00}:{1:00}:{2:00} resterend",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupTitle": {
-    "message": "Configure Auto-Start",
+    "message": "Auto-Start configureren",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "GenericAddonSetupDescription": {
-    "message": "Please select the application that should be started, any additional parameters and\r\nif it should be ran as admin.",
+    "message": "Selecteer de applicatie die moet worden gestart, eventuele aanvullende parameters en\nals het moet worden uitgevoerd als admin.",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "CommandLineParameters": {
-    "message": "Command line parameters",
+    "message": "Command lijnparameters",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "RunAsAdminLoc": {
-    "message": "Run as admin",
+    "message": "Uitvoeren als admin",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "RunOnCloseLoc": {
-    "message": "Run on game close",
+    "message": "Uitvoeren bij sluiten van spel",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "KillAfterCloseLoc": {
-    "message": "Kill after game closes",
+    "message": "Sluit na het sluiten van het spel",
     "description": "GenericAddonSetupWindowViewModel.SetupLoc"
   },
   "IntegrityCheckRunning": {
-    "message": "Running integrity check...",
+    "message": "Integriteitscontrole uitvoeren...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
-  "LoginWebExceptionContent": {
-    "message": "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.",
-    "description": "MainWindowViewModel.ShowInternetError"
-  },
-  "LoginNoOauthTitle": {
-    "message": "Login issue",
-    "description": "MainWindowViewModel.ShowInternetError"
-  },
   "PatchManDlFailure": {
-    "message": "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}",
+    "message": "XIVLauncher kon de gedownloade gamebestanden niet verifiëren. Start opnieuw op en probeer het opnieuw.\n\nDit duidt meestal op een probleem met uw internetverbinding.\nAls deze fout zich blijft voordoen, probeer dan een VPN te gebruiken die is ingesteld op Japan\n\nContext: {0}\n{1}",
     "description": "MainWindowViewModel.PatcherOnFail"
   },
   "PatchInstallerInstallFailed": {
-    "message": "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher.",
+    "message": "Er is een fout opgetreden in het installatieprogramma van de patch.\nMeld deze fout.\n\nProbeer het opnieuw of gebruik de officiële launcher.",
     "description": "MainWindowViewModel.InstallerOnFail"
   },
   "LoginBoxUsername": {
-    "message": "Square Enix ID",
+    "message": "Gebruikersnaam",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxPassword": {
-    "message": "Password",
+    "message": "Wachtwoord",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxAutoLogin": {
-    "message": "Log in automatically",
+    "message": "Automatisch inloggen",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxOtp": {
-    "message": "Use One-Time-Passwords",
+    "message": "Éénmalige wachtwoorden gebruiken",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxSteam": {
-    "message": "Use Steam service account",
+    "message": "Steam service account gebruiken",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLogin": {
-    "message": "Log in",
+    "message": "Inloggen",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoStartLogin": {
-    "message": "Update without starting",
+    "message": "Bijwerken zonder starten",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxRepairLogin": {
-    "message": "Repair game files",
+    "message": "Repareer spelbestanden",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start without Dalamud",
+    "message": "Start zonder Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
-    "message": "Log in with the provided credentials",
+    "message": "Log in met de verstrekte inloggegevens",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
-    "message": "Waiting for maintenance to be over...",
+    "message": "Wachten tot het onderhoud achter de rug is...",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "CancelWithShortcut": {
-    "message": "_Cancel",
+    "message": "_Annuleer",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "OpenAccountSwitcher": {
-    "message": "Open Account Switcher",
+    "message": "Open accountkiezer",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "Settings": {
-    "message": "Settings",
+    "message": "Instellingen",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "WorldStatus": {
-    "message": "World Status",
+    "message": "Wereld status",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "MaintenanceQueue": {
-    "message": "Wait for maintenance to be over",
+    "message": "Wacht tot het onderhoud voorbij is",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoadingDialogIsLoggingIn": {
-    "message": "Logging in...",
+    "message": "Bezig met inloggen...",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "DuplicateOtpAfterSuccess": {
-    "message": "This OTP has been already used.\nIt may take up to 30 seconds for a new one.",
+    "message": "Deze OTP is al gebruikt.\nHet kan tot 30 seconden duren voor een nieuwe.",
     "description": "MainWindowViewModel.<Login>b__21_0"
   },
   "AutoLoginIntro": {
-    "message": "You are enabling Auto-Login.\nThis means that XIVLauncher will always log you in with the current account and you will not see this window.\n\nTo change settings and accounts, you have to hold the shift button on your keyboard while clicking the XIVLauncher icon.",
+    "message": "U schakelt Auto-login in.\nDit betekent dat XIVLauncher u altijd aanmeldt met het huidige account en dat u dit venster niet ziet.\n\nOm instellingen en accounts te wijzigen, moet je de shift-knop op je toetsenbord ingedrukt houden terwijl je op het XIVLauncher-pictogram klikt.",
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GameIsOpenRepairError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot repair the game if this is the case.\nPlease close them and try again.",
+    "message": "Het spel en/of de officiële launcher zijn geopend. XIVLauncher kan het spel niet repareren als dit het geval is.\nSluit ze en probeer het opnieuw.",
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GameRepairDisclaimer": {
-    "message": "XIVLauncher will now try to find corrupted game files and repair them.\nIf you use any TexTools mods, this will replace all of them and restore the game to its initial state.\n\nDo you want to continue?",
+    "message": "XIVLauncher zal nu proberen beschadigde spelbestanden te vinden en te repareren.\nAls je een TexTools mod gebruikt, zal dit alles vervangen en het spel herstellen naar zijn oorspronkelijke staat.\n\nWilt u doorgaan?",
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GateUnreachable": {
-    "message": "The login servers could not be reached. This usually indicates that the game is under maintenance, or that your connection to the login servers is unstable.\n\nPlease try again later.",
-    "description": "<CheckGateStatus>d__23.MoveNext"
+    "message": "De inlogservers konden niet worden bereikt. Dit geeft meestal aan dat het spel in onderhoud is, of dat de verbinding met de inlogservers instabiel is.\n\nProbeer het later opnieuw.",
+    "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "GateClosed": {
-    "message": "FFXIV is currently under maintenance. Please try again later or see official sources for more information.",
-    "description": "<CheckGateStatus>d__23.MoveNext"
+    "message": "Het spel is momenteel in onderhoud. Probeer het later opnieuw of raadpleeg officiële bronnen voor meer informatie.",
+    "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "CheckBootVersionError": {
-    "message": "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher.",
-    "description": "<HandleBootCheck>d__34.MoveNext"
+    "message": "XIVLauncher was niet in staat om de opstartversie voor de geselecteerde spelinstallatie te controleren. Dit kan gebeuren als er momenteel onderhoud wordt uitgevoerd of als je verbinding met de versiecontrole server niet beschikbaar is. Rapporteer deze fout als u kunt inloggen met de officiële launcher, maar niet XIVLauncher.",
+    "description": "<HandleBootCheck>d__33.MoveNext"
   },
   "BootPatchFailure": {
-    "message": "Could not patch boot.",
-    "description": "<HandleBootCheck>d__34.MoveNext"
+    "message": "Kan de boot niet patchen.",
+    "description": "<HandleBootCheck>d__33.MoveNext"
   },
   "KillswitchText": {
-    "message": "XIVLauncher cannot start the game at this time, as Square Enix has made changes to the login process.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "message": "XIVLauncher kan het spel op dit moment niet starten, omdat er tijdens een recente patch wijzigingen zijn aangebracht in het inlog proces.\nWe moeten ons aanpassen aan deze wijzigingen en controleren of onze aanpassingen veilig zijn voordat we het programma opnieuw kunnen inschakelen. Probeer het later opnieuw.\n\nOnze excuses voor deze omstandigheden.\n\nU kunt de onderstaande \"Official Launcher\" knop gebruiken om de officiële Launcher te starten.\n",
     "description": "<Login>d__21.MoveNext"
   },
   "EmptyUsernameError": {
-    "message": "Please enter an username.",
+    "message": "Voer een gebruikersnaam in.",
     "description": "<Login>d__21.MoveNext"
   },
   "EmailUsernameError": {
-    "message": "Please enter your SE account name, not your email address.",
+    "message": "Gebruik uw SE account naam in, niet uw e-mailadres.",
     "description": "<Login>d__21.MoveNext"
   },
   "EmptyPasswordError": {
-    "message": "Please enter a password.",
+    "message": "Voer een wachtwoord in.",
     "description": "<Login>d__21.MoveNext"
   },
   "UidCacheInstallError": {
-    "message": "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall FFXIV.\n\nIf you want to reinstall FFXIV, please take care to disable it first.",
+    "message": "U hebt de UID-cache ingeschakeld in de patcher instellingen.\nMet deze instelling kun je de game niet opnieuw installeren.\n\nAls je het spel opnieuw wilt installeren, zorg er dan voor dat je het eerst uitschakelt.",
     "description": "<Login>d__21.MoveNext"
   },
   "GameRepairSuccess0": {
-    "message": "All game files seem to be valid.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "Alle spelbestanden lijken geldig te zijn.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess1": {
-    "message": "XIVLauncher has successfully repaired 1 game file.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "XIVLauncher heeft 1 spelbestand succesvol gerepareerd.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessPlural": {
-    "message": "XIVLauncher has successfully repaired {0} game files.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "XIVLauncher heeft {0} spelbestanden succesvol gerepareerd.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "Daarnaast is 1 bestand dat de oorspronkelijke spelinstallatie niet heeft meegemaakt, verplaatst naar {0}.\nAls je GShade zou gebruiken, moet je het opnieuw installeren.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "Daarnaast zijn {0} bestanden die niet met de oorspronkelijke installatie van het spel waren verplaatst naar {1}.\nAls je GShade zou gebruiken, moet je het opnieuw installeren.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
-    "message": "_Launch game",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "_Start spel",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_VerifyAgain": {
-    "message": "_Verify again",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "_Verifieer opnieuw",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_Close": {
-    "message": "_Close",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "_Sluiten",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "NoVersionReferenceError": {
-    "message": "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "De versie van het spel waar u mee bezig bent kan nog niet gerepareerd worden door XIVLauncher, omdat referentie informatie nog niet beschikbaar is.\nProbeer het later nog eens.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_TryAgain": {
-    "message": "_Try again",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "_Probeer opnieuw",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairError": {
-    "message": "An error occurred while repairing the game files.\nYou may have to reinstall the game.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "Er is een fout opgetreden tijdens het repareren van de spelbestanden.\nMisschien moet je het spel opnieuw installeren.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "PatcherAlreadyInProgress": {
-    "message": "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "message": "XIVLauncher is al bezig met het patchen van uw spel in een andere installatie. Controleer of XIVLauncher nog open is.",
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "DalamudVc2019RedistError": {
-    "message": "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "message": "De in-game add-on van XIVLauncher heeft de Microsoft Visual C++ 2015-2019 herdistributable nodig om door te gaan. Installeer het vanaf de Microsoft homepage.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {
-    "message": "Dalamud cannot run your computer's architecture. Please make sure that you are running a 64-bit version of Windows.\nIf you are using Windows on ARM, please make sure that x64-Emulation is enabled for XIVLauncher.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "message": "Dalamud kan de architectuur van uw computer niet uitvoeren. Zorg er alstublieft voor dat u een 64-bits versie van Windows gebruikt.\nAls u Windows op ARM gebruikt, zorg er dan voor dat x64-Emulatie is ingeschakeld voor XIVLauncher.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudRunnerError": {
-    "message": "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "message": "Kon Dalamud niet succesvol lanceren. Dit kan worden veroorzaakt door je antivirus.\nOm dit te voorkomen, voeg een uitzondering voor de map \"%AppData%\\XIVLauncher\\addons\" toe.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis is likely a problem with your internet connection - the game will start, but you will not be able to use plugins.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "message": "Kon de benodigde data bestanden niet downloaden om Dalamud en plugins te gebruiken.\nDit is waarschijnlijk een probleem met je internetverbinding - het spel zal beginnen, maar je kunt geen plugins gebruiken.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
-    "message": "This could be caused by your antivirus, please check its logs and add any needed exclusions.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "message": "Dit kan worden veroorzaakt door uw antivirus, controleer de logs en voeg eventuele benodigde uitsluitingen toe.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "GameIsOpenError": {
-    "message": "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again.",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "message": "Het spel en/of de officiële launcher zijn geopend. XIVLauncher kan het spel niet patchen als dit het geval is.\nSluit de officiële launcher en probeer het opnieuw.",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "PatchManNoInstaller": {
-    "message": "The patch installer could not start correctly.\n{0}\n\nIf you have denied access to it, please try again. If this issue persists, please contact us via Discord.",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "message": "Het patch-installatieprogramma kan niet correct starten.\n{0}\n\nAls u de toegang hebt geweigerd, probeer het opnieuw. Als dit probleem zich blijft voordoen, neem dan contact met ons op via Discord.",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceError": {
-    "message": "There is not enough space on your drive to download patches.\n\nYou can change the location patches are downloaded to in the settings.\n\nRequired:{0}\nFree:{1}",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "message": "Er is niet genoeg ruimte op uw schijf om patches te downloaden.\n\nU kunt de locatie patches wijzigen die worden gedownload in de instellingen.\n\nVereist:{0}\nVrij:{1}",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceErrorAll": {
-    "message": "There is not enough space on your drive to download all patches.\n\nYou can change the location patches are downloaded to in the XIVLauncher settings.\n\nRequired:{0}\nFree:{1}",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "message": "Er is niet genoeg ruimte op uw schijf om alle patches te downloaden.\n\nU kunt de locatie patches wijzigen in de XIVLauncher instellingen.\n\nVereist:{0}\nGratis:{1}",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceGameError": {
-    "message": "There is not enough space on your drive to install patches.\n\nYou can change the location the game is installed to in the settings.\n\nRequired:{0}\nFree:{1}",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "message": "Er is niet genoeg ruimte op je schijf om patches te installeren.\n\nJe kunt de locatie wijzigen waar het spel is geïnstalleerd in de instellingen.\n\nVereist:{0}\nVrij:{1}",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Inlog probleem",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginIoErrorSummary": {
-    "message": "Could not locate game data files.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Kon de spelgegevensbestanden niet vinden.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginIoErrorActionable": {
-    "message": "This may mean that the game path set in XIVLauncher isn't preset, e.g. on a disconnected drive or network storage. Please check the game path in the XIVLauncher settings.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Dit kan betekenen dat het spel pad dat in XIVLauncher is ingesteld niet is voorinstelling is, bijvoorbeeld: op een niet verbonden schijf of netwerk opslag. Controleer het spel pad in de XIVLauncher-instellingen.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\".",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Versie-informatie kon niet worden gelezen uit uw spelbestanden.\n\nU moet de spelbestanden opnieuw installeren of repareren. Klik met de rechtermuisknop op de inlogknop in XIVLauncher en kies \"Repair Game\".",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the FFXIV Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Kan niet verifiëren met Steam. Zorg ervoor dat Steam actief is en dat je bent ingelogd met het account dat aan je SE ID is gekoppeld.\nAls je met de gratis proefversie speelt, vink dan het selectievakje \"Free Trial mode\" aan op het tabblad \"About\" van de XIVLauncher instellingen.\n\nContext: {0}",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "The account you are logging in to is NOT the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Het account waarmee je inlogt is NIET het account dat gekoppeld is aan het Steam account op je PC. Je kan alleen inloggen met de account gekoppeld aan je SE ID tijdens het gebruik van deze Steam account.\n\nLog in op overeenkomende accounts.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
-    "message": "Before starting the game with this account, you need to link it to your Steam account with the official launcher.\nPlease link your accounts and try again. You can do so by clicking the \"Official Launcher\" button.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Voordat u het spel met dit account start, moet u het koppelen aan uw Steam account met de officiële launcher.\nKoppel je accounts en probeer het opnieuw. Je kan dit doen door te klikken op de knop \"Official Launcher\".",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericError": {
-    "message": "Could not log into your SE account.\nPlease check your username and password.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Kan niet inloggen op uw SE account.\nControleer uw gebruikersnaam en wachtwoord.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtpUse": {
-    "message": "If you're using OTP, then tick on \"{0}\" checkbox and try again.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Als je OTP gebruikt, vink dan \"{0}\" aan en probeer het opnieuw.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtp": {
-    "message": "Double check whether your OTP device's clock is correct.\nIf you have recently logged in, then try logging in again in 30 seconds.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Controleer of de klok van uw OTP klopt.\nAls u onlangs bent ingelogd, probeer dan opnieuw in te loggen in 30 seconden.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginWebExceptionContent": {
+    "message": "XIVLauncher kon geen verbinding maken met de spelservers.\n\nDit is mogelijk een tijdelijk probleem of een probleem met je internetverbinding. Probeer het later opnieuw.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericServerIssue": {
-    "message": "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "De server heeft een ongeldig antwoord gestuurd. Kennelijk gebeurt dit tijdens storingen of wanneer servers zwaar worden belast.\nGelieve een minuut te wachten en opnieuw te proberen, of probeer de officiële launcher te gebruiken.\n\nU kunt meer weten over storingen op de Lodestone.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "CheckLoginInfoNotAdditionally": {
-    "message": "Please check your login information or try again.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Controleer uw inloggegevens of probeer het opnieuw.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
-    "message": "\n\nAuto-Login has been disabled.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "\n\nAutomatisch inloggen is uitgeschakeld.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginNoServiceMessage": {
-    "message": "This Square Enix account cannot play FINAL FANTASY XIV. Please make sure that you have an active subscription and that it is paid up.\n\nIf you bought FINAL FANTASY XIV on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Dit account komt niet in aanmerking om de game te spelen. Zorg ervoor dat u een actief abonnement heeft en dat het is betaald.\n\nAls je de game op Steam hebt gekocht, zorg er dan voor dat je het selectievakje \"Use Steam service account\" aanvinkt terwijl je inlogt.\nAls Auto-Login is ingeschakeld, houdt u shift ingedrukt terwijl het programma opstart om toegang to krijgen tot instellingen.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginAcceptTermsMessage": {
-    "message": "Please accept the FINAL FANTASY XIV Terms of Use in the official launcher.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Accepteer alstublieft de gebruiksvoorwaarden in de officiële launcher.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "EverythingIsFuckedMessage": {
-    "message": "Certain essential game files were modified/broken by a third party and the game can neither update nor start.\nYou have to reinstall the game to continue.\n\nIf this keeps happening, please contact us via Discord.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Bepaalde essentiële gamebestanden zijn gewijzigd/gebroken door een derde partij en de game kan niet worden bijgewerkt of gestart.\nJe moet het spel opnieuw installeren om door te gaan.\n\nAls dit blijft gebeuren, neem dan contact met ons op via Discord.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginRepairResponseIsNotNeedsPatchGame": {
-    "message": "The server sent an incorrect response - the repair cannot proceed.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "De server heeft een onjuist antwoord gestuurd - de reparatie kan niet doorgaan.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "PatchInstallDisclaimer": {
-    "message": "A new patch has been found that needs to be installed before you can play.\nDo you wish for XIVLauncher to install it?",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Er is een nieuwe patch gevonden die geïnstalleerd moet worden voordat u kunt spelen.\nWilt u dat XIVLauncher deze installeert?",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginNoStartOk": {
-    "message": "An update check was executed and any pending updates were installed.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Er is een update controle uitgevoerd en alle updates zijn geïnstalleerd.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameNonZeroExitCode": {
-    "message": "It looks like the game has exited with a fatal error. Do you want to relaunch the game?\n\nExit code: 0x{0:X8}",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Het lijkt erop dat het spel een fatale fout heeft gemaakt. Wil je het spel opnieuw starten?\n\nExit code: 0x{0:X8}",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRelaunch": {
-    "message": "_Relaunch",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "_Herstarten",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameClose": {
-    "message": "_Close",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "_Sluiten",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameDoNotAskAgain": {
-    "message": "_Don't ask again",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "_Niet opnieuw vragen",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRetry": {
-    "message": "_Try again",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "_Probeer opnieuw",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningSummary": {
-    "message": "You can't launch more than two instances of the game by default.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Je kunt standaard niet meer dan twee exemplaren van de game starten.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningActionable": {
-    "message": "Please check if there is an instance of the game that did not close correctly. (Detected: {0})",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Controleer of er een instantie van het spel is dat niet correct is afgesloten. (Gedetecteerd: {0})",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameKillThenRetry": {
-    "message": "_Kill then try again",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "_Sluiten en opnieuw proberen",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher could not start the game correctly.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "XIVLauncher kon het spel niet correct starten.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\".",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Dit kan een tijdelijk probleem zijn. Probeer uw computer opnieuw op te starten.\nHet is mogelijk dat je spelinstallatie niet geldig is - je kunt je spelinstallatie repareren door met de rechtermuisknop op de inlogknop te klikken en te kiezen voor \"Repair game\".",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
-    "message": "Could not find the game executable.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Kan het spel executable niet vinden.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorActionable": {
-    "message": "This might be caused by your antivirus. You may have to reinstall the game.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Dit kan veroorzaakt zijn door je antivirus. Het kan zijn dat je het spel opnieuw moet installeren.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultipleErrors": {
-    "message": "Multiple errors have occurred.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Er zijn meerdere fouten opgetreden.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "OtpInputPrompt": {
-    "message": "Please enter your OTP key.",
+    "message": "Voer uw OTP-sleutel in.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "Or use the app!\r\nClick here to learn more!",
+    "message": "Of gebruik de app!\nKlik hier voor meer informatie!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpInputPromptBad": {
-    "message": "Enter a valid OTP key.\nIt is 6 digits long.",
+    "message": "Voer een geldige OTP-sleutel in.\nHet is 6 cijfers lang.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
-    "message": "Preparing...",
+    "message": "Voorbereiden...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchGeneralStatus": {
-    "message": "Patching through {0} updates...",
+    "message": "Toepassen via {0} updates...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchChecking": {
-    "message": "Checking...",
+    "message": "Controleren...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchDone": {
-    "message": "Download done!",
+    "message": "Download voltooid!",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstalling": {
-    "message": "Installing...",
+    "message": "Installeren...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingFormatted": {
-    "message": "Installing #{0}...",
+    "message": "Installeren van #{0}...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchInstallingIdle": {
-    "message": "Waiting for download...",
+    "message": "Wachten op download...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "PatchEta": {
-    "message": "{0} left to download at {1}/s.",
+    "message": "{0} resterend om te downloaden bij {1}/s.",
     "description": "PatchDownloadDialogViewModel.SetupLoc"
   },
   "ProfilePictureInputTitle": {
-    "message": "Configure profile picture",
+    "message": "Configureer profielfoto",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "ProfilePictureInputDescription": {
-    "message": "Please enter a character's name and world.",
+    "message": "Voer de naam en wereld van een personage in.",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "CharacterName": {
-    "message": "Character Name",
+    "message": "Karakter naam",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "WorldName": {
-    "message": "World Name",
+    "message": "Wereld Naam",
     "description": "ProfilePictureInputWindowViewModel.SetupLoc"
   },
   "OpenPluginsFolder": {
@@ -748,95 +748,95 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SaveSettings": {
-    "message": "Save Settings",
+    "message": "Instellingen opslaan",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGame": {
-    "message": "Game",
+    "message": "Spel",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseGamePath": {
-    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".",
+    "message": "Selecteer de folder waarin het spel is geïnstalleerd.\nHet moet de folders \"game\" en \"boot\" bevatten.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "GamePathSafeguardRegionWarning": {
-    "message": "XIVLauncher does not support Chinese or Korean version of the game. Make sure this path indeed is for the international version.",
+    "message": "XIVLauncher ondersteunt geen Chinese of Koreaanse versie van het spel. Zorg ervoor dat dit pad inderdaad is voor de internationale versie.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpServerCheckBox": {
-    "message": "Enable XL Authenticator app/OTP macro support",
+    "message": "XL Authenticator app/OTP macro ondersteuning inschakelen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
-    "message": "Additional launch arguments",
+    "message": "Extra lancering argumenten",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwareness": {
-    "message": "Game DPI Awareness",
+    "message": "Spel DPI Bewustzijn",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessAware": {
-    "message": "Aware",
+    "message": "Bewust",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DpiAwarenessUnaware": {
-    "message": "Unaware",
+    "message": "Onbewust",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDpiAwarenessHint": {
-    "message": "If game scaling appears wrong when using XIVLauncher, please attempt changing this setting.",
+    "message": "Als spelschalen verkeerd lijkt bij het gebruik van XIVLauncher, probeer dan deze instelling te wijzigen.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheck": {
-    "message": "Run integrity check",
+    "message": "Voer integriteitscontrole uit",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "RunIntegrityCheckTooltip": {
-    "message": "Run integrity check on game files.",
+    "message": "Voer integriteitscontrole uit op spelbestanden.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
-    "message": "Game Settings",
+    "message": "Spel Instellingen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseDirectX": {
-    "message": "Please select which DirectX version you want to use.",
+    "message": "Selecteer welke DirectX versie u wilt gebruiken.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DirectX9Notice": {
-    "message": "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from\r\nSE for any technical issues any additional XIVLauncher features such as Rich Presence and the\r\nIn-Game addon will not work.",
+    "message": "DirectX 9-modus wordt niet meer ondersteund. Het zal nog steeds starten, maar u krijgt geen ondersteuning van\nSE voor eventuele technische problemen, extra XIVLauncher functies zoals Rich Presence en de\nIn-game add-on werkt niet.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLanguage": {
-    "message": "Please select which language you want to load the game with.",
+    "message": "Selecteer de taal waarmee je het spel wilt laden.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLauncherLanguage": {
-    "message": "Please select the launcher language, requires a restart.",
+    "message": "Selecteer de launcher taal, vereist een herstart.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageHelpCtaLoc": {
-    "message": "Notice any mistakes? You can help out translating the launcher! Just click here!",
+    "message": "Heb je fouten gezien? Je kunt helpen met het vertalen van de launcher! Klik hier!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageNotice": {
-    "message": "A restart is required to apply the launcher language setting.",
+    "message": "Een herstart is vereist om de launcher taalinstelling toe te passen.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAutoLaunch": {
-    "message": "Auto-Launch",
+    "message": "Auto-starten",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchHint": {
-    "message": "These are applications that are started as soon as the game has started.",
+    "message": "Dit zijn toepassingen die gestart worden zodra het spel gestart is.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AddNew": {
-    "message": "Add new",
+    "message": "Nieuwe toevoegen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchAddNewToolTip": {
-    "message": "Add a new Auto-Start entry that allows you to launch any program.",
+    "message": "Voeg een nieuw Auto-Start item toe waarmee u elk programma kunt starten.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
@@ -844,19 +844,19 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "These options affect the XIVLauncher in-game features, provided by Dalamud. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.",
+    "message": "Deze opties zijn van invloed op de XIVLauncher in-game functies, geleverd door Dalamud. Deze functies worden automatisch\ningeschakeld als je de DirectX 11-versie van het spel gebruikt, de versie van het spel\ncompatibel, en het onderstaande selectievakje is aangevinkt.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
-    "message": "When enabled, type \"/xlhelp\" in-game to see other available commands.",
+    "message": "Wanneer ingeschakeld, typ \"/xlhelp\" in-game om andere beschikbare opdrachten te zien.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonEnabledCheckBox": {
-    "message": "Enable Dalamud",
+    "message": "Dalamud Inschakelen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChatSettings": {
-    "message": "Chat settings",
+    "message": "Chat instellingen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DiscordBotToken": {
@@ -864,191 +864,191 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AddChatChannel": {
-    "message": "Add chat channel",
+    "message": "Chatkanaal toevoegen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetCfChannel": {
-    "message": "Set Duty Finder notification channel",
+    "message": "Meldingskanaal voor Duty Finder instellen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetRouletteChannel": {
-    "message": "Set Roulette Bonus notification channel",
+    "message": "Meldingskanaal voor roulettebonus instellen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonSetRetainerChannel": {
-    "message": "Set retainer sale channel",
+    "message": "Meldingskanaal voor verkoopkanaal instellen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelay": {
-    "message": "Chat Post Delay",
+    "message": "Chatbericht vertraging",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelayDescription": {
-    "message": "Check for recently sent messages to avoid duplicates.\r\nThis allows for multiple users to use the same channel as a chat log.\r\nPlease set an appropriate delay in milliseconds below(e.g. 1000).",
+    "message": "Controleer op recent verzonden berichten om duplicaten te voorkomen.\nHierdoor kunnen meerdere gebruikers hetzelfde kanaal gebruiken als chatlog.\nStel hieronder een geschikte vertraging in milliseconden in (bijv. 1000).",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayLoc": {
-    "message": "Addon Injection Delay",
+    "message": "Addon Injectie Vertraging",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayDescriptionLoc": {
-    "message": "Delay the injection of the in-game addon. This allows you to hide it from e.g. OBS and Discord, since they will inject before it does.",
+    "message": "Stel de injectie van de in-game add-on uit. Hiermee kunt u het verbergen voor b.v. OBS en Discord, omdat ze eerder zullen injecteren.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodLoc": {
-    "message": "Choose how to load Dalamud.",
+    "message": "Kies hoe u Dalamud wilt laden.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodEntryPointLoc": {
-    "message": "New: improves compatibility with certain other software and plugins that need to load early.",
+    "message": "Nieuw: verbetert de compatibiliteit met bepaalde andere software en plugins die eerder moeten worden geladen.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodDllInjectLoc": {
-    "message": "Legacy: old version of the Dalamud injection system that may be more stable.",
+    "message": "Legacy: oude versie van het Dalamud-injectiesysteem die mogelijk stabieler is.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodEntryPointDescriptionLoc": {
-    "message": "This method uses Entry-Point rewriting to load Dalamud, which may be more compatible with certain other software, like anti-virus tools.",
+    "message": "Deze methode gebruikt het herschrijven van Entry-Point om Dalamud te laden, wat mogelijk beter compatibel is met bepaalde andere software, zoals antivirusprogramma's.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodDllInjectDescriptionLoc": {
-    "message": "This method loads Dalamud via DLL-injection, which may be more stable on certain systems.",
+    "message": "Deze methode laadt Dalamud via DLL-injectie, die op bepaalde systemen stabieler kan zijn.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisHint": {
-    "message": "Market board data provided in cooperation with Universalis.",
+    "message": "In samenwerking met Universalis worden de bestuursgegevens van de Marktplaats verstrekt.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisOptOut": {
-    "message": "Opt-out of contributing anonymously to crowd-sourced market board information",
+    "message": "Afzien van anoniem bijdragen aan informatie via crowd-sourced market board",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsDescriptionLoc": {
-    "message": "These are the plugins that are currently available installed on your machine.",
+    "message": "Dit zijn de plugins die op dit moment beschikbaar zijn op je machine.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Toggle": {
-    "message": "Toggle",
+    "message": "Omschakelen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Delete": {
-    "message": "Delete",
+    "message": "Verwijderen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsInstallHint": {
-    "message": "Choose \"Plugin Installer\" or use the /xlplugins command in-game to install more plugins.",
+    "message": "Kies \"Plugin Installer\" of gebruik het /xlplugins commando in het spel om meer plugins te installeren.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
-    "message": "Patching",
+    "message": "Toepassen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
-    "message": "Ask before installing a game patch",
+    "message": "Vraag voor het installeren van een spel patch",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchPath": {
-    "message": "Patch Download Directory",
+    "message": "Patch Download Folder",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchSpeedLimit": {
-    "message": "Download Speed Limit",
+    "message": "Snelheidslimiet downloaden",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "KeepPatches": {
-    "message": "Keep downloaded patches for future reinstalls",
+    "message": "Behoud gedownloade patches voor toekomstige herinstallatie",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchAcquisitionMethod": {
-    "message": "Choose the method used to acquire patches. We recommend \"ARIA(HTTP)\".",
+    "message": "Kies de methode voor het verkrijgen van patches. We raden \"ARIA(HTTP)\" aan.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
-    "message": "About",
+    "message": "Informatie",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "Made by goat. Special thanks to Mino, sky, LeonBlade, Wintermute, Zyian,\r\nRoy, Meli, Aida Enna, Aireil, kizer and the angry paissa artist!\r\n\r\nAny issues or requests? Join the Discord or create an issue on GitHub!",
+    "message": "Gemaakt door goat. Speciale dank aan Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, Aireil, kizer en de angry paissa artiest!\n\nProblemen of verzoeken? Word lid van Discord of maak een kwestie op GitHub!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "License": {
-    "message": "Licensed under GPLv3 or later. Click here for more.",
+    "message": "Licentie uitgegeven onder GPLv3 of hoger. Klik hier voor meer.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartBackupTool": {
-    "message": "Start Backup Tool",
+    "message": "Start Back-up Tool",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "StartOriginalLauncher": {
-    "message": "Start Original Launcher",
+    "message": "Originele Launcher starten",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "EnabledUidCache": {
-    "message": "Enable experimental UID cache (this will break on game updates!)",
+    "message": "Schakel experimentele UID-cache in (dit stopt met werken bij game-updates!)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ResetUidCacheTip": {
-    "message": "Hold control while starting the launcher to reset the UID cache",
+    "message": "Houd de control ingedrukt terwijl u het opstartprogramma start om de UID-cache opnieuw in te stellen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "EnableEncryption": {
-    "message": "Enable encrypting arguments to the client",
+    "message": "Encryptie-argumenten voor de client inschakelen",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ExitLauncherAfterGameExitLoc": {
-    "message": "Exit XIVLauncher after game exit",
+    "message": "Sluit XIVLauncher na het afsluiten van het spel",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "TreatNonZeroExitCodeAsFailureLoc": {
-    "message": "Treat non-zero game exit code as failure",
+    "message": "Behandel niet-nul spel afsluitcode als fout",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "IsFreeTrial": {
-    "message": "Start in free trial mode",
+    "message": "Start in gratis proefmodus",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {
-    "message": " (disabled)",
+    "message": " (uitgeschakeld)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UpdateCheckMsg": {
-    "message": "Checking for updates...",
+    "message": "Controleren op updates...",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AutoLoginHint": {
-    "message": "Hold the shift key to change settings!",
+    "message": "Houd de Shift-toets ingedrukt om instellingen te wijzigen!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "ResetUidCacheHint": {
-    "message": "Hold the control key to reset UID cache!",
+    "message": "Houd de control-toets ingedrukt om de UID-cache te resetten!",
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
-    "message": "XIVLauncher and/or FINAL FANTASY XIV are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?",
+    "message": "XIVLauncher en/of het spel zijn ingesteld om als beheerder te worden uitgevoerd.\nDit kan verschillende problemen veroorzaken, waaronder add-ons die niet worden gestart en sneltoetstoepassingen die niet reageren.\n\nWilt u dit probleem automatisch oplossen?",
     "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
-    "message": "XIVLauncher is running as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher as admin.",
+    "message": "XIVLauncher wordt uitgevoerd als beheerder.\nDit kan verschillende problemen veroorzaken, waaronder add-ons die niet worden gestart en sneltoetstoepassingen die niet reageren.\n\nZorg ervoor dat u XIVLauncher niet als admin uitvoert.",
     "description": "ProblemCheck.RunCheck"
   },
   "MacTypeNag": {
-    "message": "MacType was detected on this PC.\nIt will cause problems with FFXIV; both the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType.",
+    "message": "MacType is gedetecteerd op deze pc.\nHet zal problemen met het spel veroorzaken; zowel op de officiële launcher als XIVLauncher.\n\nSluit XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater en ffxiv_dx11 uit van MacType.",
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to FFXIV's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "Je hebt geen toestemming om naar de folder My Games van het spel te schrijven.\nDit voorkomt dat screenshots en personagegegevens worden opgeslagen.\n\nDit kan worden veroorzaakt door uw antivirusprogramma of door een toestemmingsfout. Controleer de machtigingen van uw map My Games.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeSymlinks": {
-    "message": "GShade symbolic links are corrupted.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "message": "Gshade symbolische koppelingen zijn beschadigd.\n\nHet spel kan niet starten. Wil je dat XIVLauncher dit oplost? U moet Gshade opnieuw installeren.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
-    "message": "A broken GShade installation was detected.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "message": "Er is een kapotte Gshade-installatie gedetecteerd.\n\nHet spel kan niet starten. Wil je dat XIVLauncher dit oplost? U moet Gshade opnieuw installeren.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeWrongMode": {
-    "message": "You installed GShade in a mode that isn't optimal for use together with XIVLauncher. Do you want XIVLauncher to fix this for you?\n\nThis will not change your presets or settings, it will merely improve compatibility with XIVLauncher features.",
+    "message": "Je hebt Gshade geïnstalleerd in een modus die niet optimaal is voor gebruik in combinatie met XIVLauncher. Wil je dat XIVLauncher dit voor je oplost?\n\nDit zal uw voorinstellingen of instellingen niet veranderen, het zal alleen de compatibiliteit met XIVLauncher-functies verbeteren.",
     "description": "ProblemCheck.RunCheck"
   }
 }
