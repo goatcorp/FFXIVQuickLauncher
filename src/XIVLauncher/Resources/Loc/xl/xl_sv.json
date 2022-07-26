@@ -4,7 +4,7 @@
     "description": "<Run>d__3.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
-    "message": "Du har inte installerat FFXIV. XIVLauncher kan inte köra den officiella spelstartaren.",
+    "message": "You don't have a game installation set up. XIVLauncher can't start the official launcher.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherConfirmSteam": {
@@ -12,7 +12,7 @@
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
-    "message": "Steam kunde inte laddas. Vänligen starta FFXIV direkt via steam.",
+    "message": "Steam couldn't be loaded. Please start the game directly via Steam.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "ErrorAssertionFailed": {
@@ -64,11 +64,11 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
-    "message": "Vänligen ange ej \"game\"- eller \"boot\"-mappen av din FFXIV-installation, utan ange istället mappen som innehåller detta.",
+    "message": "Please do not select the \"game\" or \"boot\" folder of your game installation, and choose the folder that contains these instead.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidConfirm": {
-    "message": "Mappen du angav har ingen FFXIV-installation.\nXIVLauncher kommer att installera FFXIV efter din första inloggning.\nVill du fortsätta?",
+    "message": "The folder you selected has no installation of the game.\nXIVLauncher will install the game the first time you log in.\nContinue?",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathRegionConfirm": {
@@ -84,7 +84,7 @@
     "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
-    "message": "En uppdatering för FFXIV-startaren hittades.\nDetta betyder oftast att det även finns en uppdatering för spelet.\n\nDu kommer nu att loggas in.",
+    "message": "A patch for the official launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
     "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
@@ -100,11 +100,11 @@
     "description": "SettingsControl.RunIntegrityCheck_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud är inte uppdaterad till din nuvarande FFXIV-version.\nDetta är vanligt efter speluppdateringar. Var god vänta, eller fråga i vår Discord hur det går!",
+    "message": "Dalamud was not yet updated for your current game version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Kunde inte kontakta servern för den nuvarande versionen av Dalamud som passar din version av FFXIV. Detta kan betyda att din .NET-installation är föråldrad.\nVänligen kolla vår Discord för mer information.",
+    "message": "Could not contact the server to get the current compatible game version for Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -335,14 +335,6 @@
     "message": "Kör integritetskoll...",
     "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
   },
-  "LoginWebExceptionContent": {
-    "message": "XIVLauncher kunde inte upprätta en anslutning till spelservrarna.\n\nDetta kan vara ett tillfälligt fel eller ett fel med din internetuppkoppling. Vänligen försök igen senare.",
-    "description": "MainWindowViewModel.ShowInternetError"
-  },
-  "LoginNoOauthTitle": {
-    "message": "Inloggningsproblem",
-    "description": "MainWindowViewModel.ShowInternetError"
-  },
   "PatchManDlFailure": {
     "message": "XIVLauncher kunde inte verifiera de hämtade spelfilerna. Vänligen starta om och försök igen.\n\nDetta beror oftast på ett problem med din internetuppkoppling.\nOm felet kvarstår, försök att använda ett VPN-uppkoppling till Japan.\n\nKontext: {0}\n{1}",
     "description": "MainWindowViewModel.PatcherOnFail"
@@ -352,7 +344,7 @@
     "description": "MainWindowViewModel.InstallerOnFail"
   },
   "LoginBoxUsername": {
-    "message": "Square Enix ID",
+    "message": "Username",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxPassword": {
@@ -437,22 +429,22 @@
   },
   "GateUnreachable": {
     "message": "Inloggningsservrarna kunde inte nås. Detta beror oftast på att spelet genomgår underhåll eller att din uppkoppling till spelservrarna är ostabil.\n\nVänligen försök igen senare.",
-    "description": "<CheckGateStatus>d__23.MoveNext"
+    "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "GateClosed": {
-    "message": "FFXIV pågår just nu underhåll. Vänligen försök igen senare eller kolla officiella informationskällor.",
-    "description": "<CheckGateStatus>d__23.MoveNext"
+    "message": "The game is currently under maintenance. Please try again later or see official sources for more information.",
+    "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "CheckBootVersionError": {
     "message": "XIVLauncher kunde inte kolla uppstartsversionen för den angivna spelinstallationen. Detta kan hända om underhåll pågår eller om din uppkoppling till versionskoll-servern inte är tillgänglig. Vänligen rapportera detta fel om du kan logga in med den officiella spelstartaren, men inte XIVLauncher.",
-    "description": "<HandleBootCheck>d__34.MoveNext"
+    "description": "<HandleBootCheck>d__33.MoveNext"
   },
   "BootPatchFailure": {
     "message": "Kunde inte uppdatera styrprogrammet.",
-    "description": "<HandleBootCheck>d__34.MoveNext"
+    "description": "<HandleBootCheck>d__33.MoveNext"
   },
   "KillswitchText": {
-    "message": "XIVLauncher kan inte starta spelet för närvarande då Square Enix har gjort ändringar i inloggningsprocessen.\nVi behöver anpassa oss till dessa ändringar och verifiera våra justeringar är säkra innan vi kan aktivera spelstartaren igen. Vänligen försök igen senare.\n\nVi ber om ursäkt för dessa omständigheter.\n\nDu kan använda knappen \"Officiella startprogrammet\" för att använda den officiella startaren.\n",
+    "message": "XIVLauncher cannot start the game at this time, as there were changes to the login process during a recent patch.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
     "description": "<Login>d__21.MoveNext"
   },
   "EmptyUsernameError": {
@@ -468,220 +460,228 @@
     "description": "<Login>d__21.MoveNext"
   },
   "UidCacheInstallError": {
-    "message": "Du har aktiverat UID-cachen i uppdateringsinställningarna.\nDenna inställning tillåter inte dig att ominstallera FFXIV.\n\nOm du vill ominstallera FFXIV behöver du avaktivera det först.",
+    "message": "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall the game.\n\nIf you want to reinstall the game, please take care to disable it first.",
     "description": "<Login>d__21.MoveNext"
   },
   "GameRepairSuccess0": {
     "message": "Alla spelfiler ser ut att vara giltiga.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess1": {
     "message": "XIVLauncher har reparerat 1 spelfil.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessPlural": {
     "message": "XIVLauncher har reparerat {0} spelfiler.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
     "message": "Dessutom har 1 fil som inte kom med den ursprungliga spelinstallationen flyttats till {0}.\nOm du använder GShade behöver du ominstallera det.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
     "message": "Dessutom har {0} filer som inte kom med den ursprungliga spelinstallationen flyttats till {1}.\nOm du använder GShade behöver du ominstallera det.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
     "message": "_Starta spel",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_VerifyAgain": {
     "message": "_Verifiera igen",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_Close": {
     "message": "_Stäng",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "NoVersionReferenceError": {
     "message": "Versionen av spelet du har just nu kan inte repareras av XIVLauncher då referensinformationen ännu inte är tillgänglig.\nVänligen försök igen senare.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_TryAgain": {
     "message": "_Försök igen",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairError": {
     "message": "Ett fel inträffade under reparationen.\nDu kan behöva ominstallera spelet.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "PatcherAlreadyInProgress": {
     "message": "XIVLauncher håller redan på att uppdatera ditt spel någon annanstans. Kolla om XIVLauncher fortfarande är öppet.",
-    "description": "<RepairGame>d__26.MoveNext"
+    "description": "<RepairGame>d__25.MoveNext"
   },
   "DalamudVc2019RedistError": {
     "message": "XIVLaunchers speltillägg behöver de omfördelbara paketen för Microsoft Visual C++ 2015-2019 att vara installerade för att fortsätta. Var god installera dem från Microsofts hemsida.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {
     "message": "Dalamud kan inte köra på din dators arkitektur. Var god se till att du kör på en 64-bitsutgåva av Windows.\nOm du använder Windows på ARM behöver du se till att x64-emulering är aktiverat för XIVLauncher.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudRunnerError": {
     "message": "Det gick inte att köra Dalamud. Detta kan bero på ditt antivirus.\nFör att förhindra detta behöver du lägga till ett undantag för mappen \"%AppData%\\XIVLauncher\\addons\".",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
     "message": "Det gick inte att ladda ner nödvändiga datafiler för att använda Dalamud och tillägg.\nDetta kan bero på ett problem med din internetuppkoppling. Spelet kommer att starta, men tillägg kommer inte vara tillgängliga.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
     "message": "Detta kan bero på ditt antivirus, var god kontrollera dess loggar och lägg till undantag vid behov.",
-    "description": "<StartGameAndAddon>d__30.MoveNext"
+    "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "GameIsOpenError": {
     "message": "Spelet och/eller den officiella spelstartaren är öppet. XIVLauncher kan inte uppdatera spelet på grund av detta.\nVar god stäng den officiella spelstartaren och försök igen.",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "PatchManNoInstaller": {
     "message": "Det gick inte att starta uppdateringsinstallatören.\n{0}\n\nOm du har nekat åtkomst till den, försök igen. Om detta problem kvarstår kontaktar du oss genom Discord.",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceError": {
     "message": "Det finns inte tillräckligt med utrymme på din enhet för att hämta uppdateringar.\n\nDu kan ändra platsen som uppdateringar hämtas till i inställningarna.\n\nNödvändigt:{0}\nLedig:{1}",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceErrorAll": {
     "message": "Det finns inte tillräckligt utrymme på din enhet för att hämta alla uppdateringar.\n\nDu kan ändra platsen som uppdateringar hämtas till i inställningarna.\n\nNödvändigt:{0}\nLedig:{1}",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceGameError": {
     "message": "Det finns inte tillräckligt med utrymme på din enhet för att installera uppdateringar.\n\nDu kan ändra platsen som uppdateringar hämtas till i inställningarna.\n\nNödvändigt:{0}\nLedig:{1}",
-    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Inloggningsproblem",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginIoErrorSummary": {
     "message": "Det gick inte att hitta speldatafilerna.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginIoErrorActionable": {
     "message": "Detta kan betyda att sökvägen för XIVLauncher inte är förinställt, t.ex. en frånkopplad enhet eller nätverkslagring. Var god kontrollera sökvägen till spelet i XIVLaunchers inställningar.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginInvalidVersionFiles": {
     "message": "Versionsinformationen kunde inte läsas från dina spelfiler.\n\nDu måste ominstallera eller reparera spelfilerna. Högerklicka inloggningsknappen i XIVLauncher, och välj \"Reparera spelfiler\".",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Kunde inte autentisera med Steam. Se till att Steam körs och att du är inloggad med kontot kopplat till ditt Square Enix-konto.\nOm du spelar Free Trial-versionen av FFXIV, var god kryssa \"Free Trial-läge\"-rutan i \"Om\"-fliken i XIVLaunchers inställningar.\n\nKontext: {0}",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
     "message": "Kontot du försöker logga in med är INTE det som är kopplat till ditt Steam-konto på din dator. Du kan endast logga in med kontot länkat till ditt Square Enix-ID när du använder detta Steam-konto.\n\nVar god logga in med matchande konton.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
     "message": "Innan du startar spelet med detta konto behöver du länka det med ditt Steam-konto genom den officiella spelstartaren.\nVar god länka dina konton och försök igen. Du kan göra det genom den \"Officiella startprogrammet\"-knappen.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericError": {
     "message": "Det gick inte att logga in till ditt Square Enix-konto.\nKontrollera ditt användarnamn och lösenord.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtpUse": {
     "message": "Om du använder engångslösenord behöver du kryssa \"{0}\" innan du försöker igen.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericErrorCheckOtp": {
     "message": "Dubbelkolla om klockan för din enhet för engångslösenord stämmer.\nOm du nyligen har loggat in, försök logga in igen om 30 sekunder.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginWebExceptionContent": {
+    "message": "XIVLauncher kunde inte upprätta en anslutning till spelservrarna.\n\nDetta kan vara ett tillfälligt fel eller ett fel med din internetuppkoppling. Vänligen försök igen senare.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericServerIssue": {
     "message": "Servern har skickat ett ogiltigt svar. Detta kan inträffa under avbrott eller när servrarna är under tung belastning.\nVänligen vänta en minut och försök igen, eller försök logga in med den officiella spelstartaren.\n\nDu kan lära dig mer om avbrott på Lodestone.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "CheckLoginInfoNotAdditionally": {
     "message": "Var god kontrollera dina inloggningsuppgifter eller försök igen.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginNoOauthAutologinHint": {
     "message": "\n\nAutomatisk inloggning har inaktiverats.",
-    "description": "<TryLoginToGame>d__24.MoveNext"
+    "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginNoServiceMessage": {
-    "message": "Detta Square Enix-konto kan inte spela FINAL FANTASY XIV. Se till att du har en aktiv prenumerering och att den betalats.\n\nOm du har köpt FINAL FANTASY XIV på Steam behöver rutan \"Använd Använd Steam-tjänstkonto\" kryssas när du loggar in.\nOm automatisk inloggning är aktiverad, håll ned Shift-knappen medan du kör XIVLauncher för att komma åt inställningarna.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "This account isn't eligible to play the game. Please make sure that you have an active subscription and that it is paid up.\n\nIf you bought the game on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginAcceptTermsMessage": {
-    "message": "Vänligen acceptera FINAL FANTASY XIVs användarvillkor i den officiella spelstartaren.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "message": "Please accept the Terms of Use in the official launcher.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "EverythingIsFuckedMessage": {
     "message": "Vissa viktiga spelfiler ändrades eller korrupterades av en tredje part och spelet kan varken uppdatera eller starta.\nDu måste ominstallera spelet för att fortsätta.\n\nOm detta fortsätter att hända kontaktar du oss genom Discord.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginRepairResponseIsNotNeedsPatchGame": {
     "message": "Servern har skickat ett felaktigt svar och reparationen kan inte fortsätta.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "PatchInstallDisclaimer": {
     "message": "En ny uppdatering har hittats som måste installeras innan du kan spela.\nVill du att XIVLauncher ska installera den?",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginNoStartOk": {
     "message": "En uppdateringskoll utfördes och alla väntande uppdateringar har installerats.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameNonZeroExitCode": {
     "message": "Det verkar som att spelet har avslutats med ett allvarligt fel. Vill du starta om spelet?\n\nAvslutskod: 0x{0:X8}",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRelaunch": {
     "message": "_Starta om",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameClose": {
     "message": "_Stäng",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameDoNotAskAgain": {
     "message": "_Fråga inte igen",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRetry": {
     "message": "_Försök igen",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningSummary": {
     "message": "Du kan inte köra mer än två fönster av spelet samtidigt som standard.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultiboxDeniedWarningActionable": {
     "message": "Var god kontrollera om det finns ett spelfönster som inte avslutats ordentligt. (Hittade: {0})",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameKillThenRetry": {
     "message": "_Avsluta och försök igen",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
     "message": "XIVLauncher kunde inte starta spelet rätt.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
     "message": "Detta kan vara ett tillfälligt problem. Vänligen försök att starta om din dator.\nDet är möjligt att din spelinstallation inte är giltig - du kan reparera din spelinstallation genom att högerklicka inloggningsknappen och välja \"Reparera spelfiler\".",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
     "message": "Kunde inte hitta spelprogrammet.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorActionable": {
     "message": "Detta kan orsakas av ditt antivirus. Du kan behöva ominstallera spelet.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "MultipleErrors": {
     "message": "Flera fel har inträffat.",
-    "description": "<TryProcessLoginResult>d__25.MoveNext"
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "OtpInputPrompt": {
     "message": "Ange ditt engångslösenord.",
@@ -816,7 +816,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageHelpCtaLoc": {
-    "message": "Har du märkt ett fel i översättningen? Du kan hjälpa oss med den! Bara tryck här!",
+    "message": "Har du märkt ett fel i översättningen? Du kan hjälpa oss med den! Tryck här!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageNotice": {
@@ -844,7 +844,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonDescription": {
-    "message": "Dessa inställningar påverkar funktioner i spelet som tillhandahålls av Dalamud. Dessa funktioner är aktiverade automatiskt om du kör DirectX 11-versionen av spelet, spelversionen är kompatibel och rutan nedan är ikryssad.",
+    "message": "Dessa inställningar påverkar funktioner i spelet som tillhandahålls av Dalamud. Dessa funktioner är aktiverade automatiskt \nom du kör DirectX 11-versionen av spelet, spelversionen är kompatibel och rutan nedan är ikryssad.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonCommandHint": {
@@ -940,7 +940,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
-    "message": "Uppdaterar",
+    "message": "Uppdatering",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
@@ -1024,7 +1024,7 @@
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
-    "message": "XIVLauncher och/eller FINAL FANTASY XIV är inställda att köras som administratör.\nDetta kan orsaka flera fel, t.ex. tillägg som inte körs och att snabbtangentsprogram inte svarar.\n\nVill du fixa detta automatiskt?",
+    "message": "XIVLauncher and/or the game are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?",
     "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
@@ -1032,11 +1032,11 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MacTypeNag": {
-    "message": "MacType hittades på den här datorn.\nDetta kan orsaka problem med FFXIV både i den officiella spelstartaren och XIVLauncher.\n\nVänligen undanta XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater och ffxiv_dx11 från MacType.",
+    "message": "MacType was detected on this PC.\nIt will cause problems with the game; both on the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType.",
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "Du har inte behörighet att ändra filer i FFXIVs \"My Games\"-mapp.\nDetta kommer att förhindra skärmdumpar och viss karaktärsdata från att sparas.\n\nDetta kan orsakas av antingen ditt antivirus eller ett behörighetsfel. Vänligen kontrollera behörigheterna för \"My Games\"-mappen.",
+    "message": "You do not have permission to write to the game's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeSymlinks": {
