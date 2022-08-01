@@ -1,2 +1,3 @@
-﻿• Preparation for the 6.18 DC Travel update
-• Added Swedish as a language option (thanks to Pillow!)
+﻿• Ignore GShade folders when repairing the game (by Franz)
+• A little bit of general cleanup
+• Updated the localization files

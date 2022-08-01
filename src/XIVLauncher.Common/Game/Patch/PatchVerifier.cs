@@ -40,6 +40,9 @@ namespace XIVLauncher.Common.Game.Patch
 
             // Repair recycle bin folder.
             new Regex(@"^repair_recycler/.*$", RegexOptions.IgnoreCase),
+
+            // Ignore gshade folders. Unless someone wants to handle the symlinked folder, just skip recycling them.
+            new Regex(@"^gshade-(shader|preset)s$", RegexOptions.IgnoreCase),
         };
 
         private readonly ISettings _settings;
