@@ -29,9 +29,7 @@ public class SettingsTabWine : SettingsTab
                 CheckValidity = b =>
                 {
 
-                     if (b == true && !FLATPAK && !File.Exists("/usr/lib/libgamemodeauto.so.0"))
-                         return "GameMode not detected.";
-                     else if (b == true && FLATPAK && !File.Exists("/app/lib/libgamemodeauto.so.0"))
+                     if (b == true && (!File.Exists("/usr/lib/libgamemodeauto.so.0") && !File.Exists("/app/lib/libgamemodeauto.so.0")))
                          return "GameMode not detected.";
 
                     return null;
