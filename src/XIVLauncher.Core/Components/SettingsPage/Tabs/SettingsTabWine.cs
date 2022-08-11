@@ -23,35 +23,20 @@ public class SettingsTabWine : SettingsTab
             {
                 CheckVisibility = () => startupTypeSetting.Value == WineStartupType.Custom
             },
-
-#if !FLATPAK
             new SettingsEntry<bool>("Enable Feral's GameMode", "Enable launching with Feral Interactive's GameMode CPU optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b)
             {
                 CheckVisibility = () => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
                 CheckValidity = b =>
                 {
-                    if (b == true && !File.Exists("/usr/lib/libgamemodeauto.so.0"))
-                        return "GameMode not detected.";
+
+                     if (b == true && !FLATPAK && !File.Exists("/usr/lib/libgamemodeauto.so.0"))
+                         return "GameMode not detected.";
+                     else if (b == true && FLATPAK && !File.Exists("/app/lib/libgamemodeauto.so.0"))
+                         return "GameMode not detected.";
 
                     return null;
                 }
             },
-#endif
-
-
-#if FLATPAK
-            new SettingsEntry<bool>("Enable Feral's GameMode", "Enable launching with Feral Interactive's GameMode CPU optimizations.", () => Program.Config.GameModeEnabled ?? true, b => Program.Config.GameModeEnabled = b)
-            {
-                CheckVisibility = () => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
-                CheckValidity = b =>
-                {
-                    if (b == true && !File.Exists("/app/lib/libgamemodeauto.so.0"))
-                        return "GameMode not detected.";
-
-                    return null;
-                }
-            },
-#endif
 
             new SettingsEntry<bool>("Enable DXVK ASYNC", "Enable DXVK ASYNC patch.", () => Program.Config.DxvkAsyncEnabled ?? true, b => Program.Config.DxvkAsyncEnabled = b),
             new SettingsEntry<bool>("Enable ESync", "Enable eventfd-based synchronization.", () => Program.Config.ESyncEnabled ?? true, b => Program.Config.ESyncEnabled = b),
