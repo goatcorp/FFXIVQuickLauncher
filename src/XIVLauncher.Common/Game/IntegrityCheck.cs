@@ -115,7 +115,7 @@ namespace XIVLauncher.Common.Game
 
 
 #if DEBUG
-                Log.Debug($"{relativePath} swapping to {relativePath.Replace("/", "\\")}");
+                // Log.Debug($"{relativePath} swapping to {relativePath.Replace("/", "\\")}");
 #endif
                 // for unix compatibility with windows-generated integrity files.
                 relativePath = relativePath.Replace("/", "\\");
