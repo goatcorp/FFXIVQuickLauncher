@@ -151,7 +151,30 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Error(ex, "[DASSET] Could not read asset.ver");
             }
 
-            var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL));
+            AssetInfo remoteVer = null; ;
+            string assetJson = client.DownloadString(ASSET_STORE_URL);
+            
+#if DEBUG
+            Log.Debug(assetJson, "[DASSET DEBUG] Printing entire asset json");
+#endif
+
+            try
+            {
+                remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL));
+            }
+            catch (JsonSerializationException jse)
+            {
+#if DEBUG
+                Log.Error(jse, "[DASSET DEBUG] Count not deserialize json.");
+#endif
+                Log.Information("DASSET] Using System.Text.Json as fallback to deserialize.");
+                var options = new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                remoteVer = System.Text.Json.JsonSerializer.Deserialize<AssetInfo>(assetJson, options);
+            }
+            
 
             Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer.Version);
 
