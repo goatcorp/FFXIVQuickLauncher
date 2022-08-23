@@ -17,6 +17,8 @@ using XIVLauncher.Common.Unix.Compatibility;
 using XIVLauncher.Common.Unix.Compatibility.GameFixes;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Core.Accounts;
+using XIVLauncher.Core.Configuration;
+using XIVLauncher.Common.Game.Exceptions;
 
 namespace XIVLauncher.Core.Components.MainPage;
 
@@ -1073,124 +1075,103 @@ public class MainPage : Page
     private async Task<bool> RepairGame(Launcher.LoginResult loginResult)
     {
         var doLogin = false;
-        var mutex = new Mutex(false, "XivLauncherIsPatching");
-        /*
 
-        if (mutex.WaitOne(0, false))
+        // BUG(goat): This check only behaves correctly on Windows - the mutex doesn't seem to disappear on Linux, .NET issue?
+#if WIN32
+        using var mutex = new Mutex(false, "XivLauncherIsPatching");
+
+        if (!mutex.WaitOne(0, false))
         {
-            Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
-            Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0 ASSERTION FAILED");
+            App.ShowMessageBlocking(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."),
+                "XIVLauncher");
+            Environment.Exit(0);
+            return false; // This line will not be run.
+        }
+#endif
 
-            Log.Information("STARTING REPAIR");
+        Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
+        Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0 ASSERTION FAILED");
 
-            using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20, loginResult.OauthLogin.MaxExpansion);
+        Log.Information("STARTING REPAIR");
 
-            Hide();
-            IsEnabled = false;
+        // TODO: bundle the PatchInstaller with xl-core on Windows and run this remotely
+        using var verify = new PatchVerifier(Program.CommonSettings, loginResult, 20, loginResult.OauthLogin.MaxExpansion, false);
 
-            var progressDialog = _window.Dispatcher.Invoke(() =>
+        for (bool doVerify = true; doVerify;)
+        {
+            this.App.StartLoading($"Now repairing...", canCancel: false, isIndeterminate: false);
+
+            verify.Start();
+
+            var timer = new Timer(new TimerCallback((object? obj) =>
             {
-                var d = new GameRepairProgressWindow(verify);
-                if (_window.IsVisible)
-                    d.Owner = _window;
-                d.Show();
-                d.Activate();
-                return d;
-            });
-
-            for (bool doVerify = true; doVerify;)
-            {
-                progressDialog.Dispatcher.Invoke(progressDialog.Show);
-
-                verify.Start();
-                await verify.WaitForCompletion().ConfigureAwait(false);
-
-                progressDialog.Dispatcher.Invoke(progressDialog.Hide);
-
                 switch (verify.State)
                 {
-                    case PatchVerifier.VerifyState.Done:
-                        switch (CustomMessageBox.Builder
-                                                .NewFrom(verify.NumBrokenFiles switch
-                                                {
-                                                    0 => Loc.Localize("GameRepairSuccess0", "All game files seem to be valid."),
-                                                    1 => Loc.Localize("GameRepairSuccess1", "XIVLauncher has successfully repaired 1 game file."),
-                                                    _ => string.Format(Loc.Localize("GameRepairSuccessPlural", "XIVLauncher has successfully repaired {0} game files."), verify.NumBrokenFiles),
-                                                })
-                                                .WithImage(MessageBoxImage.Information)
-                                                .WithButtons(MessageBoxButton.YesNoCancel)
-                                                .WithYesButtonText(Loc.Localize("GameRepairSuccess_LaunchGame", "_Launch game"))
-                                                .WithNoButtonText(Loc.Localize("GameRepairSuccess_VerifyAgain", "_Verify again"))
-                                                .WithCancelButtonText(Loc.Localize("GameRepairSuccess_Close", "_Close"))
-                                                .WithParentWindow(_window)
-                                                .Show())
-                        {
-                            case MessageBoxResult.Yes:
-                                doLogin = true;
-                                doVerify = false;
-                                break;
-
-                            case MessageBoxResult.No:
-                                doLogin = false;
-                                doVerify = true;
-                                break;
-
-                            case MessageBoxResult.Cancel:
-                                doLogin = doVerify = false;
-                                break;
-                        }
-
+                    // TODO: show more progress info here
+                    case PatchVerifier.VerifyState.DownloadMeta:
+                        this.App.LoadingPage.Line2 = $"{verify.CurrentFile}";
+                        this.App.LoadingPage.Line3 = $"{Math.Min(verify.PatchSetIndex + 1, verify.PatchSetCount)}/{verify.PatchSetCount} - {ApiHelpers.BytesToString(verify.Progress)}/{ApiHelpers.BytesToString(verify.Total)}";
+                        this.App.LoadingPage.Progress = (float)(verify.Total != 0 ? (float)verify.Progress / (float)verify.Total : 0.0);
                         break;
 
-                    case PatchVerifier.VerifyState.Error:
-                        doLogin = false;
-
-                        if (verify.LastException is NoVersionReferenceException)
-                        {
-                            doVerify = CustomMessageBox.Builder
-                                                       .NewFrom(Loc.Localize("NoVersionReferenceError",
-                                                           "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later."))
-                                                       .WithImage(MessageBoxImage.Exclamation)
-                                                       .WithButtons(MessageBoxButton.OKCancel)
-                                                       .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
-                                                       .WithParentWindow(_window)
-                                                       .Show() == MessageBoxResult.OK;
-                        }
-                        else
-                        {
-                            doVerify = CustomMessageBox.Builder
-                                                       .NewFrom(verify.LastException, "PatchVerifier")
-                                                       .WithAppendText("\n\n")
-                                                       .WithAppendText(Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."))
-                                                       .WithImage(MessageBoxImage.Exclamation)
-                                                       .WithButtons(MessageBoxButton.OKCancel)
-                                                       .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
-                                                       .WithParentWindow(_window)
-                                                       .Show() == MessageBoxResult.OK;
-                        }
-
+                    case PatchVerifier.VerifyState.VerifyAndRepair:
+                        this.App.LoadingPage.Line2 = $"{verify.CurrentFile}";
+                        this.App.LoadingPage.Line3 = $"{Math.Min(verify.PatchSetIndex + 1, verify.PatchSetCount)}/{verify.PatchSetCount} - {Math.Min(verify.TaskIndex + 1, verify.TaskCount)}/{verify.TaskCount} - {ApiHelpers.BytesToString(verify.Progress)}/{ApiHelpers.BytesToString(verify.Total)}";
+                        this.App.LoadingPage.Progress = (float)(verify.Total != 0 ? (float)verify.Progress / (float)verify.Total : 0);
                         break;
 
-                    case PatchVerifier.VerifyState.Cancelled:
-                        doLogin = doVerify = false;
+                    default:
+                        this.App.LoadingPage.Line2 = "";
+                        this.App.LoadingPage.Line3 = $"{Math.Min(verify.TaskIndex + 1, verify.TaskCount)}/{verify.TaskCount}";
+                        this.App.LoadingPage.Progress = (float)(verify.State == PatchVerifier.VerifyState.Done ? 1.0 : 0);
                         break;
                 }
             }
+            ));
+            timer.Change(0, 250);
 
-            progressDialog.Dispatcher.Invoke(progressDialog.Close);
-            mutex.Close();
-            mutex = null;
+            await verify.WaitForCompletion().ConfigureAwait(false);
+            timer.Dispose();
+            this.App.StopLoading();
+
+            switch (verify.State)
+            {
+                case PatchVerifier.VerifyState.Done:
+                    // TODO: ask the user if they want to login or rerun after repair
+                    App.ShowMessageBlocking(verify.NumBrokenFiles switch
+                        {
+                            0 => Loc.Localize("GameRepairSuccess0", "All game files seem to be valid."),
+                            1 => Loc.Localize("GameRepairSuccess1", "XIVLauncher has successfully repaired 1 game file."),
+                            _ => string.Format(Loc.Localize("GameRepairSuccessPlural", "XIVLauncher has successfully repaired {0} game files."), verify.NumBrokenFiles),
+                        });
+
+                    doVerify = false;
+                    break;
+
+                case PatchVerifier.VerifyState.Error:
+                    doLogin = false;
+
+                    if (verify.LastException is NoVersionReferenceException)
+                    {
+                        App.ShowMessageBlocking(Loc.Localize("NoVersionReferenceError",
+                                                        "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later."));
+                    }
+                    else
+                    {
+                        App.ShowMessageBlocking(verify.LastException + "\n\n" + Loc.Localize("GameRepairError", "An error occurred while repairing the game files.\nYou may have to reinstall the game."));
+                    }
+
+                    doVerify = false;
+                    break;
+
+                case PatchVerifier.VerifyState.Cancelled:
+                    doLogin = doVerify = false;
+                    break;
+            }
         }
-        else
-        {
-            CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher",
-                MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-        }
+
 
         return doLogin;
-        */
-
-        throw new NotImplementedException();
     }
 
     private void Hide()
