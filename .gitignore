@@ -278,7 +278,13 @@ paket-files/
 .idea/
 *.sln.iml
 
+# Visual Studio Code
+.vscode/
+
 # XL Debug dirs
 src/XIVLauncher/XIVLauncher/app-*
 src/XIVLauncher/XIVLauncher
 src/Update.exe
+
+# XLCore build directory
+src/XIVLauncher.Core/build
