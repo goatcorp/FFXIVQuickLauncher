@@ -14,7 +14,6 @@
     <AssemblyVersion>$(Version)</AssemblyVersion>
 
     <RuntimeIdentifiers>win10-x64;linux-x64;osx-x64</RuntimeIdentifiers>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
     <!-- <SelfContained>true</SelfContained> -->
 
