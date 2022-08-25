@@ -47,6 +47,8 @@ public class CompatibilityTools
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
+    protected bool isLaunchingFfxivExe;
+
     public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
@@ -121,7 +123,16 @@ public class CompatibilityTools
         var psi = new ProcessStartInfo(Wine64Path);
         psi.Arguments = command;
 
-        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, command);
+        if (command.Contains("ffxiv_dx11.exe"))
+        {
+            this.isLaunchingFfxivExe = true;
+        }
+        else
+        {
+            this.isLaunchingFfxivExe = false;
+        }
+
+        Log.Verbose("Running in prefix: (isFfxiv={isLaunchingFfxivExe}) {FileName} {Arguments}", isLaunchingFfxivExe, psi.FileName, command);
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -179,6 +190,13 @@ public class CompatibilityTools
         if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
         {
             ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
+        }
+
+        if (this.isLaunchingFfxivExe)
+        {
+            // If this is the actual RunInPrefix that is running FFXIV (not wine setup commands) then we should
+            // activate the steam overlay lib
+            ldPreload = ldPreload.Equals("") ? "/home/mbutler/.local/share/Steam/ubuntu12_64/gameoverlayrenderer.so" : ldPreload + ":/home/mbutler/.local/share/Steam/ubuntu12_64/gameoverlayrenderer.so";
         }
 
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
