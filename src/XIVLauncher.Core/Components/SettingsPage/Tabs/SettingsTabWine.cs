@@ -58,7 +58,7 @@ public class SettingsTabWine : SettingsTab
                 "Custom DXVK Overlay string. For example fps,frametimes,gpuload,version",
                 () => Program.Config.DxvkHudCustomString, s => Program.Config.DxvkHudCustomString = s)
             {
-                CheckVisibility = () => dxvkOverlaySetting.Value == DxvkHudType.Custom
+                CheckVisibility = () => dxvkOverlaySetting.Value == Dxvk.DxvkHudType.Custom
             },
             new SettingsEntry<string>("WINEDEBUG Variables", "Configure debug logging for wine. Useful for troubleshooting.", () => Program.Config.WineDebugVars ?? string.Empty, s => Program.Config.WineDebugVars = s)
         };
