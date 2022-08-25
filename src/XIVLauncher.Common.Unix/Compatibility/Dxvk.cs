@@ -51,5 +51,8 @@ public static class Dxvk
 
         [SettingsDescription("Full", "Show everything")]
         Full,
+
+        [SettingsDescription("Custom", "Custom dxvk hud string")]
+        Custom,
     }
 }

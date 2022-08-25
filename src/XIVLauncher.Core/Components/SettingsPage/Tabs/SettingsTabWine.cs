@@ -52,7 +52,13 @@ public class SettingsTabWine : SettingsTab
                 }
             },
 
-            new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
+            dxvkOverlaySetting = new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
+			new SettingsEntry<string>("DXVK custom Overlay",
+                "Custom DXVK Overlay string. For example fps,frametimes,gpuload,version",
+                () => Program.Config.DxvkHudCustomString, s => Program.Config.DxvkHudCustomString = s)
+            {
+                CheckVisibility = () => dxvkOverlaySetting.Value == DxvkHudType.Custom
+            },
             new SettingsEntry<string>("WINEDEBUG Variables", "Configure debug logging for wine. Useful for troubleshooting.", () => Program.Config.WineDebugVars ?? string.Empty, s => Program.Config.WineDebugVars = s)
         };
     }
