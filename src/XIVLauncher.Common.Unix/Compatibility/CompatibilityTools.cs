@@ -123,7 +123,7 @@ public class CompatibilityTools
         var psi = new ProcessStartInfo(Wine64Path);
         psi.Arguments = command;
 
-        if (command.Contains("ffxiv_dx11.exe"))
+        if (command.Contains("ffxiv_dx11.exe") || command.Contains("ffxiv.exe"))
         {
             this.isLaunchingFfxivExe = true;
         }
@@ -196,7 +196,7 @@ public class CompatibilityTools
         {
             // If this is the actual RunInPrefix that is running FFXIV (not wine setup commands) then we should
             // activate the steam overlay lib
-            ldPreload = ldPreload.Equals("") ? "/home/mbutler/.local/share/Steam/ubuntu12_64/gameoverlayrenderer.so" : ldPreload + ":/home/mbutler/.local/share/Steam/ubuntu12_64/gameoverlayrenderer.so";
+            ldPreload = ldPreload.Equals("") ? "~/.local/share/Steam/ubuntu12_64/gameoverlayrenderer.so" : ldPreload + ":~/.local/share/Steam/ubuntu12_64/gameoverlayrenderer.so";
         }
 
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
