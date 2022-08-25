@@ -1,7 +1,3 @@
-﻿This is a hotfix for a previous release.
-
-• Added a switcher to the news banners (by MapleRecall)
-• Game repair will now move all non-standard game files into a special folder, e.g. XivMods.json (by kizer)
-• Further improvements to prevent crashes after Dalamud updates and better error messages
+﻿• Ignore GShade folders when repairing the game (by Franz)
+• A little bit of general cleanup
 • Updated the localization files
-    => Big thanks to all volunteer translators!

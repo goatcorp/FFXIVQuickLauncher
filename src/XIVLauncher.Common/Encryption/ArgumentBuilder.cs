@@ -101,6 +101,7 @@ namespace XIVLauncher.Common.Encryption
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 [System.Runtime.InteropServices.DllImport("c")]
+                // ReSharper disable once InconsistentNaming
                 static extern ulong clock_gettime_nsec_np(int clock_id);
 
                 const int CLOCK_MONOTONIC_RAW = 4;

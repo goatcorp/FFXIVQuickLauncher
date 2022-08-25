@@ -54,7 +54,7 @@ public class LoginFrame : Component
     {
         this.mainPage = mainPage;
 
-        this.loginInput = new Input("Square Enix ID", "Enter your Square Enix ID", new Vector2(12f, 0f), 128);
+        this.loginInput = new Input("Username", "Enter your Username", new Vector2(12f, 0f), 128);
         this.passwordInput = new Input("Password", "Enter your password", new Vector2(12f, 0f), 128, flags: ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
 
         this.oneTimePasswordCheckbox = new Checkbox("Use one-time password");

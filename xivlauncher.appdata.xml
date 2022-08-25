@@ -4,10 +4,10 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0</project_license>
   <name>XIVLauncher</name>
-  <summary>Launcher &amp; seamless Linux integration for Final Fantasy XIV Online</summary>
+  <summary>Launcher &amp; seamless Linux integration for FFXIV</summary>
   <description>
     <p>
-      XIVLauncher is a custom launcher for FINAL FANTASY XIV that offers painless patching, a customized WINE version for perfect compatibility with FFXIV, a multitude of useful plugins and seamless Steam Deck integration. Install, log in, patch, and get started!
+      XIVLauncher is a custom launcher for FFXIV that offers painless patching, a customized WINE version for perfect compatibility with the game, a multitude of useful plugins and seamless Steam Deck integration. Install, log in, patch, and get started!
     </p>
   </description>
   <url type="homepage">https://goatcorp.github.io/</url>

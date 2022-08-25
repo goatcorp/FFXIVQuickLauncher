@@ -15,7 +15,8 @@ namespace XIVLauncher.Common
         Norwegian,
         Russian,
         SimplifiedChinese,
-        TraditionalChinese
+        TraditionalChinese,
+        Swedish,
     }
 
     public static class LauncherLanguageExtensions
@@ -36,13 +37,13 @@ namespace XIVLauncher.Common
                 { LauncherLanguage.Norwegian, "no" },
                 { LauncherLanguage.Russian, "ru" },
                 { LauncherLanguage.SimplifiedChinese, "zh" },
-                { LauncherLanguage.TraditionalChinese, "tw" }
+                { LauncherLanguage.TraditionalChinese, "tw" },
+                { LauncherLanguage.Swedish, "sv" },
             };
         }
 
         public static string GetLocalizationCode(this LauncherLanguage? language)
         {
-
             return GetLangCodes()[language ?? LauncherLanguage.English]; // Default localization language
         }
 
@@ -60,6 +61,7 @@ namespace XIVLauncher.Common
                     return langCode.Key;
                 }
             }
+
             return LauncherLanguage.English; // Default language
         }
     }

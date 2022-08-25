@@ -454,7 +454,7 @@ namespace XIVLauncher.Windows
                 if (bootPatches != null)
                 {
                     CustomMessageBox.Show(Loc.Localize("MaintenanceQueueBootPatch",
-                        "A patch for the FFXIV launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher", parentWindow: this);
+                        "A patch for the official launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher", parentWindow: this);
                 }
 
                 Dispatcher.Invoke(() =>
@@ -555,7 +555,7 @@ namespace XIVLauncher.Windows
                 },
                 State = Launcher.LoginState.Ok,
                 UniqueId = "0"
-            }, false, false).ConfigureAwait(false);
+            }, false, false, false).ConfigureAwait(false);
         }
 
         private void LoginPassword_OnPasswordChanged(object sender, RoutedEventArgs e)

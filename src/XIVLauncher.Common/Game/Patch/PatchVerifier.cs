@@ -21,7 +21,8 @@ namespace XIVLauncher.Common.Game.Patch
 {
     public class PatchVerifier : IDisposable
     {
-        private const string RepairRecyclerDirectory = "repair_recycler";
+        private const string REPAIR_RECYCLER_DIRECTORY = "repair_recycler";
+
         private static readonly Regex[] GameIgnoreUnnecessaryFilePatterns = new Regex[]
         {
             // Base game version files.
@@ -33,16 +34,20 @@ namespace XIVLauncher.Common.Game.Patch
             // Under WINE, since .dat files are actually WMV videos, the game will become unusable.
             // Bink videos will be used instead in those cases.
             new Regex(@"^movie/ffxiv/0000[0-3]\.bk2$", RegexOptions.IgnoreCase),
-            
+
             // DXVK can deal with corrupted cache files by itself, so let it do the job by itself.
             new Regex(@"^ffxiv_dx11\.dxvk-cache$", RegexOptions.IgnoreCase),
 
             // Repair recycle bin folder.
             new Regex(@"^repair_recycler/.*$", RegexOptions.IgnoreCase),
+
+            // Ignore gshade folders. Unless someone wants to handle the symlinked folder, just skip recycling them.
+            new Regex(@"^gshade-(shader|preset)s$", RegexOptions.IgnoreCase),
         };
 
         private readonly ISettings _settings;
         private readonly int _maxExpansionToCheck;
+        private readonly bool _external;
         private HttpClient _client;
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -126,12 +131,13 @@ namespace XIVLauncher.Common.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
 
-        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion)
+        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion, bool external = true)
         {
             this._settings = settings;
             _client = new HttpClient();
             ProgressUpdateInterval = progressUpdateInterval;
             _maxExpansionToCheck = maxExpansion;
+            _external = external;
 
             SetLoginState(loginResult);
         }
@@ -220,9 +226,9 @@ namespace XIVLauncher.Common.Game.Patch
                 Speed = (_reportedProgresses.Last().Item2 - _reportedProgresses.First().Item2) * 10 * 1000 * 1000 / elapsedMs;
         }
 
-        public async Task MoveUnnecessaryFiles(IndexedZiPatchIndexRemoteInstaller remote, string gamePath, HashSet<string> targetRelativePaths)
+        public async Task MoveUnnecessaryFiles(IIndexedZiPatchIndexInstaller installer, string gamePath, HashSet<string> targetRelativePaths)
         {
-            this.MovedFileToDir = Path.Combine(gamePath, RepairRecyclerDirectory, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+            this.MovedFileToDir = Path.Combine(gamePath, REPAIR_RECYCLER_DIRECTORY, DateTime.Now.ToString("yyyyMMdd_HHmmss"));
 
             var rootPathInfo = new DirectoryInfo(gamePath);
             gamePath = rootPathInfo.FullName;
@@ -246,8 +252,8 @@ namespace XIVLauncher.Common.Game.Patch
 
                 if (!dir.EnumerateFileSystemInfos().Any())
                 {
-                    await remote.RemoveDirectory(dir.FullName);
-                    await remote.CreateDirectory(Path.Combine(this.MovedFileToDir, relativeDirPath));
+                    await installer.RemoveDirectory(dir.FullName);
+                    await installer.CreateDirectory(Path.Combine(this.MovedFileToDir, relativeDirPath));
                     continue;
                 }
 
@@ -272,7 +278,7 @@ namespace XIVLauncher.Common.Game.Patch
                     if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativePath)))
                         continue;
 
-                    await remote.MoveFile(file.FullName, Path.Combine(this.MovedFileToDir, relativePath));
+                    await installer.MoveFile(file.FullName, Path.Combine(this.MovedFileToDir, relativePath));
                     MovedFiles.Add(relativePath);
                 }
             }
@@ -282,12 +288,17 @@ namespace XIVLauncher.Common.Game.Patch
         {
             State = VerifyState.NotStarted;
             LastException = null;
+            IIndexedZiPatchIndexInstaller indexedZiPatchIndexInstaller = null;
             try
             {
                 var assemblyLocation = AppContext.BaseDirectory;
-                using var remote = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
-                    AdminAccessRequired(_settings.GamePath.FullName));
-                await remote.SetWorkerProcessPriority(ProcessPriorityClass.Idle).ConfigureAwait(false);
+                if (_external)
+                    indexedZiPatchIndexInstaller = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
+                        AdminAccessRequired(_settings.GamePath.FullName));
+                else
+                    indexedZiPatchIndexInstaller = new IndexedZiPatchIndexLocalInstaller();
+
+                await indexedZiPatchIndexInstaller.SetWorkerProcessPriority(ProcessPriorityClass.Idle).ConfigureAwait(false);
 
                 while (!_cancellationTokenSource.IsCancellationRequested && State != VerifyState.Done)
                 {
@@ -349,9 +360,9 @@ namespace XIVLauncher.Common.Game.Patch
 
                                 try
                                 {
-                                    remote.OnVerifyProgress += UpdateVerifyProgress;
-                                    remote.OnInstallProgress += UpdateInstallProgress;
-                                    await remote.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval).ConfigureAwait(false);
+                                    indexedZiPatchIndexInstaller.OnVerifyProgress += UpdateVerifyProgress;
+                                    indexedZiPatchIndexInstaller.OnInstallProgress += UpdateInstallProgress;
+                                    await indexedZiPatchIndexInstaller.ConstructFromPatchFile(patchIndex, ProgressUpdateInterval).ConfigureAwait(false);
 
                                     var fileBroken = new bool[patchIndex.Length].ToList();
                                     var repaired = false;
@@ -363,11 +374,11 @@ namespace XIVLauncher.Common.Game.Patch
                                         Progress = Total = TaskIndex = 0;
                                         _reportedProgresses.Clear();
 
-                                        await remote.SetTargetStreamsFromPathReadOnly(adjustedGamePath).ConfigureAwait(false);
+                                        await indexedZiPatchIndexInstaller.SetTargetStreamsFromPathReadOnly(adjustedGamePath).ConfigureAwait(false);
                                         // TODO: check one at a time if random access is slow?
-                                        await remote.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, _cancellationTokenSource.Token).ConfigureAwait(false);
+                                        await indexedZiPatchIndexInstaller.VerifyFiles(attemptIndex > 0, Environment.ProcessorCount, _cancellationTokenSource.Token).ConfigureAwait(false);
 
-                                        var missingPartIndicesPerTargetFile = await remote.GetMissingPartIndicesPerTargetFile().ConfigureAwait(false);
+                                        var missingPartIndicesPerTargetFile = await indexedZiPatchIndexInstaller.GetMissingPartIndicesPerTargetFile().ConfigureAwait(false);
                                         if ((repaired = missingPartIndicesPerTargetFile.All(x => !x.Any())))
                                             break;
                                         else if (attemptIndex == 1)
@@ -380,9 +391,9 @@ namespace XIVLauncher.Common.Game.Patch
                                         TaskCount = patchIndex.Sources.Count;
                                         Progress = Total = TaskIndex = 0;
                                         _reportedProgresses.Clear();
-                                        var missing = await remote.GetMissingPartIndicesPerPatch().ConfigureAwait(false);
+                                        var missing = await indexedZiPatchIndexInstaller.GetMissingPartIndicesPerPatch().ConfigureAwait(false);
 
-                                        await remote.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath).ConfigureAwait(false);
+                                        await indexedZiPatchIndexInstaller.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath).ConfigureAwait(false);
                                         var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                                         for (var i = 0; i < patchIndex.Sources.Count; i++)
                                         {
@@ -398,37 +409,37 @@ namespace XIVLauncher.Common.Game.Patch
 
                                             // We might be trying again because local copy of the patch file might be corrupt, so refer to the local copy only for the first attempt.
                                             if (attemptIndex == 0 && source.FileInfo.Exists)
-                                                await remote.QueueInstall(i, source.FileInfo, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
+                                                await indexedZiPatchIndexInstaller.QueueInstall(i, source.FileInfo, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
                                             else
-                                                await remote.QueueInstall(i, source.Uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
+                                                await indexedZiPatchIndexInstaller.QueueInstall(i, source.Uri, null, MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET).ConfigureAwait(false);
                                         }
 
                                         CurrentMetaInstallState = IndexedZiPatchInstaller.InstallTaskState.Connecting;
                                         try
                                         {
-                                            await remote.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
-                                            await remote.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
+                                            await indexedZiPatchIndexInstaller.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
+                                            await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
                                         }
                                         catch (Exception e)
                                         {
-                                            Log.Error(e, "remote.Install");
+                                            Log.Error(e, "IndexedZiPatchIndexInstaller.Install");
                                             if (attemptIndex == REATTEMPT_COUNT - 1)
                                                 throw;
                                         }
                                     }
                                     if (!repaired)
-                                        throw new IOException("Failed to repair after 5 attempts");
+                                        throw new IOException($"Failed to repair after {REATTEMPT_COUNT} attempts");
                                     NumBrokenFiles += fileBroken.Where(x => x).Count();
                                     PatchSetIndex++;
                                 }
                                 finally
                                 {
-                                    remote.OnVerifyProgress -= UpdateVerifyProgress;
-                                    remote.OnInstallProgress -= UpdateInstallProgress;
+                                    indexedZiPatchIndexInstaller.OnVerifyProgress -= UpdateVerifyProgress;
+                                    indexedZiPatchIndexInstaller.OnInstallProgress -= UpdateInstallProgress;
                                 }
                             }
 
-                            await MoveUnnecessaryFiles(remote, gamePath, targetRelativePaths);
+                            await MoveUnnecessaryFiles(indexedZiPatchIndexInstaller, gamePath, targetRelativePaths);
 
                             State = VerifyState.Done;
                             break;
@@ -461,6 +472,10 @@ namespace XIVLauncher.Common.Game.Patch
                     LastException = ex;
                     State = VerifyState.Error;
                 }
+            }
+            finally
+            {
+                indexedZiPatchIndexInstaller?.Dispose();
             }
         }
 

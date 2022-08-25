@@ -46,6 +46,6 @@
     <PackageReleaseNotes>Automated release</PackageReleaseNotes>
     <Company>goatsoft</Company>
     <Copyright>Copyright (c) goatsoft</Copyright>
-    <PackageTags>ffxiv</PackageTags>
+    <PackageTags>mmo</PackageTags>
   </PropertyGroup>
 </Project>

@@ -6,6 +6,8 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game
 {
@@ -87,6 +89,9 @@ namespace XIVLauncher.Common.Game
         public static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gamePath,
             IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
         {
+#if DEBUG
+            Log.Debug($"Platform identified as {PlatformHelpers.GetPlatform()}");
+#endif
             var hashes = new Dictionary<string, string>();
 
             using (var sha1 = new SHA1Managed())
@@ -107,6 +112,14 @@ namespace XIVLauncher.Common.Game
             foreach (var file in directory.GetFiles())
             {
                 var relativePath = file.FullName.Substring(rootDirectory.Length);
+
+
+#if DEBUG
+                Log.Debug($"{relativePath} swapping to {relativePath.Replace("/", "\\")}");
+#endif
+                // for unix compatibility with windows-generated integrity files.
+                relativePath = relativePath.Replace("/", "\\");
+
 
                 if (!relativePath.StartsWith("\\"))
                     relativePath = "\\" + relativePath;
@@ -139,7 +152,10 @@ namespace XIVLauncher.Common.Game
             }
 
             foreach (var dir in directory.GetDirectories())
-                CheckDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
+            {
+                if (!dir.FullName.ToLower().Contains("shade")) //skip gshade directories. They just waste cpu
+                    CheckDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
+            }
         }
     }
 }

@@ -11,6 +11,9 @@ namespace XIVLauncher.Accounts
 {
     public class XivAccount
     {
+        private const string CREDS_PREFIX_OLD = "FINAL FANTASY XIV";
+        private const string CREDS_PREFIX_NEW = "XIVLAUNCHER";
+
         [JsonIgnore]
         public string Id => $"{UserName}-{UseOtp}-{UseSteamServiceAccount}";
 
@@ -23,7 +26,32 @@ namespace XIVLauncher.Accounts
         {
             get
             {
-                var credentials = CredentialManager.GetCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
+                var credentials = CredentialManager.GetCredentials($"{CREDS_PREFIX_OLD}-{UserName.ToLower()}");
+
+                if (credentials != null)
+                {
+                    var saved = CredentialManager.SaveCredentials($"{CREDS_PREFIX_NEW}-{UserName.ToLower()}", new NetworkCredential
+                    {
+                        UserName = credentials.UserName,
+                        Password = credentials.Password,
+                    });
+
+                    if (saved)
+                    {
+                        try
+                        {
+                            CredentialManager.RemoveCredentials($"{CREDS_PREFIX_OLD}-{UserName.ToLower()}");
+                        }
+                        catch (Win32Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+                else
+                {
+                    credentials = CredentialManager.GetCredentials($"{CREDS_PREFIX_NEW}-{UserName.ToLower()}");
+                }
 
                 return credentials != null ? credentials.Password : string.Empty;
             }
@@ -31,14 +59,23 @@ namespace XIVLauncher.Accounts
             {
                 try
                 {
-                    CredentialManager.RemoveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}");
+                    CredentialManager.RemoveCredentials($"{CREDS_PREFIX_OLD}-{UserName.ToLower()}");
                 }
                 catch (Win32Exception)
                 {
                     // ignored
                 }
 
-                CredentialManager.SaveCredentials($"FINAL FANTASY XIV-{UserName.ToLower()}", new NetworkCredential
+                try
+                {
+                    CredentialManager.RemoveCredentials($"{CREDS_PREFIX_NEW}-{UserName.ToLower()}");
+                }
+                catch (Win32Exception)
+                {
+                    // ignored
+                }
+
+                CredentialManager.SaveCredentials($"{CREDS_PREFIX_NEW}-{UserName.ToLower()}", new NetworkCredential
                 {
                     UserName = UserName,
                     Password = value

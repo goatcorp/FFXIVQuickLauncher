@@ -65,9 +65,9 @@ namespace XIVLauncher.Common
         }
 
         public static bool operator <(SeVersion x, SeVersion y) => x.CompareTo(y) < 0;
-        public static bool operator  > (SeVersion x, SeVersion y) => x.CompareTo(y)  > 0;
-        public static bool operator <= (SeVersion x, SeVersion y) => x.CompareTo(y) <= 0;
-        public static bool operator >= (SeVersion x, SeVersion y) => x.CompareTo(y) >= 0;
+        public static bool operator >(SeVersion x, SeVersion y) => x.CompareTo(y) > 0;
+        public static bool operator <=(SeVersion x, SeVersion y) => x.CompareTo(y) <= 0;
+        public static bool operator >=(SeVersion x, SeVersion y) => x.CompareTo(y) >= 0;
 
         public static bool operator ==(SeVersion x, SeVersion y)
         {

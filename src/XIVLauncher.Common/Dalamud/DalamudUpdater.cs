@@ -276,6 +276,7 @@ namespace XIVLauncher.Common.Dalamud
             Runner = new FileInfo(Path.Combine(currentVersionPath.FullName, "Dalamud.Injector.exe"));
 
             State = DownloadState.Done;
+            SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Starting);
         }
 
         private static bool CanRead(FileInfo info)
@@ -429,6 +430,11 @@ namespace XIVLauncher.Common.Dalamud
 
         private async Task<bool> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
         {
+#if DEBUG
+            Log.Warning("Debug build, ignoring runtime hash check");
+            return true;
+#endif
+
             var hashesFile = new FileInfo(Path.Combine(runtimePath.FullName, $"hashes-{version}.json"));
             string? runtimeHashes = null;
 
