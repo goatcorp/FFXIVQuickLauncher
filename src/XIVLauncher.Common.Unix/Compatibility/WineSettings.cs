@@ -25,7 +25,7 @@ public class WineSettings
 
     public DirectoryInfo Prefix { get; private set; }
 
-    public WineSettings(WineStartupType? startupType, string customBinPath, string debugVars, string dxvkHudCustomString, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
+    public WineSettings(WineStartupType? startupType, string customBinPath, string dxvkHudCustomString, string debugVars,  FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
     {
         this.StartupType = startupType ?? WineStartupType.Custom;
         this.CustomBinPath = customBinPath;
