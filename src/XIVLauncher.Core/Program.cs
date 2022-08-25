@@ -115,7 +115,7 @@ class Program
         Config.DxvkAsyncEnabled ??= true;
         Config.ESyncEnabled ??= true;
         Config.FSyncEnabled ??= false;
-		Config.DxvkHudCustomString ??= "fps,frametimes,gpuload,version";
+        Config.DxvkHudCustomString ??= "fps,frametimes,gpuload,version";
 
         Config.WineStartupType ??= WineStartupType.Managed;
         Config.WineBinaryPath ??= "/usr/bin";

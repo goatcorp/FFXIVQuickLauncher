@@ -15,7 +15,7 @@ public class WineSettings
 {
     public WineStartupType StartupType { get; private set; }
     public string CustomBinPath { get; private set; }
-	public string DxvkHudCustomString { get; private set; }
+    public string DxvkHudCustomString { get; private set; }
 
     public string EsyncOn { get; private set; }
     public string FsyncOn { get; private set; }
@@ -29,7 +29,7 @@ public class WineSettings
     {
         this.StartupType = startupType ?? WineStartupType.Custom;
         this.CustomBinPath = customBinPath;
-		this.DxvkHudCustomString = dxvkHudCustomString;
+        this.DxvkHudCustomString = dxvkHudCustomString;
         this.EsyncOn = (esyncOn ?? false) ? "1" : "0";
         this.FsyncOn = (fsyncOn ?? false) ? "1" : "0";
         this.DebugVars = debugVars;

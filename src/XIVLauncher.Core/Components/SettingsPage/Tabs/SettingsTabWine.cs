@@ -54,7 +54,7 @@ public class SettingsTabWine : SettingsTab
             },
 
             dxvkOverlaySetting = new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
-			new SettingsEntry<string>("DXVK custom Overlay",
+            new SettingsEntry<string>("DXVK custom Overlay",
                 "Custom DXVK Overlay string. For example fps,frametimes,gpuload,version",
                 () => Program.Config.DxvkHudCustomString, s => Program.Config.DxvkHudCustomString = s)
             {
