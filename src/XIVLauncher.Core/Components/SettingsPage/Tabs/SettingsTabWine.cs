@@ -9,7 +9,7 @@ namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 public class SettingsTabWine : SettingsTab
 {
     private SettingsEntry<WineStartupType> startupTypeSetting;
-	private SettingsEntry<Dxvk.DxvkHudType> dxvkOverlaySetting;
+    private SettingsEntry<Dxvk.DxvkHudType> dxvkOverlaySetting;
 
     public SettingsTabWine()
     {
