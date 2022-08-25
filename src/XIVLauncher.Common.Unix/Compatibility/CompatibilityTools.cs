@@ -157,13 +157,15 @@ public class CompatibilityTools
         psi.WorkingDirectory = workingDirectory;
 
         string overlayFix = Environment.GetEnvironmentVariable("OVERLAY_FIX") ?? "";
-        string argList = psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b);
+        string argList = psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b) + " " + psi.Arguments;
         bool isLaunchingFfxivExe = false;
 
         if (argList.Contains("ffxiv_dx11.exe") || argList.Contains("ffxiv.exe"))
         {
             isLaunchingFfxivExe = true;
         }
+
+        Log.Verbose("DEBUG: {overlayFix} {argList} {isLaunchingFfxivExe}", overlayFix, argList, isLaunchingFfxivExe);
 
         var wineEnviromentVariables = new Dictionary<string, string>();
         wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
@@ -190,7 +192,7 @@ public class CompatibilityTools
             ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
         }
 
-        if (isLaunchingFfxivExe && !string.IsNullOrEmpty(overlayFix))
+        if (isLaunchingFfxivExe && overlayFix.Contains("true"))
         {
             // If this is the actual RunInPrefix that is running FFXIV (not wine setup commands) then we should
             // activate the steam overlay lib but otherwise we should NOT activate the SteamOverlay
