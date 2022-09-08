@@ -531,10 +531,6 @@ namespace XIVLauncher.Common.Game.Patch
             Total = 32 * 1048576;
             Progress = 0;
 
-            var version = repo.GetVer(_settings.GamePath);
-            if (version == Constants.BASE_GAME_VERSION)
-                return;
-
             // TODO: We should not assume that this always has a "D". We should just store them by the patchlist VersionId instead.
             var repoShorthand = repo == Repository.Ffxiv ? "game" : repo.ToString().ToLower();
             var fileName = $"{latestVersion}.patch.index";
@@ -547,7 +543,7 @@ namespace XIVLauncher.Common.Game.Patch
             {
                 var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", HttpCompletionOption.ResponseHeadersRead, _cancellationTokenSource.Token).ConfigureAwait(false);
                 if (request.StatusCode == HttpStatusCode.NotFound)
-                    throw new NoVersionReferenceException(repo, version);
+                    throw new NoVersionReferenceException(repo, latestVersion);
 
                 request.EnsureSuccessStatusCode();
 
@@ -599,7 +595,7 @@ namespace XIVLauncher.Common.Game.Patch
             }
 
             _repoMetaPaths.Add(repo, filePath);
-            Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, version);
+            Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, latestVersion);
         }
 
         public void Dispose()
