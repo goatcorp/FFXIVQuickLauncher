@@ -399,7 +399,8 @@ public class Launcher
         request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
 
-        EnsureVersionSanity(gamePath, loginResult.MaxExpansion);
+        if (!forceBaseVersion)
+            EnsureVersionSanity(gamePath, loginResult.MaxExpansion);
         request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion, forceBaseVersion));
 
         var resp = await this.client.SendAsync(request);
