@@ -418,7 +418,6 @@ namespace XIVLauncher.Common.Game.Patch
                                         try
                                         {
                                             await indexedZiPatchIndexInstaller.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
-                                            await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
                                         }
                                         catch (Exception e)
                                         {
@@ -427,9 +426,13 @@ namespace XIVLauncher.Common.Game.Patch
                                                 throw;
                                         }
                                     }
+
                                     if (!repaired)
                                         throw new IOException($"Failed to repair after {REATTEMPT_COUNT} attempts");
-                                    NumBrokenFiles += fileBroken.Where(x => x).Count();
+
+                                    await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
+
+                                    NumBrokenFiles += fileBroken.Count(x => x);
                                     PatchSetIndex++;
                                 }
                                 finally
