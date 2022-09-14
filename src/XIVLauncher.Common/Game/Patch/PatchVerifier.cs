@@ -418,7 +418,6 @@ namespace XIVLauncher.Common.Game.Patch
                                         try
                                         {
                                             await indexedZiPatchIndexInstaller.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
-                                            await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
                                         }
                                         catch (Exception e)
                                         {
@@ -427,9 +426,13 @@ namespace XIVLauncher.Common.Game.Patch
                                                 throw;
                                         }
                                     }
+
                                     if (!repaired)
                                         throw new IOException($"Failed to repair after {REATTEMPT_COUNT} attempts");
-                                    NumBrokenFiles += fileBroken.Where(x => x).Count();
+
+                                    await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
+
+                                    NumBrokenFiles += fileBroken.Count(x => x);
                                     PatchSetIndex++;
                                 }
                                 finally
@@ -545,7 +548,7 @@ namespace XIVLauncher.Common.Game.Patch
             {
                 var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", HttpCompletionOption.ResponseHeadersRead, _cancellationTokenSource.Token).ConfigureAwait(false);
                 if (request.StatusCode == HttpStatusCode.NotFound)
-                    throw new NoVersionReferenceException(repo, version);
+                    throw new NoVersionReferenceException(repo, latestVersion);
 
                 request.EnsureSuccessStatusCode();
 
@@ -597,7 +600,7 @@ namespace XIVLauncher.Common.Game.Patch
             }
 
             _repoMetaPaths.Add(repo, filePath);
-            Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, version);
+            Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, latestVersion);
         }
 
         public void Dispose()
