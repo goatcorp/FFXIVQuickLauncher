@@ -4,9 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
+using CheapLoc;
 using Microsoft.Win32;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Util;
+using XIVLauncher.Common.Windows;
+using XIVLauncher.PlatformAbstractions;
+using XIVLauncher.Windows;
 
 namespace XIVLauncher
 {
@@ -156,6 +162,72 @@ namespace XIVLauncher
             {
                 return defaultPath;
             }
+        }
+
+        /// <summary>
+        /// Check if any file in the game directory is currently being used, and yell at the user if any.
+        /// 
+        /// This function works on best effort basis, and is slow.
+        /// </summary>
+        /// <param name="parentWindow">Parent window.</param>
+        /// <param name="messageGenerator">Function that returns the relevant message.</param>
+        /// <returns>False if cancelled.</returns>
+        public static bool TryYellOnGameFilesBeingOpen(Window parentWindow, Func<int, string> messageGenerator)
+        {
+            try
+            {
+                while (true)
+                {
+                    using var restartManager = new WindowsRestartManager();
+                    restartManager.Register(files: PatchVerifier.GetRelevantFiles(Path.Combine(CommonSettings.Instance.GamePath.FullName, "game")));
+                    List<WindowsRestartManager.RmProcessInfo> programs = restartManager.GetInterferingProcesses(out _);
+
+                    if (!programs.Any())
+                        break;
+
+                    switch (CustomMessageBox
+                            .Builder
+                            .NewFrom(messageGenerator(programs.Count))
+                            .WithDescription(string.Join("\n",
+                                programs
+                                    .Select(x =>
+                                    {
+                                        var process = x.Process;
+                                        if (process == null)
+                                            return $"{x.AppName} ({x.UniqueProcess.dwProcessId})";
+
+                                        string exeName = process.MainModule?.ModuleName ?? "??";
+                                        string title = process.MainWindowTitle;
+                                        if (string.IsNullOrEmpty(title) || title == x.AppName)
+                                            return $"{x.AppName} ({x.UniqueProcess.dwProcessId}: {exeName})";
+
+                                        return $"{x.AppName} ({x.UniqueProcess.dwProcessId}: {exeName}, \"{title}\")";
+                                    })))
+                            .WithImage(MessageBoxImage.Information)
+                            .WithButtons(MessageBoxButton.YesNoCancel)
+                            .WithYesButtonText(Loc.Localize("Refresh", "_Refresh"))
+                            .WithNoButtonText(Loc.Localize("Ignore", "_Ignore"))
+                            .WithDefaultResult(MessageBoxResult.Yes)
+                            .WithParentWindow(parentWindow)
+                            .Show())
+                    {
+                        case MessageBoxResult.Yes:
+                            break;
+
+                        case MessageBoxResult.No:
+                            return true;
+
+                        case MessageBoxResult.Cancel:
+                            return false;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignore, as this is on a best-effort basis anyway.
+            }
+
+            return true;
         }
     }
 }
