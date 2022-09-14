@@ -17,8 +17,8 @@ using XIVLauncher.Common.Unix.Compatibility;
 using XIVLauncher.Common.Unix.Compatibility.GameFixes;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Core.Accounts;
-using XIVLauncher.Core.Configuration;
 using XIVLauncher.Common.Game.Exceptions;
+using XIVLauncher.Core.Support;
 
 namespace XIVLauncher.Core.Components.MainPage;
 
@@ -620,7 +620,8 @@ public class MainPage : Page
         }
 
         var dalamudLauncher = new DalamudLauncher(dalamudRunner, Program.DalamudUpdater, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
-            App.Settings.GamePath, App.Storage.Root, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay, false, false, noThird);
+            App.Settings.GamePath, App.Storage.Root, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay, false, false, noThird,
+            Troubleshooting.GetTroubleshootingJson(App));
 
         try
         {

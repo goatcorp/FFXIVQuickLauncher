@@ -15,5 +15,6 @@ namespace XIVLauncher.Common.Dalamud
         public int DelayInitializeMs;
 
         public string GameVersion;
+        public string TroubleshootingPackData;
     }
 }

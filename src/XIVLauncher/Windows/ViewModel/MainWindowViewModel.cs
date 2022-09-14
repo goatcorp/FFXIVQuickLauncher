@@ -1001,7 +1001,8 @@ namespace XIVLauncher.Windows.ViewModel
                 (int)App.Settings.DalamudInjectionDelayMs,
                 false,
                 false,
-                noThird);
+                noThird,
+                Troubleshooting.GetTroubleshootingJson());
 
             var dalamudOk = false;
 
