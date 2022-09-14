@@ -532,8 +532,6 @@ namespace XIVLauncher.Common.Game.Patch
             Progress = 0;
 
             var version = repo.GetVer(_settings.GamePath);
-            if (version == Constants.BASE_GAME_VERSION)
-                return;
 
             // TODO: We should not assume that this always has a "D". We should just store them by the patchlist VersionId instead.
             var repoShorthand = repo == Repository.Ffxiv ? "game" : repo.ToString().ToLower();
