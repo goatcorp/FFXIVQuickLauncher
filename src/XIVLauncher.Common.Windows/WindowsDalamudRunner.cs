@@ -28,7 +28,8 @@ public class WindowsDalamudRunner : IDalamudRunner
             $"--dalamud-dev-plugin-directory=\"{startInfo.DefaultPluginDirectory}\"",
             $"--dalamud-asset-directory=\"{startInfo.AssetDirectory}\"",
             $"--dalamud-client-language={(int)startInfo.Language}",
-            $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}"
+            $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}",
+            $"--dalamud-tspack-b64={Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(startInfo.TroubleshootingPackData))}",
         };
 
         if (loadMethod == DalamudLoadMethod.ACLonly)

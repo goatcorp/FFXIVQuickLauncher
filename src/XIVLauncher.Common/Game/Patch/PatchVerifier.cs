@@ -534,6 +534,8 @@ namespace XIVLauncher.Common.Game.Patch
             Total = 32 * 1048576;
             Progress = 0;
 
+            var version = repo.GetVer(_settings.GamePath);
+
             // TODO: We should not assume that this always has a "D". We should just store them by the patchlist VersionId instead.
             var repoShorthand = repo == Repository.Ffxiv ? "game" : repo.ToString().ToLower();
             var fileName = $"{latestVersion}.patch.index";
