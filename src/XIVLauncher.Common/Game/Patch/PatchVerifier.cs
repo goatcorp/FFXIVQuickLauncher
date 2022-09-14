@@ -603,6 +603,56 @@ namespace XIVLauncher.Common.Game.Patch
             Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, latestVersion);
         }
 
+        public static List<FileInfo> GetRelevantFiles(string gamePath)
+        {
+            var rootPathInfo = new DirectoryInfo(gamePath);
+            gamePath = rootPathInfo.FullName;
+
+            Queue<DirectoryInfo> directoriesToVisit = new();
+            HashSet<DirectoryInfo> directoriesVisited = new();
+            directoriesToVisit.Enqueue(rootPathInfo);
+            directoriesVisited.Add(rootPathInfo);
+
+            List<FileInfo> files = new();
+
+            while (directoriesToVisit.Any())
+            {
+                var dir = directoriesToVisit.Dequeue();
+
+                // For directories, ignore if final path does not belong in the root path.
+                if (!dir.FullName.ToLowerInvariant().Replace('\\', '/').StartsWith(gamePath.ToLowerInvariant().Replace('\\', '/'), StringComparison.Ordinal))
+                    continue;
+
+                var relativeDirPath = dir == rootPathInfo ? "" : dir.FullName.Substring(gamePath.Length + 1).Replace('\\', '/');
+                if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativeDirPath)))
+                    continue;
+
+                foreach (var subdir in dir.EnumerateDirectories())
+                {
+                    if (directoriesVisited.Contains(subdir))
+                        continue;
+
+                    directoriesVisited.Add(subdir);
+                    directoriesToVisit.Enqueue(subdir);
+                }
+
+                foreach (var file in dir.EnumerateFiles())
+                {
+                    if (!file.FullName.ToLowerInvariant().Replace('\\', '/').StartsWith(gamePath.ToLowerInvariant().Replace('\\', '/'), StringComparison.Ordinal))
+                        continue;
+
+                    var relativePath = file.FullName.Substring(gamePath.Length + 1).Replace('\\', '/');
+
+                    if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativePath)))
+                        continue;
+
+                    files.Add(file);
+                }
+            }
+
+            return files;
+        }
+
         public void Dispose()
         {
             if (_verificationTask != null && !_verificationTask.IsCompleted)
