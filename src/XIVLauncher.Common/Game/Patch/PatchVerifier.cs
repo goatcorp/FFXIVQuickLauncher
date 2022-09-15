@@ -418,7 +418,6 @@ namespace XIVLauncher.Common.Game.Patch
                                         try
                                         {
                                             await indexedZiPatchIndexInstaller.Install(MAX_CONCURRENT_CONNECTIONS_FOR_PATCH_SET, _cancellationTokenSource.Token).ConfigureAwait(false);
-                                            await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
                                         }
                                         catch (Exception e)
                                         {
@@ -427,9 +426,13 @@ namespace XIVLauncher.Common.Game.Patch
                                                 throw;
                                         }
                                     }
+
                                     if (!repaired)
                                         throw new IOException($"Failed to repair after {REATTEMPT_COUNT} attempts");
-                                    NumBrokenFiles += fileBroken.Where(x => x).Count();
+
+                                    await indexedZiPatchIndexInstaller.WriteVersionFiles(adjustedGamePath).ConfigureAwait(false);
+
+                                    NumBrokenFiles += fileBroken.Count(x => x);
                                     PatchSetIndex++;
                                 }
                                 finally
@@ -532,8 +535,6 @@ namespace XIVLauncher.Common.Game.Patch
             Progress = 0;
 
             var version = repo.GetVer(_settings.GamePath);
-            if (version == Constants.BASE_GAME_VERSION)
-                return;
 
             // TODO: We should not assume that this always has a "D". We should just store them by the patchlist VersionId instead.
             var repoShorthand = repo == Repository.Ffxiv ? "game" : repo.ToString().ToLower();
@@ -547,7 +548,7 @@ namespace XIVLauncher.Common.Game.Patch
             {
                 var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", HttpCompletionOption.ResponseHeadersRead, _cancellationTokenSource.Token).ConfigureAwait(false);
                 if (request.StatusCode == HttpStatusCode.NotFound)
-                    throw new NoVersionReferenceException(repo, version);
+                    throw new NoVersionReferenceException(repo, latestVersion);
 
                 request.EnsureSuccessStatusCode();
 
@@ -599,7 +600,57 @@ namespace XIVLauncher.Common.Game.Patch
             }
 
             _repoMetaPaths.Add(repo, filePath);
-            Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, version);
+            Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, latestVersion);
+        }
+
+        public static List<FileInfo> GetRelevantFiles(string gamePath)
+        {
+            var rootPathInfo = new DirectoryInfo(gamePath);
+            gamePath = rootPathInfo.FullName;
+
+            Queue<DirectoryInfo> directoriesToVisit = new();
+            HashSet<DirectoryInfo> directoriesVisited = new();
+            directoriesToVisit.Enqueue(rootPathInfo);
+            directoriesVisited.Add(rootPathInfo);
+
+            List<FileInfo> files = new();
+
+            while (directoriesToVisit.Any())
+            {
+                var dir = directoriesToVisit.Dequeue();
+
+                // For directories, ignore if final path does not belong in the root path.
+                if (!dir.FullName.ToLowerInvariant().Replace('\\', '/').StartsWith(gamePath.ToLowerInvariant().Replace('\\', '/'), StringComparison.Ordinal))
+                    continue;
+
+                var relativeDirPath = dir == rootPathInfo ? "" : dir.FullName.Substring(gamePath.Length + 1).Replace('\\', '/');
+                if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativeDirPath)))
+                    continue;
+
+                foreach (var subdir in dir.EnumerateDirectories())
+                {
+                    if (directoriesVisited.Contains(subdir))
+                        continue;
+
+                    directoriesVisited.Add(subdir);
+                    directoriesToVisit.Enqueue(subdir);
+                }
+
+                foreach (var file in dir.EnumerateFiles())
+                {
+                    if (!file.FullName.ToLowerInvariant().Replace('\\', '/').StartsWith(gamePath.ToLowerInvariant().Replace('\\', '/'), StringComparison.Ordinal))
+                        continue;
+
+                    var relativePath = file.FullName.Substring(gamePath.Length + 1).Replace('\\', '/');
+
+                    if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativePath)))
+                        continue;
+
+                    files.Add(file);
+                }
+            }
+
+            return files;
         }
 
         public void Dispose()

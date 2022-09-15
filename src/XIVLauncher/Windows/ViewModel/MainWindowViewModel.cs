@@ -843,6 +843,15 @@ namespace XIVLauncher.Windows.ViewModel
 
                 Log.Information("STARTING REPAIR");
 
+                if (!AppUtil.TryYellOnGameFilesBeingOpen(_window, n => n switch
+                    {
+                        1 => Loc.Localize("GameRepairProcessExitRequired1",
+                            "Close the following application to repair the game."),
+                        _ => string.Format(Loc.Localize("GameRepairProcessExitRequiredPlural",
+                            "Close the following applications to repair the game.")),
+                    }))
+                    return false;
+
                 using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20, loginResult.OauthLogin.MaxExpansion);
 
                 Hide();
@@ -1001,7 +1010,8 @@ namespace XIVLauncher.Windows.ViewModel
                 (int)App.Settings.DalamudInjectionDelayMs,
                 false,
                 false,
-                noThird);
+                noThird,
+                Troubleshooting.GetTroubleshootingJson());
 
             var dalamudOk = false;
 
@@ -1233,12 +1243,31 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (GameHelpers.CheckIsGameOpen())
             {
-                CustomMessageBox.Show(
-                    Loc.Localize("GameIsOpenError", "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: _window);
-
-                return false;
+                while (GameHelpers.CheckIsGameOpen())
+                {
+                    if (CustomMessageBox
+                        .Builder
+                        .NewFrom(Loc.Localize("GameIsOpenError",
+                            "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."))
+                        .WithImage(MessageBoxImage.Exclamation)
+                        .WithButtons(MessageBoxButton.OKCancel)
+                        .WithOkButtonText(Loc.Localize("Refresh", "_Refresh"))
+                        .WithDefaultResult(MessageBoxResult.OK)
+                        .Show() == MessageBoxResult.Cancel)
+                    {
+                        return false;
+                    }
+                }
             }
+
+            if (!AppUtil.TryYellOnGameFilesBeingOpen(_window, n => n switch
+                {
+                    1 => Loc.Localize("GameUpdateExitRequired1",
+                        "Close the following application to patch the game."),
+                    _ => string.Format(Loc.Localize("GameUpdateExitRequiredPlural",
+                        "Close the following applications to patch the game.")),
+                }))
+                return false;
 
             using var installer = new Common.Game.Patch.PatchInstaller(App.Settings.KeepPatches ?? false);
             var patcher = new PatchManager(App.Settings.PatchAcquisitionMethod ?? AcquisitionMethod.Aria, App.Settings.SpeedLimitBytes,
