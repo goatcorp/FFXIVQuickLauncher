@@ -52,6 +52,8 @@ public class MainPage : Page
 
         if (PlatformHelpers.IsElevated())
             App.ShowMessage("XIVLauncher is running as administrator/root user.\nThis can cause various issues, including but not limited to addons failing to launch and hotkey applications failing to respond.\n\nPlease take care to avoid running XIVLauncher with elevated privileges", "XIVLauncher");
+
+        Troubleshooting.LogTroubleshooting(app);
     }
 
     public AccountSwitcher AccountSwitcher { get; private set; }
@@ -618,6 +620,8 @@ public class MainPage : Page
             default:
                 throw new NotImplementedException();
         }
+
+        Troubleshooting.LogTroubleshooting(App);
 
         var dalamudLauncher = new DalamudLauncher(dalamudRunner, Program.DalamudUpdater, App.Settings.DalamudLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
             App.Settings.GamePath, App.Storage.Root, App.Settings.ClientLanguage ?? ClientLanguage.English, App.Settings.DalamudLoadDelay, false, false, noThird,

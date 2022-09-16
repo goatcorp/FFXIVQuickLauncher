@@ -47,6 +47,22 @@ namespace XIVLauncher.Core.Support
             }
         }
 
+        /// <summary>
+        /// Log troubleshooting information in a parseable format to Serilog.
+        /// </summary>
+        internal static void LogTroubleshooting(LauncherApp app)
+        {
+            try
+            {
+                var encodedPayload = Convert.ToBase64String(Encoding.UTF8.GetBytes(GetTroubleshootingJson(app)));
+                Log.Information($"TROUBLESHXLTING:{encodedPayload}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not print troubleshooting");
+            }
+        }
+
         internal static string GetTroubleshootingJson(LauncherApp app)
         {
             var gamePath = app.Settings.GamePath;
