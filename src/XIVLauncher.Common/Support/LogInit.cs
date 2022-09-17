@@ -19,16 +19,24 @@ public static class LogInit
 
     public static void Setup(string defaultLogPath, string[] args)
     {
-        var parser = new Parser(c =>
+        ParserResult<LogOptions> result = null;
+
+        try
         {
-            c.IgnoreUnknownArguments = true;
-        });
-        var result = parser.ParseArguments<LogOptions>(args);
+            var parser = new Parser(c => { c.IgnoreUnknownArguments = true; });
+            result = parser.ParseArguments<LogOptions>(args);
+        }
+        catch
+        {
+#if DEBUG
+            throw;
+#endif
+        }
 
         var config = new LoggerConfiguration()
                      .WriteTo.Sink(SerilogEventSink.Instance);
 
-        var parsed = result.Value ?? new LogOptions();
+        var parsed = result?.Value ?? new LogOptions();
 
         if (!string.IsNullOrEmpty(parsed.LogPath))
         {
