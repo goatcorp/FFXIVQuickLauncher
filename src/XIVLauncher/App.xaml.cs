@@ -58,6 +58,10 @@ namespace XIVLauncher
 
             [CommandLine.Option("clientlang", Required = false, HelpText = "Client language to use.")]
             public ClientLanguage? ClientLanguage { get; set; }
+
+            // We don't care about this, just need it so that the parser doesn't error
+            [CommandLine.Option("squirrel-updated", Hidden = true)]
+            public bool SquirrelUpdated { get; set; }
         }
 
         public const string REPO_URL = "https://github.com/goatcorp/FFXIVQuickLauncher";
