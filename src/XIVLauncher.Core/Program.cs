@@ -64,12 +64,16 @@ class Program
     private static void SetupLogging()
     {
         Log.Logger = new LoggerConfiguration()
-                     .WriteTo.Async(a =>
-                         a.File(Path.Combine(storage.GetFolder("logs").FullName, "launcher.log")))
-                     .WriteTo.Console()
-                     .WriteTo.Debug()
-                     .MinimumLevel.Verbose()
-                     .CreateLogger();
+             .WriteTo.Async(a =>
+                 a.File(Path.Combine(storage.GetFolder("logs").FullName, "launcher.log")))
+             .WriteTo.Console()
+#if DEBUG
+             .WriteTo.Debug()
+             .MinimumLevel.Verbose()
+#else
+             .MinimumLevel.Information()
+#endif
+             .CreateLogger();
 
         Log.Information("========================================================");
         Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
