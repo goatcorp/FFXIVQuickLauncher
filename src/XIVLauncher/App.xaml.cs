@@ -59,9 +59,21 @@ namespace XIVLauncher
             [CommandLine.Option("clientlang", Required = false, HelpText = "Client language to use.")]
             public ClientLanguage? ClientLanguage { get; set; }
 
-            // We don't care about this, just need it so that the parser doesn't error
+            // We don't care about these, just need it so that the parser doesn't error
             [CommandLine.Option("squirrel-updated", Hidden = true)]
-            public bool SquirrelUpdated { get; set; }
+            public string SquirrelUpdated { get; set; }
+
+            [CommandLine.Option("squirrel-install", Hidden = true)]
+            public string SquirrelInstall { get; set; }
+
+            [CommandLine.Option("squirrel-obsolete", Hidden = true)]
+            public string SquirrelObsolete { get; set; }
+
+            [CommandLine.Option("squirrel-uninstall", Hidden = true)]
+            public string SquirrelUninstall { get; set; }
+
+            [CommandLine.Option("squirrel-firstrun", Hidden = true)]
+            public bool SquirrelFirstRun { get; set; }
         }
 
         public const string REPO_URL = "https://github.com/goatcorp/FFXIVQuickLauncher";
