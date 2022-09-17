@@ -4,9 +4,10 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json;
 using Serilog;
 using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using XIVLauncher.Common.Util;
 
@@ -18,13 +19,21 @@ namespace XIVLauncher.Common.Dalamud
 
         internal class AssetInfo
         {
+            [JsonPropertyName("version")]
             public int Version { get; set; }
+
+            [JsonPropertyName("assets")]
             public IReadOnlyList<Asset> Assets { get; set; }
 
             public class Asset
             {
+                [JsonPropertyName("url")]
                 public string Url { get; set; }
+
+                [JsonPropertyName("fileName")]
                 public string FileName { get; set; }
+
+                [JsonPropertyName("hash")]
                 public string Hash { get; set; }
             }
         }
@@ -151,7 +160,7 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Error(ex, "[DASSET] Could not read asset.ver");
             }
 
-            var remoteVer = JsonConvert.DeserializeObject<AssetInfo>(client.DownloadString(ASSET_STORE_URL));
+            var remoteVer = JsonSerializer.Deserialize<AssetInfo>(client.DownloadString(ASSET_STORE_URL));
 
             Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer.Version);
 
