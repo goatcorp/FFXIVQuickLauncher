@@ -42,6 +42,7 @@ namespace XIVLauncher
 #endif
 
         private MainWindow _mainWindow;
+        private FileInfo _dalamudRunnerOverride = null;
 
         public static bool GlobalIsDisableAutologin { get; private set; }
         public static byte[] GlobalSteamTicket { get; private set; }
@@ -75,7 +76,7 @@ namespace XIVLauncher
                 }
                 else if (arg.StartsWith("--dalamudRunner=", StringComparison.Ordinal))
                 {
-                    DalamudUpdater.RunnerOverride = new FileInfo(arg.Substring(16));
+                    this._dalamudRunnerOverride = new FileInfo(arg.Substring(16));
                 }
             }
 
@@ -229,6 +230,11 @@ namespace XIVLauncher
                         new DirectoryInfo(Paths.RoamingPath),
                         UniqueIdCache,
                         Settings.DalamudRolloutBucket);
+
+                    if (this._dalamudRunnerOverride != null)
+                    {
+                        DalamudUpdater.RunnerOverride = this._dalamudRunnerOverride;
+                    }
 
                     Settings.DalamudRolloutBucket = DalamudUpdater.RolloutBucket;
 
