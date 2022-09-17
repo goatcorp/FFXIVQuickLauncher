@@ -154,13 +154,13 @@ namespace XIVLauncher
                 AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
                 TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
 #endif
+
+                SerilogEventSink.Instance.LogLine += OnSerilogLogLine;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Could not set up logging. Please report this error.\n\n" + ex.Message, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            SerilogEventSink.Instance.LogLine += OnSerilogLogLine;
 
             try
             {
@@ -203,7 +203,14 @@ namespace XIVLauncher
             Loc.Setup("{}");
 #endif
 
-            Steam = new WindowsSteam();
+            try
+            {
+                Steam = new WindowsSteam();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not set up Steam");
+            }
 
 #if !XL_NOAUTOUPDATE
             if (!EnvironmentSettings.IsDisableUpdates)
