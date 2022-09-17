@@ -44,11 +44,11 @@ namespace XIVLauncher
             [CommandLine.Option("noautologin", Required = false, HelpText = "Disable autologin.")]
             public bool NoAutoLogin { get; set; }
 
-            [CommandLine.Option("genLocalizable", Required = false, HelpText = "Generate localizable files.")]
+            [CommandLine.Option("gen-localizable", Required = false, HelpText = "Generate localizable files.")]
             public bool DoGenerateLocalizables { get; set; }
 
-            [CommandLine.Option("genIntegrity", Required = false, HelpText = "Generate integrity files.")]
-            public bool DoGenerateIntegrity { get; set; }
+            [CommandLine.Option("gen-integrity", Required = false, HelpText = "Generate integrity files. Provide a game path.")]
+            public string DoGenerateIntegrity { get; set; }
 
             [CommandLine.Option("account", Required = false, HelpText = "Account name to use.")]
             public string AccountName { get; set; }
@@ -116,6 +116,27 @@ namespace XIVLauncher
 
             try
             {
+                LogInit.Setup(
+                    Path.Combine(Paths.RoamingPath, "output.log"),
+                    Environment.GetCommandLineArgs());
+
+                Log.Information("========================================================");
+                Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
+
+#if !DEBUG
+                AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+                TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+#endif
+
+                SerilogEventSink.Instance.LogLine += OnSerilogLogLine;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not set up logging. Please report this error.\n\n" + ex.Message, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            try
+            {
                 var helpWriter = new StringWriter();
                 var parser = new Parser(config => config.HelpWriter = helpWriter);
                 var result = parser.ParseArguments<CmdLineOptions>(Environment.GetCommandLineArgs());
@@ -142,9 +163,9 @@ namespace XIVLauncher
                     GlobalIsDisableAutologin = true;
                 }
 
-                if (CommandLine.DoGenerateIntegrity)
+                if (!string.IsNullOrEmpty(CommandLine.DoGenerateIntegrity))
                 {
-                    GenerateIntegrity();
+                    GenerateIntegrity(CommandLine.DoGenerateIntegrity);
                 }
 
                 if (CommandLine.DoGenerateLocalizables)
@@ -155,27 +176,6 @@ namespace XIVLauncher
             catch (Exception ex)
             {
                 MessageBox.Show("Could not parse command line arguments. Please report this error.\n\n" + ex.Message, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            try
-            {
-                LogInit.Setup(
-                    Path.Combine(Paths.RoamingPath, "output.log"),
-                    Environment.GetCommandLineArgs());
-
-                Log.Information("========================================================");
-                Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
-
-#if !DEBUG
-                AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
-                TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
-#endif
-
-                SerilogEventSink.Instance.LogLine += OnSerilogLogLine;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Could not set up logging. Please report this error.\n\n" + ex.Message, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             try
@@ -373,15 +373,14 @@ namespace XIVLauncher
             System.Windows.Threading.Dispatcher.Run();
         }
 
-        private static void GenerateIntegrity()
+        private static void GenerateIntegrity(string path)
         {
-            var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
+            var result = IntegrityCheck.RunIntegrityCheckAsync(new DirectoryInfo(path), null).GetAwaiter().GetResult();
             string saveIntegrityPath = Path.Combine(Paths.RoamingPath, $"{result.GameVersion}.json");
 
-            Log.Information("Saving integrity to " + saveIntegrityPath);
             File.WriteAllText(saveIntegrityPath, JsonConvert.SerializeObject(result));
 
-            Log.Information($"Successfully hashed {result.Hashes.Count} files.");
+            MessageBox.Show($"Successfully hashed {result.Hashes.Count} files to {path}.", "Hello Franz", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             Environment.Exit(0);
         }
 
