@@ -101,6 +101,21 @@ namespace XIVLauncher
             new(Color.FromArgb(0xFF, 0xFF, 0xd7, 0x00), 0.5f),
         }, 0.7f);
 
+        public App()
+        {
+#if !DEBUG
+            try
+            {
+                AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+                TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+            }
+            catch
+            {
+                // ignored
+            }
+#endif
+        }
+
         private static void OnSerilogLogLine(object sender, (string Line, LogEventLevel Level, DateTimeOffset TimeStamp, Exception? Exception) e)
         {
             if (e.Exception == null)
@@ -290,11 +305,6 @@ namespace XIVLauncher
 
                 Log.Information("========================================================");
                 Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
-
-#if !DEBUG
-                AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
-                TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
-#endif
 
                 SerilogEventSink.Instance.LogLine += OnSerilogLogLine;
             }
