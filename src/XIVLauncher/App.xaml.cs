@@ -15,6 +15,7 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Support;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.PlatformAbstractions;
@@ -78,21 +79,14 @@ namespace XIVLauncher
                 }
             }
 
-            var release = $"xivlauncher-{AppUtil.GetAssemblyVersion()}-{AppUtil.GetGitHash()}";
-
             try
             {
-                Log.Logger = new LoggerConfiguration()
-                             .WriteTo.Async(a =>
-                                 a.File(Path.Combine(Paths.RoamingPath, "output.log")))
-                             .WriteTo.Sink(SerilogEventSink.Instance)
-#if DEBUG
-                             .WriteTo.Debug()
-                             .MinimumLevel.Verbose()
-#else
-                            .MinimumLevel.Information()
-#endif
-                             .CreateLogger();
+                LogInit.Setup(
+                    Path.Combine(Paths.RoamingPath, "output.log"),
+                    Environment.GetCommandLineArgs());
+
+                Log.Information("========================================================");
+                Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
 
 #if !DEBUG
                 AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
@@ -146,9 +140,6 @@ namespace XIVLauncher
             // Force all fallbacks
             Loc.Setup("{}");
 #endif
-
-            Log.Information(
-                $"XIVLauncher started as {release}");
 
             Steam = new WindowsSteam();
 

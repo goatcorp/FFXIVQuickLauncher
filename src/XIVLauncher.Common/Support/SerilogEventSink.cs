@@ -2,12 +2,12 @@ using System;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace XIVLauncher.Support
+namespace XIVLauncher.Common.Support
 {
     /// <summary>
     /// Serilog event sink.
     /// </summary>
-    internal class SerilogEventSink : ILogEventSink
+    public class SerilogEventSink : ILogEventSink
     {
         private static SerilogEventSink instance;
         private readonly IFormatProvider formatProvider;
