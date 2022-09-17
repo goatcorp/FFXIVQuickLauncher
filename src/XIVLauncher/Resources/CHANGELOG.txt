@@ -1,3 +1,4 @@
-﻿• Ignore GShade folders when repairing the game (by Franz)
-• A little bit of general cleanup
-• Updated the localization files
+﻿• Fixes an issue wherein game repair may not have repaired expansions sometimes (by kizer)
+• Fixes an issue wherein game repair may not have worked with older game versions (by kizer)
+• If another process prevents patching, you will now be told which (by kizer)
+• Some changes to logging that will make support easier
