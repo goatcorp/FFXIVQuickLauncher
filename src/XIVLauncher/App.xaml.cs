@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using CheapLoc;
+using CommandLine;
 using Config.Net;
 using Newtonsoft.Json;
 using Serilog;
@@ -31,6 +33,33 @@ namespace XIVLauncher
     /// </summary>
     public partial class App : Application
     {
+        public class CmdLineOptions
+        {
+            [CommandLine.Option("dalamud-runner-override", Required = false, HelpText = "Path to a folder to override the dalamud runner with.")]
+            public string RunnerOverride { get; set; }
+
+            [CommandLine.Option("roamingPath", Required = false, HelpText = "Path to a folder to override the roaming path for XL with.")]
+            public string RoamingPath { get; set; }
+
+            [CommandLine.Option("noautologin", Required = false, HelpText = "Disable autologin.")]
+            public bool NoAutoLogin { get; set; }
+
+            [CommandLine.Option("genLocalizable", Required = false, HelpText = "Generate localizable files.")]
+            public bool DoGenerateLocalizables { get; set; }
+
+            [CommandLine.Option("genIntegrity", Required = false, HelpText = "Generate integrity files.")]
+            public bool DoGenerateIntegrity { get; set; }
+
+            [CommandLine.Option("account", Required = false, HelpText = "Account name to use.")]
+            public string AccountName { get; set; }
+
+            [CommandLine.Option("steamticket", Required = false, HelpText = "Steam ticket to use.")]
+            public string SteamTicket { get; set; }
+
+            [CommandLine.Option("clientlang", Required = false, HelpText = "Client language to use.")]
+            public ClientLanguage? ClientLanguage { get; set; }
+        }
+
         public const string REPO_URL = "https://github.com/goatcorp/FFXIVQuickLauncher";
 
         public static ILauncherSettingsV3 Settings;
@@ -41,8 +70,10 @@ namespace XIVLauncher
         private UpdateLoadingDialog _updateWindow;
 #endif
 
+        public static CmdLineOptions CommandLine { get; private set; }
+
+        private readonly FileInfo _dalamudRunnerOverride = null;
         private MainWindow _mainWindow;
-        private FileInfo _dalamudRunnerOverride = null;
 
         public static bool GlobalIsDisableAutologin { get; private set; }
         public static byte[] GlobalSteamTicket { get; private set; }
@@ -67,17 +98,47 @@ namespace XIVLauncher
                 // ignored
             }
 
-            // TODO: Use a real command line parser
-            foreach (var arg in Environment.GetCommandLineArgs())
+            try
             {
-                if (arg.StartsWith("--roamingPath=", StringComparison.Ordinal))
+                var helpWriter = new StringWriter();
+                var parser = new Parser(config => config.HelpWriter = helpWriter);
+                var result = parser.ParseArguments<CmdLineOptions>(Environment.GetCommandLineArgs());
+
+                if (result.Errors.Any())
                 {
-                    Paths.OverrideRoamingPath(arg.Substring(14));
+                    MessageBox.Show(helpWriter.ToString(), "Help");
                 }
-                else if (arg.StartsWith("--dalamudRunner=", StringComparison.Ordinal))
+
+                CommandLine = result.Value ?? new CmdLineOptions();
+
+                if (!string.IsNullOrEmpty(CommandLine.RoamingPath))
                 {
-                    this._dalamudRunnerOverride = new FileInfo(arg.Substring(16));
+                    Paths.OverrideRoamingPath(CommandLine.RoamingPath);
                 }
+
+                if (!string.IsNullOrEmpty(CommandLine.RunnerOverride))
+                {
+                    this._dalamudRunnerOverride = new FileInfo(CommandLine.RunnerOverride);
+                }
+
+                if (CommandLine.NoAutoLogin)
+                {
+                    GlobalIsDisableAutologin = true;
+                }
+
+                if (CommandLine.DoGenerateIntegrity)
+                {
+                    GenerateIntegrity();
+                }
+
+                if (CommandLine.DoGenerateLocalizables)
+                {
+                    GenerateLocalizables();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not parse command line arguments. Please report this error.\n\n" + ex.Message, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             try
@@ -203,6 +264,29 @@ namespace XIVLauncher
             }
 
             UniqueIdCache = new CommonUniqueIdCache(new FileInfo(Path.Combine(Paths.RoamingPath, "uidCache.json")));
+
+            try
+            {
+                if (!string.IsNullOrEmpty(CommandLine.AccountName))
+                {
+                    App.Settings.CurrentAccountId = CommandLine.AccountName;
+                    Log.Verbose("Account override: '{0}'", CommandLine.AccountName);
+                }
+
+                if (!string.IsNullOrEmpty(CommandLine.SteamTicket))
+                {
+                    GlobalSteamTicket = Convert.FromBase64String(CommandLine.SteamTicket);
+                }
+
+                if (CommandLine.ClientLanguage != null)
+                {
+                    App.Settings.Language = CommandLine.ClientLanguage;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not apply settings overrides from command line");
+            }
         }
 
         private void OnUpdateCheckFinished(bool finishUp)
@@ -266,6 +350,32 @@ namespace XIVLauncher
             System.Windows.Threading.Dispatcher.Run();
         }
 
+        private static void GenerateIntegrity()
+        {
+            var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
+            string saveIntegrityPath = Path.Combine(Paths.RoamingPath, $"{result.GameVersion}.json");
+
+            Log.Information("Saving integrity to " + saveIntegrityPath);
+            File.WriteAllText(saveIntegrityPath, JsonConvert.SerializeObject(result));
+
+            Log.Information($"Successfully hashed {result.Hashes.Count} files.");
+            Environment.Exit(0);
+        }
+
+        private static void GenerateLocalizables()
+        {
+            try
+            {
+                Loc.ExportLocalizable();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+            Environment.Exit(0);
+        }
+
         private bool _useFullExceptionHandler = false;
 
         private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -302,73 +412,6 @@ namespace XIVLauncher
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            var accountName = string.Empty;
-
-            if (e.Args.Length > 0)
-            {
-                foreach (string arg in e.Args)
-                {
-                    if (arg == "--noautologin")
-                    {
-                        GlobalIsDisableAutologin = true;
-                    }
-
-                    if (arg == "--genLocalizable")
-                    {
-                        try
-                        {
-                            Loc.ExportLocalizable();
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.ToString());
-                        }
-
-                        Environment.Exit(0);
-                        return;
-                    }
-
-                    if (arg == "--genIntegrity")
-                    {
-                        var result = IntegrityCheck.RunIntegrityCheckAsync(Settings.GamePath, null).GetAwaiter().GetResult();
-                        string saveIntegrityPath = Path.Combine(Paths.RoamingPath, $"{result.GameVersion}.json");
-#if DEBUG
-                        Log.Information("Saving integrity to " + saveIntegrityPath);
-#endif
-                        File.WriteAllText(saveIntegrityPath, JsonConvert.SerializeObject(result));
-
-                        MessageBox.Show($"Successfully hashed {result.Hashes.Count} files.");
-                        Environment.Exit(0);
-                        return;
-                    }
-
-                    // Check if the accountName parameter is provided, if yes, pass it to MainWindow
-                    if (arg.StartsWith("--account=", StringComparison.Ordinal))
-                    {
-                        accountName = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
-                        App.Settings.CurrentAccountId = accountName;
-                    }
-
-                    // Check if the steam ticket parameter is provided, use it later to skip steam integration
-                    if (arg.StartsWith("--steamticket=", StringComparison.Ordinal))
-                    {
-                        string steamTicket = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
-                        GlobalSteamTicket = Convert.FromBase64String(steamTicket);
-                    }
-
-                    // Override client launch language by parameter
-                    if (arg.StartsWith("--clientlang=", StringComparison.Ordinal))
-                    {
-                        string langarg = arg.Substring(arg.IndexOf("=", StringComparison.InvariantCulture) + 1);
-                        Enum.TryParse(langarg, out ClientLanguage lang); // defaults to Japanese if the input was invalid.
-                        App.Settings.Language = lang;
-                        Log.Information("Language set as {Language} by launch argument", App.Settings.Language.ToString());
-                    }
-                }
-            }
-
-            Log.Verbose("Loading MainWindow for account '{0}'", accountName);
-
             if (App.Settings.LauncherLanguage == LauncherLanguage.Russian)
             {
                 var dict = new ResourceDictionary

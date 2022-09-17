@@ -19,38 +19,42 @@ public static class LogInit
 
     public static void Setup(string defaultLogPath, string[] args)
     {
-        Parser.Default.ParseArguments<LogOptions>(args)
-              .WithParsed(o =>
-              {
-                  var config = new LoggerConfiguration()
-                               .WriteTo.Sink(SerilogEventSink.Instance);
+        var parser = new Parser(c =>
+        {
+            c.IgnoreUnknownArguments = true;
+        });
+        var result = parser.ParseArguments<LogOptions>(args);
 
-                  if (!string.IsNullOrEmpty(o.LogPath))
-                  {
-                      config.WriteTo.Async(a =>
-                      {
-                          a.File(o.LogPath);
-                      });
-                  }
-                  else
-                  {
-                      config.WriteTo.Async(a =>
-                      {
-                          a.File(defaultLogPath);
-                      });
-                  }
+        var config = new LoggerConfiguration()
+                     .WriteTo.Sink(SerilogEventSink.Instance);
+
+        var parsed = result.Value ?? new LogOptions();
+
+        if (!string.IsNullOrEmpty(parsed.LogPath))
+        {
+            config.WriteTo.Async(a =>
+            {
+                a.File(parsed.LogPath);
+            });
+        }
+        else
+        {
+            config.WriteTo.Async(a =>
+            {
+                a.File(defaultLogPath);
+            });
+        }
 
 #if DEBUG
-                  config.WriteTo.Debug();
-                  config.MinimumLevel.Verbose();
+        config.WriteTo.Debug();
+        config.MinimumLevel.Verbose();
 #else
-                  config.MinimumLevel.Information();
+        config.MinimumLevel.Information();
 #endif
 
-                  if (o.Verbose)
-                      config.MinimumLevel.Verbose();
+        if (parsed.Verbose)
+            config.MinimumLevel.Verbose();
 
-                  Log.Logger = config.CreateLogger();
-              });
+        Log.Logger = config.CreateLogger();
     }
 }
