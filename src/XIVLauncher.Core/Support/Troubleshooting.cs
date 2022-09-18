@@ -50,11 +50,11 @@ namespace XIVLauncher.Core.Support
         /// <summary>
         /// Log troubleshooting information in a parseable format to Serilog.
         /// </summary>
-        internal static void LogTroubleshooting(LauncherApp app)
+        internal static void LogTroubleshooting()
         {
             try
             {
-                var encodedPayload = Convert.ToBase64String(Encoding.UTF8.GetBytes(GetTroubleshootingJson(app)));
+                var encodedPayload = Convert.ToBase64String(Encoding.UTF8.GetBytes(GetTroubleshootingJson()));
                 Log.Information($"TROUBLESHXLTING:{encodedPayload}");
             }
             catch (Exception ex)
@@ -63,9 +63,10 @@ namespace XIVLauncher.Core.Support
             }
         }
 
-        internal static string GetTroubleshootingJson(LauncherApp app)
+        internal static string GetTroubleshootingJson()
         {
-            var gamePath = app.Settings.GamePath;
+            
+            var gamePath = Program.Config.GamePath;
 
             var integrity = TroubleshootingPayload.IndexIntegrityResult.Success;
 
@@ -92,7 +93,7 @@ namespace XIVLauncher.Core.Support
             {
                 integrity = TroubleshootingPayload.IndexIntegrityResult.Exception;
             }
-
+            
             var ffxivVer = Repository.Ffxiv.GetVer(gamePath);
             var ffxivVerBck = Repository.Ffxiv.GetVer(gamePath, true);
             var ex1Ver = Repository.Ex1.GetVer(gamePath);
@@ -107,17 +108,17 @@ namespace XIVLauncher.Core.Support
             var payload = new TroubleshootingPayload
             {
                 When = DateTime.Now,
-                IsDx11 = app.Settings.IsDx11.GetValueOrDefault(),
-                IsAutoLogin = app.Settings.IsAutologin.GetValueOrDefault(),
-                IsUidCache = app.Settings.IsUidCacheEnabled.GetValueOrDefault(),
-                DalamudEnabled = app.Settings.DalamudEnabled.GetValueOrDefault(),
-                DalamudLoadMethod = app.Settings.DalamudLoadMethod.GetValueOrDefault(),
-                DalamudInjectionDelay = app.Settings.DalamudLoadDelay,
-                EncryptArguments = app.Settings.IsEncryptArgs.GetValueOrDefault(true),
+                IsDx11 = Program.Config.IsDx11.GetValueOrDefault(),
+                IsAutoLogin = Program.Config.IsAutologin.GetValueOrDefault(),
+                IsUidCache = Program.Config.IsUidCacheEnabled.GetValueOrDefault(),
+                DalamudEnabled = Program.Config.DalamudEnabled.GetValueOrDefault(),
+                DalamudLoadMethod = Program.Config.DalamudLoadMethod.GetValueOrDefault(),
+                DalamudInjectionDelay = Program.Config.DalamudLoadDelay,
+                EncryptArguments = Program.Config.IsEncryptArgs.GetValueOrDefault(true),
                 LauncherVersion = AppUtil.GetAssemblyVersion(),
                 LauncherHash = AppUtil.GetGitHash() ?? "<unavailable>",
                 Official = AppUtil.GetBuildOrigin() == "goatcorp/FFXIVQuickLauncher",
-                DpiAwareness = app.Settings.DpiAwareness.GetValueOrDefault(),
+                DpiAwareness = Program.Config.DpiAwareness.GetValueOrDefault(),
                 Platform = PlatformHelpers.GetPlatform(),
 
                 ObservedGameVersion = ffxivVer,
