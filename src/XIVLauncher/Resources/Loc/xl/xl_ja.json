@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Refresh",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Ignore",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLauncherの更新チェックに失敗しました。GitHubの接続が原因の可能性があります。数分待ってからもう一度試してみてください。\nVPN を利用している場合はそれを無効にしてください。\n数分経っても失敗する場合は、GitHubにリンクされているDiscordに参加してサポートを受けてください。",
     "description": "<Run>d__3.MoveNext"
@@ -376,7 +384,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Dalamudなしで開始",
+    "message": "Start w/o Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoThirdLogin": {
+    "message": "Start w/o Third-Party Plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "このワンタイムパスワードは既に使用されています。\n新しいワンタイムパスワードでは最大30秒かかる場合があります。",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Close the following application to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Close the following applications to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Close the following application to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Close the following applications to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "Auto-Loginを有効にしています。\nこれにより、XIVLauncherは常に現在のアカウントでログインし、このウィンドウは表示されなくなります。\n\n設定やアカウントを変更するには、キーボードのShiftボタンを押しながらXIVLauncherを起動してください。",

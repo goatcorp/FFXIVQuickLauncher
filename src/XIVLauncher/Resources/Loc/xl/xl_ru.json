@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Refresh",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Ignore",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher не удалось проверить обновления. Это может быть вызвано проблемами подключения к GitHub. Подождите несколько минут и повторите попытку.\nОтключите VPN, если он у Вас есть. Попробуйте добавить XIVLauncher в исключения антивируса.\nЕсли обновление не удаётся проверить после нескольких минут, пожалуйста, обратитесь к FAQ.",
     "description": "<Run>d__3.MoveNext"
@@ -376,7 +384,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Запустить без Dalamud",
+    "message": "Start w/o Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoThirdLogin": {
+    "message": "Start w/o Third-Party Plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "Данный OTP уже используется.\nПодождите 30 секунд для нового использования.",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Close the following application to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Close the following applications to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Close the following application to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Close the following applications to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "Вы включаете автоматический вход.\nXIVLauncher всегда будет входить в систему с текущей учетной записью, и вы не увидите это окно.\n\nЧтобы изменить настройки, удерживайте клавишу Shift после включения XIVLauncher.",

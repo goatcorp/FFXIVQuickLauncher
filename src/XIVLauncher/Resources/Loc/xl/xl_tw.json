@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Refresh",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Ignore",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher 無法檢查更新。這可能是因為與 GitHub 的連接問題造成的。請等待幾分鐘後重試。\n如果您正在使用 VPN，請禁用後重試。你可能需要將 XIVLauncher 從你的防毒軟件中排除。\n如果此問題在數分鐘後仍未解決，請查閱常見問題。",
     "description": "<Run>d__3.MoveNext"
@@ -376,7 +384,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "不使用 Dalamud 啟動",
+    "message": "Start w/o Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoThirdLogin": {
+    "message": "Start w/o Third-Party Plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "此驗證碼已被使用。\n新的驗證碼可能需要30秒。",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Close the following application to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Close the following applications to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Close the following application to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Close the following applications to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "您正在啟用自動登入功能。\nXIVLauncher 此後將使用當前賬戶登入，並不再顯示主窗口。\n\n如果您需要更改設置或賬戶，請在登入時按住 SHIFT 鍵。",

@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Actualizar",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Ignorar",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher no ha podido buscar actualizaciones. Ésto podría ser debido a problemas de conectividad con GitHub. Espera unos minutos y prueba de nuevo. Desactiva tu VPN, si estás usando una. Tambien es posible que necesites excluir XIVLauncher de tu antivirus.\nSi sigue ocurriendo tras varios minutos, comprueba el FAQ.",
     "description": "<Run>d__3.MoveNext"
@@ -379,6 +387,10 @@
     "message": "Iniciar sin Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoThirdLogin": {
+    "message": "Iniciar sin Plugins de terceros",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxLoginTooltip": {
     "message": "Iniciar sesión con las credenciales proporcionadas",
     "description": "MainWindowViewModel.SetupLoc"
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "Esta OTP ya ha sido usada.\nGenerar una nueva podría tardar hasta 30 segundos.",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Cerrar la siguiente aplicación para reparar el juego.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Cierra las siguientes aplicaciones para reparar el juego.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Cierra la siguiente aplicación para parchear el juego.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Cierra las siguientes aplicaciones para parchear el juego.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "Estás habilitando el inicio de sesión automático.\nEsto significa que XIVLauncher siempre iniciará sesión con la cuenta actual y no verás esta ventana.\n\nPara cambiar la configuración y las cuentas, tienes que mantener pulsado la tecla Mayús de tu teclado mientras haces clic en el icono XIVLauncher.",

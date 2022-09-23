@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Refresh",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Ignore",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher kunde inte söka efter uppdateringar. Detta kan bero på anslutningsproblem med GitHub. Vänta ett par minuter och försök igen.\nOm du använder ett VPN, stäng av det. Du kan även behöva utesluta XIVLauncher från ditt antivirus.\nOm problemen kvarstår efter flera minuter, vänligen se vår FAQ.",
     "description": "<Run>d__3.MoveNext"
@@ -376,7 +384,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Starta utan Dalamud",
+    "message": "Start w/o Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoThirdLogin": {
+    "message": "Start w/o Third-Party Plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "Detta engångslösenord har redan använts.\nDet kan ta upp till 30 sekunder för att få ett nytt.",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Close the following application to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Close the following applications to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Close the following application to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Close the following applications to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "Du aktiverar nu automatisk inloggning.\nDetta betyder att XIVLauncher alltid kommer att logga in dig med det nuvarande kontot och du kommer inte se detta fönster.\n\nFör att ändra inställningar och konton behöver du hålla ned Shift-knappen på ditt tangentbord medan du kör XIVLauncher.",

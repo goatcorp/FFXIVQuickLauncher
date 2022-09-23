@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Recarregar",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Ignorar",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher não conseguiu procurar por atualizações. Isso pode ser causado por problemas de conectividade ao GitHub. Aguarde alguns minutos e tente novamente.\nDesative sua VPN, se você tiver uma.\nVocê pode ainda ter que adicionar o XIVLauncher à lista de exclusões do seu antivirus.\nSe continuar apresentando falha depois de alguns minutos, por favor verifique a FAQ.",
     "description": "<Run>d__3.MoveNext"
@@ -376,7 +384,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Começar sem Dalamud",
+    "message": "Iniciar sem o Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoThirdLogin": {
+    "message": "Iniciar sem aplicativos de terceiros (third-party).",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "Este OTP já foi usado.\nPode levar até 30 segundos para receber um novo.",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Feche a seguinte aplicação para reparar o jogo.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Feche as seguintes aplicações para reparar o jogo.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Feche a seguinte aplicação para atualizar o jogo.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Feche as seguintes aplicações para atualizar o jogo.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "Você está ativando o Login automático.\nIsto significa que o XIVLauncher sempre fará login com a conta atual e você não verá esta janela.\n\nPara alterar configurações e contas, você precisa segurar o botão shift no seu teclado enquanto clica no ícone do XIVLauncher.",
