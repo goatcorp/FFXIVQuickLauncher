@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Verversen",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Negeren",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher kon niet controleren op updates. Dit kan worden veroorzaakt door verbindingsproblemen met GitHub. Wacht een paar minuten en probeer het opnieuw.\nSchakel uw VPN uit, als u die heeft. Mogelijk moet u XIVLauncher ook uitsluiten van uw antivirusprogramma.\nAls dit na enkele minuten nog steeds niet lukt, raadpleeg dan de veelgestelde vragen.",
     "description": "<Run>d__3.MoveNext"
@@ -379,6 +387,10 @@
     "message": "Start zonder Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoThirdLogin": {
+    "message": "Start zonder plugins can derden",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxLoginTooltip": {
     "message": "Log in met de verstrekte inloggegevens",
     "description": "MainWindowViewModel.SetupLoc"
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "Deze OTP is al gebruikt.\nHet kan tot 30 seconden duren voor een nieuwe.",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Sluit de volgende applicatie om het spel te repareren.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Sluit de volgende applicaties om het spel to repareren.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Sluit de volgende applicatie om het spel to patchen.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Sluit de volgende applicaties om het spel te patchen.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "U schakelt Auto-login in.\nDit betekent dat XIVLauncher u altijd aanmeldt met het huidige account en dat u dit venster niet ziet.\n\nOm instellingen en accounts te wijzigen, moet je de shift-knop op je toetsenbord ingedrukt houden terwijl je op het XIVLauncher-pictogram klikt.",

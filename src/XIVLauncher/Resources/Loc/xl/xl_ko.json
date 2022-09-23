@@ -1,4 +1,12 @@
 {
+  "Refresh": {
+    "message": "_Refresh",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "_Ignore",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
   "updatefailureerror": {
     "message": "XIVLancher가 업데이트 확인에 실패했습니다. GitHub와의 연결 문제일 수 있습니다. 잠시 기다리고 다시 시도하세요.\n만약 VPN을 쓰고 계시다면 해제해 주세요.\n계속 실패한다면 GitHub에 있는 Discord 링크를 통해 지원을 받으세요.",
     "description": "<Run>d__3.MoveNext"
@@ -379,6 +387,10 @@
     "message": "Dalamud 없이 실행",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoThirdLogin": {
+    "message": "Start w/o Third-Party Plugins",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxLoginTooltip": {
     "message": "이 정보로 로그인",
     "description": "MainWindowViewModel.SetupLoc"
@@ -414,6 +426,22 @@
   "DuplicateOtpAfterSuccess": {
     "message": "OTP는 이미 사용중입니다.\n새 패스워드를 받는데 최대 30초가 소요될 수 있습니다.",
     "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "Close the following application to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "Close the following applications to repair the game.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "Close the following application to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "Close the following applications to patch the game.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
     "message": "자동 로그인이 활성화 되어 있습니다.\n이것은 XIVLauncher가 항상 현재 계정으로 로그인 한다는 것을 뜻하며, 이 창은 표시되지 않게 됩니다.\n\n설정과 계정을 바꾸려면, Shift키를 누른 상태에서 XIVLauncher를 실행해야 합니다.",
