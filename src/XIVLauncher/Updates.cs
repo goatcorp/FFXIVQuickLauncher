@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using CheapLoc;
@@ -12,6 +15,18 @@ namespace XIVLauncher
     class Updates
     {
         public event Action<bool> OnUpdateCheckFinished;
+
+        private class ErrorNewsData
+        {
+            [JsonPropertyName("until")]
+            public uint ShowUntil { get; set; }
+
+            [JsonPropertyName("message")]
+            public string Message { get; set; }
+
+            [JsonPropertyName("isError")]
+            public bool IsError { get; set; }
+        }
 
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {
@@ -77,10 +92,40 @@ namespace XIVLauncher
             catch (Exception ex)
             {
                 Log.Error(ex, "Update failed");
-                CustomMessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by connectivity issues to GitHub. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ."),
-                    "XIVLauncher",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error, showOfficialLauncher: true);
+                ErrorNewsData? newsData = null;
+
+                try
+                {
+                    const string NEWS_URL = "https://gist.githubusercontent.com/goaaats/5968072474f79b066a60854d38b95280/raw/xl-news.txt";
+
+                    using var client = new HttpClient()
+                    {
+                        Timeout = TimeSpan.FromSeconds(10),
+                    };
+
+                    var text = await client.GetStringAsync(NEWS_URL).ConfigureAwait(false);
+                    newsData = JsonSerializer.Deserialize<ErrorNewsData>(text);
+                }
+                catch (Exception newsEx)
+                {
+                    Log.Error(newsEx, "Could not get error news");
+                }
+
+                if (newsData != null && !string.IsNullOrEmpty(newsData.Message) && DateTimeOffset.UtcNow.ToUnixTimeSeconds() < newsData.ShowUntil)
+                {
+                    CustomMessageBox.Show(newsData.Message,
+                        "XIVLauncher",
+                        MessageBoxButton.OK,
+                        newsData.IsError ? MessageBoxImage.Error : MessageBoxImage.Asterisk, showOfficialLauncher: true);
+                }
+                else
+                {
+                    CustomMessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ."),
+                        "XIVLauncher",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error, showOfficialLauncher: true);
+                }
+
                 System.Environment.Exit(1);
             }
 
