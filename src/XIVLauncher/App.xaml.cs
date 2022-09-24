@@ -316,7 +316,11 @@ namespace XIVLauncher
             try
             {
                 var helpWriter = new StringWriter();
-                var parser = new Parser(config => config.HelpWriter = helpWriter);
+                var parser = new Parser(config =>
+                {
+                    config.HelpWriter = helpWriter;
+                    config.IgnoreUnknownArguments = true;
+                });
                 var result = parser.ParseArguments<CmdLineOptions>(Environment.GetCommandLineArgs());
 
                 if (result.Errors.Any())
