@@ -505,10 +505,17 @@ namespace XIVLauncher.Windows
         {
             var switcher = new AccountSwitcher(_accountManager);
 
-            switcher.WindowStartupLocation = WindowStartupLocation.Manual;
-            var location = PointToScreen(Mouse.GetPosition(this));
-            switcher.Left = location.X - 15;
-            switcher.Top = location.Y - 15;
+            var locationFromScreen = AccountSwitcherButton.PointToScreen(new Point(0, 0));
+            var source = PresentationSource.FromVisual(this);
+
+            if (source != null)
+            {
+                var targetPoints = source.CompositionTarget!.TransformFromDevice.Transform(locationFromScreen);
+
+                switcher.WindowStartupLocation = WindowStartupLocation.Manual;
+                switcher.Left = targetPoints.X - 15;
+                switcher.Top = targetPoints.Y - 15;
+            }
 
             switcher.OnAccountSwitchedEventHandler += OnAccountSwitchedEventHandler;
 
