@@ -72,6 +72,8 @@ public interface ILauncherConfig
 
     public bool? FSyncEnabled { get; set; }
 
+    public string DxvkFrameRate { get; set; }
+
     public Dxvk.DxvkHudType DxvkHudType { get; set; }
 
     public string? WineDebugVars { get; set; }

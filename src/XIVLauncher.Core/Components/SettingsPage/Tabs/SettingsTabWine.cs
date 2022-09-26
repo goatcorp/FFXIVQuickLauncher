@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using ImGuiNET;
 using XIVLauncher.Common.Unix.Compatibility;
@@ -51,7 +52,10 @@ public class SettingsTabWine : SettingsTab
                     return null;
                 }
             },
-
+            new SettingsEntry<string>("DXVK Frame Limit", "Configure how many frames DXVK should be limited to. Set to 0 for unlimited.", () => Program.Config.DxvkFrameRate ?? "0", s => Program.Config.DxvkFrameRate = s)
+            {
+                CheckValidity = s => Regex.IsMatch(s, @"^\d{1,3}$") ? null : "Please specify a valid integer below 999."
+            },
             new SettingsEntry<Dxvk.DxvkHudType>("DXVK Overlay", "Configure how much of the DXVK overlay is to be shown.", () => Program.Config.DxvkHudType, type => Program.Config.DxvkHudType = type),
             new SettingsEntry<string>("WINEDEBUG Variables", "Configure debug logging for wine. Useful for troubleshooting.", () => Program.Config.WineDebugVars ?? string.Empty, s => Program.Config.WineDebugVars = s)
         };
