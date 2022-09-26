@@ -173,6 +173,7 @@ public class CompatibilityTools
             Dxvk.DxvkHudType.None => "0",
             Dxvk.DxvkHudType.Fps => "fps",
             Dxvk.DxvkHudType.Full => "full",
+            Dxvk.DxvkHudType.Custom => Settings.DxvkHudCustomString,
             _ => throw new ArgumentOutOfRangeException()
         };
 
