@@ -44,13 +44,15 @@ public class CompatibilityTools
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
+    private readonly bool mangohudOn;
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
-    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
+    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? mangohudOn, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
         this.hudType = hudType;
+        this.mangohudOn = mangohudOn ?? false;
         this.gamemodeOn = gamemodeOn ?? false;
         this.dxvkAsyncOn = (dxvkAsyncOn ?? false) ? "1" : "0";
 
@@ -176,9 +178,22 @@ public class CompatibilityTools
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
+        switch (ldPreload)
         {
-            ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
+            case string val when !val.Contains("libgamemodeauto.so.0") && gamemodeOn == true &&
+                                 !val.Contains("libMangoHud.so") && mangohudOn == true:
+                ldPreload += "libgamemodeauto.so.0:libMangoHud.so";
+                wineEnviromentVariables.Add("MANGOHUD", "1");
+                break;
+
+            case string val when !val.Contains("libgamemodeauto.so.0") && gamemodeOn == true:
+                ldPreload += "libgamemodeauto.so.0";
+                break;
+
+            case string val when !val.Contains("libMangoHud.so") && mangohudOn == true:
+                ldPreload += "libMangoHud.so";
+                wineEnviromentVariables.Add("MANGOHUD", "1");
+                break;
         }
 
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);

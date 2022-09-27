@@ -66,6 +66,8 @@ public interface ILauncherConfig
 
     public bool? GameModeEnabled { get; set; }
 
+    public bool? MangoHudEnabled { get; set; }
+
     public bool? DxvkAsyncEnabled { get; set; }
 
     public bool? ESyncEnabled { get; set; }

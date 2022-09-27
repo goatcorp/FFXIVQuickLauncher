@@ -36,6 +36,17 @@ public class SettingsTabWine : SettingsTab
                     return null;
                 }
             },
+            new SettingsEntry<bool>("Enable MangoHud", "Enable launching with FlightlessMango's Vulkan/GPU overlay.", () => Program.Config.MangoHudEnabled ?? true, b => Program.Config.MangoHudEnabled = b)
+            {
+                CheckVisibility = () => RuntimeInformation.IsOSPlatform(OSPlatform.Linux),
+                CheckValidity = b =>
+                {
+                    if (b == true && !File.Exists("/usr/lib/libMangoHud.so"))
+                        return "MangoHud not detected.";
+
+                    return null;
+                }
+            },
 #endif
 
             new SettingsEntry<bool>("Enable DXVK ASYNC", "Enable DXVK ASYNC patch.", () => Program.Config.DxvkAsyncEnabled ?? true, b => Program.Config.DxvkAsyncEnabled = b),
