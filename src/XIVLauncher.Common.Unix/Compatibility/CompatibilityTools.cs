@@ -156,6 +156,17 @@ public class CompatibilityTools
         psi.UseShellExecute = false;
         psi.WorkingDirectory = workingDirectory;
 
+        // Environment variable USE_WINED3D can be used to set wineD3D
+        string useWineD3D = Environment.GetEnvironmentVariable("USE_WINED3D") ?? "";
+        if (useWineD3D.Equals("1") || useWineD3D.ToLower().Equals("true"))
+        {
+            wineD3D = true;
+        }
+        else if (useWineD3D.Equals("0") || useWineD3D.ToLower().Equals("false"))
+        {
+            wineD3D = false;
+        }
+
         var wineEnviromentVariables = new Dictionary<string, string>();
         wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
         wineEnviromentVariables.Add("WINEDLLOVERRIDES", $"mscoree=n;d3d9,d3d11,d3d10core,dxgi={(wineD3D ? "b" : "n")}");
