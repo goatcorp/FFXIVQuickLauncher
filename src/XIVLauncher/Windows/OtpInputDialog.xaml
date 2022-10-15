@@ -56,15 +56,15 @@
 
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                     <Button
-                        Content="{Binding CancelWithShortcutLoc}"
-                        Margin="10,0,0,0"
-                        Width="100"
-                        Click="CancelButton_OnClick" />
-                    <Button
                         Content="{Binding OkLoc}"
                         Margin="7,0,0,0"
                         Width="100"
                         Click="OkButton_OnClick" />
+                    <Button
+                        Content="{Binding CancelWithShortcutLoc}"
+                        Margin="10,0,0,0"
+                        Width="100"
+                        Click="CancelButton_OnClick" />
                 </StackPanel>
                 <TextBlock Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" MouseUp="OpenShortcutInfo_MouseUp" Text="{Binding OtpOneClickHintLoc}"/>
             </StackPanel>
