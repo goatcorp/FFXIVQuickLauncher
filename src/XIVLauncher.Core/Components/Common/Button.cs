@@ -33,7 +33,7 @@ public class Button : Component
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, HoverColor);
         ImGui.PushStyleColor(ImGuiCol.Text, TextColor);
 
-        if (ImGui.Button(Label, new Vector2(Width ?? -1, 0)))
+        if (ImGui.Button(Label, new Vector2(Width ?? -1, 0)) || (ImGui.IsItemFocused() && ImGui.IsKeyPressed(ImGuiKey.Enter)))
         {
             this.Click?.Invoke();
         }

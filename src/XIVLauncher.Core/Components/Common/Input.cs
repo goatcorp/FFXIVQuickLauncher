@@ -25,6 +25,11 @@ public class Input : Component
 
     public string SteamDeckPrompt { get; set; }
 
+    public bool TakeKeyboardFocus { get; set; }
+
+    /** Executed on detection of the enter key **/
+    public event Action? Enter;
+
     public string Value
     {
         get => inputBacking;
@@ -73,6 +78,9 @@ public class Input : Component
         ImGui.PushStyleColor(ImGuiCol.TextDisabled, ImGuiColors.TextDisabled);
         ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.Text);
 
+        if (TakeKeyboardFocus && ImGui.IsWindowAppearing())
+            ImGui.SetKeyboardFocusHere();
+
         ImGui.Text(Label);
 
         if (!this.IsEnabled || this.isSteamDeckInputActive)
@@ -84,6 +92,11 @@ public class Input : Component
         ImGui.PopStyleColor();
 
         ImGui.InputTextWithHint($"###{Id}", Hint, ref inputBacking, MaxLength, Flags);
+
+        if (ImGui.IsItemFocused() && ImGui.IsKeyPressed(ImGuiKey.Enter))
+        {
+            Enter?.Invoke();
+        }
 
         if (ImGui.IsItemActivated() && HasSteamDeckInput && Program.Steam != null && Program.Steam.IsValid)
         {

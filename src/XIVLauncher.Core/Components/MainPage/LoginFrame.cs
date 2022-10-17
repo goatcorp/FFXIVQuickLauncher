@@ -54,8 +54,19 @@ public class LoginFrame : Component
     {
         this.mainPage = mainPage;
 
-        this.loginInput = new Input("Username", "Enter your Username", new Vector2(12f, 0f), 128);
+        void TriggerLogin()
+        {
+            this.OnLogin?.Invoke(LoginAction.Game);
+        }
+
+        this.loginInput = new Input("Username", "Enter your Username", new Vector2(12f, 0f), 128)
+        {
+            TakeKeyboardFocus = true
+        };
+        this.loginInput.Enter += TriggerLogin;
+
         this.passwordInput = new Input("Password", "Enter your password", new Vector2(12f, 0f), 128, flags: ImGuiInputTextFlags.Password | ImGuiInputTextFlags.NoUndoRedo);
+        this.passwordInput.Enter += TriggerLogin;
 
         this.oneTimePasswordCheckbox = new Checkbox("Use one-time password");
 
@@ -64,7 +75,7 @@ public class LoginFrame : Component
         this.autoLoginCheckbox = new Checkbox("Log in automatically");
 
         this.loginButton = new Button("Login");
-        this.loginButton.Click += () => { this.OnLogin?.Invoke(LoginAction.Game); };
+        this.loginButton.Click += TriggerLogin;
     }
 
     private Vector2 GetSize()
