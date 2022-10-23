@@ -132,8 +132,8 @@ namespace XIVLauncher.Game
                 var dxgiInfo = FileVersionInfo.GetVersionInfo(dxgi.FullName);
                 var d3d11Info = FileVersionInfo.GetVersionInfo(d3d11.FullName);
 
-                if (dxgiInfo.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase) &&
-                    d3d11Info.ProductName.Equals("GShade", StringComparison.OrdinalIgnoreCase))
+                if (dxgiInfo.ProductName?.Equals("GShade", StringComparison.OrdinalIgnoreCase) == true &&
+                    d3d11Info.ProductName?.Equals("GShade", StringComparison.OrdinalIgnoreCase) == true)
                 {
                     if (CustomMessageBox.Builder
                                         .NewFrom(Loc.Localize("GShadeError",
