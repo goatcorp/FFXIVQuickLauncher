@@ -8,6 +8,7 @@
         public static bool IsPreRelease => CheckEnvBool("XL_PRERELEASE");
         public static bool IsNoRunas => CheckEnvBool("XL_NO_RUNAS");
         public static bool IsIgnoreSpaceRequirements => CheckEnvBool("XL_NO_SPACE_REQUIREMENTS");
+        public static bool IsWineD3D => CheckEnvBool("XL_FORCE_WINED3D");
         private static bool CheckEnvBool(string var) => bool.Parse(System.Environment.GetEnvironmentVariable(var) ?? "false");
     }
 }
