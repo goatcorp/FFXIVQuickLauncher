@@ -1,6 +1,9 @@
+using System.Diagnostics;
 using System.Numerics;
 using ImGuiNET;
+using XIVLauncher.Common.Unix.Compatibility;
 using XIVLauncher.Common.Util;
+using XIVLauncher.Core.Support;
 
 namespace XIVLauncher.Core.Components.SettingsPage.Tabs;
 
@@ -49,10 +52,16 @@ public class SettingsTabAbout : SettingsTab
             PlatformHelpers.OpenBrowser(Path.Combine(AppContext.BaseDirectory, "license.txt"));
         }
 
+        if (ImGui.Button("Generate Troubleshooting Pack"))
+        {
+            PackGenerator.SavePack(Program.storage);
+            PlatformHelpers.OpenBrowser(Program.storage.GetFolder("logs").FullName);
+        }
+
         ImGui.Dummy(new Vector2(20));
 
         ImGui.Image(this.logoTexture.ImGuiHandle, new Vector2(256) * ImGuiHelpers.GlobalScale);
-
+            
         base.Draw();
     }
 }

@@ -4,6 +4,7 @@ namespace XIVLauncher.Common
     {
         Win32,
         Win32OnLinux,
+        Linux,
         Mac,
     }
 }

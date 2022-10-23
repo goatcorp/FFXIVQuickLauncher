@@ -45,7 +45,7 @@ class Program
     private static bool showImGuiDemoWindow = true;
 
     private static LauncherApp launcherApp;
-    private static Storage storage;
+    public static Storage storage;
     public static DirectoryInfo DotnetRuntime => storage.GetFolder("runtime");
 
     // TODO: We don't have the steamworks api for this yet.

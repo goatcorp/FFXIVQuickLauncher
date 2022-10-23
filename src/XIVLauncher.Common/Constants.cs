@@ -18,6 +18,7 @@ namespace XIVLauncher.Common
             {
                 case Platform.Win32:
                 case Platform.Win32OnLinux:
+                case Platform.Linux:
                     return "FFXIV PATCH CLIENT";
 
                 case Platform.Mac:

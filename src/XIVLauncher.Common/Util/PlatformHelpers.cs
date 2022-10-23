@@ -14,10 +14,16 @@ public static class PlatformHelpers
     {
         if (EnvironmentSettings.IsWine)
             return Platform.Win32OnLinux;
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return Platform.Linux;
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            return Platform.Mac;
+        else
+            return Platform.Win32;
 
         // TODO(goat): Add mac here, once it's merged
 
-        return Platform.Win32;
+
     }
 
     /// <summary>
