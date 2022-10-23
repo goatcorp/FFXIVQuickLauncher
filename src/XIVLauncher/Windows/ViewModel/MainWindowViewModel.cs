@@ -541,7 +541,6 @@ namespace XIVLauncher.Windows.ViewModel
                             return false;
 
                         loginResult.State = Launcher.LoginState.Ok;
-                        action = AfterLoginAction.Start;
                     }
                     else
                     {
@@ -586,7 +585,6 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 loginResult.State = Launcher.LoginState.Ok;
-                action = AfterLoginAction.Start;
             }
 
             if (action == AfterLoginAction.UpdateOnly)

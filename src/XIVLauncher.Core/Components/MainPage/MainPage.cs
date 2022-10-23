@@ -317,7 +317,6 @@ public class MainPage : Page
                         return false;
 
                     loginResult.State = Launcher.LoginState.Ok;
-                    action = LoginAction.Game;
                 }
                 else
                 {
@@ -355,7 +354,6 @@ public class MainPage : Page
             }
 
             loginResult.State = Launcher.LoginState.Ok;
-            action = LoginAction.Game;
         }
 
         if (action == LoginAction.GameNoLaunch)
