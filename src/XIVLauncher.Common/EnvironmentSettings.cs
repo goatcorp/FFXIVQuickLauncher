@@ -9,6 +9,10 @@
         public static bool IsNoRunas => CheckEnvBool("XL_NO_RUNAS");
         public static bool IsIgnoreSpaceRequirements => CheckEnvBool("XL_NO_SPACE_REQUIREMENTS");
         public static bool IsWineD3D => CheckEnvBool("XL_FORCE_WINED3D");
-        private static bool CheckEnvBool(string var) => bool.Parse(System.Environment.GetEnvironmentVariable(var) ?? "false");
+        private static bool CheckEnvBool(string var)
+        {
+            var = (System.Environment.GetEnvironmentVariable(var) ?? "false").ToLower();
+            return (var.Equals("1") || var.Equals("true") || var.Equals("on") || var.Equals("yes"));
+        }
     }
 }
