@@ -12,9 +12,9 @@ namespace XIVLauncher.Windows.ViewModel
         public void SetupLoc()
         {
             FirstTimeGamePathLoc = Loc.Localize("ChooseGamePathFTS",
-                "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".");
+                "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".\n\nIf you don't have the game installed, you can choose an empty folder and XIVLauncher will install it for you.");
             FirstTimeSteamNoticeLoc = Loc.Localize("FirstTimeSteamNotice",
-                "Please check this box if you are usually launching the game using Steam.");
+                "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.");
             FirstTimeSteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
             FirstTimeDirectXLoc = Loc.Localize("ChooseDirectXFTS", "Please select which DirectX version you want to use.");
             DirectX9NoticeLoc = Loc.Localize("DirectX9NoticeFTS",
