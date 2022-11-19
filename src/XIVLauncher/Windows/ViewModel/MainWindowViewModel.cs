@@ -376,6 +376,16 @@ namespace XIVLauncher.Windows.ViewModel
                 var enableUidCache = App.Settings.UniqueIdCacheEnabled;
                 var gamePath = App.Settings.GamePath;
 
+                try
+                {
+                    if (App.Steam.AsyncStartTask != null)
+                        await App.Steam.AsyncStartTask.ConfigureAwait(false);
+                }
+                catch (WindowsSteam.SteamStartupTimedOutException)
+                {
+                    Log.Warning("Automatic Steam startup timed out. Will try normally.");
+                }
+
                 if (action == AfterLoginAction.Repair)
                     return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
                 else

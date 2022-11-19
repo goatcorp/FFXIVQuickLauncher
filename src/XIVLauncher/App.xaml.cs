@@ -79,7 +79,7 @@ namespace XIVLauncher
         public const string REPO_URL = "https://github.com/goatcorp/FFXIVQuickLauncher";
 
         public static ILauncherSettingsV3 Settings;
-        public static ISteam Steam;
+        public static WindowsSteam Steam;
         public static CommonUniqueIdCache UniqueIdCache;
 
 #if !XL_NOAUTOUPDATE
@@ -404,6 +404,9 @@ namespace XIVLauncher
             try
             {
                 Steam = new WindowsSteam();
+
+                if (Settings.AutoStartSteam.GetValueOrDefault(false))
+                    Steam.KickoffAsyncStartup(Settings.IsFt.GetValueOrDefault(false) ? Constants.STEAM_FT_APP_ID : Constants.STEAM_APP_ID);
             }
             catch (Exception ex)
             {

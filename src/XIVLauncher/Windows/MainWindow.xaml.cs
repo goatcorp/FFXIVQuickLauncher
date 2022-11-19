@@ -209,6 +209,8 @@ namespace XIVLauncher.Windows
 
             App.Settings.IsFt ??= false;
 
+            App.Settings.AutoStartSteam ??= false;
+
             var versionLevel = App.Settings.VersionUpgradeLevel.GetValueOrDefault(0);
 
             while (versionLevel < CURRENT_VERSION_LEVEL)
@@ -583,6 +585,11 @@ namespace XIVLauncher.Windows
         private void RadioButton_MouseLeave(object sender, MouseEventArgs e)
         {
             _bannerChangeTimer.Start();
+        }
+
+        private void SettingsControl_OnCloseMainWindowGracefully(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

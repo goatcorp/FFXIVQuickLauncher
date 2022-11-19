@@ -41,6 +41,7 @@ namespace XIVLauncher.Settings
         bool? ExitLauncherAfterGameExit { get; set; }
         bool? IsFt { get; set; }
         string DalamudRolloutBucket { get; set; }
+        bool? AutoStartSteam { get; set; }
 
         #endregion
     }

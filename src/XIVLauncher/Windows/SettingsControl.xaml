@@ -37,9 +37,24 @@
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="Red" Text="{Binding GamePathSafeguardLoc}" x:Name="GamePathSafeguardText" Visibility="Collapsed"/>
 
-                    <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
-                              x:Name="OtpServerCheckBox" Margin="0,15,0,0" Content="{Binding OtpServerCheckBoxLoc}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                        <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
+                                  x:Name="OtpServerCheckBox" Content="{Binding OtpServerCheckBoxLoc}" ToolTip="{Binding OtpServerTooltipLoc}"/>
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                HorizontalAlignment="Left" Click="LearnMoreButton_OnClick">
+                            <Button.ToolTip>
+                                <TextBlock Text="{Binding OtpLearnMoreTooltipLoc}" />
+                            </Button.ToolTip>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center"
+                                           Foreground="DarkGray" FontSize="11" Text="{Binding LearnMoreLoc}"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
 
+                    <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
+                              x:Name="AutoStartSteamCheckBox" Margin="0,15,0,0" Content="{Binding AutoStartSteamLoc}" ToolTip="{Binding AutoStartSteamTooltipLoc}" />
+                    
                     <TextBox Width="500" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
                              Margin="0,10,0,0" x:Name="LaunchArgsTextBox" materialDesign:HintAssist.Hint="{Binding AdditionalArgumentsLoc}" materialDesign:HintAssist.IsFloating="True"/>
@@ -337,7 +352,7 @@
                             <CheckBox x:Name="TreatNonZeroExitCodeAsFailureCheckbox"
                                           Content="{Binding TreatNonZeroExitCodeAsFailureLoc}"
                                           HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
-                            <CheckBox x:Name="IsFreeTrialCheckbox"
+                            <CheckBox x:Name="IsFreeTrialCheckbox" Click="IsFreeTrialCheckbox_OnClick"
                                       Content="{Binding IsFreeTrialLoc}"
                                       HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
                         </StackPanel>

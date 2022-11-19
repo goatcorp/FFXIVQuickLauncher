@@ -35,7 +35,7 @@
                     <materialDesign:FadeWipe />
                 </materialDesign:TransitionerSlide.ForwardWipe>
                 <windows:SettingsControl x:Name="SettingsControl"
-                                         SettingsDismissed="SettingsControl_OnSettingsDismissed" />
+                                         SettingsDismissed="SettingsControl_OnSettingsDismissed" CloseMainWindowGracefully="SettingsControl_OnCloseMainWindowGracefully"/>
             </materialDesign:TransitionerSlide>
 
             <materialDesign:TransitionerSlide>

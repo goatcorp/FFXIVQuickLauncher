@@ -69,6 +69,9 @@ namespace XIVLauncher.Windows.ViewModel
                 "XIVLauncher does not support Chinese or Korean version of the game. Make sure this path indeed is for the international version.");
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
             OtpServerCheckBoxLoc = Loc.Localize("OtpServerCheckBox", "Enable XL Authenticator app/OTP macro support");
+            OtpServerTooltipLoc = Loc.Localize("OtpServerTooltip", "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.");
+            LearnMoreLoc = Loc.Localize("LearnMore", "Learn More");
+            OtpLearnMoreTooltipLoc = Loc.Localize("OtpLearnMoreTooltipLoc", "Open a guide in your web browser.");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
             ChooseDpiAwarenessLoc = Loc.Localize("ChooseDpiAwareness", "Game DPI Awareness");
             DpiAwarenessAwareLoc = Loc.Localize("DpiAwarenessAware", "Aware");
@@ -77,6 +80,8 @@ namespace XIVLauncher.Windows.ViewModel
             RunIntegrityCheckLoc = Loc.Localize("RunIntegrityCheck", "Run integrity check");
             RunIntegrityCheckTooltipLoc =
                 Loc.Localize("RunIntegrityCheckTooltip", "Run integrity check on game files.");
+            AutoStartSteamLoc = Loc.Localize("AutoStartSteam", "Start Steam when starting XIVLauncher");
+            AutoStartSteamTooltipLoc = Loc.Localize("AutoStartSteamTooltip", "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.");
 
             SettingsGameSettingsLoc = Loc.Localize("SettingsGameSettings", "Game Settings");
             DirectXLoc = Loc.Localize("ChooseDirectX", "Please select which DirectX version you want to use.");
@@ -173,6 +178,9 @@ namespace XIVLauncher.Windows.ViewModel
         public string GamePathSafeguardRegionLoc { get; private set; }
         public string SteamCheckBoxLoc { get; private set; }
         public string OtpServerCheckBoxLoc { get; private set; }
+        public string OtpServerTooltipLoc { get; private set; }
+        public string LearnMoreLoc { get; private set; }
+        public string OtpLearnMoreTooltipLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
         public string ChooseDpiAwarenessLoc { get; private set; }
         public string ChooseDpiAwarenessHintLoc { get; private set; }
@@ -180,6 +188,8 @@ namespace XIVLauncher.Windows.ViewModel
         public string DpiAwarenessUnawareLoc { get; private set; }
         public string RunIntegrityCheckLoc { get; private set; }
         public string RunIntegrityCheckTooltipLoc { get; private set; }
+        public string AutoStartSteamLoc { get; private set; }
+        public string AutoStartSteamTooltipLoc { get; private set; }
 
         public string SettingsGameSettingsLoc { get; private set; }
         public string DirectXLoc { get; private set; }
