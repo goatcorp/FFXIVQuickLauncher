@@ -1,0 +1,46 @@
+﻿<Window x:Class="XIVLauncher.Windows.AdvancedSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
+        mc:Ignorable="d"
+        Title="{Binding AdvancedSettingsTitleLoc}" SizeToContent="Height" Width="450" WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        d:DataContext="{d:DesignInstance viewModel:AdvancedSettingsViewModel}">
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="10, 0, 0, 50">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="UidCacheCheckBox"
+                          Content="{Binding EnabledUidCacheLoc}"
+                          HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
+                <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                        HorizontalAlignment="Left"
+                        Click="ResetCacheButton_OnClick" Margin="0 0 0 0">
+                    <Button.ToolTip>
+                        <TextBlock Text="{Binding ResetUidCacheTipLoc}" />
+                    </Button.ToolTip>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
+                                   Foreground="DarkGray" FontSize="11">
+                            Reset
+                        </TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <CheckBox x:Name="ExitLauncherAfterGameExitCheckbox"
+                      Content="{Binding ExitLauncherAfterGameExitLoc}"
+                      HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+            <CheckBox x:Name="TreatNonZeroExitCodeAsFailureCheckbox"
+                      Content="{Binding TreatNonZeroExitCodeAsFailureLoc}"
+                      HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+        </StackPanel>
+        
+        <Button Content="{Binding CloseLoc}" Width="79" VerticalAlignment="Bottom"
+                HorizontalAlignment="Right" Margin="0,0,10,10" Click="CloseButton_OnClick" />
+    </Grid>
+</Window>

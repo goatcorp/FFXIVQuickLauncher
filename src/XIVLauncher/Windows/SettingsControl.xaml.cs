@@ -68,9 +68,6 @@ namespace XIVLauncher.Windows
             LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
             LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
             AddonListView.ItemsSource = App.Settings.AddonList ??= new List<AddonEntry>();
-            UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
-            ExitLauncherAfterGameExitCheckbox.IsChecked = App.Settings.ExitLauncherAfterGameExit ?? true;
-            TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? false;
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
             PatchAcquisitionComboBox.SelectedIndex = (int) App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria);
@@ -125,9 +122,6 @@ namespace XIVLauncher.Windows
             App.Settings.LauncherLanguage = (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex;
 
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
-            App.Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
-            App.Settings.ExitLauncherAfterGameExit = ExitLauncherAfterGameExitCheckbox.IsChecked == true;
-            App.Settings.TreatNonZeroExitCodeAsFailure = TreatNonZeroExitCodeAsFailureCheckbox.IsChecked == true;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
             App.Settings.KeepPatches = KeepPatchesCheckBox.IsChecked == true;
             App.Settings.PatchAcquisitionMethod = (AcquisitionMethod) PatchAcquisitionComboBox.SelectedIndex;
@@ -249,11 +243,6 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private void ResetCacheButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            App.UniqueIdCache.Reset();
-        }
-
         private void RunIntegrityCheck_OnClick(object s, RoutedEventArgs e)
         {
             var window = new IntegrityCheckProgressWindow();
@@ -318,7 +307,7 @@ namespace XIVLauncher.Windows
 
         private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
         {
-            Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
+            Dx9DisclaimerTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void LauncherLanguageCombo_SelectionChanged(object sender, RoutedEventArgs e)
@@ -598,6 +587,12 @@ namespace XIVLauncher.Windows
                 App.Settings.IsFt = IsFreeTrialCheckbox.IsChecked == true;
                 CloseMainWindowGracefully?.Invoke(this, null);
             }
+        }
+
+        private void OpenAdvancedSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            var asw = new AdvancedSettingsWindow();
+            asw.ShowDialog();
         }
     }
 }

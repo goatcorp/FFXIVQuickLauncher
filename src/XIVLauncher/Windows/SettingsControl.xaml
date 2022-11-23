@@ -85,11 +85,17 @@
                         DirectX 9
                     </RadioButton>
 
-                    <TextBlock x:Name="Dx9DisclaimerTextBlock" Visibility="Hidden"
+                    <TextBlock x:Name="Dx9DisclaimerTextBlock" Visibility="Collapsed"
                                HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="OrangeRed"
                                Margin="0,0,0,0" Text="{Binding DirectX9NoticeLoc}" />
+                    
+                    <CheckBox x:Name="IsFreeTrialCheckbox" Click="IsFreeTrialCheckbox_OnClick"
+                              Content="{Binding IsFreeTrialLoc}"
+                              HorizontalAlignment="Left" Margin="0,15,0,15" Foreground="DarkGray" />
+                    
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseLanguageLoc}" />
+                    
                     <ComboBox SelectedIndex="1" Margin="0, 3, 0, 0" x:Name="LanguageComboBox"
                               Foreground="{DynamicResource MaterialDesignBody}">
                         <ComboBoxItem>日本語</ComboBoxItem>
@@ -328,33 +334,18 @@
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartOriginalLauncherLoc}"/>
                                 </StackPanel>
                             </Button>
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox x:Name="UidCacheCheckBox"
-                                          Content="{Binding EnabledUidCacheLoc}"
-                                          HorizontalAlignment="Left" Margin="0,0,0,0" Foreground="DarkGray" />
-                                <Button Style="{DynamicResource MaterialDesignFlatButton}"
-                                        HorizontalAlignment="Left"
-                                        Click="ResetCacheButton_OnClick" Margin="0 0 0 0">
-                                    <Button.ToolTip>
-                                        <TextBlock Text="{Binding ResetUidCacheTipLoc}" />
-                                    </Button.ToolTip>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
-                                                   Foreground="DarkGray" FontSize="11">
-                                            Reset
-                                        </TextBlock>
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
-                            <CheckBox x:Name="ExitLauncherAfterGameExitCheckbox"
-                                      Content="{Binding ExitLauncherAfterGameExitLoc}"
-                                      HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
-                            <CheckBox x:Name="TreatNonZeroExitCodeAsFailureCheckbox"
-                                          Content="{Binding TreatNonZeroExitCodeAsFailureLoc}"
-                                          HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
-                            <CheckBox x:Name="IsFreeTrialCheckbox" Click="IsFreeTrialCheckbox_OnClick"
-                                      Content="{Binding IsFreeTrialLoc}"
-                                      HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+                            
+                            <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Left"
+                                    Click="OpenAdvancedSettings_OnClick" Margin="5 0 0 0">
+                                <Button.ToolTip>
+                                    <TextBlock Text="{Binding ResetUidCacheTipLoc}" />
+                                </Button.ToolTip>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
+                                               Foreground="DarkGray" FontSize="11" Text="{Binding OpenAdvancedSettingsLoc}"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
 
                         <Image Source="pack://application:,,,/Resources/logo.png" Width="200"

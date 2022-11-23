@@ -159,12 +159,9 @@ namespace XIVLauncher.Windows.ViewModel
             OpenFaqLoc = Loc.Localize("OpenFaq", "Open FAQ");
             StartBackupToolLoc = Loc.Localize("StartBackupTool", "Start Backup Tool");
             StartOriginalLauncherLoc = Loc.Localize("StartOriginalLauncher", "Start Original Launcher");
-            EnabledUidCacheLoc = Loc.Localize("EnabledUidCache", "Enable experimental UID cache (this will break on game updates!)");
-            ResetUidCacheTipLoc = Loc.Localize("ResetUidCacheTip", "Hold control while starting the launcher to reset the UID cache");
-            EnableEncryptionLoc = Loc.Localize("EnableEncryption", "Enable encrypting arguments to the client");
-            ExitLauncherAfterGameExitLoc = Loc.Localize("ExitLauncherAfterGameExitLoc", "Exit XIVLauncher after game exit");
-            TreatNonZeroExitCodeAsFailureLoc = Loc.Localize("TreatNonZeroExitCodeAsFailureLoc", "Treat non-zero game exit code as failure");
-            IsFreeTrialLoc = Loc.Localize("IsFreeTrial", "Start in free trial mode");
+            IsFreeTrialLoc = Loc.Localize("IsFreeTrial", "Using free trial account");
+
+            OpenAdvancedSettingsLoc = Loc.Localize("OpenAdvancedSettings", "Open Advanced Settings");
 
             PluginDisabledTagLoc = Loc.Localize("DisabledPlugin", " (disabled)");
         }
@@ -247,12 +244,8 @@ namespace XIVLauncher.Windows.ViewModel
         public string OpenFaqLoc { get; private set; }
         public string StartBackupToolLoc { get; private set; }
         public string StartOriginalLauncherLoc { get; private set; }
-        public string EnabledUidCacheLoc { get; private set; }
-        public string ResetUidCacheTipLoc { get; private set; }
-        public string EnableEncryptionLoc { get; private set; }
-        public string ExitLauncherAfterGameExitLoc { get; private set; }
-        public string TreatNonZeroExitCodeAsFailureLoc { get; private set; }
         public string IsFreeTrialLoc { get; private set; }
+        public string OpenAdvancedSettingsLoc { get; private set; }
 
         public string PluginDisabledTagLoc { get; private set; }
     }
