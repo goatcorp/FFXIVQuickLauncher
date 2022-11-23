@@ -26,6 +26,7 @@ namespace XIVLauncher.Windows
             UidCacheCheckBox.IsChecked = App.Settings.UniqueIdCacheEnabled;
             ExitLauncherAfterGameExitCheckbox.IsChecked = App.Settings.ExitLauncherAfterGameExit ?? true;
             TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? false;
+            ForceNorthAmericaCheckbox.IsChecked = App.Settings.ForceNorthAmerica ?? false;
         }
 
         private void Save()
@@ -33,6 +34,7 @@ namespace XIVLauncher.Windows
             App.Settings.UniqueIdCacheEnabled = UidCacheCheckBox.IsChecked == true;
             App.Settings.ExitLauncherAfterGameExit = ExitLauncherAfterGameExitCheckbox.IsChecked == true;
             App.Settings.TreatNonZeroExitCodeAsFailure = TreatNonZeroExitCodeAsFailureCheckbox.IsChecked == true;
+            App.Settings.ForceNorthAmerica = ForceNorthAmericaCheckbox.IsChecked == true;
         }
 
         private void CloseButton_OnClick(object sender, RoutedEventArgs e)

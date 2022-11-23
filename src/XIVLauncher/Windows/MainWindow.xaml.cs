@@ -118,7 +118,7 @@ namespace XIVLauncher.Windows
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = await Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                _headlines = await Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false)).ConfigureAwait(false);
 
                 _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
                 _bannerDotList = new();
@@ -210,6 +210,8 @@ namespace XIVLauncher.Windows
             App.Settings.IsFt ??= false;
 
             App.Settings.AutoStartSteam ??= false;
+
+            App.Settings.ForceNorthAmerica ??= false;
 
             var versionLevel = App.Settings.VersionUpgradeLevel.GetValueOrDefault(0);
 

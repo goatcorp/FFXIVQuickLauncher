@@ -42,6 +42,7 @@ namespace XIVLauncher.Settings
         bool? IsFt { get; set; }
         string DalamudRolloutBucket { get; set; }
         bool? AutoStartSteam { get; set; }
+        bool? ForceNorthAmerica { get; set; }
 
         #endregion
     }

@@ -14,6 +14,7 @@ public class AdvancedSettingsViewModel
         //EnableEncryptionLoc = Loc.Localize("EnableEncryption", "Enable encrypting arguments to the client");
         ExitLauncherAfterGameExitLoc = Loc.Localize("ExitLauncherAfterGameExitLoc", "Exit XIVLauncher after game exit");
         TreatNonZeroExitCodeAsFailureLoc = Loc.Localize("TreatNonZeroExitCodeAsFailureLoc", "Treat non-zero game exit code as failure");
+        ForceNorthAmericaLoc = Loc.Localize("ForceNorthAmerica", "Always download North American news, headlines and banners");
     }
 
     public string AdvancedSettingsTitleLoc { get; private set; }
@@ -26,4 +27,5 @@ public class AdvancedSettingsViewModel
 
     public string ExitLauncherAfterGameExitLoc { get; private set; }
     public string TreatNonZeroExitCodeAsFailureLoc { get; private set; }
+    public string ForceNorthAmericaLoc { get; private set; }
 }

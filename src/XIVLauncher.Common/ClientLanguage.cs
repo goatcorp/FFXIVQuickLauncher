@@ -12,14 +12,14 @@ namespace XIVLauncher.Common
 
     public static class ClientLanguageExtensions
     {
-        public static string GetLangCode(this ClientLanguage language)
+        public static string GetLangCode(this ClientLanguage language, bool forceNa = false)
         {
             switch (language)
             {
                 case ClientLanguage.Japanese:
                     return "ja";
 
-                case ClientLanguage.English when GameHelpers.IsRegionNorthAmerica():
+                case ClientLanguage.English when GameHelpers.IsRegionNorthAmerica() || forceNa:
                     return "en-us";
 
                 case ClientLanguage.English:

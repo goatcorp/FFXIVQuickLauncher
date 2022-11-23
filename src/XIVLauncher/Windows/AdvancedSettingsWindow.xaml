@@ -38,6 +38,9 @@
             <CheckBox x:Name="TreatNonZeroExitCodeAsFailureCheckbox"
                       Content="{Binding TreatNonZeroExitCodeAsFailureLoc}"
                       HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+            <CheckBox x:Name="ForceNorthAmericaCheckbox"
+                      Content="{Binding ForceNorthAmericaLoc}"
+                      HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
         </StackPanel>
         
         <Button Content="{Binding CloseLoc}" Width="79" VerticalAlignment="Bottom"
