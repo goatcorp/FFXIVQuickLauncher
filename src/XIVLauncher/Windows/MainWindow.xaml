@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:XIVLauncher"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:windows="clr-namespace:XIVLauncher.Windows"
@@ -18,7 +17,7 @@
     Icon="pack://application:,,,/Resources/dalamud_icon.ico"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
-    TextElement.FontWeight="Medium"
+    TextElement.FontWeight="Medium" Closing="MainWindow_OnClosing"
     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
     d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
 

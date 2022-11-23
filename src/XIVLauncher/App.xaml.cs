@@ -25,6 +25,7 @@ using XIVLauncher.Settings;
 using XIVLauncher.Settings.Parsers;
 using XIVLauncher.Support;
 using XIVLauncher.Windows;
+using XIVLauncher.Xaml;
 
 namespace XIVLauncher
 {
@@ -131,6 +132,7 @@ namespace XIVLauncher
                        .UseJsonFile(GetConfigPath("launcher"))
                        .UseTypeParser(new DirectoryInfoParser())
                        .UseTypeParser(new AddonListParser())
+                       .UseTypeParser(new CommonJsonParser<PreserveWindowPosition.WindowPlacement>())
                        .Build();
 
             if (string.IsNullOrEmpty(Settings.AcceptLanguage))

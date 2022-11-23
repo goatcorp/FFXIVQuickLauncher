@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,7 @@ using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
+using XIVLauncher.Xaml;
 using Timer = System.Timers.Timer;
 
 namespace XIVLauncher.Windows
@@ -592,6 +594,30 @@ namespace XIVLauncher.Windows
         private void SettingsControl_OnCloseMainWindowGracefully(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                PreserveWindowPosition.SaveWindowPosition(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Couldn't save window position");
+            }
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            try
+            {
+                PreserveWindowPosition.RestorePosition(this);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Couldn't restore window position");
+            }
         }
     }
 }
