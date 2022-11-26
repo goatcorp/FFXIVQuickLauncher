@@ -162,6 +162,7 @@ namespace XIVLauncher.Windows.ViewModel
             IsFreeTrialLoc = Loc.Localize("IsFreeTrial", "Using free trial account");
 
             OpenAdvancedSettingsLoc = Loc.Localize("OpenAdvancedSettings", "Open Advanced Settings");
+            OpenAdvancedSettingsTipLoc = Loc.Localize("OpenAdvancedSettingsTip", "Opens some settings for advanced users. Please only use these if you know what you're doing.");
 
             PluginDisabledTagLoc = Loc.Localize("DisabledPlugin", " (disabled)");
         }
@@ -246,6 +247,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string StartOriginalLauncherLoc { get; private set; }
         public string IsFreeTrialLoc { get; private set; }
         public string OpenAdvancedSettingsLoc { get; private set; }
+        public string OpenAdvancedSettingsTipLoc { get; private set; }
 
         public string PluginDisabledTagLoc { get; private set; }
     }

@@ -339,7 +339,7 @@
                                     HorizontalAlignment="Left"
                                     Click="OpenAdvancedSettings_OnClick" Margin="5 0 0 0">
                                 <Button.ToolTip>
-                                    <TextBlock Text="{Binding ResetUidCacheTipLoc}" />
+                                    <TextBlock Text="{Binding OpenAdvancedSettingsTipLoc}" />
                                 </Button.ToolTip>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
