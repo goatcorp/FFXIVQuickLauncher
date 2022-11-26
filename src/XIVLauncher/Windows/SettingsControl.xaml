@@ -90,8 +90,8 @@
                                Margin="0,0,0,0" Text="{Binding DirectX9NoticeLoc}" />
                     
                     <CheckBox x:Name="IsFreeTrialCheckbox" Click="IsFreeTrialCheckbox_OnClick"
-                              Content="{Binding IsFreeTrialLoc}"
-                              HorizontalAlignment="Left" Margin="0,15,0,15" Foreground="DarkGray" />
+                              Content="{Binding IsFreeTrialLoc}" Foreground="{DynamicResource MaterialDesignBody}"
+                              HorizontalAlignment="Left" Margin="0,15,0,15" />
                     
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChooseLanguageLoc}" />

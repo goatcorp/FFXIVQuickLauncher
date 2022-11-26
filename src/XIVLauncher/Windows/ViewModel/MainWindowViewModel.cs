@@ -421,7 +421,7 @@ namespace XIVLauncher.Windows.ViewModel
                 else if (ex is SteamException)
                 {
                     msgbox.WithTextFormatted(Loc.Localize("LoginSteamIssue",
-                        "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}"), ex.Message);
+                        "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.\n\nContext: {0}"), ex.Message);
 
                     if (ex.InnerException != null)
                         msgbox.WithAppendDescription(ex.InnerException.ToString());
