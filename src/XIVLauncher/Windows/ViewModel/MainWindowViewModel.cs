@@ -70,8 +70,8 @@ namespace XIVLauncher.Windows.ViewModel
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
             Launcher = App.GlobalSteamTicket == null
-                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease.FrontierUrl)
-                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease.FrontierUrl);
+                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease?.FrontierUrl)
+                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease?.FrontierUrl);
         }
 
         private Action<object> GetLoginFunc(AfterLoginAction action)
