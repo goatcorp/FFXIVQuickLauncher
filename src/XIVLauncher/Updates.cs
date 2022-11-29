@@ -13,6 +13,7 @@ using CheapLoc;
 using Newtonsoft.Json;
 using Serilog;
 using Squirrel;
+using XIVLauncher.Accounts;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows;
@@ -40,7 +41,7 @@ namespace XIVLauncher
 
 #pragma warning disable CS8618
         [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
-        private class ErrorNewsData
+        public class ErrorNewsData
         {
             [JsonPropertyName("until")]
             public uint ShowUntil { get; set; }
@@ -175,6 +176,30 @@ namespace XIVLauncher
             return new UpdateResult(manager, leaseData);
         }
 
+        public static async Task<ErrorNewsData?> GetErrorNews()
+        {
+            ErrorNewsData? newsData = null;
+
+            try
+            {
+                const string NEWS_URL = "https://gist.githubusercontent.com/goaaats/5968072474f79b066a60854d38b95280/raw/xl-news.txt";
+
+                using var client = new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(10),
+                };
+
+                var text = await client.GetStringAsync(NEWS_URL).ConfigureAwait(false);
+                newsData = JsonConvert.DeserializeObject<ErrorNewsData>(text);
+            }
+            catch (Exception newsEx)
+            {
+                Log.Error(newsEx, "Could not get error news");
+            }
+
+            return DateTimeOffset.UtcNow.ToUnixTimeSeconds() > newsData?.ShowUntil ? null : newsData;
+        }
+
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
@@ -194,15 +219,35 @@ namespace XIVLauncher
                     {
                         updateManager.RemoveShortcutForThisExe();
 
-                        try
+                        if (CustomMessageBox.Show(Loc.Localize("UninstallQuestion", "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?"), "XIVLauncher",
+                                MessageBoxButton.YesNo, MessageBoxImage.Question, false, false)
+                            == MessageBoxResult.Yes)
                         {
-                            // Let's just give this a shot, probably not going to work 100% but
-                            // there's not super much we can do about it right now
-                            Directory.Delete(Paths.RoamingPath, true);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, "Uninstall: Could not delete roaming directory");
+                            try
+                            {
+                                var mgr = new AccountManager(App.Settings);
+
+                                foreach (var account in mgr.Accounts.ToArray())
+                                {
+                                    account.Password = null;
+                                    mgr.RemoveAccount(account);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, "Uninstall: Could not delete passwords");
+                            }
+
+                            try
+                            {
+                                // Let's just give this a shot, probably not going to work 100% but
+                                // there's not super much we can do about it right now
+                                Directory.Delete(Paths.RoamingPath, true);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, "Uninstall: Could not delete roaming directory");
+                            }
                         }
                     });
 
@@ -246,26 +291,9 @@ namespace XIVLauncher
             catch (Exception ex)
             {
                 Log.Error(ex, "Update failed");
-                ErrorNewsData? newsData = null;
+                var newsData = await GetErrorNews().ConfigureAwait(false);
 
-                try
-                {
-                    const string NEWS_URL = "https://gist.githubusercontent.com/goaaats/5968072474f79b066a60854d38b95280/raw/xl-news.txt";
-
-                    using var client = new HttpClient
-                    {
-                        Timeout = TimeSpan.FromSeconds(10),
-                    };
-
-                    var text = await client.GetStringAsync(NEWS_URL).ConfigureAwait(false);
-                    newsData = JsonConvert.DeserializeObject<ErrorNewsData>(text);
-                }
-                catch (Exception newsEx)
-                {
-                    Log.Error(newsEx, "Could not get error news");
-                }
-
-                if (newsData != null && !string.IsNullOrEmpty(newsData.Message) && DateTimeOffset.UtcNow.ToUnixTimeSeconds() < newsData.ShowUntil)
+                if (newsData != null && !string.IsNullOrEmpty(newsData.Message))
                 {
                     CustomMessageBox.Show(newsData.Message,
                         "XIVLauncher",
