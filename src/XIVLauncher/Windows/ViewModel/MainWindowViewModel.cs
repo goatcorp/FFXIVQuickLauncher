@@ -1076,16 +1076,22 @@ namespace XIVLauncher.Windows.ViewModel
 
                 if (showEnsurementWarning)
                 {
-                    var ensurementErrorMessage = Loc.Localize("DalamudEnsurementError",
-                        "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.");
+                    var errorNews = await Updates.GetErrorNews().ConfigureAwait(false);
 
-                    CustomMessageBox.Builder
-                                    .NewFrom(ensurementErrorMessage)
-                                    .WithImage(MessageBoxImage.Warning)
-                                    .WithButtons(MessageBoxButton.OK)
-                                    .WithShowHelpLinks()
-                                    .WithParentWindow(_window)
-                                    .Show();
+                    // If we have valid error news, let's not show this because it probably doesn't matter
+                    if (errorNews != null)
+                    {
+                        var ensurementErrorMessage = Loc.Localize("DalamudEnsurementError",
+                            "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.");
+
+                        CustomMessageBox.Builder
+                                        .NewFrom(ensurementErrorMessage)
+                                        .WithImage(MessageBoxImage.Warning)
+                                        .WithButtons(MessageBoxButton.OK)
+                                        .WithShowHelpLinks()
+                                        .WithParentWindow(_window)
+                                        .Show();
+                    }
                 }
             }
 
