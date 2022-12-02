@@ -75,7 +75,7 @@ namespace XIVLauncher.Accounts
                     // ignored
                 }
 
-                if (!string.IsNullOrWhiteSpace(Password))
+                if (!string.IsNullOrWhiteSpace(value))
                 {
                     CredentialManager.SaveCredentials($"{CREDS_PREFIX_NEW}-{UserName.ToLower()}", new NetworkCredential
                     {
