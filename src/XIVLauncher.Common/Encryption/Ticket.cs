@@ -65,7 +65,6 @@ public class Ticket
 
         /* GARBAGE */
         int castTicketSum = unchecked((short)ticketSum);
-        Log.Information($"{castTicketSum:X}");
         var seed = time ^ castTicketSum;
         var rand = new CrtRand((uint)seed);
 
@@ -86,7 +85,7 @@ public class Ticket
         memorySteam.Seek(0, SeekOrigin.Begin);
         binaryWriter.Write(fuckedSum);
 
-        Log.Information("[STEAM] time: {Time}, bfKey: {FishKey}, rawTicket.Length: {TicketLen}, ticketSum: {TicketSum}, fuckedSum: {FuckedSum}, seed: {Seed}, numRandomBytes: {NumRandomBytes}", time,
+        Log.Verbose("[STEAM] time: {Time}, bfKey: {FishKey}, rawTicket.Length: {TicketLen}, ticketSum: {TicketSum}, fuckedSum: {FuckedSum}, seed: {Seed}, numRandomBytes: {NumRandomBytes}", time,
             blowfishKey, rawTicket.Length, ticketSum, fuckedSum, seed, numRandomBytes);
 
         /* ENC + SPLIT */
