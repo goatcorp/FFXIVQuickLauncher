@@ -41,7 +41,7 @@
                         <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
                                   x:Name="OtpServerCheckBox" Content="{Binding OtpServerCheckBoxLoc}" ToolTip="{Binding OtpServerTooltipLoc}"/>
                         <Button Style="{DynamicResource MaterialDesignFlatButton}"
-                                HorizontalAlignment="Left" Click="LearnMoreButton_OnClick">
+                                HorizontalAlignment="Left" Click="LearnMoreButton_OnClick" Margin="5 0 0 0">
                             <Button.ToolTip>
                                 <TextBlock Text="{Binding OtpLearnMoreTooltipLoc}" />
                             </Button.ToolTip>
@@ -326,26 +326,28 @@
                                     <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartBackupToolLoc}"/>
                                 </StackPanel>
                             </Button>
-                            <Button Style="{DynamicResource MaterialDesignFlatButton}"
-                                    HorizontalAlignment="Left"
-                                    x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="Launch" />
-                                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartOriginalLauncherLoc}"/>
-                                </StackPanel>
-                            </Button>
-                            
-                            <Button Style="{DynamicResource MaterialDesignFlatButton}"
-                                    HorizontalAlignment="Left"
-                                    Click="OpenAdvancedSettings_OnClick" Margin="5 0 0 0">
-                                <Button.ToolTip>
-                                    <TextBlock Text="{Binding OpenAdvancedSettingsTipLoc}" />
-                                </Button.ToolTip>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
-                                               Foreground="DarkGray" FontSize="11" Text="{Binding OpenAdvancedSettingsLoc}"/>
-                                </StackPanel>
-                            </Button>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                        HorizontalAlignment="Left"
+                                        x:Name="OriginalLauncherButton" Click="OriginalLauncherButton_OnClick">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Launch" />
+                                        <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding StartOriginalLauncherLoc}"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                        HorizontalAlignment="Left"
+                                        Click="OpenAdvancedSettings_OnClick" Margin="10 0 0 0">
+                                    <Button.ToolTip>
+                                        <TextBlock Text="{Binding OpenAdvancedSettingsTipLoc}" />
+                                    </Button.ToolTip>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
+                                                   Foreground="DarkGray" FontSize="11" Text="{Binding OpenAdvancedSettingsLoc}"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
 
                         <Image Source="pack://application:,,,/Resources/logo.png" Width="200"
