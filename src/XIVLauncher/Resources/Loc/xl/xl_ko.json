@@ -1,18 +1,18 @@
 {
   "Refresh": {
-    "message": "_Refresh",
+    "message": "_새로고침",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "Ignore": {
-    "message": "_Ignore",
+    "message": "_무시",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "updatefailureerror": {
-    "message": "XIVLancher가 업데이트 확인에 실패했습니다. GitHub와의 연결 문제일 수 있습니다. 잠시 기다리고 다시 시도하세요.\n만약 VPN을 쓰고 계시다면 해제해 주세요.\n계속 실패한다면 GitHub에 있는 Discord 링크를 통해 지원을 받으세요.",
-    "description": "<Run>d__3.MoveNext"
+    "message": "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "description": "<Run>d__19.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
-    "message": "You don't have a game installation set up. XIVLauncher can't start the official launcher.",
+    "message": "FFXIV 설치 경로 설정이 되어있지 않습니다. XIVLauncher가 공식 런처를 실행할 수 없습니다.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherConfirmSteam": {
@@ -20,7 +20,7 @@
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
-    "message": "Steam couldn't be loaded. Please start the game directly via Steam.",
+    "message": "Steam을 불러올 수 없습니다. Steam을 통해 게임을 직접 실행하세요.",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "ErrorAssertionFailed": {
@@ -60,7 +60,7 @@
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudNowStarting": {
-    "message": "Starting...",
+    "message": "시작 중...",
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "DalamudUnavailable": {
@@ -72,15 +72,15 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
-    "message": "Please do not select the \"game\" or \"boot\" folder of your game installation, and choose the folder that contains these instead.",
+    "message": "\"game\" 또는 \"boot\" 폴더를 선택하지 말고, 이를 포함하는 폴더를 선택하세요.",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidConfirm": {
-    "message": "The folder you selected has no installation of the game.\nXIVLauncher will install the game the first time you log in.\nContinue?",
+    "message": "선택한 폴더에 게임이 설치되어 있지 않습니다.\n처음 로그인할 때 XIVLauncher가 게임을 설치하게 됩니다.\n계속하시겠습니까?",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathRegionConfirm": {
-    "message": "The folder you selected might be the Chinese or Korean release of the game. XIVLauncher only supports international release of the game.\nIs the folder you've selected indeed for the international version?",
+    "message": "선택한 폴더는 아마도 중국 서버 또는 한국 서버의 폴더인 것 같습니다. XIVLauncher는 오직 글로벌 서버만 지원합니다.\n선택한 폴더에 정말 글로벌 서버가 설치되어 있습니까?",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "NewsLoading": {
@@ -92,11 +92,11 @@
     "description": "MainWindow.<SetupHeadlines>b__12_3"
   },
   "MaintenanceQueueBootPatch": {
-    "message": "A patch for the official launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
+    "message": "공식 런처의 업데이트가 감지되었습니다.\n이럴 땐 대부분의 경우 게임 쪽에도 새로운 패치가 있음을 나타냅니다.\n\n지금 로그인됩니다.",
     "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
   },
   "SettingsGamePatchPathError": {
-    "message": "게임과 패치 다운로드 경로가 동일할 수 없습니다.\n게임과 패치 다운로드 경로를 다르게 설정해 주세요.",
+    "message": "게임과 패치 다운로드 경로가 동일할 수 없습니다.\n다운로드 경로를 다르게 설정해 주세요.",
     "description": "SettingsControl.AcceptButton_Click"
   },
   "LaunchAsSteam": {
@@ -108,11 +108,11 @@
     "description": "SettingsControl.RunIntegrityCheck_OnClick"
   },
   "DalamudIncompatible": {
-    "message": "Dalamud was not yet updated for your current game version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!",
+    "message": "Dalamud가 아직 FFXIV의 현재 버전에 대응하지 않습니다.\n패치 이후 자주 일어나는 일이므로, Discord에 문의하기 전에 잠시만 기다려주세요.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "DalamudCompatCheckFailed": {
-    "message": "Could not contact the server to get the current compatible game version for Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
+    "message": "게임의 현재 버전에 대응하는 Dalamud의 정보를 서버에서 가져오려 했으나 실패했습니다. 설치되어 있는 .NET Framework가 너무 오래되었을지도 모릅니다.\n자세한 사항은 Discord를 확인하세요.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "PluginPathNotFound": {
@@ -123,21 +123,25 @@
     "message": "게임이 실행 중입니다. 게임을 끄고 다시 시도하십시오.",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
+  "SteamFtToggleAutoStartWarning": {
+    "message": "To apply this setting, XIVLauncher needs to restart.\nPlease reopen XIVLauncher.",
+    "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
+  },
   "IntegrityCheckImpossible": {
     "message": "현재 게임 버전에 대한 레퍼런스 리포트가 없습니다. 나중에 다시 시도하십시오.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckNetworkError": {
-    "message": "Failed to download reference files for checking integrity. Check your internet connection and try again.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "message": "무결성 검사를 위한 레퍼런스 파일의 다운로드에 실패했습니다. 인터넷 연결을 확인하고 재시도 하세요.",
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckFailed": {
     "message": "일부 게임 파일이 조작되거나 망가졌습니다.\n\nTexTools 모드를 사용한다면, 그것이 원인일 수 있습니다.\n\n모드를 사용하지 않는다면, XIVLauncher의 \"로그인\" 버튼을 우클릭 하고 \"게임 파일 복구\"를 선택하세요.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckValid": {
     "message": "게임 파일에서 문제를 발견하지 못했습니다.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "프로필 사진 설정",
@@ -155,6 +159,34 @@
     "message": "비밀번호 저장 안 함",
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
+  "AdvancedSettings": {
+    "message": "XIVLauncher Advanced Settings",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "EnabledUidCache": {
+    "message": "실험적 UID 캐싱 활성화 (게임 업데이트 시 오작동합니다!)",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ResetUidCacheTip": {
+    "message": "UID 캐시를 리셋하려면 Ctrl 키를 누르면서 런처를 실행하세요.",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "게임 종료후 XIVLauncher 종료",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "제로 이외의 게임 종료 코드를 실패로 간주",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ForceNorthAmerica": {
+    "message": "Always download North American news, headlines and banners",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
   "UpdateNotice": {
     "message": "XIVLauncher가 버전 {0} 으로 업데이트 되었습니다.",
     "description": "ChangeLogWindowViewModel.SetupLoc"
@@ -164,7 +196,7 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogLoadingError": {
-    "message": "변경 사항을 불러올 수 없습니다. GitHub나 Discord를 확인해주세요!",
+    "message": "변경 사항을 불러올 수 없습니다. 대신 GitHub이나 Discord를 확인해주세요!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "JoinDiscord": {
@@ -176,15 +208,11 @@
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "EmailInfo": {
-    "message": "XIVLauncher는 무료, 오픈소스 소프트웨어입니다. 런처는 개인정보를 수집하기 위한 어떠한 원격감시나 분석 도구를 사용하지 않습니다. 하지만 당신의 운영체제, 왜 XIVLauncher를 사용하는지 그리고 필요하다면 개선사항이나 비판점을 메일로 보내주신다면 정말 큰 도움이 됩니다. 보내주신 메일은 평가 후 즉시 삭제되며 회신하지 않습니다.\n\nXIVLauncher를 사용해 주셔서 감사합니다!",
+    "message": "XIVLauncher는 무료, 오픈소스 소프트웨어입니다. 런처는 개인정보를 수집하기 위한 어떠한 원격감시나 분석 도구를 사용하지 않습니다. 하지만 당신의 운영체제, 왜 XIVLauncher를 사용하는지 그리고 필요하다면 개선사항이나 비판점을 메일로 보내주신다면 정말 큰 도움이 됩니다. 보내주신 메일은 평가 후 즉시 삭제되며 회신되지 않습니다.\n\nXIVLauncher를 사용해 주셔서 감사합니다!",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChangelogThanks": {
     "message": "XIVLancher는 전세계의 여러 사람들에 의해 지원되는 무료, 오픈소스 소프트웨어입니다.\n함께 해 주셔서 감사합니다!",
-    "description": "ChangeLogWindowViewModel.SetupLoc"
-  },
-  "OK": {
-    "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
@@ -216,7 +244,7 @@
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Yes": {
-    "message": "_네",
+    "message": "네_",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "No": {
@@ -236,11 +264,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "게임이 설치되어 있는 폴더를 선택하십시오.\n\"game\"과 \"boot\" 폴더를 포함해야 합니다.",
+    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".\n\nIf you don't have the game installed, you can choose an empty folder and XIVLauncher will install it for you.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Steam으로 게임을 실행하고 있을 경우, 여기를 체크하십시오.",
+    "message": "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -248,15 +276,15 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseDirectXFTS": {
-    "message": "사용하려는 DirectX 버전을 선택하십시오.",
+    "message": "사용하려는 DirectX 버전을 선택하세요.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "DirectX9NoticeFTS": {
-    "message": "DirectX 9 모드는 더 이상 지원되지 않습니다. 아직 켜지긴 하지만, Discord 연동이나 인게임 애드온 같은 기능이 작동하지 않고 개발사로부터 어떠한 기술적 지원도 받을 수 없습니다.",
+    "message": "DirectX 9 모드는 더 이상 지원되지 않습니다. 여전히 실행할 수 있지만, Rich Presence와 Dalamud같은 XIVLauncher의 기능이 동작하지 않고, 개발사로부터 어떠한 기술적 지원도 받을 수 없습니다.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "ChooseLanguageFTS": {
-    "message": "게임을 실행할 언어를 선택하십시오.",
+    "message": "게임을 실행할 언어를 선택하세요.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeActLaunch": {
@@ -272,7 +300,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudNotice": {
-    "message": "XIVLauncher의 인게임 기능을 활성화 하시겠습니까?\nRMT 채팅 필터링과 채팅 메세지 또는 매칭 알림의 디스코드 알림같은\n추가 기능들을 게임에 추가합니다.\n\n설정하려면, XIVLauncher의 설정 메뉴에서 인게임 탭을 찾으세요.\n기능을 활성화 하면 백신 프로그램에서 오진의 가능성이 있습니다.\n기능의 설정을 확인하고 문제가 발생할 경우 백신에서 예외처리 하세요.",
+    "message": "XIVLauncher의 인게임 기능을 활성화 하시겠어요?\nRMT 채팅 필터링과 채팅 메세지 또는 매칭 알림같은\n추가 기능들을 게임에 추가합니다.\n\n설정하려면, XIVLauncher의 설정 메뉴에서 \"Dalamud\" 탭을 찾으세요.\n기능을 활성화 하면 백신 프로그램에서 오진의 가능성이 있습니다.\n기능의 설정을 확인하고 문제가 발생할 경우 백신에서 예외처리 하세요.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeDalamudCheckBox": {
@@ -280,7 +308,7 @@
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "NowDownloadingMeta": {
-    "message": "Downloading meta files...",
+    "message": "메타 파일 다운로드 중...",
     "description": "GameRepairProgressWindowViewModel.SetupLoc"
   },
   "NowVerifying": {
@@ -352,7 +380,7 @@
     "description": "MainWindowViewModel.InstallerOnFail"
   },
   "LoginBoxUsername": {
-    "message": "Username",
+    "message": "사용자명",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxPassword": {
@@ -388,7 +416,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Third-Party Plugins",
+    "message": "서드 파티 플러그인 없이 실행",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -428,19 +456,19 @@
     "description": "MainWindowViewModel.<Login>b__21_0"
   },
   "GameRepairProcessExitRequired1": {
-    "message": "Close the following application to repair the game.",
+    "message": "게임의 복구를 위해 다음의 프로그램을 종료해주세요.",
     "description": "<>c.<RepairGame>b__25_1"
   },
   "GameRepairProcessExitRequiredPlural": {
-    "message": "Close the following applications to repair the game.",
+    "message": "게임의 복구를 위해 다음의 프로그램들을 종료해주세요.",
     "description": "<>c.<RepairGame>b__25_1"
   },
   "GameUpdateExitRequired1": {
-    "message": "Close the following application to patch the game.",
+    "message": "게임의 패치를 위해 다음의 프로그램을 종료해주세요.",
     "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "GameUpdateExitRequiredPlural": {
-    "message": "Close the following applications to patch the game.",
+    "message": "게임의 패치를 위해 다음의 프로그램들을 종료해주세요.",
     "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
@@ -448,7 +476,7 @@
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GameIsOpenRepairError": {
-    "message": "게임 클라이언트나 공식 런처가 열려 있습니다. 이 상태에서는 게임을 패치할 수 없습니다.\n클라이언트와 런처를 닫고 다시 시도하십시오.",
+    "message": "게임 클라이언트나 공식 런처가 열려 있습니다. 이 상태에서는 게임을 패치할 수 없습니다.\n클라이언트나 런처를 닫고 다시 시도하십시오.",
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GameRepairDisclaimer": {
@@ -456,11 +484,11 @@
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GateUnreachable": {
-    "message": "The login servers could not be reached. This usually indicates that the game is under maintenance, or that your connection to the login servers is unstable.\n\nPlease try again later.",
+    "message": "로그인 서버에 접속할 수 없습니다. 게임이 점검 중에 있거나 로그인 서버로의 연결이 불안정할 가능성이 있습니다.\n\n 나중에 다시 시도해주세요.",
     "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "GateClosed": {
-    "message": "The game is currently under maintenance. Please try again later or see official sources for more information.",
+    "message": "게임이 현재 점검 중 입니다. 나중에 다시 시도하거나 관련 공식 정보를 참고하세요.",
     "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "CheckBootVersionError": {
@@ -472,7 +500,7 @@
     "description": "<HandleBootCheck>d__33.MoveNext"
   },
   "KillswitchText": {
-    "message": "XIVLauncher cannot start the game at this time, as there were changes to the login process during a recent patch.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "message": "최근 패치에 로그인 프로세스의 변경이 있었기 때문에, XIVLauncher가 현재 게임을 실행할 수 없습니다.\n런처를 재활성화 하기 전에 변경에 따른 조정 및 안전성을 검증해야 합니다.\n\n불편함을 드려 죄송합니다.\n\n아래의 \"공식 런처\" 버튼을 통해 공식 런처를 실행할 수 있습니다.\n",
     "description": "<Login>d__21.MoveNext"
   },
   "EmptyUsernameError": {
@@ -488,7 +516,7 @@
     "description": "<Login>d__21.MoveNext"
   },
   "UidCacheInstallError": {
-    "message": "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall the game.\n\nIf you want to reinstall the game, please take care to disable it first.",
+    "message": "패쳐 설정에서 UID 캐시를 활성화했습니다.\n이 설정은 FF14의 재설치를 허용하지 않습니다.\n\n재설치하기 전에 반드시 해당 설정을 비활성화하세요.",
     "description": "<Login>d__21.MoveNext"
   },
   "GameRepairSuccess0": {
@@ -504,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it.",
+    "message": "추가적으로, 게임 설치 시에 부속되지 않았던 1개의 파일이 다음 경로로 이동되었습니다. {0}\nGShade를 사용하고 있었다면, 재설치해야 합니다.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it.",
+    "message": "추가적으로, 게임 설치 시에 부속되지 않았던 {0} 개의 파일이 다음 경로로 이동되었습니다. {1}\nGShade를 사용하고 있었다면, 재설치해야 합니다.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -544,7 +572,7 @@
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {
-    "message": "Dalamud가 컴퓨터의 아키텍쳐를 실행할 수 없습니다. 64비트 환경의 Windows에서 실행하고 있는지 확인 해 주세요.\nARM판의 Windows를 사용하고 있다면, XIVLauncher 실행을 위해 x64 에뮬레이션을 활성화 해 주세요.",
+    "message": "Dalamud를 컴퓨터의 아키텍쳐 상에서 실행할 수 없습니다. 64비트 환경의 Windows에서 실행하고 있는지 확인 해 주세요.\nARM판의 Windows를 사용하고 있다면, XIVLauncher 실행을 위해 x64 에뮬레이션을 활성화 해 주세요.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudRunnerError": {
@@ -552,11 +580,11 @@
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis is likely a problem with your internet connection - the game will start, but you will not be able to use plugins.",
+    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
-    "message": "백신 프로그램에 의해 발생할 수 있습니다. 로그를 확인하고 예외에 추가해 주세요.",
+    "message": "백신 프로그램에 의해 발생됐을 수 있습니다. 로그를 확인하고 필요한 예외를 설정해 주세요.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "GameIsOpenError": {
@@ -564,19 +592,19 @@
     "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "PatchManNoInstaller": {
-    "message": "패치 인스톨러를 정상적으로 실행할 수 없습니다.\n{0}\n\n만약 엑세스를 차단했다면, 재시도 해보세요. 만약 에러가 계속되면 Discord를 통해 알려주세요.",
+    "message": "패치 인스톨러를 정상적으로 실행할 수 없습니다.\n{0}\n\n만약 액세스를 차단했다면, 재시도 해보세요. 만약 에러가 계속되면 Discord를 통해 알려주세요.",
     "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceError": {
-    "message": "드라이브에 패치를 설치할 충분한 공간이 없습니다.\n\n설정에서 패치가 다운될 경로를 바꿀 수 있습니다.\n\n필요함: {0}\n여유 공간: {1}",
+    "message": "드라이브에 패치를 설치할 충분한 공간이 없습니다.\n\n설정에서 패치가 다운될 경로를 바꿀 수 있습니다.\n\n필요한 공간: {0}\n여유 공간: {1}",
     "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceErrorAll": {
-    "message": "드라이브에 모든 패치를 다운로드할 충분한 공간이 없습니다.\n설정에서 패치가 다운로드 될 경로를 바꿀 수 있습니다.\n\n필요함: {0}\n여유 공간: {1}",
+    "message": "드라이브에 모든 패치를 다운로드할 충분한 공간이 없습니다.\n\n설정에서 패치가 다운로드 될 경로를 바꿀 수 있습니다.\n\n필요한 공간: {0}\n여유 공간: {1}",
     "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "FreeSpaceGameError": {
-    "message": "드라이브에 패치를 설치할 충분한 공간이 없습니다.\n\n설정에서 게임이 설치될 경로를 바꿀 수 있습니다.\n\n필요함: {0}\n여유 공간: {1}",
+    "message": "드라이브에 패치를 설치할 충분한 공간이 없습니다.\n\n설정에서 게임이 설치될 경로를 바꿀 수 있습니다.\n\n필요한 공간: {0}\n여유 공간: {1}",
     "description": "<TryHandlePatchAsync>d__34.MoveNext"
   },
   "LoginNoOauthTitle": {
@@ -592,11 +620,11 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginInvalidVersionFiles": {
-    "message": "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\".",
+    "message": "게임 파일로부터 버전 정보를 읽어올 수 없습니다\n\n게임을 재설치하거나 파일을 복구해야 합니다. XIVLauncher에서 로그인 버튼을 우클릭 하고, \"게임 복구\"를 선택하세요.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.\n\nContext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
@@ -620,7 +648,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginWebExceptionContent": {
-    "message": "XIVLauncher는 게임 서버와의 통신을 설정할 수 없습니다.\n\n일시적인 문제거나, 사용자의 인터넷 연결 문제일 수도 있습니다. 나중에 다시 시도해주세요.",
+    "message": "XIVLauncher가 게임 서버와의 통신을 설정할 수 없습니다.\n\n일시적인 문제거나, 사용자의 인터넷 연결 문제일 수도 있습니다. 나중에 다시 시도해주세요.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginGenericServerIssue": {
@@ -636,19 +664,19 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginNoServiceMessage": {
-    "message": "This account isn't eligible to play the game. Please make sure that you have an active subscription and that it is paid up.\n\nIf you bought the game on Steam, make sure to check the \"Use Steam service account\" checkbox while logging in.\nIf Auto-Login is enabled, hold shift while starting to access settings.",
+    "message": "이 계정은 게임을 플레이 할 수 없습니다. 게임 이용권이 활성화 되어 있는지 확인하세요.\n\n만약 스팀판이라면 \"Steam 서비스 계정 사용\" 체크박스를 체크하세요.\n만약 자동 로그인이 켜져 있다면 런처 실행시 Shift를 홀드하여 설정을 확인할 수 있습니다.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginAcceptTermsMessage": {
-    "message": "Please accept the Terms of Use in the official launcher.",
+    "message": "공식 런처에서 사용자 계약에 동의하세요.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "EverythingIsFuckedMessage": {
-    "message": "몇개의 필수 게임 파일들이 외부 요인에 의해 수정되거나 손상되었기 때문에 업데이트나 실행을 할 수 없습니다.\n계속하려면 게임을 완전히 지웠다가 재설치 하십시오.\n\n계속 오류가 발생하면 디스코드를 통해 알려주십시오.",
+    "message": "몇개의 필수 게임 파일들이 외부 요인에 의해 수정되거나 손상되었기 때문에 업데이트나 실행을 할 수 없습니다.\n계속하려면 게임을 재설치 하세요.\n\n계속 오류가 발생하면 디스코드를 통해 알려주세요.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LoginRepairResponseIsNotNeedsPatchGame": {
-    "message": "The server sent an incorrect response - the repair cannot proceed.",
+    "message": "서버에서 잘못된 응답을 보내왔습니다. 복구를 진행할 수 없습니다.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "PatchInstallDisclaimer": {
@@ -660,7 +688,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameNonZeroExitCode": {
-    "message": "치명적 에러로 인해 게임이 종료된 것 같습니다. 게임을 재실행 하시겠습니까?\n\n종료 코트: 0x{0:X8}",
+    "message": "치명적 에러로 인해 게임이 종료된 것 같습니다. 게임을 재실행 하시겠어요?\n\n종료 코트: 0x{0:X8}",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "LaunchGameRelaunch": {
@@ -692,11 +720,11 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorSummary": {
-    "message": "XIVLauncher could not start the game correctly.",
+    "message": "XIVLauncher가 게임을 정상적으로 실행할 수 없습니다.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorActionable": {
-    "message": "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\".",
+    "message": "일시적인 문제일 수 있습니다. PC를 재부팅하세요.\n게임 설치가 유효하지 않을 수 있습니다. 로그인 버튼을 우클릭해 \"게임 파일 복구\"를 선택하여 게임을 복구할 수 있습니다.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -716,7 +744,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
-    "message": "아니면 앱을 사용하십시오!\n여기를 클릭해 더 알아보십시오!",
+    "message": "아니면 앱을 사용하세요!\n여기를 클릭해 더 알아보세요!",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpInputPromptBad": {
@@ -788,11 +816,23 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "GamePathSafeguardRegionWarning": {
-    "message": "XIVLauncher does not support Chinese or Korean version of the game. Make sure this path indeed is for the international version.",
+    "message": "XIVLauncher는 중국 서버나 한국 서버를 지원하지 않습니다. 글로벌 서버가 있는 곳을 선택해주세요.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpServerCheckBox": {
-    "message": "XL 인증 APP/OTP 매크로 지원 활성화",
+    "message": "XL 인증기 APP/OTP 매크로 지원 활성화",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpServerTooltip": {
+    "message": "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LearnMore": {
+    "message": "Learn More",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpLearnMoreTooltipLoc": {
+    "message": "Open a guide in your web browser.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
@@ -823,6 +863,14 @@
     "message": "게임 파일에 문제가 없는지 검사하고 있습니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "AutoStartSteam": {
+    "message": "Start Steam when starting XIVLauncher",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteamTooltip": {
+    "message": "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "SettingsGameSettings": {
     "message": "게임 설정",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -832,7 +880,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DirectX9Notice": {
-    "message": "DirectX 9 모드는 더 이상 지원되지 않습니다. 아직 켜지긴 하지만, Discord 연동이나 인게임\n애드온 같은 기능이 작동하지 않고 개발사로부터 어떠한 기술적 지원도 받을 수 없습니다.",
+    "message": "DirectX 9 모드는 더 이상 지원되지 않습니다. 여전히 실행할 수 있지만, Rich Presence와 인게임 애드온 같은 XIVLauncher의 기능이 동작하지 않고, 개발사로부터 어떠한 기술적 지원도 받을 수 없습니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLanguage": {
@@ -840,7 +888,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "ChooseLauncherLanguage": {
-    "message": "런처에서 사용할 언어를 선택하십시오. (재실행이 필요합니다)",
+    "message": "런처에서 사용할 언어를 선택하세요. 재실행이 필요합니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageHelpCtaLoc": {
@@ -848,7 +896,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LauncherLanguageNotice": {
-    "message": "언어 설정을 적용하려면 런처를 다시 열어야 합니다.",
+    "message": "언어 설정을 적용하려면 런처를 재실행 해야 합니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAutoLaunch": {
@@ -864,7 +912,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchAddNewToolTip": {
-    "message": "자동 실행 항목으로 아무 프로그램을 추가합니다.",
+    "message": "프로그램을 자동으로 실행하기 위한 엔트리를 새로 추가합니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsInGame": {
@@ -908,19 +956,19 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelay": {
-    "message": "알림 지연 시간",
+    "message": "채팅 전송 딜레이",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonChatDelayDescription": {
-    "message": "중복 알림을 막기 위해 최근 보낸 메시지를 확인하도록 합니다.\n이 기능으로, 여러 명의 유저가 같은 채널에 알림을 보내게 설정해도 중복이 없게 할 수 있습니다.\n적당한 확인 딜레이를 설정하십시오. (단위: ms, 예: 1000)",
+    "message": "중복 알림을 막기 위해 최근 보낸 메시지를 확인하도록 합니다.\n이 기능으로, 여러 명의 유저가 같은 채널에 알림을 보내게 설정해도 중복이 없게 할 수 있습니다.\n적당한 딜레이를 밀리세컨드 단위로 설정하세요. (예: 1000)",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayLoc": {
-    "message": "애드온 inject 딜레이",
+    "message": "애드온 인젝션 딜레이",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonInjectionDelayDescriptionLoc": {
-    "message": "인-게임 애드온을 게임에 주입(inject)하기 전에 잠시 시간을 둡니다. OBS나 Discord같이 화면을 캡쳐하는 프로그램들보다 늦게 inject하면, 해당 프로그램에선 애드온 UI가 보이지 않게 됩니다.",
+    "message": "인게임 애드온을 게임에 주입하기 전에 잠시 시간을 둡니다. OBS나 Discord같이 화면을 캡쳐하는 프로그램들보다 늦게 주입하면, 해당 프로그램에선 애드온 UI가 보이지 않게 됩니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "InGameAddonLoadMethodLoc": {
@@ -948,7 +996,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "UniversalisOptOut": {
-    "message": "익명으로 진행되는 장터 게시판 가격 데이터의 수집을 중지(opt-out)합니다.",
+    "message": "익명으로 진행되는 장터 게시판 가격 데이터의 수집을 중지(Opt-out)합니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PluginsDescriptionLoc": {
@@ -968,7 +1016,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsPatching": {
-    "message": "패치",
+    "message": "패치 적용 중",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AskBeforePatch": {
@@ -984,11 +1032,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "KeepPatches": {
-    "message": "다운로드한 패치 삭제하지 않기 (재설치할 경우를 대비)",
+    "message": "재설치를 대비하여 다운로드한 패치 삭제하지 않기",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "PatchAcquisitionMethod": {
-    "message": "패치를 받기 위한 방법을 선택하세요. ARIA(HTPP)를 추천합니다.",
+    "message": "패치를 받기 위한 방법을 선택하세요. \"ARIA(HTTP)\"를 추천합니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsAbout": {
@@ -996,7 +1044,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "Credits": {
-    "message": "제작: goat. Special Thanks: Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, 그리고 Angry Paisa Artist에게도 감사를 보냅니다.\n\n문제가 있거나 이랬으면 좋겠다- 하는 사항들은, Discord 서버에 참여하거나 GitHub에 이슈로 남겨주세요!",
+    "message": "제작: goat. Special Thanks: Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, Aireil, kizer 그리고 Angry Paisa Artist에게도 감사를 보냅니다!\n\n문제가 있거나 이랬으면 좋겠다- 하는 사항들은, Discord 서버에 참여하거나 GitHub에 이슈로 남겨주세요!",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "License": {
@@ -1011,28 +1059,16 @@
     "message": "공식 런처 열기",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "EnabledUidCache": {
-    "message": "UID 캐싱 활성화 (시험적 기능이며 게임 업데이트 시 오작동합니다)",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ResetUidCacheTip": {
-    "message": "UID 캐시를 리셋하려면 Ctrl 키를 누르면서 런처를 실행하세요.",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "EnableEncryption": {
-    "message": "클라이언트에 넘기는 명령줄 인수를 암호화하기",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ExitLauncherAfterGameExitLoc": {
-    "message": "게임 종료후 XIVLauncher 종료",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "TreatNonZeroExitCodeAsFailureLoc": {
-    "message": "제로 이외의 게임 종료 코드를 실패로 간주",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
   "IsFreeTrial": {
-    "message": "무료 트라이얼 모드로 시작",
+    "message": "Using free trial account",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettings": {
+    "message": "Open Advanced Settings",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettingsTip": {
+    "message": "Opens some settings for advanced users. Please only use these if you know what you're doing.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {
@@ -1052,7 +1088,7 @@
     "description": "UpdateLoadingDialogViewModel.SetupLoc"
   },
   "AdminCheck": {
-    "message": "XIVLauncher and/or the game are set to run as administrator.\nThis can cause various issues, including addons failing to launch and hotkey applications failing to respond.\n\nDo you want to fix this issue automatically?",
+    "message": "XIVLauncher 또는(와) 게임이 관리자 권한으로 실행하게 되어 있습니다.\n이렇게 하면 단축키를 사용하는 다른 프로그램이 키 입력에 반응하지 않거나, 애드온이 작동하지 않는 등 문제가 발생할 수 있습니다.\n\n이 문제를 자동으로 수정하도록 할까요?",
     "description": "ProblemCheck.RunCheck"
   },
   "AdminCheckNag": {
@@ -1060,15 +1096,15 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MacTypeNag": {
-    "message": "MacType was detected on this PC.\nIt will cause problems with the game; both on the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType.",
+    "message": "MacType을 PC에서 감지했습니다.\n이것은 공식 런처와 XIVLauncher 어느 쪽이든 문제를 일으킬 수 있습니다.\n\nMacType의 제외 목록에 XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater, ffxiv_dx11을 추가해주세요.",
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to the game's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "FFXIV의 My Games 폴더에 대한 쓰기 권한이 없습니다.\n권한 부족은 스크린 샷이냐 일부 캐릭터 데이터의 저장을 막습니다.\n\n안티 바이러스나 권한에 관한 문제로 발생될 수 있습니다. 문서 - My Games 폴더의 권한을 확인하세요.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeSymlinks": {
-    "message": "GShade symbolic links are corrupted.\n\nThe game cannot start. Do you want XIVLauncher to fix this? You will need to reinstall GShade.",
+    "message": "GShade의 심볼릭 링크가 손상되었습니다.\n\n게임을 실행할 수 없습니다. XIVLauncher가 이 문제를 해결할 수 있도록 하겠습니까? GSahde 재설치가 필요합니다.",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeError": {
@@ -1076,7 +1112,7 @@
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeWrongMode": {
-    "message": "You installed GShade in a mode that isn't optimal for use together with XIVLauncher. Do you want XIVLauncher to fix this for you?\n\nThis will not change your presets or settings, it will merely improve compatibility with XIVLauncher features.",
+    "message": "GSahde가 XIVLauncher와 같이 사용하기에 최적화 되지 않은 모드로 설치되었습니다. XIVLauncher가 문제를 수정하게 할까요?\n\nXIVLauncher의 기능과의 약간의 호환성이 증가할 뿐 프리셋이나 설정을 건드리진 않습니다.",
     "description": "ProblemCheck.RunCheck"
   }
 }

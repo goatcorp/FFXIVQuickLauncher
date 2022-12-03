@@ -8,8 +8,8 @@
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "updatefailureerror": {
-    "message": "XIVLauncher kunde inte söka efter uppdateringar. Detta kan bero på anslutningsproblem med GitHub. Vänta ett par minuter och försök igen.\nOm du använder ett VPN, stäng av det. Du kan även behöva utesluta XIVLauncher från ditt antivirus.\nOm problemen kvarstår efter flera minuter, vänligen se vår FAQ.",
-    "description": "<Run>d__3.MoveNext"
+    "message": "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "description": "<Run>d__19.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "You don't have a game installation set up. XIVLauncher can't start the official launcher.",
@@ -123,21 +123,25 @@
     "message": "Spelet är öppet, vänligen stäng det och försök igen.",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
+  "SteamFtToggleAutoStartWarning": {
+    "message": "To apply this setting, XIVLauncher needs to restart.\nPlease reopen XIVLauncher.",
+    "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
+  },
   "IntegrityCheckImpossible": {
     "message": "Det finns ingen referensrapport för denna spelversion än. Vänligen försök igen senare.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckNetworkError": {
     "message": "Kunde inte ladda ner referensfiler för integritetskoll. Vänligen kolla din internetuppkoppling och försök igen.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckFailed": {
     "message": "Vissa spelfiler ser ut att vara ändrade eller korrupta. \n\nAnvänder du TexTools-modifieringar är detta förväntat.\n\nOm du inte använder modifieringar, högerklicka \"Logga in\"-knappen på XIVLaunchers startsida och välj \"Reparera spel\".",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckValid": {
     "message": "Din spelinstallation ser ut att vara giltig.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "Välj profilbild",
@@ -154,6 +158,34 @@
   "AccountSwitcherDontSavePassword": {
     "message": "Spara inte lösenord",
     "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AdvancedSettings": {
+    "message": "XIVLauncher Advanced Settings",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "EnabledUidCache": {
+    "message": "Aktivera experimentell UID-cache (speluppdateringar kommer ha sönder detta!)",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ResetUidCacheTip": {
+    "message": "Håll Ctrl-knappen när du startar XIVLauncher för att återställa UID-cachen",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "Avsluta XIVLauncher efter att spelet avslutats",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "Behandla avslutskoder som inte är noll som ett fel",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ForceNorthAmerica": {
+    "message": "Always download North American news, headlines and banners",
+    "description": "AdvancedSettingsViewModel..ctor"
   },
   "UpdateNotice": {
     "message": "XIVLauncher har uppdaterats till version {0}.",
@@ -181,10 +213,6 @@
   },
   "ChangelogThanks": {
     "message": "XIVLauncher är gratis och använder öppen källkod av folk från hela världen.\nTack för att du är här!",
-    "description": "ChangeLogWindowViewModel.SetupLoc"
-  },
-  "OK": {
-    "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
@@ -236,11 +264,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Vänligen välj mappen ditt spel är installerat i.\nMapparna \"game\" och \"boot\" borde finnas i den.",
+    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".\n\nIf you don't have the game installed, you can choose an empty folder and XIVLauncher will install it for you.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Kryssa denna ruta om du kör spelet genom Steam.",
+    "message": "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -552,7 +580,7 @@
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "Det gick inte att ladda ner nödvändiga datafiler för att använda Dalamud och tillägg.\nDetta kan bero på ett problem med din internetuppkoppling. Spelet kommer att starta, men tillägg kommer inte vara tillgängliga.",
+    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
@@ -596,7 +624,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.\n\nContext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
@@ -795,6 +823,18 @@
     "message": "Aktivera XL Authenticator-appen eller engångslösenords-macro",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "OtpServerTooltip": {
+    "message": "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LearnMore": {
+    "message": "Learn More",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpLearnMoreTooltipLoc": {
+    "message": "Open a guide in your web browser.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "Ytterligare startargument",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -821,6 +861,14 @@
   },
   "RunIntegrityCheckTooltip": {
     "message": "Kör integritetskoll på spelfiler.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteam": {
+    "message": "Start Steam when starting XIVLauncher",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteamTooltip": {
+    "message": "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
@@ -1011,28 +1059,16 @@
     "message": "Starta Officiella Spelstartaren",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "EnabledUidCache": {
-    "message": "Aktivera experimentell UID-cache (speluppdateringar kommer ha sönder detta!)",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ResetUidCacheTip": {
-    "message": "Håll Ctrl-knappen när du startar XIVLauncher för att återställa UID-cachen",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "EnableEncryption": {
-    "message": "Aktivera kryptering av argument till klienten",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ExitLauncherAfterGameExitLoc": {
-    "message": "Avsluta XIVLauncher efter att spelet avslutats",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "TreatNonZeroExitCodeAsFailureLoc": {
-    "message": "Behandla avslutskoder som inte är noll som ett fel",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
   "IsFreeTrial": {
-    "message": "Starta i Free Trial-läge",
+    "message": "Using free trial account",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettings": {
+    "message": "Open Advanced Settings",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettingsTip": {
+    "message": "Opens some settings for advanced users. Please only use these if you know what you're doing.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {

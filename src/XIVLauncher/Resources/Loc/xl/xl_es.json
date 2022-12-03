@@ -8,8 +8,8 @@
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "updatefailureerror": {
-    "message": "XIVLauncher no ha podido buscar actualizaciones. Ésto podría ser debido a problemas de conectividad con GitHub. Espera unos minutos y prueba de nuevo. Desactiva tu VPN, si estás usando una. Tambien es posible que necesites excluir XIVLauncher de tu antivirus.\nSi sigue ocurriendo tras varios minutos, comprueba el FAQ.",
-    "description": "<Run>d__3.MoveNext"
+    "message": "XIVLauncher no ha podido comprobar las actualizaciones. Esto puede deberse a problemas de conexión a Internet. Espera unos minutos y vuelve a intentarlo.\nDesactiva tu VPN, si tienes una. Es posible que también tengas que excluir a XIVLauncher de tu antivirus.\nSi esto sigue fallando después de varios minutos, por favor revisa las Preguntas Frecuentes.",
+    "description": "<Run>d__19.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "No tienes una instalación del juego. XIVLauncher no puede ejecutar el launcher oficial.",
@@ -123,21 +123,25 @@
     "message": "El juego está abierto, por favor ciérralo e inténtalo de nuevo.",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
+  "SteamFtToggleAutoStartWarning": {
+    "message": "Para aplicar esta configuración, necesitas reiniciar XIVLauncher.\nPor favor, vuelve a abrir XIVLauncher.",
+    "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
+  },
   "IntegrityCheckImpossible": {
     "message": "Aún no hay un informe de referencia para esta versión del juego. Por favor inténtalo de nuevo más tarde.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckNetworkError": {
     "message": "No se han podido descargar los archivos de referencia para comprobar la integridad. Comprueba tu conexión a internet y prueba de nuevo.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckFailed": {
     "message": "Algunos archivos del juego parecen estar modificados o corruptos.\n\nSi utilizas mods de TexTools, es un resultado a esperar.\n\nSi no utilizas mods, haz click derecho en el botón de iniciar sesión en la página inicial de XIVLauncher y elige \"Reparar juego\".",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckValid": {
     "message": "Tu instalación del juego parece ser válida.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "Añade una foto del perfil",
@@ -154,6 +158,34 @@
   "AccountSwitcherDontSavePassword": {
     "message": "No guardar la contraseña",
     "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AdvancedSettings": {
+    "message": "Configuración avanzada de XIVLauncher",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "EnabledUidCache": {
+    "message": "Activar caché experimental UID (¡esto cesará al actualizar juego!)",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ResetUidCacheTip": {
+    "message": "Mantén pulsado control mientras inicias el launcher para resetear la caché UID",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "Cerrar XIVLauncher al salir del juego",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "Tratar código de salida de juego no cero como fallo",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ForceNorthAmerica": {
+    "message": "Descargar siempre noticias, headlines y banners de América del Norte",
+    "description": "AdvancedSettingsViewModel..ctor"
   },
   "UpdateNotice": {
     "message": "XIVLauncher ha sido actualizado a la versión {0}.",
@@ -181,10 +213,6 @@
   },
   "ChangelogThanks": {
     "message": "XIVLauncher es un software gratuito de código abierto apoyado por una variedad de personas de todo el mundo.\n¡Gracias por quedarte!",
-    "description": "ChangeLogWindowViewModel.SetupLoc"
-  },
-  "OK": {
-    "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
@@ -236,11 +264,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Por favor selecciona la carpeta en la que está instalado el juego. Debe contener las carpetas \"game\" y \"boot\".",
+    "message": "Por favor, selecciona la carpeta en la que está instalado el juego.\nDebe contener las carpetas \"game\" y \"boot\".\n\nSi no tienes el juego instalado, puedes elegir una carpeta vacía y XIVLauncher lo instalará por ti.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Por favor marca esta casilla si normalmente inicias el juego por Steam.",
+    "message": "Por favor, marca esta casilla si estás iniciando el juego usando Steam, o si tienes una cuenta con una licencia de Steam.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -552,7 +580,7 @@
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "No se han podido descargar archivos de datos necesarios para el funcionamiento de Dalamud y sus plugins.\nEs probable que sea un problema con tu conexión a internet - el juego funcionará, pero no podrás usar plugins.",
+    "message": "No se pudo descargar los archivos de datos necesarios para usar Dalamud y plugins.\nEsto podría ser un problema con tu conexión a internet, o podría deberse a que tu antivirus bloquea los archivos necesarios. El juego se abrirá, pero no podrás usar plugins.\n\nPor favor, revisa nuestras Preguntas Frecuentes para más información.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
@@ -596,7 +624,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "No se ha podido verificar con Steam. Por favor, asegúrate de que Steam está ejecutándose y que has iniciado sesión con la cuenta que se enlazó con tu ID de SE.\nSi estás usando la Prueba Gratuita, por favor, marca la casilla de \"Modo Free Trial\" en la pestaña \"Acerca de\" en los ajustes de XIVLauncher.\n\nContexto: {0}",
+    "message": "No se ha podido verificar con Steam. Por favor, asegúrate de que Steam está ejecutándose y que has iniciado sesión con la cuenta que se vinculó con tu ID de SE.\nSi estás usando la Prueba Gratuita, por favor, marca la casilla de \"Usando cuenta en Free Trial\" en la pestaña \"Configuración de juego\" en los ajustes de XIVLauncher.\n\nContexto: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
@@ -795,6 +823,18 @@
     "message": "Habilitar soporte para macros XL Authenticator/OTP",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "OtpServerTooltip": {
+    "message": "Esto te permitirá enviar tu código OTP a XIVLauncher directamente desde tu teléfono.\nHaz clic en \"Aprender más\" para ver cómo configurar esto.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LearnMore": {
+    "message": "Saber más",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpLearnMoreTooltipLoc": {
+    "message": "Abrir una guía en tu navegador.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "Parámetros de inicio adicionales",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -821,6 +861,14 @@
   },
   "RunIntegrityCheckTooltip": {
     "message": "Ejecutar verificación de integridad en los archivos del juego.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteam": {
+    "message": "Iniciar Steam al iniciar XIVLauncher",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteamTooltip": {
+    "message": "Siempre que abras XIVLauncher, comprobará si Steam se está ejecutando y se iniciará si no lo está.\nTe mostrarás automáticamente como \"Jugando\" en Steam.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
@@ -1011,28 +1059,16 @@
     "message": "Iniciar el launcher oficial",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "EnabledUidCache": {
-    "message": "Activar caché experimental UID (¡esto cesará al actualizar juego!)",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ResetUidCacheTip": {
-    "message": "Mantén pulsado control mientras inicias el launcher para resetear la caché UID",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "EnableEncryption": {
-    "message": "Activar el cifrado de argumentos al cliente",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ExitLauncherAfterGameExitLoc": {
-    "message": "Cerrar XIVLauncher al salir del juego",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "TreatNonZeroExitCodeAsFailureLoc": {
-    "message": "Tratar código de salida de juego no cero como fallo",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
   "IsFreeTrial": {
-    "message": "Comenzar en modo prueba gratuita",
+    "message": "Utilizando cuenta de prueba gratuita",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettings": {
+    "message": "Abrir configuración avanzada",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettingsTip": {
+    "message": "Abre algunos ajustes para usuarios avanzados. Por favor, úsalos sólo si sabes lo que estás haciendo.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {

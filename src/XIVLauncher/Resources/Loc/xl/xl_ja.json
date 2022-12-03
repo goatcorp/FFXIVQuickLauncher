@@ -1,18 +1,18 @@
 {
   "Refresh": {
-    "message": "_Refresh",
+    "message": "更新",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "Ignore": {
-    "message": "_Ignore",
+    "message": "キャンセル",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "updatefailureerror": {
-    "message": "XIVLauncherの更新チェックに失敗しました。GitHubの接続が原因の可能性があります。数分待ってからもう一度試してみてください。\nVPN を利用している場合はそれを無効にしてください。\n数分経っても失敗する場合は、GitHubにリンクされているDiscordに参加してサポートを受けてください。",
-    "description": "<Run>d__3.MoveNext"
+    "message": "XIVLauncherの更新チェックに失敗しました。GitHubへの接続が原因の可能性があります。数分待ってからもう一度試してみてください。\nVPN を利用している場合はそれを無効にしてください。\n数分経っても失敗する場合は、GitHubにリンクされているDiscordに参加してサポートを受けてください。",
+    "description": "<Run>d__19.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
-    "message": "You don't have a game installation set up. XIVLauncher can't start the official launcher.",
+    "message": "FFXIVゲーム本体のインストール先が設定されていません。XIVLauncherは公式ランチャーを起動できません。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherConfirmSteam": {
@@ -20,7 +20,7 @@
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
-    "message": "Steam couldn't be loaded. Please start the game directly via Steam.",
+    "message": "Steamの動作を検出することができませんでした。直接SteamからFFXIVを起動してください。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "ErrorAssertionFailed": {
@@ -72,11 +72,11 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
-    "message": "Please do not select the \"game\" or \"boot\" folder of your game installation, and choose the folder that contains these instead.",
+    "message": "FFXIVがインストールされているフォルダの「game」や「boot」を選択せず、この2つを含む元のフォルダを選択してください。",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidConfirm": {
-    "message": "The folder you selected has no installation of the game.\nXIVLauncher will install the game the first time you log in.\nContinue?",
+    "message": "選択したフォルダにはFFXIVがインストールされていません。\nXIVLauncherは初回ログイン時にFFXIVをインストールします。\n続けますか？",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathRegionConfirm": {
@@ -123,21 +123,25 @@
     "message": "ゲームが実行中です。終了させてもう一度実行してください。",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
+  "SteamFtToggleAutoStartWarning": {
+    "message": "To apply this setting, XIVLauncher needs to restart.\nPlease reopen XIVLauncher.",
+    "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
+  },
   "IntegrityCheckImpossible": {
     "message": "このゲームバージョンはまだ参照レポートがありません。後ほど再度お試し下さい。",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckNetworkError": {
     "message": "整合性を確認するための参照ファイルのダウンロードに失敗しました。インターネット接続を確認して、もう一度お試しください。",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckFailed": {
     "message": "いくつかのゲームファイルが改造または破損しているようです。\nもしTexTools MODを導入しているのであれば、それが原因だと思われます。\nもしMOD類を使用していないのであれば、XIVLauncherのログイン画面にある「ログイン」ボタンを右クリックして、「ゲームファイルの修復」を選んでください",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckValid": {
     "message": "ゲームインストールは有効性がありそうです。",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "プロフィール画像を設定",
@@ -154,6 +158,34 @@
   "AccountSwitcherDontSavePassword": {
     "message": "パスワードを保存しない",
     "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AdvancedSettings": {
+    "message": "XIVLauncher Advanced Settings",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "EnabledUidCache": {
+    "message": "UID キャッシュを有効化 ※実験的機能 (おかしな動作をするかもしれません)",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ResetUidCacheTip": {
+    "message": "UIDキャッシュをリセットするにはランチャーの起動中Controlキーを押しっぱなしにします。",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "ゲーム終了後にXIVLauncherを終了",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "ゼロ以外のゲーム終了コードを失敗として扱う",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ForceNorthAmerica": {
+    "message": "Always download North American news, headlines and banners",
+    "description": "AdvancedSettingsViewModel..ctor"
   },
   "UpdateNotice": {
     "message": "XIVLauncher がバージョン {0} に更新されました。",
@@ -181,10 +213,6 @@
   },
   "ChangelogThanks": {
     "message": "XIVLauncherは、世界中の様々な人々によって支えられているフリーのオープンソース・ソフトウェアです。\n興味を持っていただきありがとうございます！",
-    "description": "ChangeLogWindowViewModel.SetupLoc"
-  },
-  "OK": {
-    "message": "OK",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
@@ -236,11 +264,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "\nゲームがインストールされているフォルダを選択してください。\n対象のフォルダには \"game\" と \"boot\" フォルダがあります。",
+    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".\n\nIf you don't have the game installed, you can choose an empty folder and XIVLauncher will install it for you.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "いつも Steam を使用してゲームを起動している場合はチェックして下さい。",
+    "message": "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -384,11 +412,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start w/o Dalamud",
+    "message": "Dalamudを無効にして起動する",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Third-Party Plugins",
+    "message": "サードパーティープラグインを無効にして起動する",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -552,7 +580,7 @@
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "Dalamudとプラグインを使用するために必要なデータファイルをダウンロードできませんでした。\nこれはインターネット接続に問題がある可能性があります。\nこのままゲームは起動されますが、Dalamudプラグインを使用することはできません。",
+    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
@@ -596,7 +624,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Steamで認証できませんでした。 Steam が起動していること、および スクウェア・エニックスIDに紐付けられたSteamアカウントでログインしていることを確認してください。\nフリートライアル版でプレイしている場合は、XIVLauncherの設定の「情報」タブにある「フリートライアルモードで開始」にチェックを入れてください。 \n\n\nContext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
@@ -795,6 +823,18 @@
     "message": "XL Authenticator app/OTPマクロのサポートを有効化",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "OtpServerTooltip": {
+    "message": "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LearnMore": {
+    "message": "Learn More",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpLearnMoreTooltipLoc": {
+    "message": "Open a guide in your web browser.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "追加の起動パラメータ",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -821,6 +861,14 @@
   },
   "RunIntegrityCheckTooltip": {
     "message": "ゲームファイルの整合性チェックを実行します。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteam": {
+    "message": "Start Steam when starting XIVLauncher",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteamTooltip": {
+    "message": "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
@@ -1011,28 +1059,16 @@
     "message": "公式ランチャーを起動",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "EnabledUidCache": {
-    "message": "UID キャッシュを有効化 ※実験的機能 (おかしな動作をするかもしれません)",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ResetUidCacheTip": {
-    "message": "UIDキャッシュをリセットするにはランチャーの起動中Controlキーを押しっぱなしにします。",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "EnableEncryption": {
-    "message": "クライアントへの引数を暗号化する",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ExitLauncherAfterGameExitLoc": {
-    "message": "ゲーム終了後にXIVLauncherを終了",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "TreatNonZeroExitCodeAsFailureLoc": {
-    "message": "ゼロ以外のゲーム終了コードを失敗として扱う",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
   "IsFreeTrial": {
-    "message": "フリートライアルモードで開始",
+    "message": "Using free trial account",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettings": {
+    "message": "Open Advanced Settings",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettingsTip": {
+    "message": "Opens some settings for advanced users. Please only use these if you know what you're doing.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {
