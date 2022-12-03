@@ -8,8 +8,8 @@
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "updatefailureerror": {
-    "message": "XIVLauncher 無法檢查更新。這可能是因為與 GitHub 的連接問題造成的。請等待幾分鐘後重試。\n如果您正在使用 VPN，請禁用後重試。你可能需要將 XIVLauncher 從你的防毒軟件中排除。\n如果此問題在數分鐘後仍未解決，請查閱常見問題。",
-    "description": "<Run>d__3.MoveNext"
+    "message": "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "description": "<Run>d__19.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "You don't have a game installation set up. XIVLauncher can't start the official launcher.",
@@ -123,21 +123,25 @@
     "message": "遊戲正在執行中，請先關閉遊戲後再試。",
     "description": "SettingsControl.DeletePlugin_OnClick"
   },
+  "SteamFtToggleAutoStartWarning": {
+    "message": "To apply this setting, XIVLauncher needs to restart.\nPlease reopen XIVLauncher.",
+    "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
+  },
   "IntegrityCheckImpossible": {
     "message": "此遊戲版本尚無參考報告。我們無法為您執行完整性檢查，請稍後再試。",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckNetworkError": {
     "message": "Failed to download reference files for checking integrity. Check your internet connection and try again.",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckFailed": {
     "message": "一些遊戲檔案似乎被修改或損壞。 \n\n如果您使用了 TextTools 模組，這是預期的結果。\n\n如果您沒有使用模組，請右鍵單擊 XIVLauncher 開始頁面上的「登錄」按鈕並選擇「修復遊戲」。",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "IntegrityCheckValid": {
     "message": "您的遊戲安裝完整。",
-    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
   },
   "AccountSwitcherSetProfilePic": {
     "message": "更改頭像",
@@ -154,6 +158,34 @@
   "AccountSwitcherDontSavePassword": {
     "message": "不保存密碼",
     "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AdvancedSettings": {
+    "message": "XIVLauncher Advanced Settings",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "OK": {
+    "message": "確定",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "EnabledUidCache": {
+    "message": "啟用試驗性 UID 快取（這將在遊戲更新後失效！）",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ResetUidCacheTip": {
+    "message": "在啟動啟動器時長按 Ctrl 鍵可以重置 UID 快取",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "遊戲退出後關閉 XIVLauncher",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "將非零的遊戲退出代碼視為失敗",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ForceNorthAmerica": {
+    "message": "Always download North American news, headlines and banners",
+    "description": "AdvancedSettingsViewModel..ctor"
   },
   "UpdateNotice": {
     "message": "XIVLauncher 已更新至 {0} 版本。",
@@ -181,10 +213,6 @@
   },
   "ChangelogThanks": {
     "message": "XIVLauncher 是由無數來自世界各地的人共同創造出的、免費且開源的軟體。\n非常感謝您在我們成長之路上的陪伴。",
-    "description": "ChangeLogWindowViewModel.SetupLoc"
-  },
-  "OK": {
-    "message": "確定",
     "description": "ChangeLogWindowViewModel.SetupLoc"
   },
   "ChatChannelSetupTitle": {
@@ -236,11 +264,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "請選擇遊戲所在資料夾。\n該資料夾應該包含「game」和「boot」資料夾。",
+    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".\n\nIf you don't have the game installed, you can choose an empty folder and XIVLauncher will install it for you.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "如果您常用 Steam 啟動遊戲，請選中此項。",
+    "message": "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -552,7 +580,7 @@
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis is likely a problem with your internet connection - the game will start, but you will not be able to use plugins.",
+    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
@@ -596,7 +624,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Free Trial mode\" checkbox in the \"About\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.\n\nContext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
@@ -795,6 +823,18 @@
     "message": "啟用 XL Authenticator APP/OTP 巨集支持",
     "description": "SettingsControlViewModel.SetupLoc"
   },
+  "OtpServerTooltip": {
+    "message": "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LearnMore": {
+    "message": "Learn More",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpLearnMoreTooltipLoc": {
+    "message": "Open a guide in your web browser.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
   "AdditionalArguments": {
     "message": "額外啟動參數",
     "description": "SettingsControlViewModel.SetupLoc"
@@ -821,6 +861,14 @@
   },
   "RunIntegrityCheckTooltip": {
     "message": "對遊戲檔案執行完整性檢查。",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteam": {
+    "message": "Start Steam when starting XIVLauncher",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteamTooltip": {
+    "message": "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
@@ -1011,28 +1059,16 @@
     "message": "啟動官方啟動器",
     "description": "SettingsControlViewModel.SetupLoc"
   },
-  "EnabledUidCache": {
-    "message": "啟用試驗性 UID 快取（這將在遊戲更新後失效！）",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ResetUidCacheTip": {
-    "message": "在啟動啟動器時長按 Ctrl 鍵可以重置 UID 快取",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "EnableEncryption": {
-    "message": "啟用客戶端加密參數傳輸",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "ExitLauncherAfterGameExitLoc": {
-    "message": "遊戲退出後關閉 XIVLauncher",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
-  "TreatNonZeroExitCodeAsFailureLoc": {
-    "message": "將非零的遊戲退出代碼視為失敗",
-    "description": "SettingsControlViewModel.SetupLoc"
-  },
   "IsFreeTrial": {
-    "message": "在免費試用模式下啟動",
+    "message": "Using free trial account",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettings": {
+    "message": "Open Advanced Settings",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettingsTip": {
+    "message": "Opens some settings for advanced users. Please only use these if you know what you're doing.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {
