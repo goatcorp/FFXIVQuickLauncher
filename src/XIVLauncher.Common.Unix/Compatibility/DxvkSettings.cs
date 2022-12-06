@@ -40,13 +40,16 @@ public class DxvkSettings
         {
             case Dxvk.DxvkHudType.Fps:
                 DxvkVars.Add("DXVK_HUD","fps");
+                DxvkVars.Add("MANGOHUD","0");
                 break;
             case Dxvk.DxvkHudType.Custom:
                 if (dxvkHudCustom == "") dxvkHudCustom = "fps,frametimes,gpuload,version";
                 DxvkVars.Add("DXVK_HUD",dxvkHudCustom);
+                DxvkVars.Add("MANGOHUD","0");
                 break;
             case Dxvk.DxvkHudType.Full:
                 DxvkVars.Add("DXVK_HUD","full");
+                DxvkVars.Add("MANGOHUD","0");
                 break;
             case Dxvk.DxvkHudType.MangoHud:
                 DxvkVars.Add("DXVK_HUD","0");
