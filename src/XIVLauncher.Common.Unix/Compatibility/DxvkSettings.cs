@@ -16,11 +16,13 @@ public class DxvkSettings
     public Dxvk.DxvkVersion DxvkVersion { get; private set; }
 
     public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, bool? async = true,
-        Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1)
+        int? frameRate = 0, Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1)
     {
         this.DxvkHud = hud;
         this.DxvkVars = new Dictionary<string, string> ();
         this.DxvkVars.Add("DXVK_ASYNC", ((async ?? false) ? "1" : "0"));
+        frameRate ??= 0;
+        if (frameRate > 0) this.DxvkVars.Add("DXVK_FRAME_RATE", (frameRate).ToString());
         this.DxvkVersion = version;
         string release = this.DxvkVersion switch
         {
