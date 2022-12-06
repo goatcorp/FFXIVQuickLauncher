@@ -15,7 +15,7 @@ public class DxvkSettings
 
     public Dxvk.DxvkVersion DxvkVersion { get; private set; }
 
-    public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, bool? async = true,
+    public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, string dxvkHudCustom="", bool? async = true,
         int? frameRate = 0, Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1)
     {
         this.DxvkHud = hud;
@@ -39,6 +39,10 @@ public class DxvkSettings
         {
             case Dxvk.DxvkHudType.Fps:
                 DxvkVars.Add("DXVK_HUD","fps");
+                break;
+            case Dxvk.DxvkHudType.Custom:
+                if (dxvkHudCustom == "") dxvkHudCustom = "fps,frametimes,gpuload,version";
+                DxvkVars.Add("DXVK_HUD",dxvkHudCustom);
                 break;
             case Dxvk.DxvkHudType.Full:
                 DxvkVars.Add("DXVK_HUD","full");

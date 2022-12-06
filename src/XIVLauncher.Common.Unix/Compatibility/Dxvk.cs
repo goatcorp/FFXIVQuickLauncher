@@ -47,6 +47,9 @@ public static class Dxvk
         [SettingsDescription("FPS", "Only show FPS")]
         Fps,
 
+        [SettingsDescription("DXVK Hud Custom", "Use a custom DXVK_HUD string")]
+        Custom,
+
         [SettingsDescription("Full", "Show everything")]
         Full,
     }
