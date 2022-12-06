@@ -52,6 +52,15 @@ public static class Dxvk
 
         [SettingsDescription("Full", "Show everything")]
         Full,
+
+        [SettingsDescription("MangoHud Default", "Uses no config file.")]
+        MangoHud,
+
+        [SettingsDescription("MangoHud Custom", "Specify a custom config file")]
+        MangoHudCustom,
+
+        [SettingsDescription("MangoHud Full", "Show (almost) everything")]
+        MangoHudFull,
     }
 
     public enum DxvkVersion

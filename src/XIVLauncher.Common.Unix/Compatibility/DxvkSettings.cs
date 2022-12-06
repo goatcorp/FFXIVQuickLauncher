@@ -15,8 +15,9 @@ public class DxvkSettings
 
     public Dxvk.DxvkVersion DxvkVersion { get; private set; }
 
-    public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, string dxvkHudCustom="", bool? async = true,
-        int? frameRate = 0, Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1)
+    public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, string dxvkHudCustom="",
+        string mangoHudPath="", bool? async = true, int? frameRate = 0,
+        Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1)
     {
         this.DxvkHud = hud;
         this.DxvkVars = new Dictionary<string, string> ();
@@ -46,6 +47,23 @@ public class DxvkSettings
                 break;
             case Dxvk.DxvkHudType.Full:
                 DxvkVars.Add("DXVK_HUD","full");
+                break;
+            case Dxvk.DxvkHudType.MangoHud:
+                DxvkVars.Add("DXVK_HUD","0");
+                DxvkVars.Add("MANGOHUD","1");
+                DxvkVars.Add("MANGOHUD_CONFIG", "");
+                break;
+            case Dxvk.DxvkHudType.MangoHudCustom:
+                DxvkVars.Add("DXVK_HUD","0");
+                DxvkVars.Add("MANGOHUD","1");
+                if (mangoHudPath == "")
+                    mangoHudPath = Environment.GetEnvironmentVariable("HOME") + "/.config/MangoHud/MangoHud.conf";
+                DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
+                break;
+            case Dxvk.DxvkHudType.MangoHudFull:
+                DxvkVars.Add("DXVK_HUD","0");
+                DxvkVars.Add("MANGOHUD","1");
+                DxvkVars.Add("MANGOHUD_CONFIG","full");
                 break;
             // If DxvkHudType is None, or undefined, don't set anything.
             default:

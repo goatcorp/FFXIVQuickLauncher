@@ -82,7 +82,7 @@ public class CompatibilityTools
     }
 
         public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
-            : this(wineSettings, new DxvkSettings(hudType, "", dxvkAsyncOn), gamemodeOn, toolsFolder)
+            : this(wineSettings, new DxvkSettings(hudType, "", "", dxvkAsyncOn), gamemodeOn, toolsFolder)
         {
             // Old constructor format. This is for compatibility with XL.Core. Once changes are made
             // there, this can be deleted.
