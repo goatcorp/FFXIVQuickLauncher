@@ -1,9 +1,11 @@
-﻿• Adds an option to start Steam automatically when starting XIVLauncher
+﻿This update is a hotfix for version 6.3.0, which resolves an issue wherein the launcher window would be really tiny.
+
+• Adds an option to start Steam automatically when starting XIVLauncher
 • The window position of the launcher is now retained between starts
 • Adds an option to see the North American headlines without using a North American Windows installation
 • Fixes an issue wherein the account switcher may not have opened correctly on high-DPI screens
 • Fixes an issue wherein XIVLauncher could not start the game with certain graphics injectors
 • Fixes an issue wherein game repair may not have repaired expansions under certain conditions (by kizer)
 • Fixes an issue wherein game repair may not have worked with older game versions (by kizer)
-• Fixes an issue wherein the "Update without starting" may not have worked correctly (by Mitalie)
+• Fixes an issue wherein "Update without starting" may not have worked correctly (by Mitalie)
 • If another process prevents patching, you will now be told which (by kizer)
