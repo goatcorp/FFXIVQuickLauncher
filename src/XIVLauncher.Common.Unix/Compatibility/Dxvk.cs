@@ -8,17 +8,15 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public static class Dxvk
 {
-    private const string DXVK_DOWNLOAD = "https://github.com/Sporif/dxvk-async/releases/download/1.10.1/dxvk-async-1.10.1.tar.gz";
-    private const string DXVK_NAME = "dxvk-async-1.10.1";
-
-    public static async Task InstallDxvk(DirectoryInfo prefix, DirectoryInfo installDirectory)
+    public static async Task InstallDxvk(DirectoryInfo prefix, DirectoryInfo installDirectory, DxvkSettings? dxvkSettings = null)
     {
-        var dxvkPath = Path.Combine(installDirectory.FullName, DXVK_NAME, "x64");
+        dxvkSettings ??= new DxvkSettings();
+        var dxvkPath = Path.Combine(installDirectory.FullName, dxvkSettings.FolderName, "x64");
 
         if (!Directory.Exists(dxvkPath))
         {
             Log.Information("DXVK does not exist, downloading");
-            await DownloadDxvk(installDirectory).ConfigureAwait(false);
+            await DownloadDxvk(installDirectory, dxvkSettings.DownloadURL).ConfigureAwait(false);
         }
 
         var system32 = Path.Combine(prefix.FullName, "drive_c", "windows", "system32");
@@ -30,12 +28,12 @@ public static class Dxvk
         }
     }
 
-    private static async Task DownloadDxvk(DirectoryInfo installDirectory)
+    private static async Task DownloadDxvk(DirectoryInfo installDirectory, string downloadURL)
     {
         using var client = new HttpClient();
         var tempPath = Path.GetTempFileName();
 
-        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(DXVK_DOWNLOAD));
+        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(downloadURL));
         PlatformHelpers.Untar(tempPath, installDirectory.FullName);
 
         File.Delete(tempPath);
@@ -51,5 +49,20 @@ public static class Dxvk
 
         [SettingsDescription("Full", "Show everything")]
         Full,
+    }
+
+    public enum DxvkVersion
+    {
+        [SettingsDescription("1.10.1 (default)", "The default version of DXVK used with XIVLauncher.Core.")]
+        v1_10_1,
+
+        [SettingsDescription("1.10.2", "Newer version of 1.10 branch of DXVK. Probably works.")]
+        v1_10_2,
+
+        [SettingsDescription("1.10.3", "Newer version of 1.10 branch of DXVK. Probably works.")]
+        v1_10_3,
+
+        [SettingsDescription("2.0 (might break Dalamud, GShade)", "Newest version of DXVK. Might break Dalamud or GShade.")]
+        v2_0,
     }
 }
