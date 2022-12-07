@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
@@ -60,7 +61,18 @@ public class DxvkSettings
                 DxvkVars.Add("DXVK_HUD","0");
                 DxvkVars.Add("MANGOHUD","1");
                 if (mangoHudPath == "")
-                    mangoHudPath = Environment.GetEnvironmentVariable("HOME") + "/.config/MangoHud/MangoHud.conf";
+                {
+                    string home = Environment.GetEnvironmentVariable("HOME");
+                    string conf1 = Path.Combine(home,".xlcore","MangoHud.conf");
+                    string conf2 = Path.Combine(home,".config","MangoHud","wine-ffxiv_dx11.conf");
+                    string conf3 = Path.Combine(home,".config","MangoHud","MangoHud.conf");
+                    if (File.Exists(conf1))
+                        mangoHudPath = conf1;
+                    else if (File.Exists(conf2))
+                        mangoHudPath = conf2;
+                    else
+                        mangoHudPath = conf3;
+                }
                 DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
                 break;
             case Dxvk.DxvkHudType.MangoHudFull:
