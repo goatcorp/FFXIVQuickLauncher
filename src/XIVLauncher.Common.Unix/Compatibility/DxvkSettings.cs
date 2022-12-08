@@ -73,7 +73,8 @@ public class DxvkSettings
                     else
                         mangoHudPath = conf3;
                 }
-                DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
+                // Make absolutely sure the file exists, otherwise the game will hang.
+                if (File.Exists(mangoHudPath)) DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
                 break;
             case Dxvk.DxvkHudType.MangoHudFull:
                 DxvkVars.Add("DXVK_HUD","0");
