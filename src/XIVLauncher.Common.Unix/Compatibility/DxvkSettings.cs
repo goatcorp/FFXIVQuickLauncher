@@ -28,6 +28,8 @@ public class DxvkSettings
         string home = Environment.GetEnvironmentVariable("HOME");
         corePath ??= Path.Combine(home,".xlcore");
         string dxvkConfigPath = Path.Combine(corePath,".dxvk");
+        if (!Directory.Exists(dxvkConfigPath))
+            Directory.Create(dxvkConfigPath);
         this.DxvkVars = new Dictionary<string, string> ();
         this.DxvkVars.Add("DXVK_LOG_PATH",Path.Combine(corePath,"logs"));
         this.DxvkVars.Add("DXVK_CONFIG_FILE",Path.Combine(dxvkConfigPath,"dxvk.conf"));
