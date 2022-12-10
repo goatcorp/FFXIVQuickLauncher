@@ -18,7 +18,7 @@ public class DxvkSettings
     public Dxvk.DxvkVersion DxvkVersion { get; private set; }
 
     private const string ALLOWED_CHARS = "^[0-9a-zA-Z,=.]+$";
-    private const string ALLOWED_WORDS = "^(?:devinfo|fps|frametimes|submissions|drawcalls|pipelines|descriptors|memory|gpuload|version|api|cs|compiler|samplers|scale=(?:[0-9]){0,2}(?:.(?:[0-9])+)?)$";
+    private const string ALLOWED_WORDS = "^(?:devinfo|fps|frametimes|submissions|drawcalls|pipelines|descriptors|memory|gpuload|version|api|cs|compiler|samplers|scale=(?:[0-9])*(?:.(?:[0-9])+)?)$";
 
     public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, string dxvkHudCustom="",
         string mangoHudPath="", bool? async = true, int? frameRate = 0,
@@ -36,7 +36,7 @@ public class DxvkSettings
             Dxvk.DxvkVersion.v1_10_2 => "1.10.2",
             Dxvk.DxvkVersion.v1_10_3 => "1.10.3",
             Dxvk.DxvkVersion.v2_0 => "2.0",
-            _ => VersionOutOfRange(),
+            _ => throw new ArgumentOutOfRangeException(),
         };
         this.DownloadURL = $"https://github.com/Sporif/dxvk-async/releases/download/{release}/dxvk-async-{release}.tar.gz";
         this.FolderName = $"dxvk-async-{release}";
@@ -91,11 +91,6 @@ public class DxvkSettings
             default:
                 break;
         }
-    }
-
-    private string VersionOutOfRange() {
-        this.DxvkVersion = Dxvk.DxvkVersion.v1_10_1;
-        return "1.10.1";
     }
 
     public static bool CheckDxvkHudString(string customHud)
