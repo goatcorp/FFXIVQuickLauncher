@@ -22,10 +22,15 @@ public class DxvkSettings
 
     public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, string dxvkHudCustom="",
         string mangoHudPath="", bool? async = true, int? frameRate = 0,
-        Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1)
+        Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1, string? corePath = null)
     {
         this.DxvkHud = hud;
+        string home = Environment.GetEnvironmentVariable("HOME");
+        corePath ??= Path.Combine(home,".xlcore");
+        string dxvkConfigPath = Path.Combine(corePath,".dxvk");
         this.DxvkVars = new Dictionary<string, string> ();
+        this.DxvkVars.Add("DXVK_LOG_PATH",Path.Combine(corePath,"logs"));
+        this.DxvkVars.Add("DXVK_CONFIG_FILE",Path.Combine(dxvkConfigPath,"dxvk.conf"));
         this.DxvkVars.Add("DXVK_ASYNC", ((async ?? false) ? "1" : "0"));
         frameRate ??= 0;
         if (frameRate > 0) this.DxvkVars.Add("DXVK_FRAME_RATE", (frameRate).ToString());
@@ -40,7 +45,7 @@ public class DxvkSettings
         };
         this.DownloadURL = $"https://github.com/Sporif/dxvk-async/releases/download/{release}/dxvk-async-{release}.tar.gz";
         this.FolderName = $"dxvk-async-{release}";
-
+        this.DxvkVars.Add("DXVK_STATE_CACHE_PATH",Path.Combine(dxvkConfigPath,release));
         switch(this.DxvkHud)
         {
             case Dxvk.DxvkHudType.Fps:
@@ -66,8 +71,7 @@ public class DxvkSettings
                 DxvkVars.Add("MANGOHUD","1");
                 if (mangoHudPath == "")
                 {
-                    string home = Environment.GetEnvironmentVariable("HOME");
-                    string conf1 = Path.Combine(home,".xlcore","MangoHud.conf");
+                    string conf1 = Path.Combine(corePath,"MangoHud.conf");
                     string conf2 = Path.Combine(home,".config","MangoHud","wine-ffxiv_dx11.conf");
                     string conf3 = Path.Combine(home,".config","MangoHud","MangoHud.conf");
                     if (CheckMangoHudPath(conf1))
