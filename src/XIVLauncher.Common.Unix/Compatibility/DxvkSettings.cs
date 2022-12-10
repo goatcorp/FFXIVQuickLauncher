@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 
@@ -44,7 +45,7 @@ public class DxvkSettings
                 DxvkVars.Add("MANGOHUD","0");
                 break;
             case Dxvk.DxvkHudType.Custom:
-                if (dxvkHudCustom == "") dxvkHudCustom = "fps,frametimes,gpuload,version";
+                if (!CheckDxvkHudString(dxvkHudCustom)) dxvkHudCustom = "fps,frametimes,gpuload,version";
                 DxvkVars.Add("DXVK_HUD",dxvkHudCustom);
                 DxvkVars.Add("MANGOHUD","0");
                 break;
@@ -60,21 +61,23 @@ public class DxvkSettings
             case Dxvk.DxvkHudType.MangoHudCustom:
                 DxvkVars.Add("DXVK_HUD","0");
                 DxvkVars.Add("MANGOHUD","1");
-                if (mangoHudPath == "")
+                if (!CheckMangoHudPath(mangoHudPath))
                 {
                     string home = Environment.GetEnvironmentVariable("HOME");
                     string conf1 = Path.Combine(home,".xlcore","MangoHud.conf");
                     string conf2 = Path.Combine(home,".config","MangoHud","wine-ffxiv_dx11.conf");
                     string conf3 = Path.Combine(home,".config","MangoHud","MangoHud.conf");
-                    if (File.Exists(conf1))
+                    if (CheckMangoHudPath(conf1))
                         mangoHudPath = conf1;
-                    else if (File.Exists(conf2))
+                    else if (CheckMangoHudPath(conf2))
                         mangoHudPath = conf2;
-                    else
+                    else if (CheckMangoHudPath(conf3))
                         mangoHudPath = conf3;
+                    else
+                        DxvkVars.Add("MANGOHUD_CONFIG","");
+                        break;
                 }
-                // Make absolutely sure the file exists, otherwise the game will hang.
-                if (File.Exists(mangoHudPath)) DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
+                DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
                 break;
             case Dxvk.DxvkHudType.MangoHudFull:
                 DxvkVars.Add("DXVK_HUD","0");
@@ -90,5 +93,17 @@ public class DxvkSettings
     private string VersionOutOfRange() {
         this.DxvkVersion = Dxvk.DxvkVersion.v1_10_1;
         return "1.10.1";
+    }
+
+    public static bool CheckDxvkHudString(string customHud)
+    {
+        if (string.IsNullOrWhiteSpace(customHud)) return false;
+        if (!Regex.IsMatch(customHud,"^[0-9a-zA-Z,=]*$")) return false;
+        return true;
+    }
+
+    public static bool CheckMangoHudPath(string mangoPath)
+    {
+        return (File.Exists(mangoPath)) ? true : false;
     }
 }
