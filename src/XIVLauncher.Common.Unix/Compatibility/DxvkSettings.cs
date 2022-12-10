@@ -100,6 +100,7 @@ public class DxvkSettings
 
     public static bool CheckDxvkHudString(string customHud)
     {
+        if (customHud == "1") return true;
         if (string.IsNullOrWhiteSpace(customHud)) return false;
         if (!Regex.IsMatch(customHud,ALLOWED_CHARS)) return false;
         string[] hudvars = customHud.Split(",");
