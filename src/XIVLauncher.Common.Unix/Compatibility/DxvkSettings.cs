@@ -64,7 +64,7 @@ public class DxvkSettings
             case Dxvk.DxvkHudType.MangoHudCustom:
                 DxvkVars.Add("DXVK_HUD","0");
                 DxvkVars.Add("MANGOHUD","1");
-                if (!CheckMangoHudPath(mangoHudPath))
+                if (mangoHudPath == "")
                 {
                     string home = Environment.GetEnvironmentVariable("HOME");
                     string conf1 = Path.Combine(home,".xlcore","MangoHud.conf");
@@ -76,11 +76,9 @@ public class DxvkSettings
                         mangoHudPath = conf2;
                     else if (CheckMangoHudPath(conf3))
                         mangoHudPath = conf3;
-                    else
-                        DxvkVars.Add("MANGOHUD_CONFIG","");
-                        break;
                 }
-                DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
+                if (CheckMangoHudPath(mangoHudPath))
+                    DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
                 break;
             case Dxvk.DxvkHudType.MangoHudFull:
                 DxvkVars.Add("DXVK_HUD","0");
