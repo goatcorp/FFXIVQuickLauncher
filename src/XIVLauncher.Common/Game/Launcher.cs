@@ -40,7 +40,7 @@ public class Launcher
 
     private const string FALLBACK_FRONTIER_URL_TEMPLATE = "https://launcher.finalfantasyxiv.com/v620/index.html?rc_lang={0}&time={1}";
 
-    public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings, string? frontierUrl)
+    public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings, string? frontierUrl =  null)
     {
         this.steam = steam;
         this.uniqueIdCache = uniqueIdCache;
@@ -71,7 +71,7 @@ public class Launcher
         this.client = new HttpClient(handler);
     }
 
-    public Launcher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings, string? frontierUrl)
+    public Launcher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings, string? frontierUrl = null)
         : this(steam: null, uniqueIdCache, settings, frontierUrl)
     {
         this.steamTicket = steamTicket;
