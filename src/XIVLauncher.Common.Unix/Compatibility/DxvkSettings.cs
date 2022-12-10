@@ -79,6 +79,8 @@ public class DxvkSettings
                 }
                 if (CheckMangoHudPath(mangoHudPath))
                     DxvkVars.Add("MANGOHUD_CONFIGFILE",mangoHudPath);
+                else
+                    DxvkVars.Add("MANGOHUD_CONFIG","");
                 break;
             case Dxvk.DxvkHudType.MangoHudFull:
                 DxvkVars.Add("DXVK_HUD","0");
