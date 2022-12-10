@@ -47,7 +47,8 @@ public class DxvkSettings
         };
         this.DownloadURL = $"https://github.com/Sporif/dxvk-async/releases/download/{release}/dxvk-async-{release}.tar.gz";
         this.FolderName = $"dxvk-async-{release}";
-        this.DxvkVars.Add("DXVK_STATE_CACHE_PATH",Path.Combine(dxvkConfigPath,release));
+        string dxvkCacheSync = release + ((async ?? false) ? "-async" : ""); 
+        this.DxvkVars.Add("DXVK_STATE_CACHE_PATH",Path.Combine(dxvkConfigPath,dxvkCacheSync));
         switch(this.DxvkHud)
         {
             case Dxvk.DxvkHudType.Fps:
