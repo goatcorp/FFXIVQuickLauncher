@@ -65,28 +65,7 @@ public class CompatibilityTools
             if (!this.dxvkDirectory.Exists)
                 this.dxvkDirectory.Create();
         }
-
-        if (!wineSettings.Prefix.Exists)
-            wineSettings.Prefix.Create();
-        if (wineSettings.StartupType == WineStartupType.Managed)
-        {
-            if (!this.toolDirectory.Exists)
-                this.toolDirectory.Create();
-
-            if (!this.dxvkDirectory.Exists)
-                this.dxvkDirectory.Create();
-        }
-
-        if (!wineSettings.Prefix.Exists)
-            wineSettings.Prefix.Create();
     }
-
-        public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
-            : this(wineSettings, new DxvkSettings(hudType, "", "", dxvkAsyncOn), gamemodeOn, toolsFolder)
-        {
-            // Old constructor format. This is for compatibility with XL.Core. Once changes are made
-            // there, this can be deleted.
-        }
 
     public async Task EnsureTool(DirectoryInfo tempPath)
     {
