@@ -17,6 +17,9 @@ public class DxvkSettings
 
     public Dxvk.DxvkVersion DxvkVersion { get; private set; }
 
+    private const string ALLOWED_CHARS = "^[0-9a-zA-Z,=.]+$";
+    private const string ALLOWED_WORDS = "^(?:devinfo|fps|frametimes|submissions|drawcalls|pipelines|descriptors|memory|gpuload|version|api|cs|compiler|samplers|scale=(?:[0-9]){0,2}(?:.(?:[0-9])+)?)$";
+
     public DxvkSettings(Dxvk.DxvkHudType hud = Dxvk.DxvkHudType.None, string dxvkHudCustom="",
         string mangoHudPath="", bool? async = true, int? frameRate = 0,
         Dxvk.DxvkVersion version = Dxvk.DxvkVersion.v1_10_1)
@@ -98,7 +101,13 @@ public class DxvkSettings
     public static bool CheckDxvkHudString(string customHud)
     {
         if (string.IsNullOrWhiteSpace(customHud)) return false;
-        if (!Regex.IsMatch(customHud,"^[0-9a-zA-Z,=]*$")) return false;
+        if (!Regex.IsMatch(customHud,ALLOWED_CHARS)) return false;
+        string[] hudvars = customHud.Split(",");
+        foreach (var hudvar in hudvars)
+        {
+            if (!Regex.IsMatch(hudvar,ALLOWED_WORDS))
+                return false;
+        }
         return true;
     }
 
