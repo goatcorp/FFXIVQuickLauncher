@@ -68,13 +68,13 @@ public static class Dxvk
         [SettingsDescription("1.10.1 (default)", "The default version of DXVK used with XIVLauncher.Core.")]
         v1_10_1,
 
-        [SettingsDescription("1.10.2", "Newer version of 1.10 branch of DXVK. Probably works.")]
+        [SettingsDescription("1.10.2", "Newer version of 1.10 branch of DXVK. Safe to use.")]
         v1_10_2,
 
-        [SettingsDescription("1.10.3", "Newer version of 1.10 branch of DXVK. Probably works.")]
+        [SettingsDescription("1.10.3", "Newer version of 1.10 branch of DXVK. Safe to use.")]
         v1_10_3,
 
-        [SettingsDescription("2.0 (might break Dalamud, GShade)", "Newest version of DXVK. Might break Dalamud or GShade.")]
+        [SettingsDescription("2.0 (might break Dalamud, GShade)", "Newest version of DXVK. May be faster, but not stable yet.")]
         v2_0,
     }
 }
