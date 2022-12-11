@@ -10,7 +10,8 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Serilog;
 using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
@@ -92,40 +93,40 @@ namespace XIVLauncher.Common.Game.Patch
 
         private class VerifyVersions
         {
-            [JsonProperty("boot")]
+            [JsonPropertyName("boot")]
             public string Boot { get; set; }
 
-            [JsonProperty("bootRevision")]
+            [JsonPropertyName("bootRevision")]
             public int BootRevision { get; set; }
 
-            [JsonProperty("game")]
+            [JsonPropertyName("game")]
             public string Game { get; set; }
 
-            [JsonProperty("gameRevision")]
+            [JsonPropertyName("gameRevision")]
             public int GameRevision { get; set; }
 
-            [JsonProperty("ex1")]
+            [JsonPropertyName("ex1")]
             public string Ex1 { get; set; }
 
-            [JsonProperty("ex1Revision")]
+            [JsonPropertyName("ex1Revision")]
             public int Ex1Revision { get; set; }
 
-            [JsonProperty("ex2")]
+            [JsonPropertyName("ex2")]
             public string Ex2 { get; set; }
 
-            [JsonProperty("ex2Revision")]
+            [JsonPropertyName("ex2Revision")]
             public int Ex2Revision { get; set; }
 
-            [JsonProperty("ex3")]
+            [JsonPropertyName("ex3")]
             public string Ex3 { get; set; }
 
-            [JsonProperty("ex3Revision")]
+            [JsonPropertyName("ex3Revision")]
             public int Ex3Revision { get; set; }
 
-            [JsonProperty("ex4")]
+            [JsonPropertyName("ex4")]
             public string Ex4 { get; set; }
 
-            [JsonProperty("ex4Revision")]
+            [JsonPropertyName("ex4Revision")]
             public int Ex4Revision { get; set; }
         }
 
@@ -498,7 +499,7 @@ namespace XIVLauncher.Common.Game.Patch
             var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json").ConfigureAwait(false);
             _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-            var latestVersion = JsonConvert.DeserializeObject<VerifyVersions>(latestVersionJson);
+            var latestVersion = JsonSerializer.Deserialize<VerifyVersions>(latestVersionJson);
 
             PatchSetIndex++;
             await this.GetRepoMeta(Repository.Ffxiv, latestVersion.Game, metaFolder, latestVersion.GameRevision).ConfigureAwait(false);

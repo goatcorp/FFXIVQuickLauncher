@@ -19,7 +19,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Encryption;
@@ -609,7 +609,7 @@ public class Launcher
                 await DownloadAsLauncher(
                     $"https://frontier.ffxiv.com/worldStatus/gate_status.json?lang={language.GetLangCode()}&_={ApiHelpers.GetUnixMillis()}", language).ConfigureAwait(true));
 
-            return JsonConvert.DeserializeObject<GateStatus>(reply);
+            return JsonSerializer.Deserialize<GateStatus>(reply);
         }
         catch (Exception exc)
         {

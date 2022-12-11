@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Config.Net;
-using Newtonsoft.Json;
+using System.Text.Json;
 using XIVLauncher.Common.Addon;
 
 namespace XIVLauncher.Settings.Parsers
@@ -13,7 +13,7 @@ namespace XIVLauncher.Settings.Parsers
         public string ToRawString(object value)
         {
             if (value is List<AddonEntry> list)
-                return JsonConvert.SerializeObject(list);
+                return JsonSerializer.Serialize(list);
 
             return null;
         }
@@ -28,7 +28,7 @@ namespace XIVLauncher.Settings.Parsers
 
             if (t == typeof(List<AddonEntry>))
             {
-                result = JsonConvert.DeserializeObject<List<AddonEntry>>(value);
+                result = JsonSerializer.Deserialize<List<AddonEntry>>(value);
                 return true;
             }
 

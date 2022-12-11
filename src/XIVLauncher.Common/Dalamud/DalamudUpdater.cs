@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
@@ -142,7 +142,7 @@ namespace XIVLauncher.Common.Dalamud
 
             var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}").ConfigureAwait(false);
 
-            DalamudVersionInfo versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
+            DalamudVersionInfo versionInfoRelease = JsonSerializer.Deserialize<DalamudVersionInfo>(versionInfoJsonRelease);
 
             DalamudVersionInfo? versionInfoStaging = null;
 
@@ -151,7 +151,7 @@ namespace XIVLauncher.Common.Dalamud
                 var versionInfoJsonStaging = await client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(settings)).ConfigureAwait(false);
 
                 if (versionInfoJsonStaging.StatusCode != HttpStatusCode.BadRequest)
-                    versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoJsonStaging.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    versionInfoStaging = JsonSerializer.Deserialize<DalamudVersionInfo>(await versionInfoJsonStaging.Content.ReadAsStringAsync().ConfigureAwait(false));
             }
 
             return (versionInfoRelease, versionInfoStaging);
@@ -179,7 +179,7 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Information("[DUPDATE] Using release version ({Hash})", remoteVersionInfo.AssemblyVersion);
             }
 
-            var versionInfoJson = JsonConvert.SerializeObject(remoteVersionInfo);
+            var versionInfoJson = JsonSerializer.Serialize(remoteVersionInfo);
 
             var addonPath = new DirectoryInfo(Path.Combine(this.addonDirectory.FullName, "Hooks"));
             var currentVersionPath = new DirectoryInfo(Path.Combine(addonPath.FullName, remoteVersionInfo.AssemblyVersion));
@@ -331,7 +331,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 Log.Verbose("[DUPDATE] Checking integrity of {Directory}", directory.FullName);
 
-                var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashesJson);
+                var hashes = JsonSerializer.Deserialize<Dictionary<string, string>>(hashesJson);
 
                 foreach (var hash in hashes)
                 {

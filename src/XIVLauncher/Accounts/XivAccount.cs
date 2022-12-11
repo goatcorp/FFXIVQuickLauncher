@@ -1,11 +1,11 @@
 ﻿using AdysTech.CredentialManager;
-using Newtonsoft.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using Serilog;
 using System;
 using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace XIVLauncher.Accounts
 {
@@ -136,7 +136,7 @@ namespace XIVLauncher.Accounts
 
         private const string URL = "https://xivapi.com/";
 
-        public static async Task<JObject> GetCharacterSearch(string name, string world)
+        public static async Task<JsonObject> GetCharacterSearch(string name, string world)
         {
             return await Get("character/search" + $"?name={name}&server={world}");
         }
@@ -148,7 +148,7 @@ namespace XIVLauncher.Accounts
             {
                 var result = client.DownloadString(URL + endpoint);
 
-                var parsedObject = JObject.Parse(result);
+                var parsedObject = JsonObject.Parse(result);
 
                 return parsedObject;
             }

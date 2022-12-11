@@ -5,7 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Support;
@@ -24,25 +25,25 @@ namespace XIVLauncher.Windows
 
         public class VersionMeta
         {
-            [JsonProperty("version")]
+            [JsonPropertyName("version")]
             public string Version { get; set; }
 
-            [JsonProperty("url")]
+            [JsonPropertyName("url")]
             public string Url { get; set; }
 
-            [JsonProperty("changelog")]
+            [JsonPropertyName("changelog")]
             public string Changelog { get; set; }
 
-            [JsonProperty("when")]
+            [JsonPropertyName("when")]
             public DateTime When { get; set; }
         }
 
         public class ReleaseMeta
         {
-            [JsonProperty("releaseVersion")]
+            [JsonPropertyName("releaseVersion")]
             public VersionMeta ReleaseVersion { get; set; }
 
-            [JsonProperty("prereleaseVersion")]
+            [JsonPropertyName("prereleaseVersion")]
             public VersionMeta PrereleaseVersion { get; set; }
         }
 
@@ -98,7 +99,7 @@ namespace XIVLauncher.Windows
                 try
                 {
                     using var client = new HttpClient();
-                    var response = JsonConvert.DeserializeObject<ReleaseMeta>(await client.GetStringAsync(META_URL));
+                    var response = JsonSerializer.Deserialize<ReleaseMeta>(await client.GetStringAsync(META_URL));
 
                     Dispatcher.Invoke(() => this.ChangeLogText.Text = _prerelease ? response.PrereleaseVersion.Changelog : response.ReleaseVersion.Changelog);
                 }

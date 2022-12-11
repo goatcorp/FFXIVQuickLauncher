@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 using XIVLauncher.Common.PlatformAbstractions;
 
@@ -159,7 +159,7 @@ namespace XIVLauncher.Common.Dalamud
             using var client = new WebClient();
 
             var versionInfoJson = client.DownloadString(REMOTE_BASE + "release");
-            var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
+            var remoteVersionInfo = JsonSerializer.Deserialize<DalamudVersionInfo>(versionInfoJson);
 
             if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
                 return false;
