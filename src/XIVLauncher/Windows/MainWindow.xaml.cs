@@ -36,6 +36,7 @@ namespace XIVLauncher.Windows
         private Headlines _headlines;
         private BitmapImage[] _bannerBitmaps;
         private int _currentBannerIndex;
+        private bool _everShown = false;
 
         class BannerDotInfo
         {
@@ -184,7 +185,7 @@ namespace XIVLauncher.Windows
             }
         }
 
-        private const int CURRENT_VERSION_LEVEL = 1;
+        private const int CURRENT_VERSION_LEVEL = 2;
 
         private void SetDefaults()
         {
@@ -240,6 +241,11 @@ namespace XIVLauncher.Windows
                             Log.Error(ex, "Could not check for RTSS/SpecialK");
                         }
 
+                        break;
+
+                    // 5.12.2022: Bad main window placement when using auto-launch
+                    case 1:
+                        App.Settings.MainWindowPlacement = null;
                         break;
 
                     default:
@@ -344,6 +350,8 @@ namespace XIVLauncher.Windows
 
             Show();
             Activate();
+
+            _everShown = true;
         }
 
         private void BannerCard_MouseUp(object sender, MouseButtonEventArgs e)
@@ -598,6 +606,9 @@ namespace XIVLauncher.Windows
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
+            if (!_everShown)
+                return;
+
             try
             {
                 PreserveWindowPosition.SaveWindowPosition(this);
@@ -613,6 +624,11 @@ namespace XIVLauncher.Windows
             try
             {
                 PreserveWindowPosition.RestorePosition(this);
+
+                // Restore the size of the window to what we expect it to be
+                // There's no better way to do it that doesn't make me wanna off myself
+                Width = 845;
+                Height = 376;
             }
             catch (Exception ex)
             {
