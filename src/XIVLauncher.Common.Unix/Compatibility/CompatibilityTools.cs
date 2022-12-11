@@ -163,15 +163,14 @@ public class CompatibilityTools
         wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
         string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
 
-        if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
+        if (gamemodeOn && !ldPreload.Contains("libgamemodeauto.so.0"))
         {
             ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
         }
 
-        foreach(KeyValuePair<string,string> dxvkVar in DxvkSettings.DxvkVars)
-        {
+        foreach (KeyValuePair<string, string> dxvkVar in DxvkSettings.DxvkVars)
             wineEnviromentVariables.Add(dxvkVar.Key, dxvkVar.Value);
-        }
+
         wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);
         wineEnviromentVariables.Add("WINEFSYNC", Settings.FsyncOn);
 
