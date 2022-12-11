@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,7 +12,6 @@ using CheapLoc;
 using MaterialDesignThemes.Wpf.Transitions;
 using Serilog;
 using XIVLauncher.Common.Game;
-using Newtonsoft.Json.Linq;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Addon.Implementations;
@@ -346,11 +346,11 @@ namespace XIVLauncher.Windows
 
             foreach (var path in definitionFiles)
             {
-                dynamic definition = JObject.Parse(File.ReadAllText(path));
+                var definition = (JsonObject)JsonNode.Parse(File.ReadAllText(path));
 
                 try
                 {
-                    if (PluginListView.SelectedValue.ToString().Contains(definition.Name.Value + " " + definition.AssemblyVersion.Value))
+                    if (PluginListView.SelectedValue.ToString().Contains($"{definition?["Name"]} {definition?["AssemblyVersion"]}"))
                     {
                         selectedPath = Path.GetDirectoryName(path);
                         break;
@@ -459,16 +459,16 @@ namespace XIVLauncher.Windows
                         continue;
                     }
 
-                    dynamic pluginConfig = JObject.Parse(File.ReadAllText(localInfoFile.FullName));
+                    var pluginConfig = JsonNode.Parse(File.ReadAllText(localInfoFile.FullName));
                     var isDisabled = File.Exists(Path.Combine(latest.FullName, ".disabled"));
 
                     if (isDisabled)
                     {
-                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion + ViewModel.PluginDisabledTagLoc);
+                        PluginListView.Items.Add($"{pluginConfig!["Name"]} {pluginConfig!["AssemblyVersion"]}{ViewModel.PluginDisabledTagLoc}");
                     }
                     else
                     {
-                        PluginListView.Items.Add(pluginConfig.Name + " " + pluginConfig.AssemblyVersion);
+                        PluginListView.Items.Add($"{pluginConfig!["Name"]} {pluginConfig!["AssemblyVersion"]}");
                     }
                 }
             }

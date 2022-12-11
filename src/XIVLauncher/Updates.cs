@@ -6,11 +6,11 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using CheapLoc;
-using Newtonsoft.Json;
 using Serilog;
 using Squirrel;
 using XIVLauncher.Accounts;
@@ -65,16 +65,22 @@ namespace XIVLauncher
 #pragma warning disable CS8618
         public class Lease
         {
+            [JsonPropertyName("success")]
             public bool Success { get; set; }
 
+            [JsonPropertyName("message")]
             public string? Message { get; set; }
 
+            [JsonPropertyName("frontierUrl")]
             public string FrontierUrl { get; set; }
 
+            [JsonPropertyName("flags")]
             public LeaseFeatureFlags Flags { get; set; }
 
+            [JsonPropertyName("releasesList")]
             public string ReleasesList { get; set; }
 
+            [JsonPropertyName("validUntil")]
             public DateTime? ValidUntil { get; set; }
         }
 #pragma warning restore CS8618
@@ -165,10 +171,10 @@ namespace XIVLauncher
                 Log.Information("Updates: Received canary track lease!");
             }
 
-            var leaseData = JsonConvert.DeserializeObject<Lease>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+            var leaseData = JsonSerializer.Deserialize<Lease>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
 
-            if (!leaseData.Success)
-                throw new LeaseAcquisitionException(leaseData.Message!);
+            if (!leaseData?.Success ?? true)
+                throw new LeaseAcquisitionException(leaseData?.Message!);
 
             var fakeDownloader = new FakeSquirrelFileDownloader(leaseData, prerelease);
             var manager = new UpdateManager(FAKE_URL_PREFIX, "XIVLauncher", null, fakeDownloader);
@@ -190,7 +196,7 @@ namespace XIVLauncher
                 };
 
                 var text = await client.GetStringAsync(NEWS_URL).ConfigureAwait(false);
-                newsData = JsonConvert.DeserializeObject<ErrorNewsData>(text);
+                newsData = JsonSerializer.Deserialize<ErrorNewsData>(text);
             }
             catch (Exception newsEx)
             {

@@ -678,8 +678,7 @@ Public License instead of this License.  But first, please read
 For third-party dependencies, please refer to the package's respective license.
 
 Id                                        LicenseUrl                                                                             
---                                        ----------                                                                             
-Newtonsoft.Json                           https://licenses.nuget.org/MIT                                                         
+--                                        ----------                                                                                                                              
 Serilog                                   https://licenses.nuget.org/Apache-2.0                                                                                                                                 
 Serilog.Sinks.Console                     https://www.apache.org/licenses/LICENSE-2.0                                            
 Serilog.Sinks.Debug                       https://www.apache.org/licenses/LICENSE-2.0                                            

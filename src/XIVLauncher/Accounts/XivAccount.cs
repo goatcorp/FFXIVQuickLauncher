@@ -109,22 +109,23 @@ namespace XIVLauncher.Accounts
 
             try
             {
-                dynamic searchResponse = GetCharacterSearch(ChosenCharacterName, ChosenCharacterWorld)
-                .GetAwaiter().GetResult();
+                var searchResponse = GetCharacterSearch(ChosenCharacterName, ChosenCharacterWorld)
+                                     .GetAwaiter().GetResult();
 
-                if (searchResponse.Results.Count > 1) //If we get more than one match from XIVAPI
+                if (searchResponse["Results"]?.AsArray().Count > 1) //If we get more than one match from XIVAPI
                 {
-                    foreach (var accountInfo in searchResponse.Results)
+                    foreach (var accountInfo in searchResponse["Results"].AsArray())
                     {
                         //We have to check with it all lower in case they type their character name LiKe ThIsLoL. The server XIVAPI returns also contains the DC name, so let's just do a contains on the server to make it easy.
-                        if (accountInfo.Name.Value.ToLower() == ChosenCharacterName.ToLower() && accountInfo.Server.Value.ToLower().Contains(ChosenCharacterWorld.ToLower()))
+                        if (string.Equals(((string)accountInfo["Name"])!, ChosenCharacterName, StringComparison.OrdinalIgnoreCase)
+                            && ((string)accountInfo["Server"])!.ToLower().Contains(ChosenCharacterWorld.ToLower()))
                         {
-                            return accountInfo.Avatar.Value;
+                            return (string)accountInfo["Avatar"];
                         }
                     }
                 }
 
-                return searchResponse.Results.Count > 0 ? (string)searchResponse.Results[0].Avatar : null;
+                return searchResponse["Results"]?.AsArray().Count > 0 ? (string)searchResponse["Results"].AsArray()[0]?["Avatar"] : null;
             }
             catch (Exception ex)
             {
@@ -141,16 +142,15 @@ namespace XIVLauncher.Accounts
             return await Get("character/search" + $"?name={name}&server={world}");
         }
 
-        public static async Task<dynamic> Get(string endpoint)
+        public static async Task<JsonObject> Get(string endpoint)
         {
-
             using (var client = new WebClient())
             {
                 var result = client.DownloadString(URL + endpoint);
 
-                var parsedObject = JsonObject.Parse(result);
+                var parsedObject = JsonNode.Parse(result);
 
-                return parsedObject;
+                return (JsonObject)parsedObject;
             }
         }
     }
