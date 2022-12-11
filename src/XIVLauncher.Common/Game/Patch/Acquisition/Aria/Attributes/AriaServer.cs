@@ -4,29 +4,29 @@
  */
 
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 
 namespace AriaNet.Attributes
 {
     public class ServerDetail
     {
-        [JsonProperty("currentUri")]
+        [JsonPropertyName("currentUri")]
         public string CurrentUri { get; set; }
 
-        [JsonProperty("downloadSpeed")]
+        [JsonPropertyName("downloadSpeed")]
         public string DownloadSpeed { get; set; }
 
-        [JsonProperty("uri")]
+        [JsonPropertyName("uri")]
         public string Uri { get; set; }
     }
 
     public class AriaServer
     {
-        [JsonProperty("index")]
+        [JsonPropertyName("index")]
         public string Index { get; set; }
 
-        [JsonProperty("servers")]
+        [JsonPropertyName("servers")]
         public List<ServerDetail> Servers { get; set; }
     }
 }

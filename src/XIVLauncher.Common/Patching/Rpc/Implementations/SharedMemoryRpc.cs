@@ -1,6 +1,7 @@
 using System;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Serilog;
 using SharedMemory;
 using XIVLauncher.Common.PatcherIpc;
@@ -21,13 +22,13 @@ public class SharedMemoryRpc : IRpc, IDisposable
         var json = IpcHelpers.Base64Decode(Encoding.ASCII.GetString(payload));
         Log.Information("[SHMEMRPC] IPC({0}): {1}", msgId, json);
 
-        var msg = JsonConvert.DeserializeObject<PatcherIpcEnvelope>(json, IpcHelpers.JsonSettings);
+        var msg = JsonSerializer.Deserialize<PatcherIpcEnvelope>(json);
         MessageReceived?.Invoke(msg);
     }
 
     public void SendMessage(PatcherIpcEnvelope envelope)
     {
-        var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
+        var json = IpcHelpers.Base64Encode(JsonSerializer.Serialize(envelope));
         this.rpcBuffer.RemoteRequest(Encoding.ASCII.GetBytes(json));
     }
 

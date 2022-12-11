@@ -4,28 +4,28 @@
  */
 
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AriaNet.Attributes
 {
     public class AriaFile
     {
-        [JsonProperty("index")]
+        [JsonPropertyName("index")]
         public string Index { get; set; }
 
-        [JsonProperty("length")]
+        [JsonPropertyName("length")]
         public string Length { get; set; }
 
-        [JsonProperty("completedLength")]
+        [JsonPropertyName("completedLength")]
         public string CompletedLength { get; set; }
 
-        [JsonProperty("path")]
+        [JsonPropertyName("path")]
         public string Path { get; set; }
 
-        [JsonProperty("selected")]
+        [JsonPropertyName("selected")]
         public string Selected { get; set; }
 
-        [JsonProperty("uris")]
+        [JsonPropertyName("uris")]
         public List<AriaUri> Uris { get; set; }
     }
 }

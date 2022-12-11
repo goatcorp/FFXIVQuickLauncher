@@ -139,7 +139,7 @@ namespace XIVLauncher.Common.Game.Patch
             this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.StartInstall,
-                Data = new PatcherIpcStartInstall
+                StartInstallInfo = new PatcherIpcStartInstall
                 {
                     GameDirectory = gameDirectory,
                     PatchFile = file,
@@ -155,7 +155,7 @@ namespace XIVLauncher.Common.Game.Patch
             this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.Finish,
-                Data = gameDirectory
+                GameDirectory = gameDirectory
             });
         }
 

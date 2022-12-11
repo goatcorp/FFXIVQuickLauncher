@@ -4,17 +4,16 @@
  */
 
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AriaNet.Attributes
 {
-    [JsonObject]
     public class AriaVersionInfo
     {
-        [JsonProperty("enabledFeatures")]
+        [JsonPropertyName("enabledFeatures")]
         public List<string> EnabledFeatures { get; set; }
-        
-        [JsonProperty("version")]
+
+        [JsonPropertyName("version")]
         public string Version { get; set; }
     }
 }

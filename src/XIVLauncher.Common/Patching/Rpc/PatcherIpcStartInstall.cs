@@ -1,13 +1,29 @@
-﻿using System.IO;
+﻿#nullable enable
+using System.IO;
+using System.Text.Json.Serialization;
 
 namespace XIVLauncher.Common.PatcherIpc
 {
     public class PatcherIpcStartInstall
     {
-        public FileInfo PatchFile { get; set; }
         public Repository Repo { get; set; }
-        public string VersionId { get; set; }
-        public DirectoryInfo GameDirectory { get; set; }
+        public string VersionId { get; set; } = null!;
         public bool KeepPatch { get; set; }
+        public string? PatchFilePath { get; set; }
+        public string? GameDirectoryPath { get; set; }
+
+        [JsonIgnore]
+        public FileInfo? PatchFile
+        {
+            get => new(PatchFilePath!);
+            set => PatchFilePath = value?.FullName;
+        }
+
+        [JsonIgnore]
+        public DirectoryInfo? GameDirectory
+        {
+            get => new(GameDirectoryPath!);
+            set => GameDirectoryPath = value?.FullName;
+        }
     }
 }

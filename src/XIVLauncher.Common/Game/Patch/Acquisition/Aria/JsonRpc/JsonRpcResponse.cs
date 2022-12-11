@@ -1,16 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria.JsonRpc
 {
     public class JsonRpcResponse<T>
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
-        [JsonProperty("jsonrpc")]
+        [JsonPropertyName("jsonrpc")]
         public string Version { get; set; }
 
-        [JsonProperty("result")]
+        [JsonPropertyName("result")]
         public T Result { get; set; }
     }
 }
