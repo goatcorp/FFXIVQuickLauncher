@@ -8,9 +8,8 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public static class Dxvk
 {
-    public static async Task InstallDxvk(DirectoryInfo prefix, DirectoryInfo installDirectory, DxvkSettings? dxvkSettings = null)
+    public static async Task InstallDxvk(DirectoryInfo prefix, DirectoryInfo installDirectory, DxvkSettings dxvkSettings)
     {
-        dxvkSettings ??= new DxvkSettings();
         var dxvkPath = Path.Combine(installDirectory.FullName, dxvkSettings.FolderName, "x64");
 
         if (!Directory.Exists(dxvkPath))
