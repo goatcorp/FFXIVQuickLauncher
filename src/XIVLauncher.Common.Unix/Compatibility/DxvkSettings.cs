@@ -125,4 +125,8 @@ public class DxvkSettings
 
         return hudvars.All(hudvar => Regex.IsMatch(hudvar, ALLOWED_WORDS));
     }
+    
+    public static bool CheckMangoHudPath(string mangoPath)
+    {
+        return (File.Exists(mangoPath)) ? true : false;    
 }
