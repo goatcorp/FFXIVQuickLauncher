@@ -115,10 +115,10 @@ public class DxvkSettings
         }
     }
 
-    private static bool CheckDxvkHudString(string? customHud)
+    public static bool CheckDxvkHudString(string? customHud)
     {
-        if (customHud == "1") return true;
         if (string.IsNullOrWhiteSpace(customHud)) return false;
+        if (customHud == "1") return true;
         if (!Regex.IsMatch(customHud,ALLOWED_CHARS)) return false;
 
         string[] hudvars = customHud.Split(",");
