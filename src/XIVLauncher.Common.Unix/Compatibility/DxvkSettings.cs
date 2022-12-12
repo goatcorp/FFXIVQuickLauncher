@@ -9,7 +9,7 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public class DxvkSettings
 {
-    public bool Enabled { get; };
+    public bool Enabled { get; }
     public string DownloadURL { get; }
 
     public string FolderName { get; }
@@ -49,8 +49,9 @@ public class DxvkSettings
         };
         DownloadURL = $"https://github.com/Sporif/dxvk-async/releases/download/{release}/dxvk-async-{release}.tar.gz";
         FolderName = $"dxvk-async-{release}";
-        string dxvkCachePath = Path.Combine(dxvkConfigPath.FullName, release + (async ? "-async" : ""));
-        this.DxvkVars.Add("DXVK_STATE_CACHE_PATH", dxvkCachePath);
+        DirectoryInfo dxvkCachePath = new DirectoryInfo(Path.Combine(dxvkConfigPath.FullName, "cache"));
+        if (!dxvkCachePath.Exists) dxvkCachePath.Create();
+        this.DxvkVars.Add("DXVK_STATE_CACHE_PATH", Path.Combine(dxvkCachePath.FullName, release + (async ? "-async" : "")));
 
         switch(this.DxvkHud)
         {
@@ -128,5 +129,6 @@ public class DxvkSettings
     
     public static bool CheckMangoHudPath(string mangoPath)
     {
-        return (File.Exists(mangoPath)) ? true : false;    
+        return (File.Exists(mangoPath)) ? true : false;
+    }
 }
