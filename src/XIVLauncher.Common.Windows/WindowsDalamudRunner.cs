@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -20,7 +21,7 @@ public class WindowsDalamudRunner : IDalamudRunner
         {
             "launch",
             $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
-            $"--handle-owner={(long)inheritableCurrentProcess.Handle}",
+            $"--handle-owner={(long)(inheritableCurrentProcess?.Handle ?? IntPtr.Zero)}",
             $"--game=\"{gameExe.FullName}\"",
             $"--dalamud-working-directory=\"{startInfo.WorkingDirectory}\"",
             $"--dalamud-configuration-path=\"{startInfo.ConfigurationPath}\"",
@@ -189,7 +190,7 @@ public class WindowsDalamudRunner : IDalamudRunner
         [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
         DuplicateOptions dwOptions);
 
-    private static Process GetInheritableCurrentProcessHandle() {
+    private static Process? GetInheritableCurrentProcessHandle() {
         if (!DuplicateHandle(Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, out var inheritableCurrentProcessHandle, 0, true, DuplicateOptions.SameAccess)) {
             Log.Error("Failed to call DuplicateHandle: Win32 error code {0}", Marshal.GetLastWin32Error());
             return null;
