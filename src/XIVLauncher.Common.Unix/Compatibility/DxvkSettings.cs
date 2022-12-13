@@ -10,6 +10,7 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 public class DxvkSettings
 {
     public bool Enabled { get; }
+
     public string DownloadURL { get; }
 
     public string FolderName { get; }
@@ -21,6 +22,7 @@ public class DxvkSettings
     public Dxvk.DxvkVersion DxvkVersion { get; }
 
     private const string ALLOWED_CHARS = "^[0-9a-zA-Z,=.]+$";
+
     private const string ALLOWED_WORDS = "^(?:devinfo|fps|frametimes|submissions|drawcalls|pipelines|descriptors|memory|gpuload|version|api|cs|compiler|samplers|scale=(?:[0-9])*(?:.(?:[0-9])+)?)$";
 
     public DxvkSettings(Dxvk.DxvkHudType hud, DirectoryInfo corePath, Dxvk.DxvkVersion version, bool enabled = true, string? dxvkHudCustom = null, FileInfo? mangoHudConfig = null, bool async = true,
@@ -125,10 +127,5 @@ public class DxvkSettings
         string[] hudvars = customHud.Split(",");
 
         return hudvars.All(hudvar => Regex.IsMatch(hudvar, ALLOWED_WORDS));
-    }
-    
-    public static bool CheckMangoHudPath(string mangoPath)
-    {
-        return (File.Exists(mangoPath)) ? true : false;
     }
 }
