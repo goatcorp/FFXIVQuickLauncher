@@ -8,7 +8,7 @@
     <owners>goaaats</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/goaaats/FFXIVQuickLauncher</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/goaaats/FFXIVQuickLauncher/master/XIVLauncher/Resources/dalamud_icon.ico</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/goaaats/FFXIVQuickLauncher/master/src/XIVLauncher/Resources/dalamud_icon.ico</iconUrl>
     <description>Custom launcher for the most critically acclaimed MMO</description>
   </metadata>
 
