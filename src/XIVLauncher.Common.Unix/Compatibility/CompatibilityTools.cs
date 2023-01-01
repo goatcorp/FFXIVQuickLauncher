@@ -22,22 +22,14 @@ public class CompatibilityTools
 
     private StreamWriter logWriter;
 
-#if WINE_XIV_ARCH_LINUX
-    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/7.10.r3.g560db77d/wine-xiv-staging-fsync-git-arch-7.10.r3.g560db77d.tar.xz";
-#elif WINE_XIV_FEDORA_LINUX
-    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/7.10.r3.g560db77d/wine-xiv-staging-fsync-git-fedora-7.10.r3.g560db77d.tar.xz";
-#else
-    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/7.10.r3.g560db77d/wine-xiv-staging-fsync-git-ubuntu-7.10.r3.g560db77d.tar.xz";
-#endif
-    private const string WINE_XIV_RELEASE_NAME = "wine-xiv-staging-fsync-git-7.10.r3.g560db77d";
-
     public bool IsToolReady { get; private set; }
 
     public WineSettings Settings { get; private set; }
 
-    private string WineBinPath => Settings.StartupType == WineStartupType.Managed ?
-                                    Path.Combine(toolDirectory.FullName, WINE_XIV_RELEASE_NAME, "bin") :
-                                    Settings.CustomBinPath;
+    private string WineBinPath => Settings.StartupType == WineStartupType.Custom ?
+                                    Settings.CustomBinPath :
+                                    Path.Combine(toolDirectory.FullName, Settings.WineFolder, "bin");
+    
     private string Wine64Path => Path.Combine(WineBinPath, "wine64");
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
 
@@ -57,7 +49,7 @@ public class CompatibilityTools
 
         this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
-        if (wineSettings.StartupType == WineStartupType.Managed)
+        if (wineSettings.StartupType != WineStartupType.Custom)
         {
             if (!this.toolDirectory.Exists)
                 this.toolDirectory.Create();
@@ -86,7 +78,7 @@ public class CompatibilityTools
         using var client = new HttpClient();
         var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
 
-        await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false)).ConfigureAwait(false);
+        await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(Settings.WineURL).ConfigureAwait(false)).ConfigureAwait(false);
 
         PlatformHelpers.Untar(tempFilePath, this.toolDirectory.FullName);
 

@@ -116,6 +116,14 @@ public class DxvkSettings
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
+        if (!this.Enabled)
+        {
+            DxvkVars = new Dictionary<string, string>
+            {
+                { "PROTON_USE_WINED3D", "1" },
+            };
+        }
     }
 
     public static bool CheckDxvkHudString(string? customHud)
