@@ -64,13 +64,13 @@ public static class Dxvk
 
     public enum DxvkVersion
     {
-        [SettingsDescription("1.10.1 (default)", "The default version of DXVK used with XIVLauncher.Core.")]
+        [SettingsDescription("1.10.1", "The version of DXVK used with XIVLauncher.Core 1.0.2. Safe to use.")]
         v1_10_1,
 
-        [SettingsDescription("1.10.2", "Newer version of 1.10 branch of DXVK. Safe to use.")]
+        [SettingsDescription("1.10.2", "Older version of 1.10 branch of DXVK. Safe to use.")]
         v1_10_2,
 
-        [SettingsDescription("1.10.3", "Newer version of 1.10 branch of DXVK. Safe to use.")]
+        [SettingsDescription("1.10.3 (default)", "Current version of 1.10 branch of DXVK.")]
         v1_10_3,
 
         [SettingsDescription("2.0 (might break Dalamud, GShade)", "Newest version of DXVK. May be faster, but not stable yet.")]
