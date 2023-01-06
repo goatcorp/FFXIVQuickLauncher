@@ -161,8 +161,10 @@ namespace XIVLauncher.Common.Dalamud
         {
             var settings = DalamudSettings.GetSettings(this.configDirectory);
 
-            // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
+        if (System.Environment.OSVersion.ToString() == "6.1")
+        {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+        }
 
             var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(settings).ConfigureAwait(false);
 
