@@ -44,4 +44,32 @@ public class WindowsGameRunner : IGameRunner
             return NativeAclFix.LaunchGame(workingDirectory, path, arguments, environment, dpiAwareness, process => { });
         }
     }
+    
+    public Process? Run(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, bool withCompatibility)
+    {
+        var psi = new ProcessStartInfo(path, arguments)
+        {
+            WorkingDirectory = workingDirectory
+        };
+
+        foreach (var envVar in environment)
+        {
+            if (psi.Environment.ContainsKey(envVar.Key))
+            {
+                psi.Environment[envVar.Key] = envVar.Value;
+            }
+            else
+            {
+                psi.Environment.Add(envVar.Key, envVar.Value);
+            }
+        }
+
+        var p = new Process()
+        {
+            StartInfo = psi
+        };
+        p.Start();
+
+        return p;
+    }
 }

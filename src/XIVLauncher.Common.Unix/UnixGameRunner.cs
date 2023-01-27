@@ -31,4 +31,37 @@ public class UnixGameRunner : IGameRunner
             return compatibility.RunInPrefix($"\"{path}\" {arguments}", workingDirectory, environment, writeLog: true);
         }
     }
+
+    public Process? Run(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, bool withCompatibility)
+    {
+        if (withCompatibility)
+        {
+            return compatibility.RunInPrefix($"\"{path}\" {arguments}", workingDirectory, environment, writeLog: true);
+        }
+        
+        var psi = new ProcessStartInfo(path, arguments)
+        {
+            WorkingDirectory = workingDirectory
+        };
+
+        foreach (var envVar in environment)
+        {
+            if (psi.Environment.ContainsKey(envVar.Key))
+            {
+                psi.Environment[envVar.Key] = envVar.Value;
+            }
+            else
+            {
+                psi.Environment.Add(envVar.Key, envVar.Value);
+            }
+        }
+
+        var p = new Process()
+        {
+            StartInfo = psi
+        };
+        p.Start();
+
+        return p;
+    }
 }
