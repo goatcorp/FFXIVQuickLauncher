@@ -37,7 +37,6 @@ public class DxvkSettings
         {
             { "DXVK_LOG_PATH", Path.Combine(corePath.FullName, "logs") },
             { "DXVK_CONFIG_FILE", Path.Combine(dxvkConfigPath.FullName, "dxvk.conf") },
-            { "DXVK_ASYNC", async ? "1" : "0" },
             { "DXVK_FRAME_RATE", (maxFrameRate).ToString() }
         };
         DxvkVersion = version;
@@ -47,10 +46,20 @@ public class DxvkSettings
             Dxvk.DxvkVersion.v1_10_2 => "1.10.2",
             Dxvk.DxvkVersion.v1_10_3 => "1.10.3",
             Dxvk.DxvkVersion.v2_0 => "2.0",
+            Dxvk.DxvkVersion.v2_1 => "2.1",
             _ => throw new ArgumentOutOfRangeException(),
         };
-        DownloadURL = $"https://github.com/Sporif/dxvk-async/releases/download/{release}/dxvk-async-{release}.tar.gz";
-        FolderName = $"dxvk-async-{release}";
+        if (release != "2.1")
+        {
+            DownloadURL = $"https://github.com/Sporif/dxvk-async/releases/download/{release}/dxvk-async-{release}.tar.gz";
+            FolderName = $"dxvk-async-{release}";
+            DxvkVars.Add("DXVK_ASYNC", async ? "1" : "0");
+        }
+        else
+        {
+            DownloadURL = $"https://github.com/doitsujin/dxvk/releases/download/v{release}/dxvk-{release}.tar.gz";
+            FolderName = $"dxvk-{release}";
+        }
         DirectoryInfo dxvkCachePath = new DirectoryInfo(Path.Combine(dxvkConfigPath.FullName, "cache"));
         if (!dxvkCachePath.Exists) dxvkCachePath.Create();
         this.DxvkVars.Add("DXVK_STATE_CACHE_PATH", Path.Combine(dxvkCachePath.FullName, release + (async ? "-async" : "")));

@@ -73,7 +73,10 @@ public static class Dxvk
         [SettingsDescription("1.10.3 (default)", "Current version of 1.10 branch of DXVK.")]
         v1_10_3,
 
-        [SettingsDescription("2.0 (might break Dalamud, GShade)", "Newest version of DXVK. May be faster, but not stable yet.")]
+        [SettingsDescription("2.0 (might break Dalamud, GShade)", "Newer version of DXVK. May be faster, but not stable yet.")]
         v2_0,
+
+        [SettingsDescription("2.1 (might break Dalamud, GShade. No Async)", "Newest version of DXVK. No Async patch.")]
+        v2_1,
     }
 }
