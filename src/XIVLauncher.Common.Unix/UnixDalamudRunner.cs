@@ -96,6 +96,7 @@ public class UnixDalamudRunner : IDalamudRunner
         {
             var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
             var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
+            if (unixPid == 0) unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
 
             if (unixPid == 0)
             {

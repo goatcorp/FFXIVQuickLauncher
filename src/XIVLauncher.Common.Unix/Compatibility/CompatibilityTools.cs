@@ -52,7 +52,7 @@ public class CompatibilityTools
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
-    private bool useProton => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("XLC_PROTON")) ? false :
+    public bool useProton => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("XLC_PROTON")) ? false :
             Environment.GetEnvironmentVariable("XLC_PROTON") == "1" || Environment.GetEnvironmentVariable("XLC_PROTON").ToLower() == "true";
 
     public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
@@ -339,6 +339,28 @@ public class CompatibilityTools
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
             l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
         var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
+        return unixPids.FirstOrDefault();
+    }
+
+    public Int32 GetUnixProcessIdByName(string executableName)
+    {
+        Console.WriteLine($"Process Name = {executableName}");
+        ProcessStartInfo psi = new ProcessStartInfo("pgrep");
+        psi.RedirectStandardOutput = true;
+        psi.RedirectStandardError = true;
+        psi.UseShellExecute = false;
+        psi.ArgumentList.Add("-f");
+        psi.ArgumentList.Add(executableName);
+
+        Process pidget = new();
+        pidget.StartInfo = psi;
+        pidget.Start();
+
+        var output = pidget.StandardOutput.ReadToEnd();
+        if (string.IsNullOrWhiteSpace(output))
+            return 0;
+        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        var unixPids = matchingLines.Select(l => int.Parse(l, System.Globalization.NumberStyles.Integer)).ToArray();
         return unixPids.FirstOrDefault();
     }
 
