@@ -35,16 +35,14 @@ public class CompatibilityTools
 
     public WineSettings Settings { get; private set; }
 
-    private string WineBinPath => Settings.StartupType == WineStartupType.Managed ?
+    private string WineBinPath => Settings.StartupType != WineStartupType.Custom ?
                                     Path.Combine(toolDirectory.FullName, WINE_XIV_RELEASE_NAME, "bin") :
                                     Settings.CustomBinPath;
     private string Wine64Path => Path.Combine(WineBinPath, "wine64");
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
 
-    private string SteamRoot => Path.Combine(Environment.GetEnvironmentVariable("HOME"),".steam","root");
-    private string ProtonPath => Path.Combine(SteamRoot,"steamapps","common","Proton 7.0","proton");
-
-    private string ProtonDataPath => Path.Combine(Settings.Prefix.Parent.FullName, "protonprefix");
+    private string SteamRoot => Settings.SteamRoot;
+    private string ProtonPath => Path.Combine(Settings.ProtonPath,"proton");
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
@@ -52,8 +50,7 @@ public class CompatibilityTools
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
-    public bool useProton => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("XLC_PROTON")) ? false :
-            Environment.GetEnvironmentVariable("XLC_PROTON") == "1" || Environment.GetEnvironmentVariable("XLC_PROTON").ToLower() == "true";
+    public bool useProton => Settings.StartupType == WineStartupType.Proton;
 
     public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
     {
@@ -78,6 +75,9 @@ public class CompatibilityTools
 
         if (!wineSettings.Prefix.Exists)
             wineSettings.Prefix.Create();
+        
+        if (!wineSettings.ProtonPrefix.Exists)
+            wineSettings.ProtonPrefix.Create();
     }
 
     public async Task EnsureTool(DirectoryInfo tempPath)
@@ -187,18 +187,19 @@ public class CompatibilityTools
 
         if (useProton)
         {
-            if (!Directory.Exists(ProtonDataPath)) Directory.CreateDirectory(ProtonDataPath);
-            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", ProtonDataPath);
+            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
             wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot);
             wineEnviromentVariables.Add("PROTON_LOG", "1");
-            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.Prefix.Parent.FullName,"logs"));
+            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
+            if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
+            if (!Settings.EsyncOn && !Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
         }
         else
         {
             wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
-            wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);
-            wineEnviromentVariables.Add("WINEFSYNC", Settings.FsyncOn);
             wineEnviromentVariables.Add("DXVK_ASYNC", dxvkAsyncOn);
+            if (Settings.EsyncOn) wineEnviromentVariables.Add("WINEESYNC", "1");
+            if (Settings.FsyncOn) wineEnviromentVariables.Add("WINEFSYNC", "1");
 
         }
 
