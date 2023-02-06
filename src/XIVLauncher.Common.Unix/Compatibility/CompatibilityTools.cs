@@ -82,15 +82,19 @@ public class CompatibilityTools
 
     public async Task EnsureTool(DirectoryInfo tempPath)
     {
-        if (!File.Exists(Wine64Path))
+        if (!useProton)
         {
-            Log.Information("Compatibility tool does not exist, downloading");
-            await DownloadTool(tempPath).ConfigureAwait(false);
+            if (!File.Exists(Wine64Path))
+            {
+                Log.Information("Compatibility tool does not exist, downloading");
+                await DownloadTool(tempPath).ConfigureAwait(false);
+            }
+
+            EnsurePrefix();
+            await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory).ConfigureAwait(false);
         }
-
-        EnsurePrefix();
-        await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory).ConfigureAwait(false);
-
+        else
+            EnsurePrefix();
         IsToolReady = true;
     }
 
