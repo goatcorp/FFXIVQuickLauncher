@@ -92,25 +92,10 @@ public class UnixDalamudRunner : IDalamudRunner
 
         }).Start();
 
-        try
-        {
-            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
-
-            if (unixPid == 0)
-            {
-                Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
-                return null;
-            }
-
-            var gameProcess = Process.GetProcessById(unixPid);
-            Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
-            return gameProcess;
-        }
-        catch (JsonReaderException ex)
-        {
-            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
-            return null;
-        }
+        var unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+        Log.Information($"Got Unix PID: {unixPid}");
+        var gameProcess = Process.GetProcessById(unixPid);
+        Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}");
+        return gameProcess;
     }
 }

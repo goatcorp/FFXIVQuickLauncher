@@ -32,12 +32,16 @@ public class CompatibilityTools
     
     private string Wine64Path => Path.Combine(WineBinPath, "wine64");
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
+    private string SteamPath => Settings.SteamPath;
+    private string ProtonPath => Path.Combine(Settings.ProtonPath,"proton");
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
     public DxvkSettings DxvkSettings { get; private set; }
 
     private readonly bool gamemodeOn;
+
+    public bool useProton => Settings.StartupType == WineStartupType.Proton;
 
     public CompatibilityTools(WineSettings wineSettings, DxvkSettings dxvkSettings, bool? gamemodeOn, DirectoryInfo toolsFolder)
     {
@@ -49,7 +53,7 @@ public class CompatibilityTools
 
         this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
-        if (wineSettings.StartupType != WineStartupType.Custom)
+        if (Settings.StartupType != WineStartupType.Custom && !useProton)
         {
             if (!this.toolDirectory.Exists)
                 this.toolDirectory.Create();
@@ -57,18 +61,26 @@ public class CompatibilityTools
             if (!this.dxvkDirectory.Exists)
                 this.dxvkDirectory.Create();
         }
+
+        if (!Settings.Prefix.Exists) Settings.Prefix.Create();
+        if (!Settings.ProtonPrefix.Exists) Settings.ProtonPrefix.Create();
     }
 
     public async Task EnsureTool(DirectoryInfo tempPath)
     {
-        if (!File.Exists(Wine64Path))
+        if (!useProton)
         {
-            Log.Information("Compatibility tool does not exist, downloading");
-            await DownloadTool(tempPath).ConfigureAwait(false);
-        }
+            if (!File.Exists(Wine64Path))
+            {
+                Log.Information("Compatibility tool does not exist, downloading");
+                await DownloadTool(tempPath).ConfigureAwait(false);
+            }
 
-        EnsurePrefix();
-        await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings).ConfigureAwait(false);
+            EnsurePrefix();
+            await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings).ConfigureAwait(false);
+        }
+        else
+            EnsurePrefix();
 
         IsToolReady = true;
     }
@@ -105,16 +117,34 @@ public class CompatibilityTools
 
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
-        var psi = new ProcessStartInfo(Wine64Path);
-        psi.Arguments = command;
+        ProcessStartInfo psi;
+        if (useProton)
+        {
+            psi = new ProcessStartInfo(ProtonPath);
+            psi.Arguments = "runinprefix " + command;
+        }
+        else
+        {
+            psi = new ProcessStartInfo(Wine64Path);
+            psi.Arguments = command;
+        }
 
-        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, command);
+        Log.Verbose($"Running in prefix: {psi.FileName} {psi.Arguments}");
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
-        var psi = new ProcessStartInfo(Wine64Path);
+        ProcessStartInfo psi;
+        if (useProton)
+        {
+            psi = new ProcessStartInfo(ProtonPath);
+            psi.ArgumentList.Add("runinprefix");
+        }
+        else
+        {
+            psi = new ProcessStartInfo(Wine64Path);
+        }
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
@@ -144,8 +174,35 @@ public class CompatibilityTools
         psi.WorkingDirectory = workingDirectory;
 
         var wineEnviromentVariables = new Dictionary<string, string>();
-        wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
         wineEnviromentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi={(DxvkSettings.Enabled && !wineD3D ? "n" : "b")}");
+
+        if (useProton)
+        {
+            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
+            wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamPath);
+            wineEnviromentVariables.Add("PROTON_LOG", "1");
+            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
+            foreach (KeyValuePair<string, string> dxvkVar in DxvkSettings.DxvkVars)
+            {
+                
+                if (dxvkVar.Key == "DXVK_CONFIG_FILE")
+                    wineEnviromentVariables.Add(dxvkVar.Key, Path.Combine(Settings.ProtonPrefix.FullName,"dxvk.conf"));
+                else if (dxvkVar.Key == "DXVK_STATE_CACHE_PATH")
+                { } // Do nothing. Let Proton manage this.
+                else
+                    wineEnviromentVariables.Add(dxvkVar.Key, dxvkVar.Value);
+            }
+            if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
+            if (!Settings.EsyncOn && !Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
+        }
+        else
+        {
+            wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
+            foreach (KeyValuePair<string, string> dxvkVar in DxvkSettings.DxvkVars)
+                wineEnviromentVariables.Add(dxvkVar.Key, dxvkVar.Value);
+            if (Settings.EsyncOn) wineEnviromentVariables.Add("WINEESYNC", "1");
+            if (Settings.FsyncOn) wineEnviromentVariables.Add("WINEFSYNC", "1");
+        }
 
         if (!string.IsNullOrEmpty(Settings.DebugVars))
         {
@@ -159,13 +216,6 @@ public class CompatibilityTools
         {
             ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
         }
-
-        foreach (KeyValuePair<string, string> dxvkVar in DxvkSettings.DxvkVars)
-            wineEnviromentVariables.Add(dxvkVar.Key, dxvkVar.Value);
-
-        wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);
-        wineEnviromentVariables.Add("WINEFSYNC", Settings.FsyncOn);
-
         wineEnviromentVariables.Add("LD_PRELOAD", ldPreload);
 
         MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
@@ -190,6 +240,45 @@ public class CompatibilityTools
             }
         }
 #endif
+
+        if (useProton)
+        {
+            ProcessStartInfo psifirstrun = new ProcessStartInfo(ProtonPath);
+            psifirstrun.RedirectStandardOutput = redirectOutput;
+            psifirstrun.RedirectStandardError = writeLog;
+            psifirstrun.UseShellExecute = false;
+            psifirstrun.WorkingDirectory = workingDirectory;
+            psifirstrun.ArgumentList.Add("run");
+
+            MergeDictionaries(psifirstrun.EnvironmentVariables, wineEnviromentVariables);
+            MergeDictionaries(psifirstrun.EnvironmentVariables, environment);
+
+            Process firstrun = new();
+            firstrun.StartInfo = psifirstrun;
+
+            firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
+            {
+                if (String.IsNullOrEmpty(errLine.Data))
+                    return;
+
+                try
+                {
+                    logWriter.WriteLine(errLine.Data);
+                    Console.Error.WriteLine(errLine.Data);
+                }
+                catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
+                                        ex is OverflowException ||
+                                        ex is IndexOutOfRangeException)
+                {
+                    // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
+                    //logWriter.WriteLine("Error writing Wine log line:");
+                    //logWriter.WriteLine(ex.Message);
+                }
+            });
+
+            firstrun.Start();
+        }
+
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
@@ -242,6 +331,28 @@ public class CompatibilityTools
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
             l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
         var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
+        return unixPids.FirstOrDefault();
+    }
+
+    public Int32 GetUnixProcessIdByName(string executableName)
+    {
+        Console.WriteLine($"Process Name = {executableName}");
+        ProcessStartInfo psi = new ProcessStartInfo("pgrep");
+        psi.RedirectStandardOutput = true;
+        psi.RedirectStandardError = true;
+        psi.UseShellExecute = false;
+        psi.ArgumentList.Add("-f");
+        psi.ArgumentList.Add(executableName);
+
+        Process pidget = new();
+        pidget.StartInfo = psi;
+        pidget.Start();
+
+        var output = pidget.StandardOutput.ReadToEnd();
+        if (string.IsNullOrWhiteSpace(output))
+            return 0;
+        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        var unixPids = matchingLines.Select(l => int.Parse(l, System.Globalization.NumberStyles.Integer)).ToArray();
         return unixPids.FirstOrDefault();
     }
 
