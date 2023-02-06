@@ -94,18 +94,26 @@ public class UnixDalamudRunner : IDalamudRunner
 
         try
         {
-            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+            var unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+            Log.Information($"Got Unix PID: {unixPid}");
+            Console.Write($"~~~~~~~~~~\n\nGot Unix PID: {unixPid}\n\n~~~~~~~~~~\n");
+/*            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
             var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
-            if (unixPid == 0) unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+            Log.Information($"First attempt at Unix Process ID: {unixPid}");
+            if (unixPid == 0) {
+                Log.Information($"That didn't work. Attempting to get by name: {gameExe.Name}");
+                unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+                Log.Information($"Second attempt at Unix Process ID: {unixPid}");
+            }
 
             if (unixPid == 0)
             {
                 Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
                 return null;
             }
-
+*/
             var gameProcess = Process.GetProcessById(unixPid);
-            Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
+            Log.Information($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}"); //and Wine pid {dalamudConsoleOutput.Pid}");
             return gameProcess;
         }
         catch (JsonReaderException ex)
