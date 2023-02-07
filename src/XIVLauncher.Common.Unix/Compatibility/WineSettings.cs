@@ -104,10 +104,4 @@ public class WineSettings
                 throw new ArgumentOutOfRangeException();
         }
     }
-
-    public WineSettings(WineStartupType? startupType, string customBinPath, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
-        : this(startupType, customBinPath, Path.Combine(System.Environment.GetEnvironmentVariable("HOME"),".steam","root"),
-            Path.Combine(System.Environment.GetEnvironmentVariable("HOME"),".steam","root","steamapps","common","Proton 7.0"),
-            debugVars, logFile, prefix, new DirectoryInfo(Path.Combine(prefix.Parent.FullName,"protonprefix")), esyncOn, fsyncOn)
-    {    }
 }
