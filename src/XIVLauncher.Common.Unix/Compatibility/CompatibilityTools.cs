@@ -210,8 +210,8 @@ public class CompatibilityTools
         }
 
         wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
-        string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
 
+        string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
         if (gamemodeOn && !ldPreload.Contains("libgamemodeauto.so.0"))
         {
             ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
@@ -279,7 +279,6 @@ public class CompatibilityTools
             firstrun.Start();
         }
 
-
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
@@ -341,7 +340,7 @@ public class CompatibilityTools
         psi.RedirectStandardOutput = true;
         psi.RedirectStandardError = true;
         psi.UseShellExecute = false;
-        psi.ArgumentList.Add("-f");
+        psi.ArgumentList.Add("-n");
         psi.ArgumentList.Add(executableName);
 
         Process pidget = new();

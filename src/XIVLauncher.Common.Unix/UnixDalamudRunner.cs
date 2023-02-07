@@ -92,10 +92,40 @@ public class UnixDalamudRunner : IDalamudRunner
 
         }).Start();
 
-        var unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
-        Log.Information($"Got Unix PID: {unixPid}");
-        var gameProcess = Process.GetProcessById(unixPid);
-        Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}");
-        return gameProcess;
+        // If using proton, the dalamudProcess will output gibberish or nothing, so we'll get unix pid by name.
+        if (compatibility.useProton)
+        {
+            var unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+            if (unixPid == 0)
+            {
+                Log.Error("Could not retrieve Unix process ID by name. Proton did not run correctly.");
+                return null;
+            }
+            var gameProcess = Process.GetProcessById(unixPid);
+            Log.Information($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}"); //and Wine pid {dalamudConsoleOutput.Pid}");
+            return gameProcess;
+        }
+
+        try
+        {
+            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+            var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
+            if (unixPid == 0) unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+
+            if (unixPid == 0)
+            {
+                Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
+                return null;
+            }
+
+            var gameProcess = Process.GetProcessById(unixPid);
+            Log.Information($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
+            return gameProcess;
+        }
+        catch (JsonReaderException ex)
+        {
+            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
+            return null;
+        }
     }
 }
