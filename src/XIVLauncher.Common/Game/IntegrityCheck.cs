@@ -144,7 +144,7 @@ namespace XIVLauncher.Common.Game
 
             foreach (var dir in directory.GetDirectories())
             {
-                if (!dir.FullName.ToLower().Contains("shade")) //skip gshade directories. They just waste cpu
+                if (!dir.FullName.ToLower().Contains("shade")) //skip reshade and similar directories.
                     CheckDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
             }
         }
