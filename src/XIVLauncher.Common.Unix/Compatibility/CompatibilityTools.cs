@@ -354,7 +354,7 @@ public class CompatibilityTools
         psi.RedirectStandardOutput = true;
         psi.RedirectStandardError = true;
         psi.UseShellExecute = false;
-        psi.ArgumentList.Add("-f");
+        psi.ArgumentList.Add("-n");
         psi.ArgumentList.Add(executableName);
 
         Process pidget = new();
