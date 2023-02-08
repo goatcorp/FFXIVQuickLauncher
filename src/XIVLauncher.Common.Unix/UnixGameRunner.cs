@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Serilog;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Unix.Compatibility;
@@ -32,6 +33,11 @@ public class UnixGameRunner : IGameRunner
         }
     }
 
+    private void ProcessOutputHandler(object sender, DataReceivedEventArgs args)
+    {
+        Log.Information("Process output: {0}", args.Data);
+    }
+    
     public Process? Run(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, bool withCompatibility)
     {
         if (withCompatibility)
@@ -41,7 +47,10 @@ public class UnixGameRunner : IGameRunner
         
         var psi = new ProcessStartInfo(path, arguments)
         {
-            WorkingDirectory = workingDirectory
+            WorkingDirectory = workingDirectory,
+            RedirectStandardError = true,
+            RedirectStandardOutput = true,
+            UseShellExecute = false
         };
 
         foreach (var envVar in environment)
@@ -58,9 +67,14 @@ public class UnixGameRunner : IGameRunner
 
         var p = new Process()
         {
-            StartInfo = psi
+            StartInfo = psi,
         };
+
+        p.OutputDataReceived += ProcessOutputHandler;
+        
         p.Start();
+        p.BeginOutputReadLine();
+        p.BeginErrorReadLine();
 
         return p;
     }
