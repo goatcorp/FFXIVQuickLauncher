@@ -193,6 +193,7 @@ public class CompatibilityTools
         {
             wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
             wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot);
+            wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
             wineEnviromentVariables.Add("PROTON_LOG", "1");
             wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
             if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
@@ -254,43 +255,43 @@ public class CompatibilityTools
         }
 #endif
 
-        if (useProton)
-        {
-            ProcessStartInfo psifirstrun = new ProcessStartInfo(ProtonPath);
-            psifirstrun.RedirectStandardOutput = redirectOutput;
-            psifirstrun.RedirectStandardError = writeLog;
-            psifirstrun.UseShellExecute = false;
-            psifirstrun.WorkingDirectory = workingDirectory;
-            psifirstrun.ArgumentList.Add("run");
+        // if (useProton)
+        // {
+        //     ProcessStartInfo psifirstrun = new ProcessStartInfo(ProtonPath);
+        //     psifirstrun.RedirectStandardOutput = redirectOutput;
+        //     psifirstrun.RedirectStandardError = writeLog;
+        //     psifirstrun.UseShellExecute = false;
+        //     psifirstrun.WorkingDirectory = workingDirectory;
+        //     psifirstrun.ArgumentList.Add("run");
 
-            MergeDictionaries(psifirstrun.EnvironmentVariables, wineEnviromentVariables);
-            MergeDictionaries(psifirstrun.EnvironmentVariables, environment);
+        //     MergeDictionaries(psifirstrun.EnvironmentVariables, wineEnviromentVariables);
+        //     MergeDictionaries(psifirstrun.EnvironmentVariables, environment);
 
-            Process firstrun = new();
-            firstrun.StartInfo = psifirstrun;
+        //     Process firstrun = new();
+        //     firstrun.StartInfo = psifirstrun;
 
-            firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
-            {
-                if (String.IsNullOrEmpty(errLine.Data))
-                    return;
+        //     firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
+        //     {
+        //         if (String.IsNullOrEmpty(errLine.Data))
+        //             return;
 
-                try
-                {
-                    logWriter.WriteLine(errLine.Data);
-                    Console.Error.WriteLine(errLine.Data);
-                }
-                catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
-                                        ex is OverflowException ||
-                                        ex is IndexOutOfRangeException)
-                {
-                    // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
-                    //logWriter.WriteLine("Error writing Wine log line:");
-                    //logWriter.WriteLine(ex.Message);
-                }
-            });
+        //         try
+        //         {
+        //             logWriter.WriteLine(errLine.Data);
+        //             Console.Error.WriteLine(errLine.Data);
+        //         }
+        //         catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
+        //                                 ex is OverflowException ||
+        //                                 ex is IndexOutOfRangeException)
+        //         {
+        //             // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
+        //             //logWriter.WriteLine("Error writing Wine log line:");
+        //             //logWriter.WriteLine(ex.Message);
+        //         }
+        //     });
 
-            firstrun.Start();
-        }
+        //     firstrun.Start();
+        // }
     
 
         Process helperProcess = new();
@@ -316,6 +317,7 @@ public class CompatibilityTools
         });
 
         helperProcess.Start();
+        Log.Information($"Name: {helperProcess.ProcessName} Handle: {helperProcess.Handle}, Pid: {helperProcess.Id}");
         if (writeLog)
             helperProcess.BeginErrorReadLine();
 
@@ -349,19 +351,20 @@ public class CompatibilityTools
 
     public Int32 GetUnixProcessIdByName(string executableName)
     {
-        Console.WriteLine($"Process Name = {executableName}");
         ProcessStartInfo psi = new ProcessStartInfo("pgrep");
         psi.RedirectStandardOutput = true;
         psi.RedirectStandardError = true;
         psi.UseShellExecute = false;
-        psi.ArgumentList.Add("-n");
+        psi.ArgumentList.Add("-fn");
         psi.ArgumentList.Add(executableName);
 
-        Process pidget = new();
-        pidget.StartInfo = psi;
-        pidget.Start();
+        Log.Information($"{psi.FileName} {string.Join(" ", psi.ArgumentList)}");
 
-        var output = pidget.StandardOutput.ReadToEnd();
+        Process pgrep = new();
+        pgrep.StartInfo = psi;
+        pgrep.Start();
+        var output = pgrep.StandardOutput.ReadToEnd();
+        Log.Information(output);
         if (string.IsNullOrWhiteSpace(output))
             return 0;
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
@@ -371,8 +374,26 @@ public class CompatibilityTools
 
     public string UnixToWinePath(string unixPath)
     {
-        var launchArguments = new string[] { "winepath", "--windows", unixPath };
-        var winePath = RunInPrefix(launchArguments, redirectOutput: true);
+        Process winePath;
+        if (useProton)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo(ProtonPath);
+            psi.RedirectStandardOutput = true;
+            psi.RedirectStandardError = true;
+            psi.ArgumentList.Add("getcompatpath");
+            psi.ArgumentList.Add(unixPath);
+            psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
+            psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot); 
+
+            winePath = new();
+            winePath.StartInfo = psi;
+            winePath.Start();
+        }
+        else
+        {
+            var launchArguments = new string[] { "winepath", "--windows", unixPath };
+            winePath = RunInPrefix(launchArguments, redirectOutput: true);
+        }
         var output = winePath.StandardOutput.ReadToEnd();
         return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }

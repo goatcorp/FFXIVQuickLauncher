@@ -73,10 +73,13 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
 
+        Log.Information("~~~~~~~~~~~~~~~~~~~~~");
+        Log.Information($"Dalamud: {string.Join(" ", launchArguments)}");
+        Log.Information("~~~~~~~~~~~~~~~~~~~~~");
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
-        var output = dalamudProcess.StandardOutput.ReadLine();
 
-        if (output == null)
+        var output = dalamudProcess.StandardOutput.ReadLine();
+        if (output == null && !compatibility.useProton)
             throw new DalamudRunnerException("An internal Dalamud error has occured");
 
         Console.WriteLine(output);
@@ -86,15 +89,17 @@ public class UnixDalamudRunner : IDalamudRunner
             while (!dalamudProcess.StandardOutput.EndOfStream)
             {
                 var output = dalamudProcess.StandardOutput.ReadLine();
-                if (output != null)
+                if (output != null && !compatibility.useProton)
                     Console.WriteLine(output);
             }
 
         }).Start();
 
         // If using proton, the dalamudProcess will output gibberish or nothing, so we'll get unix pid by name.
+        // Dalamud won't do console logging, but this should prevent crashes.
         if (compatibility.useProton)
         {
+            Log.Information($"Trying to get Unix Process Id of {gameExe.Name}");
             var unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
             if (unixPid == 0)
             {
@@ -102,7 +107,7 @@ public class UnixDalamudRunner : IDalamudRunner
                 return null;
             }
             var gameProcess = Process.GetProcessById(unixPid);
-            Log.Information($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}"); //and Wine pid {dalamudConsoleOutput.Pid}");
+            Log.Information($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}");
             return gameProcess;
         }
 
