@@ -39,10 +39,10 @@ namespace XIVLauncher.Common.Game.Patch
             new Regex(@"^ffxiv_dx11\.dxvk-cache$", RegexOptions.IgnoreCase),
 
             // Repair recycle bin folder.
-            new Regex(@"^repair_recycler/.*$", RegexOptions.IgnoreCase),
+            new Regex(@"^repair_recycler(/.*)?$", RegexOptions.IgnoreCase),
 
-            // Ignore gshade folders. Unless someone wants to handle the symlinked folder, just skip recycling them.
-            new Regex(@"^gshade-(shader|preset)s$", RegexOptions.IgnoreCase),
+            // Ignore reshade/gshade folders. Unless someone wants to handle the symlinked folder, just skip recycling them.
+            new Regex(@"^(re|g)shade-(shader|preset)s(/.*)?$", RegexOptions.IgnoreCase),
         };
 
         private readonly ISettings _settings;
