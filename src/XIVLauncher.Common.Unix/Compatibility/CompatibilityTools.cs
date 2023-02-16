@@ -42,6 +42,7 @@ public class CompatibilityTools
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
 
     private string SteamRoot => Settings.SteamRoot;
+    private string SoldierRuntime => Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier");
     private string ProtonPath => Path.Combine(Settings.ProtonPath,"proton");
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
@@ -132,10 +133,11 @@ public class CompatibilityTools
     {
         ProcessStartInfo psi;
         if (useProton)
-        {
-            psi = new ProcessStartInfo(ProtonPath);
-            psi.Arguments = "runinprefix " + command;
-        }
+            return RunInProton(command, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
+        // {
+        //     psi = new ProcessStartInfo(ProtonPath);
+        //     psi.Arguments = "runinprefix " + command;
+        // }
         else
         {
             psi = new ProcessStartInfo(Wine64Path);
@@ -143,6 +145,15 @@ public class CompatibilityTools
         }
 
         Log.Verbose($"Running in prefix: {psi.FileName} {psi.Arguments}");
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
+    }
+
+    public Process RunInProton(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
+    {
+        ProcessStartInfo psi;
+        psi = new ProcessStartInfo(Path.Combine(SoldierRuntime,"_v2-entry-point"));
+        psi.Arguments = "--verb=waitforexitandrun -- \"" + ProtonPath + "\" runinprefix " + command;
+        Log.Information($"Running command > {SoldierRuntime}/_v2-entry-point {psi.Arguments}");
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -191,13 +202,14 @@ public class CompatibilityTools
 
         if (useProton)
         {
+            wineEnviromentVariables.Add("DRI_PRIME","0");
             wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
             wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot);
+            wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS","/games/other/FFXIV");
             wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
             wineEnviromentVariables.Add("PROTON_LOG", "1");
             wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
             if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
-            if (!Settings.EsyncOn && !Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
         }
         else
         {
@@ -214,7 +226,7 @@ public class CompatibilityTools
             wineEnviromentVariables.Add("WINEDEBUG", Settings.DebugVars);
         }
 
-        wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
+        // wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
 
         string dxvkHud = hudType switch
         {
@@ -255,43 +267,43 @@ public class CompatibilityTools
         }
 #endif
 
-        // if (useProton)
-        // {
-        //     ProcessStartInfo psifirstrun = new ProcessStartInfo(ProtonPath);
-        //     psifirstrun.RedirectStandardOutput = redirectOutput;
-        //     psifirstrun.RedirectStandardError = writeLog;
-        //     psifirstrun.UseShellExecute = false;
-        //     psifirstrun.WorkingDirectory = workingDirectory;
-        //     psifirstrun.ArgumentList.Add("run");
+        if (useProton && !File.Exists(Path.Combine(Settings.ProtonPrefix.FullName, "tracked_files")))
+        {
+            ProcessStartInfo psifirstrun = new ProcessStartInfo(ProtonPath);
+            psifirstrun.RedirectStandardOutput = redirectOutput;
+            psifirstrun.RedirectStandardError = writeLog;
+            psifirstrun.UseShellExecute = false;
+            psifirstrun.WorkingDirectory = workingDirectory;
+            psifirstrun.ArgumentList.Add("run");
 
-        //     MergeDictionaries(psifirstrun.EnvironmentVariables, wineEnviromentVariables);
-        //     MergeDictionaries(psifirstrun.EnvironmentVariables, environment);
+            MergeDictionaries(psifirstrun.EnvironmentVariables, wineEnviromentVariables);
+            MergeDictionaries(psifirstrun.EnvironmentVariables, environment);
 
-        //     Process firstrun = new();
-        //     firstrun.StartInfo = psifirstrun;
+            Process firstrun = new();
+            firstrun.StartInfo = psifirstrun;
 
-        //     firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
-        //     {
-        //         if (String.IsNullOrEmpty(errLine.Data))
-        //             return;
+            firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
+            {
+                if (String.IsNullOrEmpty(errLine.Data))
+                    return;
 
-        //         try
-        //         {
-        //             logWriter.WriteLine(errLine.Data);
-        //             Console.Error.WriteLine(errLine.Data);
-        //         }
-        //         catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
-        //                                 ex is OverflowException ||
-        //                                 ex is IndexOutOfRangeException)
-        //         {
-        //             // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
-        //             //logWriter.WriteLine("Error writing Wine log line:");
-        //             //logWriter.WriteLine(ex.Message);
-        //         }
-        //     });
+                try
+                {
+                    logWriter.WriteLine(errLine.Data);
+                    Console.Error.WriteLine(errLine.Data);
+                }
+                catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
+                                        ex is OverflowException ||
+                                        ex is IndexOutOfRangeException)
+                {
+                    // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
+                    //logWriter.WriteLine("Error writing Wine log line:");
+                    //logWriter.WriteLine(ex.Message);
+                }
+            });
 
-        //     firstrun.Start();
-        // }
+            firstrun.Start();
+        }
     
 
         Process helperProcess = new();

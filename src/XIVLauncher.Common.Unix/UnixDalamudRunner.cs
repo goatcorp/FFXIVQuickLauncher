@@ -73,10 +73,17 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
 
+        
+
         Log.Information("~~~~~~~~~~~~~~~~~~~~~");
         Log.Information($"Dalamud: {string.Join(" ", launchArguments)}");
         Log.Information("~~~~~~~~~~~~~~~~~~~~~");
-        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
+        
+        Process dalamudProcess;
+        if (!compatibility.useProton)
+            dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
+        else
+            dalamudProcess = compatibility.RunInProton(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
 
         var output = dalamudProcess.StandardOutput.ReadLine();
         if (output == null && !compatibility.useProton)
