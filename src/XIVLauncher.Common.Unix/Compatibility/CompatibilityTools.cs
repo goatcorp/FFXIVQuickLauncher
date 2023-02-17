@@ -41,9 +41,9 @@ public class CompatibilityTools
     private string Wine64Path => Path.Combine(WineBinPath, "wine64");
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
 
-    private string SteamRoot => Settings.SteamRoot;
+    private string SteamRoot => Settings.Proton.SteamRoot;
     private string SoldierRuntime => Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier");
-    private string ProtonPath => Path.Combine(Settings.ProtonPath,"proton");
+    private string ProtonPath => Path.Combine(Settings.Proton.ProtonPath,"proton");
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
@@ -205,7 +205,7 @@ public class CompatibilityTools
             wineEnviromentVariables.Add("DRI_PRIME","0");
             wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
             wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot);
-            wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS","/games/other/FFXIV");
+            wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", Settings.Proton.CompatMounts);
             wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
             wineEnviromentVariables.Add("PROTON_LOG", "1");
             wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
@@ -329,7 +329,6 @@ public class CompatibilityTools
         });
 
         helperProcess.Start();
-        Log.Information($"Name: {helperProcess.ProcessName} Handle: {helperProcess.Handle}, Pid: {helperProcess.Id}");
         if (writeLog)
             helperProcess.BeginErrorReadLine();
 
@@ -370,13 +369,10 @@ public class CompatibilityTools
         psi.ArgumentList.Add("-fn");
         psi.ArgumentList.Add(executableName);
 
-        Log.Information($"{psi.FileName} {string.Join(" ", psi.ArgumentList)}");
-
         Process pgrep = new();
         pgrep.StartInfo = psi;
         pgrep.Start();
         var output = pgrep.StandardOutput.ReadToEnd();
-        Log.Information(output);
         if (string.IsNullOrWhiteSpace(output))
             return 0;
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
