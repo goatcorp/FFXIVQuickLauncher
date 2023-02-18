@@ -41,10 +41,6 @@ public class CompatibilityTools
     private string Wine64Path => Path.Combine(WineBinPath, "wine64");
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
 
-    private string SteamRoot => Settings.Proton.SteamRoot;
-    private string SoldierRuntime => Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier");
-    private string ProtonPath => Path.Combine(Settings.Proton.ProtonPath,"proton");
-
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
@@ -77,8 +73,8 @@ public class CompatibilityTools
         if (!wineSettings.Prefix.Exists)
             wineSettings.Prefix.Create();
         
-        if (!wineSettings.ProtonPrefix.Exists)
-            wineSettings.ProtonPrefix.Create();
+        if (!wineSettings.Proton.Prefix.Exists)
+            wineSettings.Proton.Prefix.Create();
     }
 
     public async Task EnsureTool(DirectoryInfo tempPath)
@@ -133,43 +129,17 @@ public class CompatibilityTools
     {
         ProcessStartInfo psi;
         if (UseProton)
-            return RunInProton(command, workingDirectory, environment, redirectOutput, writeLog, wineD3D, inject);
-        // {
-        //     psi = new ProcessStartInfo(ProtonPath);
-        //     psi.Arguments = "runinprefix " + command;
-        // }
+        {
+            psi = new ProcessStartInfo(Settings.Proton.GetCommand(inject));
+            psi.Arguments = Settings.Proton.GetArguments(inject) + " " + command;
+        }
         else
         {
             psi = new ProcessStartInfo(Wine64Path);
             psi.Arguments = command;
         }
 
-        Log.Verbose($"Running in prefix: {psi.FileName} {psi.Arguments}");
-        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
-    }
-
-    public Process RunInProton(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true)
-    {
-        if (Settings.Proton.UseReaper)
-            return RunInReaper(command, workingDirectory, environment, redirectOutput, writeLog, wineD3D, inject);
-        ProcessStartInfo psi;
-        var verb = "runinprefix";
-        var proc = inject ? Settings.Proton.SoldierInject : Settings.Proton.SoldierRun;
-        var args = inject ? "--verb=waitforexitandrun --" : "--";
-        psi = new ProcessStartInfo(proc);
-        psi.Arguments = $"{args} \"" + ProtonPath + $"\" {verb} " + command;
-        Log.Information($"Running command > {proc} {psi.Arguments}");
-        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
-    }
-
-    public Process RunInReaper(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true)
-    {
-        var psi = new ProcessStartInfo(Settings.Proton.ReaperPath);
-        var verb = "runinprefix";
-        var proc = inject ? Settings.Proton.SoldierInject : Settings.Proton.SoldierRun;
-        var args = inject ? "--verb=waitforexitandrun --" : "--";
-        psi.Arguments = $"SteamLaunch -- {proc} {args} \"" + ProtonPath + $"\" {verb} " + command;
-        Log.Information($"Running command > {Settings.Proton.ReaperPath} {psi.Arguments}");
+        Log.Information($"Running in prefix: {psi.FileName} {psi.Arguments}");
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -178,8 +148,10 @@ public class CompatibilityTools
         ProcessStartInfo psi;
         if (UseProton)
         {
-            psi = new ProcessStartInfo(ProtonPath);
-            psi.ArgumentList.Add("runinprefix");
+            psi = new ProcessStartInfo(Settings.Proton.GetCommand());
+            var protonargs = Settings.Proton.GetArgumentsAsArray();
+            foreach (var protonarg in protonargs)
+                psi.ArgumentList.Add(protonarg);
         }
         else
         {
@@ -188,7 +160,7 @@ public class CompatibilityTools
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
-        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
+        Log.Information("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -218,15 +190,17 @@ public class CompatibilityTools
 
         if (UseProton)
         {
-            wineEnviromentVariables.Add("DRI_PRIME","0");
-            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
-            wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot);
+            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.Proton.Prefix.FullName);
+            wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Settings.Proton.SteamRoot);
             wineEnviromentVariables.Add("STEAM_COMPAT_APP_ID", Settings.Proton.SteamAppId);
-            wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", Settings.Proton.CompatMounts);
-            wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
-            wineEnviromentVariables.Add("PRESSURE_VESSEL_VARIABLE_DIR", Settings.ProtonPrefix.Parent.FullName + "/protontmp");
+            
+            string compatMounts = Environment.GetEnvironmentVariable("STEAM_COMPAT_MOUNTS") ?? "";
+            compatMounts = Settings.Proton.CompatMounts + (compatMounts.Equals("") ? "" : ":" + compatMounts);
+            wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", compatMounts);
+            
+            //wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(Settings.Proton.SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
             wineEnviromentVariables.Add("PROTON_LOG", "1");
-            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
+            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.Proton.Prefix.Parent.FullName, "logs"));
             if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
         }
         else
@@ -244,7 +218,7 @@ public class CompatibilityTools
             wineEnviromentVariables.Add("WINEDEBUG", Settings.DebugVars);
         }
 
-        // wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
+        wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
 
         string dxvkHud = hudType switch
         {
@@ -285,14 +259,14 @@ public class CompatibilityTools
         }
 #endif
 
-        if (UseProton && !File.Exists(Path.Combine(Settings.ProtonPrefix.FullName, "tracked_files")))
+        if (UseProton && !File.Exists(Path.Combine(Settings.Proton.Prefix.FullName, "tracked_files")))
         {
-            ProcessStartInfo psifirstrun = new ProcessStartInfo(ProtonPath);
+            ProcessStartInfo psifirstrun = new ProcessStartInfo(Settings.Proton.GetCommand());
             psifirstrun.RedirectStandardOutput = redirectOutput;
             psifirstrun.RedirectStandardError = writeLog;
             psifirstrun.UseShellExecute = false;
             psifirstrun.WorkingDirectory = workingDirectory;
-            psifirstrun.ArgumentList.Add("run");
+            psifirstrun.Arguments = Settings.Proton.GetArguments();
 
             MergeDictionaries(psifirstrun.EnvironmentVariables, wineEnviromentVariables);
             MergeDictionaries(psifirstrun.EnvironmentVariables, environment);
@@ -402,13 +376,12 @@ public class CompatibilityTools
         Process winePath;
         if (UseProton)
         {
-            ProcessStartInfo psi = new ProcessStartInfo(ProtonPath);
+            ProcessStartInfo psi = new ProcessStartInfo(Settings.Proton.GetCommand());
             psi.RedirectStandardOutput = true;
             psi.RedirectStandardError = true;
-            psi.ArgumentList.Add("getcompatpath");
-            psi.ArgumentList.Add(unixPath);
-            psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
-            psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot); 
+            psi.Arguments = Settings.Proton.GetArguments(verb: "getcompatpath") + " " + unixPath;
+            psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.Proton.Prefix.FullName);
+            psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Settings.Proton.SteamRoot); 
 
             winePath = new();
             winePath.StartInfo = psi;

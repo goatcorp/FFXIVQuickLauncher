@@ -28,9 +28,8 @@ public class WineSettings
     public FileInfo LogFile { get; private set; }
 
     public DirectoryInfo Prefix { get; private set; }
-    public DirectoryInfo ProtonPrefix { get; private set; }
 
-    public WineSettings(WineStartupType? startupType, string customBinPath, ProtonSettings protonSettings, string debugVars, FileInfo logFile, DirectoryInfo prefix, DirectoryInfo protonPrefix, bool? esyncOn, bool? fsyncOn)
+    public WineSettings(WineStartupType? startupType, string customBinPath, ProtonSettings protonSettings, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
     {
         this.StartupType = startupType ?? WineStartupType.Custom;
         this.CustomBinPath = customBinPath;
@@ -40,12 +39,12 @@ public class WineSettings
         this.DebugVars = debugVars;
         this.LogFile = logFile;
         this.Prefix = prefix;
-        this.ProtonPrefix = protonPrefix;
     }
 
     public WineSettings(WineStartupType? startupType, string customBinPath, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
-        : this(startupType, customBinPath, new ProtonSettings(Path.Combine(System.Environment.GetEnvironmentVariable("HOME"),".steam","root"),
+        : this(startupType, customBinPath, new ProtonSettings(new DirectoryInfo(Path.Combine(prefix.Parent.FullName,"protonprefix")),
+            Path.Combine(System.Environment.GetEnvironmentVariable("HOME"),".steam","root"),
             Path.Combine(System.Environment.GetEnvironmentVariable("HOME"),".steam","root","steamapps","common","Proton 7.0")),
-            debugVars, logFile, prefix, new DirectoryInfo(Path.Combine(prefix.Parent.FullName,"protonprefix")), esyncOn, fsyncOn)
+            debugVars, logFile, prefix, esyncOn, fsyncOn)
     {    }
 }

@@ -6,6 +6,8 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public class ProtonSettings
 {
+    public DirectoryInfo Prefix { get; }
+    
     public string SteamRoot { get; }
 
     public string ProtonPath { get; }
@@ -30,11 +32,12 @@ public class ProtonSettings
 
     public string SteamAppId { get; }
 
-    public ProtonSettings(string steamRoot, string protonPath, string gamePath = "", string configPath = "", string appId = "39210", bool useSoldier = true, bool useReaper = false)
+    public ProtonSettings(DirectoryInfo protonPrefix, string steamRoot, string protonPath, string gamePath = "", string configPath = "", string appId = "39210", bool useSoldier = true, bool useReaper = false)
     {
+        Prefix = protonPrefix;
         string xlcore = Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".xlcore");
         SteamRoot = steamRoot;
-        ProtonPath = protonPath;
+        ProtonPath = Path.Combine(protonPath, "proton");
         GamePath = string.IsNullOrEmpty(gamePath) ? Path.Combine(xlcore, "ffxiv") : gamePath;
         ConfigPath = string.IsNullOrEmpty(configPath) ? Path.Combine(xlcore, "ffxivConfig") : configPath;
         UseSoldier = useSoldier;
@@ -49,7 +52,7 @@ public class ProtonSettings
         return ProtonPath;   
     }
 
-    public string GetArguments(bool inject = true)
+    public string GetArguments(bool inject = true, string verb = "runinprefix")
     {
         List<string> commands = new List<string>();
         if (UseReaper)
@@ -63,8 +66,27 @@ public class ProtonSettings
         }
         if (UseSoldier || UseReaper)
             commands.Add("\"" + ProtonPath + "\"");
-        commands.Add("runinprefix");
+        commands.Add(verb);
 
         return string.Join(' ', commands);        
+    }
+
+    public string[] GetArgumentsAsArray(bool inject = true, string verb = "runinprefix")
+    {
+        List<string> commands = new List<string>();
+        if (UseReaper)
+        {
+            commands.Add("SteamLaunch --");
+        }
+        if (UseSoldier)
+        {
+            if (UseReaper) commands.Add(inject ? SoldierInject : SoldierRun);
+            commands.Add(inject ? "--verb=waitforexitandrun --" : "--");
+        }
+        if (UseSoldier || UseReaper)
+            commands.Add("\"" + ProtonPath + "\"");
+        commands.Add(verb);
+
+        return commands.ToArray();
     }
 }

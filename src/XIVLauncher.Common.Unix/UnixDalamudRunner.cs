@@ -73,7 +73,7 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
        
-        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true, inject: false);
+        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
         var output = dalamudProcess.StandardOutput.ReadLine();
         if (output == null && !compatibility.UseProton)
             throw new DalamudRunnerException("An internal Dalamud error has occured");
