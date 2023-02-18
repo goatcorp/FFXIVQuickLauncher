@@ -43,15 +43,18 @@ public class CompatibilityTools
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
+    public ProtonSettings Proton { get; private set;}
+    
     private readonly Dxvk.DxvkHudType hudType;
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
     public bool UseProton => Settings.StartupType == WineStartupType.Proton;
 
-    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
+    public CompatibilityTools(WineSettings wineSettings, ProtonSettings protonSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
+        this.Proton = protonSettings;
         this.hudType = hudType;
         this.gamemodeOn = gamemodeOn ?? false;
         this.dxvkAsyncOn = (dxvkAsyncOn ?? false) ? "1" : "0";
@@ -73,8 +76,8 @@ public class CompatibilityTools
         if (!wineSettings.Prefix.Exists)
             wineSettings.Prefix.Create();
         
-        if (!wineSettings.Proton.Prefix.Exists)
-            wineSettings.Proton.Prefix.Create();
+        if (!protonSettings.Prefix.Exists)
+            protonSettings.Prefix.Create();
     }
 
     public async Task EnsureTool(DirectoryInfo tempPath)
@@ -122,53 +125,53 @@ public class CompatibilityTools
 
     public void EnsurePrefix()
     {
-        if (UseProton && !File.Exists(Path.Combine(Settings.Proton.Prefix.FullName, "tracked_files")))
-        {
-            // "proton run" must be run at least once to activate the proton prefix
-            ProcessStartInfo psi = new ProcessStartInfo(Settings.Proton.ProtonPath);
-            psi.RedirectStandardOutput = true;
-            psi.RedirectStandardError = true;
-            psi.UseShellExecute = false;
-            psi.Arguments = "run";
-            psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.Proton.Prefix.FullName);
-            psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Settings.Proton.SteamRoot); 
+        // if (UseProton && !File.Exists(Path.Combine(Proton.Prefix.FullName, "tracked_files")))
+        // {
+        //     // "proton run" must be run at least once to activate the proton prefix
+        //     ProcessStartInfo psi = new ProcessStartInfo(Proton.ProtonPath);
+        //     psi.RedirectStandardOutput = true;
+        //     psi.RedirectStandardError = true;
+        //     psi.UseShellExecute = false;
+        //     psi.Arguments = "run";
+        //     psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Proton.Prefix.FullName);
+        //     psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Proton.SteamRoot); 
 
-            Process firstrun = new();
-            firstrun.StartInfo = psi;
+        //     Process firstrun = new();
+        //     firstrun.StartInfo = psi;
 
-            firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
-            {
-                if (String.IsNullOrEmpty(errLine.Data))
-                    return;
+        //     firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
+        //     {
+        //         if (String.IsNullOrEmpty(errLine.Data))
+        //             return;
 
-                try
-                {
-                    logWriter.WriteLine(errLine.Data);
-                    Console.Error.WriteLine(errLine.Data);
-                }
-                catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
-                                        ex is OverflowException ||
-                                        ex is IndexOutOfRangeException)
-                {
-                    // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
-                    //logWriter.WriteLine("Error writing Wine log line:");
-                    //logWriter.WriteLine(ex.Message);
-                }
-            });
+        //         try
+        //         {
+        //             logWriter.WriteLine(errLine.Data);
+        //             Console.Error.WriteLine(errLine.Data);
+        //         }
+        //         catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
+        //                                 ex is OverflowException ||
+        //                                 ex is IndexOutOfRangeException)
+        //         {
+        //             // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
+        //             //logWriter.WriteLine("Error writing Wine log line:");
+        //             //logWriter.WriteLine(ex.Message);
+        //         }
+        //     });
 
-            firstrun.Start();
-        }
+        //     firstrun.Start();
+        // }
 
-        RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
+        RunInPrefix("cmd /c dir %userprofile%/Documents > nul", verb: "run").WaitForExit();
     }
 
-    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true)
+    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true, string verb = "runinprefix")
     {
         ProcessStartInfo psi;
         if (UseProton)
         {
-            psi = new ProcessStartInfo(Settings.Proton.GetCommand(inject));
-            psi.Arguments = Settings.Proton.GetArguments(inject) + " " + command;
+            psi = new ProcessStartInfo(Proton.GetCommand(inject));
+            psi.Arguments = Proton.GetArguments(inject, verb) + " " + command;
         }
         else
         {
@@ -176,17 +179,17 @@ public class CompatibilityTools
             psi.Arguments = command;
         }
 
-        Log.Verbose($"Running in prefix: {psi.FileName} {psi.Arguments}");
+        Log.Information($"Running in prefix: {psi.FileName} {psi.Arguments}");
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
-    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
+    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true, string verb = "runinprefix")
     {
         ProcessStartInfo psi;
         if (UseProton)
         {
-            psi = new ProcessStartInfo(Settings.Proton.GetCommand());
-            var protonargs = Settings.Proton.GetArgumentsAsArray();
+            psi = new ProcessStartInfo(Proton.GetCommand());
+            var protonargs = Proton.GetArgumentsAsArray(inject, verb);
             foreach (var protonarg in protonargs)
                 psi.ArgumentList.Add(protonarg);
         }
@@ -197,7 +200,7 @@ public class CompatibilityTools
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
-        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
+        Log.Information("Running in prefix (by array): {FileName} {Arguments}", psi.FileName, string.Join(' ', psi.ArgumentList)); //psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -227,17 +230,17 @@ public class CompatibilityTools
 
         if (UseProton)
         {
-            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.Proton.Prefix.FullName);
-            wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Settings.Proton.SteamRoot);
-            wineEnviromentVariables.Add("STEAM_COMPAT_APP_ID", Settings.Proton.SteamAppId);
+            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Proton.Prefix.FullName);
+            wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Proton.SteamRoot);
+            wineEnviromentVariables.Add("STEAM_COMPAT_APP_ID", Proton.SteamAppId);
             
             string compatMounts = Environment.GetEnvironmentVariable("STEAM_COMPAT_MOUNTS") ?? "";
-            compatMounts = Settings.Proton.CompatMounts + (compatMounts.Equals("") ? "" : ":" + compatMounts);
+            compatMounts = Proton.CompatMounts + (compatMounts.Equals("") ? "" : ":" + compatMounts);
             wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", compatMounts);
             
-            //wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(Settings.Proton.SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
+            //wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(Proton.SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
             wineEnviromentVariables.Add("PROTON_LOG", "1");
-            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.Proton.Prefix.Parent.FullName, "logs"));
+            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Proton.Prefix.Parent.FullName, "logs"));
             if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
         }
         else

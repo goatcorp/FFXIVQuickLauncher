@@ -76,15 +76,18 @@ public class ProtonSettings
         List<string> commands = new List<string>();
         if (UseReaper)
         {
-            commands.Add("SteamLaunch --");
+            commands.Add("SteamLaunch");
+            commands.Add("--");
         }
         if (UseSoldier)
         {
             if (UseReaper) commands.Add(inject ? SoldierInject : SoldierRun);
-            commands.Add(inject ? "--verb=waitforexitandrun --" : "--");
+            if (inject) commands.Add("--verb=waitforexitandrun");
+            commands.Add("--");
+
         }
         if (UseSoldier || UseReaper)
-            commands.Add("\"" + ProtonPath + "\"");
+            commands.Add(ProtonPath);
         commands.Add(verb);
 
         return commands.ToArray();
