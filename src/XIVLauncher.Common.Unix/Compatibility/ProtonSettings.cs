@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 
-public struct ProtonSettings
+public class ProtonSettings
 {
     public string SteamRoot { get; }
 
@@ -19,14 +20,51 @@ public struct ProtonSettings
 
     public string ConfigPath { get; }
 
+    public bool UseReaper { get; }
+
+    public bool UseSoldier { get; }
+
+    public string ReaperPath => Path.Combine(SteamRoot,"ubuntu12_32","reaper");
+
     public string CompatMounts => GamePath + ':' + ConfigPath;
 
-    public ProtonSettings(string steamRoot, string protonPath, string gamePath = "", string configPath = "")
+    public string SteamAppId { get; }
+
+    public ProtonSettings(string steamRoot, string protonPath, string gamePath = "", string configPath = "", string appId = "39210", bool useSoldier = true, bool useReaper = false)
     {
         string xlcore = Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".xlcore");
         SteamRoot = steamRoot;
         ProtonPath = protonPath;
         GamePath = string.IsNullOrEmpty(gamePath) ? Path.Combine(xlcore, "ffxiv") : gamePath;
         ConfigPath = string.IsNullOrEmpty(configPath) ? Path.Combine(xlcore, "ffxivConfig") : configPath;
+        UseSoldier = useSoldier;
+        UseReaper = useReaper;
+        SteamAppId = appId;
+    }
+
+    public string GetCommand(bool inject = true)
+    {
+        if (UseReaper) return ReaperPath;
+        if (UseSoldier) return inject ? SoldierInject : SoldierRun;
+        return ProtonPath;   
+    }
+
+    public string GetArguments(bool inject = true)
+    {
+        List<string> commands = new List<string>();
+        if (UseReaper)
+        {
+            commands.Add("SteamLaunch --");
+        }
+        if (UseSoldier)
+        {
+            if (UseReaper) commands.Add(inject ? SoldierInject : SoldierRun);
+            commands.Add(inject ? "--verb=waitforexitandrun --" : "--");
+        }
+        if (UseSoldier || UseReaper)
+            commands.Add("\"" + ProtonPath + "\"");
+        commands.Add("runinprefix");
+
+        return string.Join(' ', commands);        
     }
 }

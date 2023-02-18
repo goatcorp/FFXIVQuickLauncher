@@ -25,6 +25,6 @@ public class UnixGameRunner : IGameRunner
         if (dalamudOk)
             return this.dalamudLauncher.Run(new FileInfo(path), arguments, environment);
 
-        return compatibility.RunInPrefix($"\"{path}\" {arguments}", workingDirectory, environment, writeLog: true);
+        return compatibility.RunInPrefix($"\"{path}\" {arguments}", workingDirectory, environment, writeLog: true, inject: false);
     }
 }

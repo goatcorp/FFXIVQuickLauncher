@@ -73,27 +73,26 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
        
-        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
+        var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true, inject: false);
         var output = dalamudProcess.StandardOutput.ReadLine();
-        if (output == null && !compatibility.useProton)
+        if (output == null && !compatibility.UseProton)
             throw new DalamudRunnerException("An internal Dalamud error has occured");
 
-        Console.WriteLine("DALAMUD: " + output);
-
+        Console.WriteLine("DALAMUD " + output);
         new Thread(() =>
         {
             while (!dalamudProcess.StandardOutput.EndOfStream)
             {
                 var output = dalamudProcess.StandardOutput.ReadLine();
-                if (output != null) // && !compatibility.useProton)
-                    Console.WriteLine("DALAMUD: " + output);
+                if (output != null) // && !compatibility.UseProton)
+                    Console.WriteLine("DALAMUD " + output);
             }
 
         }).Start();
 
         // If using proton, the dalamudProcess will output gibberish or nothing, so we'll get unix pid by name.
         // Dalamud won't launch the DalamudCrashHandler, but XIVLauncher will close when ffxiv exits.
-        if (compatibility.useProton)
+        if (compatibility.UseProton)
         {
             Log.Information($"Trying to get Unix Process Id of {gameExe.Name}");
             var unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);

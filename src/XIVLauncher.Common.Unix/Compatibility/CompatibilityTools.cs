@@ -51,7 +51,7 @@ public class CompatibilityTools
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
-    public bool useProton => Settings.StartupType == WineStartupType.Proton;
+    public bool UseProton => Settings.StartupType == WineStartupType.Proton;
 
     public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
     {
@@ -83,7 +83,7 @@ public class CompatibilityTools
 
     public async Task EnsureTool(DirectoryInfo tempPath)
     {
-        if (!useProton)
+        if (!UseProton)
         {
             if (!File.Exists(Wine64Path))
             {
@@ -129,11 +129,11 @@ public class CompatibilityTools
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
-    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
+    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true)
     {
         ProcessStartInfo psi;
-        if (useProton)
-            return RunInProton(command, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
+        if (UseProton)
+            return RunInProton(command, workingDirectory, environment, redirectOutput, writeLog, wineD3D, inject);
         // {
         //     psi = new ProcessStartInfo(ProtonPath);
         //     psi.Arguments = "runinprefix " + command;
@@ -148,19 +148,35 @@ public class CompatibilityTools
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
-    public Process RunInProton(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
+    public Process RunInProton(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true)
     {
+        if (Settings.Proton.UseReaper)
+            return RunInReaper(command, workingDirectory, environment, redirectOutput, writeLog, wineD3D, inject);
         ProcessStartInfo psi;
-        psi = new ProcessStartInfo(Path.Combine(SoldierRuntime,"_v2-entry-point"));
-        psi.Arguments = "--verb=waitforexitandrun -- \"" + ProtonPath + "\" runinprefix " + command;
-        Log.Information($"Running command > {SoldierRuntime}/_v2-entry-point {psi.Arguments}");
+        var verb = "runinprefix";
+        var proc = inject ? Settings.Proton.SoldierInject : Settings.Proton.SoldierRun;
+        var args = inject ? "--verb=waitforexitandrun --" : "--";
+        psi = new ProcessStartInfo(proc);
+        psi.Arguments = $"{args} \"" + ProtonPath + $"\" {verb} " + command;
+        Log.Information($"Running command > {proc} {psi.Arguments}");
+        return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
+    }
+
+    public Process RunInReaper(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true)
+    {
+        var psi = new ProcessStartInfo(Settings.Proton.ReaperPath);
+        var verb = "runinprefix";
+        var proc = inject ? Settings.Proton.SoldierInject : Settings.Proton.SoldierRun;
+        var args = inject ? "--verb=waitforexitandrun --" : "--";
+        psi.Arguments = $"SteamLaunch -- {proc} {args} \"" + ProtonPath + $"\" {verb} " + command;
+        Log.Information($"Running command > {Settings.Proton.ReaperPath} {psi.Arguments}");
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
         ProcessStartInfo psi;
-        if (useProton)
+        if (UseProton)
         {
             psi = new ProcessStartInfo(ProtonPath);
             psi.ArgumentList.Add("runinprefix");
@@ -200,13 +216,15 @@ public class CompatibilityTools
         var wineEnviromentVariables = new Dictionary<string, string>();
         wineEnviromentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi={(wineD3D ? "b" : "n")}");
 
-        if (useProton)
+        if (UseProton)
         {
             wineEnviromentVariables.Add("DRI_PRIME","0");
             wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
             wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamRoot);
+            wineEnviromentVariables.Add("STEAM_COMPAT_APP_ID", Settings.Proton.SteamAppId);
             wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", Settings.Proton.CompatMounts);
             wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
+            wineEnviromentVariables.Add("PRESSURE_VESSEL_VARIABLE_DIR", Settings.ProtonPrefix.Parent.FullName + "/protontmp");
             wineEnviromentVariables.Add("PROTON_LOG", "1");
             wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
             if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
@@ -267,7 +285,7 @@ public class CompatibilityTools
         }
 #endif
 
-        if (useProton && !File.Exists(Path.Combine(Settings.ProtonPrefix.FullName, "tracked_files")))
+        if (UseProton && !File.Exists(Path.Combine(Settings.ProtonPrefix.FullName, "tracked_files")))
         {
             ProcessStartInfo psifirstrun = new ProcessStartInfo(ProtonPath);
             psifirstrun.RedirectStandardOutput = redirectOutput;
@@ -327,7 +345,6 @@ public class CompatibilityTools
                 //logWriter.WriteLine(ex.Message);
             }
         });
-
         helperProcess.Start();
         if (writeLog)
             helperProcess.BeginErrorReadLine();
@@ -383,7 +400,7 @@ public class CompatibilityTools
     public string UnixToWinePath(string unixPath)
     {
         Process winePath;
-        if (useProton)
+        if (UseProton)
         {
             ProcessStartInfo psi = new ProcessStartInfo(ProtonPath);
             psi.RedirectStandardOutput = true;
