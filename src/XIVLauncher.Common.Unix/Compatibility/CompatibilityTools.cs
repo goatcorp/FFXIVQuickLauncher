@@ -125,43 +125,6 @@ public class CompatibilityTools
 
     public void EnsurePrefix()
     {
-        // if (UseProton && !File.Exists(Path.Combine(Proton.Prefix.FullName, "tracked_files")))
-        // {
-        //     // "proton run" must be run at least once to activate the proton prefix
-        //     ProcessStartInfo psi = new ProcessStartInfo(Proton.ProtonPath);
-        //     psi.RedirectStandardOutput = true;
-        //     psi.RedirectStandardError = true;
-        //     psi.UseShellExecute = false;
-        //     psi.Arguments = "run";
-        //     psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Proton.Prefix.FullName);
-        //     psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Proton.SteamRoot); 
-
-        //     Process firstrun = new();
-        //     firstrun.StartInfo = psi;
-
-        //     firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
-        //     {
-        //         if (String.IsNullOrEmpty(errLine.Data))
-        //             return;
-
-        //         try
-        //         {
-        //             logWriter.WriteLine(errLine.Data);
-        //             Console.Error.WriteLine(errLine.Data);
-        //         }
-        //         catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
-        //                                 ex is OverflowException ||
-        //                                 ex is IndexOutOfRangeException)
-        //         {
-        //             // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
-        //             //logWriter.WriteLine("Error writing Wine log line:");
-        //             //logWriter.WriteLine(ex.Message);
-        //         }
-        //     });
-
-        //     firstrun.Start();
-        // }
-
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul", verb: "run").WaitForExit();
     }
 
@@ -179,7 +142,7 @@ public class CompatibilityTools
             psi.Arguments = command;
         }
 
-        Log.Information($"Running in prefix: {psi.FileName} {psi.Arguments}");
+        Log.Verbose($"Running in prefix: {psi.FileName} {psi.Arguments}");
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -200,7 +163,7 @@ public class CompatibilityTools
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
-        Log.Information("Running in prefix (by array): {FileName} {Arguments}", psi.FileName, string.Join(' ', psi.ArgumentList)); //psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
+        Log.Verbose("Running in prefix (by array): {FileName} {Arguments}", psi.FileName, string.Join(' ', psi.ArgumentList)); //psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
