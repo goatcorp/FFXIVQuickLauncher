@@ -122,6 +122,43 @@ public class CompatibilityTools
 
     public void EnsurePrefix()
     {
+        if (UseProton && !File.Exists(Path.Combine(Settings.Proton.Prefix.FullName, "tracked_files")))
+        {
+            // "proton run" must be run at least once to activate the proton prefix
+            ProcessStartInfo psi = new ProcessStartInfo(Settings.Proton.ProtonPath);
+            psi.RedirectStandardOutput = true;
+            psi.RedirectStandardError = true;
+            psi.UseShellExecute = false;
+            psi.Arguments = "run";
+            psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.Proton.Prefix.FullName);
+            psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Settings.Proton.SteamRoot); 
+
+            Process firstrun = new();
+            firstrun.StartInfo = psi;
+
+            firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
+            {
+                if (String.IsNullOrEmpty(errLine.Data))
+                    return;
+
+                try
+                {
+                    logWriter.WriteLine(errLine.Data);
+                    Console.Error.WriteLine(errLine.Data);
+                }
+                catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
+                                        ex is OverflowException ||
+                                        ex is IndexOutOfRangeException)
+                {
+                    // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
+                    //logWriter.WriteLine("Error writing Wine log line:");
+                    //logWriter.WriteLine(ex.Message);
+                }
+            });
+
+            firstrun.Start();
+        }
+
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
@@ -139,7 +176,7 @@ public class CompatibilityTools
             psi.Arguments = command;
         }
 
-        Log.Information($"Running in prefix: {psi.FileName} {psi.Arguments}");
+        Log.Verbose($"Running in prefix: {psi.FileName} {psi.Arguments}");
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -160,7 +197,7 @@ public class CompatibilityTools
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
-        Log.Information("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
+        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -259,45 +296,6 @@ public class CompatibilityTools
         }
 #endif
 
-        if (UseProton && !File.Exists(Path.Combine(Settings.Proton.Prefix.FullName, "tracked_files")))
-        {
-            ProcessStartInfo psifirstrun = new ProcessStartInfo(Settings.Proton.GetCommand());
-            psifirstrun.RedirectStandardOutput = redirectOutput;
-            psifirstrun.RedirectStandardError = writeLog;
-            psifirstrun.UseShellExecute = false;
-            psifirstrun.WorkingDirectory = workingDirectory;
-            psifirstrun.Arguments = Settings.Proton.GetArguments();
-
-            MergeDictionaries(psifirstrun.EnvironmentVariables, wineEnviromentVariables);
-            MergeDictionaries(psifirstrun.EnvironmentVariables, environment);
-
-            Process firstrun = new();
-            firstrun.StartInfo = psifirstrun;
-
-            firstrun.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
-            {
-                if (String.IsNullOrEmpty(errLine.Data))
-                    return;
-
-                try
-                {
-                    logWriter.WriteLine(errLine.Data);
-                    Console.Error.WriteLine(errLine.Data);
-                }
-                catch (Exception ex) when (ex is ArgumentOutOfRangeException ||
-                                        ex is OverflowException ||
-                                        ex is IndexOutOfRangeException)
-                {
-                    // very long wine log lines get chopped off after a (seemingly) arbitrary limit resulting in strings that are not null terminated
-                    //logWriter.WriteLine("Error writing Wine log line:");
-                    //logWriter.WriteLine(ex.Message);
-                }
-            });
-
-            firstrun.Start();
-        }
-    
-
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
         helperProcess.ErrorDataReceived += new DataReceivedEventHandler((_, errLine) =>
@@ -373,25 +371,8 @@ public class CompatibilityTools
 
     public string UnixToWinePath(string unixPath)
     {
-        Process winePath;
-        if (UseProton)
-        {
-            ProcessStartInfo psi = new ProcessStartInfo(Settings.Proton.GetCommand());
-            psi.RedirectStandardOutput = true;
-            psi.RedirectStandardError = true;
-            psi.Arguments = Settings.Proton.GetArguments(verb: "getcompatpath") + " " + unixPath;
-            psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.Proton.Prefix.FullName);
-            psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Settings.Proton.SteamRoot); 
-
-            winePath = new();
-            winePath.StartInfo = psi;
-            winePath.Start();
-        }
-        else
-        {
-            var launchArguments = new string[] { "winepath", "--windows", unixPath };
-            winePath = RunInPrefix(launchArguments, redirectOutput: true);
-        }
+        var launchArguments = new string[] { "winepath", "--windows", unixPath };
+        var winePath = RunInPrefix(launchArguments, redirectOutput: true);
         var output = winePath.StandardOutput.ReadToEnd();
         return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
