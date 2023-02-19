@@ -200,8 +200,7 @@ public class CompatibilityTools
             string compatMounts = Environment.GetEnvironmentVariable("STEAM_COMPAT_MOUNTS") ?? "";
             compatMounts = Proton.CompatMounts + (compatMounts.Equals("") ? "" : ":" + compatMounts);
             wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", compatMounts);
-            
-            //wineEnviromentVariables.Add("PRESSURE_VESSEL_RUNTIME_BASE", Path.Combine(Proton.SteamRoot,"steamapps","common","SteamLinuxRuntime_soldier"));
+
             wineEnviromentVariables.Add("PROTON_LOG", "1");
             wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Proton.Prefix.Parent.FullName, "logs"));
             if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");

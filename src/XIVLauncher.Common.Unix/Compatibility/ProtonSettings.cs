@@ -40,13 +40,20 @@ public class ProtonSettings
         ProtonPath = Path.Combine(protonPath, "proton");
         GamePath = string.IsNullOrEmpty(gamePath) ? Path.Combine(xlcore, "ffxiv") : gamePath;
         ConfigPath = string.IsNullOrEmpty(configPath) ? Path.Combine(xlcore, "ffxivConfig") : configPath;
+#if FLATPAK
+        UseSoldier = false; // Already in a flatpak container, so this is ignored. Pressure-vessel and flatpak don't like to share.
+#else
         UseSoldier = useSoldier;
+#endif
         UseReaper = useReaper;
         SteamAppId = appId;
     }
 
     public string GetCommand(bool inject = true)
     {
+#if FLATPAK
+        inject = true;
+#endif
         if (UseReaper) return ReaperPath;
         if (UseSoldier) return inject ? SoldierInject : SoldierRun;
         return ProtonPath;   
