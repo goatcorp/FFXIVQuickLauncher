@@ -125,9 +125,30 @@ public class CompatibilityTools
 
     public void EnsurePrefix()
     {
-        RunInPrefix("cmd /c dir %userprofile%/Documents > nul", verb: "run").WaitForExit();
+        if (UseProton)
+            RunInMinProton("cmd /c dir %userprofile%/Documents > nul", verb: "run").WaitForExit();
+        else
+            RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
+    public Process RunInMinProton(string command,bool wineD3D = false, string verb = "runinprefix")
+    {
+        var psi = new ProcessStartInfo(Proton.ProtonPath);
+        psi.RedirectStandardOutput = true;
+        psi.RedirectStandardError = true;
+        psi.UseShellExecute = false;
+        psi.EnvironmentVariables.Add("STEAM_COMPAT_DATA_PATH", Proton.Prefix.FullName);
+        psi.EnvironmentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Proton.SteamRoot);
+        if (wineD3D)
+            psi.EnvironmentVariables.Add("PROTON_USE_WINED3D", "1");
+        psi.Arguments = verb + " " + command;
+
+        var minProton = new Process();
+        minProton.StartInfo = psi;
+        minProton.Start();
+        Log.Verbose($"Running minimal proton in prefix: {psi.FileName} {psi.Arguments}");
+        return minProton;
+    }
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false, bool inject = true, string verb = "runinprefix")
     {
         ProcessStartInfo psi;
@@ -337,7 +358,7 @@ public class CompatibilityTools
     public string UnixToWinePath(string unixPath)
     {
         var launchArguments = new string[] { "winepath", "--windows", unixPath };
-        var winePath = RunInPrefix(launchArguments, redirectOutput: true);
+        var winePath = (UseProton) ? RunInMinProton($"\"{unixPath}\"", verb: "getcompatpath") : RunInPrefix(launchArguments, redirectOutput: true);
         var output = winePath.StandardOutput.ReadToEnd();
         return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
