@@ -40,9 +40,6 @@ namespace XIVLauncher.Common.Game.Patch
 
             // Repair recycle bin folder.
             new Regex(@"^repair_recycler/.*$", RegexOptions.IgnoreCase),
-
-            // Ignore gshade folders. Unless someone wants to handle the symlinked folder, just skip recycling them.
-            new Regex(@"^gshade-(shader|preset)s$", RegexOptions.IgnoreCase),
         };
 
         private readonly ISettings _settings;
@@ -262,8 +259,24 @@ namespace XIVLauncher.Common.Game.Patch
                     if (directoriesVisited.Contains(subdir))
                         continue;
 
-                    directoriesVisited.Add(subdir);
-                    directoriesToVisit.Enqueue(subdir);
+                    if (!subdir.FullName.ToLowerInvariant().Replace('\\', '/').StartsWith(gamePath.ToLowerInvariant().Replace('\\', '/')))
+                        continue;
+
+                    var relativePath = subdir.FullName.Substring(gamePath.Length + 1).Replace('\\', '/') + "/";
+                    
+                    if (GameIgnoreUnnecessaryFilePatterns.Any(x => x.IsMatch(relativePath)))
+                        continue;
+
+                    if (!targetRelativePaths.Any(x => x.Replace('\\', '/').ToLowerInvariant().StartsWith(relativePath.ToLowerInvariant())))
+                    {
+                        await installer.MoveFile(subdir.FullName, Path.Combine(this.MovedFileToDir, relativePath));
+                        MovedFiles.Add(relativePath);
+                    }
+                    else
+                    {
+                        directoriesVisited.Add(subdir);
+                        directoriesToVisit.Enqueue(subdir);
+                    }
                 }
 
                 foreach (var file in dir.EnumerateFiles())
