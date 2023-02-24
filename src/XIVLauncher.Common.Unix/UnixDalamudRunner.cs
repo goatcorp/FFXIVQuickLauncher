@@ -45,30 +45,30 @@ public class UnixDalamudRunner : IDalamudRunner
         var launchArguments = new List<string>
         {
             $"\"{runner.FullName}\"",
-            "launch",
-            $"--mode={(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject")}",
-            $"--game=\"{gameExePath}\"",
-            $"--dalamud-working-directory=\"{startInfo.WorkingDirectory}\"",
-            $"--dalamud-configuration-path=\"{startInfo.ConfigurationPath}\"",
-            $"--dalamud-plugin-directory=\"{startInfo.PluginDirectory}\"",
-            $"--dalamud-dev-plugin-directory=\"{startInfo.DefaultPluginDirectory}\"",
-            $"--dalamud-asset-directory=\"{startInfo.AssetDirectory}\"",
-            $"--dalamud-client-language={(int)startInfo.Language}",
-            $"--dalamud-delay-initialize={startInfo.DelayInitializeMs}",
-            $"--dalamud-tspack-b64={Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(startInfo.TroubleshootingPackData))}",
+            DalamudInjectorArgs.Launch,
+            DalamudInjectorArgs.Mode(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject"),
+            DalamudInjectorArgs.Game(gameExePath),
+            DalamudInjectorArgs.WorkingDirectory(startInfo.WorkingDirectory),
+            DalamudInjectorArgs.ConfigurationPath(startInfo.ConfigurationPath),
+            DalamudInjectorArgs.PluginDirectory(startInfo.PluginDirectory),
+            DalamudInjectorArgs.PluginDevDirectory(startInfo.DefaultPluginDirectory),
+            DalamudInjectorArgs.AssetDirectory(startInfo.AssetDirectory),
+            DalamudInjectorArgs.ClientLanguage((int)startInfo.Language),
+            DalamudInjectorArgs.DelayInitialize(startInfo.DelayInitializeMs),
+            DalamudInjectorArgs.TSPackB64(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(startInfo.TroubleshootingPackData))),
         };
 
         if (loadMethod == DalamudLoadMethod.ACLonly)
-            launchArguments.Add("--without-dalamud");
+            launchArguments.Add(DalamudInjectorArgs.WithoutDalamud);
 
         if (fakeLogin)
-            launchArguments.Add("--fake-arguments");
+            launchArguments.Add(DalamudInjectorArgs.FakeArguments);
 
         if (noPlugins)
-            launchArguments.Add("--no-plugins");
+            launchArguments.Add(DalamudInjectorArgs.NoPlugin);
 
         if (noThirdPlugins)
-            launchArguments.Add("--no-third-plugins");
+            launchArguments.Add(DalamudInjectorArgs.NoThirdParty);
 
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
