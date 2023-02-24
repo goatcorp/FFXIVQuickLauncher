@@ -130,10 +130,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public Task MoveFile(string sourceFile, string targetFile, CancellationToken? cancellationToken = null)
         {
             var sourceParentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFile));
-            var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFile));
-
+            var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFile.EndsWith("/") ? targetFile.Substring(0, targetFile.Length - 1) : targetFile));
             targetParentDir.Create();
-            new FileInfo(sourceFile).MoveTo(targetFile);
+            Directory.Move(sourceFile, targetFile);
 
             if (!sourceParentDir.GetFileSystemInfos().Any())
                 sourceParentDir.Delete(false);
