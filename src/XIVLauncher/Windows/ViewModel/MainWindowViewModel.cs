@@ -1060,7 +1060,7 @@ namespace XIVLauncher.Windows.ViewModel
                     var errorNews = await Updates.GetErrorNews().ConfigureAwait(false);
 
                     // If we have valid error news, let's not show this because it probably doesn't matter
-                    if (errorNews != null)
+                    if (errorNews == null)
                     {
                         var ensurementErrorMessage = Loc.Localize("DalamudEnsurementError",
                             "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.");
