@@ -294,7 +294,7 @@ public class Launcher
     }
 
     /// <summary>
-    /// Check ver & bck files for sanity.
+    /// Check ver and bck files for sanity.
     /// </summary>
     /// <param name="gamePath"></param>
     /// <param name="exLevel"></param>

@@ -45,7 +45,7 @@ public class UnixDalamudRunner : IDalamudRunner
         var launchArguments = new List<string>
         {
             $"\"{runner.FullName}\"",
-            DalamudInjectorArgs.Launch,
+            DalamudInjectorArgs.LAUNCH,
             DalamudInjectorArgs.Mode(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject"),
             DalamudInjectorArgs.Game(gameExePath),
             DalamudInjectorArgs.WorkingDirectory(startInfo.WorkingDirectory),
@@ -55,20 +55,20 @@ public class UnixDalamudRunner : IDalamudRunner
             DalamudInjectorArgs.AssetDirectory(startInfo.AssetDirectory),
             DalamudInjectorArgs.ClientLanguage((int)startInfo.Language),
             DalamudInjectorArgs.DelayInitialize(startInfo.DelayInitializeMs),
-            DalamudInjectorArgs.TSPackB64(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(startInfo.TroubleshootingPackData))),
+            DalamudInjectorArgs.TsPackB64(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(startInfo.TroubleshootingPackData))),
         };
 
         if (loadMethod == DalamudLoadMethod.ACLonly)
-            launchArguments.Add(DalamudInjectorArgs.WithoutDalamud);
+            launchArguments.Add(DalamudInjectorArgs.WITHOUT_DALAMUD);
 
         if (fakeLogin)
-            launchArguments.Add(DalamudInjectorArgs.FakeArguments);
+            launchArguments.Add(DalamudInjectorArgs.FAKE_ARGUMENTS);
 
         if (noPlugins)
-            launchArguments.Add(DalamudInjectorArgs.NoPlugin);
+            launchArguments.Add(DalamudInjectorArgs.NO_PLUGIN);
 
         if (noThirdPlugins)
-            launchArguments.Add(DalamudInjectorArgs.NoThirdParty);
+            launchArguments.Add(DalamudInjectorArgs.NO_THIRD_PARTY);
 
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);
