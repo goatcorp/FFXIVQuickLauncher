@@ -1048,32 +1048,15 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (App.Settings.InGameAddonEnabled && !forceNoDalamud && App.Settings.IsDx11)
             {
-                var showEnsurementWarning = false;
-
                 try
                 {
                     var dalamudStatus = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
                     dalamudOk = dalamudStatus == DalamudLauncher.DalamudInstallState.Ok;
-                    showEnsurementWarning = dalamudStatus == DalamudLauncher.DalamudInstallState.Failed;
                 }
-                catch (DalamudRunnerException ex)
+                catch (Exception ex)
                 {
-                    Log.Error(ex, "Couldn't ensure Dalamud runner");
+                    Log.Error(ex, "Couldn't DalamudLauncher::HoldForUpdate()");
 
-                    var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
-                        "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
-
-                    CustomMessageBox.Builder
-                                    .NewFrom(runnerErrorMessage)
-                                    .WithImage(MessageBoxImage.Error)
-                                    .WithButtons(MessageBoxButton.OK)
-                                    .WithShowHelpLinks()
-                                    .WithParentWindow(_window)
-                                    .Show();
-                }
-
-                if (showEnsurementWarning)
-                {
                     var errorNews = await Updates.GetErrorNews().ConfigureAwait(false);
 
                     // If we have valid error news, let's not show this because it probably doesn't matter

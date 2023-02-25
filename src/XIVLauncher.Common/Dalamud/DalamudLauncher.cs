@@ -26,7 +26,6 @@ namespace XIVLauncher.Common.Dalamud
         public enum DalamudInstallState
         {
             Ok,
-            Failed,
             OutOfDate,
         }
 
@@ -56,23 +55,17 @@ namespace XIVLauncher.Common.Dalamud
 
             while (this.updater.State != DalamudUpdater.DownloadState.Done)
             {
-                if (this.updater.State == DalamudUpdater.DownloadState.Failed)
-                {
-                    this.updater.CloseOverlay();
-                    return DalamudInstallState.Failed;
-                }
-
                 if (this.updater.State == DalamudUpdater.DownloadState.NoIntegrity)
                 {
                     this.updater.CloseOverlay();
-                    throw new DalamudRunnerException("No runner integrity");
+                    throw new DalamudRunnerException("Updater returned no integrity.", this.updater.EnsurementException);
                 }
 
                 Thread.Yield();
             }
 
             if (!this.updater.Runner.Exists)
-                throw new DalamudRunnerException("Runner not present");
+                throw new DalamudRunnerException("Runner did not exist.");
 
             if (!ReCheckVersion(gamePath))
             {
