@@ -1,5 +1,6 @@
 ﻿* Fixes an issue wherein the game may not have started correctly with Dalamud under certain conditions
 * Fixes an issue wherein XIVLauncher may have been stuck on a download screen under certain conditions
-* Fixes an issue wherein the game repair feature may not have correctly cleaned up leftover files by certain shading tools
+* Fixes an issue wherein the game repair feature may not have correctly cleaned up leftover files by certain shade-type tools
     => If you previously encountered issues with this feature, you should try repairing again by right-clicking the login button
 * Fixes an issue wherein the launch conditions for Dalamud would differ between the Linux and Windows versions of XIVLauncher
+* Fixes an issue wherein, if certain essential files for Dalamud where missing, no error message would be shown
