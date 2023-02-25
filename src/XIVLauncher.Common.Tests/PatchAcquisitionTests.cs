@@ -91,11 +91,13 @@ namespace XIVLauncher.Common.Tests
             await TestPatchDownload(new AriaHttpPatchAcquisition());
         }
 
+        /*
         [TestMethod]
         public async Task TestTorrentDownload()
         {
             await TorrentPatchAcquisition.InitializeAsync(0);
             await TestPatchDownload(new TorrentPatchAcquisition());
         }
+        */
     }
 }

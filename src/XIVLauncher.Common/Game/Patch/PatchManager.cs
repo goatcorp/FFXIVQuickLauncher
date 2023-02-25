@@ -159,6 +159,7 @@ namespace XIVLauncher.Common.Game.Patch
                     // ignored
                     break;
 
+                /*
                 case AcquisitionMethod.MonoTorrentNetFallback:
                     await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
@@ -167,6 +168,7 @@ namespace XIVLauncher.Common.Game.Patch
                     await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
                     await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
+                */
 
                 case AcquisitionMethod.Aria:
                     await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
@@ -182,7 +184,7 @@ namespace XIVLauncher.Common.Game.Patch
             try
             {
                 await AriaHttpPatchAcquisition.UnInitializeAsync();
-                await TorrentPatchAcquisition.UnInitializeAsync();
+                //await TorrentPatchAcquisition.UnInitializeAsync();
             }
             catch (Exception ex)
             {
@@ -220,6 +222,7 @@ namespace XIVLauncher.Common.Game.Patch
                     acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
 
+                /*
                 case AcquisitionMethod.MonoTorrentNetFallback:
                     acquisition = new TorrentPatchAcquisition();
 
@@ -235,9 +238,12 @@ namespace XIVLauncher.Common.Game.Patch
                     if (!torrentAcquisition.IsApplicable(download.Patch))
                         acquisition = new AriaHttpPatchAcquisition();
                     break;
+                */
+
                 case AcquisitionMethod.Aria:
                     acquisition = new AriaHttpPatchAcquisition();
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
