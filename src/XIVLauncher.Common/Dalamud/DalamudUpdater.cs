@@ -121,7 +121,8 @@ namespace XIVLauncher.Common.Dalamud
                     }
                 }
 
-                if (this.State != DownloadState.Done) this.State = DownloadState.Failed;
+                if (this.State != DownloadState.Done)
+                    this.State = DownloadState.Failed;
             });
         }
 
@@ -233,33 +234,17 @@ namespace XIVLauncher.Common.Dalamud
 
                     SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Runtime);
 
-                    try
-                    {
-                        await DownloadRuntime(this.runtimeDirectory, remoteVersionInfo.RuntimeVersion).ConfigureAwait(false);
-                        File.WriteAllText(versionFile.FullName, remoteVersionInfo.RuntimeVersion);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "[DUPDATE] Could not download runtime");
-
-                        State = DownloadState.Failed;
-                        return;
-                    }
+                    Log.Verbose("[DUPDATE] Now download runtime...");
+                    await DownloadRuntime(this.runtimeDirectory, remoteVersionInfo.RuntimeVersion).ConfigureAwait(false);
+                    File.WriteAllText(versionFile.FullName, remoteVersionInfo.RuntimeVersion);
                 }
             }
 
-            try
-            {
-                this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
-                this.ReportOverlayProgress(null, 0, null);
-                AssetDirectory = await AssetManager.EnsureAssets(this.assetDirectory, this.forceProxy).ConfigureAwait(true);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "[DUPDATE] Asset ensurement error, bailing out...");
-                State = DownloadState.Failed;
-                return;
-            }
+            Log.Verbose("[DUPDATE] Now ensure assets...");
+            this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
+            this.ReportOverlayProgress(null, 0, null);
+            var assetResult = await AssetManager.EnsureAssets(this.assetDirectory, this.forceProxy).ConfigureAwait(true);
+            AssetDirectory = assetResult.AssetDir;
 
             if (!IsIntegrity(currentVersionPath))
             {
@@ -271,7 +256,7 @@ namespace XIVLauncher.Common.Dalamud
 
             WriteVersionJson(currentVersionPath, versionInfoJson);
 
-            Log.Information("[DUPDATE] All set for " + remoteVersionInfo.SupportedGameVer);
+            Log.Information("[DUPDATE] All set for {GameVersion} with {DalamudVersion}({RuntimeVersion}, {AssetVersion})", remoteVersionInfo.SupportedGameVer, remoteVersionInfo.AssemblyVersion, remoteVersionInfo.RuntimeVersion, assetResult.Version);
 
             Runner = new FileInfo(Path.Combine(currentVersionPath.FullName, "Dalamud.Injector.exe"));
 
