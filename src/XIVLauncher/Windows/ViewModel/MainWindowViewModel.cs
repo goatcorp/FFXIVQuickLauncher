@@ -416,6 +416,11 @@ namespace XIVLauncher.Windows.ViewModel
                     msgbox.WithTextFormatted(Loc.Localize("LoginInvalidVersionFiles",
                         "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\"."), ex.Message);
                 }
+                else if (ex is SteamTicketNullException)
+                {
+                    msgbox.WithText(Loc.Localize("LoginSteamNullTicket",
+                        "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings."));
+                }
                 else if (ex is SteamException)
                 {
                     msgbox.WithTextFormatted(Loc.Localize("LoginSteamIssue",
