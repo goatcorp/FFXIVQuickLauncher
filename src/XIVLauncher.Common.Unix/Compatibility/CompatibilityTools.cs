@@ -222,7 +222,7 @@ public class CompatibilityTools
             compatMounts = Proton.CompatMounts + (compatMounts.Equals("") ? "" : ":" + compatMounts);
             wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", compatMounts);
 
-            wineEnviromentVariables.Add("PROTON_LOG", "1");
+            // User can add "PROTON_LOG=1" as env variable if they want logging. Will log to ~/.xlcore/logs/steam-<gameid>.log
             wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Proton.Prefix.Parent.FullName, "logs"));
             if (!Settings.FsyncOn) wineEnviromentVariables.Add("PROTON_NO_FSYNC", "1");
         }
