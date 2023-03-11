@@ -59,23 +59,18 @@ public class WineSettings
     private const string DISTRO = "ubuntu";
 #endif
 
-    public WineSettings(WineStartupType? startupType, string customBinPath, string steamPath, string protonPath, string debugVars,
-                        FileInfo logFile, DirectoryInfo prefix, DirectoryInfo protonPrefix, bool? esyncOn, bool? fsyncOn)
+    public WineSettings(WineStartupType? startupType, string customBinPath, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
     {
         this.StartupType = startupType ?? WineStartupType.Custom;
         this.CustomBinPath = customBinPath;
-        this.SteamPath = steamPath;
-        this.ProtonPath = protonPath;
         this.EsyncOn = esyncOn ?? false;
         this.FsyncOn = fsyncOn ?? false;
         this.DebugVars = debugVars;
         this.LogFile = logFile;
         this.Prefix = prefix;
-        this.ProtonPrefix = protonPrefix;
 
         switch (StartupType)
         {
-            case WineStartupType.Managed:
             case WineStartupType.Official7_10:
                 WineURL = $"https://github.com/goatcorp/wine-xiv-git/releases/download/7.10.r3.g560db77d/wine-xiv-staging-fsync-git-{DISTRO}-7.10.r3.g560db77d.tar.xz";
                 WineFolder = "wine-xiv-staging-fsync-git-7.10.r3.g560db77d";
@@ -86,6 +81,7 @@ public class WineSettings
                 WineFolder = "wine-xiv-staging-fsync-git-7.15.r4.gfa8d0abc";
                 break;
 
+            case WineStartupType.Managed:
             case WineStartupType.TKG_Patched8_3_0:
                 WineURL = "https://github.com/rankynbass/unofficial-wine-xiv-git/releases/download/v8.3.0/unofficial-wine-xiv-git-v8.3.0.tar.xz";
                 WineFolder = "unofficial-wine-xiv-git-v8.3.0";
@@ -101,7 +97,7 @@ public class WineSettings
                 WineFolder = "unofficial-wine-xiv-Proton7-36-x86_64";
                 break;
 
-            case WineStartupType.Unofficial7_38:
+            case WineStartupType.Unoffical7_38:
                 WineURL = "https://github.com/rankynbass/wine-ge-xiv/releases/download/xiv-Proton7-38/unofficial-wine-xiv-Proton7-38-x86_64.tar.xz";
                 WineFolder = "unofficial-wine-xiv-Proton7-38-x86_64";
                 break;

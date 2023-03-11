@@ -35,9 +35,10 @@ public class CompatibilityTools
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
-    public ProtonSettings Proton { get; private set;}
+    public ProtonSettings Proton { get; private set; }
     
-    private readonly Dxvk.DxvkHudType hudType;
+    public DxvkSettings DxvkSettings { get; private set; }
+
     private readonly bool gamemodeOn;
 
     public bool UseProton => Settings.StartupType == WineStartupType.Proton;
@@ -53,7 +54,7 @@ public class CompatibilityTools
 
         this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
-        if (Settings.StartupType != WineStartupType.Custom && !useProton)
+        if (Settings.StartupType != WineStartupType.Custom && !UseProton)
         {
             if (!this.toolDirectory.Exists)
                 this.toolDirectory.Create();
@@ -204,21 +205,29 @@ public class CompatibilityTools
 
         if (UseProton)
         {
-            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Settings.ProtonPrefix.FullName);
-            wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", SteamPath);
+            wineEnviromentVariables.Add("STEAM_COMPAT_DATA_PATH", Proton.Prefix.FullName);
+            wineEnviromentVariables.Add("STEAM_COMPAT_CLIENT_INSTALL_PATH", Proton.SteamRoot);
             wineEnviromentVariables.Add("STEAM_COMPAT_APP_ID", Proton.SteamAppId);
 
+            string runPath = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");
+
+            // discord ipc paths
+            string discordIPCPaths = "";
+            for (int i = 0; i < 10; i++)
+                discordIPCPaths += $"{runPath}/discord-ipc-{i}:{runPath}/app/com.discordapp.Discord/discord-ipc-{i}:{runPath}/snap.discord-cananry/discord-ipc-{i}:";
             string compatMounts = Environment.GetEnvironmentVariable("STEAM_COMPAT_MOUNTS") ?? "";
-            compatMounts = Proton.CompatMounts + (compatMounts.Equals("") ? "" : ":" + compatMounts);
+            compatMounts = discordIPCPaths + Proton.CompatMounts + (compatMounts.Equals("") ? "" : ":" + compatMounts);
             wineEnviromentVariables.Add("STEAM_COMPAT_MOUNTS", compatMounts);
 
-            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Settings.ProtonPrefix.Parent.FullName, "logs"));
+            Log.Information($"STEAM_COMPAT_MOUNTS={discordIPCPaths}");
+
+            wineEnviromentVariables.Add("PROTON_LOG_DIR", Path.Combine(Proton.Prefix.Parent.FullName, "logs"));
 
             foreach (KeyValuePair<string, string> dxvkVar in DxvkSettings.DxvkVars)
             {
                 
                 if (dxvkVar.Key == "DXVK_CONFIG_FILE")
-                    wineEnviromentVariables.Add(dxvkVar.Key, Path.Combine(Settings.ProtonPrefix.FullName,"dxvk.conf"));
+                    wineEnviromentVariables.Add(dxvkVar.Key, Path.Combine(Proton.Prefix.FullName,"dxvk.conf"));
                 else if (dxvkVar.Key == "DXVK_STATE_CACHE_PATH")
                 { } // Do nothing. Let Proton manage this.
                 else
