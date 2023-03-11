@@ -12,17 +12,23 @@ public enum WineStartupType
     [SettingsDescription("Managed by XIVLauncher", "The game installation and wine setup is managed by XIVLauncher - you can leave it up to us.")]
     Managed,
 
-    [SettingsDescription("Official Wine-XIV 7.10 (Current Default)", "A custom version of Wine-TKG 7.10 with XIV patches.")]
+    [SettingsDescription("Official Wine-XIV 7.10 (Official Launcher Default)", "A custom version of Wine-TKG 7.10 with XIV patches.")]
     Official7_10,
 
     [SettingsDescription("Official Wine-XIV 7.15 (Untested)", "A custom version of Wine-TKG 7.15 with XIV patches.")]
-    Official7_15, 
+    Official7_15,
 
-    [SettingsDescription("Unofficial Wine Proton7-35", "Based on Wine-GE, but with XIV patches applied.")]
+    [SettingsDescription("RB's Wine-XIV 8.3.0 (XIVLauncher-RB Default)", "A custom version of Wine-TKG 8.3 with XIV patches.")]
+    TKG_Patched8_3_0,
+
+    [SettingsDescription("RB's Wine Proton7-35", "Based on Wine-GE, but with XIV patches applied.")]
     Unoffical7_35,
 
-    [SettingsDescription("Unofficial Wine Proton7-36", "Based on Wine-GE, but with XIV and Haptic Feedback patches applied.")]
+    [SettingsDescription("RB's Wine Proton7-36", "Based on Wine-GE, but with XIV and Haptic Feedback patches applied.")]
     Unoffical7_36,
+
+    [SettingsDescription("RB's Wine Proton7-38", "Based on Wine-GE, but with XIV and Haptic Feedback patches applied.")]
+    Unoffical7_38,
 
     [SettingsDescription("Custom", "Point XIVLauncher to a custom location containing wine binaries to run the game with.")]
     Custom,
@@ -33,9 +39,6 @@ public class WineSettings
     public WineStartupType StartupType { get; private set; }
     public string CustomBinPath { get; private set; }
 
-    public string SteamPath { get; private set; }
-    public string ProtonPath { get; private set; }
-
     public bool EsyncOn { get; private set; }
     public bool FsyncOn { get; private set; }
 
@@ -43,7 +46,6 @@ public class WineSettings
     public FileInfo LogFile { get; private set; }
 
     public DirectoryInfo Prefix { get; private set; }
-    public DirectoryInfo ProtonPrefix { get; private set; }
 
     public string WineFolder { get; private set; }
 
@@ -83,6 +85,11 @@ public class WineSettings
                 WineURL = $"https://github.com/goatcorp/wine-xiv-git/releases/download/7.15.r4.gfa8d0abc/wine-xiv-staging-fsync-git-{DISTRO}-7.15.r4.gfa8d0abc.tar.xz";
                 WineFolder = "wine-xiv-staging-fsync-git-7.15.r4.gfa8d0abc";
                 break;
+
+            case WineStartupType.TKG_Patched8_3_0:
+                WineURL = "https://github.com/rankynbass/unofficial-wine-xiv-git/releases/download/v8.3.0/unofficial-wine-xiv-git-v8.3.0.tar.xz";
+                WineFolder = "unofficial-wine-xiv-git-v8.3.0";
+                break;                
             
             case WineStartupType.Unoffical7_35:
                 WineURL = "https://github.com/rankynbass/wine-ge-xiv/releases/download/xiv-Proton7-35/unofficial-wine-xiv-Proton7-35-x86_64.tar.xz";
@@ -92,6 +99,11 @@ public class WineSettings
             case WineStartupType.Unoffical7_36:
                 WineURL = "https://github.com/rankynbass/wine-ge-xiv/releases/download/xiv-Proton7-36/unofficial-wine-xiv-Proton7-36-x86_64.tar.xz";
                 WineFolder = "unofficial-wine-xiv-Proton7-36-x86_64";
+                break;
+
+            case WineStartupType.Unofficial7_38:
+                WineURL = "https://github.com/rankynbass/wine-ge-xiv/releases/download/xiv-Proton7-38/unofficial-wine-xiv-Proton7-38-x86_64.tar.xz";
+                WineFolder = "unofficial-wine-xiv-Proton7-38-x86_64";
                 break;
 
             case WineStartupType.Proton:

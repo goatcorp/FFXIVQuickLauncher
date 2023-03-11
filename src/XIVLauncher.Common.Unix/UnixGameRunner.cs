@@ -23,12 +23,8 @@ public class UnixGameRunner : IGameRunner
     public Process? Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
     {
         if (dalamudOk)
-        {
             return this.dalamudLauncher.Run(new FileInfo(path), arguments, environment);
-        }
-        else
-        {
-            return compatibility.RunInPrefix($"\"{path}\" {arguments}", workingDirectory, environment, writeLog: true);
-        }
+
+        return compatibility.RunInPrefix($"\"{path}\" {arguments}", workingDirectory, environment, writeLog: true, inject: false);
     }
 }
