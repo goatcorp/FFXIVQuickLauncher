@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria.JsonRpc
@@ -31,13 +31,13 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria.JsonRpc
 
         public async Task<T> Invoke<T>(string method, params object[] args)
         {
-            var argsJson = JsonConvert.SerializeObject(args);
+            var argsJson = JsonSerializer.Serialize(args);
             Log.Debug($"[JSONRPC] method({method}) arg({argsJson})");
 
             var httpResponse = await _client.GetAsync(_endpoint + $"?method={method}&id={Guid.NewGuid()}&params={Base64Encode(argsJson)}");
             httpResponse.EnsureSuccessStatusCode();
 
-            var rpcResponse = JsonConvert.DeserializeObject<JsonRpcResponse<T>>(await httpResponse.Content.ReadAsStringAsync());
+            var rpcResponse = JsonSerializer.Deserialize<JsonRpcResponse<T>>(await httpResponse.Content.ReadAsStringAsync());
             return rpcResponse.Result;
         }
     }

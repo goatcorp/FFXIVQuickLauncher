@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using XIVLauncher.Common.PlatformAbstractions;
 
 namespace XIVLauncher.PlatformAbstractions
@@ -24,10 +25,8 @@ namespace XIVLauncher.PlatformAbstractions
 
         private readonly FileInfo configFile;
 
-        public void Save()
-        {
-            File.WriteAllText(configFile.FullName, JsonConvert.SerializeObject(_cache, Formatting.Indented));
-        }
+        public void Save() =>
+            File.WriteAllText(configFile.FullName, JsonSerializer.Serialize(_cache, new JsonSerializerOptions { WriteIndented = true }));
 
         public void Load()
         {
@@ -37,7 +36,7 @@ namespace XIVLauncher.PlatformAbstractions
                 return;
             }
 
-            _cache = JsonConvert.DeserializeObject<List<UniqueIdCacheEntry>>(File.ReadAllText(configFile.FullName)) ?? new List<UniqueIdCacheEntry>();
+            _cache = JsonSerializer.Deserialize<List<UniqueIdCacheEntry>>(File.ReadAllText(configFile.FullName)) ?? new List<UniqueIdCacheEntry>();
         }
 
         public void Reset()

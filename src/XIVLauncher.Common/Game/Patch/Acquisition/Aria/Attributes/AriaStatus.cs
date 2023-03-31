@@ -4,50 +4,50 @@
  */
 
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AriaNet.Attributes
 {
     public class AriaStatus
     {
 
-        [JsonProperty("bitfield")]
+        [JsonPropertyName("bitfield")]
         public string Bitfield { get; set; }
 
-        [JsonProperty("completedLength")]
+        [JsonPropertyName("completedLength")]
         public string CompletedLength { get; set; }
 
-        [JsonProperty("connections")]
+        [JsonPropertyName("connections")]
         public string Connections { get; set; }
 
-        [JsonProperty("dir")]
+        [JsonPropertyName("dir")]
         public string Dir { get; set; }
 
-        [JsonProperty("downloadSpeed")]
+        [JsonPropertyName("downloadSpeed")]
         public string DownloadSpeed { get; set; }
 
-        [JsonProperty("files")]
+        [JsonPropertyName("files")]
         public List<AriaFile> Files { get; set; }
 
-        [JsonProperty("gid")]
+        [JsonPropertyName("gid")]
         public string TaskId { get; set; }
 
-        [JsonProperty("numPieces")]
+        [JsonPropertyName("numPieces")]
         public string NumPieces { get; set; }
 
-        [JsonProperty("pieceLength")]
+        [JsonPropertyName("pieceLength")]
         public string PieceLength { get; set; }
 
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public string Status { get; set; }
 
-        [JsonProperty("totalLength")]
+        [JsonPropertyName("totalLength")]
         public string TotalLength { get; set; }
 
-        [JsonProperty("uploadLength")]
+        [JsonPropertyName("uploadLength")]
         public string UploadLength { get; set; }
 
-        [JsonProperty("uploadSpeed")]
+        [JsonPropertyName("uploadSpeed")]
         public string UploadSpeed { get; set; }
     }
 }

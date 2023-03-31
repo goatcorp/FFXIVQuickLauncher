@@ -2,51 +2,52 @@
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game
 {
     public partial class Headlines
     {
-        [JsonProperty("news")]
+        [JsonPropertyName("news")]
         public News[] News { get; set; }
 
-        [JsonProperty("topics")]
+        [JsonPropertyName("topics")]
         public News[] Topics { get; set; }
 
-        [JsonProperty("pinned")]
+        [JsonPropertyName("pinned")]
         public News[] Pinned { get; set; }
 
-        [JsonProperty("banner")]
+        [JsonPropertyName("banner")]
         public Banner[] Banner { get; set; }
     }
 
     public class Banner
     {
-        [JsonProperty("lsb_banner")]
+        [JsonPropertyName("lsb_banner")]
         public Uri LsbBanner { get; set; }
 
-        [JsonProperty("link")]
+        [JsonPropertyName("link")]
         public Uri Link { get; set; }
     }
 
     public class News
     {
-        [JsonProperty("date")]
+        [JsonPropertyName("date")]
         public DateTimeOffset Date { get; set; }
 
-        [JsonProperty("title")]
+        [JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; set; }
 
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
-        [JsonProperty("tag", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("tag")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Tag { get; set; }
     }
 
@@ -60,20 +61,7 @@ namespace XIVLauncher.Common.Game
 
             var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*").ConfigureAwait(false));
 
-            return JsonConvert.DeserializeObject<Headlines>(json, Converter.SETTINGS);
+            return JsonSerializer.Deserialize<Headlines>(json);
         }
-    }
-
-    internal static class Converter
-    {
-        public static readonly JsonSerializerSettings SETTINGS = new JsonSerializerSettings
-        {
-            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-            DateParseHandling = DateParseHandling.None,
-            Converters =
-            {
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-            }
-        };
     }
 }

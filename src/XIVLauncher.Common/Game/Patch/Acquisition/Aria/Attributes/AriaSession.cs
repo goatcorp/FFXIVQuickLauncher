@@ -3,14 +3,13 @@
  * You can find the original code in this GitHub repository: https://github.com/huming2207/AriaNet
  */
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AriaNet.Attributes
 {
-    [JsonObject]
     public class AriaSession
     {
-        [JsonProperty("sessionId")]
+        [JsonPropertyName("sessionId")]
         public string SessionId { get; set; }
     }
 }

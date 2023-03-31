@@ -3,16 +3,16 @@
  * You can find the original code in this GitHub repository: https://github.com/huming2207/AriaNet
  */
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AriaNet.Attributes
 {
     public class AriaUri
     {
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public string Status { get; set; }
 
-        [JsonProperty("uri")]
+        [JsonPropertyName("uri")]
         public string Uri { get; set; }
     }
 }

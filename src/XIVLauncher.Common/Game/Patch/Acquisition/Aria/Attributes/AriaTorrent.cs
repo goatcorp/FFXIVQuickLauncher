@@ -3,37 +3,37 @@
  * You can find the original code in this GitHub repository: https://github.com/huming2207/AriaNet
  */
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace AriaNet.Attributes
 {
     public class AriaTorrent
     {
-        [JsonProperty("amChoking")]
+        [JsonPropertyName("amChoking")]
         public string AmChoking { get; set; }
 
-        [JsonProperty("bitfield")]
+        [JsonPropertyName("bitfield")]
         public string BitField { get; set; }
 
-        [JsonProperty("downloadSpeed")]
+        [JsonPropertyName("downloadSpeed")]
         public string DownloadSpeed { get; set; }
 
-        [JsonProperty("ip")]
+        [JsonPropertyName("ip")]
         public string Ip { get; set; }
 
-        [JsonProperty("peerChoking")]
+        [JsonPropertyName("peerChoking")]
         public string PeerChoking { get; set; }
 
-        [JsonProperty("peerId")]
+        [JsonPropertyName("peerId")]
         public string PeerId { get; set; }
 
-        [JsonProperty("port")]
+        [JsonPropertyName("port")]
         public string Port { get; set; }
 
-        [JsonProperty("seeder")]
+        [JsonPropertyName("seeder")]
         public string Seeder { get; set; }
 
-        [JsonProperty("uploadSpeed")]
+        [JsonPropertyName("uploadSpeed")]
         public string UploadSpeed { get; set; }
     }
 }

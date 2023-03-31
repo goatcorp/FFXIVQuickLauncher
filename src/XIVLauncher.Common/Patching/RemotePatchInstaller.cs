@@ -35,7 +35,7 @@ public class RemotePatchInstaller
         rpc.SendMessage(new PatcherIpcEnvelope
         {
             OpCode = PatcherIpcOpCode.Hello,
-            Data = DateTime.Now
+            Timestamp = DateTime.Now
         });
 
         Log.Information("[PATCHER] sent hello");
@@ -87,12 +87,12 @@ public class RemotePatchInstaller
 
             case PatcherIpcOpCode.StartInstall:
 
-                var installData = (PatcherIpcStartInstall)envelope.Data;
+                var installData = envelope.StartInstallInfo;
                 this.queuedInstalls.Enqueue(installData);
                 break;
 
             case PatcherIpcOpCode.Finish:
-                var path = (DirectoryInfo)envelope.Data;
+                var path = envelope.GameDirectory;
 
                 try
                 {

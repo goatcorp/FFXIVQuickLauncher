@@ -10,13 +10,12 @@ using System.Windows.Media;
 using CheapLoc;
 using CommandLine;
 using Config.Net;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 using Serilog.Events;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Support;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
@@ -232,7 +231,7 @@ namespace XIVLauncher
             var result = IntegrityCheck.RunIntegrityCheckAsync(new DirectoryInfo(path), null).GetAwaiter().GetResult();
             string saveIntegrityPath = Path.Combine(Paths.RoamingPath, $"{result.GameVersion}.json");
 
-            File.WriteAllText(saveIntegrityPath, JsonConvert.SerializeObject(result));
+            File.WriteAllText(saveIntegrityPath, JsonSerializer.Serialize(result));
 
             MessageBox.Show($"Successfully hashed {result.Hashes.Count} files to {path}.", "Hello Franz", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             Environment.Exit(0);

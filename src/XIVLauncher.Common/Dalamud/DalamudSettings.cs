@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Serilog;
 
 namespace XIVLauncher.Common.Dalamud
@@ -20,7 +20,7 @@ namespace XIVLauncher.Common.Dalamud
 
             try
             {
-                deserialized = File.Exists(configPath) ? JsonConvert.DeserializeObject<DalamudSettings>(File.ReadAllText(configPath)) : new DalamudSettings();
+                deserialized = File.Exists(configPath) ? JsonSerializer.Deserialize<DalamudSettings>(File.ReadAllText(configPath)) : new DalamudSettings();
             }
             catch (Exception ex)
             {

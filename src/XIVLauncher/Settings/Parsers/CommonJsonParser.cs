@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Config.Net;
-using Newtonsoft.Json;
 
 namespace XIVLauncher.Settings.Parsers;
 
@@ -11,7 +11,7 @@ public class CommonJsonParser<T> : ITypeParser
     {
         try
         {
-            result = JsonConvert.DeserializeObject(value, t);
+            result = JsonSerializer.Deserialize(value, t);
         }
         catch
         {
@@ -24,7 +24,7 @@ public class CommonJsonParser<T> : ITypeParser
 
     public string ToRawString(object value)
     {
-        return value == null ? null : JsonConvert.SerializeObject(value);
+        return value == null ? null : JsonSerializer.Serialize(value);
     }
 
     public IEnumerable<Type> SupportedTypes => new[] { typeof(T) };
