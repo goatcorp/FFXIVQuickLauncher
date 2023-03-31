@@ -70,4 +70,10 @@ public static class DebugHelpers
 
         return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
     }
+
+#if DEBUG
+    public static bool IsDebugBuild => true;
+#else
+    public static bool IsDebugBuild => false;
+#endif
 }

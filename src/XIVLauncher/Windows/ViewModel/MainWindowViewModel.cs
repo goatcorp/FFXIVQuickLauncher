@@ -168,26 +168,24 @@ namespace XIVLauncher.Windows.ViewModel
             if (!bootRes)
                 return;
 
-            // Putting this here, so it always ends up in loc
-            var killswitchText = Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as there were changes to the login process during a recent patch." +
-                                                                "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
-                                                                "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
-                                                                "\n");
+            var cutoffText = Loc.Localize("KillswitchText", "XIVLauncher cannot start the game at this time, as there were changes to the login process during a recent patch." +
+                                                            "\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later." +
+                                                            "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
+                                                            "\n");
 
-            /* ============== 6.18 DC TRAVEL UPDATE ============== */
-            /*
-            var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
-            var ver615 = SeVersion.Parse("2022.03.25.0000.0001");
-
-            if (bootver > ver615)
+            if (!string.IsNullOrEmpty(Updates.UpdateLease?.CutOffBootver))
             {
-                CustomMessageBox.Show(killswitchText, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
+                var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
+                var cutoff = SeVersion.Parse(Updates.UpdateLease.CutOffBootver);
 
-                Environment.Exit(0);
-                return;
+                if (bootver > cutoff)
+                {
+                    CustomMessageBox.Show(cutoffText, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.None, showHelpLinks: false, showDiscordLink: true, showOfficialLauncher: true);
+
+                    Environment.Exit(0);
+                    return;
+                }
             }
-            */
-            /* =================================================== */
 
             if (string.IsNullOrEmpty(username))
             {
@@ -417,6 +415,11 @@ namespace XIVLauncher.Windows.ViewModel
                 {
                     msgbox.WithTextFormatted(Loc.Localize("LoginInvalidVersionFiles",
                         "Version information could not be read from your game files.\n\nYou need to reinstall or repair the game files. Right click the login button in XIVLauncher, and choose \"Repair Game\"."), ex.Message);
+                }
+                else if (ex is SteamTicketNullException)
+                {
+                    msgbox.WithText(Loc.Localize("LoginSteamNullTicket",
+                        "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings."));
                 }
                 else if (ex is SteamException)
                 {
@@ -897,8 +900,8 @@ namespace XIVLauncher.Windows.ViewModel
                                 .WithAppendText(verify.MovedFiles.Count switch
                                 {
                                     0 => "",
-                                    1 => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMoved1", "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using GShade, you will have to reinstall it."), verify.MovedFileToDir),
-                                    _ => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMovedPlural", "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using GShade, you will have to reinstall it."), verify.MovedFiles.Count, verify.MovedFileToDir),
+                                    1 => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMoved1", "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it."), verify.MovedFileToDir),
+                                    _ => "\n\n" + string.Format(Loc.Localize("GameRepairSuccessMovedPlural", "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it."), verify.MovedFiles.Count, verify.MovedFileToDir),
                                 })
                                 .WithDescription(verify.MovedFiles.Any() ? string.Join("\n", verify.MovedFiles.Select(x => $"* {x}")) : null)
                                 .WithImage(MessageBoxImage.Information)
@@ -1050,36 +1053,19 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (App.Settings.InGameAddonEnabled && !forceNoDalamud && App.Settings.IsDx11)
             {
-                var showEnsurementWarning = false;
-
                 try
                 {
                     var dalamudStatus = dalamudLauncher.HoldForUpdate(App.Settings.GamePath);
                     dalamudOk = dalamudStatus == DalamudLauncher.DalamudInstallState.Ok;
-                    showEnsurementWarning = dalamudStatus == DalamudLauncher.DalamudInstallState.Failed;
                 }
-                catch (DalamudRunnerException ex)
+                catch (Exception ex)
                 {
-                    Log.Error(ex, "Couldn't ensure Dalamud runner");
+                    Log.Error(ex, "Couldn't DalamudLauncher::HoldForUpdate()");
 
-                    var runnerErrorMessage = Loc.Localize("DalamudRunnerError",
-                        "Could not launch Dalamud successfully. This might be caused by your antivirus.\nTo prevent this, please add an exception for the folder \"%AppData%\\XIVLauncher\\addons\".");
-
-                    CustomMessageBox.Builder
-                                    .NewFrom(runnerErrorMessage)
-                                    .WithImage(MessageBoxImage.Error)
-                                    .WithButtons(MessageBoxButton.OK)
-                                    .WithShowHelpLinks()
-                                    .WithParentWindow(_window)
-                                    .Show();
-                }
-
-                if (showEnsurementWarning)
-                {
                     var errorNews = await Updates.GetErrorNews().ConfigureAwait(false);
 
                     // If we have valid error news, let's not show this because it probably doesn't matter
-                    if (errorNews != null)
+                    if (errorNews == null)
                     {
                         var ensurementErrorMessage = Loc.Localize("DalamudEnsurementError",
                             "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.");

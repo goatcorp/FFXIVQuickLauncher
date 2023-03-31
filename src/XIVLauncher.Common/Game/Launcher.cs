@@ -156,19 +156,27 @@ public class Launcher
                     throw new SteamException("Not logged into Steam, or Steam is running in offline mode. Please log in and try again.");
                 }
 
-                try
+                const int NUM_TRIES = 5;
+
+                for (var i = 0; i < NUM_TRIES; i++)
                 {
-                    steamTicket = await Ticket.Get(steam).ConfigureAwait(true);
-                }
-                catch (Exception ex)
-                {
-                    throw new SteamException("Could not request auth ticket.", ex);
+                    try
+                    {
+                        steamTicket = await Ticket.Get(steam).ConfigureAwait(true);
+
+                        if (steamTicket != null)
+                            break;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new SteamException($"Could not request auth ticket (try {i + 1}/{NUM_TRIES})", ex);
+                    }
                 }
             }
 
             if (steamTicket == null)
             {
-                throw new SteamException("Steam auth ticket was null.");
+                throw new SteamTicketNullException();
             }
         }
 
@@ -294,7 +302,7 @@ public class Launcher
     }
 
     /// <summary>
-    /// Check ver & bck files for sanity.
+    /// Check ver and bck files for sanity.
     /// </summary>
     /// <param name="gamePath"></param>
     /// <param name="exLevel"></param>

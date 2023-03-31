@@ -9,3 +9,11 @@ public class SteamException : Exception
     {
     }
 }
+
+public class SteamTicketNullException : SteamException
+{
+    public SteamTicketNullException()
+        : base("Steam ticket was null.")
+    {
+    }
+}

@@ -71,6 +71,9 @@ namespace XIVLauncher
             [JsonPropertyName("message")]
             public string? Message { get; set; }
 
+            [JsonPropertyName("cutOffBootver")]
+            public string? CutOffBootver { get; set; }
+
             [JsonPropertyName("frontierUrl")]
             public string FrontierUrl { get; set; }
 

@@ -38,7 +38,7 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        public static async Task<DirectoryInfo> EnsureAssets(DirectoryInfo baseDir, bool forceProxy)
+        public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(DirectoryInfo baseDir, bool forceProxy)
         {
             using var client = new HttpClient
             {
@@ -128,7 +128,7 @@ namespace XIVLauncher.Common.Dalamud
 
             CleanUpOld(baseDir, info.Version - 1);
 
-            return assetsDir;
+            return (assetsDir, info.Version);
         }
 
         private static string GetAssetVerPath(DirectoryInfo baseDir)

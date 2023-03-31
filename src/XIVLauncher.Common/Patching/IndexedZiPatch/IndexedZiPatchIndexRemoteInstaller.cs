@@ -477,10 +477,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                     var targetFileName = reader.ReadString();
 
                                     var sourceParentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFileName));
-                                    var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFileName));
+                                    var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFileName.EndsWith("/") ? targetFileName.Substring(0, targetFileName.Length - 1) : targetFileName));
 
                                     targetParentDir.Create();
-                                    new FileInfo(sourceFileName).MoveTo(targetFileName);
+                                    Directory.Move(sourceFileName, targetFileName);
 
                                     if (!sourceParentDir.GetFileSystemInfos().Any())
                                         sourceParentDir.Delete(false);

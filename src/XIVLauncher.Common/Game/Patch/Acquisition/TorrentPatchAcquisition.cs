@@ -1,4 +1,8 @@
-﻿using System;
+﻿
+
+
+/*
+using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -55,9 +59,6 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
 
         public override async Task StartDownloadAsync(string url, FileInfo outFile)
         {
-            throw new NotImplementedException("WIP");
-
-            /*
             if (_torrentBytes == null)
             {
                 if (!IsApplicable(patch))
@@ -89,7 +90,6 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
 
             await _torrentManager.StartAsync();
             await _torrentManager.DhtAnnounceAsync();
-            */
         }
 
         public override async Task CancelAsync()
@@ -102,3 +102,4 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition
         }
     }
 }
+*/
