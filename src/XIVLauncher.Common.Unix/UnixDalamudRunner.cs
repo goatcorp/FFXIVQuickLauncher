@@ -81,6 +81,15 @@ public class UnixDalamudRunner : IDalamudRunner
 
         Console.WriteLine(output);
 
+        // Skip "ERROR: Could Not Get Primary Adapter Handle" and proceed to next line
+        if (output.Contains("ERROR"))
+        {
+            output = dalamudProcess.StandardOutput.ReadLine();
+            if (output == null)
+                throw new DalamudRunnerException("An internal Dalamud error has occured");
+            Console.WriteLine(output);
+        }
+        
         new Thread(() =>
         {
             while (!dalamudProcess.StandardOutput.EndOfStream)
@@ -99,12 +108,18 @@ public class UnixDalamudRunner : IDalamudRunner
 
             if (unixPid == 0)
             {
-                Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
+                Log.Error("Using unpatched wine... trying backup method to get process id.");
+                // Use backup method to find pid of ffxiv process. This should always work provided the user doesn't try to run two instances of FFXIV at once.
+                unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+            }
+            if (unixPid == 0)
+            {
+                Log.Error($"Could not find process id of {gameExe.Name}. You should never see this error if FFXIV launched successfully.");
                 return null;
             }
 
             var gameProcess = Process.GetProcessById(unixPid);
-            Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
+            Log.Information($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
             return gameProcess;
         }
         catch (JsonReaderException ex)

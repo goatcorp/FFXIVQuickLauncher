@@ -113,7 +113,8 @@ public class CompatibilityTools
 
     public void EnsurePrefix()
     {
-        RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
+        Dictionary<string, string> gstreamfix = new Dictionary<string, string>() {{"WINEDLLOVERRIDES", "winegstreamer="}};
+        RunInPrefix("cmd /c dir %userprofile%/Documents > nul", environment: gstreamfix).WaitForExit();
     }
 
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
@@ -263,6 +264,27 @@ public class CompatibilityTools
             l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
         var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
         return unixPids.FirstOrDefault();
+    }
+
+    public Int32 GetUnixProcessIdByName(string executableName)
+    {
+        int closest = 0;
+        var currentProcess = Process.GetCurrentProcess(); // Gets XIVLauncher.Core's process
+        bool nonunique = false;
+        foreach (var process in Process.GetProcessesByName(executableName))
+        {
+            if (process.Id < currentProcess.Id) continue;  // Process was launched before XIVLauncher.Core
+            if (process.SessionId != currentProcess.SessionId) continue; // Process was launched from a different session than XIVLauncher.Core
+            // Assume that the closest PID to XIVLauncher.Core's is the correct one. But log an error if more than one is found.
+            if ((closest - currentProcess.Id) > (process.Id - currentProcess.Id) || closest == 0)
+            {
+                if (closest != 0) nonunique = true;
+                closest = process.Id;
+            }
+            if (nonunique) Log.Error($"More than one {executableName} found! Selecting the most likely match with process id {closest}.");
+            return closest;
+        }
+        return closest;
     }
 
     public string UnixToWinePath(string unixPath)
