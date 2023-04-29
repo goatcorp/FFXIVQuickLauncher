@@ -113,8 +113,7 @@ public class CompatibilityTools
 
     public void EnsurePrefix()
     {
-        Dictionary<string, string> gstreamfix = new Dictionary<string, string>() {{"WINEDLLOVERRIDES", "winegstreamer="}};
-        RunInPrefix("cmd /c dir %userprofile%/Documents > nul", environment: gstreamfix).WaitForExit();
+        RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
