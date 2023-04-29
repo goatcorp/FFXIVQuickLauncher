@@ -74,21 +74,19 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add(gameArgs);
 
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
-        var output = dalamudProcess.StandardOutput.ReadLine();
-
-        if (output == null)
-            throw new DalamudRunnerException("An internal Dalamud error has occured");
+        var output = dalamudProcess.StandardOutput.ReadLine() ?? "";
 
         Console.WriteLine(output);
 
         // Skip "ERROR: Could Not Get Primary Adapter Handle" and proceed to next line
         if (output.Contains("ERROR"))
         {
-            output = dalamudProcess.StandardOutput.ReadLine();
-            if (output == null)
-                throw new DalamudRunnerException("An internal Dalamud error has occured");
+            output = dalamudProcess.StandardOutput.ReadLine() ?? "";
             Console.WriteLine(output);
         }
+
+        if (string.IsNullOrEmpty(output) || output.Contains("ERROR"))
+            throw new DalamudRunnerException("An internal Dalamud error has occured");
         
         new Thread(() =>
         {
