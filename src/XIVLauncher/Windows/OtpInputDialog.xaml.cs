@@ -54,7 +54,7 @@ namespace XIVLauncher.Windows
                 {
                     // Start Listen
                     Task.Run(() => _otpListener.Start());
-                    Log.Debug("OTP server started...");
+                    Log.Information("OTP server started...");
                 }
                 catch (Exception ex)
                 {
