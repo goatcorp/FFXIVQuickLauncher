@@ -8,7 +8,7 @@ namespace XIVLauncher.Common.Unix.Compatibility.GameFixes.Implementations;
 
 public class MacVideoFix : GameFix
 {
-    private const string MAC_ZIP_URL = "https://mac-dl.ffxiv.com/cw/finalfantasyxiv-1.0.8.zip";
+    private const string MAC_ZIP_URL = "https://mac-dl.ffxiv.com/cw/finalfantasyxiv-1.1.2.zip";
 
     public MacVideoFix(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory, DirectoryInfo tempDirectory)
         : base(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory)
