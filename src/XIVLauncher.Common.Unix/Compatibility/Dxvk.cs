@@ -64,7 +64,7 @@ public static class Dxvk
 
     public enum DxvkVersion
     {
-        [SettingsDescription("1.10.1", "The version of DXVK used with XIVLauncher.Core 1.0.2. Safe to use.")]
+        [SettingsDescription("1.10.1", "The version of DXVK originally used with XIVLauncher.Core 1.0.3. Safe to use.")]
         v1_10_1,
 
         [SettingsDescription("1.10.2", "Older version of 1.10 branch of DXVK. Safe to use.")]
@@ -73,10 +73,13 @@ public static class Dxvk
         [SettingsDescription("1.10.3 (default)", "Current version of 1.10 branch of DXVK.")]
         v1_10_3,
 
-        [SettingsDescription("2.0 (might break Dalamud, GShade)", "Newer version of DXVK. May be faster, but not stable yet.")]
+        [SettingsDescription("2.0", "Newer version of DXVK. Last version with Async patch")]
         v2_0,
 
-        [SettingsDescription("2.1 (might break Dalamud, GShade. No Async)", "Newest version of DXVK. No Async patch.")]
+        [SettingsDescription("2.1 (No Async)", "Newer version of DXVK, using graphics pipeline library. No Async patch.")]
         v2_1,
+
+         [SettingsDescription("2.2 (No Async)", "Newest version of DXVK, using graphics pipeline library. No Async patch.")]
+        v2_2,       
     }
 }
