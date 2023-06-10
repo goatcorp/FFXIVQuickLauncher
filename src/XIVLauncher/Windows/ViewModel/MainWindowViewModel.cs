@@ -429,10 +429,13 @@ namespace XIVLauncher.Windows.ViewModel
                     if (ex.InnerException != null)
                         msgbox.WithAppendDescription(ex.InnerException.ToString());
                 }
-                else if (ex is SteamWrongAccountException)
+                else if (ex is SteamWrongAccountException wrongAccountException)
                 {
-                    msgbox.WithText(Loc.Localize("LoginSteamWrongAccount",
-                        "The account you are logging in to is NOT the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts."));
+                    var locMsg = Loc.Localize("LoginSteamWrongAccount",
+                        "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.");
+                    locMsg = string.Format(locMsg, wrongAccountException.ImposedUserName);
+
+                    msgbox.WithText(locMsg);
                 }
                 else if (ex is SteamLinkNeededException)
                 {
