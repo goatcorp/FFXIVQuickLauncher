@@ -1,8 +1,2 @@
-﻿This is a hotfix for the previous update, resolving an issue wherein error messages were not displayed correctly.
-
-* Fixes an issue wherein the game may not have started correctly with Dalamud under certain conditions
-* Fixes an issue wherein XIVLauncher may have been stuck on a download screen under certain conditions
-* Fixes an issue wherein the game repair feature may not have correctly cleaned up leftover files by certain shade-type tools
-    => If you previously encountered issues with this feature, you should try repairing again by right-clicking the login button
-* Fixes an issue wherein the launch conditions for Dalamud would differ between the Linux and Windows versions of XIVLauncher
-* Fixes an issue wherein, if certain essential files for Dalamud were missing, no error message would be shown
+﻿* Adds a clipboard button to the OTP window, which will automatically paste in your clipboard contents as an OTP once pressed
+* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly under certain conditions
