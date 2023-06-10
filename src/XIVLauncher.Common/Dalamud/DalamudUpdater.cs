@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
@@ -222,16 +223,29 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Information("[DUPDATE] Now starting for .NET Runtime {0}", remoteVersionInfo.RuntimeVersion);
 
                 var versionFile = new FileInfo(Path.Combine(this.Runtime.FullName, "version"));
-                var localVersion = "5.0.6"; // This is the version we first shipped. We didn't write out a version file, so we can't check it.
-                if (versionFile.Exists)
-                    localVersion = File.ReadAllText(versionFile.FullName);
+                var localVersion = GetLocalRuntimeVersion(versionFile);
+
+                var runtimeNeedsUpdate = localVersion != remoteVersionInfo.RuntimeVersion;
 
                 if (!this.Runtime.Exists)
                     Directory.CreateDirectory(this.Runtime.FullName);
 
-                var integrity = await CheckRuntimeHashes(Runtime, localVersion).ConfigureAwait(false);
+                var isRuntimeIntegrity = false;
 
-                if (runtimePaths.Any(p => !p.Exists) || localVersion != remoteVersionInfo.RuntimeVersion || !integrity)
+                // Only check runtime hashes if we don't need to update it
+                if (!runtimeNeedsUpdate)
+                {
+                    try
+                    {
+                        isRuntimeIntegrity = await CheckRuntimeHashes(Runtime, localVersion).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[DUPDATE] Could not check runtime integrity.");
+                    }
+                }
+
+                if (runtimePaths.Any(p => !p.Exists) || runtimeNeedsUpdate || !isRuntimeIntegrity)
                 {
                     Log.Information("[DUPDATE] Not found, outdated or no integrity: {LocalVer} - {RemoteVer}", localVersion, remoteVersionInfo.RuntimeVersion);
 
@@ -429,23 +443,43 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        private async Task<bool> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
+        private string GetLocalRuntimeVersion(FileInfo versionFile)
         {
-            if (DebugHelpers.IsDebugBuild)
+            // This is the version we first shipped. We didn't write out a version file, so we can't check it.
+            var localVersion = "5.0.6";
+
+            try
             {
-                Log.Warning("Debug build, ignoring runtime hash check");
-                return true;
+                if (versionFile.Exists)
+                    localVersion = File.ReadAllText(versionFile.FullName);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[DUPDATE] Could not read local runtime version.");
             }
 
+            return localVersion;
+        }
+
+        private async Task<bool> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
+        {
             var hashesFile = new FileInfo(Path.Combine(runtimePath.FullName, $"hashes-{version}.json"));
             string? runtimeHashes = null;
 
             if (!hashesFile.Exists)
             {
-                Log.Verbose("Hashes file does not exist, redownloading...");
+                Log.Verbose("[DUPDATE] Hashes file does not exist, redownloading...");
 
-                using var client = new HttpClient();
-                runtimeHashes = await client.GetStringAsync($"https://kamori.goats.dev/Dalamud/Release/Runtime/Hashes/{version}").ConfigureAwait(false);
+                try
+                {
+                    using var client = new HttpClient();
+                    runtimeHashes = await client.GetStringAsync($"https://kamori.goats.dev/Dalamud/Release/Runtime/Hashes/{version}").ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[DUPDATE] Could not download hashes for runtime v{Version}", version);
+                    return false;
+                }
 
                 File.WriteAllText(hashesFile.FullName, runtimeHashes);
             }
@@ -469,6 +503,9 @@ namespace XIVLauncher.Common.Dalamud
                 runtimePath.Delete(true);
                 runtimePath.Create();
             }
+
+            // Wait for it to be gone, thanks Windows
+            Thread.Sleep(1000);
 
             var dotnetUrl = $"https://kamori.goats.dev/Dalamud/Release/Runtime/DotNet/{version}";
             var desktopUrl = $"https://kamori.goats.dev/Dalamud/Release/Runtime/WindowsDesktop/{version}";
