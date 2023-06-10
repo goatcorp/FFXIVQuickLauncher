@@ -219,7 +219,7 @@ namespace XIVLauncher.Common.Dalamud
             if (GameHelpers.CheckIsGameOpen())
                 return;
 
-            for (int i = version; i >= i - 30; i--)
+            for (int i = version; i >= version - 30; i--)
             {
                 var toDelete = Path.Combine(baseDir.FullName, i.ToString());
 
@@ -233,9 +233,11 @@ namespace XIVLauncher.Common.Dalamud
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Could not clean up old assets");
+                    Log.Error(ex, "[DASSET] Could not clean up old assets");
                 }
             }
+
+            Log.Verbose("[DASSET] Finished cleaning");
         }
     }
 }
