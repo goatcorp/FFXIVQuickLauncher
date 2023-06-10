@@ -751,6 +751,10 @@
     "message": "Enter a valid OTP key.\nIt is 6 digits long.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
+  "PasteButton": {
+    "message": "Click here to paste from the clipboard.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
   "PatchPreparing": {
     "message": "Preparing...",
     "description": "PatchDownloadDialogViewModel.SetupLoc"

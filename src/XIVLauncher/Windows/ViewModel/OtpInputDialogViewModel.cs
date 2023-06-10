@@ -16,6 +16,7 @@ namespace XIVLauncher.Windows.ViewModel
             OkLoc = Loc.Localize("OK", "OK");
             OtpOneClickHintLoc = Loc.Localize("OtpOneClickHint", "Or use the app!\r\nClick here to learn more!");
             OtpInputPromptBadLoc = Loc.Localize("OtpInputPromptBad", "Enter a valid OTP key.\nIt is 6 digits long.");
+            PasteButtonLoc = Loc.Localize("PasteButton", "Click here to paste from the clipboard.");
         }
 
         public string OtpInputPromptLoc { get; private set; }
@@ -23,5 +24,6 @@ namespace XIVLauncher.Windows.ViewModel
         public string OkLoc { get; private set; }
         public string OtpOneClickHintLoc { get; private set; }
         public string OtpInputPromptBadLoc { get; private set; }
+        public string PasteButtonLoc { get; private set; }
     }
 }

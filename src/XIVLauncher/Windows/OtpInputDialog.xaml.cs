@@ -170,6 +170,12 @@ namespace XIVLauncher.Windows
             Cancel();
         }
 
+        private void PasteButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.OtpTextBox.Text = Clipboard.GetText();
+            TryAcceptOtp(this.OtpTextBox.Text);
+        }
+
         public void OpenShortcutInfo_MouseUp(object sender, RoutedEventArgs e)
         {
             Process.Start($"https://goatcorp.github.io/faq/mobile_otp");
