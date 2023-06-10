@@ -7,9 +7,13 @@
     "message": "_Ignorieren",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
+  "UninstallQuestion": {
+    "message": "Schade, dass du gehst!\nMöchtest du alle deine gespeicherten Einstellungen, Plugins und Passwörter löschen?",
+    "description": "<>c__DisplayClass20_1.<Run>b__2"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher konnte nicht auf Updates prüfen. Dies könnte an Problemen mit deiner Internetverbindung liegen. Warte ein Paar Minuten, und versuche es noch einmal.\nSchalte deinen VPN aus, falls du einen nutzt. Es könnte sein, dass du XIVLauncher in deinem Antivirenprogramm freischalten musst.\nFalls diese Fehler in einigen Minuten immer noch auftritt, schaue bitte in unser FAQ.",
-    "description": "<Run>d__19.MoveNext"
+    "description": "<Run>d__20.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "Du hast keine Spielinstallation eingerichtet. XIVLauncher kann den offiziellen Launcher nicht starten.",
@@ -89,11 +93,11 @@
   },
   "NewsDlFailed": {
     "message": "Download fehlgeschlagen.",
-    "description": "MainWindow.<SetupHeadlines>b__12_3"
+    "description": "MainWindow.<SetupHeadlines>b__13_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "Ein Patch für den offiziellen Launcher wurde gefunden.\nDies bedeutet üblicherweise, dass auch ein Patch für das eigentliche Spiel existiert.\n\nDu wirst jetzt eingeloggt.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__22.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "Spiel- und Patch-Downloadpfade können nicht identisch sein.\nBitte stelle sicher, dass unterschiedliche Spiel- und Patch-Downloadpfade ausgewählt wurden.",
@@ -114,14 +118,6 @@
   "DalamudCompatCheckFailed": {
     "message": "Deine Spielversion konnte nicht überprüft werden.\nDies könnte bedeuten, dass dein .NET Framework zu alt ist.\n\nBitte prüfe unseren Discord für mehr Informationen.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
-  },
-  "PluginPathNotFound": {
-    "message": "Plugin-Verzeichnis konnte nicht gefunden werden.",
-    "description": "SettingsControl.TogglePlugin_OnClick"
-  },
-  "GameIsOpenPluginLocked": {
-    "message": "Falls das Spiel geöffnet ist, schließe es und probiere es erneut.",
-    "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "SteamFtToggleAutoStartWarning": {
     "message": "Um diese Einstellung zu übernehmen, muss XIVLauncher neu starten.\nBitte öffne XIVLauncher erneut.",
@@ -415,6 +411,10 @@
     "message": "Ohne Dalamud starten",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoPluginLogin": {
+    "message": "Ohne Plugins starten",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxNoThirdLogin": {
     "message": "Ohne Drittanbieter-Plugins starten",
     "description": "MainWindowViewModel.SetupLoc"
@@ -532,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Zusätzlich wurde 1 Datei, die nicht mit der ursprünglichen Spielinstallation geliefert wurde, nach {0} verschoben.\nFalls du GShade verwendest, musst du es neu installieren.",
+    "message": "Zusätzlich wurde 1 Datei, die nicht mit der ursprünglichen Spielinstallation geliefert wurden, nach {0} verschoben.\nFalls du ReShade verwendest, musst du es neu installieren.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Zusätzlich wurden {0} Dateien, die nicht mit der ursprünglichen Spielinstallation geliefert wurden, nach {1} verschoben.\nFalls du GShade verwendest, musst du es neu installieren.",
+    "message": "Zusätzlich wurden {0} Dateien, die nicht mit der ursprünglichen Spielinstallation geliefert wurden, nach {1} verschoben.\nFalls du ReShade verwendest, musst du es neu installieren.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -575,12 +575,8 @@
     "message": "Dalamud ist nicht mit der Architektur dieses PC's kompatibel. Bitte stelle sicher, dass eine 64-Bit-Version von Windows verwendet wird.\nFalls du Windows auf ARM verwendest, stelle bitte sicher, dass x64-Emulation für XIVLauncher aktiviert ist.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
-  "DalamudRunnerError": {
-    "message": "Dalamud konnte nicht erfolgreich gestartet werden. Dies könnte durch ein Antivirenprogramm verursacht werden.\nUm dies zu verhindern, fügen Sie bitte eine Ausnahme für den Ordner \"%AppData%\\XIVLauncher\\addons\" hinzu.",
-    "description": "<StartGameAndAddon>d__29.MoveNext"
-  },
   "DalamudEnsurementError": {
-    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.",
+    "message": "Notwendige Daten für Dalamud und Plugins konnten nicht heruntergeladen werden.\nDies könnte ein Problem mit deiner Internetverbindung oder deinem Antivirenprogramm sein. Das Spiel wird jetzt starten, aber du wirst keine Plugins verwenden können.\n\nBitte prüfe unser FAQ für weitere Informationen.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
@@ -623,12 +619,16 @@
     "message": "Versionsinformationen konnten nicht von deinen Spieldateien gelesen werden.\n\nDu musst die Spieldateien neu installieren oder reparieren. Klicke mit der rechten Maustaste auf den Login-Button in XIVLauncher und wähle \"Spiel reparieren\".",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
+  "LoginSteamNullTicket": {
+    "message": "Steam hat dich nicht authentifiziert. Das ist sehr wahrscheinlich ein temporäres Problem mit Steam, probiere es einfach in ein Paar Minuten noch einmal.\n\nFalls das Problem weiterhin besteht, stelle sicher, dass Steam läuft und dass du mit dem Account angemeldet bist, der mit deinem Square-Enix Konto verknüpft ist.\nFalls du die kostenlose Testversion spielst, aktiviere die Option \"Kostenlose Version\" in der Registerkarte \"Spieleinstellungen\" in den XIVLauncher Einstellungen.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Steam konnte nicht erreicht werden. Bitte stelle sicher, dass Steam läuft und dass du mit dem mit deiner SE ID verbundenen Konto eingeloggt bist.\nFalls du die kostenlose Version spielst, aktiviere die Option \"Kostenlose Version\" in der Registerkarte \"Spieleinstellungen\" in den XIVLauncher Einstellungen.\n\nKontext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "Das Konto, mit dem du dich einloggst, ist NICHT dasjenige, welches mit dem Steam Account auf deinem PC verbunden ist. Du kannst dich nur mit dem mit deiner SE ID verbundenen Konto einloggen.\n\nBitte melde dich bei passenden Konten an.",
+    "message": "Das Konto, mit dem du dich einloggst, ist NICHT dasjenige, welches mit dem Steam Account auf deinem PC verbunden ist. Du kannst dich nur mit dem mit deiner SE ID verbundenen Konto einloggen.\n\nBitte melde dich bei passenden Konten an. Das Konto, welches mit diesem Steam-Account verknüpft ist, heißt \"{0}\" - stelle sicher, dass du es richtig eingetippt hast.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -749,6 +749,10 @@
   },
   "OtpInputPromptBad": {
     "message": "Gib einen OTP-Code ein.\nEr muss 6 Zeichen lang sein.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PasteButton": {
+    "message": "Klicke hier, um aus der Zwischenablage einzufügen.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
