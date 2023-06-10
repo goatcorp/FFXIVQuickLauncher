@@ -7,9 +7,13 @@
     "message": "キャンセル",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
+  "UninstallQuestion": {
+    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "description": "<>c__DisplayClass20_1.<Run>b__2"
+  },
   "updatefailureerror": {
     "message": "XIVLauncherの更新チェックに失敗しました。GitHubへの接続が原因の可能性があります。数分待ってからもう一度試してみてください。\nVPN を利用している場合はそれを無効にしてください。\n数分経っても失敗する場合は、GitHubにリンクされているDiscordに参加してサポートを受けてください。",
-    "description": "<Run>d__19.MoveNext"
+    "description": "<Run>d__20.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "FFXIVゲーム本体のインストール先が設定されていません。XIVLauncherは公式ランチャーを起動できません。",
@@ -89,11 +93,11 @@
   },
   "NewsDlFailed": {
     "message": "最新ニュースを取得できませんでした。",
-    "description": "MainWindow.<SetupHeadlines>b__12_3"
+    "description": "MainWindow.<SetupHeadlines>b__13_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "A patch for the official launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__22.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "ゲームとパッチのダウンロード保存先は同じにはできません。\nゲームとパッチのダウンロード保存先を別々に選択してください。",
@@ -114,14 +118,6 @@
   "DalamudCompatCheckFailed": {
     "message": "Could not contact the server to get the current compatible game version for Dalamud. This might mean that your .NET installation is too old.\nPlease check the Discord for more information.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
-  },
-  "PluginPathNotFound": {
-    "message": "プラグインのディレクトリが見つかりません。",
-    "description": "SettingsControl.TogglePlugin_OnClick"
-  },
-  "GameIsOpenPluginLocked": {
-    "message": "ゲームが実行中です。終了させてもう一度実行してください。",
-    "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "SteamFtToggleAutoStartWarning": {
     "message": "To apply this setting, XIVLauncher needs to restart.\nPlease reopen XIVLauncher.",
@@ -415,6 +411,10 @@
     "message": "Dalamudを無効にして起動する",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoPluginLogin": {
+    "message": "Start w/o any Plugins",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxNoThirdLogin": {
     "message": "サードパーティープラグインを無効にして起動する",
     "description": "MainWindowViewModel.SetupLoc"
@@ -532,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "加えて、ゲームインストール時に付属していなかった1つのファイルが {0} に移動されました。GShadeを使用していた場合は、再インストールが必要です。",
+    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "加えて、ゲームインストール時に付属していなかった {0} つのファイルが {1} に移動されました。GShadeを使用していた場合は、再インストールが必要です。",
+    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -573,10 +573,6 @@
   },
   "DalamudArchError": {
     "message": "Dalamudはコンピュータのアーキテクチャを実行できません。64ビット版のWindowsを実行していることを確認してください。\nARM版Windowsを使用している場合は、XIVLauncherでx64エミュレーションが有効になっていることを確認してください。",
-    "description": "<StartGameAndAddon>d__29.MoveNext"
-  },
-  "DalamudRunnerError": {
-    "message": "Dalamud を正常に起動できませんでした。アンチウイルスソフトが原因である可能性があります。\nこれを防ぐために、アンチウイルスソフトの例外設定に「%AppData%\\XIVLauncher\\addons」のフォルダを追加してください。",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
@@ -623,12 +619,16 @@
     "message": "バージョン情報をゲームファイルから読み取れませんでした。\n\nゲームファイルを再インストールまたは修復する必要があります。 XIVLauncherのログインボタンを右クリックし、「ゲームを修復」を選択します。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
+  "LoginSteamNullTicket": {
+    "message": "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
   "LoginSteamIssue": {
     "message": "Steamで認証できませんでした。 Steam が起動していること、および スクウェア・エニックスIDに紐付けられたSteamアカウントでログインしていることを確認してください。\nフリートライアル版でプレイしている場合は、XIVLauncherの設定の「情報」タブにある「フリートライアルモードで開始」にチェックを入れてください。 \n\n\nContext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "ログインしているアカウントは、お使いの PC の Steam アカウントにリンクされているアカウントではありません。 この Steam アカウントの使用中は、スクウェア・エニックスIDに関連付けられたアカウントでのみログインできます。\n\n一致するアカウントにログインしてください。",
+    "message": "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -749,6 +749,10 @@
   },
   "OtpInputPromptBad": {
     "message": "有効なOTPキーを入力してください。\n6桁の数字です。",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PasteButton": {
+    "message": "Click here to paste from the clipboard.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {

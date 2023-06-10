@@ -7,9 +7,13 @@
     "message": "_무시",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
+  "UninstallQuestion": {
+    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "description": "<>c__DisplayClass20_1.<Run>b__2"
+  },
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
-    "description": "<Run>d__19.MoveNext"
+    "message": "XIVLauncher가 업데이트 확인에 실패했습니다. GitHub와의 연결 문제일 수 있습니다. 잠시 기다렸다 다시 시도하세요.\n만약 VPN을 쓰고 계시다면 해제해 주세요. 백신에서 XIVLauncher를 예외 추가 할 수도 있습니다.\n계속 실패한다면 FAQ를 확인해주세요.",
+    "description": "<Run>d__20.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "FFXIV 설치 경로 설정이 되어있지 않습니다. XIVLauncher가 공식 런처를 실행할 수 없습니다.",
@@ -89,11 +93,11 @@
   },
   "NewsDlFailed": {
     "message": "새로운 소식 데이터를 가져오지 못했습니다.",
-    "description": "MainWindow.<SetupHeadlines>b__12_3"
+    "description": "MainWindow.<SetupHeadlines>b__13_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "공식 런처의 업데이트가 감지되었습니다.\n이럴 땐 대부분의 경우 게임 쪽에도 새로운 패치가 있음을 나타냅니다.\n\n지금 로그인됩니다.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__22.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "게임과 패치 다운로드 경로가 동일할 수 없습니다.\n다운로드 경로를 다르게 설정해 주세요.",
@@ -115,16 +119,8 @@
     "message": "게임의 현재 버전에 대응하는 Dalamud의 정보를 서버에서 가져오려 했으나 실패했습니다. 설치되어 있는 .NET Framework가 너무 오래되었을지도 모릅니다.\n자세한 사항은 Discord를 확인하세요.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
-  "PluginPathNotFound": {
-    "message": "플러그인 디렉토리 경로를 찾을 수 없습니다.",
-    "description": "SettingsControl.TogglePlugin_OnClick"
-  },
-  "GameIsOpenPluginLocked": {
-    "message": "게임이 실행 중입니다. 게임을 끄고 다시 시도하십시오.",
-    "description": "SettingsControl.DeletePlugin_OnClick"
-  },
   "SteamFtToggleAutoStartWarning": {
-    "message": "To apply this setting, XIVLauncher needs to restart.\nPlease reopen XIVLauncher.",
+    "message": "설정을 적용하려면, XIVLauncher를 다시 시작해야 합니다.\nXIVLauncher를 다시 열어주세요.",
     "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
   },
   "IntegrityCheckImpossible": {
@@ -160,7 +156,7 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AdvancedSettings": {
-    "message": "XIVLauncher Advanced Settings",
+    "message": "XIVLancher 고급 설정",
     "description": "AdvancedSettingsViewModel..ctor"
   },
   "OK": {
@@ -184,7 +180,7 @@
     "description": "AdvancedSettingsViewModel..ctor"
   },
   "ForceNorthAmerica": {
-    "message": "Always download North American news, headlines and banners",
+    "message": "항상 북미 지역의 소식, 배너 등을 가져옵니다.",
     "description": "AdvancedSettingsViewModel..ctor"
   },
   "UpdateNotice": {
@@ -244,7 +240,7 @@
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "Yes": {
-    "message": "네_",
+    "message": "_네",
     "description": "CustomMessageBoxViewModel.SetupLoc"
   },
   "No": {
@@ -264,11 +260,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".\n\nIf you don't have the game installed, you can choose an empty folder and XIVLauncher will install it for you.",
+    "message": "게임이 설치되어 있는 폴더를 선택해 주세요.\n\"game\" 및 \"boot\" 폴더가 포함되어 있어야 합니다.\n\n게임이 설치되어 있지 않다면, XIVLauncher가 게임을 설치할 수 있도록 빈 폴더를 선택할 수 있습니다.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.",
+    "message": "만약 당신이 Steam을 통해 게임을 실행하거나, 계정에 Steam 라이센스가 있다면 이 체크박스를 체크하세요.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -415,6 +411,10 @@
     "message": "Dalamud 없이 실행",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoPluginLogin": {
+    "message": "Start w/o any Plugins",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxNoThirdLogin": {
     "message": "서드 파티 플러그인 없이 실행",
     "description": "MainWindowViewModel.SetupLoc"
@@ -532,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "추가적으로, 게임 설치 시에 부속되지 않았던 1개의 파일이 다음 경로로 이동되었습니다. {0}\nGShade를 사용하고 있었다면, 재설치해야 합니다.",
+    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "추가적으로, 게임 설치 시에 부속되지 않았던 {0} 개의 파일이 다음 경로로 이동되었습니다. {1}\nGShade를 사용하고 있었다면, 재설치해야 합니다.",
+    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -575,12 +575,8 @@
     "message": "Dalamud를 컴퓨터의 아키텍쳐 상에서 실행할 수 없습니다. 64비트 환경의 Windows에서 실행하고 있는지 확인 해 주세요.\nARM판의 Windows를 사용하고 있다면, XIVLauncher 실행을 위해 x64 에뮬레이션을 활성화 해 주세요.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
-  "DalamudRunnerError": {
-    "message": "Dalamud를 성공적으로 실행할 수 없습니다. 안티 바이러스에 의해 일어났을 수도 있습니다.\n이를 예방하기 위해 다음 경로의 폴더를 검사 예외에 추가하세요. \"%AppData%\\XIVLauncher\\addons\"",
-    "description": "<StartGameAndAddon>d__29.MoveNext"
-  },
   "DalamudEnsurementError": {
-    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.",
+    "message": "Dalamud와 플러그인을 사용하기 위한 필요 데이터 파일을 다운로드 할 수 없습니다.\n이 문제는 인터넷 연결이나, 안티바이러스에 의한 것일 수 있습니다. 게임은 실행되겠지만, 플러그인을 사용할 수 없게 됩니다.\n\n더 많은 정보를 보려면 FAQ를 참조하세요.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
@@ -623,12 +619,16 @@
     "message": "게임 파일로부터 버전 정보를 읽어올 수 없습니다\n\n게임을 재설치하거나 파일을 복구해야 합니다. XIVLauncher에서 로그인 버튼을 우클릭 하고, \"게임 복구\"를 선택하세요.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
+  "LoginSteamNullTicket": {
+    "message": "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Steam에서 인증할 수 없습니다. Steam이 실행되고 있는지, SE ID와 연동된 계정으로 로그인 했는지 확인하세요.\n무료 트라이얼을 이용하고 있다면, XIVLauncher의 \"게임 설정\" 탭에서 \"무료 트라이얼 계정 사용\" 체크박스를 체크하세요.\n\nContext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "로그인 한 계정은 PC의 스팀 계정과 연결된 계정이 아닙니다. 이 Steam 계정을 이용중일 땐, SE ID와 연동된 계정으로만 로그인 할 수 있습니다.\n\n일치하는 계정으로 로그인 하세요.",
+    "message": "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -740,7 +740,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "OtpInputPrompt": {
-    "message": "OTP 키를 입력하십시오.",
+    "message": "OTP 키를 입력해주세요.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "OtpOneClickHint": {
@@ -749,6 +749,10 @@
   },
   "OtpInputPromptBad": {
     "message": "유효한 OTP 키를 입력해주세요.\n6개의 숫자 입니다.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PasteButton": {
+    "message": "Click here to paste from the clipboard.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
@@ -824,15 +828,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpServerTooltip": {
-    "message": "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.",
+    "message": "사용자의 휴대전화에서 XIVLancher에서 바로 OTP 코드를 전송할 수 있습니다.\n설정 방법을 보려면 \"자세히 알아보기\"를 클릭하세요.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LearnMore": {
-    "message": "Learn More",
+    "message": "자세히 알아보기",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpLearnMoreTooltipLoc": {
-    "message": "Open a guide in your web browser.",
+    "message": "웹브라우저에서 가이드를 엽니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
@@ -864,11 +868,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoStartSteam": {
-    "message": "Start Steam when starting XIVLauncher",
+    "message": "XIVLancher를 실행할 때 Steam 실행",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoStartSteamTooltip": {
-    "message": "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.",
+    "message": "XIVLauncher를 열 때마다 Steam이 실행 중인지 확인하고 실행 중이 아닌 경우 시작합니다.\nSteam에서 자동으로 \"플레이 중\"으로 표시됩니다.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
@@ -1060,15 +1064,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "IsFreeTrial": {
-    "message": "Using free trial account",
+    "message": "무료 트라이얼 계정 사용",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OpenAdvancedSettings": {
-    "message": "Open Advanced Settings",
+    "message": "고급 설정 열기",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OpenAdvancedSettingsTip": {
-    "message": "Opens some settings for advanced users. Please only use these if you know what you're doing.",
+    "message": "고급 유저를 위한 몇몇 설정을 엽니다. 설정들이 어떤 작용을 하는지 아는 경우에만 사용하세요.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {

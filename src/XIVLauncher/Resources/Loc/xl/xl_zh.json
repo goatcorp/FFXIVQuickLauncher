@@ -7,9 +7,13 @@
     "message": "_Ignore",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
+  "UninstallQuestion": {
+    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "description": "<>c__DisplayClass20_1.<Run>b__2"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher 无法检查更新。这可能是网络连接不稳定导致的。您可以等待几分钟后重试。\n如果您正在使用 VPN，请禁用后重试。您可能还需要将 XIVLauncher 加入到杀毒软件的白名单中。\n如果此错误持续发生，请查看常见问题页面。",
-    "description": "<Run>d__19.MoveNext"
+    "description": "<Run>d__20.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "您没有设置游戏安装路径。XIVLauncher 无法启动官方启动器。",
@@ -89,11 +93,11 @@
   },
   "NewsDlFailed": {
     "message": "无法获取公告信息。",
-    "description": "MainWindow.<SetupHeadlines>b__12_3"
+    "description": "MainWindow.<SetupHeadlines>b__13_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "检测到官方启动器更新。\n这通常意味着游戏也有更新。\n\n即将为您登录。",
-    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__22.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "游戏和补丁的下载路径不能相同。\n请选择不同的游戏和补丁下载路径。",
@@ -114,14 +118,6 @@
   "DalamudCompatCheckFailed": {
     "message": "无法从服务器获取当前 Dalamud 兼容的游戏版本。这可能是因为您的 .NET 框架版本过旧。\n您可以在 Discord 获取更多有关信息。",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
-  },
-  "PluginPathNotFound": {
-    "message": "无法找到插件目录。",
-    "description": "SettingsControl.TogglePlugin_OnClick"
-  },
-  "GameIsOpenPluginLocked": {
-    "message": "游戏正在运行中，请关闭后再试。",
-    "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "SteamFtToggleAutoStartWarning": {
     "message": "请重新启动 XIVLauncher 以应用更改。",
@@ -415,6 +411,10 @@
     "message": "禁用 Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoPluginLogin": {
+    "message": "Start w/o any Plugins",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxNoThirdLogin": {
     "message": "禁用第三方插件",
     "description": "MainWindowViewModel.SetupLoc"
@@ -532,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "此外，没有安装最初游戏的1个文件已被移动到 {0}。\n如果您正在使用 GShade，您将必须重新安装它。",
+    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "此外，没有安装最初游戏的 {0} 文件已被移动到 {1}。\n如果您正在使用 GShade，您将必须重新安装它。",
+    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -573,10 +573,6 @@
   },
   "DalamudArchError": {
     "message": "Dalamud 无法在你的计算机架构上运行。请确保您正在使用 64 位元的 Windows。\n如果您在 ARM 架构上使用 Windows ，请确保 XIVLauncher 启用了 x64 模拟器。",
-    "description": "<StartGameAndAddon>d__29.MoveNext"
-  },
-  "DalamudRunnerError": {
-    "message": "无法启动 Dalamud。这可能是由您的杀毒软件导致的。\n为了防止这种情况，请将「%AppData%\\XIVLauncher\\addons」添加至杀毒软件的白名单。",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
@@ -623,12 +619,16 @@
     "message": "无法从您的游戏文件读取版本信息。\n\n您需要重新安装或修复游戏文件。 右键点击XIVLauncher中的登录按钮，然后选择\"修复游戏\"。",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
+  "LoginSteamNullTicket": {
+    "message": "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
   "LoginSteamIssue": {
     "message": "无法通过 Steam 进行验证。 请确保 Steam 正在运行，并且使用与你 SE ID 绑定的 Steam 账户登录。\n如果您正在使用免费试用版，请在 XIVLauncher 设置的\"游戏设置\"选项卡中勾选\"使用试用账户\"。\n\n相关资讯：{0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "您正在登录的账户与电脑上关联 Steam 的账户不一致。您只能使用绑定了 SE ID 的 Steam 账户登陆。\n请使用匹配的账户登录。",
+    "message": "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -749,6 +749,10 @@
   },
   "OtpInputPromptBad": {
     "message": "请输入一个有效的动态密码 (OTP)。\n长度为6位数字。",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PasteButton": {
+    "message": "Click here to paste from the clipboard.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
