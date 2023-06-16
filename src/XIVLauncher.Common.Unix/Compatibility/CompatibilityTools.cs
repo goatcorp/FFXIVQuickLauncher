@@ -168,7 +168,7 @@ public class CompatibilityTools
             ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
         }
 
-        foreach (KeyValuePair<string, string> dxvkVar in DxvkSettings.DxvkVars)
+        foreach (var dxvkVar in DxvkSettings.DxvkVars)
             wineEnviromentVariables.Add(dxvkVar.Key, dxvkVar.Value);
 
         wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);

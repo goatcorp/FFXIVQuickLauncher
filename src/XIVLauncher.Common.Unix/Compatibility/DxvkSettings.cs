@@ -62,7 +62,7 @@ public class DxvkSettings
             FolderName = $"dxvk-{release}";
         }
 
-        DirectoryInfo dxvkCachePath = new DirectoryInfo(Path.Combine(dxvkConfigPath.FullName, "cache"));
+        var dxvkCachePath = new DirectoryInfo(Path.Combine(dxvkConfigPath.FullName, "cache"));
         if (!dxvkCachePath.Exists) dxvkCachePath.Create();
         this.DxvkVars.Add("DXVK_STATE_CACHE_PATH", Path.Combine(dxvkCachePath.FullName, release + (async ? "-async" : "")));
 
