@@ -174,10 +174,30 @@ public class CompatibilityTools
         foreach (var keyValuePair in b)
         {
             if (a.ContainsKey(keyValuePair.Key))
-                a[keyValuePair.Key] = keyValuePair.Value;
+            {
+                if (keyValuePair.Key == "LD_PRELOAD")
+                    a[keyValuePair.Key] = MergeLDPreload(a[keyValuePair.Key], keyValuePair.Value);
+                else
+                    a[keyValuePair.Key] = keyValuePair.Value;
+            }
             else
                 a.Add(keyValuePair.Key, keyValuePair.Value);
         }
+    }
+
+    private string MergeLDPreload(string a, string b)
+    {
+        var alist = a.Split(':');
+        var blist = b.Split(':');
+        var clist = (System.Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "").Split(':');
+        
+        var merged = (alist.Union(blist)).Union(clist);
+
+        var ldpreload = "";
+        foreach (var item in merged)
+            ldpreload += item + ":";
+        
+        return ldpreload.TrimEnd(':');
     }
 
     private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string> environment, bool redirectOutput, bool writeLog, bool wineD3D)
