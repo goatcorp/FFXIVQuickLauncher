@@ -11,18 +11,59 @@ using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 
-public class Runner
+public abstract class Runner
 {
-    public string Folder { get; private set; }
+    public abstract string RunnerType { get; }
 
-    public string DownloadUrl { get; private set; }
+    public string Folder { get; }
 
-    public Dictionary<string, string> Environment { get; private set; }
+    public string DownloadUrl { get; }
 
-    public Runner(string folder, string url, Dictionary<string, string> env = null)
+    protected DirectoryInfo Prefix;
+
+    protected DirectoryInfo ToolFolder; 
+
+    public Dictionary<string, string> Environment { get; }
+
+
+    protected Runner(string folder, string url, DirectoryInfo prefix, Dictionary<string, string> env = null)
     {
         Folder = folder;
         DownloadUrl = url;
+        Prefix = prefix;
         Environment =  env ?? new Dictionary<string, string>();
+    }
+
+    public abstract Task Install();
+
+    protected bool IsDirectoryEmpty(string folder)
+    {
+        if (!Directory.Exists(folder)) return true;
+        return !Directory.EnumerateFileSystemEntries(folder).Any();
+    }
+
+    public virtual string GetCommand()
+    {
+        return "";
+    }
+
+    public virtual string GetServer()
+    {
+        return "";
+    }
+
+    public virtual string GetParameters()
+    {
+        return "";
+    }
+
+    public virtual string GetPathCommand()
+    {
+        return "";
+    }
+
+    public virtual string GetPathParameters(string unixPath)
+    {
+        return unixPath;
     }
 }
