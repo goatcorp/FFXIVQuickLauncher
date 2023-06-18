@@ -78,7 +78,9 @@ public class WindowsDalamudRunner : IDalamudRunner
         {
             var environmentBlock = GetEnvironmentVariablesBlock(envVars);
 
-            Log.Verbose("Starting launch Dalamud with\n\tCmdLine: {CommandLine}\n\tEnvBlock: {EnvironmentBlock}", fullCommandLine, environmentBlock);
+            Log.Verbose("Starting launch Dalamud with\n\tCmdLine: {CommandLine}\n\tEnvBlock: {EnvironmentBlock}",
+                fullCommandLine,
+                environmentBlock.Replace("\0", "\\0"));
 
             var kernelStartupInfo = Kernel32.STARTUPINFO.Create();
             Kernel32.PROCESS_INFORMATION kernelProcessInfo;
