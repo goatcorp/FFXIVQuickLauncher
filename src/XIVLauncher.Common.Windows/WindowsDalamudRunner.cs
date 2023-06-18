@@ -16,21 +16,31 @@ public class WindowsDalamudRunner : IDalamudRunner
     {
         var inheritableCurrentProcess = GetInheritableCurrentProcessHandle();
 
+        if (gameExe == null)
+            throw new Exception("Game path was null");
+
+        if (startInfo == null)
+            throw new Exception("StartInfo was null");
+
+        if (startInfo.TroubleshootingPackData == null)
+            throw new Exception("TS data was null");
+
         var launchArguments = new List<string>
         {
             DalamudInjectorArgs.LAUNCH,
             DalamudInjectorArgs.Mode(loadMethod == DalamudLoadMethod.EntryPoint ? "entrypoint" : "inject"),
-            DalamudInjectorArgs.HandleOwner((long)inheritableCurrentProcess.Handle),
             DalamudInjectorArgs.Game(gameExe.FullName),
             DalamudInjectorArgs.WorkingDirectory(startInfo.WorkingDirectory),
             DalamudInjectorArgs.ConfigurationPath(startInfo.ConfigurationPath),
             DalamudInjectorArgs.PluginDirectory(startInfo.PluginDirectory),
-            DalamudInjectorArgs.PluginDevDirectory(startInfo.DefaultPluginDirectory),
             DalamudInjectorArgs.AssetDirectory(startInfo.AssetDirectory),
             DalamudInjectorArgs.ClientLanguage((int)startInfo.Language),
             DalamudInjectorArgs.DelayInitialize(startInfo.DelayInitializeMs),
             DalamudInjectorArgs.TsPackB64(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(startInfo.TroubleshootingPackData))),
         };
+
+        if (inheritableCurrentProcess != null)
+            DalamudInjectorArgs.HandleOwner((long)inheritableCurrentProcess.Handle);
 
         if (loadMethod == DalamudLoadMethod.ACLonly)
             launchArguments.Add(DalamudInjectorArgs.WITHOUT_DALAMUD);
@@ -190,7 +200,8 @@ public class WindowsDalamudRunner : IDalamudRunner
         DuplicateOptions dwOptions);
 
     private static Process GetInheritableCurrentProcessHandle() {
-        if (!DuplicateHandle(Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, out var inheritableCurrentProcessHandle, 0, true, DuplicateOptions.SameAccess)) {
+        if (!DuplicateHandle(Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, out var inheritableCurrentProcessHandle, 0, true, DuplicateOptions.SameAccess))
+        {
             Log.Error("Failed to call DuplicateHandle: Win32 error code {0}", Marshal.GetLastWin32Error());
             return null;
         }

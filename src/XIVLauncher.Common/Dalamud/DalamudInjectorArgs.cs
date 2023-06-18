@@ -13,7 +13,6 @@ namespace XIVLauncher.Common.Dalamud
         public static string WorkingDirectory(string path) => $"--dalamud-working-directory=\"{path}\"";
         public static string ConfigurationPath(string path) => $"--dalamud-configuration-path=\"{path}\"";
         public static string PluginDirectory(string path) => $"--dalamud-plugin-directory=\"{path}\"";
-        public static string PluginDevDirectory(string path) => $"--dalamud-dev-plugin-directory=\"{path}\"";
         public static string AssetDirectory(string path) => $"--dalamud-asset-directory=\"{path}\"";
         public static string ClientLanguage(int language) => $"--dalamud-client-language={language}";
         public static string DelayInitialize(int delay) => $"--dalamud-delay-initialize={delay}";

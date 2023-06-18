@@ -34,7 +34,6 @@ public class UnixDalamudRunner : IDalamudRunner
             () => { startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory); },
             () => { startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath); },
             () => { startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory); },
-            () => { startInfo.DefaultPluginDirectory = compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory); },
             () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory); }
         );
 
@@ -51,7 +50,6 @@ public class UnixDalamudRunner : IDalamudRunner
             DalamudInjectorArgs.WorkingDirectory(startInfo.WorkingDirectory),
             DalamudInjectorArgs.ConfigurationPath(startInfo.ConfigurationPath),
             DalamudInjectorArgs.PluginDirectory(startInfo.PluginDirectory),
-            DalamudInjectorArgs.PluginDevDirectory(startInfo.DefaultPluginDirectory),
             DalamudInjectorArgs.AssetDirectory(startInfo.AssetDirectory),
             DalamudInjectorArgs.ClientLanguage((int)startInfo.Language),
             DalamudInjectorArgs.DelayInitialize(startInfo.DelayInitializeMs),

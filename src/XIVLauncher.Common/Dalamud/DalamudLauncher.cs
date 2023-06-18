@@ -84,16 +84,13 @@ namespace XIVLauncher.Common.Dalamud
             Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1})", this.gamePath.FullName, this.language);
 
             var ingamePluginPath = Path.Combine(this.configDirectory.FullName, "installedPlugins");
-            var defaultPluginPath = Path.Combine(this.configDirectory.FullName, "devPlugins");
 
             Directory.CreateDirectory(ingamePluginPath);
-            Directory.CreateDirectory(defaultPluginPath);
 
             var startInfo = new DalamudStartInfo
             {
                 Language = language,
                 PluginDirectory = ingamePluginPath,
-                DefaultPluginDirectory = defaultPluginPath,
                 ConfigurationPath = DalamudSettings.GetConfigPath(this.configDirectory),
                 AssetDirectory = this.updater.AssetDirectory.FullName,
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
