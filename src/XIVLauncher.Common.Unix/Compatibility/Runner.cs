@@ -13,11 +13,21 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public abstract class Runner
 {
-    public abstract string RunnerType { get; }
+    public virtual string RunnerType { get; set; }
 
     public string Folder { get; }
 
     public string DownloadUrl { get; }
+
+    public virtual string RunCommand => string.Empty;
+
+    public virtual string RunArguments => string.Empty;
+
+    public virtual string Server => string.Empty;
+
+    public virtual string PathCommand => RunCommand;
+
+    public virtual string PathArguments => string.Empty;
 
     protected DirectoryInfo Prefix;
 
@@ -40,30 +50,5 @@ public abstract class Runner
     {
         if (!Directory.Exists(folder)) return true;
         return !Directory.EnumerateFileSystemEntries(folder).Any();
-    }
-
-    public virtual string GetCommand()
-    {
-        return "";
-    }
-
-    public virtual string GetServer()
-    {
-        return "";
-    }
-
-    public virtual string GetParameters()
-    {
-        return "";
-    }
-
-    public virtual string GetPathCommand()
-    {
-        return "";
-    }
-
-    public virtual string GetPathParameters(string unixPath)
-    {
-        return unixPath;
     }
 }
