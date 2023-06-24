@@ -29,19 +29,16 @@ public class WineRunner
 
     private string xlcoreFolder;
 
-    public bool IsProton { get; }
-
     public Dictionary<string, string> Environment { get; }
 
-    public WineRunner(string runCmd, string runArgs, string folder, string url, string rootFolder, Dictionary<string, string> env = null, bool is64only = false, bool isProton = false)
+    public WineRunner(string runCmd, string runArgs, string folder, string url, string rootFolder, Dictionary<string, string> env = null, bool is64only = false)
     {
-        RunArguments = (isProton) ? "runinprefix" : "";
+        RunArguments = runArgs;
         wineFolder = folder;
         downloadUrl = url;
         toolFolder = Path.Combine(rootFolder, "compatibilitytool", "beta");
         xlcoreFolder = rootFolder;
         Environment = (env is null) ? new Dictionary<string, string>() : env;
-        IsProton = isProton;
         if (string.IsNullOrEmpty(runCmd))
         {
             RunCommand = Path.Combine(toolFolder, folder, "bin", (is64only) ? "wine" : "wine64");
@@ -49,21 +46,13 @@ public class WineRunner
         }
         else
         {
-            if (isProton)
-            {
-                RunCommand = Path.Combine(runCmd, "proton");
-                WineServer = Path.Combine(runCmd, "files", "bin", "wineserver");
-            }
+            if (File.Exists(Path.Combine(runCmd, "wine64")))
+                RunCommand = Path.Combine(runCmd, "wine64");
+            else if (File.Exists(Path.Combine(runCmd, "wine")))
+                RunCommand = Path.Combine(runCmd, "wine");
             else
-            {
-                if (File.Exists(Path.Combine(runCmd, "wine64")))
-                    RunCommand = Path.Combine(runCmd, "wine64");
-                else if (File.Exists(Path.Combine(runCmd, "wine")))
-                    RunCommand = Path.Combine(runCmd, "wine");
-                else
-                    throw new FileNotFoundException($"There is no wine or wine64 binary at {runCmd}.");
-                WineServer = Path.Combine(runCmd, "wineserver");
-            }
+                throw new FileNotFoundException($"There is no wine or wine64 binary at {runCmd}.");
+            WineServer = Path.Combine(runCmd, "wineserver");
         }
     }
 
@@ -88,12 +77,5 @@ public class WineRunner
         }
         else
             Log.Information("Did not try to download Wine.");
-    }
-
-    public string GetWinePrefix()
-    {
-        if (IsProton)
-            return Path.Combine(xlcoreFolder, "protonprefix", "pfx");
-        return Path.Combine(xlcoreFolder, "wineprefix");
     }
 }

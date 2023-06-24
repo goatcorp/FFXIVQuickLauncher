@@ -72,7 +72,7 @@ public class CompatibilityTools
         EnsurePrefix();
 
         // Check to make sure dxvk is valid
-        if (DxvkSettings.IsDxvk && !WineSettings.IsProton)
+        if (DxvkSettings.IsDxvk)
             await DxvkSettings.Install();
 
         IsToolReady = true;
@@ -112,7 +112,7 @@ public class CompatibilityTools
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
         
-        Log.Information("Running in prefix (array): {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
+        Log.Verbose("Running in prefix (array): {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -246,6 +246,28 @@ public class CompatibilityTools
         return unixPids.FirstOrDefault();
     }
 
+    public Int32 GetUnixProcessIdByName(string executableName)
+    {
+        int closest = 0;
+        var currentProcess = Process.GetCurrentProcess(); // Gets XIVLauncher.Core's process
+        bool nonunique = false;
+        foreach (var process in Process.GetProcessesByName(executableName))
+        {
+            if (process.Id < currentProcess.Id)
+                continue;  // Process was launched before XIVLauncher.Core
+
+            // Assume that the closest PID to XIVLauncher.Core's is the correct one. But log an error if more than one is found.
+            if ((closest - currentProcess.Id) > (process.Id - currentProcess.Id) || closest == 0)
+            {
+                if (closest != 0) nonunique = true;
+                closest = process.Id;
+            }
+            if (nonunique) Log.Error($"More than one {executableName} found! Selecting the most likely match with process id {closest}.");
+        }
+        if (closest != 0) Log.Information($"Process for {executableName} found using fallback method.");
+        return closest;
+    }
+
     public string UnixToWinePath(string unixPath)
     {
         var launchArguments = new string[] { "winepath", "--windows", unixPath };
@@ -267,7 +289,7 @@ public class CompatibilityTools
         {
             Arguments = "-k"
         };
-        psi.Environment.Add("WINEPREFIX", WineSettings.GetWinePrefix());
+        psi.Environment.Add("WINEPREFIX", Prefix.FullName);
 
         Process.Start(psi);
     }
