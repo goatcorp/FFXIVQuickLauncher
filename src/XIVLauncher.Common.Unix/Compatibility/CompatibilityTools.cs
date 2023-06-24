@@ -25,9 +25,9 @@ public class CompatibilityTools
 
     public bool IsToolReady { get; private set; }
 
-    public Runner WineSettings { get; private set; }
+    public WineRunner WineSettings { get; private set; }
 
-    public Runner DxvkSettings { get; private set; }
+    public DxvkRunner DxvkSettings { get; private set; }
 
     private Dictionary<string, string> EnvVars;
 
@@ -39,14 +39,15 @@ public class CompatibilityTools
 
     public bool IsToolDownloaded => File.Exists(WineSettings.RunCommand) && Prefix.Exists;
 
-    public CompatibilityTools(Runner wineSettings, Runner dxvkSettings, Dictionary<string, string> environment, string wineoverrides, DirectoryInfo prefix, DirectoryInfo toolsFolder, FileInfo logfile)
+
+    public CompatibilityTools(WineRunner wineSettings, DxvkRunner dxvkSettings, Dictionary<string, string> environment, string wineoverrides, DirectoryInfo prefix, DirectoryInfo toolsFolder, FileInfo logfile)
     {
         WineSettings = wineSettings;
         DxvkSettings = dxvkSettings;
         EnvVars = environment;
         Prefix = prefix;
         WineDLLOverrides = (string.IsNullOrEmpty(wineoverrides)) ? "msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi=n,b" : wineoverrides;
-        wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
+        wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
         dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
         LogFile = logfile;
 
@@ -71,7 +72,7 @@ public class CompatibilityTools
         EnsurePrefix();
 
         // Check to make sure dxvk is valid
-        if (DxvkSettings.RunnerType == "Dxvk")
+        if (DxvkSettings.IsDxvk && !WineSettings.IsProton)
             await DxvkSettings.Install();
 
         IsToolReady = true;
@@ -157,7 +158,6 @@ public class CompatibilityTools
         psi.WorkingDirectory = workingDirectory;
 
         var wineEnvironmentVariables = new Dictionary<string, string>();
-        wineEnvironmentVariables.Add("WINEPREFIX", Prefix.FullName);
         if (wineD3D)
             wineEnvironmentVariables.Add("WINEDLLOVERRIDES", "msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi=b");
         else
@@ -165,10 +165,12 @@ public class CompatibilityTools
         wineEnvironmentVariables.Add("XL_WINEONLINUX", "true");
 
         MergeDictionaries(psi.Environment, WineSettings.Environment);
-        if (DxvkSettings is not null)
-            MergeDictionaries(psi.Environment, DxvkSettings.Environment);
+        MergeDictionaries(psi.Environment, DxvkSettings.Environment);
         MergeDictionaries(psi.Environment, wineEnvironmentVariables);
         MergeDictionaries(psi.Environment, environment);
+        Log.Verbose("Launching with the following environment:");
+        foreach (var kvp in psi.Environment)
+            Log.Verbose(kvp.Key + "=" + kvp.Value);
 
 #if FLATPAK_NOTRIGHTNOW
         psi.FileName = "flatpak-spawn";
@@ -246,13 +248,8 @@ public class CompatibilityTools
 
     public string UnixToWinePath(string unixPath)
     {
-        var psi = new ProcessStartInfo(WineSettings.PathCommand);
-        psi.Arguments = WineSettings.PathArguments + " " + unixPath;
-        psi.RedirectStandardOutput = true;
-        psi.RedirectStandardError = true;
-        foreach (var envvar in WineSettings.Environment)
-            psi.Environment.Add(envvar.Key, envvar.Value);
-        var winePath = Process.Start(psi);
+        var launchArguments = new string[] { "winepath", "--windows", unixPath };
+        var winePath = RunInPrefix(launchArguments, redirectOutput: true);
         var output = winePath.StandardOutput.ReadToEnd();
         return output.Split('\n', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
     }
@@ -266,12 +263,18 @@ public class CompatibilityTools
 
     public void Kill()
     {
-        var psi = new ProcessStartInfo(WineSettings.Server)
+        var psi = new ProcessStartInfo(WineSettings.WineServer)
         {
             Arguments = "-k"
         };
-        psi.Environment.Add("WINEPREFIX", Prefix.FullName);
+        psi.Environment.Add("WINEPREFIX", WineSettings.GetWinePrefix());
 
         Process.Start(psi);
+    }
+
+    public static bool IsDirectoryEmpty(string folder)
+    {
+        if (!Directory.Exists(folder)) return true;
+        return !Directory.EnumerateFileSystemEntries(folder).Any();
     }
 }
