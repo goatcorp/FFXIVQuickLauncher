@@ -64,14 +64,14 @@ namespace XIVLauncher.Common.Dalamud
                 file.CopyTo(Path.Combine(target.FullName, file.Name));
         }
 
-        public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(DirectoryInfo baseDir, bool forceProxy)
+        public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(DalamudUpdater updater, DirectoryInfo baseDir)
         {
-            using var client = new HttpClient
+            using var metaClient = new HttpClient
             {
-                Timeout = TimeSpan.FromMinutes(4),
+                Timeout = TimeSpan.FromMinutes(30),
             };
 
-            client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            metaClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true,
             };
@@ -80,7 +80,7 @@ namespace XIVLauncher.Common.Dalamud
 
             Log.Verbose("[DASSET] Starting asset download");
 
-            var (isRefreshNeeded, info) = await CheckAssetRefreshNeeded(client, baseDir);
+            var (isRefreshNeeded, info) = await CheckAssetRefreshNeeded(metaClient, baseDir);
 
             // NOTE(goat): We should use a junction instead of copying assets to a new folder. There is no C# API for junctions in .NET Framework.
 
@@ -135,14 +135,18 @@ namespace XIVLauncher.Common.Dalamud
 
                 var packageUrl = info.PackageUrl;
 
-                if (forceProxy && packageUrl.Contains("/File/Get/"))
-                {
-                    packageUrl = packageUrl.Replace("/File/Get/", "/File/GetProxy/");
-                }
+                var tempPath = Path.GetTempFileName();
 
-                using var packageStream = await client.GetStreamAsync(packageUrl);
-                using var packageArc = new ZipArchive(packageStream, ZipArchiveMode.Read);
-                packageArc.ExtractToDirectory(assetsDir.FullName);
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
+
+                await updater.DownloadFile(packageUrl, tempPath, TimeSpan.FromMinutes(4));
+
+                using (var packageStream = File.OpenRead(tempPath))
+                using (var packageArc = new ZipArchive(packageStream, ZipArchiveMode.Read))
+                {
+                    packageArc.ExtractToDirectory(assetsDir.FullName);
+                }
 
                 try
                 {
@@ -153,6 +157,8 @@ namespace XIVLauncher.Common.Dalamud
                 {
                     Log.Error(ex, "[DASSET] Could not copy to dev dir");
                 }
+
+                File.Delete(tempPath);
             }
 
             if (isRefreshNeeded)
