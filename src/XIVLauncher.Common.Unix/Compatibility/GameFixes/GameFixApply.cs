@@ -1,5 +1,4 @@
 using System.IO;
-using XIVLauncher.Common.Unix.Compatibility.GameFixes.Implementations;
 
 namespace XIVLauncher.Common.Unix.Compatibility.GameFixes;
 
@@ -11,12 +10,9 @@ public class GameFixApply
 
     public event UpdateProgressDelegate UpdateProgress;
 
-    public GameFixApply(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory, DirectoryInfo tempDirectory)
+    public GameFixApply(GameFix[] gameFixes)
     {
-        this.fixes = new GameFix[]
-        {
-            new MacVideoFix(gameDirectory, configDirectory, winePrefixDirectory, tempDirectory),
-        };
+        this.fixes = gameFixes;
     }
 
     public void Run()
