@@ -1,18 +1,18 @@
 {
   "Refresh": {
-    "message": "_Refresh",
+    "message": "_Actualiser",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "Ignore": {
-    "message": "_Ignore",
+    "message": "_Ignorer",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "UninstallQuestion": {
-    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "message": "Désolé de vous voir partir!\nVoulez-vous supprimer tous vos paramètres, plugins et mots de passe sauvegardés ?",
     "description": "<>c__DisplayClass20_1.<Run>b__2"
   },
   "updatefailureerror": {
-    "message": "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ.",
+    "message": "XIVLauncher n'a pas pu vérifier les mises à jour. Cela peut être dû à des problèmes de connectivité à GitHub. Attendez quelques minutes, puis réessayez.\nDésactivez votre VPN, si vous en avez un. Vous pourriez avoir à ajouter une exception pour XIVLauncher dans la configuration de votre antivirus.\nSi ces erreurs continuent de survenir dans les minutes qui suivent, veuillez consulter la FAQ.",
     "description": "<Run>d__20.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
@@ -120,7 +120,7 @@
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
   },
   "SteamFtToggleAutoStartWarning": {
-    "message": "To apply this setting, XIVLauncher needs to restart.\nPlease reopen XIVLauncher.",
+    "message": "Pour appliquer ce paramètre, XIVLauncher doit redémarrer.\nVeuillez rouvrir XIVLauncher.",
     "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
   },
   "IntegrityCheckImpossible": {
@@ -156,7 +156,7 @@
     "description": "AccountSwitcherViewModel.SetupLoc"
   },
   "AdvancedSettings": {
-    "message": "XIVLauncher Advanced Settings",
+    "message": "Paramètres avancés XIVLauncher",
     "description": "AdvancedSettingsViewModel..ctor"
   },
   "OK": {
@@ -180,7 +180,7 @@
     "description": "AdvancedSettingsViewModel..ctor"
   },
   "ForceNorthAmerica": {
-    "message": "Always download North American news, headlines and banners",
+    "message": "Téléchargez toujours les actualités, les titres et les bannières nord-américaines",
     "description": "AdvancedSettingsViewModel..ctor"
   },
   "UpdateNotice": {
@@ -260,11 +260,11 @@
     "description": "DalamudLoadingOverlayViewModel.SetupLoc"
   },
   "ChooseGamePathFTS": {
-    "message": "Please select the folder your game is installed in.\r\nIt should contain the folders \"game\" and \"boot\".\n\nIf you don't have the game installed, you can choose an empty folder and XIVLauncher will install it for you.",
+    "message": "Veuillez sélectionner le dossier d'installation du jeu.\nIl doit contenir les dossiers \"game\" et \"boot\".\n\nSi vous n'avez pas installé le jeu, vous pouvez choisir un dossier vide et XIVLauncher l'installera pour vous.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamNotice": {
-    "message": "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.",
+    "message": "Veuillez cocher cette case si vous lancez généralement le jeu en utilisant Steam, ou si vous avez un compte avec une licence Steam.",
     "description": "FirstTimeSetupViewModel.SetupLoc"
   },
   "FirstTimeSteamCheckBox": {
@@ -408,15 +408,15 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start w/o Dalamud",
+    "message": "Démarrer sans Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoPluginLogin": {
-    "message": "Start w/o any Plugins",
+    "message": "Démarrer sans aucuns plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Third-Party Plugins",
+    "message": "Démarrer sans les plugins tiers",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -456,19 +456,19 @@
     "description": "MainWindowViewModel.<Login>b__21_0"
   },
   "GameRepairProcessExitRequired1": {
-    "message": "Close the following application to repair the game.",
+    "message": "Fermez l'application suivante pour réparer le jeu.",
     "description": "<>c.<RepairGame>b__25_1"
   },
   "GameRepairProcessExitRequiredPlural": {
-    "message": "Close the following applications to repair the game.",
+    "message": "Fermez les applications suivantes pour réparer le jeu.",
     "description": "<>c.<RepairGame>b__25_1"
   },
   "GameUpdateExitRequired1": {
-    "message": "Close the following application to patch the game.",
+    "message": "Fermez l'application suivante pour mettre à jour le jeu.",
     "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "GameUpdateExitRequiredPlural": {
-    "message": "Close the following applications to patch the game.",
+    "message": "Fermez les applications suivantes pour mettre à jour le jeu.",
     "description": "<>c.<TryHandlePatchAsync>b__34_2"
   },
   "AutoLoginIntro": {
@@ -532,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "De plus, 1 fichier étranger à l'installation originelle du jeu a été déplacé vers {0}.\nSi vous utilisiez ReShade, vous devrez le réinstaller.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "De plus, {0} fichier étranger à l'installation de base du jeu a été déplacé vers {1}.\nSi vous utilisiez ReShade, vous devrez le réinstaller.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -576,7 +576,7 @@
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
-    "message": "Could not download necessary data files to use Dalamud and plugins.\nThis could be a problem with your internet connection, or might be caused by your antivirus application blocking necessary files. The game will start, but you will not be able to use plugins.\n\nPlease check our FAQ for more information.",
+    "message": "Impossible de télécharger les fichiers de données nécessaires à l'utilisation de Dalamud et ses plugins.\nCeci peut être un problème de connectivité internet ou peut être un blocage de ces fichiers par votre antivirus. Le jeu démarrera, mais vous ne serez pas en mesure d'utiliser les plugins.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "AddonLoadError": {
@@ -620,15 +620,15 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamNullTicket": {
-    "message": "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.",
+    "message": "Steam n'a pas pu vous identifier. Il se peut que cela soit un incident temporaire avec Steam, essayez de nouveau dans quelques minutes.\n\nSi le problème persiste, veuillez vous assurer que Steam est démarré et que vous êtes connecté au compte lié à votre identifiant SE.\nSi vous jouez avec la version d'essai gratuite, cochez la case \"Utilisation d'un compte d'essai gratuit\" dans la partie \"Options du jeu\" des paramètres de XIVLauncher.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
-    "message": "Could not authenticate with Steam. Please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.\n\nContext: {0}",
+    "message": "Impossible de s'identifier avec Steam. Veuillez vous assurer que Steam est démarré et que vous êtes connecté au compte lié à votre identifiant SE.\nSi vous jouez avec la version d'essai gratuite, cochez la case \"Utilisation d'un compte d'essai gratuit\" dans la partie \"Options du jeu\" des paramètres de XIVLauncher.\n\nContexte : {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.",
+    "message": "Le compte auquel vous vous connectez n'est pas celui qui est lié au compte Steam sur votre PC. Vous ne pouvez uniquement vous connecter avec le compte lié à votre identifiant SE lorsque vous utilisez ce compte Steam.\n\nVeuillez vous connecter avec le compte correspondant. Le compte lié au compte Steam est {0} - Veuillez vous assurer qu'il n'y a pas de faute de frappe.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -727,6 +727,10 @@
     "message": "Il peut s'agir d'un problème temporaire. Veuillez essayer de redémarrer votre PC.\nIl est aussi possible que votre installation de jeu soit invalide - vous pouvez réparer votre installation de jeu avec un clic droit sur le bouton Connexion et en choisissant l'option \"Réparer les fichiers du jeu\".",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "Impossible de trouver l'exécutable du jeu.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
@@ -752,7 +756,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PasteButton": {
-    "message": "Click here to paste from the clipboard.",
+    "message": "Cliquez ici pour coller depuis le presse-papiers.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
@@ -828,15 +832,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpServerTooltip": {
-    "message": "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.",
+    "message": "Cela vous permettra d'envoyer votre code OTP à XIVLauncher directement depuis votre téléphone.\nCliquez sur \"En savoir plus\" pour savoir comment configurer ceci.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LearnMore": {
-    "message": "Learn More",
+    "message": "En savoir plus",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpLearnMoreTooltipLoc": {
-    "message": "Open a guide in your web browser.",
+    "message": "Ouvrez un guide dans votre navigateur Web.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {
@@ -868,11 +872,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoStartSteam": {
-    "message": "Start Steam when starting XIVLauncher",
+    "message": "Démarrer Steam quand XIVLauncher est démarré",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoStartSteamTooltip": {
-    "message": "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.",
+    "message": "Chaque fois que vous ouvrez XIVLauncher, il vérifiera si Steam est en cours d'exécution et le démarre s'il ne l'est pas.\nVous serez automatiquement affiché comme \"Dans un jeu\" sur Steam.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "SettingsGameSettings": {
@@ -1064,15 +1068,15 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "IsFreeTrial": {
-    "message": "Using free trial account",
+    "message": "Utilisation d'un compte d'essai gratuit",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OpenAdvancedSettings": {
-    "message": "Open Advanced Settings",
+    "message": "Ouvrir les Paramètres Avancés",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OpenAdvancedSettingsTip": {
-    "message": "Opens some settings for advanced users. Please only use these if you know what you're doing.",
+    "message": "Ouvre certains paramètres pour les utilisateurs avancés. Veuillez les utiliser uniquement si vous savez ce que vous faites.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "DisabledPlugin": {

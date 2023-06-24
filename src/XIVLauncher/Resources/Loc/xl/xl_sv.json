@@ -727,6 +727,10 @@
     "message": "Detta kan vara ett tillfälligt problem. Vänligen försök att starta om din dator.\nDet är möjligt att din spelinstallation inte är giltig - du kan reparera din spelinstallation genom att högerklicka inloggningsknappen och välja \"Reparera spelfiler\".",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "Kunde inte hitta spelprogrammet.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"

@@ -8,7 +8,7 @@
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "UninstallQuestion": {
-    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "message": "Jammer dat je gaat!\nWil je al je opgeslagen instellingen, plug-ins en wachtwoorden verwijderen?",
     "description": "<>c__DisplayClass20_1.<Run>b__2"
   },
   "updatefailureerror": {
@@ -412,7 +412,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoPluginLogin": {
-    "message": "Start w/o any Plugins",
+    "message": "Start zonder plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
@@ -532,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "Daarnaast is 1 bestand dat niet bij de originele game-installatie zat, verplaatst naar {0}.\nAls u ReShade gebruikte, moet u het opnieuw installeren.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "Daarnaast zijn {0} bestanden die niet bij de originele game-installatie zaten, verplaatst naar {1}.\nAls u ReShade gebruikte, moet u het opnieuw installeren.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -620,7 +620,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamNullTicket": {
-    "message": "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.",
+    "message": "Steam heeft je niet geverifieerd. Dit is waarschijnlijk een tijdelijk probleem met Steam en misschien moet je het over een paar minuten opnieuw proberen.\n\nAls het probleem zich blijft voordoen, zorg er dan voor dat Steam actief is en dat je bent ingelogd met het account dat aan je SE-ID is gekoppeld.\nAls je speelt met de gratis proefversie, vink dan het selectievakje \"Gebruik gratis proefaccount\" aan op het tabblad \"Spelinstellingen\" van de XIVLauncher-instellingen.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
@@ -628,7 +628,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.",
+    "message": "Het account waarmee je inlogt, is niet het account dat is gekoppeld aan het Steam-account op je pc. Je kunt alleen inloggen met het account dat aan je SE-ID is gekoppeld terwijl je dit Steam-account gebruikt.\n\nLog in op overeenkomende accounts. Het account dat is gekoppeld aan Steam is \"{0}\" - zorg ervoor dat er geen typefouten zijn.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -727,6 +727,10 @@
     "message": "Dit kan een tijdelijk probleem zijn. Probeer uw computer opnieuw op te starten.\nHet is mogelijk dat je spelinstallatie niet geldig is - je kunt je spelinstallatie repareren door met de rechtermuisknop op de inlogknop te klikken en te kiezen voor \"Repair game\".",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "Kan het spel executable niet vinden.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
@@ -752,7 +756,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PasteButton": {
-    "message": "Click here to paste from the clipboard.",
+    "message": "Klik hier om vanaf het klembord te plakken.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
