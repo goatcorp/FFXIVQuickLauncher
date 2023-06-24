@@ -36,6 +36,7 @@ public class WindowsDalamudRunner : IDalamudRunner
             DalamudInjectorArgs.Game(gameExe.FullName),
             DalamudInjectorArgs.WorkingDirectory(dalamudStartInfo.WorkingDirectory),
             DalamudInjectorArgs.ConfigurationPath(dalamudStartInfo.ConfigurationPath),
+            DalamudInjectorArgs.LoggingPath(dalamudStartInfo.LoggingPath),
             DalamudInjectorArgs.PluginDirectory(dalamudStartInfo.PluginDirectory),
             DalamudInjectorArgs.AssetDirectory(dalamudStartInfo.AssetDirectory),
             DalamudInjectorArgs.ClientLanguage((int)dalamudStartInfo.Language),
