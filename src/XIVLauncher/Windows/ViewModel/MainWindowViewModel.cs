@@ -740,9 +740,14 @@ namespace XIVLauncher.Windows.ViewModel
                             {
                                 summaries.Add(Loc.Localize("GameExitedPrematurelyErrorSummary",
                                     "XIVLauncher could not start the game correctly."));
-                                actionables.Add(Loc.Localize("GameExitedPrematurelyErrorActionable",
-                                    "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\"."));
                                 descriptions.Add(null);
+
+                                var actionableText = Loc.Localize("GameExitedPrematurelyErrorActionable",
+                                    "This may be a temporary issue. Please try restarting your PC.\nIt is possible that your game installation is not valid - you can repair your game installation by right clicking the Login button and choosing \"Repair game\".");
+                                actionableText += Loc.Localize("GameExitedPrematurelyErrorAV",
+                                    "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.");
+
+                                actionables.Add(actionableText);
                             }
 
                             builder.WithShowNewGitHubIssue(false);
