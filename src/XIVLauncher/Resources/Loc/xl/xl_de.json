@@ -727,6 +727,10 @@
     "message": "Dies kann ein temporäres Problem sein. Bitte versuche, deinen PC neu zu starten.\nEs ist möglich, dass deine Spielinstallation nicht gültig ist - du kannst deine Spielinstallation reparieren, indem du mit der rechten Maustaste auf den Login-Button klickst und \"Spiel reparieren\" auswählst.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nDieses Problem könnte auch dadurch verursacht werden, dass dein Antivirenprogramm XIVLauncher fälschlicherweise als bösartig markiert. Möglicherweise musst du dessen Einstellungen anpassen - bitte lese unsere FAQ für weitere Informationen.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "Die Programmdatei des Spiels konnte nicht gefunden werden.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"

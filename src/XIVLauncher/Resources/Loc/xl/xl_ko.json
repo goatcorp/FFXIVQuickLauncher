@@ -727,6 +727,10 @@
     "message": "일시적인 문제일 수 있습니다. PC를 재부팅하세요.\n게임 설치가 유효하지 않을 수 있습니다. 로그인 버튼을 우클릭해 \"게임 파일 복구\"를 선택하여 게임을 복구할 수 있습니다.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "게임 실행 파일을 찾을 수 없습니다.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"

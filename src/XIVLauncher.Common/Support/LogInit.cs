@@ -1,7 +1,8 @@
-using System.IO;
-using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using CommandLine;
 using Serilog;
+using Serilog.Enrichers.Sensitive;
 
 namespace XIVLauncher.Common.Support;
 
@@ -60,9 +61,45 @@ public static class LogInit
         config.MinimumLevel.Information();
 #endif
 
+        config.Enrich.WithSensitiveDataMasking(o =>
+        {
+            o.MaskingOperators = new List<IMaskingOperator>()
+            {
+                new SeEncryptedArgsMaskingOperator(),
+                new SeTestSidMaskingOperator(),
+            };
+        });
+
         if (parsed.Verbose)
             config.MinimumLevel.Verbose();
 
         Log.Logger = config.CreateLogger();
+    }
+
+    private class SeTestSidMaskingOperator : RegexMaskingOperator
+    {
+        private const string TEST_SID_PATTERN =
+            "(?:DEV\\.TestSID=\\S+)";
+
+        public SeTestSidMaskingOperator()
+            : base(TEST_SID_PATTERN, RegexOptions.IgnoreCase | RegexOptions.Compiled)
+        {
+        }
+
+        protected override bool ShouldMaskInput(string input)
+        {
+            return input != "DEV.TestSID=0";
+        }
+    }
+
+    private class SeEncryptedArgsMaskingOperator : RegexMaskingOperator
+    {
+        private const string ENCRYPTED_ARGS_PATTERN =
+            "(?:\\/\\/\\*\\*sqex[0-9]+\\S+\\/\\/)";
+
+        public SeEncryptedArgsMaskingOperator()
+            : base(ENCRYPTED_ARGS_PATTERN, RegexOptions.IgnoreCase | RegexOptions.Compiled)
+        {
+        }
     }
 }

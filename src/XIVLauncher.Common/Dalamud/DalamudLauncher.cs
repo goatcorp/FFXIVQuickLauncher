@@ -14,6 +14,7 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DalamudLoadMethod loadMethod;
         private readonly DirectoryInfo gamePath;
         private readonly DirectoryInfo configDirectory;
+        private readonly DirectoryInfo logPath;
         private readonly ClientLanguage language;
         private readonly IDalamudRunner runner;
         private readonly DalamudUpdater updater;
@@ -29,13 +30,15 @@ namespace XIVLauncher.Common.Dalamud
             OutOfDate,
         }
 
-        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin, bool noPlugin, bool noThirdPlugin, string troubleshootingData)
+        public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, DirectoryInfo logPath,
+                               ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin, bool noPlugin, bool noThirdPlugin, string troubleshootingData)
         {
             this.runner = runner;
             this.updater = updater;
             this.loadMethod = loadMethod;
             this.gamePath = gamePath;
             this.configDirectory = configDirectory;
+            this.logPath = logPath;
             this.language = clientLanguage;
             this.injectionDelay = injectionDelay;
             this.fakeLogin = fakeLogin;
@@ -84,17 +87,15 @@ namespace XIVLauncher.Common.Dalamud
             Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1})", this.gamePath.FullName, this.language);
 
             var ingamePluginPath = Path.Combine(this.configDirectory.FullName, "installedPlugins");
-            var defaultPluginPath = Path.Combine(this.configDirectory.FullName, "devPlugins");
 
             Directory.CreateDirectory(ingamePluginPath);
-            Directory.CreateDirectory(defaultPluginPath);
 
             var startInfo = new DalamudStartInfo
             {
                 Language = language,
                 PluginDirectory = ingamePluginPath,
-                DefaultPluginDirectory = defaultPluginPath,
                 ConfigurationPath = DalamudSettings.GetConfigPath(this.configDirectory),
+                LoggingPath = this.logPath.FullName,
                 AssetDirectory = this.updater.AssetDirectory.FullName,
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 WorkingDirectory = this.updater.Runner.Directory?.FullName,

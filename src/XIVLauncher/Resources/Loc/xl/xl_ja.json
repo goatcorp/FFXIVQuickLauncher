@@ -727,6 +727,10 @@
     "message": "これは一時的な問題かもしれません。PCを再起動してみてください。\nゲームファイルが正常でない可能性があります - ログインボタンを右クリックして「ゲームを修復」を選択することで、ゲームを修復できます。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "ゲームの実行ファイルが見つかりませんでした。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"

@@ -5,6 +5,7 @@
         <Description>Shared XIVLauncher platform-specific implementations for Windows.</Description>
         <VersionPrefix>1.0.0</VersionPrefix>
         <Nullable>disable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -40,5 +41,6 @@
 
         <!-- Custom steamworks, based on the chippy branch of Facepunch.Steamworks -->
         <PackageReference Include="goaaats.Steamworks" Version="2.3.4" />
+        <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
     </ItemGroup>
 </Project>

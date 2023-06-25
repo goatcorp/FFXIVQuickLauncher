@@ -727,6 +727,10 @@
     "message": "Potrebbe essere un problema temporaneo. Prova a riavviare il tuo PC.\nÈ possibile che l'installazione del gioco non sia valida - è possibile riparare l'installazione del gioco facendo clic destro sul pulsante Login e scegliendo \"Ripara il gioco\".",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "Impossibile trovare l' eseguibile del gioco.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
