@@ -29,7 +29,7 @@ public class DxvkRunner
     {
         Folder = folder;
         downloadUrl = url;
-        toolFolder = Path.Combine(rootFolder, "compatibilitytool", "wine");
+        toolFolder = Path.Combine(rootFolder, "compatibilitytool", "dxvk");
         prefix = Path.Combine(rootFolder, "wineprefix");
         Environment = (env is null) ? new Dictionary<string, string>() : env;
         IsDxvk = isDxvk;
