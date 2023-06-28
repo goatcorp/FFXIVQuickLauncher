@@ -17,7 +17,7 @@ public class DxvkSettings
     {
         Folder = folder;
         DownloadUrl = url;
-        Environment = (env is null) ? new Dictionary<string, string>() : env;
+        Environment = env ?? new Dictionary<string, string>();
         IsDxvk = isDxvk;
     }
 }

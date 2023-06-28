@@ -21,7 +21,7 @@ public class WineSettings
         RunCommand = string.Empty;
         Folder = folder;
         DownloadUrl = url;
-        Environment = (env is null) ? new Dictionary<string, string>() : env;
+        Environment = env ?? new Dictionary<string, string>();
 
         // Use customwine to pass in the custom wine bin/ path. If it's empty, we construct the RunCommand from the folder.
         if (string.IsNullOrEmpty(customwine))
