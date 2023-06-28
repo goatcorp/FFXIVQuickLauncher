@@ -25,13 +25,11 @@ public class CompatibilityTools
 
     public bool IsToolReady { get; private set; }
 
-    public WineRunner WineSettings { get; private set; }
+    public WineSettings WineSettings { get; private set; }
 
-    public DxvkRunner DxvkSettings { get; private set; }
+    public DxvkSettings DxvkSettings { get; private set; }
 
-    private Dictionary<string, string> EnvVars;
-
-    public string WineDLLOverrides;
+    private string WineDLLOverrides;
 
     private FileInfo LogFile;
 
@@ -39,19 +37,31 @@ public class CompatibilityTools
 
     public bool IsToolDownloaded => File.Exists(WineSettings.RunCommand) && Prefix.Exists;
 
+    public bool IsFlatpak;  // Not currently used.
 
-    public CompatibilityTools(WineRunner wineSettings, DxvkRunner dxvkSettings, Dictionary<string, string> environment, string wineoverrides, DirectoryInfo prefix, DirectoryInfo toolsFolder, FileInfo logfile)
+
+    public CompatibilityTools(WineSettings wineSettings, DxvkSettings dxvkSettings, DirectoryInfo prefix, DirectoryInfo toolsFolder, FileInfo logfile, bool isFlatpak)
     {
         WineSettings = wineSettings;
         DxvkSettings = dxvkSettings;
-        EnvVars = environment;
         Prefix = prefix;
-        WineDLLOverrides = (string.IsNullOrEmpty(wineoverrides)) ? "msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi=n,b" : wineoverrides;
-        wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
+        var wineoverrides = "msquic=,mscoree=n,b;";
+        if (dxvkSettings.IsDxvk)
+        {
+            wineoverrides += "d3d9,d3d11,d3d10core,dxgi=n,b";
+        }
+        else
+        {
+            wineoverrides += "d3d9,d3d11,d3d10core,dxgi=b";
+        }
+        WineDLLOverrides = wineoverrides;
+        wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
         dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
         LogFile = logfile;
 
         logWriter = new StreamWriter(LogFile.FullName);
+
+        IsFlatpak = isFlatpak;
 
         if (!wineDirectory.Exists)
             wineDirectory.Create();
@@ -66,16 +76,67 @@ public class CompatibilityTools
     public async Task EnsureTool(DirectoryInfo tempPath)
     {
         // Check to make sure wine is valid
-        await WineSettings.Install();
+        await EnsureWine();
         if (!File.Exists(WineSettings.RunCommand))
-            throw new FileNotFoundException("The wine64 binary was not found.");
+            throw new FileNotFoundException("No wine or wine64 binary could be found.");
         EnsurePrefix();
 
         // Check to make sure dxvk is valid
         if (DxvkSettings.IsDxvk)
-            await DxvkSettings.Install();
+            await EnsureDxvk();
 
         IsToolReady = true;
+    }
+
+    private async Task EnsureWine()
+    {
+        if (IsDirectoryEmpty(Path.Combine(wineDirectory.FullName, WineSettings.Folder)))
+        {
+            Log.Information($"Downloading Tool to {wineDirectory.FullName}");
+            if (string.IsNullOrEmpty(WineSettings.DownloadUrl))
+            {
+                Log.Error($"Attempted to download Wine runner without a download URL.");
+                throw new InvalidOperationException($"Wine runner does not exist, and no download URL was provided for it.");
+            }
+            Log.Information($"{WineSettings.Folder} does not exist. Downloading...");
+            using var client = new HttpClient();
+            var tempPath = Path.GetTempFileName();
+
+            File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WineSettings.DownloadUrl));
+            PlatformHelpers.Untar(tempPath, wineDirectory.FullName);
+
+            File.Delete(tempPath);
+        }
+        // This is for possible future wine builds with WoW64, which do not have a wine64 binary.
+        WineSettings.SetWineOrWine64(Path.Combine(wineDirectory.FullName, WineSettings.Folder, "bin"));
+    }
+
+    private async Task EnsureDxvk()
+    {
+        if (CompatibilityTools.IsDirectoryEmpty(Path.Combine(dxvkDirectory.FullName, DxvkSettings.Folder)))
+        {
+            if (string.IsNullOrEmpty(DxvkSettings.DownloadUrl))
+            {
+                Log.Error($"Attempted to download Dxvk without a download URL.");
+                throw new InvalidOperationException($"{DxvkSettings.Folder} does not exist, and no download URL was provided for it.");
+            }
+            Log.Information($"{DxvkSettings.Folder} does not exist. Downloading...");
+            using var client = new HttpClient();
+            var tempPath = Path.GetTempFileName();
+
+            File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(DxvkSettings.DownloadUrl));
+            PlatformHelpers.Untar(tempPath, dxvkDirectory.FullName);
+
+            File.Delete(tempPath);
+        }
+
+        var prefixinstall = Path.Combine(Prefix.FullName, "drive_c", "windows", "system32");
+        var files = new DirectoryInfo(Path.Combine(dxvkDirectory.FullName, DxvkSettings.Folder, "x64")).GetFiles();
+
+        foreach (FileInfo fileName in files)
+        {
+            fileName.CopyTo(Path.Combine(prefixinstall, fileName.Name), true);
+        }
     }
 
     private void ResetPrefix()
@@ -97,22 +158,19 @@ public class CompatibilityTools
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
         var psi = new ProcessStartInfo(WineSettings.RunCommand);
-        psi.Arguments = (WineSettings.RunArguments + " " + command).Trim();
+        psi.Arguments = command.Trim();
 
-        Log.Verbose("Running in prefix (string): {FileName} {Arguments}", psi.FileName, psi.Arguments);
+        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.Arguments);
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
         var psi = new ProcessStartInfo(WineSettings.RunCommand);
-        if (!string.IsNullOrEmpty(WineSettings.RunArguments))
-            foreach (var param in WineSettings.RunArguments.Split(null))
-                psi.ArgumentList.Add(param);
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
         
-        Log.Verbose("Running in prefix (array): {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
+        Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, psi.ArgumentList.Aggregate(string.Empty, (a, b) => a + " " + b));
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
@@ -168,29 +226,26 @@ public class CompatibilityTools
         MergeDictionaries(psi.Environment, DxvkSettings.Environment);
         MergeDictionaries(psi.Environment, wineEnvironmentVariables);
         MergeDictionaries(psi.Environment, environment);
-        Log.Verbose("Launching with the following environment:");
-        foreach (var kvp in psi.Environment)
-            Log.Verbose(kvp.Key + "=" + kvp.Value);
 
-#if FLATPAK_NOTRIGHTNOW
-        psi.FileName = "flatpak-spawn";
+// #if FLATPAK_NOTRIGHTNOW
+//         psi.FileName = "flatpak-spawn";
 
-        psi.ArgumentList.Insert(0, "--host");
-        psi.ArgumentList.Insert(1, WineSettings.RunCommand);
+//         psi.ArgumentList.Insert(0, "--host");
+//         psi.ArgumentList.Insert(1, WineSettings.RunCommand);
 
-        foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
-        {
-            psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
-        }
+//         foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
+//         {
+//             psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
+//         }
 
-        if (environment != null)
-        {
-            foreach (KeyValuePair<string, string> envVar in environment)
-            {
-                psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
-            }
-        }
-#endif
+//         if (environment != null)
+//         {
+//             foreach (KeyValuePair<string, string> envVar in environment)
+//             {
+//                 psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
+//             }
+//         }
+// #endif
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
@@ -234,7 +289,7 @@ public class CompatibilityTools
         return GetProcessIds(executableName).FirstOrDefault();
     }
 
-    public Int32 GetUnixProcessId(Int32 winePid)
+    public Int32 GetUnixProcessId(Int32 winePid, string executableName)
     {
         var wineDbg = RunInPrefix("winedbg --command \"info procmap\"", redirectOutput: true);
         var output = wineDbg.StandardOutput.ReadToEnd();
@@ -243,7 +298,8 @@ public class CompatibilityTools
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
             l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
         var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
-        return unixPids.FirstOrDefault();
+        var unixPid = unixPids.FirstOrDefault();
+        return (unixPid == 0) ? GetUnixProcessIdByName(executableName) : unixPid;
     }
 
     public Int32 GetUnixProcessIdByName(string executableName)

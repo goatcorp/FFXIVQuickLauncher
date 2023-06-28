@@ -74,18 +74,12 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add(gameArgs);
 
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
-        var output = dalamudProcess.StandardOutput.ReadLine() ?? "";
+        var output = dalamudProcess.StandardOutput.ReadLine();
+
+        if (output is null)
+            throw new DalamudRunnerException("An internal Dalamud error has occured");
 
         Console.WriteLine("[DALAMUD] " + output);
-
-        // Skip "ERROR: Could Not Get Primary Adapter Handle" and proceed to next line
-        if (output.Equals("ERROR: Could Not Get Primary Adapter Handle"))
-        {
-            output = dalamudProcess.StandardOutput.ReadLine() ?? "";
-        }
-
-        if (string.IsNullOrEmpty(output) || output.Contains("ERROR"))
-            throw new DalamudRunnerException("An internal Dalamud error has occured");
 
         new Thread(() =>
         {
@@ -99,32 +93,33 @@ public class UnixDalamudRunner : IDalamudRunner
         }).Start();
 
         int unixPid = 0;
-        int winePid = 0;
         try
         {
             var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
-            winePid = dalamudConsoleOutput.Pid;
+            unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid, gameExe.Name);
+
+            if (unixPid == 0)
+            {
+                Log.Error("Could not retrive Unix process ID, this feature works much better with a patched wine version");
+                return null;
+            }
+
+            var gameProcess = Process.GetProcessById(unixPid);
+            Log.Verbose($"Got {gameExe.Name} process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
+            return gameProcess;
         }
         catch (JsonReaderException ex)
         {
             Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
-        }
-
-        if (unixPid == 0)
-        {
-            Log.Warning("Using unpatched wine, or had a Dalamud error. Dalamud may not function properly. Trying backup method to get Unix process ID.");
-            // Use backup method to find pid of ffxiv process. This should always work provided the user doesn't try to run two instances of FFXIV at once.
+            // Try to get the FFXIV process anyway. That way XIVLauncher can close when FFXIV closes.
             unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+            if (unixPid == 0)
+            {
+                Log.Error("Could not retrive Unix process ID, this feature works much better with a patched wine version");
+                return null;
+            }
+            Log.Verbose($"Got {gameExe.Name} process with Unix pid {unixPid}");
+            return Process.GetProcessById(unixPid);
         }
-        if (unixPid == 0)
-        {
-            Log.Error($"Could not find Unix process ID of {gameExe.Name}.");
-            return null;
-        }
-
-        var gameProcess = Process.GetProcessById(unixPid);
-        Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {(winePid == 0 ? "unknown" : winePid)}");
-        return gameProcess;
     }
 }
