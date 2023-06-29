@@ -86,10 +86,15 @@ public class CompatibilityTools
             await EnsureDxvk();
 
         IsToolReady = true;
+        Log.Information($"Using wine at path {WineSettings.RunCommand}");
     }
 
     private async Task EnsureWine()
     {
+        if (WineSettings.IsManaged) return;
+
+        if (File.Exists(WineSettings.RunCommand)) return;
+        
         if (IsDirectoryEmpty(Path.Combine(wineDirectory.FullName, WineSettings.Folder)))
         {
             Log.Information($"Downloading Tool to {wineDirectory.FullName}");
@@ -227,25 +232,25 @@ public class CompatibilityTools
         MergeDictionaries(psi.Environment, wineEnvironmentVariables);
         MergeDictionaries(psi.Environment, environment);
 
-// #if FLATPAK_NOTRIGHTNOW
-//         psi.FileName = "flatpak-spawn";
+#if FLATPAK_NOTRIGHTNOW
+        psi.FileName = "flatpak-spawn";
 
-//         psi.ArgumentList.Insert(0, "--host");
-//         psi.ArgumentList.Insert(1, WineSettings.RunCommand);
+        psi.ArgumentList.Insert(0, "--host");
+        psi.ArgumentList.Insert(1, WineSettings.RunCommand);
 
-//         foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
-//         {
-//             psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
-//         }
+        foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
+        {
+            psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
+        }
 
-//         if (environment != null)
-//         {
-//             foreach (KeyValuePair<string, string> envVar in environment)
-//             {
-//                 psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
-//             }
-//         }
-// #endif
+        if (environment != null)
+        {
+            foreach (KeyValuePair<string, string> envVar in environment)
+            {
+                psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
+            }
+        }
+#endif
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi;

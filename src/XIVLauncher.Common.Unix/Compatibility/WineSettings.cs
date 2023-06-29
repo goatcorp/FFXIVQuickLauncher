@@ -14,6 +14,8 @@ public class WineSettings
 
     public string DownloadUrl { get; }
 
+    public bool IsManaged { get; }
+
     public Dictionary<string, string> Environment { get; }
 
     public WineSettings(string customwine, string folder, string url, string rootFolder, Dictionary<string, string> env = null)
@@ -29,19 +31,29 @@ public class WineSettings
             var wineBinPath = Path.Combine(Path.Combine(rootFolder, "compatibilitytool", "wine"), folder, "bin");
             SetWineOrWine64(wineBinPath);
             WineServer = Path.Combine(wineBinPath, "wineserver");
+            IsManaged = true;
         }
         else
         {
             SetWineOrWine64(customwine);
             WineServer = Path.Combine(customwine, "wineserver");
+            IsManaged = false;
         }
     }
 
     public void SetWineOrWine64(string path)
     {
         if (File.Exists(Path.Combine(path, "wine64")))
+        {
+            
             RunCommand = Path.Combine(path, "wine64");
+            return;
+        }
         if (File.Exists(Path.Combine(path, "wine")))
+        {
             RunCommand = Path.Combine(path, "wine");
+            return;
+        }
+        RunCommand = "";
     }
 }
