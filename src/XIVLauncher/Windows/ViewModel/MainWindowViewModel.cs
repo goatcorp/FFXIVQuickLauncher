@@ -1516,6 +1516,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string WaitingForMaintenanceLoc { get; private set; }
         public string CancelWithShortcutLoc { get; private set; }
         public string LoginTooltipLoc { get; private set; }
+        public string LaunchOptionsLoc { get; private set; }
         public string OpenAccountSwitcherLoc { get; private set; }
         public string SettingsLoc { get; private set; }
         public string WorldStatusLoc { get; private set; }
