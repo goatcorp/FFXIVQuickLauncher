@@ -313,14 +313,29 @@
                                                                          >
 
                                                     <materialDesign:PopupBox.ToggleContent>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <materialDesign:PackIcon Kind="ChevronDoubleDown" Background="#2196f3"
-                                                        BorderBrush="#2196f3" Foreground="White" Height="32" />
-                                                        </StackPanel>
+                                                        <Border Margin="0,0,0,0"
+                                                            BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                                                            BorderThickness="1" 
+                                                            CornerRadius="2"
+                                                            >
+                                                            <Border.Effect>
+                                                                <DropShadowEffect BlurRadius="2"
+                                                                    Opacity="0.4"
+                                                                    ShadowDepth="2"
+                                                                    Direction="315"/>
+                                                            </Border.Effect>
 
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <materialDesign:PackIcon Kind="ChevronDoubleDown" Background="{DynamicResource PrimaryHueMidBrush}"
+                                                                 Foreground="White" Height="30" />
+                                                            </StackPanel>
+
+                                                        </Border>
+                                                        
 
 
                                                     </materialDesign:PopupBox.ToggleContent>
+                                                
 
 
                                                 <materialDesign:PopupBox.PopupContent>
