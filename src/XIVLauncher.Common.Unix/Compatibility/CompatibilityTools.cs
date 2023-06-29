@@ -91,7 +91,7 @@ public class CompatibilityTools
 
     private async Task EnsureWine()
     {
-        if (WineSettings.IsManaged) return;
+        if (!WineSettings.IsManaged) return;
 
         if (File.Exists(WineSettings.RunCommand)) return;
         
