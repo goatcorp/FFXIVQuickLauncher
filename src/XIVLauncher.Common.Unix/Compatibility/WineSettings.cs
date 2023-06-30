@@ -6,7 +6,7 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public class WineSettings
 {
-    public string RunCommand { get; private set; }
+    public string RunCommand { get; set; }
 
     public string WineServer { get; }
 
@@ -29,31 +29,26 @@ public class WineSettings
         if (string.IsNullOrEmpty(customwine))
         {
             var wineBinPath = Path.Combine(Path.Combine(rootFolder, "compatibilitytool", "wine"), folder, "bin");
-            SetWineOrWine64(wineBinPath);
+            RunCommand = SetWineOrWine64(wineBinPath);
             WineServer = Path.Combine(wineBinPath, "wineserver");
             IsManaged = true;
         }
         else
         {
-            SetWineOrWine64(customwine);
+            RunCommand = SetWineOrWine64(customwine);
             WineServer = Path.Combine(customwine, "wineserver");
             IsManaged = false;
         }
     }
 
-    public void SetWineOrWine64(string path)
+    public string SetWineOrWine64(string path)
     {
         if (File.Exists(Path.Combine(path, "wine64")))
-        {
-            
-            RunCommand = Path.Combine(path, "wine64");
-            return;
-        }
+            return Path.Combine(path, "wine64");
+
         if (File.Exists(Path.Combine(path, "wine")))
-        {
-            RunCommand = Path.Combine(path, "wine");
-            return;
-        }
-        RunCommand = "";
+            return Path.Combine(path, "wine");
+            
+        return string.Empty;
     }
 }

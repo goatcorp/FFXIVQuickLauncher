@@ -93,55 +93,41 @@ public class CompatibilityTools
     {
         if (!WineSettings.IsManaged) return;
 
-        if (File.Exists(WineSettings.RunCommand)) return;
-        
-        if (IsDirectoryEmpty(Path.Combine(wineDirectory.FullName, WineSettings.Folder)))
-        {
-            Log.Information($"Downloading Tool to {wineDirectory.FullName}");
-            if (string.IsNullOrEmpty(WineSettings.DownloadUrl))
-            {
-                Log.Error($"Attempted to download Wine runner without a download URL.");
-                throw new InvalidOperationException($"Wine runner does not exist, and no download URL was provided for it.");
-            }
-            Log.Information($"{WineSettings.Folder} does not exist. Downloading...");
-            using var client = new HttpClient();
-            var tempPath = Path.GetTempFileName();
-
-            File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(WineSettings.DownloadUrl));
-            PlatformHelpers.Untar(tempPath, wineDirectory.FullName);
-
-            File.Delete(tempPath);
-        }
-        // This is for possible future wine builds with WoW64, which do not have a wine64 binary.
-        WineSettings.SetWineOrWine64(Path.Combine(wineDirectory.FullName, WineSettings.Folder, "bin"));
+        await DownloadTool(wineDirectory.FullName, WineSettings.Folder, WineSettings.DownloadUrl);
+       
+        // Use wine if wine64 isn't found. This is mostly for WoW64 wine builds.
+        WineSettings.RunCommand = WineSettings.SetWineOrWine64(Path.Combine(wineDirectory.FullName, WineSettings.Folder, "bin"));
     }
 
     private async Task EnsureDxvk()
     {
-        if (CompatibilityTools.IsDirectoryEmpty(Path.Combine(dxvkDirectory.FullName, DxvkSettings.Folder)))
-        {
-            if (string.IsNullOrEmpty(DxvkSettings.DownloadUrl))
-            {
-                Log.Error($"Attempted to download Dxvk without a download URL.");
-                throw new InvalidOperationException($"{DxvkSettings.Folder} does not exist, and no download URL was provided for it.");
-            }
-            Log.Information($"{DxvkSettings.Folder} does not exist. Downloading...");
-            using var client = new HttpClient();
-            var tempPath = Path.GetTempFileName();
-
-            File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(DxvkSettings.DownloadUrl));
-            PlatformHelpers.Untar(tempPath, dxvkDirectory.FullName);
-
-            File.Delete(tempPath);
-        }
+        await DownloadTool(dxvkDirectory.FullName, DxvkSettings.Folder, DxvkSettings.DownloadUrl);
 
         var prefixinstall = Path.Combine(Prefix.FullName, "drive_c", "windows", "system32");
         var files = new DirectoryInfo(Path.Combine(dxvkDirectory.FullName, DxvkSettings.Folder, "x64")).GetFiles();
 
         foreach (FileInfo fileName in files)
-        {
             fileName.CopyTo(Path.Combine(prefixinstall, fileName.Name), true);
-        }
+    }
+
+    private async Task DownloadTool(string toolDirectory, string toolFolder, string downloadUrl)
+    {
+        if (IsDirectoryEmpty(Path.Combine(toolDirectory, toolFolder)))
+        {
+            if (string.IsNullOrEmpty(downloadUrl))
+            {
+                Log.Error($"Attempted to download {toolFolder} without a download URL.");
+                throw new InvalidOperationException($"{toolFolder} does not exist, and no download URL was provided for it.");
+            }
+            Log.Information($"{toolFolder} does not exist. Downloading...");
+            using var client = new HttpClient();
+            var tempPath = Path.GetTempFileName();
+
+            File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(downloadUrl));
+            PlatformHelpers.Untar(tempPath, toolDirectory);
+
+            File.Delete(tempPath);
+        }        
     }
 
     private void ResetPrefix()
@@ -232,25 +218,25 @@ public class CompatibilityTools
         MergeDictionaries(psi.Environment, wineEnvironmentVariables);
         MergeDictionaries(psi.Environment, environment);
 
-#if FLATPAK_NOTRIGHTNOW
-        psi.FileName = "flatpak-spawn";
+// #if FLATPAK_NOTRIGHTNOW
+//         psi.FileName = "flatpak-spawn";
 
-        psi.ArgumentList.Insert(0, "--host");
-        psi.ArgumentList.Insert(1, WineSettings.RunCommand);
+//         psi.ArgumentList.Insert(0, "--host");
+//         psi.ArgumentList.Insert(1, WineSettings.RunCommand);
 
-        foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
-        {
-            psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
-        }
+//         foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
+//         {
+//             psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
+//         }
 
-        if (environment != null)
-        {
-            foreach (KeyValuePair<string, string> envVar in environment)
-            {
-                psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
-            }
-        }
-#endif
+//         if (environment != null)
+//         {
+//             foreach (KeyValuePair<string, string> envVar in environment)
+//             {
+//                 psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
+//             }
+//         }
+// #endif
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
@@ -355,7 +341,7 @@ public class CompatibilityTools
         Process.Start(psi);
     }
 
-    public static bool IsDirectoryEmpty(string folder)
+    private bool IsDirectoryEmpty(string folder)
     {
         if (!Directory.Exists(folder)) return true;
         return !Directory.EnumerateFileSystemEntries(folder).Any();
