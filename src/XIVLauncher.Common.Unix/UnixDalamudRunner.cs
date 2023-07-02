@@ -92,34 +92,32 @@ public class UnixDalamudRunner : IDalamudRunner
 
         }).Start();
 
+        // For some reason, if there is a return statement in the try block, then any returns from the catch statment onward will
+        // trigger an exception when XLCore tries to get the exit code. Doing the return *after* the whole try-catch block works, however.
         int unixPid = 0;
+        int winePid = 0;
         try
         {
             var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid, gameExe.Name);
-
-            if (unixPid == 0)
-            {
-                Log.Error("Could not retrive Unix process ID, this feature works much better with a patched wine version");
-                return null;
-            }
-
-            var gameProcess = Process.GetProcessById(unixPid);
-            Log.Verbose($"Got {gameExe.Name} process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
-            return gameProcess;
+            winePid = dalamudConsoleOutput.Pid;
+            unixPid = compatibility.GetUnixProcessId(winePid, gameExe.Name);
         }
         catch (JsonReaderException ex)
         {
             Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
             // Try to get the FFXIV process anyway. That way XIVLauncher can close when FFXIV closes.
             unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
-            if (unixPid == 0)
-            {
-                Log.Error("Could not retrive Unix process ID, this feature works much better with a patched wine version");
-                return null;
-            }
-            Log.Verbose($"Got {gameExe.Name} process with Unix pid {unixPid}");
-            return Process.GetProcessById(unixPid);
         }
+
+        if (unixPid == 0)
+        {
+            Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version.");
+            return null;
+        }
+
+        var gameProcess = Process.GetProcessById(unixPid);
+        var winePidInfo = (winePid == 0) ? string.Empty : $" and Wine pid {winePid}";
+        Log.Verbose($"Got {gameExe.Name} process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}{winePidInfo}");
+        return gameProcess;
     }
 }
