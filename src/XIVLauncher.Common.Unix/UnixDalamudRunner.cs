@@ -74,56 +74,57 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add(gameArgs);
 
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
-        var output = dalamudProcess.StandardOutput.ReadLine() ?? "";
 
-        Console.WriteLine(output);
-
-        // Skip "ERROR: Could Not Get Primary Adapter Handle" and proceed to next line
-        if (output.Equals("ERROR: Could Not Get Primary Adapter Handle"))
+        // Proton-based wine sometimes throws a meaningless error, as does the ReShade Effects Shader Toggler (REST).
+        // Skip up to two errors (or any two other non-json lines). If the third line is also an error, just continue as normal and catch the error.
+        string output;
+        int dalamudErrorCount = 0;
+        do
         {
-            output = dalamudProcess.StandardOutput.ReadLine() ?? "";
-            Console.WriteLine(output);
-        }
-
-        if (string.IsNullOrEmpty(output) || output.Contains("ERROR"))
-            throw new DalamudRunnerException("An internal Dalamud error has occured");
-        
+            output = dalamudProcess.StandardOutput.ReadLine();
+            if (output is null)
+                throw new DalamudRunnerException("An internal Dalamud error has occured");
+            Console.WriteLine("[DALAMUD] " + output);         
+            dalamudErrorCount++;
+        } while (!output.StartsWith('{') && dalamudErrorCount <= 2);
+ 
         new Thread(() =>
         {
             while (!dalamudProcess.StandardOutput.EndOfStream)
             {
                 var output = dalamudProcess.StandardOutput.ReadLine();
                 if (output != null)
-                    Console.WriteLine(output);
+                    Console.WriteLine("[DALAMUD] " + output);
             }
 
         }).Start();
 
+        // For some reason, if there is a return statement in the try block, then any returns from the catch statment onward will
+        // trigger an exception when XLCore tries to get the exit code. Doing the return *after* the whole try-catch block works, however.
+        int unixPid = 0;
+        int winePid = 0;
         try
         {
             var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
-
-            if (unixPid == 0)
-            {
-                Log.Warning("Using unpatched wine. This may cause issues with Dalamud. Trying backup method to get Unix process ID.");
-                // Use backup method to find pid of ffxiv process. This should always work provided the user doesn't try to run two instances of FFXIV at once.
-                unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
-            }
-            if (unixPid == 0)
-            {
-                Log.Error($"Could not find Unix process ID of {gameExe.Name}.");
-                return null;
-            }
-
-            var gameProcess = Process.GetProcessById(unixPid);
-            Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
-            return gameProcess;
+            winePid = dalamudConsoleOutput.Pid;
+            unixPid = compatibility.GetUnixProcessId(winePid, gameExe.Name);
         }
         catch (JsonReaderException ex)
         {
             Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
+            // Try to get the FFXIV process anyway. That way XIVLauncher can close when FFXIV closes.
+            unixPid = compatibility.GetUnixProcessId(0, gameExe.Name);
+        }
+
+        if (unixPid == 0)
+        {
+            Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version.");
             return null;
         }
+
+        var gameProcess = Process.GetProcessById(unixPid);
+        var winePidInfo = (winePid == 0) ? string.Empty : $" and Wine pid {winePid}";
+        Log.Verbose($"Got {gameExe.Name} process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}{winePidInfo}.");
+        return gameProcess;
     }
 }
