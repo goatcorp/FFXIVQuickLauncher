@@ -282,6 +282,8 @@ public class CompatibilityTools
 
     public Int32 GetUnixProcessId(Int32 winePid, string executableName)
     {
+        if (winePid == 0)
+            return GetUnixProcessIdByName(executableName);
         var wineDbg = RunInPrefix("winedbg --command \"info procmap\"", redirectOutput: true);
         var output = wineDbg.StandardOutput.ReadToEnd();
         if (output.Contains("syntax error\n"))
