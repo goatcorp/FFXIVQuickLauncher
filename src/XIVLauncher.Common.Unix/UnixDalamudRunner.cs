@@ -74,12 +74,19 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add(gameArgs);
 
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
-        var output = dalamudProcess.StandardOutput.ReadLine();
 
-        if (output is null)
-            throw new DalamudRunnerException("An internal Dalamud error has occured");
-
-        Console.WriteLine("[DALAMUD] " + output);
+        // Proton-based wine sometimes throws a meaningless error, as does the ReShade Effects Shader Toggler (REST).
+        // Skip up to two errors (or any two other non-json lines). If the third line is also an error, just continue as normal and catch the error.
+        string output;
+        int dalamudErrorCount = 0;
+        do
+        {
+            output = dalamudProcess.StandardOutput.ReadLine();
+            if (output is null)
+                throw new DalamudRunnerException("An internal Dalamud error has occured");
+            Console.WriteLine("[DALAMUD] " + output);         
+            dalamudErrorCount++;
+        } while (!output.StartsWith('{') && dalamudErrorCount <= 2);
 
         new Thread(() =>
         {
@@ -106,7 +113,7 @@ public class UnixDalamudRunner : IDalamudRunner
         {
             Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
             // Try to get the FFXIV process anyway. That way XIVLauncher can close when FFXIV closes.
-            unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
+            unixPid = compatibility.GetUnixProcessId(0, gameExe.Name);
         }
 
         if (unixPid == 0)
@@ -117,7 +124,7 @@ public class UnixDalamudRunner : IDalamudRunner
 
         var gameProcess = Process.GetProcessById(unixPid);
         var winePidInfo = (winePid == 0) ? string.Empty : $" and Wine pid {winePid}";
-        Log.Verbose($"Got {gameExe.Name} process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}{winePidInfo}");
+        Log.Verbose($"Got {gameExe.Name} process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}{winePidInfo}.");
         return gameProcess;
     }
 }

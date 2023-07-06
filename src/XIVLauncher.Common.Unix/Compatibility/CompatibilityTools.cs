@@ -293,7 +293,7 @@ public class CompatibilityTools
         return (unixPid == 0) ? GetUnixProcessIdByName(executableName) : unixPid;
     }
 
-    public Int32 GetUnixProcessIdByName(string executableName)
+    private Int32 GetUnixProcessIdByName(string executableName)
     {
         int closest = 0;
         int early = 0;
