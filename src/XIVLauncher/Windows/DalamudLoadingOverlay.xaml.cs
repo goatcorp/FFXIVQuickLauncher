@@ -2,6 +2,7 @@
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using CheapLoc;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
@@ -22,6 +23,9 @@ namespace XIVLauncher.Windows
             InitializeComponent();
 
             this.DataContext = new DalamudLoadingOverlayViewModel();
+
+            var interop = new WindowInteropHelper(this);
+            interop.EnsureHandle();
         }
 
         private IDalamudLoadingOverlay.DalamudUpdateStep _progress;

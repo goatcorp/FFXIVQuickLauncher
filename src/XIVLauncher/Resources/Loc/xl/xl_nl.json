@@ -7,9 +7,13 @@
     "message": "_Negeren",
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
+  "UninstallQuestion": {
+    "message": "Jammer dat je gaat!\nWil je al je opgeslagen instellingen, plug-ins en wachtwoorden verwijderen?",
+    "description": "<>c__DisplayClass20_1.<Run>b__2"
+  },
   "updatefailureerror": {
     "message": "XIVLauncher kon niet controleren op updates. Dit kan worden veroorzaakt door problemen met het internetverbinding. Wacht een paar minuten en probeer het opnieuw. \nSchakel uw VPN uit, als u die heeft. Mogelijk moet u XIVLauncher ook uitsluiten van uw antivirusprogramma. \nAls dit na enkele minuten blijft mislukken, bekijk dan de FAQ.",
-    "description": "<Run>d__19.MoveNext"
+    "description": "<Run>d__20.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
     "message": "U hebt geen spel installatie ingesteld. XIVLauncher kan de officiële launcher niet starten.",
@@ -89,11 +93,11 @@
   },
   "NewsDlFailed": {
     "message": "Kon de nieuwsgegevens niet downloaden.",
-    "description": "MainWindow.<SetupHeadlines>b__12_3"
+    "description": "MainWindow.<SetupHeadlines>b__13_3"
   },
   "MaintenanceQueueBootPatch": {
     "message": "Er is een patch voor de officiële launcher gedetecteerd.\nDit betekent meestal dat er ook een patch voor het spel is.\n\nU wordt nu ingelogd.",
-    "description": "<OnMaintenanceQueueTimerEvent>d__21.MoveNext"
+    "description": "<OnMaintenanceQueueTimerEvent>d__22.MoveNext"
   },
   "SettingsGamePatchPathError": {
     "message": "Spel en patch download paden kunnen niet hetzelfde zijn.\nZorg ervoor dat je verschillende game en patch download paden kiest.",
@@ -114,14 +118,6 @@
   "DalamudCompatCheckFailed": {
     "message": "Kan geen contact opnemen met de server om de huidige compatibele spel versie voor Dalamud op te halen. Dit kan betekenen dat uw .NET installatie te oud is.\nRaadpleeg de Discord voor meer informatie.",
     "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
-  },
-  "PluginPathNotFound": {
-    "message": "Kan plugin pad niet vinden.",
-    "description": "SettingsControl.TogglePlugin_OnClick"
-  },
-  "GameIsOpenPluginLocked": {
-    "message": "Het spel is geopend, sluit het alstublieft en probeer het opnieuw.",
-    "description": "SettingsControl.DeletePlugin_OnClick"
   },
   "SteamFtToggleAutoStartWarning": {
     "message": "Als u deze instelling wilt toepassen, moet XIVLauncher opnieuw opstarten.\n\nHeropen XIVLauncher.",
@@ -415,6 +411,10 @@
     "message": "Start zonder Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxNoPluginLogin": {
+    "message": "Start zonder plugins",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxNoThirdLogin": {
     "message": "Start zonder plugins can derden",
     "description": "MainWindowViewModel.SetupLoc"
@@ -532,11 +532,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Daarnaast is 1 bestand dat de oorspronkelijke spelinstallatie niet heeft meegemaakt, verplaatst naar {0}.\nAls je GShade zou gebruiken, moet je het opnieuw installeren.",
+    "message": "Daarnaast is 1 bestand dat niet bij de originele game-installatie zat, verplaatst naar {0}.\nAls u ReShade gebruikte, moet u het opnieuw installeren.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Daarnaast zijn {0} bestanden die niet met de oorspronkelijke installatie van het spel waren verplaatst naar {1}.\nAls je GShade zou gebruiken, moet je het opnieuw installeren.",
+    "message": "Daarnaast zijn {0} bestanden die niet bij de originele game-installatie zaten, verplaatst naar {1}.\nAls u ReShade gebruikte, moet u het opnieuw installeren.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -573,10 +573,6 @@
   },
   "DalamudArchError": {
     "message": "Dalamud kan de architectuur van uw computer niet uitvoeren. Zorg er alstublieft voor dat u een 64-bits versie van Windows gebruikt.\nAls u Windows op ARM gebruikt, zorg er dan voor dat x64-Emulatie is ingeschakeld voor XIVLauncher.",
-    "description": "<StartGameAndAddon>d__29.MoveNext"
-  },
-  "DalamudRunnerError": {
-    "message": "Kon Dalamud niet succesvol lanceren. Dit kan worden veroorzaakt door je antivirus.\nOm dit te voorkomen, voeg een uitzondering voor de map \"%AppData%\\XIVLauncher\\addons\" toe.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudEnsurementError": {
@@ -623,12 +619,16 @@
     "message": "Versie-informatie kon niet worden gelezen uit uw spelbestanden.\n\nU moet de spelbestanden opnieuw installeren of repareren. Klik met de rechtermuisknop op de inlogknop in XIVLauncher en kies \"Repair Game\".",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
+  "LoginSteamNullTicket": {
+    "message": "Steam heeft je niet geverifieerd. Dit is waarschijnlijk een tijdelijk probleem met Steam en misschien moet je het over een paar minuten opnieuw proberen.\n\nAls het probleem zich blijft voordoen, zorg er dan voor dat Steam actief is en dat je bent ingelogd met het account dat aan je SE-ID is gekoppeld.\nAls je speelt met de gratis proefversie, vink dan het selectievakje \"Gebruik gratis proefaccount\" aan op het tabblad \"Spelinstellingen\" van de XIVLauncher-instellingen.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
   "LoginSteamIssue": {
     "message": "Kan niet verifiëren met Steam. Zorg ervoor dat Steam actief is en dat je bent ingelogd met het account dat is gekoppeld aan je SE ID. Als u speelt met de gratis proefversie, vink dan het selectievakje \"Gratis proefaccount gebruiken\" aan op het tabblad \"Spel Instellingen\" van de XIVLauncher-instellingen.\n\nContext: {0}",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "Het account waarmee je inlogt is NIET het account dat gekoppeld is aan het Steam account op je PC. Je kan alleen inloggen met de account gekoppeld aan je SE ID tijdens het gebruik van deze Steam account.\n\nLog in op overeenkomende accounts.",
+    "message": "Het account waarmee je inlogt, is niet het account dat is gekoppeld aan het Steam-account op je pc. Je kunt alleen inloggen met het account dat aan je SE-ID is gekoppeld terwijl je dit Steam-account gebruikt.\n\nLog in op overeenkomende accounts. Het account dat is gekoppeld aan Steam is \"{0}\" - zorg ervoor dat er geen typefouten zijn.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -727,6 +727,10 @@
     "message": "Dit kan een tijdelijk probleem zijn. Probeer uw computer opnieuw op te starten.\nHet is mogelijk dat je spelinstallatie niet geldig is - je kunt je spelinstallatie repareren door met de rechtermuisknop op de inlogknop te klikken en te kiezen voor \"Repair game\".",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
   "BinaryNotPresentErrorSummary": {
     "message": "Kan het spel executable niet vinden.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
@@ -749,6 +753,10 @@
   },
   "OtpInputPromptBad": {
     "message": "Voer een geldige OTP-sleutel in.\nHet is 6 cijfers lang.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PasteButton": {
+    "message": "Klik hier om vanaf het klembord te plakken.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {

@@ -215,32 +215,6 @@
                     </ScrollViewer>
                 </Grid>
             </TabItem>
-            <TabItem Header="Plugins">
-                <Grid Margin="10,10,10,0">
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
-                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding PluginsDescriptionLoc}" />
-
-                    <!-- BUG(goat): There seems to be an issue with material design wherein this has an unintended margin on? Need to go negative to restore the original look. -->
-                    <materialDesign:Card Margin="0,-15,0,0" Height="230">
-                        <ListView x:Name="PluginListView" Height="230"
-                                  Foreground="{DynamicResource MaterialDesignBody}">
-                            <ListView.ContextMenu>
-                                <ContextMenu StaysOpen="true">
-                                    <MenuItem Header="{Binding PluginsToggleLoc}"
-                                              Click="TogglePlugin_OnClick"
-                                              Foreground="{DynamicResource MaterialDesignBody}" />
-                                    <MenuItem Header="{Binding PluginsDeleteLoc}"
-                                              Click="DeletePlugin_OnClick"
-                                              Foreground="{DynamicResource MaterialDesignBody}" />
-                                </ContextMenu>
-                            </ListView.ContextMenu>
-                        </ListView>
-                    </materialDesign:Card>
-
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                               Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,10" Text="{Binding PluginsInstallHintLoc}"/>
-                </Grid>
-            </TabItem>
             <TabItem Header="{Binding SettingsPatchingLoc}">
                 <StackPanel>
                     <CheckBox x:Name="AskBeforePatchingCheckBox"

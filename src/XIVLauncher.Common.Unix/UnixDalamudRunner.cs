@@ -31,10 +31,10 @@ public class UnixDalamudRunner : IDalamudRunner
         Parallel.Invoke(
             () => { gameExePath = compatibility.UnixToWinePath(gameExe.FullName); },
             () => { dotnetRuntimePath = compatibility.UnixToWinePath(dotnetRuntime.FullName); },
+            () => { startInfo.LoggingPath = compatibility.UnixToWinePath(startInfo.LoggingPath); },
             () => { startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory); },
             () => { startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath); },
             () => { startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory); },
-            () => { startInfo.DefaultPluginDirectory = compatibility.UnixToWinePath(startInfo.DefaultPluginDirectory); },
             () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory); }
         );
 
@@ -50,8 +50,8 @@ public class UnixDalamudRunner : IDalamudRunner
             DalamudInjectorArgs.Game(gameExePath),
             DalamudInjectorArgs.WorkingDirectory(startInfo.WorkingDirectory),
             DalamudInjectorArgs.ConfigurationPath(startInfo.ConfigurationPath),
+            DalamudInjectorArgs.LoggingPath(startInfo.LoggingPath),
             DalamudInjectorArgs.PluginDirectory(startInfo.PluginDirectory),
-            DalamudInjectorArgs.PluginDevDirectory(startInfo.DefaultPluginDirectory),
             DalamudInjectorArgs.AssetDirectory(startInfo.AssetDirectory),
             DalamudInjectorArgs.ClientLanguage((int)startInfo.Language),
             DalamudInjectorArgs.DelayInitialize(startInfo.DelayInitializeMs),

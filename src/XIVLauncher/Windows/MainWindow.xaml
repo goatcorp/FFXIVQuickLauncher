@@ -290,10 +290,14 @@
                                                         <ContextMenu x:Name="LoginContextMenu">
                                                             <MenuItem Header="{Binding LoginRepairLoc}"
                                                                       Command="{Binding Path=LoginRepairCommand}" />
+                                                            <Separator/>
                                                             <MenuItem Header="{Binding LoginNoDalamudLoc}"
                                                                       Command="{Binding Path=LoginNoDalamudCommand}" />
+                                                            <MenuItem Header="{Binding LoginNoPluginsLoc}"
+                                                                      Command="{Binding Path=LoginNoPluginsCommand}" />
                                                             <MenuItem Header="{Binding LoginNoThirdLoc}"
                                                                       Command="{Binding Path=LoginNoThirdCommand}" />
+                                                            <Separator/>
                                                             <MenuItem Header="{Binding LoginNoStartLoc}"
                                                                       Command="{Binding Path=LoginNoStartCommand}" />
                                                         </ContextMenu>
