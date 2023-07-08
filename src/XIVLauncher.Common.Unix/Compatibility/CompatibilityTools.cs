@@ -212,6 +212,9 @@ public class CompatibilityTools
         else
             wineEnvironmentVariables.Add("WINEDLLOVERRIDES", WineDLLOverrides);
         wineEnvironmentVariables.Add("XL_WINEONLINUX", "true");
+        var ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD");
+        if (ldPreload is not null)
+            wineEnvironmentVariables.Add("LD_PRELOAD", ldPreload);
 
         MergeDictionaries(psi.Environment, WineSettings.Environment);
         MergeDictionaries(psi.Environment, DxvkSettings.Environment);
