@@ -229,7 +229,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 try
                 {
-                    if (Directory.Exists(toDelete.FullName) && toDelete.Name != "dev" & toDelete.Name != version.ToString())
+                    if (Directory.Exists(toDelete.FullName) && toDelete.Name != "dev" && toDelete.Name != version.ToString())
                     {
                         Directory.Delete(toDelete.FullName, true);
                         Log.Verbose("[DASSET] Cleaned out old v{Version}", toDelete.Name);
