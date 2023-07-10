@@ -166,7 +166,7 @@ namespace XIVLauncher.Common.Dalamud
 
             Log.Verbose("[DASSET] Assets OK at {0}", assetsDir.FullName);
 
-            CleanUpOld(baseDir, info.Version - 1);
+            CleanUpOld(baseDir, info.Version);
 
             return (assetsDir, info.Version);
         }
@@ -225,16 +225,14 @@ namespace XIVLauncher.Common.Dalamud
             if (GameHelpers.CheckIsGameOpen())
                 return;
 
-            for (int i = version; i >= version - 30; i--)
+            foreach (DirectoryInfo toDelete in baseDir.GetDirectories())
             {
-                var toDelete = Path.Combine(baseDir.FullName, i.ToString());
-
                 try
                 {
-                    if (Directory.Exists(toDelete))
+                    if (Directory.Exists(toDelete.FullName) && toDelete.Name != "dev" && toDelete.Name != version.ToString())
                     {
-                        Directory.Delete(toDelete, true);
-                        Log.Verbose("[DASSET] Cleaned out old v{Version}", i);
+                        Directory.Delete(toDelete.FullName, true);
+                        Log.Verbose("[DASSET] Cleaned out old v{Version}", toDelete.Name);
                     }
                 }
                 catch (Exception ex)
