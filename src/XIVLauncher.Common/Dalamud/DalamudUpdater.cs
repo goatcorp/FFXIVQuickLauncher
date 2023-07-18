@@ -400,6 +400,15 @@ namespace XIVLauncher.Common.Dalamud
             File.WriteAllText(Path.Combine(addonPath.FullName, "version.json"), info);
         }
 
+        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+        {
+            foreach (DirectoryInfo dir in source.GetDirectories())
+                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+
+            foreach (FileInfo file in source.GetFiles())
+                file.CopyTo(Path.Combine(target.FullName, file.Name));
+        }
+
         private async Task DownloadDalamud(DirectoryInfo addonPath, DalamudVersionInfo version)
         {
             // Ensure directory exists
@@ -433,10 +442,7 @@ namespace XIVLauncher.Common.Dalamud
                     devPath.Create();
                 }
 
-                foreach (var fileInfo in addonPath.GetFiles())
-                {
-                    fileInfo.CopyTo(Path.Combine(devPath.FullName, fileInfo.Name));
-                }
+                CopyFilesRecursively(addonPath, devPath);
             }
             catch (Exception ex)
             {
