@@ -75,18 +75,24 @@ public class UnixDalamudRunner : IDalamudRunner
 
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
 
-        // Proton-based wine sometimes throws a meaningless error, as does the ReShade Effects Shader Toggler (REST).
-        // Skip up to two errors (or any two other non-json lines). If the third line is also an error, just continue as normal and catch the error.
-        string output;
-        int dalamudErrorCount = 0;
-        do
+        DalamudConsoleOutput dalamudConsoleOutput = null;
+
+        while (dalamudConsoleOutput == null)
         {
-            output = dalamudProcess.StandardOutput.ReadLine();
-            if (output is null)
+            var output = dalamudProcess.StandardOutput.ReadLine();
+            if (output == null)
                 throw new DalamudRunnerException("An internal Dalamud error has occured");
-            Console.WriteLine(output);         
-            dalamudErrorCount++;
-        } while (!output.StartsWith('{') && dalamudErrorCount <= 2);
+            Console.WriteLine(output);
+
+            try
+            {
+                dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, $"Couldn't parse Dalamud output: {output}");
+            }
+        }
 
         new Thread(() =>
         {
@@ -96,35 +102,26 @@ public class UnixDalamudRunner : IDalamudRunner
                 if (output != null)
                     Console.WriteLine(output);
             }
-
         }).Start();
 
-        // For some reason, if there is a return statement in the try block, then any returns from the catch statment onward will
-        // trigger an exception when XLCore tries to get the exit code. Doing the return *after* the whole try-catch block works, however.
-        int unixPid = 0;
-        int winePid = 0;
         try
         {
-            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
-            winePid = dalamudConsoleOutput.Pid;
-            unixPid = compatibility.GetUnixProcessId(winePid);
-        }
-        catch (JsonReaderException ex)
-        {
-            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
-            // Try to get the FFXIV process anyway. That way XIVLauncher can close when FFXIV closes.
-            unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
-        }
+            var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
 
-        if (unixPid == 0)
+            if (unixPid == 0)
+            {
+                Log.Error("Could not retrieve Unix process ID");
+                return null;
+            }
+
+            var gameProcess = Process.GetProcessById(unixPid);
+            Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
+            return gameProcess;
+        }
+        catch (Exception ex)
         {
-            Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version.");
+            Log.Error(ex, $"Could not retrieve game Process information");
             return null;
         }
-
-        var gameProcess = Process.GetProcessById(unixPid);
-        var winePidInfo = (winePid == 0) ? string.Empty : $" and Wine pid {winePid}";
-        Log.Verbose($"Got {gameExe.Name} process handle {gameProcess.Handle} with Unix pid {gameProcess.Id}{winePidInfo}.");
-        return gameProcess;
     }
 }
