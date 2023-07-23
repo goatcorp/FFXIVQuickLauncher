@@ -178,9 +178,8 @@ public class CompatibilityTools
     {
         var alist = a.Split(':');
         var blist = b.Split(':');
-        var clist = (System.Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "").Split(':');
         
-        var merged = (alist.Union(blist)).Union(clist);
+        var merged = alist.Union(blist);
 
         var ldpreload = "";
         foreach (var item in merged)
@@ -298,7 +297,7 @@ public class CompatibilityTools
         return processNames.FirstOrDefault();
     }
 
-    public Int32 GetUnixProcessIdByName(string executableName)
+    private Int32 GetUnixProcessIdByName(string executableName)
     {
         int closest = 0;
         int early = 0;
