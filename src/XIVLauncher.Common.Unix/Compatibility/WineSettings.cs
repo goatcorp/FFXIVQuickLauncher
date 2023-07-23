@@ -32,24 +32,24 @@ public class WineSettings
 
     public Dictionary<string, string> Environment { get; }
 
-    public WineSettings(string customwine, string folder, string url, string rootFolder, Dictionary<string, string> env = null)
+    public WineSettings(string customWinePath, string managedFolder, string managedDownloadUrl, string rootFolder, Dictionary<string, string> env = null)
     {
-        Folder = folder;
-        DownloadUrl = url;
+        Folder = managedFolder;
+        DownloadUrl = managedDownloadUrl;
         Environment = env ?? new Dictionary<string, string>();
 
-        // Use customwine to pass in the custom wine bin/ path. If it's empty, we construct the RunCommand from the folder.
-        if (string.IsNullOrEmpty(customwine))
+        // Use customWinePath to pass in the custom wine bin/ path. If it's empty, we construct the RunCommand from the managedFolder.
+        if (string.IsNullOrEmpty(customWinePath))
         {
-            var wineBinPath = Path.Combine(Path.Combine(rootFolder, "compatibilitytool", "wine"), folder, "bin");
+            var wineBinPath = Path.Combine(Path.Combine(rootFolder, "compatibilitytool", "wine"), managedFolder, "bin");
             RunCommandFolder = wineBinPath;
             WineServer = Path.Combine(wineBinPath, "wineserver");
             IsManaged = true;
         }
         else
         {
-            RunCommandFolder = customwine;
-            WineServer = Path.Combine(customwine, "wineserver");
+            RunCommandFolder = customWinePath;
+            WineServer = Path.Combine(customWinePath, "wineserver");
             IsManaged = false;
         }
     }
