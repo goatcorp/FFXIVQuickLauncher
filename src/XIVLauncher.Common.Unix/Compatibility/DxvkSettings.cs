@@ -11,13 +11,13 @@ public class DxvkSettings
 
     public Dictionary<string, string> Environment { get; }
 
-    public bool IsDxvk { get; }
+    public bool Enabled { get; }
 
-    public DxvkSettings(string folder, string url, string rootFolder, Dictionary<string, string> env = null, bool isDxvk = true)
+    public DxvkSettings(string folder, string url, string rootFolder, Dictionary<string, string> env = null, bool enabled = true)
     {
         Folder = folder;
         DownloadUrl = url;
         Environment = env ?? new Dictionary<string, string>();
-        IsDxvk = isDxvk;
+        Enabled = enabled;
     }
 }

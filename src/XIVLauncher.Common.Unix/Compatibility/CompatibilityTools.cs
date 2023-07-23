@@ -45,16 +45,7 @@ public class CompatibilityTools
         WineSettings = wineSettings;
         DxvkSettings = dxvkSettings;
         Prefix = prefix;
-        var wineoverrides = "msquic=,mscoree=n,b;";
-        if (dxvkSettings.IsDxvk)
-        {
-            wineoverrides += "d3d9,d3d11,d3d10core,dxgi=n,b";
-        }
-        else
-        {
-            wineoverrides += "d3d9,d3d11,d3d10core,dxgi=b";
-        }
-        WineDLLOverrides = wineoverrides;
+        WineDLLOverrides = $"msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi={(dxvkSettings.Enabled ? "n,b" : "b")}";
         wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
         dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
         LogFile = logfile;
@@ -82,7 +73,7 @@ public class CompatibilityTools
         EnsurePrefix();
 
         // Check to make sure dxvk is valid
-        if (DxvkSettings.IsDxvk)
+        if (DxvkSettings.Enabled)
             await EnsureDxvk();
 
         IsToolReady = true;
@@ -96,7 +87,6 @@ public class CompatibilityTools
         await DownloadTool(wineDirectory.FullName, WineSettings.Folder, WineSettings.DownloadUrl);
        
         // Use wine if wine64 isn't found. This is mostly for WoW64 wine builds.
-        WineSettings.RunCommand = WineSettings.SetWineOrWine64(Path.Combine(wineDirectory.FullName, WineSettings.Folder, "bin"));
     }
 
     private async Task EnsureDxvk()
@@ -221,25 +211,25 @@ public class CompatibilityTools
         MergeDictionaries(psi.Environment, wineEnvironmentVariables);
         MergeDictionaries(psi.Environment, environment);
 
-// #if FLATPAK_NOTRIGHTNOW
-//         psi.FileName = "flatpak-spawn";
+#if FLATPAK_NOTRIGHTNOW
+        psi.FileName = "flatpak-spawn";
 
-//         psi.ArgumentList.Insert(0, "--host");
-//         psi.ArgumentList.Insert(1, WineSettings.RunCommand);
+        psi.ArgumentList.Insert(0, "--host");
+        psi.ArgumentList.Insert(1, WineSettings.RunCommand);
 
-//         foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
-//         {
-//             psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
-//         }
+        foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
+        {
+            psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
+        }
 
-//         if (environment != null)
-//         {
-//             foreach (KeyValuePair<string, string> envVar in environment)
-//             {
-//                 psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
-//             }
-//         }
-// #endif
+        if (environment != null)
+        {
+            foreach (KeyValuePair<string, string> envVar in environment)
+            {
+                psi.ArgumentList.Insert(1, $"--env=\"{envVar.Key}\"=\"{envVar.Value}\"");
+            }
+        }
+#endif
 
         Process helperProcess = new();
         helperProcess.StartInfo = psi;
@@ -283,22 +273,32 @@ public class CompatibilityTools
         return GetProcessIds(executableName).FirstOrDefault();
     }
 
-    public Int32 GetUnixProcessId(Int32 winePid, string executableName)
+    public Int32 GetUnixProcessId(Int32 winePid)
     {
-        if (winePid == 0)
-            return GetUnixProcessIdByName(executableName);
         var wineDbg = RunInPrefix("winedbg --command \"info procmap\"", redirectOutput: true);
         var output = wineDbg.StandardOutput.ReadToEnd();
         if (output.Contains("syntax error\n"))
-            return GetUnixProcessIdByName(executableName);
+        {
+            var processName = GetProcessName(winePid);
+            return GetUnixProcessIdByName(processName);
+        }
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
             l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
         var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
-        var unixPid = unixPids.FirstOrDefault();
-        return (unixPid == 0) ? GetUnixProcessIdByName(executableName) : unixPid;
+        return unixPids.FirstOrDefault();
     }
 
-    private Int32 GetUnixProcessIdByName(string executableName)
+    private string GetProcessName(Int32 winePid)
+    {
+        var wineDbg = RunInPrefix("winedbg --command \"info proc\"", redirectOutput: true);
+        var output = wineDbg.StandardOutput.ReadToEnd();
+        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
+            l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
+        var processNames = matchingLines.Select( l => l.Substring(20).Trim('\'')).ToArray();
+        return processNames.FirstOrDefault();
+    }
+
+    public Int32 GetUnixProcessIdByName(string executableName)
     {
         int closest = 0;
         int early = 0;

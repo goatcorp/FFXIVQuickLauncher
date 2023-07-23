@@ -84,7 +84,7 @@ public class UnixDalamudRunner : IDalamudRunner
             output = dalamudProcess.StandardOutput.ReadLine();
             if (output is null)
                 throw new DalamudRunnerException("An internal Dalamud error has occured");
-            Console.WriteLine("[DALAMUD] " + output);         
+            Console.WriteLine(output);         
             dalamudErrorCount++;
         } while (!output.StartsWith('{') && dalamudErrorCount <= 2);
 
@@ -94,7 +94,7 @@ public class UnixDalamudRunner : IDalamudRunner
             {
                 var output = dalamudProcess.StandardOutput.ReadLine();
                 if (output != null)
-                    Console.WriteLine("[DALAMUD] " + output);
+                    Console.WriteLine(output);
             }
 
         }).Start();
@@ -107,13 +107,13 @@ public class UnixDalamudRunner : IDalamudRunner
         {
             var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
             winePid = dalamudConsoleOutput.Pid;
-            unixPid = compatibility.GetUnixProcessId(winePid, gameExe.Name);
+            unixPid = compatibility.GetUnixProcessId(winePid);
         }
         catch (JsonReaderException ex)
         {
             Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
             // Try to get the FFXIV process anyway. That way XIVLauncher can close when FFXIV closes.
-            unixPid = compatibility.GetUnixProcessId(0, gameExe.Name);
+            unixPid = compatibility.GetUnixProcessIdByName(gameExe.Name);
         }
 
         if (unixPid == 0)

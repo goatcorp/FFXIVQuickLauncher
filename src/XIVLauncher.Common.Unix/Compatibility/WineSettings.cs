@@ -6,7 +6,21 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public class WineSettings
 {
-    public string RunCommand { get; set; }
+    private string RunCommandFolder;
+
+    public string RunCommand
+    {
+        get
+        {
+            if (File.Exists(Path.Combine(RunCommandFolder, "wine64")))
+                return Path.Combine(RunCommandFolder, "wine64");
+
+            if (File.Exists(Path.Combine(RunCommandFolder, "wine")))
+                return Path.Combine(RunCommandFolder, "wine");
+                
+            return string.Empty;
+        }
+    }
 
     public string WineServer { get; }
 
@@ -20,7 +34,6 @@ public class WineSettings
 
     public WineSettings(string customwine, string folder, string url, string rootFolder, Dictionary<string, string> env = null)
     {
-        RunCommand = string.Empty;
         Folder = folder;
         DownloadUrl = url;
         Environment = env ?? new Dictionary<string, string>();
@@ -29,26 +42,15 @@ public class WineSettings
         if (string.IsNullOrEmpty(customwine))
         {
             var wineBinPath = Path.Combine(Path.Combine(rootFolder, "compatibilitytool", "wine"), folder, "bin");
-            RunCommand = SetWineOrWine64(wineBinPath);
+            RunCommandFolder = wineBinPath;
             WineServer = Path.Combine(wineBinPath, "wineserver");
             IsManaged = true;
         }
         else
         {
-            RunCommand = SetWineOrWine64(customwine);
+            RunCommandFolder = customwine;
             WineServer = Path.Combine(customwine, "wineserver");
             IsManaged = false;
         }
-    }
-
-    public string SetWineOrWine64(string path)
-    {
-        if (File.Exists(Path.Combine(path, "wine64")))
-            return Path.Combine(path, "wine64");
-
-        if (File.Exists(Path.Combine(path, "wine")))
-            return Path.Combine(path, "wine");
-            
-        return string.Empty;
     }
 }
