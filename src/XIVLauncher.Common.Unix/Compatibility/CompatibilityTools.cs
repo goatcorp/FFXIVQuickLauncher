@@ -22,29 +22,16 @@ public class CompatibilityTools
 
     private StreamWriter logWriter;
 
-#if WINE_XIV_ARCH_LINUX
-    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/8.5.r4.g4211bac7/wine-xiv-staging-fsync-git-arch-8.5.r4.g4211bac7.tar.xz";
-#elif WINE_XIV_FEDORA_LINUX
-    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/8.5.r4.g4211bac7/wine-xiv-staging-fsync-git-fedora-8.5.r4.g4211bac7.tar.xz";
-#else
-    private const string WINE_XIV_RELEASE_URL = "https://github.com/goatcorp/wine-xiv-git/releases/download/8.5.r4.g4211bac7/wine-xiv-staging-fsync-git-ubuntu-8.5.r4.g4211bac7.tar.xz";
-#endif
-    private const string WINE_XIV_RELEASE_NAME = "wine-xiv-staging-fsync-git-8.5.r4.g4211bac7";
-
     public bool IsToolReady { get; private set; }
 
     public WineSettings Settings { get; private set; }
 
-    private string WineBinPath => Settings.StartupType == WineStartupType.Managed ?
-                                    Path.Combine(toolDirectory.FullName, WINE_XIV_RELEASE_NAME, "bin") :
-                                    Settings.CustomBinPath;
-    private string Wine64Path => Path.Combine(WineBinPath, "wine64");
-    private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
-
-    public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
+    public bool IsToolDownloaded => File.Exists(Settings.WinePath) && Settings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
+
     private readonly bool gamemodeOn;
+
     private readonly string dxvkAsyncOn;
 
     public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
@@ -54,19 +41,16 @@ public class CompatibilityTools
         this.gamemodeOn = gamemodeOn ?? false;
         this.dxvkAsyncOn = (dxvkAsyncOn ?? false) ? "1" : "0";
 
-        this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "beta"));
+        this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
         this.dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
 
         this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
-        if (wineSettings.StartupType == WineStartupType.Managed)
-        {
-            if (!this.toolDirectory.Exists)
-                this.toolDirectory.Create();
+        if (!this.toolDirectory.Exists)
+            this.toolDirectory.Create();
 
-            if (!this.dxvkDirectory.Exists)
-                this.dxvkDirectory.Create();
-        }
+        if (!this.dxvkDirectory.Exists)
+            this.dxvkDirectory.Create();
 
         if (!wineSettings.Prefix.Exists)
             wineSettings.Prefix.Create();
@@ -74,7 +58,7 @@ public class CompatibilityTools
 
     public async Task EnsureTool(DirectoryInfo tempPath)
     {
-        if (!File.Exists(Wine64Path))
+        if (!File.Exists(Settings.WinePath))
         {
             Log.Information("Compatibility tool does not exist, downloading");
             await DownloadTool(tempPath).ConfigureAwait(false);
@@ -91,7 +75,7 @@ public class CompatibilityTools
         using var client = new HttpClient();
         var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
 
-        await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false)).ConfigureAwait(false);
+        await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(Settings.DownloadUrl).ConfigureAwait(false)).ConfigureAwait(false);
 
         PlatformHelpers.Untar(tempFilePath, this.toolDirectory.FullName);
 
@@ -118,7 +102,7 @@ public class CompatibilityTools
 
     public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
-        var psi = new ProcessStartInfo(Wine64Path);
+        var psi = new ProcessStartInfo(Settings.WinePath);
         psi.Arguments = command;
 
         Log.Verbose("Running in prefix: {FileName} {Arguments}", psi.FileName, command);
@@ -127,7 +111,7 @@ public class CompatibilityTools
 
     public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
-        var psi = new ProcessStartInfo(Wine64Path);
+        var psi = new ProcessStartInfo(Settings.WinePath);
         foreach (var arg in args)
             psi.ArgumentList.Add(arg);
 
@@ -195,7 +179,7 @@ public class CompatibilityTools
         psi.FileName = "flatpak-spawn";
 
         psi.ArgumentList.Insert(0, "--host");
-        psi.ArgumentList.Insert(1, Wine64Path);
+        psi.ArgumentList.Insert(1, Settings.WinePath);
 
         foreach (KeyValuePair<string, string> envVar in wineEnviromentVariables)
         {
@@ -322,7 +306,7 @@ public class CompatibilityTools
 
     public void Kill()
     {
-        var psi = new ProcessStartInfo(WineServerPath)
+        var psi = new ProcessStartInfo(Settings.WineServerPath)
         {
             Arguments = "-k"
         };
