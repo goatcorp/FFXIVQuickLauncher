@@ -258,11 +258,51 @@ public class CompatibilityTools
         var wineDbg = RunInPrefix("winedbg --command \"info procmap\"", redirectOutput: true);
         var output = wineDbg.StandardOutput.ReadToEnd();
         if (output.Contains("syntax error\n"))
-            return 0;
+        {
+            var processName = GetProcessName(winePid);
+            return GetUnixProcessIdByName(processName);
+        }
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
             l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
         var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
         return unixPids.FirstOrDefault();
+    }
+
+    private string GetProcessName(Int32 winePid)
+    {
+        var wineDbg = RunInPrefix("winedbg --command \"info proc\"", redirectOutput: true);
+        var output = wineDbg.StandardOutput.ReadToEnd();
+        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
+            l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
+        var processNames = matchingLines.Select( l => l.Substring(20).Trim('\'')).ToArray();
+        return processNames.FirstOrDefault();
+    }
+
+    private Int32 GetUnixProcessIdByName(string executableName)
+    {
+        int closest = 0;
+        int early = 0;
+        var currentProcess = Process.GetCurrentProcess(); // Gets XIVLauncher.Core's process
+        bool nonunique = false;
+        foreach (var process in Process.GetProcessesByName(executableName))
+        {
+            if (process.Id < currentProcess.Id)
+            {
+                early = process.Id;
+                continue;  // Process was launched before XIVLauncher.Core
+            }
+            // Assume that the closest PID to XIVLauncher.Core's is the correct one. But log an error if more than one is found.
+            if ((closest - currentProcess.Id) > (process.Id - currentProcess.Id) || closest == 0)
+            {
+                if (closest != 0) nonunique = true;
+                closest = process.Id;
+            }
+            if (nonunique) Log.Error($"More than one {executableName} found! Selecting the most likely match with process id {closest}.");
+        }
+        // Deal with rare edge-case where pid rollover causes the ffxiv pid to be lower than XLCore's.
+        if (closest == 0 && early != 0) closest = early;
+        if (closest != 0) Log.Verbose($"Process for {executableName} found using fallback method: {closest}. XLCore pid: {currentProcess.Id}");
+        return closest;
     }
 
     public string UnixToWinePath(string unixPath)
