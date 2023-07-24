@@ -26,20 +26,20 @@ public class CompatibilityTools
 
     public WineSettings Settings { get; private set; }
 
+    public DxvkSettings DxvkSettings { get; private set; }
+
     public bool IsToolDownloaded => File.Exists(Settings.WinePath) && Settings.Prefix.Exists;
 
     private readonly Dxvk.DxvkHudType hudType;
 
     private readonly bool gamemodeOn;
 
-    private readonly string dxvkAsyncOn;
-
-    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
+    public CompatibilityTools(WineSettings wineSettings, DxvkSettings dxvkSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
+        this.DxvkSettings = dxvkSettings;
         this.hudType = hudType;
         this.gamemodeOn = gamemodeOn ?? false;
-        this.dxvkAsyncOn = (dxvkAsyncOn ?? false) ? "1" : "0";
 
         this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
         this.dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
@@ -65,7 +65,7 @@ public class CompatibilityTools
         }
 
         EnsurePrefix();
-        await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory).ConfigureAwait(false);
+        await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings.Folder, DxvkSettings.DownloadUrl).ConfigureAwait(false);
 
         IsToolReady = true;
     }
@@ -140,16 +140,16 @@ public class CompatibilityTools
         psi.UseShellExecute = false;
         psi.WorkingDirectory = workingDirectory;
 
-        var wineEnviromentVariables = new Dictionary<string, string>();
-        wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
-        wineEnviromentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi={(wineD3D ? "b" : "n")}");
+        var wineEnvironmentVariables = new Dictionary<string, string>();
+        wineEnvironmentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
+        wineEnvironmentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi={(wineD3D ? "b" : "n")}");
 
         if (!string.IsNullOrEmpty(Settings.DebugVars))
         {
-            wineEnviromentVariables.Add("WINEDEBUG", Settings.DebugVars);
+            wineEnvironmentVariables.Add("WINEDEBUG", Settings.DebugVars);
         }
 
-        wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
+        wineEnvironmentVariables.Add("XL_WINEONLINUX", "true");
         string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
 
         string dxvkHud = hudType switch
@@ -159,20 +159,21 @@ public class CompatibilityTools
             Dxvk.DxvkHudType.Full => "full",
             _ => throw new ArgumentOutOfRangeException()
         };
+        wineEnvironmentVariables.Add("DXVK_HUD", dxvkHud);
 
         if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
         {
             ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
         }
 
-        wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
-        wineEnviromentVariables.Add("DXVK_ASYNC", dxvkAsyncOn);
-        wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);
-        wineEnviromentVariables.Add("WINEFSYNC", Settings.FsyncOn);
+        foreach (var dxvkVar in DxvkSettings.Environment)
+            wineEnvironmentVariables.Add(dxvkVar.Key, dxvkVar.Value);
+        wineEnvironmentVariables.Add("WINEESYNC", Settings.EsyncOn);
+        wineEnvironmentVariables.Add("WINEFSYNC", Settings.FsyncOn);
 
-        wineEnviromentVariables.Add("LD_PRELOAD", ldPreload);
+        wineEnvironmentVariables.Add("LD_PRELOAD", ldPreload);
 
-        MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
+        MergeDictionaries(psi.EnvironmentVariables, wineEnvironmentVariables);
         MergeDictionaries(psi.EnvironmentVariables, environment);
 
 #if FLATPAK_NOTRIGHTNOW
@@ -181,7 +182,7 @@ public class CompatibilityTools
         psi.ArgumentList.Insert(0, "--host");
         psi.ArgumentList.Insert(1, Settings.WinePath);
 
-        foreach (KeyValuePair<string, string> envVar in wineEnviromentVariables)
+        foreach (KeyValuePair<string, string> envVar in wineEnvironmentVariables)
         {
             psi.ArgumentList.Insert(1, $"--env={envVar.Key}={envVar.Value}");
         }
