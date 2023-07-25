@@ -48,7 +48,7 @@ public class DxvkSettings
         if (dxvkHudEnabled)
             Environment.Add("DXVK_HUD", DxvkHudStringIsValid(dxvkHudString) ? dxvkHudString : "1");
 
-        if (mangoHudEnabled && !string.IsNullOrEmpty(GetMangoHudPath()))
+        if (mangoHudEnabled && MangoHudInstalled())
         {
             Environment.Add("MANGOHUD", "1");
             if (mangoHudCustomIsFile)
@@ -68,6 +68,7 @@ public class DxvkSettings
     public static bool DxvkHudStringIsValid(string customHud)
     {
         if (string.IsNullOrWhiteSpace(customHud)) return false;
+        if (customHud == "full") return true;
         if (customHud == "1") return true;
         if (!Regex.IsMatch(customHud,ALLOWED_CHARS)) return false;
 
@@ -76,16 +77,14 @@ public class DxvkSettings
         return hudvars.All(hudvar => Regex.IsMatch(hudvar, ALLOWED_WORDS));        
     }
 
-    public static string GetMangoHudPath()
+    public static bool MangoHudInstalled()
     {
         var usrLib = Path.Combine("/usr", "lib", "mangohud", "libMangoHud.so"); // fedora uses this
         var usrLib64 = Path.Combine("/usr", "lib64", "mangohud", "libMangoHud.so"); // arch and openSUSE use this
         var flatpak = Path.Combine(new string[] { "/usr", "lib", "extensions", "vulkan", "MangoHud", "lib", "x86_64-linux-gnu", "libMangoHud.so"});
         var debuntu = Path.Combine(new string[] { "/usr", "lib", "x86_64-linux-gnu", "mangohud", "libMangoHud.so"});
-        if (File.Exists(usrLib64)) return usrLib64;
-        if (File.Exists(usrLib)) return usrLib;
-        if (File.Exists(flatpak)) return flatpak;
-        if (File.Exists(debuntu)) return debuntu;
-        return string.Empty;
+        if (File.Exists(usrLib64) || File.Exists(usrLib) || File.Exists(flatpak) || File.Exists(debuntu))
+            return true;
+        return false;
     }
 }
