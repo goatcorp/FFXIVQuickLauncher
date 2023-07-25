@@ -17,7 +17,7 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 
 public class CompatibilityTools
 {
-    private DirectoryInfo toolDirectory;
+    private DirectoryInfo wineDirectory;
     private DirectoryInfo dxvkDirectory;
 
     private StreamWriter logWriter;
@@ -30,24 +30,21 @@ public class CompatibilityTools
 
     public bool IsToolDownloaded => File.Exists(Settings.WinePath) && Settings.Prefix.Exists;
 
-    private readonly Dxvk.DxvkHudType hudType;
-
     private readonly bool gamemodeOn;
 
-    public CompatibilityTools(WineSettings wineSettings, DxvkSettings dxvkSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, DirectoryInfo toolsFolder)
+    public CompatibilityTools(WineSettings wineSettings, DxvkSettings dxvkSettings, bool? gamemodeOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
         this.DxvkSettings = dxvkSettings;
-        this.hudType = hudType;
         this.gamemodeOn = gamemodeOn ?? false;
 
-        this.toolDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
+        this.wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
         this.dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
 
         this.logWriter = new StreamWriter(wineSettings.LogFile.FullName);
 
-        if (!this.toolDirectory.Exists)
-            this.toolDirectory.Create();
+        if (!this.wineDirectory.Exists)
+            this.wineDirectory.Create();
 
         if (!this.dxvkDirectory.Exists)
             this.dxvkDirectory.Create();
@@ -61,28 +58,29 @@ public class CompatibilityTools
         if (!File.Exists(Settings.WinePath))
         {
             Log.Information("Compatibility tool does not exist, downloading");
-            await DownloadTool(tempPath).ConfigureAwait(false);
+            await ToolDownloader.InstallWine(wineDirectory, Settings.FolderName, Settings.DownloadUrl).ConfigureAwait(false);
         }
 
         EnsurePrefix();
-        await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings.Folder, DxvkSettings.DownloadUrl).ConfigureAwait(false);
+        if (DxvkSettings.Enabled)
+            await ToolDownloader.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings.FolderName, DxvkSettings.DownloadUrl).ConfigureAwait(false);
 
         IsToolReady = true;
     }
 
-    private async Task DownloadTool(DirectoryInfo tempPath)
-    {
-        using var client = new HttpClient();
-        var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
+    // private async Task DownloadTool(DirectoryInfo tempPath)
+    // {
+    //     using var client = new HttpClient();
+    //     var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
 
-        await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(Settings.DownloadUrl).ConfigureAwait(false)).ConfigureAwait(false);
+    //     await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(Settings.DownloadUrl).ConfigureAwait(false)).ConfigureAwait(false);
 
-        PlatformHelpers.Untar(tempFilePath, this.toolDirectory.FullName);
+    //     PlatformHelpers.Untar(tempFilePath, this.wineDirectory.FullName);
 
-        Log.Information("Compatibility tool successfully extracted to {Path}", this.toolDirectory.FullName);
+    //     Log.Information("Compatibility tool successfully extracted to {Path}", this.wineDirectory.FullName);
 
-        File.Delete(tempFilePath);
-    }
+    //     File.Delete(tempFilePath);
+    // }
 
     private void ResetPrefix()
     {
@@ -140,9 +138,11 @@ public class CompatibilityTools
         psi.UseShellExecute = false;
         psi.WorkingDirectory = workingDirectory;
 
+        wineD3D = !DxvkSettings.Enabled || wineD3D;
+
         var wineEnvironmentVariables = new Dictionary<string, string>();
         wineEnvironmentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
-        wineEnvironmentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi={(wineD3D ? "b" : "n")}");
+        wineEnvironmentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d11,d3d10core,dxgi={(wineD3D ? "b" : "n,b")}");
 
         if (!string.IsNullOrEmpty(Settings.DebugVars))
         {
@@ -151,15 +151,6 @@ public class CompatibilityTools
 
         wineEnvironmentVariables.Add("XL_WINEONLINUX", "true");
         string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
-
-        string dxvkHud = hudType switch
-        {
-            Dxvk.DxvkHudType.None => "0",
-            Dxvk.DxvkHudType.Fps => "fps",
-            Dxvk.DxvkHudType.Full => "full",
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        wineEnvironmentVariables.Add("DXVK_HUD", dxvkHud);
 
         if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
         {

@@ -6,21 +6,18 @@ using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 
-public static class Dxvk
+public static class ToolDownloader
 {
     public static async Task InstallDxvk(DirectoryInfo prefix, DirectoryInfo installDirectory, string folder, string downloadUrl)
     {
         var dxvkPath = Path.Combine(installDirectory.FullName, folder, "x64");
-        var dxvkPath32 = Path.Combine(installDirectory.FullName, folder, "x32");
-
         if (!Directory.Exists(dxvkPath))
         {
             Log.Information("DXVK does not exist, downloading");
-            await DownloadDxvk(installDirectory, downloadUrl).ConfigureAwait(false);
+            await DownloadTool(installDirectory, downloadUrl).ConfigureAwait(false);
         }
 
         var system32 = Path.Combine(prefix.FullName, "drive_c", "windows", "system32");
-        var syswow64 = Path.Combine(prefix.FullName, "drive_c", "windows", "syswow64");
         var files = Directory.GetFiles(dxvkPath);
 
         foreach (string fileName in files)
@@ -28,15 +25,27 @@ public static class Dxvk
             File.Copy(fileName, Path.Combine(system32, Path.GetFileName(fileName)), true);
         }
 
-        files = Directory.GetFiles(dxvkPath32);
-
-        foreach (string fileName in files)
+        // 32-bit files for Directx9.
+        var dxvkPath32 = Path.Combine(installDirectory.FullName, folder, "x32");
+        if (Directory.Exists(dxvkPath32))
         {
-            File.Copy(fileName, Path.Combine(syswow64, Path.GetFileName(fileName)), true);
+            var syswow64 = Path.Combine(prefix.FullName, "drive_c", "windows", "syswow64");
+            files = Directory.GetFiles(dxvkPath32);
+
+            foreach (string fileName in files)
+            {
+                File.Copy(fileName, Path.Combine(syswow64, Path.GetFileName(fileName)), true);
+            }
         }   
     }
 
-    private static async Task DownloadDxvk(DirectoryInfo installDirectory, string downloadUrl)
+    public static async Task InstallWine(DirectoryInfo installDirectory, string folder, string downloadUrl)
+    {
+        if (!Directory.Exists(Path.Combine(installDirectory.FullName, folder)))
+            await DownloadTool(installDirectory, downloadUrl).ConfigureAwait(false);
+    }
+
+    private static async Task DownloadTool(DirectoryInfo installDirectory, string downloadUrl)
     {
         using var client = new HttpClient();
         var tempPath = Path.GetTempFileName();

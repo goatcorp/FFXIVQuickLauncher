@@ -12,7 +12,7 @@ public class WineSettings
 
     private string BinPath;
 
-    public string WineRootFolder;
+    public string FolderName;
 
     public string DownloadUrl;
 
@@ -31,7 +31,7 @@ public class WineSettings
         // storageFolder is the path to .xlcore folder. managedFolder is the foldername inside the tarball that will be downloaded
         // from managedUrl
         IsManaged = isManaged;
-        WineRootFolder = managedFolder;
+        FolderName = managedFolder;
         DownloadUrl = managedUrl;
         BinPath = (isManaged) ? Path.Combine(new [] {storageFolder, "compatibilitytool", "wine", managedFolder, "bin"}) : customBinPath;
 
