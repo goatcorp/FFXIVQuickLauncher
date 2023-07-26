@@ -1,12 +1,25 @@
 ﻿using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Serilog;
 using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
 
-public static class ToolDownloader
+public enum DistroPackage
+{
+    ubuntu,
+
+    fedora,
+
+    arch,
+
+    none,
+}
+
+public static class UnixHelpers
 {
     public static async Task InstallDxvk(DirectoryInfo prefix, DirectoryInfo installDirectory, string folder, string downloadUrl)
     {
@@ -55,16 +68,29 @@ public static class ToolDownloader
 
         File.Delete(tempPath);
     }
-
-    public enum DxvkHudType
+    public static bool DxvkHudStringIsValid(string customHud)
     {
-        [SettingsDescription("None", "Show nothing")]
-        None,
+        var ALLOWED_CHARS = "^[0-9a-zA-Z,=.]+$";
+        var ALLOWED_WORDS = "^(?:devinfo|fps|frametimes|submissions|drawcalls|pipelines|descriptors|memory|gpuload|version|api|cs|compiler|samplers|scale=(?:[0-9])*(?:.(?:[0-9])+)?)$";
 
-        [SettingsDescription("FPS", "Only show FPS")]
-        Fps,
+        if (string.IsNullOrWhiteSpace(customHud)) return false;
+        if (customHud == "full") return true;
+        if (customHud == "1") return true;
+        if (!Regex.IsMatch(customHud, ALLOWED_CHARS)) return false;
 
-        [SettingsDescription("Full", "Show everything")]
-        Full,
+        string[] hudvars = customHud.Split(",");
+
+        return hudvars.All(hudvar => Regex.IsMatch(hudvar, ALLOWED_WORDS));        
+    }
+
+    public static bool MangoHudIsInstalled()
+    {
+        var usrLib = Path.Combine("/usr", "lib", "mangohud", "libMangoHud.so"); // fedora uses this
+        var usrLib64 = Path.Combine("/usr", "lib64", "mangohud", "libMangoHud.so"); // arch and openSUSE use this
+        var flatpak = Path.Combine(new string[] { "/usr", "lib", "extensions", "vulkan", "MangoHud", "lib", "x86_64-linux-gnu", "libMangoHud.so"});
+        var debuntu = Path.Combine(new string[] { "/usr", "lib", "x86_64-linux-gnu", "mangohud", "libMangoHud.so"});
+        if (File.Exists(usrLib64) || File.Exists(usrLib) || File.Exists(flatpak) || File.Exists(debuntu))
+            return true;
+        return false;
     }
 }

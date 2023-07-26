@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
-using XIVLauncher.Common.Util;
 
 #if FLATPAK
 #warning THIS IS A FLATPAK BUILD!!!
@@ -18,6 +15,7 @@ namespace XIVLauncher.Common.Unix.Compatibility;
 public class CompatibilityTools
 {
     private DirectoryInfo wineDirectory;
+    
     private DirectoryInfo dxvkDirectory;
 
     private StreamWriter logWriter;
@@ -30,13 +28,25 @@ public class CompatibilityTools
 
     public bool IsToolDownloaded => File.Exists(Settings.WinePath) && Settings.Prefix.Exists;
 
+    public bool IsFlatpak { get; }
+    
     private readonly bool gamemodeOn;
 
-    public CompatibilityTools(WineSettings wineSettings, DxvkSettings dxvkSettings, bool? gamemodeOn, DirectoryInfo toolsFolder)
+    private Dictionary<string, string> extraEnvironmentVars;
+
+    public CompatibilityTools(WineSettings wineSettings, DxvkSettings dxvkSettings, bool? gamemodeOn, DirectoryInfo toolsFolder, bool isFlatpak, Dictionary<string, string> extraEnvVars = null)
     {
         this.Settings = wineSettings;
         this.DxvkSettings = dxvkSettings;
         this.gamemodeOn = gamemodeOn ?? false;
+
+        // This is currently unused, but might be useful in the future. 
+        this.IsFlatpak = isFlatpak;
+        this.extraEnvironmentVars = extraEnvVars ?? new Dictionary<string, string>();
+
+        // This is also unused. It's here to allow features to be added to XL.Core without requiring immediate
+        // changes to XL.Common.Unix. It should only ever be used temporarily.
+        this.extraEnvironmentVars = extraEnvVars ?? new Dictionary<string, string>();
 
         this.wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
         this.dxvkDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "dxvk"));
@@ -58,12 +68,12 @@ public class CompatibilityTools
         if (!File.Exists(Settings.WinePath))
         {
             Log.Information("Compatibility tool does not exist, downloading");
-            await ToolDownloader.InstallWine(wineDirectory, Settings.FolderName, Settings.DownloadUrl).ConfigureAwait(false);
+            await UnixHelpers.InstallWine(wineDirectory, Settings.FolderName, Settings.DownloadUrl).ConfigureAwait(false);
         }
 
         EnsurePrefix();
         if (DxvkSettings.Enabled)
-            await ToolDownloader.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings.FolderName, DxvkSettings.DownloadUrl).ConfigureAwait(false);
+            await UnixHelpers.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings.FolderName, DxvkSettings.DownloadUrl).ConfigureAwait(false);
 
         IsToolReady = true;
     }
@@ -117,7 +127,7 @@ public class CompatibilityTools
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
-    private void MergeDictionaries(StringDictionary a, IDictionary<string, string> b)
+    private void MergeDictionaries(IDictionary<string, string> a, IDictionary<string, string> b)
     {
         if (b is null)
             return;
@@ -125,10 +135,29 @@ public class CompatibilityTools
         foreach (var keyValuePair in b)
         {
             if (a.ContainsKey(keyValuePair.Key))
-                a[keyValuePair.Key] = keyValuePair.Value;
+            {
+                if (keyValuePair.Key == "LD_PRELOAD")
+                    a[keyValuePair.Key] = MergeLDPreload(a[keyValuePair.Key], keyValuePair.Value);
+                else
+                    a[keyValuePair.Key] = keyValuePair.Value;
+            }
             else
                 a.Add(keyValuePair.Key, keyValuePair.Value);
         }
+    }
+
+    private string MergeLDPreload(string a, string b)
+    {
+        var alist = a.Split(':');
+        var blist = b.Split(':');
+        
+        var merged = alist.Union(blist);
+
+        var ldpreload = "";
+        foreach (var item in merged)
+            ldpreload += item + ":";
+        
+        return ldpreload.TrimEnd(':');
     }
 
     private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string> environment, bool redirectOutput, bool writeLog, bool wineD3D)
@@ -164,8 +193,9 @@ public class CompatibilityTools
 
         wineEnvironmentVariables.Add("LD_PRELOAD", ldPreload);
 
-        MergeDictionaries(psi.EnvironmentVariables, wineEnvironmentVariables);
-        MergeDictionaries(psi.EnvironmentVariables, environment);
+        MergeDictionaries(psi.Environment, wineEnvironmentVariables);
+        MergeDictionaries(psi.Environment, extraEnvironmentVars);
+        MergeDictionaries(psi.Environment, environment);
 
 #if FLATPAK_NOTRIGHTNOW
         psi.FileName = "flatpak-spawn";

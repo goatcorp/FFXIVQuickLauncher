@@ -28,8 +28,7 @@ public class WineSettings
 
     public WineSettings(bool isManaged, string customBinPath, string managedFolder, string managedUrl, string storageFolder, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
     {
-        // storageFolder is the path to .xlcore folder. managedFolder is the foldername inside the tarball that will be downloaded
-        // from managedUrl
+        // storageFolder is the path to .xlcore folder. managedFolder is the foldername inside the tarball that will be downloaded from managedUrl.
         IsManaged = isManaged;
         FolderName = managedFolder;
         DownloadUrl = managedUrl;
