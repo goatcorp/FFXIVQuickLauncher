@@ -52,7 +52,7 @@ public static class UnixHelpers
         }   
     }
 
-    public static async Task InstallWine(DirectoryInfo installDirectory, string folder, string downloadUrl)
+    public static async Task DownloadWine(DirectoryInfo installDirectory, string folder, string downloadUrl)
     {
         if (!Directory.Exists(Path.Combine(installDirectory.FullName, folder)))
             await DownloadTool(installDirectory, downloadUrl).ConfigureAwait(false);

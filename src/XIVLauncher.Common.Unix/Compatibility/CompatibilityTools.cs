@@ -40,12 +40,8 @@ public class CompatibilityTools
         this.DxvkSettings = dxvkSettings;
         this.gamemodeOn = gamemodeOn ?? false;
 
-        // This is currently unused, but might be useful in the future. 
+        // These are currently unused. Here for future use. 
         this.IsFlatpak = isFlatpak;
-        this.extraEnvironmentVars = extraEnvVars ?? new Dictionary<string, string>();
-
-        // This is also unused. It's here to allow features to be added to XL.Core without requiring immediate
-        // changes to XL.Common.Unix. It should only ever be used temporarily.
         this.extraEnvironmentVars = extraEnvVars ?? new Dictionary<string, string>();
 
         this.wineDirectory = new DirectoryInfo(Path.Combine(toolsFolder.FullName, "wine"));
@@ -68,10 +64,10 @@ public class CompatibilityTools
         if (!File.Exists(Settings.WinePath))
         {
             Log.Information("Compatibility tool does not exist, downloading");
-            await UnixHelpers.InstallWine(wineDirectory, Settings.FolderName, Settings.DownloadUrl).ConfigureAwait(false);
+            await UnixHelpers.DownloadWine(wineDirectory, Settings.FolderName, Settings.DownloadUrl).ConfigureAwait(false);
         }
-
         EnsurePrefix();
+        
         if (DxvkSettings.Enabled)
             await UnixHelpers.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings.FolderName, DxvkSettings.DownloadUrl).ConfigureAwait(false);
 
