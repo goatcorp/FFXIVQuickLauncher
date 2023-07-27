@@ -144,6 +144,8 @@ public class CompatibilityTools
 
     private string MergeLDPreload(string a, string b)
     {
+        a ??= "";
+        b ??= "";
         var alist = a.Split(':');
         var blist = b.Split(':');
         
@@ -154,6 +156,16 @@ public class CompatibilityTools
             ldpreload += item + ":";
         
         return ldpreload.TrimEnd(':');
+    }
+
+    public void AddEnvironmentVar(string key, string value)
+    {
+        extraEnvironmentVars.Add(key, value);
+    }
+
+    public void AddEnvironmentVars(IDictionary<string, string> env)
+    {
+        MergeDictionaries(extraEnvironmentVars, env);
     }
 
     private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string> environment, bool redirectOutput, bool writeLog, bool wineD3D)
@@ -175,22 +187,17 @@ public class CompatibilityTools
         }
 
         wineEnvironmentVariables.Add("XL_WINEONLINUX", "true");
-        string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
 
-        if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
-        {
-            ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
-        }
+        if (this.gamemodeOn)
+            wineEnvironmentVariables.Add("LD_PRELOAD", MergeLDPreload("libgamemodeauto.so.0" , Environment.GetEnvironmentVariable("LD_PRELOAD")));
 
         foreach (var dxvkVar in DxvkSettings.Environment)
             wineEnvironmentVariables.Add(dxvkVar.Key, dxvkVar.Value);
         wineEnvironmentVariables.Add("WINEESYNC", Settings.EsyncOn);
         wineEnvironmentVariables.Add("WINEFSYNC", Settings.FsyncOn);
 
-        wineEnvironmentVariables.Add("LD_PRELOAD", ldPreload);
-
         MergeDictionaries(psi.Environment, wineEnvironmentVariables);
-        MergeDictionaries(psi.Environment, extraEnvironmentVars);
+        MergeDictionaries(psi.Environment, extraEnvironmentVars);       // Allow extraEnvironmentVars to override what we set here.
         MergeDictionaries(psi.Environment, environment);
 
 #if FLATPAK_NOTRIGHTNOW
