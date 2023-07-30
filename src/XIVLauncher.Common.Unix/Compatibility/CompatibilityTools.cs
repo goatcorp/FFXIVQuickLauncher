@@ -266,7 +266,7 @@ public class CompatibilityTools
     {
         var wineDbg = RunInPrefix("winedbg --command \"info procmap\"", redirectOutput: true);
         var output = wineDbg.StandardOutput.ReadToEnd();
-        if (output.Contains("syntax error\n"))
+        if (output.Contains("syntax error\n") || output.Contains("Exception c0000005")) // Proton8 wine changed the error message
         {
             var processName = GetProcessName(winePid);
             return GetUnixProcessIdByName(processName);
