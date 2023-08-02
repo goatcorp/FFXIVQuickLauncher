@@ -1,5 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
 using Serilog;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
@@ -38,9 +40,9 @@ public class DxvkSettings
         Environment.Add("DXVK_STATE_CACHE_PATH", Path.Combine(dxvkCachePath.FullName, folder));
 
         if (dxvkHudEnabled)
-            Environment.Add("DXVK_HUD", UnixHelpers.DxvkHudStringIsValid(dxvkHudString) ? dxvkHudString : "1");
+            Environment.Add("DXVK_HUD", DxvkHudStringIsValid(dxvkHudString) ? dxvkHudString : "1");
 
-        if (mangoHudEnabled && UnixHelpers.MangoHudIsInstalled())
+        if (mangoHudEnabled && MangoHudIsInstalled())
         {
             Environment.Add("MANGOHUD", "1");
             if (mangoHudCustomIsFile)
@@ -55,5 +57,31 @@ public class DxvkSettings
                 Environment.Add("MANGOHUD_CONFIG", customMangoHud);
             }
         }
+    }
+
+    public static bool DxvkHudStringIsValid(string customHud)
+    {
+        var ALLOWED_CHARS = "^[0-9a-zA-Z,=.]+$";
+        var ALLOWED_WORDS = "^(?:devinfo|fps|frametimes|submissions|drawcalls|pipelines|descriptors|memory|gpuload|version|api|cs|compiler|samplers|scale=(?:[0-9])*(?:.(?:[0-9])+)?)$";
+
+        if (string.IsNullOrWhiteSpace(customHud)) return false;
+        if (customHud == "full") return true;
+        if (customHud == "1") return true;
+        if (!Regex.IsMatch(customHud, ALLOWED_CHARS)) return false;
+
+        string[] hudvars = customHud.Split(",");
+
+        return hudvars.All(hudvar => Regex.IsMatch(hudvar, ALLOWED_WORDS));        
+    }
+
+    public static bool MangoHudIsInstalled()
+    {
+        var usrLib = Path.Combine("/", "usr", "lib", "mangohud", "libMangoHud.so"); // fedora uses this
+        var usrLib64 = Path.Combine("/", "usr", "lib64", "mangohud", "libMangoHud.so"); // arch and openSUSE use this
+        var flatpak = Path.Combine("/", "usr", "lib", "extensions", "vulkan", "MangoHud", "lib", "x86_64-linux-gnu", "libMangoHud.so");
+        var debuntu = Path.Combine("/", "usr", "lib", "x86_64-linux-gnu", "mangohud", "libMangoHud.so");
+        if (File.Exists(usrLib64) || File.Exists(usrLib) || File.Exists(flatpak) || File.Exists(debuntu))
+            return true;
+        return false;
     }
 }

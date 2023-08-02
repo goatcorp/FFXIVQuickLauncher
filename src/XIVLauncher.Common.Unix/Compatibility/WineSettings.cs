@@ -26,13 +26,13 @@ public class WineSettings
 
     public DirectoryInfo Prefix { get; private set; }
 
-    public WineSettings(bool isManaged, string customBinPath, string managedFolder, string managedUrl, string storageFolder, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
+    public WineSettings(bool isManaged, string customBinPath, string managedFolder, string managedUrl, DirectoryInfo storageFolder, string debugVars, FileInfo logFile, DirectoryInfo prefix, bool? esyncOn, bool? fsyncOn)
     {
         // storageFolder is the path to .xlcore folder. managedFolder is the foldername inside the tarball that will be downloaded from managedUrl.
         IsManaged = isManaged;
         FolderName = managedFolder;
         DownloadUrl = managedUrl;
-        BinPath = (isManaged) ? Path.Combine(new [] {storageFolder, "compatibilitytool", "wine", managedFolder, "bin"}) : customBinPath;
+        BinPath = (isManaged) ? Path.Combine(storageFolder.FullName, "compatibilitytool", "wine", managedFolder, "bin") : customBinPath;
 
         this.EsyncOn = (esyncOn ?? false) ? "1" : "0";
         this.FsyncOn = (fsyncOn ?? false) ? "1" : "0";

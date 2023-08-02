@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using XIVLauncher.Common.Util;
 using Serilog;
 
 #if FLATPAK
@@ -63,30 +65,59 @@ public class CompatibilityTools
     {
         if (!File.Exists(Settings.WinePath))
         {
-            Log.Information("Compatibility tool does not exist, downloading");
-            await UnixHelpers.DownloadWine(wineDirectory, Settings.FolderName, Settings.DownloadUrl).ConfigureAwait(false);
+            Log.Information($"Compatibility tool does not exist, downloading {Settings.DownloadUrl}");
+            await DownloadTool(wineDirectory, Settings.DownloadUrl).ConfigureAwait(false);
         }
         EnsurePrefix();
         
         if (DxvkSettings.Enabled)
-            await UnixHelpers.InstallDxvk(Settings.Prefix, dxvkDirectory, DxvkSettings.FolderName, DxvkSettings.DownloadUrl).ConfigureAwait(false);
+            await InstallDxvk().ConfigureAwait(false);
 
         IsToolReady = true;
     }
 
-    // private async Task DownloadTool(DirectoryInfo tempPath)
-    // {
-    //     using var client = new HttpClient();
-    //     var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
+    private async Task InstallDxvk()
+    {
+        var dxvkPath = Path.Combine(dxvkDirectory.FullName, DxvkSettings.FolderName, "x64");
+        if (!Directory.Exists(dxvkPath))
+        {
+            Log.Information($"DXVK does not exist, downloading {DxvkSettings.DownloadUrl}");
+            await DownloadTool(dxvkDirectory, DxvkSettings.DownloadUrl).ConfigureAwait(false);
+        }
 
-    //     await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(Settings.DownloadUrl).ConfigureAwait(false)).ConfigureAwait(false);
+        var system32 = Path.Combine(Settings.Prefix.FullName, "drive_c", "windows", "system32");
+        var files = Directory.GetFiles(dxvkPath);
 
-    //     PlatformHelpers.Untar(tempFilePath, this.wineDirectory.FullName);
+        foreach (string fileName in files)
+        {
+            File.Copy(fileName, Path.Combine(system32, Path.GetFileName(fileName)), true);
+        }
 
-    //     Log.Information("Compatibility tool successfully extracted to {Path}", this.wineDirectory.FullName);
+        // 32-bit files for Directx9.
+        var dxvkPath32 = Path.Combine(dxvkDirectory.FullName, DxvkSettings.FolderName, "x32");
+        var syswow64 = Path.Combine(Settings.Prefix.FullName, "drive_c", "windows", "syswow64");
 
-    //     File.Delete(tempFilePath);
-    // }
+        if (Directory.Exists(dxvkPath32))
+        {
+            files = Directory.GetFiles(dxvkPath32);
+
+            foreach (string fileName in files)
+            {
+                File.Copy(fileName, Path.Combine(syswow64, Path.GetFileName(fileName)), true);
+            }
+        }   
+    }
+
+    private async Task DownloadTool(DirectoryInfo installDirectory, string downloadUrl)
+    {
+        using var client = new HttpClient();
+        var tempPath = Path.GetTempFileName();
+
+        File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(downloadUrl));
+        PlatformHelpers.Untar(tempPath, installDirectory.FullName);
+
+        File.Delete(tempPath);
+    }
 
     private void ResetPrefix()
     {
@@ -146,16 +177,7 @@ public class CompatibilityTools
     {
         a ??= "";
         b ??= "";
-        var alist = a.Split(':');
-        var blist = b.Split(':');
-        
-        var merged = alist.Union(blist);
-
-        var ldpreload = "";
-        foreach (var item in merged)
-            ldpreload += item + ":";
-        
-        return ldpreload.TrimEnd(':');
+        return (a.Trim(':') + ":" + b.Trim(':')).Trim(':');
     }
 
     public void AddEnvironmentVar(string key, string value)
@@ -283,7 +305,7 @@ public class CompatibilityTools
         var output = wineDbg.StandardOutput.ReadToEnd();
         var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
             l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
-        var processNames = matchingLines.Select( l => l.Substring(20).Trim('\'')).ToArray();
+        var processNames = matchingLines.Select(l => l.Substring(20).Trim('\'')).ToArray();
         return processNames.FirstOrDefault();
     }
 
