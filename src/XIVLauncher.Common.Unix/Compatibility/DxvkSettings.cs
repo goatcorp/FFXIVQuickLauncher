@@ -16,7 +16,7 @@ public class DxvkSettings
 
     public Dictionary<string, string> Environment { get; }
 
-    public DxvkSettings(string folder, string url, string storageFolder, bool async, int maxFrameRate, bool dxvkHudEnabled, string dxvkHudString, bool mangoHudEnabled, bool mangoHudCustomIsFile, string customMangoHud, bool enabled = true)
+    public DxvkSettings(string folder, string url, string storageFolder, bool async, int maxFrameRate, bool dxvkHudEnabled, string dxvkHudString, bool mangoHudEnabled = false, bool mangoHudCustomIsFile = false, string customMangoHud = "", bool enabled = true)
     {
         FolderName = folder;
         DownloadUrl = url;
