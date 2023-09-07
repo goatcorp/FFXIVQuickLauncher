@@ -1491,7 +1491,7 @@ namespace XIVLauncher.Windows.ViewModel
             LoginRepairLoc = Loc.Localize("LoginBoxRepairLogin", "Repair game files");
             LoginNoDalamudLoc = Loc.Localize("LoginBoxNoDalamudLogin", "Start w/o Dalamud");
             LoginNoPluginsLoc = Loc.Localize("LoginBoxNoPluginLogin", "Start w/o any Plugins");
-            LoginNoThirdLoc = Loc.Localize("LoginBoxNoThirdLogin", "Start w/o Third-Party Plugins");
+            LoginNoThirdLoc = Loc.Localize("LoginBoxNoThirdLogin", "Start w/o Custom Repo Plugins");
             LoginTooltipLoc = Loc.Localize("LoginBoxLoginTooltip", "Log in with the provided credentials");
             WaitingForMaintenanceLoc = Loc.Localize("LoginBoxWaitingForMaint", "Waiting for maintenance to be over...");
             CancelWithShortcutLoc = Loc.Localize("CancelWithShortcut", "_Cancel");
