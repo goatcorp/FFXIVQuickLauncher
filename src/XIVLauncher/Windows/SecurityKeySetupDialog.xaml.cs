@@ -25,6 +25,8 @@ namespace XIVLauncher.Windows
 
         private SecurityKeySetupDialogViewModel ViewModel => DataContext as SecurityKeySetupDialogViewModel;
 
+        private bool _usernameProvided;
+
         private YubiAuth _yubiAuth;
 
         public SecurityKeySetupDialog()
@@ -57,6 +59,17 @@ namespace XIVLauncher.Windows
                     KeySetupTextBox.Focus();
                 });
             }
+
+            AccountManager accountManager = new AccountManager(App.Settings);
+
+            var savedAccount = accountManager.CurrentAccount;
+
+            if (savedAccount != null)
+            {
+                YubiAuth.SetUsername(savedAccount.UserName);
+                _usernameProvided = true;
+            }
+
             SetupYubiListener();
             return base.ShowDialog();
         }
@@ -123,6 +136,22 @@ namespace XIVLauncher.Windows
 
         public void TryAcceptKey(string key)
         {
+            if (!_usernameProvided)
+            {
+                Log.Error("Didn't receive a username.");
+                Dispatcher.Invoke(() =>
+                {
+                    KeySetupInputPrompt.Text = ViewModel.KeySetupUsernameLoc;
+                    KeySetupInputPrompt.Foreground = Brushes.Red;
+                    Storyboard myStoryboard = (Storyboard)KeySetupInputPrompt.Resources["InvalidShake"];
+                    Storyboard.SetTarget(myStoryboard.Children.ElementAt(0), KeySetupInputPrompt);
+                    myStoryboard.Begin();
+                    KeySetupTextBox.Focus();
+                });
+
+                return;
+            }
+
             if (key.Length < 32 || Regex.IsMatch(key, "[^A-Za-z2-7=]+"))
             {
                 Log.Error("Malformed Authentication Key: {Key}", key);

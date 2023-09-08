@@ -5,7 +5,6 @@ using Serilog;
 using Yubico.YubiKey;
 using Yubico.YubiKey.Oath;
 using Yubico.PlatformInterop;
-using System.Runtime.InteropServices;
 
 namespace XIVLauncher.Accounts
 {
@@ -16,6 +15,7 @@ namespace XIVLauncher.Accounts
         private const CredentialType AUTH_TYPE = CredentialType.Totp;
         private const CredentialPeriod TIME_PERIOD = CredentialPeriod.Period30;
         private const byte NUM_DIGITS = 6;
+        private static string username = "";
 
         private static IYubiKeyDevice _yubiKey;
         public YubiKeyDeviceListener DeviceListener;
@@ -25,13 +25,26 @@ namespace XIVLauncher.Accounts
             DeviceListener = YubiKeyDeviceListener.Instance;
         }
 
+        public static void SetUsername(string name)
+        {
+            username = name;
+        }
+        public static string GetUsername()
+        {
+            return username;
+        }
+        public string GetAccountName()
+        {
+            return ACCOUNT_NAME + "-" + username;
+        }
+
         //Generates generic credential
         public Credential BuildCredential()
         {
             var credentialTotp = new Credential
             {
                 Issuer = ISSUER,
-                AccountName = ACCOUNT_NAME,
+                AccountName = GetAccountName(),
                 Type = AUTH_TYPE,
                 Period = TIME_PERIOD,
                 Digits = NUM_DIGITS,
@@ -45,7 +58,7 @@ namespace XIVLauncher.Accounts
             var credentialTotp = new Credential
             {
                 Issuer = ISSUER,
-                AccountName = ACCOUNT_NAME,
+                AccountName = GetAccountName(),
                 Type = AUTH_TYPE,
                 Period = TIME_PERIOD,
                 Secret = key,
@@ -90,7 +103,7 @@ namespace XIVLauncher.Accounts
         {
             try
             {
-                IList<Credential> creds = session.GetCredentials().Where(credential => credential.Issuer == ISSUER && credential.AccountName == ACCOUNT_NAME).ToList();
+                IList<Credential> creds = session.GetCredentials().Where(credential => credential.Issuer == ISSUER && credential.AccountName == GetAccountName()).ToList();
                 if (creds != null && creds.Count != 0)
                 {
                     return true;
