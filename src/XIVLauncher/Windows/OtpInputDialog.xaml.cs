@@ -261,7 +261,7 @@ namespace XIVLauncher.Windows
                         Storyboard.SetTarget(myStoryboard.Children.ElementAt(0), OtpInputPrompt);
                         myStoryboard.Begin();
                         OtpTextBox.Focus();
-                        return;
+                        throw new InvalidOperationException("Unable to find valid YubiKey credential.");
                     }
                 });
 
@@ -272,6 +272,11 @@ namespace XIVLauncher.Windows
                 return;
             }
 
+            catch (InvalidOperationException e)
+            {
+                Log.Error(e.Message);
+                return;
+            }
 
             byte retries = 0;
             _yubiThread = new Thread(() =>
