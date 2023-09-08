@@ -1,0 +1,75 @@
+﻿<Window x:Class="XIVLauncher.Windows.SecurityKeySetupDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Enter Authentication Key" WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Medium"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStyle="None" Height="198.088" Width="325.186">
+    <Grid Margin="0,0,0,0">
+        <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="182" Margin="0,0,10,0">
+            <StackPanel Margin="10,10,10,0">
+                <Grid
+                    HorizontalAlignment="Stretch"
+                    Height="32">
+                    <TextBlock
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Text="{Binding KeySetupInputPromptInsertLoc}"
+                        TextAlignment="Center"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        x:Name="KeySetupInputPrompt">
+                        <TextBlock.Resources>
+                            <Storyboard x:Key="InvalidShake">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="RenderTransform.(TranslateTransform.X)">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.0" Value="10"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-7"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="5"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-3"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </TextBlock.Resources>
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform X="0" Y="0" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </Grid>
+
+                <TextBox
+                    Margin="0,8,0,10"
+                    HorizontalAlignment="Stretch"
+                    PreviewTextInput="KeySetupTextBox_OnPreviewTextInput"
+                    PreviewKeyDown="KeySetupTextBox_PreviewKeyDown"
+                    KeyDown="KeySetupTextBox_OnKeyDown"
+                    MaxLength="32"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    x:Name="KeySetupTextBox" TextChanged="KeySetupTextBox_TextChanged" />
+                <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
+                                  x:Name="KeySetupTouchCheckBox" Content="{Binding KeySetupCheckBoxLoc}" ToolTip="{Binding KeySetupTooltipLoc}"/>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Button
+                        Content="{Binding OkLoc}"
+                        Margin="10,0,0,0"
+                        Width="100"
+                        Click="OkButton_OnClick" />
+                    <Button
+                        Content="{Binding CancelWithShortcutLoc}"
+                        Margin="7,0,0,0"
+                        Width="100"
+                        Click="CancelButton_OnClick" />
+                </StackPanel>
+                <TextBlock Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" MouseUp="OpenShortcutInfo_MouseUp" Text="{Binding KeySetupOnClickHintLoc}"/>
+            </StackPanel>
+        </materialDesign:Card>
+    </Grid>
+</Window>
