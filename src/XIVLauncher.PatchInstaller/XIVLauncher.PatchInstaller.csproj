@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>latest</LangVersion>

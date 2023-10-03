@@ -37,7 +37,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 for (int i = 0, readIndex = reader.ReadInt32(); i < readIndex; i++)
                     this.sourceFiles.Add(reader.ReadString());
                 foreach (var _ in this.sourceFiles)
-                    this.sourceFileLastPtr.Add(reader.ReadInt32());
+                    this.sourceFileLastPtr.Add(reader.ReadInt64());
 
                 for (int i = 0, readIndex = reader.ReadInt32(); i < readIndex; i++)
                     this.targetFiles.Add(new IndexedZiPatchTargetFile(reader, false));
