@@ -423,6 +423,10 @@
     "message": "Logg inn med de angitte opplysningene",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxLaunchOptions": {
+    "message": "Additional launch options",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxWaitingForMaint": {
     "message": "Venter på at vedlikeholdet skal bli ferdig...",
     "description": "MainWindowViewModel.SetupLoc"

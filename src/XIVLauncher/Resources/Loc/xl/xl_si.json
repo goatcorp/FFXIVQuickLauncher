@@ -423,6 +423,10 @@
     "message": "Log in with the provided credentials",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxLaunchOptions": {
+    "message": "Additional launch options",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxWaitingForMaint": {
     "message": "Waiting for maintenance to be over...",
     "description": "MainWindowViewModel.SetupLoc"

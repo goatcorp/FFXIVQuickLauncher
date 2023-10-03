@@ -423,6 +423,10 @@
     "message": "Войти в систему с предоставленными учетными данными",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxLaunchOptions": {
+    "message": "Additional launch options",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxWaitingForMaint": {
     "message": "Ожидание окончания технического обслуживания...",
     "description": "MainWindowViewModel.SetupLoc"
