@@ -1,4 +1,5 @@
 ﻿using XIVLauncher.Common.Patching.Util;
+using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -10,12 +11,10 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected override void ReadChunk()
         {
-            var start = this.Reader.BaseStream.Position;
-
-            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
+            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
         }
 
-        public XXXXChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public XXXXChunk(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         public override string ToString()
         {

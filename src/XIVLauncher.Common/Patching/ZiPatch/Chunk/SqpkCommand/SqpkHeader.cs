@@ -29,12 +29,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public byte[] HeaderData { get; protected set; }
         public long HeaderDataSourceOffset { get; protected set; }
 
-        public SqpkHeader(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkHeader(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            var start = this.Reader.BaseStream.Position;
-
+            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
             FileKind = (TargetFileKind)this.Reader.ReadByte();
             HeaderKind = (TargetHeaderKind)this.Reader.ReadByte();
             this.Reader.ReadByte(); // Alignment
@@ -46,8 +45,6 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
             HeaderDataSourceOffset = Offset + this.Reader.BaseStream.Position;
             HeaderData = this.Reader.ReadBytes(HEADER_SIZE);
-
-            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)

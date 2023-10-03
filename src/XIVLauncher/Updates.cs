@@ -258,6 +258,16 @@ namespace XIVLauncher
 
                 if (newRelease != null)
                 {
+                    try
+                    {
+                        // Reset UID cache after updating
+                        App.UniqueIdCache.Reset();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     if (changelogWindow == null)
                     {
                         Log.Error("changelogWindow was null");
