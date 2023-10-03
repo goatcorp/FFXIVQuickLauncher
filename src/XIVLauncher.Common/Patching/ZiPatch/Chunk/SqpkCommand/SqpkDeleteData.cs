@@ -23,7 +23,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
             TargetFile = new SqpackDatFile(this.Reader);
 
-            BlockOffset = this.Reader.ReadUInt32BE() << 7;
+            BlockOffset = (long)this.Reader.ReadUInt32BE() << 7;
             BlockNumber = this.Reader.ReadUInt32BE();
 
             this.Reader.ReadUInt32(); // Reserved
