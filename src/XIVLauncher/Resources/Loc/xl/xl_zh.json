@@ -728,7 +728,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorAV": {
-    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "message": "\n这个问题也可能是由您的杀毒软件错误地将 XIVLauncher 标记为恶意软件导致的。 您可能需要在设置中将它设置为例外 - 请检查我们的常见问题以获取更多信息。",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
