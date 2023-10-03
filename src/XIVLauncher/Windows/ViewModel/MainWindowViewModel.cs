@@ -1020,6 +1020,16 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void InstallerOnFail()
         {
+            try
+            {
+                // Reset UID cache, we need users to log in again
+                App.UniqueIdCache.Reset();
+            }
+            catch
+            {
+                // ignored
+            }
+
             CustomMessageBox.Show(
                 Loc.Localize("PatchInstallerInstallFailed", "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher."),
                 "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
