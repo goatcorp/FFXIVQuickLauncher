@@ -1,6 +1,5 @@
-﻿* Fixes an issue wherein the launcher may not have been able to patch the game correctly due to a signed/unsigned mismatch
-* Fixes an issue wherein the game may not have started correctly under very specific circumstances
-* Fixes an issue wherein some error messages may have been unclear
-* The "Updating assets" step of starting the game will now show the actual download progress
+﻿* Fixes an issue wherein the game repair feature may not have functioned correctly
+* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly
+* Adds a separate button to the login menu, which will open advanced login options, in addition to right-clicking
 * Updated the localization files
     => Thanks to our dedicated localization team!
