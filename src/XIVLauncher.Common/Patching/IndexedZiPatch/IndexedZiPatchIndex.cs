@@ -19,7 +19,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public readonly int ExpacVersion;
 
         private readonly List<string> sourceFiles = new();
-        private readonly List<int> sourceFileLastPtr = new();
+        private readonly List<long> sourceFileLastPtr = new();
         private readonly List<IndexedZiPatchTargetFile> targetFiles = new();
         private readonly List<IList<Tuple<int, int>>> sourceFilePartsCache = new();
 
@@ -52,7 +52,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         }
 
         public IList<string> Sources => this.sourceFiles.AsReadOnly();
-        public int GetSourceLastPtr(int index) => this.sourceFileLastPtr[index];
+        public long GetSourceLastPtr(int index) => this.sourceFileLastPtr[index];
         public IList<IndexedZiPatchTargetFile> Targets => this.targetFiles.AsReadOnly();
 
         public IList<IList<Tuple<int, int>>> SourceParts
@@ -149,7 +149,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                                         cancellationToken.Value.ThrowIfCancellationRequested();
 
                                     var block = sqpkFile.CompressedData[i];
-                                    var dataOffset = (int)sqpkFile.CompressedDataSourceOffsets[i];
+                                    var dataOffset = sqpkFile.CompressedDataSourceOffsets[i];
                                     if (block.IsCompressed)
                                     {
                                         file.Update(new IndexedZiPatchPartLocator

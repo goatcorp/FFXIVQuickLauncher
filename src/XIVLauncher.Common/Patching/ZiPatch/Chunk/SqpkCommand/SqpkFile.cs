@@ -22,24 +22,23 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
         public OperationKind Operation { get; protected set; }
         public long FileOffset { get; protected set; }
-        public ulong FileSize { get; protected set; }
+        public long FileSize { get; protected set; }
         public ushort ExpansionId { get; protected set; }
         public SqexFile TargetFile { get; protected set; }
 
         public List<long> CompressedDataSourceOffsets { get; protected set; }
         public List<SqpkCompressedBlock> CompressedData { get; protected set; }
 
-        public SqpkFile(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkFile(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            var start = this.Reader.BaseStream.Position;
-
+            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
             Operation = (OperationKind)this.Reader.ReadByte();
             this.Reader.ReadBytes(2); // Alignment
 
             FileOffset = this.Reader.ReadInt64BE();
-            FileSize = this.Reader.ReadUInt64BE();
+            FileSize = this.Reader.ReadInt64BE();
 
             var pathLen = this.Reader.ReadUInt32BE();
 
@@ -53,15 +52,13 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
                 CompressedDataSourceOffsets = new();
                 CompressedData = new List<SqpkCompressedBlock>();
 
-                while (Size - this.Reader.BaseStream.Position + start > 0)
+                while (advanceAfter.NumBytesRemaining > 0)
                 {
                     CompressedDataSourceOffsets.Add(Offset + this.Reader.BaseStream.Position);
                     CompressedData.Add(new SqpkCompressedBlock(this.Reader));
                     CompressedDataSourceOffsets[CompressedDataSourceOffsets.Count - 1] += CompressedData[CompressedData.Count - 1].HeaderSize;
                 }
             }
-
-            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         private static bool RemoveAllFilter(string filePath) =>
