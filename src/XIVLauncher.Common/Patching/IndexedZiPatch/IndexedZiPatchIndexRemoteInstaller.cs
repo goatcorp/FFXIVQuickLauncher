@@ -34,6 +34,10 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
                 this.workerProcess.StartInfo.UseShellExecute = true;
                 this.workerProcess.StartInfo.Verb = asAdmin ? "runas" : "open";
                 this.workerProcess.StartInfo.Arguments = $"index-rpc {Process.GetCurrentProcess().Id} {rpcChannelName}";
+#if !DEBUG
+                this.workerProcess.StartInfo.CreateNoWindow = true;
+                this.workerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+#endif
                 this.workerProcess.Start();
             }
             else
