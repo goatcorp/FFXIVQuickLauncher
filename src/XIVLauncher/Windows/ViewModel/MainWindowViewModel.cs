@@ -1503,6 +1503,7 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoPluginsLoc = Loc.Localize("LoginBoxNoPluginLogin", "Start w/o any Plugins");
             LoginNoThirdLoc = Loc.Localize("LoginBoxNoThirdLogin", "Start w/o Custom Repo Plugins");
             LoginTooltipLoc = Loc.Localize("LoginBoxLoginTooltip", "Log in with the provided credentials");
+            LaunchOptionsLoc = Loc.Localize("LoginBoxLaunchOptions", "Additional launch options");
             WaitingForMaintenanceLoc = Loc.Localize("LoginBoxWaitingForMaint", "Waiting for maintenance to be over...");
             CancelWithShortcutLoc = Loc.Localize("CancelWithShortcut", "_Cancel");
             OpenAccountSwitcherLoc = Loc.Localize("OpenAccountSwitcher", "Open Account Switcher");

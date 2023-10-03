@@ -310,6 +310,7 @@
                                                                          HorizontalAlignment="Left"
                                                                          VerticalAlignment="Center"
                                                                          Margin="0,0,7,0"
+                                                                         ToolTip="{Binding Path=LaunchOptionsLoc}"
                                                                          >
 
                                                     <materialDesign:PopupBox.ToggleContent>
