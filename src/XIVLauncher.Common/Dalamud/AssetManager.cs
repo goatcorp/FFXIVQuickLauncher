@@ -42,28 +42,6 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        private static void DeleteAndRecreateDirectory(DirectoryInfo dir)
-        {
-            if (!dir.Exists)
-            {
-                dir.Create();
-            }
-            else
-            {
-                dir.Delete(true);
-                dir.Create();
-            }
-        }
-
-        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
-        {
-            foreach (var dir in source.GetDirectories())
-                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
-
-            foreach (var file in source.GetFiles())
-                file.CopyTo(Path.Combine(target.FullName, file.Name));
-        }
-
         public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(DalamudUpdater updater, DirectoryInfo baseDir)
         {
             using var metaClient = new HttpClient
@@ -128,7 +106,7 @@ namespace XIVLauncher.Common.Dalamud
 
             if (isRefreshNeeded)
             {
-                DeleteAndRecreateDirectory(currentDir);
+                PlatformHelpers.DeleteAndRecreateDirectory(currentDir);
 
                 // Wait for it to be gone
                 Thread.Sleep(1000);
@@ -150,8 +128,8 @@ namespace XIVLauncher.Common.Dalamud
 
                 try
                 {
-                    DeleteAndRecreateDirectory(devDir);
-                    CopyFilesRecursively(currentDir, devDir);
+                    PlatformHelpers.DeleteAndRecreateDirectory(devDir);
+                    PlatformHelpers.CopyFilesRecursively(currentDir, devDir);
                 }
                 catch (Exception ex)
                 {

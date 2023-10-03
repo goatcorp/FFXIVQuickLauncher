@@ -428,18 +428,8 @@ namespace XIVLauncher.Common.Dalamud
             {
                 var devPath = new DirectoryInfo(Path.Combine(addonPath.FullName, "..", "dev"));
 
-                if (!devPath.Exists)
-                    devPath.Create();
-                else
-                {
-                    devPath.Delete(true);
-                    devPath.Create();
-                }
-
-                foreach (var fileInfo in addonPath.GetFiles())
-                {
-                    fileInfo.CopyTo(Path.Combine(devPath.FullName, fileInfo.Name));
-                }
+                PlatformHelpers.DeleteAndRecreateDirectory(devPath);
+                PlatformHelpers.CopyFilesRecursively(addonPath, devPath);
             }
             catch (Exception ex)
             {

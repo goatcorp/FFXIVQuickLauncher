@@ -22,8 +22,6 @@ public static class PlatformHelpers
             return Platform.Win32;
 
         // TODO(goat): Add mac here, once it's merged
-
-
     }
 
     /// <summary>
@@ -34,6 +32,28 @@ public static class PlatformHelpers
     {
         // https://stackoverflow.com/a/50413126
         return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+    }
+
+    public static void DeleteAndRecreateDirectory(DirectoryInfo dir)
+    {
+        if (!dir.Exists)
+        {
+            dir.Create();
+        }
+        else
+        {
+            dir.Delete(true);
+            dir.Create();
+        }
+    }
+
+    public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+    {
+        foreach (var dir in source.GetDirectories())
+            CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+
+        foreach (var file in source.GetFiles())
+            file.CopyTo(Path.Combine(target.FullName, file.Name));
     }
 
     public static void OpenBrowser(string url)
