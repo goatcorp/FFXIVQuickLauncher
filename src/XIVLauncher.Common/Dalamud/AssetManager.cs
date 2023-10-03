@@ -215,7 +215,7 @@ namespace XIVLauncher.Common.Dalamud
 
             foreach (var toDelete in baseDir.GetDirectories())
             {
-                if (toDelete != devDir && toDelete != currentDir)
+                if (toDelete.Name != devDir.Name && toDelete.Name != currentDir.Name)
                 {
                     toDelete.Delete(true);
                     Log.Verbose("[DASSET] Cleaned out {Path}", toDelete.FullName);
