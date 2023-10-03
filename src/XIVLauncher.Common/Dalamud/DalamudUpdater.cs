@@ -377,6 +377,9 @@ namespace XIVLauncher.Common.Dalamud
 
         private static void CleanUpOld(DirectoryInfo addonPath, string currentVer)
         {
+            if (GameHelpers.CheckIsGameOpen())
+                return;
+
             if (!addonPath.Exists)
                 return;
 
