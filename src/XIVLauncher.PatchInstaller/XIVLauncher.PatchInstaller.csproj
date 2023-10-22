@@ -37,6 +37,7 @@
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="SharedMemory" Version="2.3.2" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="System.Threading.Channels" Version="8.0.0-rc.2.23479.6" />
   </ItemGroup>
 
   <ItemGroup>

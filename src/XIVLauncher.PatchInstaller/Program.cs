@@ -1,4 +1,5 @@
-﻿using System.CommandLine;
+﻿using System;
+using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
 using Serilog;
@@ -22,12 +23,23 @@ public static class Program
         rc.AddCommand(InstallCommand.COMMAND);
         rc.AddCommand(IndexCreateCommand.COMMAND);
         rc.AddCommand(IndexVerifyCommand.COMMAND);
+        rc.AddCommand(IndexUpdateCommand.COMMAND);
         rc.AddCommand(IndexRpcCommand.COMMAND);
         rc.AddCommand(IndexRpcTestCommand.COMMAND);
         rc.AddCommand(RpcCommand.COMMAND);
 
-        var ret = await rc.InvokeAsync(args);
-        Log.Information("Operation complete.");
+        var ret = -1;
+
+        try
+        {
+            ret = await rc.InvokeAsync(args);
+            Log.Information("Operation complete.");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Operation failed.");
+        }
+
         return ret;
     }
 }
