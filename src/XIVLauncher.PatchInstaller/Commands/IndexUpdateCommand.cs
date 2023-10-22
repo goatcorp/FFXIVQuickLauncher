@@ -257,10 +257,10 @@ public class IndexUpdateCommand
                             if (i < firstPatchFileIndex)
                                 continue;
 
-                            Log.Information("Indexing patch [ex{expac}: {index}/{total}]: {file}", expac, i + 1, patchFilePath.Length, patchFilePath);
+                            Log.Information("Indexing patch [ex{expac}: {index}/{total}]: {file}", expac, i + 1, patchFilePaths.Count, patchFilePath);
                             await patchIndex.ApplyZiPatch(Path.GetFileName(patchFilePath), patchFiles[patchFiles.Count - 1], cancellationToken);
 
-                            Log.Information("Hashing indexed patch [ex{expac}: {index}/{total}]: {file}.index", expac, i + 1, patchFilePath.Length, patchFilePath);
+                            Log.Information("Hashing indexed patch [ex{expac}: {index}/{total}]: {file}.index", expac, i + 1, patchFilePaths.Count, patchFilePath);
                             await patchIndex.CalculateCrc32(sources, cancellationToken);
 
                             using (var writer = new BinaryWriter(new DeflateStream(new FileStream(patchFilePath + ".index.tmp", FileMode.Create), CompressionLevel.Optimal)))
