@@ -41,12 +41,15 @@ public class IndexUpdateCommand
     private static readonly Option<string?> PasswordOption = new("-p", () => null, "User password.");
     private static readonly Option<string?> OtpOption = new("-o", () => null, "User OTP.");
 
+    private static readonly Option<bool> SkipPatchHashOption = new("--skip-patch-hash", () => false, "Skip patch hash validation.");
+
     static IndexUpdateCommand()
     {
         COMMAND.AddOption(PatchRootPathOption);
         COMMAND.AddOption(UserNameOption);
         COMMAND.AddOption(PasswordOption);
         COMMAND.AddOption(OtpOption);
+        COMMAND.AddOption(SkipPatchHashOption);
         COMMAND.SetHandler(x => new IndexUpdateCommand(x.ParseResult).Handle(x.GetCancellationToken()));
     }
 
@@ -54,6 +57,7 @@ public class IndexUpdateCommand
     private readonly string? username;
     private readonly string? password;
     private readonly string? otp;
+    private readonly bool skipPatchHash;
 
     private static readonly HttpClient Client = new(new HttpClientHandler
     {
@@ -69,6 +73,7 @@ public class IndexUpdateCommand
         this.username = parseResult.GetValueForOption(UserNameOption);
         this.password = parseResult.GetValueForOption(PasswordOption);
         this.otp = parseResult.GetValueForOption(OtpOption);
+        this.skipPatchHash = parseResult.GetValueForOption(SkipPatchHashOption);
     }
 
     private async Task<int> Handle(CancellationToken cancellationToken)
@@ -102,13 +107,13 @@ public class IndexUpdateCommand
 
                     if (!localPath.Exists || localPath.Length != patch.Length)
                     {
-                        Log.Information("Downloading patch [{index}/{total}]: {path}", i + 1, bootPatchList.Length, patch.Url);
+                        Log.Information("[{index}/{total}] Downloading: {path}", i + 1, bootPatchList.Length, patch.Url);
                         var fd = new FileDownloader(Client, patch.Url, localPath.FullName, null, cancellationToken, 8);
                         var dtask = fd.Download();
 
                         while (!dtask.IsCompleted)
                         {
-                            await Task.WhenAny(dtask, Task.Delay(200, cancellationToken));
+                            await Task.WhenAny(dtask, Task.Delay(5000, new()));
                             Log.Information(
                                 "Downloaded {curr:##,###} bytes out of {total:##,###} bytes ({percentage:F2}%): {speed:##,###}b/s",
                                 fd.DownloadedLength,
@@ -118,7 +123,7 @@ public class IndexUpdateCommand
                         }
                     }
 
-                    Log.Information("Applying patch [{index}/{total}]: {path}", i + 1, bootPatchList.Length, Path.GetFileName(patch.Url));
+                    Log.Information("[{index}/{total}] Applying: {path}", i + 1, bootPatchList.Length, Path.GetFileName(patch.Url));
 
                     using var ziPatch = new ZiPatchFile(localPath.OpenRead());
                     foreach (var chunk in ziPatch.GetChunks())
@@ -155,6 +160,9 @@ public class IndexUpdateCommand
 
         var fileCompletions = gamePatchList.ToDictionary(x => x, _ => new TaskCompletionSource<PatchListEntry>());
 
+        foreach (var patch in bootPatchList)
+            (fileCompletions[patch] = new()).SetResult(patch);
+
         await Task.WhenAll(
             Task.Run(async () =>
             {
@@ -171,21 +179,21 @@ public class IndexUpdateCommand
 
                     var downloadRequired = !localPath.Exists || localPath.Length != patch.Length;
 
-                    if (!downloadRequired)
+                    if (!downloadRequired && !this.skipPatchHash)
                     {
-                        Log.Information("Verifying patch [{index}/{total}]: {path}", i + 1, gamePatchList.Length, patch.Url);
+                        Log.Information("[{index}/{total}]: Verifying: {path}", i + 1, gamePatchList.Length, patch.Url);
                         downloadRequired = !await CheckPatchHashAsync(localPath, patch, cancellationToken);
                     }
 
                     if (downloadRequired)
                     {
-                        Log.Information("Downloading patch [{index}/{total}]: {path}", i + 1, gamePatchList.Length, patch.Url);
+                        Log.Information("[{index}/{total}]: Downloading: {path}", i + 1, gamePatchList.Length, patch.Url);
                         var fd = new FileDownloader(Client, patch.Url, localPath.FullName, null, cancellationToken, 8);
                         var dtask = fd.Download();
 
                         while (!dtask.IsCompleted)
                         {
-                            await Task.WhenAny(dtask, Task.Delay(200, new()));
+                            await Task.WhenAny(dtask, Task.Delay(5000, new()));
                             Log.Information(
                                 "Downloaded {curr:##,###} bytes out of {total:##,###} bytes ({percentage:F2}%): {speed:##,###}b/s",
                                 fd.DownloadedLength,
@@ -197,7 +205,7 @@ public class IndexUpdateCommand
                         // propagate exception if any happened
                         await dtask;
 
-                        if (!await CheckPatchHashAsync(localPath, patch, cancellationToken))
+                        if (!this.skipPatchHash && !await CheckPatchHashAsync(localPath, patch, cancellationToken))
                             throw new IOException("Downloaded file did not pass hash check");
                     }
 
@@ -208,9 +216,17 @@ public class IndexUpdateCommand
             {
                 foreach (var (expac, patches) in indexSources.Select(x => (x.Key, x.Value)))
                 {
+                    var expacName = expac switch
+                    {
+                        -1 => "boot",
+                        0 => "ffxiv",
+                        _ => $"ex{expac}",
+                    };
                     var patchFilePaths = patches.Select(x => Path.Combine(this.settings.GamePath.FullName, EnsureRelativePath(new Uri(x.Url).LocalPath))).ToList();
                     var firstPatchFileIndex = patchFilePaths.Count - 1;
                     IndexedZiPatchIndex? patchIndex = null;
+
+                    Log.Information("[{expac}]: Finding most recent reusable patch index", expacName);
 
                     for (; firstPatchFileIndex >= 0; firstPatchFileIndex--)
                     {
@@ -239,6 +255,12 @@ public class IndexUpdateCommand
 
                     ++firstPatchFileIndex;
 
+                    if (firstPatchFileIndex >= patchFilePaths.Count)
+                    {
+                        Log.Information("[{expac}]: Patch index generation not needed; skipping", expacName);
+                        continue;
+                    }
+
                     var sources = new List<Stream>();
                     var patchFiles = new List<ZiPatchFile>();
                     patchIndex ??= new(expac);
@@ -257,10 +279,10 @@ public class IndexUpdateCommand
                             if (i < firstPatchFileIndex)
                                 continue;
 
-                            Log.Information("Indexing patch [ex{expac}: {index}/{total}]: {file}", expac, i + 1, patchFilePaths.Count, patchFilePath);
+                            Log.Information("[{expac}: {index}/{total}]: Indexing: {file}", expacName, i + 1, patchFilePaths.Count, patchFilePath);
                             await patchIndex.ApplyZiPatch(Path.GetFileName(patchFilePath), patchFiles[patchFiles.Count - 1], cancellationToken);
 
-                            Log.Information("Hashing indexed patch [ex{expac}: {index}/{total}]: {file}.index", expac, i + 1, patchFilePaths.Count, patchFilePath);
+                            Log.Information("[{expac}: {index}/{total}]: Hashing: {file}", expacName, i + 1, patchFilePaths.Count, patchFilePath);
                             await patchIndex.CalculateCrc32(sources, cancellationToken);
 
                             using (var writer = new BinaryWriter(new DeflateStream(new FileStream(patchFilePath + ".index.tmp", FileMode.Create), CompressionLevel.Optimal)))

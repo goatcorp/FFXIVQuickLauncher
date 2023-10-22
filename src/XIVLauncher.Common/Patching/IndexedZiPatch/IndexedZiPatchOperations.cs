@@ -66,9 +66,16 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             }
         }
 
-        public static async Task<IndexedZiPatchInstaller> VerifyFromZiPatchIndex(string patchIndexFilePath, string gameRootPath, CancellationToken? cancellationToken = null) => await VerifyFromZiPatchIndex(new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress))), gameRootPath, cancellationToken);
+        public static async Task<IndexedZiPatchInstaller> VerifyFromZiPatchIndex(string patchIndexFilePath, string gameRootPath, int concurrentCount, CancellationToken? cancellationToken = null)
+        {
+            return await VerifyFromZiPatchIndex(
+                       new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(patchIndexFilePath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress))),
+                       gameRootPath,
+                       concurrentCount,
+                       cancellationToken);
+        }
 
-        public static async Task<IndexedZiPatchInstaller> VerifyFromZiPatchIndex(IndexedZiPatchIndex patchIndex, string gameRootPath, CancellationToken? cancellationToken = null)
+        public static async Task<IndexedZiPatchInstaller> VerifyFromZiPatchIndex(IndexedZiPatchIndex patchIndex, string gameRootPath, int concurrentCount, CancellationToken? cancellationToken = null)
         {
             using var verifier = new IndexedZiPatchInstaller(patchIndex)
             {
@@ -107,7 +114,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             try
             {
                 verifier.SetTargetStreamsFromPathReadOnly(gameRootPath);
-                await verifier.VerifyFiles(false, 8, cancellationToken);
+                await verifier.VerifyFiles(false, concurrentCount, cancellationToken);
             }
             finally
             {
@@ -120,7 +127,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public static async Task RepairFromPatchFileIndexFromFile(IndexedZiPatchIndex patchIndex, string gameRootPath, string patchFileRootDir, int concurrentCount, CancellationToken? cancellationToken = null)
         {
-            using var verifier = await VerifyFromZiPatchIndex(patchIndex, gameRootPath, cancellationToken);
+            using var verifier = await VerifyFromZiPatchIndex(patchIndex, gameRootPath, concurrentCount, cancellationToken);
             verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
             for (var i = 0; i < patchIndex.Sources.Count; i++)
                 verifier.QueueInstall(i, new FileInfo(Path.Combine(patchFileRootDir, patchIndex.Sources[i])));
@@ -131,7 +138,7 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
 
         public static async Task RepairFromPatchFileIndexFromUri(IndexedZiPatchIndex patchIndex, string gameRootPath, string baseUri, int concurrentCount, CancellationToken? cancellationToken = null)
         {
-            using var verifier = await VerifyFromZiPatchIndex(patchIndex, gameRootPath, cancellationToken);
+            using var verifier = await VerifyFromZiPatchIndex(patchIndex, gameRootPath, concurrentCount, cancellationToken);
             verifier.SetTargetStreamsFromPathReadWriteForMissingFiles(gameRootPath);
             for (var i = 0; i < patchIndex.Sources.Count; i++)
                 verifier.QueueInstall(i, baseUri + patchIndex.Sources[i], null, concurrentCount);
