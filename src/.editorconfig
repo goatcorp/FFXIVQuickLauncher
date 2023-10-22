@@ -1,0 +1,147 @@
+root = true
+# top-most EditorConfig file
+
+[*]
+charset = utf-8
+
+end_of_line = lf
+insert_final_newline = true
+
+# 4 space indentation
+indent_style = space
+indent_size = 4
+
+# disable redundant style warnings
+
+# Microsoft .NET properties
+csharp_indent_braces = false
+csharp_new_line_before_catch = true
+csharp_new_line_before_else = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = false
+csharp_new_line_before_open_brace = all
+csharp_preferred_modifier_order = public, private, protected, internal, new, abstract, virtual, sealed, override, static, readonly, extern, unsafe, volatile, async:suggestion
+csharp_style_var_elsewhere = true:suggestion
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+dotnet_code_quality_unused_parameters = non_public
+dotnet_naming_rule.event_rule.severity = warning
+dotnet_naming_rule.event_rule.style = upper_camel_case_style
+dotnet_naming_rule.event_rule.symbols = event_symbols
+dotnet_naming_rule.private_constants_rule.severity = warning
+dotnet_naming_rule.private_constants_rule.style = upper_camel_case_style
+dotnet_naming_rule.private_constants_rule.symbols = private_constants_symbols
+dotnet_naming_rule.private_instance_fields_rule.severity = warning
+dotnet_naming_rule.private_instance_fields_rule.style = lower_camel_case_style
+dotnet_naming_rule.private_instance_fields_rule.symbols = private_instance_fields_symbols
+dotnet_naming_rule.private_static_fields_rule.severity = warning
+dotnet_naming_rule.private_static_fields_rule.style = lower_camel_case_style
+dotnet_naming_rule.private_static_fields_rule.symbols = private_static_fields_symbols
+dotnet_naming_rule.private_static_readonly_rule.severity = warning
+dotnet_naming_rule.private_static_readonly_rule.style = upper_camel_case_style
+dotnet_naming_rule.private_static_readonly_rule.symbols = private_static_readonly_symbols
+dotnet_naming_style.lower_camel_case_style.capitalization = camel_case
+dotnet_naming_style.on_upper_camel_case_style.capitalization = pascal_case
+dotnet_naming_style.on_upper_camel_case_style.required_prefix = On
+dotnet_naming_style.upper_camel_case_style.capitalization = pascal_case
+dotnet_naming_symbols.event_symbols.applicable_accessibilities = *
+dotnet_naming_symbols.event_symbols.applicable_kinds = event
+dotnet_naming_symbols.private_constants_symbols.applicable_accessibilities = private
+dotnet_naming_symbols.private_constants_symbols.applicable_kinds = field
+dotnet_naming_symbols.private_constants_symbols.required_modifiers = const
+dotnet_naming_symbols.private_instance_fields_symbols.applicable_accessibilities = private
+dotnet_naming_symbols.private_instance_fields_symbols.applicable_kinds = field
+dotnet_naming_symbols.private_static_fields_symbols.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_fields_symbols.applicable_kinds = field
+dotnet_naming_symbols.private_static_fields_symbols.required_modifiers = static
+dotnet_naming_symbols.private_static_readonly_symbols.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_readonly_symbols.applicable_kinds = field
+dotnet_naming_symbols.private_static_readonly_symbols.required_modifiers = static,readonly
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:suggestion
+dotnet_style_predefined_type_for_member_access = true:suggestion
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+dotnet_style_parentheses_in_other_operators = always_for_clarity:silent
+dotnet_style_object_initializer = false
+dotnet_style_qualification_for_event = true:suggestion
+dotnet_style_qualification_for_field = true:suggestion
+dotnet_style_qualification_for_method = true:suggestion
+dotnet_style_qualification_for_property = true:suggestion
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_before_open_square_brackets = false
+csharp_space_before_comma = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_comma = true
+csharp_space_after_cast = false
+csharp_space_around_binary_operators = before_and_after
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_parentheses = none
+csharp_space_between_square_brackets = false
+
+# ReSharper properties
+resharper_align_linq_query = true
+resharper_align_multiline_argument = true
+resharper_align_multiline_calls_chain = true
+resharper_align_multiline_expression = true
+resharper_align_multiline_extends_list = true
+resharper_align_multiline_for_stmt = true
+resharper_align_multline_type_parameter_constrains = true
+resharper_align_multline_type_parameter_list = true
+resharper_apply_on_completion = true
+resharper_auto_property_can_be_made_get_only_global_highlighting = none
+resharper_auto_property_can_be_made_get_only_local_highlighting = none
+resharper_autodetect_indent_settings = true
+resharper_braces_for_ifelse = required_for_multiline
+resharper_can_use_global_alias = false
+resharper_csharp_align_multiline_parameter = true
+resharper_csharp_align_multiple_declaration = true
+resharper_csharp_empty_block_style = multiline
+resharper_csharp_int_align_comments = true
+resharper_csharp_new_line_before_while = true
+resharper_csharp_wrap_after_declaration_lpar = true
+resharper_enforce_line_ending_style = true
+resharper_member_can_be_private_global_highlighting = none
+resharper_member_can_be_private_local_highlighting = none
+resharper_new_line_before_finally = false
+resharper_place_accessorholder_attribute_on_same_line = false
+resharper_place_field_attribute_on_same_line = false
+resharper_show_autodetect_configure_formatting_tip = false
+resharper_use_indent_from_vs = false
+
+# ReSharper inspection severities
+resharper_arrange_missing_parentheses_highlighting = hint
+resharper_arrange_redundant_parentheses_highlighting = hint
+resharper_arrange_this_qualifier_highlighting = none
+resharper_arrange_type_member_modifiers_highlighting = hint
+resharper_arrange_type_modifiers_highlighting = hint
+resharper_built_in_type_reference_style_for_member_access_highlighting = hint
+resharper_built_in_type_reference_style_highlighting = none
+resharper_foreach_can_be_converted_to_query_using_another_get_enumerator_highlighting = none
+resharper_foreach_can_be_partly_converted_to_query_using_another_get_enumerator_highlighting = none
+resharper_invert_if_highlighting = none
+resharper_loop_can_be_converted_to_query_highlighting = none
+resharper_method_has_async_overload_highlighting = none
+resharper_private_field_can_be_converted_to_local_variable_highlighting = none
+resharper_redundant_base_qualifier_highlighting = none
+resharper_suggest_var_or_type_built_in_types_highlighting = hint
+resharper_suggest_var_or_type_elsewhere_highlighting = hint
+resharper_suggest_var_or_type_simple_types_highlighting = hint
+resharper_unused_auto_property_accessor_global_highlighting = none
+csharp_style_deconstructed_variable_declaration = true:silent
+
+[*.{appxmanifest,asax,ascx,aspx,axaml,axml,build,c,c++,cc,cginc,compute,config,cp,cpp,cs,cshtml,csproj,css,cu,cuh,cxx,dbml,discomap,dtd,h,hh,hlsl,hlsli,hlslinc,hpp,htm,html,hxx,inc,inl,ino,ipp,js,json,jsproj,jsx,lsproj,master,mpp,mq4,mq5,mqh,njsproj,nuspec,paml,proj,props,proto,razor,resjson,resw,resx,skin,StyleCop,targets,tasks,tpp,ts,tsx,usf,ush,vb,vbproj,xaml,xamlx,xml,xoml,xsd}]
+indent_style = space
+indent_size = 4
+tab_width = 4
+dotnet_style_parentheses_in_other_operators = always_for_clarity:silent
+
+[*.{yaml,yml}]
+indent_style = space
+indent_size = 2
+tab_width = 2
