@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 // ReSharper disable InconsistentNaming
 
 namespace XIVLauncher.Common.Patching.Util

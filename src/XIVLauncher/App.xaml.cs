@@ -16,7 +16,6 @@ using Serilog.Events;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Support;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
