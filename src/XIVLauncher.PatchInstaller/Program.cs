@@ -23,6 +23,7 @@ public static class Program
         rc.AddCommand(InstallCommand.COMMAND);
         rc.AddCommand(IndexCreateCommand.COMMAND);
         rc.AddCommand(IndexVerifyCommand.COMMAND);
+        rc.AddCommand(IndexRepairCommand.COMMAND);
         rc.AddCommand(IndexUpdateCommand.COMMAND);
         rc.AddCommand(IndexRpcCommand.COMMAND);
         rc.AddCommand(IndexRpcTestCommand.COMMAND);
