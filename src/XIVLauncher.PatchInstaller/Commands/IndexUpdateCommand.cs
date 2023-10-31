@@ -3,21 +3,17 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
@@ -41,7 +37,8 @@ public class IndexUpdateCommand
     private static readonly Option<string?> PasswordOption = new("-p", () => null, "User password.");
     private static readonly Option<string?> OtpOption = new("-o", () => null, "User OTP.");
 
-    private static readonly Option<bool> SkipPatchHashOption = new("--skip-patch-hash", () => false, "Skip patch hash validation.");
+    private static readonly Option<bool> NoVerifyOldPatchHashOption = new("--no-verify-old-patch-hash", () => false, "Skip patch hash validation for old patch files.");
+    private static readonly Option<bool> NoVerifyNewPatchHashOption = new("--no-verify-new-patch-hash", () => false, "Skip patch hash validation for newly downloaded patch files.");
 
     static IndexUpdateCommand()
     {
@@ -49,7 +46,8 @@ public class IndexUpdateCommand
         COMMAND.AddOption(UserNameOption);
         COMMAND.AddOption(PasswordOption);
         COMMAND.AddOption(OtpOption);
-        COMMAND.AddOption(SkipPatchHashOption);
+        COMMAND.AddOption(NoVerifyOldPatchHashOption);
+        COMMAND.AddOption(NoVerifyNewPatchHashOption);
         COMMAND.SetHandler(x => new IndexUpdateCommand(x.ParseResult).Handle(x.GetCancellationToken()));
     }
 
@@ -57,7 +55,8 @@ public class IndexUpdateCommand
     private readonly string? username;
     private readonly string? password;
     private readonly string? otp;
-    private readonly bool skipPatchHash;
+    private readonly bool noVerifyOldPatchHash;
+    private readonly bool noVerifyNewPatchHash;
 
     private static readonly HttpClient Client = new(new HttpClientHandler
     {
@@ -73,20 +72,21 @@ public class IndexUpdateCommand
         this.username = parseResult.GetValueForOption(UserNameOption);
         this.password = parseResult.GetValueForOption(PasswordOption);
         this.otp = parseResult.GetValueForOption(OtpOption);
-        this.skipPatchHash = parseResult.GetValueForOption(SkipPatchHashOption);
+        this.noVerifyOldPatchHash = parseResult.GetValueForOption(NoVerifyOldPatchHashOption);
+        this.noVerifyNewPatchHash = parseResult.GetValueForOption(NoVerifyNewPatchHashOption);
     }
 
     private async Task<int> Handle(CancellationToken cancellationToken)
     {
         var la = new Launcher((ISteam?)null, new CommonUniqueIdCache(null), this.settings);
 
-        var bootPatchListFilePath = Path.Combine(this.settings.GamePath.FullName, "bootlist.json");
+        var bootPatchListFile = new FileInfo(Path.Combine(this.settings.GamePath.FullName, "bootlist.json"));
 
-        if (!TryReadPatchListEntries(bootPatchListFilePath, out var bootPatchList))
+        if (!TryReadPatchListEntries(bootPatchListFile, out var bootPatchList) || bootPatchListFile.LastWriteTime < DateTime.Now - TimeSpan.FromHours(1))
         {
             Log.Information("Downloading boot patch information.");
             bootPatchList = await la.CheckBootVersion(this.settings.PatchPath, true);
-            File.WriteAllText(bootPatchListFilePath, JsonConvert.SerializeObject(bootPatchList, Formatting.Indented));
+            File.WriteAllText(bootPatchListFile.FullName, JsonConvert.SerializeObject(bootPatchList, Formatting.Indented));
         }
 
         using (var zpStore = new SqexFileStreamStore())
@@ -135,7 +135,7 @@ public class IndexUpdateCommand
             }
         }
 
-        var gamePatchListFilePath = Path.Combine(this.settings.GamePath.FullName, "gamelist.json");
+        var gamePatchListFile = new FileInfo(Path.Combine(this.settings.GamePath.FullName, "gamelist.json"));
         PatchListEntry[] gamePatchList;
 
         if (this.username is not null && this.password is not null)
@@ -143,9 +143,9 @@ public class IndexUpdateCommand
             Log.Information("Logging in and fetching game patch information.");
             var lr = await la.Login(this.username, this.password, this.otp ?? "", false, false, this.settings.GamePath, true, false);
             gamePatchList = lr.PendingPatches;
-            File.WriteAllText(gamePatchListFilePath, JsonConvert.SerializeObject(gamePatchList, Formatting.Indented));
+            File.WriteAllText(gamePatchListFile.FullName, JsonConvert.SerializeObject(gamePatchList, Formatting.Indented));
         }
-        else if (!TryReadPatchListEntries(gamePatchListFilePath, out gamePatchList))
+        else if (!TryReadPatchListEntries(gamePatchListFile, out gamePatchList))
         {
             Log.Error("No previous game patch file list found. You need to log in.");
             return -1;
@@ -179,7 +179,7 @@ public class IndexUpdateCommand
 
                     var downloadRequired = !localPath.Exists || localPath.Length != patch.Length;
 
-                    if (!downloadRequired && !this.skipPatchHash)
+                    if (!downloadRequired && !this.noVerifyOldPatchHash)
                     {
                         Log.Information("[{index}/{total}]: Verifying: {path}", i + 1, gamePatchList.Length, patch.Url);
                         downloadRequired = !await CheckPatchHashAsync(localPath, patch, cancellationToken);
@@ -205,7 +205,7 @@ public class IndexUpdateCommand
                         // propagate exception if any happened
                         await dtask;
 
-                        if (!this.skipPatchHash && !await CheckPatchHashAsync(localPath, patch, cancellationToken))
+                        if (!this.noVerifyNewPatchHash && !await CheckPatchHashAsync(localPath, patch, cancellationToken))
                             throw new IOException("Downloaded file did not pass hash check");
                     }
 
@@ -235,7 +235,16 @@ public class IndexUpdateCommand
                         if (!File.Exists(indexPath))
                             continue;
 
-                        patchIndex = new(new BinaryReader(new DeflateStream(new FileStream(indexPath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
+                        try
+                        {
+                            patchIndex = new(new BinaryReader(new DeflateStream(new FileStream(indexPath, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warning(e, "Failed to read; ignoring {f}", Path.GetFileName(indexPath));
+                            continue;
+                        }
+
                         if (patchIndex.ExpacVersion != expac)
                             continue;
 
@@ -257,7 +266,7 @@ public class IndexUpdateCommand
 
                     if (firstPatchFileIndex >= patchFilePaths.Count)
                     {
-                        Log.Information("[{expac}]: Patch index generation not needed; skipping", expacName);
+                        Log.Information("[{expac}]: Patch index generation not needed; skipping: {indexFileName}", expacName, Path.GetFileName(patchFilePaths[patchFilePaths.Count - 1]));
                         continue;
                     }
 
@@ -288,7 +297,19 @@ public class IndexUpdateCommand
                             using (var writer = new BinaryWriter(new DeflateStream(new FileStream(patchFilePath + ".index.tmp", FileMode.Create), CompressionLevel.Optimal)))
                                 patchIndex.WriteTo(writer);
 
-                            File.Move(patchFilePath + ".index.tmp", patchFilePath + ".index");
+                            if (File.Exists(patchFilePath + ".index"))
+                            {
+                                for (var j = 0;; j++)
+                                {
+                                    if (File.Exists($"{patchFilePath}.index.{j}.old"))
+                                        continue;
+
+                                    File.Move(patchFilePath + ".index", $"{patchFilePath}.index.{j}.old");
+                                    break;
+                                }
+                            }
+
+                            File.Move($"{patchFilePath}.index.tmp", $"{patchFilePath}.index");
                         }
                     } finally
                     {
@@ -298,372 +319,6 @@ public class IndexUpdateCommand
                 }
             }, cancellationToken));
         return 0;
-    }
-
-    private class FileDownloader
-    {
-        private const int BufferSize = 65536;
-        private const int ConnectionDelay = 200;
-
-        private const int SpeedBucketCount = 50;
-        private const int SpeedBucketDuration = 100;
-        private readonly long[] speedBucketBaseTick = new long[SpeedBucketCount];
-        private readonly long[] speedAccumulator = new long[SpeedBucketCount];
-
-        private readonly HttpClient client;
-        private readonly string localPath;
-        private readonly string? sid;
-        private readonly CancellationToken cancellationToken;
-        private readonly int numThreads;
-        private readonly List<Fragment> fragments = new();
-        private readonly Channel<Tuple<long, int, byte[]>> fileChannel;
-        private string url;
-
-        private Stream? localFile;
-
-        public FileDownloader(HttpClient client, string url, string localPath, string? sid, CancellationToken cancellationToken, int numThreads)
-        {
-            this.client = client;
-            this.url = url;
-            this.localPath = localPath;
-            this.sid = sid;
-            this.cancellationToken = cancellationToken;
-            this.numThreads = numThreads;
-            this.fileChannel = Channel.CreateBounded<Tuple<long, int, byte[]>>(numThreads * 16);
-        }
-
-        public long TotalLength { get; private set; } = -1;
-        public long DownloadedLength { get; private set; }
-        public long BytesPerSecond => this.speedAccumulator.Sum() * 1000 / (SpeedBucketCount * SpeedBucketDuration);
-
-        private async Task<HttpResponseMessage> GetResponseAsync(long start, long end)
-        {
-            if (start == 0 && end == 0)
-                Log.Verbose("Connecting: {url}", this.url);
-            else
-                Log.Verbose("Connecting: {url} ({start:##,###}-{end:##,###})", this.url, start, end);
-
-            using var req = new HttpRequestMessage(HttpMethod.Get, url);
-            req.Headers.Add("User-Agent", Constants.PatcherUserAgent);
-            req.Headers.Add("Connection", "Keep-Alive");
-            if (start != 0 || end != 0)
-                req.Headers.Range = new(start == 0 ? null : start, end == 0 ? null : end);
-            if (sid != null)
-                req.Headers.Add("X-Patch-Unique-Id", sid);
-            // Note: "req" has to be alive during the await, so we async+return await instead of plain return.
-            return await this.client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        }
-
-        public async Task Download()
-        {
-            var tempPath = $"{this.localPath}.tmp.{Process.GetCurrentProcess().Id:X08}{Environment.TickCount:X16}0000";
-            for (var i = 1; File.Exists(tempPath); i++)
-                tempPath = $"{this.localPath}.tmp.{Process.GetCurrentProcess().Id:X08}{Environment.TickCount:X16}{i:X04}";
-
-            this.localFile = File.Create(tempPath);
-            var flushTask = FlushTask();
-
-            try
-            {
-                try
-                {
-                    HttpResponseMessage? response = null;
-                    Stream? stream = null;
-
-                    while (true)
-                    {
-                        try
-                        {
-                            response = await this.GetResponseAsync(0, 0);
-                            stream = await response.Content.ReadAsStreamAsync();
-
-                            switch (response.StatusCode)
-                            {
-                                case HttpStatusCode.OK:
-                                    break;
-
-                                case HttpStatusCode.Redirect:
-                                case HttpStatusCode.TemporaryRedirect:
-                                    url = response.Headers.Location.ToString();
-                                    continue;
-
-                                default:
-                                    throw new InvalidResponseException("Invalid response status code", response.StatusCode.ToString());
-                            }
-
-                            if (response.Content.Headers.ContentLength is not { } length)
-                            {
-                                Log.Information("File size unknown");
-
-                                await stream.CopyToAsync(this.localFile);
-                                this.localFile?.Dispose();
-                                this.localFile = null;
-                                File.Move(tempPath, this.localPath);
-                                return;
-                            }
-
-                            TotalLength = length;
-                            Log.Information("Downloading {length:##,###} bytes", length);
-                            this.fragments.Add(new(this, response, stream, 0, length));
-                            this.fragments.Add(new(this, null, null, length, length));
-                            response = null;
-                            stream = null;
-
-                            break;
-                        } finally
-                        {
-                            response?.Dispose();
-                            stream?.Dispose();
-                            response = null;
-                            stream = null;
-                        }
-                    }
-
-                    var working = new List<Task>();
-
-                    while (await MergeAndFindGap() != -1)
-                    {
-                        working.Clear();
-                        working.AddRange(this.fragments.Select(x => x.DownloadTask).Where(x => !x.IsCompleted));
-
-                        if (working.Count >= this.numThreads)
-                        {
-                            await Task.WhenAny(working.Append(Task.Delay(200, this.cancellationToken)));
-                            _ = await MergeAndFindGap();
-                            continue;
-                        }
-
-                        await Task.Delay(ConnectionDelay, this.cancellationToken);
-                        var largestGap = await MergeAndFindGap();
-                        if (largestGap == -1)
-                            break;
-
-                        var cur = this.fragments[largestGap];
-                        var next = this.fragments[largestGap + 1];
-
-                        var fragStart = cur.DownloadTask.IsCompleted ? cur.AvailEnd : (cur.AvailEnd + next.Start) / 2;
-                        var fragEnd = next.Start;
-                        if (fragStart >= fragEnd)
-                            continue;
-
-                        try
-                        {
-                            response = await this.GetResponseAsync(fragStart, fragEnd);
-                            stream = await response.Content.ReadAsStreamAsync();
-
-                            if (response.StatusCode != HttpStatusCode.PartialContent)
-                                throw new InvalidResponseException($"Invalid response status code: {response.StatusCode}", "");
-
-                            this.fragments[largestGap].MaxEnd = fragStart;
-                            this.fragments.Insert(largestGap + 1, new(this, response, stream, fragStart, fragEnd));
-                            response = null;
-                            stream = null;
-                        } finally
-                        {
-                            response?.Dispose();
-                            stream?.Dispose();
-                            response = null;
-                            stream = null;
-                        }
-                    }
-                } finally
-                {
-                    foreach (var f in this.fragments)
-                        await f.DisposeAsync();
-
-                    this.fileChannel.Writer.Complete();
-                    await flushTask;
-                }
-
-                this.localFile?.Dispose();
-                this.localFile = null;
-                File.Move(tempPath, this.localPath);
-            }
-            catch (Exception)
-            {
-                this.localFile?.Dispose();
-                this.localFile = null;
-
-                try
-                {
-                    File.Delete(tempPath);
-                }
-                catch (Exception)
-                {
-                    // ignore
-                }
-
-                throw;
-            } finally
-            {
-                foreach (var f in this.fragments)
-                    await f.DisposeAsync();
-                this.fragments.Clear();
-            }
-        }
-
-        private async Task FlushTask()
-        {
-            try
-            {
-                while (true)
-                {
-                    var (from, size, buffer) = await this.fileChannel.Reader.ReadAsync(this.cancellationToken);
-                    this.localFile!.Seek(from, SeekOrigin.Begin);
-                    await this.localFile.WriteAsync(buffer, 0, size, this.cancellationToken);
-                    ArrayPool<byte>.Shared.Return(buffer);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // ignore
-            }
-            catch (ChannelClosedException)
-            {
-                // ignore
-            }
-        }
-
-        private async Task<int> MergeAndFindGap()
-        {
-            var largestGap = -1;
-
-            for (var i = 0; i < this.fragments.Count - 1; i++)
-            {
-                var cur = this.fragments[i];
-                var next = this.fragments[i + 1];
-
-                // both are finished and continuous then merge
-                if (cur.AvailEnd >= next.Start)
-                {
-                    if (cur.DownloadTask.IsCompleted && next.DownloadTask.IsCompleted)
-                    {
-                        this.fragments[i] = new(this, null, null, cur.Start, next.AvailEnd);
-                        this.fragments.RemoveAt(i + 1);
-                        await cur.DisposeAsync();
-                        await next.DisposeAsync();
-                        i--;
-                        continue;
-                    }
-
-                    await cur.DisposeAsync();
-                }
-
-                if (largestGap == -1)
-                {
-                    largestGap = i;
-                }
-                else
-                {
-                    var prevGap = this.fragments[largestGap + 1].Start - this.fragments[largestGap].AvailEnd;
-                    var currGap = next.Start - cur.AvailEnd;
-                    if ((cur.DownloadTask.IsCompleted ? currGap : currGap / 2) > prevGap)
-                        largestGap = i;
-                }
-            }
-
-            this.DownloadedLength = Math.Min(
-                this.fragments.Sum(x => x.AvailEnd - x.Start),
-                this.TotalLength == 0 ? long.MaxValue : this.TotalLength);
-
-            return largestGap;
-        }
-
-        private async Task Write(long from, int size, byte[] buffer)
-        {
-            var baseTick = Environment.TickCount / SpeedBucketDuration;
-            var speedBucket = baseTick % SpeedBucketCount;
-
-            if (this.speedBucketBaseTick[speedBucket] != baseTick)
-            {
-                this.speedBucketBaseTick[speedBucket] = baseTick;
-                this.speedAccumulator[speedBucket] = size;
-            }
-            else
-            {
-                this.speedAccumulator[speedBucket] += size;
-            }
-
-            await fileChannel.Writer.WriteAsync(Tuple.Create(from, size, buffer), this.cancellationToken);
-        }
-
-        private sealed class Fragment : IDisposable, IAsyncDisposable
-        {
-            public readonly long Start;
-            public readonly Task DownloadTask;
-
-            public long MaxEnd;
-            public long AvailEnd;
-
-            private readonly HttpResponseMessage? httpResponseMessage;
-            private readonly Stream? stream;
-            private CancellationTokenSource? cancellationTokenSource;
-            private readonly FileDownloader parent;
-
-            public Fragment(FileDownloader parent, HttpResponseMessage? httpResponseMessage, Stream? stream, long start, long maxEnd)
-            {
-                this.parent = parent;
-                this.httpResponseMessage = httpResponseMessage;
-                this.stream = stream;
-                this.cancellationTokenSource = stream is null ? null : new();
-
-                this.Start = start;
-                this.MaxEnd = maxEnd;
-                this.AvailEnd = stream is null ? maxEnd : start;
-                this.DownloadTask = stream is null ? Task.CompletedTask : Task.Run(TaskBody);
-            }
-
-            public void Dispose()
-            {
-                this.cancellationTokenSource?.Cancel();
-                this.DownloadTask.Wait();
-                this.cancellationTokenSource?.Dispose();
-                this.cancellationTokenSource = null;
-            }
-
-            public async ValueTask DisposeAsync()
-            {
-                this.cancellationTokenSource?.Cancel();
-
-                try
-                {
-                    await this.DownloadTask;
-                }
-                catch (Exception)
-                {
-                    // ignore
-                }
-
-                this.cancellationTokenSource?.Dispose();
-                this.cancellationTokenSource = null;
-            }
-
-            private async Task TaskBody()
-            {
-                using var _1 = this.httpResponseMessage!;
-                using var _2 = this.stream!;
-                var token = this.cancellationTokenSource!.Token;
-
-                while (true)
-                {
-                    var avail = unchecked((int)Math.Min(BufferSize, this.MaxEnd - this.AvailEnd));
-                    if (avail <= 0)
-                        break;
-
-                    var buf = ArrayPool<byte>.Shared.Rent(avail);
-                    avail = await stream!.ReadAsync(buf, 0, avail, token);
-
-                    if (avail == 0)
-                    {
-                        ArrayPool<byte>.Shared.Return(buf);
-                        break;
-                    }
-
-                    await this.parent.Write(this.AvailEnd, avail, buf);
-                    this.AvailEnd += avail;
-                }
-            }
-        }
     }
 
     private static async Task<bool> CheckPatchHashAsync(FileInfo localPath, PatchListEntry patch, CancellationToken cancellationToken)
@@ -705,15 +360,15 @@ public class IndexUpdateCommand
         }
     }
 
-    private static bool TryReadPatchListEntries(string path, out PatchListEntry[] entries)
+    private static bool TryReadPatchListEntries(FileInfo path, out PatchListEntry[] entries)
     {
         entries = null!;
-        if (!File.Exists(path))
+        if (!path.Exists)
             return false;
 
         try
         {
-            if (JsonConvert.DeserializeObject<PatchListEntry[]>(File.ReadAllText(path)) is { } r)
+            if (JsonConvert.DeserializeObject<PatchListEntry[]>(File.ReadAllText(path.FullName)) is { } r)
             {
                 Log.Information($"Using cached file file: {path}");
                 entries = r;
