@@ -1,8 +1,2 @@
-﻿* Fixes an issue wherein the game repair feature may not have functioned correctly
-* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly
-* Adds a separate button to the login menu, which will open advanced login options, in addition to right-clicking
-* Updated the localization files
-    => Thanks to our dedicated localization team!
-    
-Hotfix:
-* Fixes an issue wherein a window showing debug information may have been shown during patching
+﻿* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly under certain conditions
+* Fixes an issue wherein the banners shown on the main page were outdated
