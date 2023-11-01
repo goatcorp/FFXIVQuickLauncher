@@ -42,10 +42,7 @@ public class Launcher
         this.uniqueIdCache = uniqueIdCache;
         this.settings = settings;
 
-        if (this.frontierUrlTemplate == null)
-            throw new Exception("Frontier URL template is null, this is now required");
-
-        this.frontierUrlTemplate = frontierUrl;
+        this.frontierUrlTemplate = frontierUrl ?? throw new Exception("Frontier URL template is null, this is now required");
 
         ServicePointManager.Expect100Continue = false;
 
