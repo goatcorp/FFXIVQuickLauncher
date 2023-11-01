@@ -31,7 +31,7 @@ public static class PlatformHelpers
     public static string GetTempFileName()
     {
         // https://stackoverflow.com/a/50413126
-        return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        return Path.Combine(Path.GetTempPath(), "xivlauncher_" + Guid.NewGuid());
     }
 
     public static void DeleteAndRecreateDirectory(DirectoryInfo dir)
