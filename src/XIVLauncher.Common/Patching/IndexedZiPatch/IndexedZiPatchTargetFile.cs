@@ -206,9 +206,9 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
             });
         }
 
-        public Stream ToStream(List<Stream> sources)
+        public Stream ToStream(List<Stream> sources, bool disposeStreams = true)
         {
-            return new IndexedZiPatchTargetViewStream(sources, this);
+            return new IndexedZiPatchTargetViewStream(sources, this, disposeStreams);
         }
 
         public void WriteTo(BinaryWriter writer)
