@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using CheapLoc;
 using Serilog;
@@ -35,6 +36,9 @@ namespace XIVLauncher.Windows.ViewModel
     internal class MainWindowViewModel : INotifyPropertyChanged
     {
         private readonly Window _window;
+
+        private readonly Task<GateStatus> loginStatusTask;
+        private bool refetchLoginStatus = false;
 
         public bool IsLoggingIn;
 
@@ -71,9 +75,36 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoThirdCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.StartWithoutThird), () => !IsLoggingIn);
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
+            var frontierUrl = Updates.UpdateLease?.FrontierUrl;
+#if DEBUG || RELEASENOUPDATE
+            // FALLBACK
+            frontierUrl ??= "https://launcher.finalfantasyxiv.com/v650/index.html?rc_lang={0}&time={1}";
+#endif
+
             Launcher = App.GlobalSteamTicket == null
-                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease?.FrontierUrl)
-                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease?.FrontierUrl);
+                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, frontierUrl)
+                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, frontierUrl);
+
+            // Tried and failed to get this from the theme
+            var worldStatusBrushOk = new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xf3));
+            WorldStatusIconColor = worldStatusBrushOk;
+
+            // Grey out world status icon while deferred check is running
+            WorldStatusIconColor = new SolidColorBrush(Color.FromRgb(38, 38, 38));
+
+            this.loginStatusTask = Launcher.GetLoginStatus();
+            this.loginStatusTask.ContinueWith((resultTask) =>
+            {
+                try
+                {
+                    var brushToSet = resultTask.Result.Status ? worldStatusBrushOk : null;
+                    WorldStatusIconColor = brushToSet ?? new SolidColorBrush(Color.FromRgb(242, 24, 24));
+                }
+                catch
+                {
+                    // ignored
+                }
+            });
         }
 
         private Action<object> GetLoginFunc(AfterLoginAction action)
@@ -338,7 +369,17 @@ namespace XIVLauncher.Windows.ViewModel
 #if !DEBUG
             try
             {
-                loginStatus = await Launcher.GetLoginStatus().ConfigureAwait(false);
+                if (refetchLoginStatus)
+                {
+                    var response = await Launcher.GetLoginStatus().ConfigureAwait(false);
+                    loginStatus = response.Status;
+                }
+                else
+                {
+                    var response = await this.loginStatusTask;
+                    loginStatus = response.Status;
+                    refetchLoginStatus = true;
+                }
             }
             catch (Exception ex)
             {
@@ -1482,6 +1523,17 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 _loadingDialogMessage = value;
                 OnPropertyChanged(nameof(LoadingDialogMessage));
+            }
+        }
+
+        private SolidColorBrush _worldStatusIconColor;
+        public SolidColorBrush WorldStatusIconColor
+        {
+            get => _worldStatusIconColor;
+            set
+            {
+                _worldStatusIconColor = value;
+                OnPropertyChanged(nameof(WorldStatusIconColor));
             }
         }
 

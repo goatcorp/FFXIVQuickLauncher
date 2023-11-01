@@ -1,5 +1,3 @@
-
-
 #nullable enable
 
 using System;
@@ -38,15 +36,16 @@ public class Launcher
     private readonly HttpClient client;
     private readonly string frontierUrlTemplate;
 
-    private const string FALLBACK_FRONTIER_URL_TEMPLATE = "https://launcher.finalfantasyxiv.com/v620/index.html?rc_lang={0}&time={1}";
-
-    public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings, string? frontierUrl =  null)
+    public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings, string frontierUrl)
     {
         this.steam = steam;
         this.uniqueIdCache = uniqueIdCache;
         this.settings = settings;
-        this.frontierUrlTemplate =
-            string.IsNullOrWhiteSpace(frontierUrl) ? FALLBACK_FRONTIER_URL_TEMPLATE : frontierUrl;
+
+        if (this.frontierUrlTemplate == null)
+            throw new Exception("Frontier URL template is null, this is now required");
+
+        this.frontierUrlTemplate = frontierUrl;
 
         ServicePointManager.Expect100Continue = false;
 
@@ -71,7 +70,7 @@ public class Launcher
         this.client = new HttpClient(handler);
     }
 
-    public Launcher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings, string? frontierUrl = null)
+    public Launcher(byte[] steamTicket, IUniqueIdCache uniqueIdCache, ISettings settings, string frontierUrl)
         : this(steam: null, uniqueIdCache, settings, frontierUrl)
     {
         this.steamTicket = steamTicket;
@@ -625,7 +624,7 @@ public class Launcher
         }
     }
 
-    public async Task<bool> GetLoginStatus()
+    public async Task<GateStatus> GetLoginStatus()
     {
         try
         {
@@ -633,11 +632,11 @@ public class Launcher
                 await DownloadAsLauncher(
                     $"https://frontier.ffxiv.com/worldStatus/login_status.json?_={ApiHelpers.GetUnixMillis()}", ClientLanguage.English).ConfigureAwait(true));
 
-            return Convert.ToBoolean(int.Parse(reply[10].ToString()));
+            return JsonConvert.DeserializeObject<GateStatus>(reply);
         }
         catch (Exception exc)
         {
-            throw new Exception("Could not get gate status", exc);
+            throw new Exception("Could not get login status", exc);
         }
     }
 
@@ -675,6 +674,7 @@ public class Launcher
         request.Headers.AddWithoutValidation("Origin", "https://launcher.finalfantasyxiv.com");
 
         request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(language));
+        request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
 
         var resp = await this.client.SendAsync(request);
         return await resp.Content.ReadAsByteArrayAsync();

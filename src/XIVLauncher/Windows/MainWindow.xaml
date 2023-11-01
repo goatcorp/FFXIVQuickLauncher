@@ -174,7 +174,7 @@
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <materialDesign:PackIcon Kind="Earth" Height="Auto"
-                                                                 Width="Auto" x:Name="WorldStatusPackIcon" />
+                                                                 Width="Auto" Foreground="{Binding WorldStatusIconColor}"/>
                                     </StackPanel>
                                 </Button>
 

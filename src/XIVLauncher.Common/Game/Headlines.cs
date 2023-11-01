@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,9 +19,6 @@ namespace XIVLauncher.Common.Game
 
         [JsonProperty("pinned")]
         public News[] Pinned { get; set; }
-
-        [JsonProperty("banner")]
-        public Banner[] Banner { get; set; }
     }
 
     public class Banner
@@ -30,6 +28,18 @@ namespace XIVLauncher.Common.Game
 
         [JsonProperty("link")]
         public Uri Link { get; set; }
+
+        [JsonProperty("order_priority")]
+        public int? OrderPriority { get; set; }
+
+        [JsonProperty("fix_order")]
+        public int? FixOrder { get; set; }
+    }
+
+    public class BannerRoot
+    {
+        [JsonProperty("banner")]
+        public List<Banner> Banner { get; set; }
     }
 
     public class News
@@ -52,7 +62,7 @@ namespace XIVLauncher.Common.Game
 
     public partial class Headlines
     {
-        public static async Task<Headlines> Get(Launcher game, ClientLanguage language, bool forceNa = false)
+        public static async Task<Headlines> GetNews(Launcher game, ClientLanguage language, bool forceNa = false)
         {
             var unixTimestamp = ApiHelpers.GetUnixMillis();
             var langCode = language.GetLangCode(forceNa);
@@ -61,6 +71,38 @@ namespace XIVLauncher.Common.Game
             var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*").ConfigureAwait(false));
 
             return JsonConvert.DeserializeObject<Headlines>(json, Converter.SETTINGS);
+        }
+
+        public static async Task<IReadOnlyList<Banner>> GetBanners(Launcher game, ClientLanguage language, bool forceNa = false)
+        {
+            var unixTimestamp = ApiHelpers.GetUnixMillis();
+            var langCode = language.GetLangCode(forceNa);
+            var url = $"https://frontier.ffxiv.com/v2/topics/{langCode}/banner.json?lang={langCode}&media=pcapp&_={unixTimestamp}";
+
+            var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*").ConfigureAwait(false));
+
+            return JsonConvert.DeserializeObject<BannerRoot>(json, Converter.SETTINGS).Banner;
+        }
+
+        public static async Task<IReadOnlyCollection<Banner>> GetMessage(Launcher game, ClientLanguage language, bool forceNa = false)
+        {
+            var unixTimestamp = ApiHelpers.GetUnixMillis();
+            var langCode = language.GetLangCode(forceNa);
+            var url = $"https://frontier.ffxiv.com/v2/notice/{langCode}/message.json?_={unixTimestamp}";
+
+            var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*").ConfigureAwait(false));
+
+            return JsonConvert.DeserializeObject<BannerRoot>(json, Converter.SETTINGS).Banner;
+        }
+
+        public static async Task<IReadOnlyCollection<Banner>> GetWorlds(Launcher game, ClientLanguage language)
+        {
+            var unixTimestamp = ApiHelpers.GetUnixMillis();
+            var url = $"https://frontier.ffxiv.com/v2/world/status.json?_={unixTimestamp}";
+
+            var json = Encoding.UTF8.GetString(await game.DownloadAsLauncher(url, language, "application/json, text/plain, */*").ConfigureAwait(false));
+
+            return JsonConvert.DeserializeObject<BannerRoot>(json, Converter.SETTINGS).Banner;
         }
     }
 
