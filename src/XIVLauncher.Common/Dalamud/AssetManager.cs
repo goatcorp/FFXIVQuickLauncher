@@ -113,7 +113,7 @@ namespace XIVLauncher.Common.Dalamud
 
                 var packageUrl = info.PackageUrl;
 
-                var tempPath = Path.GetTempFileName();
+                var tempPath = PlatformHelpers.GetTempFileName();
 
                 if (File.Exists(tempPath))
                     File.Delete(tempPath);

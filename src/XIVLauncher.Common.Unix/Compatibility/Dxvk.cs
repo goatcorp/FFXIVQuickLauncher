@@ -33,7 +33,7 @@ public static class Dxvk
     private static async Task DownloadDxvk(DirectoryInfo installDirectory)
     {
         using var client = new HttpClient();
-        var tempPath = Path.GetTempFileName();
+        var tempPath = PlatformHelpers.GetTempFileName();
 
         File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(DXVK_DOWNLOAD));
         PlatformHelpers.Untar(tempPath, installDirectory.FullName);
