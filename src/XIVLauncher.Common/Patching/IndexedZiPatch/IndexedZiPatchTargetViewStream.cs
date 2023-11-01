@@ -8,11 +8,13 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
     {
         private readonly List<Stream> sources;
         private readonly IndexedZiPatchTargetFile partList;
+        private readonly bool disposeStreams;
 
-        internal IndexedZiPatchTargetViewStream(List<Stream> sources, IndexedZiPatchTargetFile partList)
+        internal IndexedZiPatchTargetViewStream(List<Stream> sources, IndexedZiPatchTargetFile partList, bool disposeStreams)
         {
             this.sources = sources;
             this.partList = partList;
+            this.disposeStreams = disposeStreams;
         }
 
         public override bool CanRead => true;
@@ -24,6 +26,18 @@ namespace XIVLauncher.Common.Patching.IndexedZiPatch
         public override long Length => this.partList.FileSize;
 
         public override long Position { get; set; }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposeStreams)
+            {
+                foreach (var s in sources)
+                    s.Dispose();
+                this.sources.Clear();
+            }
+        }
 
         public override int Read(byte[] buffer, int offset, int count)
         {

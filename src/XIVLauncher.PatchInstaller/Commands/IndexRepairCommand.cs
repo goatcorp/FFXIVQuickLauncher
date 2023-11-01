@@ -17,10 +17,7 @@ public class IndexRepairCommand
         "game-path",
         "Root folder of a game installation, such as \"C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn\\\"");
 
-    private static readonly Argument<string?> PatchRootPathArgument = new("patch-root-path", "Path to a folder containing relevant patch files.")
-    {
-        Arity = ArgumentArity.ZeroOrOne,
-    };
+    private static readonly Argument<string> PatchRootPathArgument = new("patch-root-path", "Path to a folder containing relevant patch files.");
 
     private static readonly Option<int> ThreadCountOption = new(
         new[] { "-t", "--threads" },
@@ -39,7 +36,7 @@ public class IndexRepairCommand
 
     private readonly string patchIndexFile;
     private readonly string gameRootPath;
-    private readonly string? patchRootPath;
+    private readonly string patchRootPath;
     private readonly int threadCount;
 
     private IndexRepairCommand(ParseResult parseResult)

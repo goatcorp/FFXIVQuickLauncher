@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
 using Serilog;
+using Serilog.Events;
 using XIVLauncher.Common;
 using XIVLauncher.PatchInstaller.Commands;
 
@@ -13,7 +14,7 @@ public static class Program
     private static async Task<int> Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
-                     .WriteTo.Console()
+                     .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Fatal)
                      .WriteTo.File(Path.Combine(Paths.RoamingPath, "patcher.log"))
                      .WriteTo.Debug()
                      .MinimumLevel.Verbose()
@@ -22,6 +23,7 @@ public static class Program
         var rc = new RootCommand();
         rc.AddCommand(InstallCommand.COMMAND);
         rc.AddCommand(IndexCreateCommand.COMMAND);
+        rc.AddCommand(IndexCreateIntegrityCommand.COMMAND);
         rc.AddCommand(IndexVerifyCommand.COMMAND);
         rc.AddCommand(IndexRepairCommand.COMMAND);
         rc.AddCommand(IndexUpdateCommand.COMMAND);
