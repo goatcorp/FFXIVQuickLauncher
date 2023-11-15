@@ -1,6 +1,10 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using System.IO;
 using System.Threading.Tasks;
+using Serilog;
+using Serilog.Events;
+using XIVLauncher.Common;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 
 namespace XIVLauncher.PatchInstaller.Commands;
@@ -31,6 +35,13 @@ public class IndexRpcCommand
 
     private async Task<int> Handle()
     {
+        Log.Logger = new LoggerConfiguration()
+                     .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Fatal)
+                     .WriteTo.File(Path.Combine(Paths.RoamingPath, "patcher.log"))
+                     .WriteTo.Debug()
+                     .MinimumLevel.Verbose()
+                     .CreateLogger();
+
         new IndexedZiPatchIndexRemoteInstaller.WorkerSubprocessBody(this.monitorProcessId, this.channelName).RunToDisposeSelf();
         return 0;
     }

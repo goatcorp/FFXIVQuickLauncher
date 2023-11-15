@@ -1,10 +1,8 @@
 ﻿using System;
 using System.CommandLine;
-using System.IO;
 using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;
-using XIVLauncher.Common;
 using XIVLauncher.PatchInstaller.Commands;
 
 namespace XIVLauncher.PatchInstaller;
@@ -15,7 +13,6 @@ public static class Program
     {
         Log.Logger = new LoggerConfiguration()
                      .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Fatal)
-                     .WriteTo.File(Path.Combine(Paths.RoamingPath, "patcher.log"))
                      .WriteTo.Debug()
                      .MinimumLevel.Verbose()
                      .CreateLogger();
