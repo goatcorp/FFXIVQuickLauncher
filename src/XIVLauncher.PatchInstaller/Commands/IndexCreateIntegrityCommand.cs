@@ -53,7 +53,6 @@ public class IndexCreateIntegrityCommand
         if (this.threadCount == 0)
             this.threadCount = Environment.ProcessorCount;
         Debug.Assert(this.threadCount > 0);
-        this.threadCount = 8;
     }
 
     private async Task<int> Handle(CancellationToken cancellationToken)

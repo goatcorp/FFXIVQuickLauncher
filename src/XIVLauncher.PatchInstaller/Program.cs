@@ -21,6 +21,7 @@ public static class Program
                      .CreateLogger();
 
         var rc = new RootCommand();
+        rc.AddCommand(CheckIntegrityCommand.COMMAND);
         rc.AddCommand(InstallCommand.COMMAND);
         rc.AddCommand(IndexCreateCommand.COMMAND);
         rc.AddCommand(IndexCreateIntegrityCommand.COMMAND);
