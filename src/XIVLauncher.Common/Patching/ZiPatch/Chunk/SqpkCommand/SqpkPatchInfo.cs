@@ -1,4 +1,5 @@
 ﻿using XIVLauncher.Common.Patching.Util;
+using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 {
@@ -12,19 +13,16 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public byte Version { get; protected set; }
         public ulong InstallSize { get; protected set; }
 
-        public SqpkPatchInfo(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkPatchInfo(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            var start = this.Reader.BaseStream.Position;
-
+            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
             Status = this.Reader.ReadByte();
             Version = this.Reader.ReadByte();
             this.Reader.ReadByte(); // Alignment
 
             InstallSize = this.Reader.ReadUInt64BE();
-
-            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override string ToString()

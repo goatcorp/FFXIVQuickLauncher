@@ -416,11 +416,15 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Démarrer sans les plugins tiers",
+    "message": "Start w/o Custom Repo Plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
     "message": "Connexion avec les identifiants fournis",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLaunchOptions": {
+    "message": "Additional launch options",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
@@ -728,7 +732,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorAV": {
-    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "message": "\nCe problème pourrait également être causé par votre antivirus identifiant XIVLauncher comme malveillant par erreur. Vous devrez peut-être ajouter des exclusions à ses paramètres - veuillez consulter notre FAQ pour plus d'informations.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {

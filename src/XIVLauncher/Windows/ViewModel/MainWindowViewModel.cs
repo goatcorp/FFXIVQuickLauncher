@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using CheapLoc;
 using Serilog;
@@ -35,6 +36,9 @@ namespace XIVLauncher.Windows.ViewModel
     internal class MainWindowViewModel : INotifyPropertyChanged
     {
         private readonly Window _window;
+
+        private readonly Task<GateStatus> loginStatusTask;
+        private bool refetchLoginStatus = false;
 
         public bool IsLoggingIn;
 
@@ -71,9 +75,36 @@ namespace XIVLauncher.Windows.ViewModel
             LoginNoThirdCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.StartWithoutThird), () => !IsLoggingIn);
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
+            var frontierUrl = Updates.UpdateLease?.FrontierUrl;
+#if DEBUG || RELEASENOUPDATE
+            // FALLBACK
+            frontierUrl ??= "https://launcher.finalfantasyxiv.com/v650/index.html?rc_lang={0}&time={1}";
+#endif
+
             Launcher = App.GlobalSteamTicket == null
-                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease?.FrontierUrl)
-                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, Updates.UpdateLease?.FrontierUrl);
+                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, frontierUrl)
+                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, frontierUrl);
+
+            // Tried and failed to get this from the theme
+            var worldStatusBrushOk = new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xf3));
+            WorldStatusIconColor = worldStatusBrushOk;
+
+            // Grey out world status icon while deferred check is running
+            WorldStatusIconColor = new SolidColorBrush(Color.FromRgb(38, 38, 38));
+
+            this.loginStatusTask = Launcher.GetLoginStatus();
+            this.loginStatusTask.ContinueWith((resultTask) =>
+            {
+                try
+                {
+                    var brushToSet = resultTask.Result.Status ? worldStatusBrushOk : null;
+                    WorldStatusIconColor = brushToSet ?? new SolidColorBrush(Color.FromRgb(242, 24, 24));
+                }
+                catch
+                {
+                    // ignored
+                }
+            });
         }
 
         private Action<object> GetLoginFunc(AfterLoginAction action)
@@ -338,7 +369,17 @@ namespace XIVLauncher.Windows.ViewModel
 #if !DEBUG
             try
             {
-                loginStatus = await Launcher.GetLoginStatus().ConfigureAwait(false);
+                if (refetchLoginStatus)
+                {
+                    var response = await Launcher.GetLoginStatus().ConfigureAwait(false);
+                    loginStatus = response.Status;
+                }
+                else
+                {
+                    var response = await this.loginStatusTask;
+                    loginStatus = response.Status;
+                    refetchLoginStatus = true;
+                }
             }
             catch (Exception ex)
             {
@@ -1020,6 +1061,16 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void InstallerOnFail()
         {
+            try
+            {
+                // Reset UID cache, we need users to log in again
+                App.UniqueIdCache.Reset();
+            }
+            catch
+            {
+                // ignored
+            }
+
             CustomMessageBox.Show(
                 Loc.Localize("PatchInstallerInstallFailed", "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher."),
                 "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -1475,6 +1526,17 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
+        private SolidColorBrush _worldStatusIconColor;
+        public SolidColorBrush WorldStatusIconColor
+        {
+            get => _worldStatusIconColor;
+            set
+            {
+                _worldStatusIconColor = value;
+                OnPropertyChanged(nameof(WorldStatusIconColor));
+            }
+        }
+
         #endregion
 
         #region Localization
@@ -1491,8 +1553,9 @@ namespace XIVLauncher.Windows.ViewModel
             LoginRepairLoc = Loc.Localize("LoginBoxRepairLogin", "Repair game files");
             LoginNoDalamudLoc = Loc.Localize("LoginBoxNoDalamudLogin", "Start w/o Dalamud");
             LoginNoPluginsLoc = Loc.Localize("LoginBoxNoPluginLogin", "Start w/o any Plugins");
-            LoginNoThirdLoc = Loc.Localize("LoginBoxNoThirdLogin", "Start w/o Third-Party Plugins");
+            LoginNoThirdLoc = Loc.Localize("LoginBoxNoThirdLogin", "Start w/o Custom Repo Plugins");
             LoginTooltipLoc = Loc.Localize("LoginBoxLoginTooltip", "Log in with the provided credentials");
+            LaunchOptionsLoc = Loc.Localize("LoginBoxLaunchOptions", "Additional launch options");
             WaitingForMaintenanceLoc = Loc.Localize("LoginBoxWaitingForMaint", "Waiting for maintenance to be over...");
             CancelWithShortcutLoc = Loc.Localize("CancelWithShortcut", "_Cancel");
             OpenAccountSwitcherLoc = Loc.Localize("OpenAccountSwitcher", "Open Account Switcher");
@@ -1516,6 +1579,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string WaitingForMaintenanceLoc { get; private set; }
         public string CancelWithShortcutLoc { get; private set; }
         public string LoginTooltipLoc { get; private set; }
+        public string LaunchOptionsLoc { get; private set; }
         public string OpenAccountSwitcherLoc { get; private set; }
         public string SettingsLoc { get; private set; }
         public string WorldStatusLoc { get; private set; }

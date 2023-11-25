@@ -174,7 +174,7 @@
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <materialDesign:PackIcon Kind="Earth" Height="Auto"
-                                                                 Width="Auto" x:Name="WorldStatusPackIcon" />
+                                                                 Width="Auto" Foreground="{Binding WorldStatusIconColor}"/>
                                     </StackPanel>
                                 </Button>
 
@@ -279,11 +279,11 @@
                                             <StackPanel Orientation="Horizontal"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Bottom"
-                                                        Width="142" Margin="0,0,0,0" DockPanel.Dock="Bottom">
+                                                        Width="160" Margin="0,0,0,0" DockPanel.Dock="Bottom">
                                                 <Button
                                                     Content="{Binding LoginLoc}"
                                                     Command="{Binding Path=StartLoginCommand}"
-                                                    Margin="0,0,7,0" Width="84"
+                                                    Margin="0,0,0,0" Width="84"
                                                     ToolTip="{Binding LoginTooltipLoc}">
 
                                                     <Button.ContextMenu>
@@ -304,6 +304,66 @@
                                                     </Button.ContextMenu>
 
                                                 </Button>
+                                                <materialDesign:PopupBox PopupMode="Click"
+                                                                         PlacementMode="BottomAndAlignCentres"
+                                                                         StaysOpen="False"
+                                                                         HorizontalAlignment="Left"
+                                                                         VerticalAlignment="Center"
+                                                                         Margin="0,0,7,0"
+                                                                         ToolTip="{Binding Path=LaunchOptionsLoc}"
+                                                                         >
+
+                                                    <materialDesign:PopupBox.ToggleContent>
+                                                        <Border Margin="0,0,0,0"
+                                                            BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                                                            BorderThickness="1" 
+                                                            CornerRadius="2"
+                                                            >
+                                                            <Border.Effect>
+                                                                <DropShadowEffect BlurRadius="2"
+                                                                    Opacity="0.4"
+                                                                    ShadowDepth="2"
+                                                                    Direction="315"/>
+                                                            </Border.Effect>
+
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <materialDesign:PackIcon Kind="ChevronDoubleDown" Background="{DynamicResource PrimaryHueMidBrush}"
+                                                                 Foreground="White" Height="30" />
+                                                            </StackPanel>
+
+                                                        </Border>
+                                                        
+
+
+                                                    </materialDesign:PopupBox.ToggleContent>
+                                                
+
+
+                                                <materialDesign:PopupBox.PopupContent>
+                                                        <Menu>
+                                                            
+                                                            <Menu.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <StackPanel />
+                                                                </ItemsPanelTemplate>
+                                                            </Menu.ItemsPanel>
+                                                            <MenuItem Header="{Binding LoginRepairLoc}"
+                                                                      Command="{Binding Path=LoginRepairCommand}" />
+                                                            <Separator/>
+                                                            <MenuItem Header="{Binding LoginNoDalamudLoc}"
+                                                                      Command="{Binding Path=LoginNoDalamudCommand}" />
+                                                            <MenuItem Header="{Binding LoginNoPluginsLoc}"
+                                                                      Command="{Binding Path=LoginNoPluginsCommand}" />
+                                                            <MenuItem Header="{Binding LoginNoThirdLoc}"
+                                                                      Command="{Binding Path=LoginNoThirdCommand}" />
+                                                            <Separator/>
+                                                            <MenuItem Header="{Binding LoginNoStartLoc}"
+                                                                      Command="{Binding Path=LoginNoStartCommand}" />
+                                                            
+                                                            
+                                                        </Menu>
+                                                    </materialDesign:PopupBox.PopupContent>
+                                                </materialDesign:PopupBox>
                                                 <Button HorizontalAlignment="Left"
                                                         x:Name="AccountSwitcherButton" Margin="0 0 0 0"
                                                         Background="#FF0096DB"

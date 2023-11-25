@@ -42,28 +42,6 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        private static void DeleteAndRecreateDirectory(DirectoryInfo dir)
-        {
-            if (!dir.Exists)
-            {
-                dir.Create();
-            }
-            else
-            {
-                dir.Delete(true);
-                dir.Create();
-            }
-        }
-
-        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
-        {
-            foreach (DirectoryInfo dir in source.GetDirectories())
-                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
-
-            foreach (FileInfo file in source.GetFiles())
-                file.CopyTo(Path.Combine(target.FullName, file.Name));
-        }
-
         public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(DalamudUpdater updater, DirectoryInfo baseDir)
         {
             using var metaClient = new HttpClient
@@ -84,7 +62,7 @@ namespace XIVLauncher.Common.Dalamud
 
             // NOTE(goat): We should use a junction instead of copying assets to a new folder. There is no C# API for junctions in .NET Framework.
 
-            var assetsDir = new DirectoryInfo(Path.Combine(baseDir.FullName, info.Version.ToString()));
+            var currentDir = new DirectoryInfo(Path.Combine(baseDir.FullName, info.Version.ToString()));
             var devDir = new DirectoryInfo(Path.Combine(baseDir.FullName, "dev"));
 
             // If we don't need a refresh, let's check if all hashes are good
@@ -92,7 +70,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 foreach (var entry in info.Assets)
                 {
-                    var filePath = Path.Combine(assetsDir.FullName, entry.FileName);
+                    var filePath = Path.Combine(currentDir.FullName, entry.FileName);
 
                     if (!File.Exists(filePath))
                     {
@@ -128,14 +106,14 @@ namespace XIVLauncher.Common.Dalamud
 
             if (isRefreshNeeded)
             {
-                DeleteAndRecreateDirectory(assetsDir);
+                PlatformHelpers.DeleteAndRecreateDirectory(currentDir);
 
                 // Wait for it to be gone
                 Thread.Sleep(1000);
 
                 var packageUrl = info.PackageUrl;
 
-                var tempPath = Path.GetTempFileName();
+                var tempPath = PlatformHelpers.GetTempFileName();
 
                 if (File.Exists(tempPath))
                     File.Delete(tempPath);
@@ -145,13 +123,13 @@ namespace XIVLauncher.Common.Dalamud
                 using (var packageStream = File.OpenRead(tempPath))
                 using (var packageArc = new ZipArchive(packageStream, ZipArchiveMode.Read))
                 {
-                    packageArc.ExtractToDirectory(assetsDir.FullName);
+                    packageArc.ExtractToDirectory(currentDir.FullName);
                 }
 
                 try
                 {
-                    DeleteAndRecreateDirectory(devDir);
-                    CopyFilesRecursively(assetsDir, devDir);
+                    PlatformHelpers.DeleteAndRecreateDirectory(devDir);
+                    PlatformHelpers.CopyFilesRecursively(currentDir, devDir);
                 }
                 catch (Exception ex)
                 {
@@ -164,11 +142,18 @@ namespace XIVLauncher.Common.Dalamud
             if (isRefreshNeeded)
                 SetLocalAssetVer(baseDir, info.Version);
 
-            Log.Verbose("[DASSET] Assets OK at {0}", assetsDir.FullName);
+            Log.Verbose("[DASSET] Assets OK at {0}", currentDir.FullName);
 
-            CleanUpOld(baseDir, info.Version - 1);
+            try
+            {
+                CleanUpOld(baseDir, devDir, currentDir);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[DASSET] Could not clean up old assets");
+            }
 
-            return (assetsDir, info.Version);
+            return (currentDir, info.Version);
         }
 
         private static string GetAssetVerPath(DirectoryInfo baseDir)
@@ -220,26 +205,20 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        private static void CleanUpOld(DirectoryInfo baseDir, int version)
+        private static void CleanUpOld(DirectoryInfo baseDir, DirectoryInfo devDir, DirectoryInfo currentDir)
         {
             if (GameHelpers.CheckIsGameOpen())
                 return;
 
-            for (int i = version; i >= version - 30; i--)
-            {
-                var toDelete = Path.Combine(baseDir.FullName, i.ToString());
+            if (!baseDir.Exists)
+                return;
 
-                try
+            foreach (var toDelete in baseDir.GetDirectories())
+            {
+                if (toDelete.Name != devDir.Name && toDelete.Name != currentDir.Name)
                 {
-                    if (Directory.Exists(toDelete))
-                    {
-                        Directory.Delete(toDelete, true);
-                        Log.Verbose("[DASSET] Cleaned out old v{Version}", i);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "[DASSET] Could not clean up old assets");
+                    toDelete.Delete(true);
+                    Log.Verbose("[DASSET] Cleaned out {Path}", toDelete.FullName);
                 }
             }
 

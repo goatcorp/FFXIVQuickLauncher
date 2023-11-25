@@ -5,7 +5,6 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using XIVLauncher.Common.Game.Patch;
-using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
 using Brushes = System.Windows.Media.Brushes;

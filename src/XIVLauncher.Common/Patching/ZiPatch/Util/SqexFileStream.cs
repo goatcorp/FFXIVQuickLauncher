@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Util
@@ -31,22 +30,21 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
             return null;
         }
 
-        public void WriteFromOffset(byte[] data, int offset)
+        public void WriteFromOffset(byte[] data, long offset)
         {
             Seek(offset, SeekOrigin.Begin);
             Write(data, 0, data.Length);
         }
 
-        public void Wipe(int length)
+        public void Wipe(long length)
         {
-            for (int numBytes; length > 0; length -= numBytes)
-            {
-                numBytes = Math.Min(WipeBuffer.Length, length);
-                Write(WipeBuffer, 0, numBytes);
-            }
+            var numFullChunks = length / WipeBuffer.Length;
+            for (var i = 0; i < numFullChunks; i++)
+                Write(WipeBuffer, 0, WipeBuffer.Length);
+            Write(WipeBuffer, 0, checked((int)(length - numFullChunks * WipeBuffer.Length)));
         }
 
-        public void WipeFromOffset(int length, int offset)
+        public void WipeFromOffset(long length, long offset)
         {
             Seek(offset, SeekOrigin.Begin);
             Wipe(length);

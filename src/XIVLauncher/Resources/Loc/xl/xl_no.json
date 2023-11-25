@@ -8,7 +8,7 @@
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "UninstallQuestion": {
-    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "message": "Synd å se deg gå!\nØnsker du å slette alle dine lagrede innstillinger, programtillegg og passord?",
     "description": "<>c__DisplayClass20_1.<Run>b__2"
   },
   "updatefailureerror": {
@@ -376,7 +376,7 @@
     "description": "MainWindowViewModel.InstallerOnFail"
   },
   "LoginBoxUsername": {
-    "message": "Username",
+    "message": "Brukernavn",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxPassword": {
@@ -408,19 +408,23 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoDalamudLogin": {
-    "message": "Start w/o Dalamud",
+    "message": "Start uten Dalamud",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoPluginLogin": {
-    "message": "Start w/o any Plugins",
+    "message": "Start uten programtillegg",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Third-Party Plugins",
+    "message": "Start w/o Custom Repo Plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
     "message": "Logg inn med de angitte opplysningene",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLaunchOptions": {
+    "message": "Additional launch options",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
@@ -836,11 +840,11 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "LearnMore": {
-    "message": "Learn More",
+    "message": "Finn ut mer",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "OtpLearnMoreTooltipLoc": {
-    "message": "Open a guide in your web browser.",
+    "message": "Åpne en guide i nettleseren.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AdditionalArguments": {

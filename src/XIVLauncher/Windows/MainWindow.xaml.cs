@@ -34,6 +34,7 @@ namespace XIVLauncher.Windows
     {
         private Timer _bannerChangeTimer;
         private Headlines _headlines;
+        private IReadOnlyList<Banner> _banners;
         private BitmapImage[] _bannerBitmaps;
         private int _currentBannerIndex;
         private bool _everShown = false;
@@ -121,14 +122,20 @@ namespace XIVLauncher.Windows
             {
                 _bannerChangeTimer?.Stop();
 
-                _headlines = await Headlines.Get(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false)).ConfigureAwait(false);
+                await Headlines.GetWorlds(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                _banners = await Headlines.GetBanners(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false))
+                                          .ConfigureAwait(false);
+                await Headlines.GetMessage(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false))
+                               .ConfigureAwait(false);
+                _headlines = await Headlines.GetNews(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false))
+                                            .ConfigureAwait(false);
 
-                _bannerBitmaps = new BitmapImage[_headlines.Banner.Length];
+                _bannerBitmaps = new BitmapImage[_banners.Count];
                 _bannerDotList = new();
 
-                for (var i = 0; i < _headlines.Banner.Length; i++)
+                for (var i = 0; i < _banners.Count; i++)
                 {
-                    var imageBytes = await _launcher.DownloadAsLauncher(_headlines.Banner[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
+                    var imageBytes = await _launcher.DownloadAsLauncher(_banners[i].LsbBanner.ToString(), App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
 
                     using var stream = new MemoryStream(imageBytes);
 
@@ -157,7 +164,7 @@ namespace XIVLauncher.Windows
                 {
                     _bannerDotList.ToList().ForEach(x => x.Active = false);
 
-                    if (_currentBannerIndex + 1 > _headlines.Banner.Length - 1)
+                    if (_currentBannerIndex + 1 > _banners.Count - 1)
                         _currentBannerIndex = 0;
                     else
                         _currentBannerIndex++;
@@ -176,8 +183,9 @@ namespace XIVLauncher.Windows
 
                 Dispatcher.BeginInvoke(new Action(() => { NewsListView.ItemsSource = _headlines.News; }));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error(ex, "Could not get news");
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     NewsListView.ItemsSource = new List<News> {new News {Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError"}};
@@ -272,23 +280,6 @@ namespace XIVLauncher.Windows
 
             this.SetDefaults();
 
-            var worldStatusBrushOk = WorldStatusPackIcon.Foreground;
-            // grey out world status icon while deferred check is running
-            WorldStatusPackIcon.Foreground = new SolidColorBrush(Color.FromRgb(38, 38, 38));
-
-            _launcher.GetGateStatus(App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ContinueWith((resultTask) =>
-            {
-                try
-                {
-                    var brushToSet = resultTask.Result.Status ? worldStatusBrushOk : null;
-                    Dispatcher.InvokeAsync(() =>  WorldStatusPackIcon.Foreground = brushToSet ?? new SolidColorBrush(Color.FromRgb(242, 24, 24)));
-                }
-                catch
-                {
-                    // ignored
-                }
-            });
-
             _accountManager = new AccountManager(App.Settings);
 
             var savedAccount = _accountManager.CurrentAccount;
@@ -359,7 +350,7 @@ namespace XIVLauncher.Windows
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            if (_headlines != null) Process.Start(_headlines.Banner[_currentBannerIndex].Link.ToString());
+            if (_headlines != null) Process.Start(_banners[_currentBannerIndex].Link.ToString());
         }
 
         private void NewsListView_OnMouseUp(object sender, MouseButtonEventArgs e)

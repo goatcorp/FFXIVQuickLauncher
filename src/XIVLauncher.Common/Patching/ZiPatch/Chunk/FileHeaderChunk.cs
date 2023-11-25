@@ -1,4 +1,5 @@
 ﻿using XIVLauncher.Common.Patching.Util;
+using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -24,11 +25,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         public uint SqpkHeaderCommands { get; protected set; }
         public uint SqpkFileCommands { get; protected set; }
 
-        public FileHeaderChunk(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public FileHeaderChunk(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            var start = this.Reader.BaseStream.Position;
+            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
 
             Version = (byte)(this.Reader.ReadUInt32() >> 16);
             PatchType = this.Reader.ReadFixedLengthString(4u);
@@ -51,7 +52,6 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
             // 0xB8 of unknown data for V3, 0x08 of 0x00 for V2
             // ... Probably irrelevant.
-            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override string ToString()

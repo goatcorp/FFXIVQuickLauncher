@@ -416,11 +416,15 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Third-Party Plugins",
+    "message": "Start w/o Custom Repo Plugins",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
     "message": "Logga in med den angivna informationen",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLaunchOptions": {
+    "message": "Additional launch options",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {

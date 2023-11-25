@@ -1,6 +1,2 @@
-﻿* The "Updating assets" step of starting the game will now show the actual download progress
-* Fixes an issue wherein the launcher may not have started correctly under very specific circumstances
-* Fixes an issue wherein the game may not have started correctly under very specific circumstances
-* Fixes an issue wherein some error messages may have been unclear
-* Updated the localization files
-    => Thanks to our dedicated localization team!
+﻿* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly under certain conditions
+* Fixes an issue wherein the banners shown on the main page were outdated

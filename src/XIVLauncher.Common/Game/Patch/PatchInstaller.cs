@@ -57,6 +57,12 @@ namespace XIVLauncher.Common.Game.Patch
                 if (!EnvironmentSettings.IsNoRunas && Environment.OSVersion.Version.Major >= 6)
                     startInfo.Verb = "runas";
 
+                if (!Debugger.IsAttached)
+                {
+                    startInfo.CreateNoWindow = true;
+                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                }
+
                 startInfo.Arguments = $"rpc {rpcName}";
 
                 State = InstallerState.NotReady;

@@ -14,13 +14,13 @@ public class MacVideoFix : GameFix
 {
     private static async Task<string> GetLatestMacZipUrl()
     {
-        const string sparkleFeedUrl = "https://mac-dl.ffxiv.com/cw/finalfantasy-mac.xml";
-        const string fallbackUrl = "https://mac-dl.ffxiv.com/cw/finalfantasyxiv-1.1.2.zip";
+        const string SPARKLE_FEED_URL = "https://mac-dl.ffxiv.com/cw/finalfantasy-mac.xml";
+        const string FALLBACK_URL = "https://mac-dl.ffxiv.com/cw/finalfantasyxiv-1.1.2.zip";
 
         try
         {
             using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
-            var sparkleFeed = XDocument.Parse(await client.GetStringAsync(sparkleFeedUrl));
+            var sparkleFeed = XDocument.Parse(await client.GetStringAsync(SPARKLE_FEED_URL));
             var latestItem = sparkleFeed.Descendants("item").FirstOrDefault();
             var enclosureElement = latestItem?.Element("enclosure");
             var urlAttribute = enclosureElement?.Attribute("url");
@@ -29,7 +29,7 @@ public class MacVideoFix : GameFix
         catch (Exception ex)
         {
             Log.Error(ex, "Failed to extract Mac Zip URL from Sparkle update feed, using static fallback");
-            return fallbackUrl;
+            return FALLBACK_URL;
         }
     }
 

@@ -12,7 +12,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
             $"{base.GetFileName(platform)}.dat{FileId}";
 
 
-        public static void WriteEmptyFileBlockAt(SqexFileStream stream, int offset, int blockNumber)
+        public static void WriteEmptyFileBlockAt(SqexFileStream stream, long offset, long blockNumber)
         {
             stream.WipeFromOffset(blockNumber << 7, offset);
             stream.Position = offset;

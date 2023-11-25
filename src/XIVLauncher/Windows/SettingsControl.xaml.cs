@@ -11,7 +11,6 @@ using CheapLoc;
 using MaterialDesignThemes.Wpf.Transitions;
 using Serilog;
 using XIVLauncher.Common.Game;
-using Newtonsoft.Json.Linq;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Addon.Implementations;

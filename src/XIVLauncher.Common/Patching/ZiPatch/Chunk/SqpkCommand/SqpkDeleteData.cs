@@ -10,26 +10,23 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
 
         public SqpackDatFile TargetFile { get; protected set; }
-        public int BlockOffset { get; protected set; }
-        public int BlockNumber { get; protected set; }
+        public long BlockOffset { get; protected set; }
+        public long BlockNumber { get; protected set; }
 
 
-        public SqpkDeleteData(ChecksumBinaryReader reader, int offset, int size) : base(reader, offset, size) {}
+        public SqpkDeleteData(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            var start = this.Reader.BaseStream.Position;
-
+            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
             this.Reader.ReadBytes(3); // Alignment
 
             TargetFile = new SqpackDatFile(this.Reader);
 
-            BlockOffset = this.Reader.ReadInt32BE() << 7;
-            BlockNumber = this.Reader.ReadInt32BE();
+            BlockOffset = (long)this.Reader.ReadUInt32BE() << 7;
+            BlockNumber = this.Reader.ReadUInt32BE();
 
             this.Reader.ReadUInt32(); // Reserved
-
-            this.Reader.ReadBytes(Size - (int)(this.Reader.BaseStream.Position - start));
         }
 
         public override void ApplyChunk(ZiPatchConfig config)
