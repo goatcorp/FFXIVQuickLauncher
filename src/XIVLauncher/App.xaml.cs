@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -58,6 +59,12 @@ namespace XIVLauncher
 
             [CommandLine.Option("clientlang", Required = false, HelpText = "Client language to use.")]
             public ClientLanguage? ClientLanguage { get; set; }
+
+            [CommandLine.Option("exportconfig", Required = false, HelpText = "Export a zip of all config")]
+            public bool DoExportConfig { get; set; }
+
+            [CommandLine.Option("importconfig", Required = false, HelpText = "Import a zip of all config")]
+            public string DoImportConfig { get; set; }
 
             // We don't care about these, just need it so that the parser doesn't error
             [CommandLine.Option("squirrel-updated", Hidden = true)]
@@ -251,6 +258,49 @@ namespace XIVLauncher
             Environment.Exit(0);
         }
 
+        private static void ExportConfig()
+        {
+            try
+            {
+                var filename= DalamudAndPluginConfigImportExport.ExportConfig(Paths.RoamingPath);
+
+                MessageBox.Show($"Exported config as {filename}.\n\nXIVLauncher will now exit.", "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                Process.Start("explorer.exe", $"/select, \"{filename}\"");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+            Environment.Exit(0);
+        }
+
+        private static void ImportConfig(string zipFile)
+        {
+            try
+            {
+                var importPromptResult = MessageBox.Show($"XIVLauncher is going to import config from {zipFile}. "
+                    + "This will overwrite any files that already exist.", "XIVLauncher", 
+                    MessageBoxButton.OKCancel, MessageBoxImage.Asterisk);
+
+                if (importPromptResult == MessageBoxResult.OK) 
+                {
+                    DalamudAndPluginConfigImportExport.ImportConfig(zipFile, Paths.RoamingPath);
+
+                    MessageBox.Show($"Imported config.\n\nXIVLauncher will now exit. Please re-run XIVLauncher.", "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    Environment.Exit(0);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                Environment.Exit(0);
+            }
+
+            
+        }
+
         private bool _useFullExceptionHandler = false;
 
         private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
@@ -354,6 +404,16 @@ namespace XIVLauncher
                 if (CommandLine.DoGenerateLocalizables)
                 {
                     GenerateLocalizables();
+                }
+
+                if (CommandLine.DoExportConfig)
+                {
+                    ExportConfig();
+                }
+
+                if (!string.IsNullOrEmpty(CommandLine.DoImportConfig))
+                {
+                    ImportConfig(CommandLine.DoImportConfig);
                 }
             }
             catch (Exception ex)
