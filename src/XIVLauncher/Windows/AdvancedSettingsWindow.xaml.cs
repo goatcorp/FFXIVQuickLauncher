@@ -10,8 +10,6 @@ namespace XIVLauncher.Windows
     {
         public bool WasCompleted { get; private set; } = false;
 
-        private readonly string actPath;
-
         public AdvancedSettingsWindow()
         {
             InitializeComponent();

@@ -152,10 +152,10 @@ namespace XIVLauncher.Windows
 
                 _bannerDotList[0].Active = true;
 
-                Dispatcher.BeginInvoke(new Action(() =>
+                _ = this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    BannerImage.Source = _bannerBitmaps[0];
-                    BannerDot.ItemsSource = _bannerDotList;
+                    this.BannerImage.Source = this._bannerBitmaps[0];
+                    this.BannerDot.ItemsSource = this._bannerDotList;
                 }));
 
                 _bannerChangeTimer = new Timer {Interval = 5000};
@@ -181,12 +181,12 @@ namespace XIVLauncher.Windows
                 _bannerChangeTimer.AutoReset = true;
                 _bannerChangeTimer.Start();
 
-                Dispatcher.BeginInvoke(new Action(() => { NewsListView.ItemsSource = _headlines.News; }));
+                _ = Dispatcher.BeginInvoke(new Action(() => { NewsListView.ItemsSource = _headlines.News; }));
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Could not get news");
-                Dispatcher.BeginInvoke(new Action(() =>
+                _ = Dispatcher.BeginInvoke(new Action(() =>
                 {
                     NewsListView.ItemsSource = new List<News> {new News {Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError"}};
                 }));

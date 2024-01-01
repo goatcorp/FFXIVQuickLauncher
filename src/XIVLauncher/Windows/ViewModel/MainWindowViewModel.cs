@@ -304,7 +304,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<bool> CheckGateStatus()
         {
-            GateStatus? gateStatus = null;
+            GateStatus gateStatus = null;
 
             try
             {
@@ -1093,7 +1093,7 @@ namespace XIVLauncher.Windows.ViewModel
             Environment.Exit(0);
         }
 
-        public async Task<Process?> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud, bool noThird, bool noPlugins)
+        public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud, bool noThird, bool noPlugins)
         {
             var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
                 App.Settings.GamePath,
@@ -1247,7 +1247,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void PersistAccount(string username, string password)
         {
-            if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.UserName.Equals(username) &&
+            if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.UserName.Equals(username, StringComparison.Ordinal) &&
                 AccountManager.CurrentAccount.Password != password &&
                 AccountManager.CurrentAccount.SavePassword)
                 AccountManager.UpdatePassword(AccountManager.CurrentAccount, password);

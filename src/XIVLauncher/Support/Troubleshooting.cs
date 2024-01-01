@@ -18,7 +18,7 @@ namespace XIVLauncher.Support
         /// <summary>
         /// Gets the most recent exception to occur.
         /// </summary>
-        public static Exception? LastException { get; private set; }
+        public static Exception LastException { get; private set; }
 
         /// <summary>
         /// Log the last exception in a parseable format to serilog.
