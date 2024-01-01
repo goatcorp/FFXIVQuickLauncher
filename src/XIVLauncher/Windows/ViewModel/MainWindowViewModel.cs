@@ -995,6 +995,21 @@ namespace XIVLauncher.Windows.ViewModel
                                     .WithParentWindow(_window)
                                     .Show() == MessageBoxResult.OK;
                             }
+                            // Seemingly no better way to detect this, probably brittle if this is localized
+                            else if (verify.LastException != null && verify.LastException.ToString().Contains("Data error"))
+                            {
+                                doVerify = new CustomMessageBox.Builder()
+                                           .WithText(Loc.Localize("GameRepairError_DataError", "Your hard drive reported an error while checking game files. XIVLauncher cannot repair this installation, as the error may indicate a physical issue with your hard drive.\nPlease check your drive's health, or try to update its firmware.\nReinstalling the game in a new location may solve this issue temporarily."))
+                                           .WithExitOnClose(CustomMessageBox.ExitOnCloseModes.DontExitOnClose)
+                                           .WithImage(MessageBoxImage.Error)
+                                           .WithShowHelpLinks(true)
+                                           .WithShowDiscordLink(true)
+                                           .WithShowNewGitHubIssue(false)
+                                           .WithButtons(MessageBoxButton.OKCancel)
+                                           .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
+                                           .WithParentWindow(_window)
+                                           .Show() == MessageBoxResult.OK;
+                            }
                             else
                             {
                                 doVerify = CustomMessageBox.Builder
