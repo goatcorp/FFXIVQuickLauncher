@@ -1,2 +1,3 @@
 ﻿* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly under certain conditions
 * Fixes an issue wherein the banners shown on the main page were outdated
+* Clarifies an error message when encountering a disk I/O error during repair
