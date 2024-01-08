@@ -190,6 +190,12 @@ namespace XIVLauncher.Windows
                 App.Settings.AddonList = addonList;
 
                 AddonListView.ItemsSource = App.Settings.AddonList;
+                
+                var result = addonSetup.Result.CreateTask();
+                if (result != null && !result.Value)
+                {
+                    CustomMessageBox.Show(Loc.Localize("FailedTaskCreation", "Failed to create Task. Addon will default to normal launch behavior."), "XIVLauncher", image: MessageBoxImage.Exclamation);
+                }
             }
         }
 
@@ -221,6 +227,28 @@ namespace XIVLauncher.Windows
                     App.Settings.AddonList = addonList;
 
                     AddonListView.ItemsSource = App.Settings.AddonList;
+
+                    if (genericAddon.UseSchTask && !addonSetup.Result.UseSchTask) genericAddon.DeleteTask(); // Delete the old task since it was disabled
+
+                    if (addonSetup.Result.UseSchTask)
+                    {
+                        // Check if we need to change the Scheduled Task. This needs to be done if in any of these cases:
+                        //      a) Path Changed
+                        //      b) Command Line Changed
+                        //      c) The old one did not have it enabled.
+                        if (!string.Equals(genericAddon.Path, addonSetup.Result.Path, StringComparison.OrdinalIgnoreCase) ||
+                            !string.Equals(genericAddon.CommandLine, addonSetup.Result.CommandLine, StringComparison.OrdinalIgnoreCase) ||
+                            !genericAddon.UseSchTask)
+                        {
+                            if (!string.IsNullOrEmpty(genericAddon.TaskName)) genericAddon.DeleteTask(); // Delete the old task
+
+                            var result = addonSetup.Result.CreateTask();
+                            if (result != null && !result.Value)
+                            {
+                                CustomMessageBox.Show(Loc.Localize("FailedTaskCreation", "Failed to create Task. Addon will default to normal launch behavior."), "XIVLauncher", image: MessageBoxImage.Exclamation);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -234,6 +262,11 @@ namespace XIVLauncher.Windows
         {
             if (AddonListView.SelectedItem is AddonEntry entry && entry.Addon is GenericAddon genericAddon)
             {
+                if (genericAddon.RunAsAdmin && genericAddon.UseSchTask)
+                {
+                    genericAddon.DeleteTask();
+                }
+
                 App.Settings.AddonList = App.Settings.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
 
                 AddonListView.ItemsSource = App.Settings.AddonList;
