@@ -80,7 +80,8 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
         {
             "ucrtbase_clr0400",
             "vcruntime140_clr0400",
-            "vcruntime140"
+            "vcruntime140",
+            "vcruntime140_1"
         };
 
         var passedRegistry = false;
@@ -106,6 +107,8 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
         {
             Log.Debug("Checking for DLL: " + path);
             passedDllChecks = passedDllChecks && CheckLibrary(path);
+            if (!CheckLibrary(path))
+                Log.Error("Cound not find " + path);
         }
 
         // Display our findings
@@ -116,7 +119,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 
         if (!passedDllChecks)
         {
-            Log.Error("Missing DLL files required by Dalamud.");
+            Log.Error("Missing DLL files required by Dalamud. Please try installing vcredist bundle again.");
         }
 
         return (passedRegistry && passedDllChecks);
