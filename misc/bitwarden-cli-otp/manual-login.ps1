@@ -18,7 +18,7 @@ while (($ServerUp.length -eq 0) -and ((Get-Process -Id $Launcher).ProcessName -e
 if ((Get-Process -Id $Launcher).ProcessName -eq "XIVLauncher" 2>$null) {
   # Suppress any errors here to minimize error dialog spam in exe builds
   $OTP = bw get totp $VaultItemName
-  # Allows for access when 1Password is locked but can be unlocked via Windows Hello
+  # Allows for some padding of time in case OTP service loads slowly
   Start-Sleep -Seconds 1
   if ($OTP.length -eq 6) {
     try {

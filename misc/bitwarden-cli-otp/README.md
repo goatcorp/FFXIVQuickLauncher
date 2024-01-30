@@ -14,7 +14,3 @@ These scripts (based on [kensykora's automatic OTP entry](https://gist.github.co
 4. Make sure line 4 of either script matches your vault item's name. It is "Square Enix" by default.
 5. Check "Enable XL Authenticator app/OTP macro support" in Settings and if you're using the automatic login script, check "Log in automatically" on the main launcher screen.
 6. (Optional) Win-PS2EXE allows you to convert the script into an executable. This has the added benefit of being able to be pinned to the taskbar with Windows 11, but it also provides more context in the Windows Hello prompt by using the exe name you choose instead of the generic "powershell" requesting access. **Note: Windows Defender and other anti-virus software will likely take issue with these built exes so ensure they are approved for use.**
-
-## Known Issues
-- In some instances the Windows Hello prompt will minimize itself. I believe this is due to 1Password itself being minimized.
-- In some instances the script will fail to retrieve an OTP. Unlocking the vault before running the script is a workaround for the time being.
