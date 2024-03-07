@@ -102,10 +102,12 @@ namespace XIVLauncher.Common.Dalamud
             Overlay!.ReportProgress(size, downloaded, progress);
         }
 
-        public void Run()
+        public void Run(bool overrideForceProxy = false)
         {
-            Log.Information("[DUPDATE] Starting...");
+            Log.Information("[DUPDATE] Starting... (forceProxy: {ForceProxy})", overrideForceProxy);
             this.State = DownloadState.Unknown;
+
+            this.forceProxy = overrideForceProxy;
 
             Task.Run(async () =>
             {

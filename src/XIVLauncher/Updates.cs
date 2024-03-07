@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -59,7 +60,7 @@ namespace XIVLauncher
         {
             None = 0,
             GlobalDisableDalamud = 1,
-            GlobalDisableLogin = 1 << 1,
+            ForceProxyDalamudAndAssets = 1 << 1,
         }
 
 #pragma warning disable CS8618
@@ -200,6 +201,11 @@ namespace XIVLauncher
             }
 
             return DateTimeOffset.UtcNow.ToUnixTimeSeconds() > newsData?.ShowUntil ? null : newsData;
+        }
+
+        public static bool HaveFeatureFlag(LeaseFeatureFlags flag)
+        {
+            return UpdateLease != null && UpdateLease.Flags.HasFlag(flag);
         }
 
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)

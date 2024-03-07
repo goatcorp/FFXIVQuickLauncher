@@ -675,7 +675,7 @@ namespace XIVLauncher.Windows.ViewModel
                     using var process = await StartGameAndAddon(
                         loginResult,
                         isSteam,
-                        action == AfterLoginAction.StartWithoutDalamud,
+                        action == AfterLoginAction.StartWithoutDalamud || Updates.HaveFeatureFlag(Updates.LeaseFeatureFlags.GlobalDisableDalamud),
                         action == AfterLoginAction.StartWithoutThird,
                         action == AfterLoginAction.StartWithoutPlugins).ConfigureAwait(false);
 
