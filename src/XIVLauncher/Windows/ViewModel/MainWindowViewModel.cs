@@ -1133,7 +1133,7 @@ namespace XIVLauncher.Windows.ViewModel
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: _window);
             }
 
-            if (App.Settings.InGameAddonEnabled && !forceNoDalamud && App.Settings.IsDx11)
+            if (App.Settings.InGameAddonEnabled && !forceNoDalamud)
             {
                 try
                 {
@@ -1173,7 +1173,6 @@ namespace XIVLauncher.Windows.ViewModel
                 isSteam,
                 App.Settings.AdditionalLaunchArgs,
                 App.Settings.GamePath,
-                App.Settings.IsDx11,
                 App.Settings.Language.GetValueOrDefault(ClientLanguage.English),
                 App.Settings.EncryptArguments.GetValueOrDefault(false),
                 App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware));

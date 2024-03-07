@@ -118,10 +118,9 @@ namespace XIVLauncher.Windows
                 }
             }
 
-            if (SetupTabControl.SelectedIndex == 4)
+            if (SetupTabControl.SelectedIndex == 3)
             {
                 App.Settings.GamePath = new DirectoryInfo(GamePathEntry.Text);
-                App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
                 App.Settings.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
                 App.Settings.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
 
@@ -144,16 +143,6 @@ namespace XIVLauncher.Windows
             }
 
             SetupTabControl.SelectedIndex++;
-        }
-
-        private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
-        {
-            Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
-        }
-
-        private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
-        {
-            Dx9DisclaimerTextBlock.Visibility = Visibility.Hidden;
         }
     }
 }

@@ -229,16 +229,13 @@ public class Launcher
 
     public Process? LaunchGame(IGameRunner runner, string sessionId, int region, int expansionLevel,
                                bool isSteamServiceAccount, string additionalArguments,
-                               DirectoryInfo gamePath, bool isDx11, ClientLanguage language,
+                               DirectoryInfo gamePath, ClientLanguage language,
                                bool encryptArguments, DpiAwareness dpiAwareness)
     {
         Log.Information(
             $"XivGame::LaunchGame(steamServiceAccount:{isSteamServiceAccount}, args:{additionalArguments})");
 
         var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
-        if (!isDx11)
-            exePath = Path.Combine(gamePath.FullName, "game", "ffxiv.exe");
-
         var environment = new Dictionary<string, string>();
 
         var argumentBuilder = new ArgumentBuilder()

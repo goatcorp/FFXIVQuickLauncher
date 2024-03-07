@@ -84,9 +84,6 @@ namespace XIVLauncher.Windows.ViewModel
             AutoStartSteamTooltipLoc = Loc.Localize("AutoStartSteamTooltip", "Whenever you open XIVLauncher, it will check if Steam is running and start it if it isn't.\nYou will automatically show as \"Playing\" on Steam.");
 
             SettingsGameSettingsLoc = Loc.Localize("SettingsGameSettings", "Game Settings");
-            DirectXLoc = Loc.Localize("ChooseDirectX", "Please select which DirectX version you want to use.");
-            DirectX9NoticeLoc = Loc.Localize("DirectX9Notice",
-                "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from\r\nSE for any technical issues any additional XIVLauncher features such as Rich Presence and the\r\nIn-Game addon will not work.");
             ChooseLanguageLoc = Loc.Localize("ChooseLanguage", "Please select which language you want to load the game with.");
             ChooseLauncherLanguageLoc = Loc.Localize("ChooseLauncherLanguage", "Please select the launcher language, requires a restart.");
             LauncherLanguageHelpCtaLoc = Loc.Localize("LauncherLanguageHelpCtaLoc",
