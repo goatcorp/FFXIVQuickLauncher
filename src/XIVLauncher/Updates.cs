@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -217,6 +216,22 @@ namespace XIVLauncher
             {
                 var updateResult = await LeaseUpdateManager(downloadPrerelease).ConfigureAwait(false);
                 UpdateLease = updateResult.Lease;
+
+                // Log feature flags
+                try
+                {
+                    var flags = string.Join(", ", Enum.GetValues(typeof(LeaseFeatureFlags))
+                                                      .Cast<LeaseFeatureFlags>()
+                                                      .Where(f => UpdateLease.Flags.HasFlag(f))
+                                                      .Select(f => f.ToString()));
+
+                    Log.Information("Feature flags: {Flags}", flags);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not log feature flags");
+                }
+
                 using var updateManager = updateResult.Manager;
 
                 // TODO: is this allowed?
