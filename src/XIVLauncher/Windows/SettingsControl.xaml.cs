@@ -194,16 +194,15 @@ namespace XIVLauncher.Windows
 
             if (entry.Addon is GenericAddon genericAddon)
             {
+                var selectedIndex = AddonListView.SelectedIndex;
                 var addonSetup = new GenericAddonSetupWindow(genericAddon);
                 addonSetup.ShowDialog();
 
                 if (addonSetup.Result != null)
                 {
-                    App.Settings.AddonList = App.Settings.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
-
                     var addonList = App.Settings.AddonList;
-
-                    addonList.Add(new AddonEntry
+                    addonList.RemoveAt(selectedIndex);
+                    addonList.Insert(selectedIndex, new AddonEntry
                     {
                         IsEnabled = entry.IsEnabled,
                         Addon = addonSetup.Result
@@ -223,9 +222,12 @@ namespace XIVLauncher.Windows
 
         private void RemoveAddonEntry_OnClick(object sender, RoutedEventArgs e)
         {
-            if (AddonListView.SelectedItem is AddonEntry entry && entry.Addon is GenericAddon genericAddon)
+            if (AddonListView.SelectedItem is AddonEntry)
             {
-                App.Settings.AddonList = App.Settings.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
+                var addonList = App.Settings.AddonList;
+                addonList.RemoveAt(this.AddonListView.SelectedIndex);
+
+                App.Settings.AddonList = addonList;
 
                 AddonListView.ItemsSource = App.Settings.AddonList;
             }
