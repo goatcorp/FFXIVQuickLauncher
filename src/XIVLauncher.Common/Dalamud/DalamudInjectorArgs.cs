@@ -7,6 +7,7 @@ namespace XIVLauncher.Common.Dalamud
         public const string FAKE_ARGUMENTS = "--fake-arguments";
         public const string NO_PLUGIN = "--no-plugin";
         public const string NO_THIRD_PARTY = "--no-3rd-plugin";
+        public const string GC_SERVER = "--gc-server";
         public static string Mode(string method) => $"--mode={method}";
         public static string Game(string path) => $"--game=\"{path}\"";
         public static string HandleOwner(long handle) => $"--handle-owner={handle}";
