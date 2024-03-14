@@ -3,7 +3,7 @@
     <Product>XIVLauncher</Product>
     <AssemblyTitle>XIVLauncher</AssemblyTitle>
     <Description>Custom launcher for the most critically acclaimed MMO.</Description>
-    <VersionPrefix>6.3.12</VersionPrefix>
+    <VersionPrefix>6.3.13</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup>

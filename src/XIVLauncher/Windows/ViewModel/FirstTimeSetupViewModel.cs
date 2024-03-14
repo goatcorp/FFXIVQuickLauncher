@@ -16,9 +16,6 @@ namespace XIVLauncher.Windows.ViewModel
             FirstTimeSteamNoticeLoc = Loc.Localize("FirstTimeSteamNotice",
                 "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.");
             FirstTimeSteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
-            FirstTimeDirectXLoc = Loc.Localize("ChooseDirectXFTS", "Please select which DirectX version you want to use.");
-            DirectX9NoticeLoc = Loc.Localize("DirectX9NoticeFTS",
-                "DirectX 9 mode is not supported anymore. It will still start, but you will not get support from SE for any technical issues any additional XIVLauncher features such as Rich Presence and Dalamud will not work.");
             FirstTimeLanguageLoc = Loc.Localize("ChooseLanguageFTS", "Please select which language you want to load the game with.");
             FirstTimeActLaunchLoc = Loc.Localize("FirstTimeActLaunch",
                 "Advanced Combat Tracker is installed on your computer.\r\nDo you want to launch it automatically when launching the game?");

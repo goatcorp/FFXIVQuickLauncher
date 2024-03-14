@@ -18,7 +18,7 @@ namespace XIVLauncher.Support
         /// <summary>
         /// Gets the most recent exception to occur.
         /// </summary>
-        public static Exception? LastException { get; private set; }
+        public static Exception LastException { get; private set; }
 
         /// <summary>
         /// Log the last exception in a parseable format to serilog.
@@ -93,7 +93,6 @@ namespace XIVLauncher.Support
             var payload = new TroubleshootingPayload
             {
                 When = DateTime.Now,
-                IsDx11 = App.Settings.IsDx11,
                 IsAutoLogin = App.Settings.AutologinEnabled,
                 IsUidCache = App.Settings.UniqueIdCacheEnabled,
                 DalamudEnabled = App.Settings.InGameAddonEnabled,
@@ -149,8 +148,6 @@ namespace XIVLauncher.Support
         private class TroubleshootingPayload
         {
             public DateTime When { get; set; }
-
-            public bool IsDx11 { get; set; }
 
             public bool IsAutoLogin { get; set; }
 

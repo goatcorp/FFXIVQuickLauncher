@@ -59,7 +59,7 @@ namespace XIVLauncher
         {
             None = 0,
             GlobalDisableDalamud = 1,
-            GlobalDisableLogin = 1 << 1,
+            ForceProxyDalamudAndAssets = 1 << 1,
         }
 
 #pragma warning disable CS8618
@@ -202,6 +202,11 @@ namespace XIVLauncher
             return DateTimeOffset.UtcNow.ToUnixTimeSeconds() > newsData?.ShowUntil ? null : newsData;
         }
 
+        public static bool HaveFeatureFlag(LeaseFeatureFlags flag)
+        {
+            return UpdateLease != null && UpdateLease.Flags.HasFlag(flag);
+        }
+
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
@@ -211,6 +216,22 @@ namespace XIVLauncher
             {
                 var updateResult = await LeaseUpdateManager(downloadPrerelease).ConfigureAwait(false);
                 UpdateLease = updateResult.Lease;
+
+                // Log feature flags
+                try
+                {
+                    var flags = string.Join(", ", Enum.GetValues(typeof(LeaseFeatureFlags))
+                                                      .Cast<LeaseFeatureFlags>()
+                                                      .Where(f => UpdateLease.Flags.HasFlag(f))
+                                                      .Select(f => f.ToString()));
+
+                    Log.Information("Feature flags: {Flags}", flags);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Could not log feature flags");
+                }
+
                 using var updateManager = updateResult.Manager;
 
                 // TODO: is this allowed?

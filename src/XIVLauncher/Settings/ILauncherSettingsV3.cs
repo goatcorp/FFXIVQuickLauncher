@@ -13,7 +13,6 @@ namespace XIVLauncher.Settings
         #region Launcher Setting
 
         DirectoryInfo GamePath { get; set; }
-        bool IsDx11 { get; set; }
         bool AutologinEnabled { get; set; }
         List<AddonEntry> AddonList { get; set; }
         bool UniqueIdCacheEnabled { get; set; }

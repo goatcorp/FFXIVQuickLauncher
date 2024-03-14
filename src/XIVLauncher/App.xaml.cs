@@ -116,7 +116,7 @@ namespace XIVLauncher
 #endif
         }
 
-        private static void OnSerilogLogLine(object sender, (string Line, LogEventLevel Level, DateTimeOffset TimeStamp, Exception? Exception) e)
+        private static void OnSerilogLogLine(object sender, (string Line, LogEventLevel Level, DateTimeOffset TimeStamp, Exception Exception) e)
         {
             if (e.Exception == null)
                 return;
@@ -206,7 +206,7 @@ namespace XIVLauncher
                     while (DalamudUpdater.Overlay == null)
                         Thread.Yield();
 
-                    DalamudUpdater.Run();
+                    DalamudUpdater.Run(Updates.HaveFeatureFlag(Updates.LeaseFeatureFlags.ForceProxyDalamudAndAssets));
                 }
                 catch (Exception ex)
                 {

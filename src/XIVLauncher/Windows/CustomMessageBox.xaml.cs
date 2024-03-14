@@ -342,8 +342,7 @@ namespace XIVLauncher.Windows
                     .WithAppendDescription("\n64bit? " + Environment.Is64BitProcess);
                 if (App.Settings != null)
                 {
-                    this.WithAppendDescription("\nDX11? " + App.Settings.IsDx11)
-                        .WithAppendDescription("\nAddons Enabled? " + App.Settings.InGameAddonEnabled)
+                    this.WithAppendDescription("\nAddons Enabled? " + App.Settings.InGameAddonEnabled)
                         .WithAppendDescription("\nAuto Login Enabled? " + App.Settings.AutologinEnabled)
                         .WithAppendDescription("\nLanguage: " + App.Settings.Language)
                         .WithAppendDescription("\nLauncherLanguage: " + App.Settings.LauncherLanguage)

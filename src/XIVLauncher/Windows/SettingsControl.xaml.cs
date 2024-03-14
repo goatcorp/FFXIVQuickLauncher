@@ -55,14 +55,6 @@ namespace XIVLauncher.Windows
             if (App.Settings.PatchPath != null)
                 ViewModel.PatchPath = App.Settings.PatchPath.FullName;
 
-            if (App.Settings.IsDx11)
-                Dx11RadioButton.IsChecked = true;
-            else
-            {
-                Dx9RadioButton.IsChecked = true;
-                Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
-            }
-
             LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
             LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
             LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
@@ -110,7 +102,6 @@ namespace XIVLauncher.Windows
 
             App.Settings.GamePath = !string.IsNullOrEmpty(ViewModel.GamePath) ? new DirectoryInfo(ViewModel.GamePath) : null;
             App.Settings.PatchPath = !string.IsNullOrEmpty(ViewModel.PatchPath) ? new DirectoryInfo(ViewModel.PatchPath) : null;
-            App.Settings.IsDx11 = Dx11RadioButton.IsChecked == true;
 
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             // Keep the notice visible if LauncherLanguage has changed
@@ -203,16 +194,15 @@ namespace XIVLauncher.Windows
 
             if (entry.Addon is GenericAddon genericAddon)
             {
+                var selectedIndex = AddonListView.SelectedIndex;
                 var addonSetup = new GenericAddonSetupWindow(genericAddon);
                 addonSetup.ShowDialog();
 
                 if (addonSetup.Result != null)
                 {
-                    App.Settings.AddonList = App.Settings.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
-
                     var addonList = App.Settings.AddonList;
-
-                    addonList.Add(new AddonEntry
+                    addonList.RemoveAt(selectedIndex);
+                    addonList.Insert(selectedIndex, new AddonEntry
                     {
                         IsEnabled = entry.IsEnabled,
                         Addon = addonSetup.Result
@@ -232,9 +222,12 @@ namespace XIVLauncher.Windows
 
         private void RemoveAddonEntry_OnClick(object sender, RoutedEventArgs e)
         {
-            if (AddonListView.SelectedItem is AddonEntry entry && entry.Addon is GenericAddon genericAddon)
+            if (AddonListView.SelectedItem is AddonEntry)
             {
-                App.Settings.AddonList = App.Settings.AddonList.Where(x => x.Addon is GenericAddon thisGenericAddon && thisGenericAddon.Path != genericAddon.Path).ToList();
+                var addonList = App.Settings.AddonList;
+                addonList.RemoveAt(this.AddonListView.SelectedIndex);
+
+                App.Settings.AddonList = addonList;
 
                 AddonListView.ItemsSource = App.Settings.AddonList;
             }
@@ -295,16 +288,6 @@ namespace XIVLauncher.Windows
             });
 
             window.ShowDialog();
-        }
-
-        private void Dx9RadioButton_OnChecked(object sender, RoutedEventArgs e)
-        {
-            Dx9DisclaimerTextBlock.Visibility = Visibility.Visible;
-        }
-
-        private void Dx9RadioButton_OnUnchecked(object sender, RoutedEventArgs e)
-        {
-            Dx9DisclaimerTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void LauncherLanguageCombo_SelectionChanged(object sender, RoutedEventArgs e)

@@ -161,8 +161,8 @@ namespace XIVLauncher.Game
 
             if ((d3d11.Exists || dinput8.Exists) && !App.Settings.HasComplainedAboutGShadeDxgi.GetValueOrDefault(false))
             {
-                FileVersionInfo? d3d11Info = null;
-                FileVersionInfo? dinput8Info = null;
+                FileVersionInfo d3d11Info = null;
+                FileVersionInfo dinput8Info = null;
 
                 if (d3d11.Exists)
                     d3d11Info = FileVersionInfo.GetVersionInfo(d3d11.FullName);
