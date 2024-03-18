@@ -1246,25 +1246,40 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void PersistAccount(string username, string password)
         {
-            if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.UserName.Equals(username, StringComparison.Ordinal) &&
-                AccountManager.CurrentAccount.Password != password &&
-                AccountManager.CurrentAccount.SavePassword)
-                AccountManager.UpdatePassword(AccountManager.CurrentAccount, password);
-
-            if (AccountManager.CurrentAccount == null ||
-                AccountManager.CurrentAccount.Id != $"{username}-{IsOtp}-{IsSteam}")
+            try
             {
-                var accountToSave = new XivAccount(username)
+                if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.UserName.Equals(username, StringComparison.Ordinal) &&
+                    AccountManager.CurrentAccount.Password != password &&
+                    AccountManager.CurrentAccount.SavePassword)
+                    AccountManager.UpdatePassword(AccountManager.CurrentAccount, password);
+
+                if (AccountManager.CurrentAccount == null ||
+                    AccountManager.CurrentAccount.Id != $"{username}-{IsOtp}-{IsSteam}")
                 {
-                    Password = password,
-                    SavePassword = true,
-                    UseOtp = IsOtp,
-                    UseSteamServiceAccount = IsSteam
-                };
+                    var accountToSave = new XivAccount(username)
+                    {
+                        Password = password,
+                        SavePassword = true,
+                        UseOtp = IsOtp,
+                        UseSteamServiceAccount = IsSteam
+                    };
 
-                AccountManager.AddAccount(accountToSave);
+                    AccountManager.AddAccount(accountToSave);
 
-                AccountManager.CurrentAccount = accountToSave;
+                    AccountManager.CurrentAccount = accountToSave;
+                }
+            }
+            catch (Win32Exception ex)
+            {
+                CustomMessageBox.Builder
+                                .NewFrom(Loc.Localize("PersistAccountError",
+                                                      "XIVLauncher could not save your account information. This is likely caused by having too many saved accounts in the Windows Credential Manager.\nPlease try removing some of them."))
+                                .WithAppendDescription(ex.ToString())
+                                .WithShowHelpLinks()
+                                .WithImage(MessageBoxImage.Warning)
+                                .WithButtons(MessageBoxButton.OK)
+                                .WithParentWindow(_window)
+                                .Show();
             }
         }
 
