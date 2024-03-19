@@ -206,7 +206,7 @@ namespace XIVLauncher.Windows.ViewModel
                                                             "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
                                                             "\n");
 
-            if (!string.IsNullOrEmpty(Updates.UpdateLease?.CutOffBootver))
+            if (!string.IsNullOrEmpty(Updates.UpdateLease?.CutOffBootver) && !EnvironmentSettings.IsNoKillswitch)
             {
                 var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
                 var cutoff = SeVersion.Parse(Updates.UpdateLease.CutOffBootver);
