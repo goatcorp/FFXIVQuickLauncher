@@ -360,14 +360,12 @@ public class Launcher
 
         for (var i = 0; i < FilesToHash.Length; i++)
         {
-            result +=
-                $"{FilesToHash[i]}/{GetFileHash(Path.Combine(gamePath.FullName, "boot", FilesToHash[i]))}";
-
-            if (i != FilesToHash.Length - 1)
-                result += ",";
+            var path = Path.Combine(gamePath.FullName, "boot", FilesToHash[i]);
+            if (!File.Exists(path)) continue;
+            result += $"{FilesToHash[i]}/{GetFileHash(path)},";
         }
-
-        return result;
+        
+        return result.TrimEnd(',');
     }
 
     public async Task<PatchListEntry[]> CheckBootVersion(DirectoryInfo gamePath)
