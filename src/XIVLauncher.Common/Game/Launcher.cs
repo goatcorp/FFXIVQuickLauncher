@@ -81,9 +81,7 @@ public class Launcher
     {
         "ffxivboot.exe",
         "ffxivboot64.exe",
-        "ffxivlauncher.exe",
         "ffxivlauncher64.exe",
-        "ffxivupdater.exe",
         "ffxivupdater64.exe"
     };
 
