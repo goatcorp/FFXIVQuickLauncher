@@ -1,3 +1,7 @@
 ﻿* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly under certain conditions
 * Fixes an issue wherein the banners shown on the main page were outdated
+* Fixes an issue wherein removing addons from the auto-launch page may not have been possible under certain conditions(by @nebel)
+* Adjusts to a change in the login protocol
+* Removes support for the DirectX 9 version of the game, as it has been discontinued
 * Clarifies an error message when encountering a disk I/O error during repair
+* Clarifies an error message when passwords could not be saved
