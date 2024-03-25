@@ -53,8 +53,14 @@ namespace XIVLauncher.Windows
                 try
                 {
                     // Start Listen
-                    Task.Run(() => _otpListener.Start());
-                    Log.Debug("OTP server started...");
+                    Task otpListenerTask = Task.Run(() => _otpListener.Start());
+                    
+                    otpListenerTask.ContinueWith(t => {
+                        if (otpListenerTask.IsCompleted) Log.Information("OTP server started...");
+                        else if (otpListenerTask.IsCanceled) Log.Information("OTP server cancelled...");
+                        else if (otpListenerTask.IsFaulted) Log.Error(t.Exception, "OTP server could not be started...");
+                    });
+                    
                 }
                 catch (Exception ex)
                 {
