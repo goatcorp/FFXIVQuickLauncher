@@ -52,6 +52,33 @@
                         </Button>
                     </StackPanel>
 
+                    <StackPanel Orientation="Horizontal" Margin="20,5,0,0">
+                        <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
+                                  x:Name="OtpYubiKeyCheckBox" Content="{Binding OtpYubiKeyCheckBoxLoc}" ToolTip="{Binding OtpYubiKeyTooltipLoc}"  IsEnabled="{Binding ElementName=OtpServerCheckBox, Path=IsChecked}"/>
+
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                HorizontalAlignment="Left" Click="YubiKeySetupAuthButton_OnClick" Margin="0 0 0 0">
+                            <Button.ToolTip>
+                                <TextBlock Text="{Binding OtpSetupAuthTooltipLoc}" />
+                            </Button.ToolTip>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center"
+                                           Foreground="LightBlue" FontSize="11" Text="{Binding OtpSetupAuthLoc}"/>
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                HorizontalAlignment="Left" Click="LearnMoreYubiKeyButton_OnClick" Margin="5 0 0 0">
+                            <Button.ToolTip>
+                                <TextBlock Text="{Binding OtpLearnMoreTooltipLoc}" />
+                            </Button.ToolTip>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock VerticalAlignment="Center"
+                                           Foreground="DarkGray" FontSize="11" Text="{Binding LearnMoreLoc}"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
                     <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
                               x:Name="AutoStartSteamCheckBox" Margin="0,15,0,0" Content="{Binding AutoStartSteamLoc}" ToolTip="{Binding AutoStartSteamTooltipLoc}" />
                     
