@@ -11,7 +11,7 @@ namespace XIVLauncher.Common.Game
 {
     public static class IntegrityCheck
     {
-        private const string INTEGRITY_CHECK_BASE_URL = "https://goatcorp.github.io/integrity/";
+        public const string INTEGRITY_CHECK_BASE_URL = "https://goatcorp.github.io/integrity/";
 
         public class IntegrityCheckResult
         {
@@ -76,7 +76,7 @@ namespace XIVLauncher.Common.Game
             return (failed ? CompareResult.Invalid : CompareResult.Valid, report, remoteIntegrity);
         }
 
-        private static IntegrityCheckResult DownloadIntegrityCheckForVersion(string gameVersion)
+        public static IntegrityCheckResult DownloadIntegrityCheckForVersion(string gameVersion)
         {
             using (var client = new WebClient())
             {

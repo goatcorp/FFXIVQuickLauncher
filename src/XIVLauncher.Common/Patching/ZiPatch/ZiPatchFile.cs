@@ -26,8 +26,12 @@ namespace XIVLauncher.Common.Patching.ZiPatch
             this._stream = stream;
 
             var reader = new BinaryReader(stream);
+
             if (zipatchMagic.Any(magic => magic != reader.ReadUInt32()))
+            {
+                stream.Dispose();
                 throw new ZiPatchException();
+            }
         }
 
         /// <summary>
