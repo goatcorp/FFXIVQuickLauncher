@@ -161,6 +161,12 @@ namespace XIVLauncher.Common.Windows
             return false;
         }
 
+        public bool DismissFloatingGamepadTextInput()
+        {
+            // Facepunch.Steamworks doesn't have this...
+            return false;
+        }
+
         public bool IsRunningOnSteamDeck() => SteamUtils.IsRunningOnSteamDeck;
 
         public uint GetServerRealTime() => (uint)((DateTimeOffset)SteamUtils.SteamServerTime).ToUnixTimeSeconds();
