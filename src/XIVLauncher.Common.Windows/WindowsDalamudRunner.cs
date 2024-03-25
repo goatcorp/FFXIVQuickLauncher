@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +16,7 @@ namespace XIVLauncher.Common.Windows;
 
 public class WindowsDalamudRunner : IDalamudRunner
 {
-    public unsafe Process? Run(FileInfo runner, bool fakeLogin, bool noPlugins, bool noThirdPlugins, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo dalamudStartInfo)
+    public unsafe Process? Run(FileInfo runner, bool fakeLogin, bool noPlugins, bool noThirdPlugins, bool gcServer, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo dalamudStartInfo)
     {
         var inheritableCurrentProcess = GetInheritableCurrentProcessHandle();
 

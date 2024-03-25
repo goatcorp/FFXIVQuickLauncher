@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -22,6 +22,7 @@ namespace XIVLauncher.Common.Dalamud
         private readonly bool fakeLogin;
         private readonly bool noPlugin;
         private readonly bool noThirdPlugin;
+        private readonly bool gcServer;
         private readonly string troubleshootingData;
 
         public enum DalamudInstallState
@@ -31,7 +32,7 @@ namespace XIVLauncher.Common.Dalamud
         }
 
         public DalamudLauncher(IDalamudRunner runner, DalamudUpdater updater, DalamudLoadMethod loadMethod, DirectoryInfo gamePath, DirectoryInfo configDirectory, DirectoryInfo logPath,
-                               ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin, bool noPlugin, bool noThirdPlugin, string troubleshootingData)
+                               ClientLanguage clientLanguage, int injectionDelay, bool fakeLogin, bool noPlugin, bool noThirdPlugin, bool gcServer, string troubleshootingData)
         {
             this.runner = runner;
             this.updater = updater;
@@ -44,6 +45,7 @@ namespace XIVLauncher.Common.Dalamud
             this.fakeLogin = fakeLogin;
             this.noPlugin = noPlugin;
             this.noThirdPlugin = noThirdPlugin;
+            this.gcServer = gcServer;
             this.troubleshootingData = troubleshootingData;
         }
 
@@ -121,7 +123,7 @@ namespace XIVLauncher.Common.Dalamud
                     break;
             }
 
-            var process = this.runner.Run(this.updater.Runner, this.fakeLogin, this.noPlugin, this.noThirdPlugin, gameExe, gameArgs, environment, this.loadMethod, startInfo);
+            var process = this.runner.Run(this.updater.Runner, this.fakeLogin, this.noPlugin, this.noThirdPlugin, this.gcServer, gameExe, gameArgs, environment, this.loadMethod, startInfo);
 
             this.updater.CloseOverlay();
 

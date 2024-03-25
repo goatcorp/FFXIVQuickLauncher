@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
@@ -43,6 +43,7 @@ namespace XIVLauncher.Settings
         string DalamudRolloutBucket { get; set; }
         bool? AutoStartSteam { get; set; }
         bool? ForceNorthAmerica { get; set; }
+        bool EnableGcServer { get; set; }
 
         PreserveWindowPosition.WindowPlacement? MainWindowPlacement { get; set; }
 
