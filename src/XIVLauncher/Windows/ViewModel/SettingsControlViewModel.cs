@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using CheapLoc;
@@ -128,6 +128,11 @@ namespace XIVLauncher.Windows.ViewModel
                 "This method uses Entry-Point rewriting to load Dalamud, which may be more compatible with certain other software, like anti-virus tools.");
             InGameAddonLoadMethodDllInjectDescriptionLoc = Loc.Localize("InGameAddonLoadMethodDllInjectDescriptionLoc",
                 "This method loads Dalamud via DLL-injection, which may be more stable on certain systems.");
+            ImportConfigLoc = Loc.Localize("ImportConfigLoc", "Import Config");
+            ImportConfigTipLoc = Loc.Localize("ImportConfigTipLoc", "Import Dalamud and Plugin config from a previously exported file.");
+            ExportConfigLoc = Loc.Localize("ExportConfigLoc", "Export Config");
+            ExportConfigTipLoc = Loc.Localize("ExportConfigTipLoc", "Export Dalamud and Plugin config to a file.");
+            ImportExportConfigDescLoc = Loc.Localize("ImportExportConfigDescLoc", "Import and export packages containing Dalamud and Plugin config files.");
 
             UniversalisHintLoc = Loc.Localize("UniversalisHint",
                 "Market board data provided in cooperation with Universalis.");
@@ -222,6 +227,11 @@ namespace XIVLauncher.Windows.ViewModel
         public string InGameAddonLoadMethodDllInjectDescriptionLoc { get; private set; }
         public string UniversalisHintLoc { get; private set; }
         public string UniversalisOptOutLoc { get; private set; }
+        public string ImportConfigLoc { get; private set; }
+        public string ImportConfigTipLoc { get; private set; }
+        public string ExportConfigLoc { get; private set; }
+        public string ExportConfigTipLoc { get; private set; }
+        public string ImportExportConfigDescLoc { get; private set; }
 
         public string PluginsDescriptionLoc { get; private set; }
         public string PluginsToggleLoc { get; private set; }
