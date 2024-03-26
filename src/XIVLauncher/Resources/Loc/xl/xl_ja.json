@@ -416,7 +416,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Custom Repo Plugins",
+    "message": "カスタムリポジトリプラグインを無効にして開始する",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -424,7 +424,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLaunchOptions": {
-    "message": "Additional launch options",
+    "message": "追加の起動オプション",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {

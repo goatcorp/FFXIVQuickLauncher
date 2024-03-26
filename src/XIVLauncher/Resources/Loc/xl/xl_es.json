@@ -416,7 +416,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Custom Repo Plugins",
+    "message": "Iniciar sin plugins de repositorio personalizado",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -424,7 +424,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLaunchOptions": {
-    "message": "Additional launch options",
+    "message": "Opciones de inicio adicionales",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
