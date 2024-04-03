@@ -78,7 +78,7 @@ public class IndexUpdateCommand
 
     private async Task<int> Handle(CancellationToken cancellationToken)
     {
-        var la = new Launcher((ISteam?)null, new CommonUniqueIdCache(null), this.settings);
+        var la = new Launcher((ISteam?)null, new CommonUniqueIdCache(null), this.settings, "https://launcher.finalfantasyxiv.com/v650/index.html?rc_lang={0}&time={1}");
 
         var bootPatchListFile = new FileInfo(Path.Combine(this.settings.GamePath.FullName, "bootlist.json"));
 

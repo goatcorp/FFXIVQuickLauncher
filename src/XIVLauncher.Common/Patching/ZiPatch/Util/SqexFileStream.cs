@@ -7,12 +7,14 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
     {
         private static readonly byte[] WipeBuffer = new byte[1 << 16];
 
-        public SqexFileStream(string path, FileMode mode) : base(path, mode, FileAccess.ReadWrite, FileShare.Read, 1 << 16)
-        {}
-
-        public static SqexFileStream? WaitForStream(string path, FileMode mode, int tries = 5, int sleeptime = 1)
+        public SqexFileStream(string path, FileMode mode)
+            : base(path, mode, FileAccess.ReadWrite, FileShare.Read, 1 << 16)
         {
-            do
+        }
+
+        public static SqexFileStream WaitForStream(string path, FileMode mode, int tries = 5, int sleeptime = 1)
+        {
+            while (true)
             {
                 try
                 {
@@ -20,14 +22,12 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
                 }
                 catch (IOException)
                 {
-                    if (tries == 0)
+                    if (tries-- <= 0)
                         throw;
 
                     Thread.Sleep(sleeptime * 1000);
                 }
-            } while (0 < --tries);
-
-            return null;
+            }
         }
 
         public void WriteFromOffset(byte[] data, long offset)

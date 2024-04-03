@@ -87,11 +87,12 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
                 case OperationKind.RemoveAll:
                     foreach (var file in SqexFile.GetAllExpansionFiles(config.GamePath, ExpansionId).Where(RemoveAllFilter))
-                        File.Delete(file);
+                        new SqexFile(file).Delete(config.Store, config.GamePath);
+
                     break;
 
                 case OperationKind.DeleteFile:
-                    File.Delete(config.GamePath + "/" + TargetFile.RelativePath);
+                    this.TargetFile.Delete(config.Store, config.GamePath);
                     break;
 
                 case OperationKind.MakeDirTree:
