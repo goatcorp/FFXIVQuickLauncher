@@ -220,6 +220,15 @@ namespace XIVLauncher.Windows.ViewModel
                 }
             }
 
+            if (!isOtp && !App.Settings.HasComplainedAboutNoOtp.GetValueOrDefault(false))
+            {
+                var otpComplainText = Loc.Localize("OtpComplaint", "Your account does not have OTP enabled. This is a security risk and we strongly recommend enabling it."
+                                                                   + "\n\nYou can enable OTP in the account settings on the game's website. We won't show you this message again.");
+
+                CustomMessageBox.Show(otpComplainText, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Warning, parentWindow: _window);
+                App.Settings.HasComplainedAboutNoOtp = true;
+            }
+
             if (string.IsNullOrEmpty(username))
             {
                 CustomMessageBox.Show(

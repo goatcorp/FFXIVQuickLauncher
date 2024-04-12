@@ -31,6 +31,7 @@ namespace XIVLauncher.Settings
         bool? KeepPatches { get; set; }
         bool? HasComplainedAboutAdmin { get; set; }
         bool? HasComplainedAboutGShadeDxgi { get; set; }
+        bool? HasComplainedAboutNoOtp { get; set; }
         string LastVersion { get; set; }
         AcquisitionMethod? PatchAcquisitionMethod { get; set; }
         bool? HasShownAutoLaunchDisclaimer { get; set; }
