@@ -159,17 +159,6 @@ namespace XIVLauncher.Common.Game.Patch
                     // ignored
                     break;
 
-                /*
-                case AcquisitionMethod.MonoTorrentNetFallback:
-                    await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    break;
-
-                case AcquisitionMethod.MonoTorrentAriaFallback:
-                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
-                    await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    break;
-                */
-
                 case AcquisitionMethod.Aria:
                     await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
                     break;
@@ -184,7 +173,6 @@ namespace XIVLauncher.Common.Game.Patch
             try
             {
                 await AriaHttpPatchAcquisition.UnInitializeAsync();
-                //await TorrentPatchAcquisition.UnInitializeAsync();
             }
             catch (Exception ex)
             {
@@ -221,24 +209,6 @@ namespace XIVLauncher.Common.Game.Patch
                 case AcquisitionMethod.NetDownloader:
                     acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
-
-                /*
-                case AcquisitionMethod.MonoTorrentNetFallback:
-                    acquisition = new TorrentPatchAcquisition();
-
-                    var torrentAcquisition = acquisition as TorrentPatchAcquisition;
-                    if (!torrentAcquisition.IsApplicable(download.Patch))
-                        acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    break;
-
-                case AcquisitionMethod.MonoTorrentAriaFallback:
-                    acquisition = new TorrentPatchAcquisition();
-
-                    torrentAcquisition = acquisition as TorrentPatchAcquisition;
-                    if (!torrentAcquisition.IsApplicable(download.Patch))
-                        acquisition = new AriaHttpPatchAcquisition();
-                    break;
-                */
 
                 case AcquisitionMethod.Aria:
                     acquisition = new AriaHttpPatchAcquisition();
