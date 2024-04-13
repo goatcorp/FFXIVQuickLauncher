@@ -29,7 +29,7 @@ public static class ApiHelpers
     public static string GetTimeLeft(TimeSpan span, string[] locs)
     {
         if (span.TotalSeconds < 1)
-            return "0s";
+            return "";
 
         var seconds = (long)span.TotalSeconds;
         var minutes = seconds / 60;

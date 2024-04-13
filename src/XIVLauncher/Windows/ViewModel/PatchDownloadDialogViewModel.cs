@@ -21,10 +21,10 @@ namespace XIVLauncher.Windows.ViewModel
             PatchEtaLoc = Loc.Localize("PatchEta", "{0} left to download at {1}/s.");
             PatchEtaTimeLoc = new[]
             {
-                Loc.Localize("PatchEtaTimeDays", "ETA: {0}d {1}h {2}m {3}s"),
-                Loc.Localize("PatchEtaTimeHours", "ETA: {0}h {1}m {2}s"),
-                Loc.Localize("PatchEtaTimeMinutes", "ETA: {0}m {1}s"),
-                Loc.Localize("PatchEtaTimeSeconds", "ETA: {0}s"),
+                Loc.Localize("PatchEtaTimeDays", "Download ETA: {0}d {1}h {2}m {3}s"),
+                Loc.Localize("PatchEtaTimeHours", "Download ETA: {0}h {1}m {2}s"),
+                Loc.Localize("PatchEtaTimeMinutes", "Download ETA: {0}m {1}s"),
+                Loc.Localize("PatchEtaTimeSeconds", "Download ETA: {0}s"),
             };
         }
 
