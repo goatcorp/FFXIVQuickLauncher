@@ -31,7 +31,7 @@
                 <TextBlock x:Name="InstallingText" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding PatchInstallingLoc}"></TextBlock>
                 <ProgressBar IsIndeterminate="True" Margin="0,0,0,11" />
 
-                <TextBlock x:Name="BytesLeftText" Foreground="DarkGray" Margin="0,8,0,12" TextAlignment="Center" Text="{Binding PatchPreparingLoc}" MouseLeftButtonUp="BytesLeftText_OnMouseLeftButtonUp"/>
+                <TextBlock x:Name="BytesLeftText" Foreground="DarkGray" Margin="0,8,0,12" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

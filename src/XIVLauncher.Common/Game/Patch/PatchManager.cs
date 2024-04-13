@@ -236,9 +236,9 @@ namespace XIVLauncher.Common.Game.Patch
 
                     this.hasError = true;
 
+                    CancelAllDownloads();
                     OnFail?.Invoke(download.Patch, context);
 
-                    CancelAllDownloads();
                     Task.Run(async () => await UnInitializeAcquisition(), new CancellationTokenSource(5000).Token).GetAwaiter().GetResult();
 
                     try
@@ -250,7 +250,7 @@ namespace XIVLauncher.Common.Game.Patch
                         // This is fine. We will catch it next try.
                         Log.Error(ex, "Could not delete patch file");
                     }
-                    
+
                     Environment.Exit(0);
                 }
 
@@ -302,10 +302,6 @@ namespace XIVLauncher.Common.Game.Patch
 
         public void CancelAllDownloads()
         {
-            #if !DEBUG
-            return;
-            #endif
-
             foreach (var downloadService in DownloadServices)
             {
                 if (downloadService == null)
@@ -469,7 +465,7 @@ namespace XIVLauncher.Common.Game.Patch
                 return HashCheckResult.UnknownHashType;
             }
 
-            var stream = path.OpenRead();
+            using var stream = path.OpenRead();
 
             if (stream.Length != patchListEntry.Length)
             {
@@ -503,11 +499,9 @@ namespace XIVLauncher.Common.Game.Patch
                 if (sb.ToString() == patchListEntry.Hashes[i])
                     continue;
 
-                stream.Close();
                 return HashCheckResult.BadHash;
             }
 
-            stream.Close();
             return HashCheckResult.Pass;
         }
 
