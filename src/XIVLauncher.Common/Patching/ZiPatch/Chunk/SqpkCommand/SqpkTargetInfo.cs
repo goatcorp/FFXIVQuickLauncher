@@ -1,5 +1,5 @@
-﻿using XIVLauncher.Common.Patching.Util;
-using XIVLauncher.Common.Patching.ZiPatch.Util;
+﻿using System.IO;
+using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 {
@@ -23,11 +23,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public ulong DeletedDataSize { get; protected set; }
         public ulong SeekCount { get; protected set; }
 
-        public SqpkTargetInfo(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public SqpkTargetInfo(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
             // Reserved
             this.Reader.ReadBytes(3);
 

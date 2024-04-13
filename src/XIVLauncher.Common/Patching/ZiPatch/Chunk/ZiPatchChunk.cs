@@ -19,18 +19,24 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         public long Offset { get; protected set; }
         public long Size { get; protected set; }
         public uint Checksum { get; protected set; }
+
+        /// <summary>
+        /// The checksum calculated from the chunk's data.
+        /// This WILL! be 0 if the file has not been loaded with checksums enabled.
+        /// </summary>
         public uint CalculatedChecksum { get; protected set; }
 
-        protected readonly ChecksumBinaryReader Reader;
+        private bool _needsChecksum;
+        protected readonly BinaryReader Reader;
 
         private static readonly AsyncLocal<MemoryStream> localMemoryStream = new AsyncLocal<MemoryStream>();
-
 
         // Only FileHeader, ApplyOption, Sqpk, and EOF have been observed in XIVARR+ patches
         // AddDirectory and DeleteDirectory can theoretically happen, so they're implemented
         // ApplyFreeSpace doesn't seem to show up anymore, and EntryFile will just error out
-        private static readonly Dictionary<string, Func<ChecksumBinaryReader, long, long, ZiPatchChunk>> ChunkTypes =
-            new Dictionary<string, Func<ChecksumBinaryReader, long, long, ZiPatchChunk>> {
+        private static readonly Dictionary<string, Func<BinaryReader, long, long, ZiPatchChunk>> ChunkTypes =
+            new()
+            {
                 { FileHeaderChunk.Type, (reader, offset, size) => new FileHeaderChunk(reader, offset, size) },
                 { ApplyOptionChunk.Type, (reader, offset, size) => new ApplyOptionChunk(reader, offset, size) },
                 { ApplyFreeSpaceChunk.Type, (reader, offset, size) => new ApplyFreeSpaceChunk(reader, offset, size) },
@@ -39,10 +45,10 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
                 { SqpkChunk.Type, SqpkChunk.GetCommand },
                 { EndOfFileChunk.Type, (reader, offset, size) => new EndOfFileChunk(reader, offset, size) },
                 { XXXXChunk.Type, (reader, offset, size) => new XXXXChunk(reader, offset, size) }
-        };
+            };
 
 
-        public static ZiPatchChunk GetChunk(Stream stream)
+        public static ZiPatchChunk GetChunk(Stream stream, bool needsChecksum)
         {
             localMemoryStream.Value = localMemoryStream.Value ?? new MemoryStream();
 
@@ -64,16 +70,26 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
                 // Read into MemoryStream's inner buffer
                 reader.BaseStream.Read(memoryStream.GetBuffer(), 0, readSize);
 
-                var binaryReader = new ChecksumBinaryReader(memoryStream);
-                binaryReader.InitCrc32();
+                BinaryReader binaryReader;
+
+                if (needsChecksum)
+                {
+                    var checksumBinaryReader = new ChecksumBinaryReader(memoryStream);
+                    checksumBinaryReader.InitCrc32();
+                    binaryReader = checksumBinaryReader;
+                }
+                else
+                {
+                    binaryReader = new BinaryReader(memoryStream);
+                }
 
                 var type = binaryReader.ReadFixedLengthString(4u);
                 if (!ChunkTypes.TryGetValue(type, out var constructor))
                     throw new ZiPatchException();
 
-
                 var chunk = constructor(binaryReader, baseOffset, size);
 
+                chunk._needsChecksum = needsChecksum;
                 chunk.ReadChunk();
                 chunk.ReadChecksum();
                 return chunk;
@@ -88,7 +104,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
             }
         }
 
-        protected ZiPatchChunk(ChecksumBinaryReader reader, long offset, long size)
+        protected ZiPatchChunk(BinaryReader reader, long offset, long size)
         {
             this.Reader = reader;
 
@@ -98,15 +114,20 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected virtual void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
         }
 
         public virtual void ApplyChunk(ZiPatchConfig config) {}
 
         protected void ReadChecksum()
         {
-            CalculatedChecksum = this.Reader.GetCrc32();
+            if (_needsChecksum && this.Reader is ChecksumBinaryReader checksumBinaryReader) CalculatedChecksum = checksumBinaryReader.GetCrc32();
             Checksum = this.Reader.ReadUInt32BE();
+        }
+
+        protected AdvanceOnDispose GetAdvanceOnDispose()
+        {
+            return new AdvanceOnDispose(this.Reader, Size, _needsChecksum);
         }
 
         public bool IsChecksumValid => CalculatedChecksum == Checksum;

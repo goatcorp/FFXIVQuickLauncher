@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -1061,26 +1061,12 @@ namespace XIVLauncher.Windows.ViewModel
             return TryHandlePatchAsync(Repository.Ffxiv, loginResult.PendingPatches, loginResult.UniqueId);
         }
 
-        private void PatcherOnFail(PatchManager.FailReason reason, string versionId)
+        private void PatcherOnFail(PatchListEntry patch, string context)
         {
             var dlFailureLoc = Loc.Localize("PatchManDlFailure",
-                "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
-
-            switch (reason)
-            {
-                case PatchManager.FailReason.DownloadProblem:
-                    CustomMessageBox.Show(string.Format(dlFailureLoc, "Problem", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-                    break;
-
-                case PatchManager.FailReason.HashCheck:
-                    CustomMessageBox.Show(string.Format(dlFailureLoc, "IsHashCheckPass", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(reason), reason, null);
-            }
-
-            Environment.Exit(0);
+                                            "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\n"
+                                            + "This usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
+            CustomMessageBox.Show(string.Format(dlFailureLoc, context, patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
         }
 
         private void InstallerOnFail()

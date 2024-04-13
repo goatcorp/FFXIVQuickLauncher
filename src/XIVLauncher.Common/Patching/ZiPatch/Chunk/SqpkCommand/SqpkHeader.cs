@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
@@ -29,11 +28,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public byte[] HeaderData { get; protected set; }
         public long HeaderDataSourceOffset { get; protected set; }
 
-        public SqpkHeader(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public SqpkHeader(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
             FileKind = (TargetFileKind)this.Reader.ReadByte();
             HeaderKind = (TargetHeaderKind)this.Reader.ReadByte();
             this.Reader.ReadByte(); // Alignment

@@ -15,15 +15,16 @@ namespace XIVLauncher.Common.Patching.ZiPatch
         };
 
         private readonly Stream _stream;
-
+        private readonly bool _needsChecksum;
 
         /// <summary>
         /// Instantiates a ZiPatchFile from a Stream
         /// </summary>
         /// <param name="stream">Stream to a ZiPatch</param>
-        public ZiPatchFile(Stream stream)
+        public ZiPatchFile(Stream stream, bool needsChecksum = false)
         {
-            this._stream = stream;
+            _stream = stream;
+            _needsChecksum = needsChecksum;
 
             var reader = new BinaryReader(stream);
             if (zipatchMagic.Any(magic => magic != reader.ReadUInt32()))
@@ -40,17 +41,17 @@ namespace XIVLauncher.Common.Patching.ZiPatch
             return new ZiPatchFile(stream);
         }
 
-
-
         public IEnumerable<ZiPatchChunk> GetChunks()
         {
             ZiPatchChunk chunk;
+
             do
             {
-                chunk = ZiPatchChunk.GetChunk(_stream);
+                chunk = ZiPatchChunk.GetChunk(_stream, _needsChecksum);
 
                 yield return chunk;
-            } while (chunk.ChunkType != EndOfFileChunk.Type);
+            }
+            while (chunk.ChunkType != EndOfFileChunk.Type);
         }
 
         public void Dispose()
