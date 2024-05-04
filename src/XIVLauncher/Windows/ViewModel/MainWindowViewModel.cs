@@ -206,7 +206,7 @@ namespace XIVLauncher.Windows.ViewModel
                                                             "\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher." +
                                                             "\n");
 
-            if (!string.IsNullOrEmpty(Updates.UpdateLease?.CutOffBootver))
+            if (!string.IsNullOrEmpty(Updates.UpdateLease?.CutOffBootver) && !EnvironmentSettings.IsNoKillswitch)
             {
                 var bootver = SeVersion.Parse(Repository.Boot.GetVer(App.Settings.GamePath));
                 var cutoff = SeVersion.Parse(Updates.UpdateLease.CutOffBootver);
@@ -1246,25 +1246,40 @@ namespace XIVLauncher.Windows.ViewModel
 
         private void PersistAccount(string username, string password)
         {
-            if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.UserName.Equals(username, StringComparison.Ordinal) &&
-                AccountManager.CurrentAccount.Password != password &&
-                AccountManager.CurrentAccount.SavePassword)
-                AccountManager.UpdatePassword(AccountManager.CurrentAccount, password);
-
-            if (AccountManager.CurrentAccount == null ||
-                AccountManager.CurrentAccount.Id != $"{username}-{IsOtp}-{IsSteam}")
+            try
             {
-                var accountToSave = new XivAccount(username)
+                if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.UserName.Equals(username, StringComparison.Ordinal) &&
+                    AccountManager.CurrentAccount.Password != password &&
+                    AccountManager.CurrentAccount.SavePassword)
+                    AccountManager.UpdatePassword(AccountManager.CurrentAccount, password);
+
+                if (AccountManager.CurrentAccount == null ||
+                    AccountManager.CurrentAccount.Id != $"{username}-{IsOtp}-{IsSteam}")
                 {
-                    Password = password,
-                    SavePassword = true,
-                    UseOtp = IsOtp,
-                    UseSteamServiceAccount = IsSteam
-                };
+                    var accountToSave = new XivAccount(username)
+                    {
+                        Password = password,
+                        SavePassword = true,
+                        UseOtp = IsOtp,
+                        UseSteamServiceAccount = IsSteam
+                    };
 
-                AccountManager.AddAccount(accountToSave);
+                    AccountManager.AddAccount(accountToSave);
 
-                AccountManager.CurrentAccount = accountToSave;
+                    AccountManager.CurrentAccount = accountToSave;
+                }
+            }
+            catch (Win32Exception ex)
+            {
+                CustomMessageBox.Builder
+                                .NewFrom(Loc.Localize("PersistAccountError",
+                                                      "XIVLauncher could not save your account information. This is likely caused by having too many saved accounts in the Windows Credential Manager.\nPlease try removing some of them."))
+                                .WithAppendDescription(ex.ToString())
+                                .WithShowHelpLinks()
+                                .WithImage(MessageBoxImage.Warning)
+                                .WithButtons(MessageBoxButton.OK)
+                                .WithParentWindow(_window)
+                                .Show();
             }
         }
 

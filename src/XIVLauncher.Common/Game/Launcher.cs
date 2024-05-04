@@ -81,9 +81,7 @@ public class Launcher
     {
         "ffxivboot.exe",
         "ffxivboot64.exe",
-        "ffxivlauncher.exe",
         "ffxivlauncher64.exe",
-        "ffxivupdater.exe",
         "ffxivupdater64.exe"
     };
 
@@ -277,19 +275,19 @@ public class Launcher
 
     private static string GetVersionReport(DirectoryInfo gamePath, int exLevel, bool forceBaseVersion)
     {
-        var verReport = $"{GetBootVersionHash(gamePath)}";
+        var verReport = $"{GetBootVersionHash(gamePath)}\n";
 
         if (exLevel >= 1)
-            verReport += $"\nex1\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex1.GetVer(gamePath))}";
+            verReport += $"ex1\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex1.GetVer(gamePath))}\n";
 
         if (exLevel >= 2)
-            verReport += $"\nex2\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex2.GetVer(gamePath))}";
+            verReport += $"ex2\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex2.GetVer(gamePath))}\n";
 
         if (exLevel >= 3)
-            verReport += $"\nex3\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex3.GetVer(gamePath))}";
+            verReport += $"ex3\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex3.GetVer(gamePath))}\n";
 
         if (exLevel >= 4)
-            verReport += $"\nex4\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex4.GetVer(gamePath))}";
+            verReport += $"ex4\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex4.GetVer(gamePath))}\n";
 
         return verReport;
     }
@@ -403,12 +401,13 @@ public class Launcher
         var request = new HttpRequestMessage(HttpMethod.Post,
             $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{loginResult.SessionId}");
 
-        request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
+        request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
+        request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
 
         if (!forceBaseVersion)
             EnsureVersionSanity(gamePath, loginResult.MaxExpansion);
-        request.Content = new StringContent(GetVersionReport(gamePath, loginResult.MaxExpansion, forceBaseVersion));
+        request.Content = new ByteArrayContent(Encoding.UTF8.GetBytes(GetVersionReport(gamePath, loginResult.MaxExpansion, forceBaseVersion)));
 
         var resp = await this.client.SendAsync(request);
         var text = await resp.Content.ReadAsStringAsync();
