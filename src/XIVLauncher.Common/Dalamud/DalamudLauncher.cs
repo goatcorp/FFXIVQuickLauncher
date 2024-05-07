@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -142,9 +142,6 @@ namespace XIVLauncher.Common.Dalamud
             var info = DalamudVersionInfo.Load(new FileInfo(Path.Combine(this.updater.Runner.DirectoryName!,
                 "version.json")));
 
-            if (Repository.Ffxiv.GetVer(gamePath) != info.SupportedGameVer)
-                return false;
-
             return true;
         }
 
@@ -154,9 +151,6 @@ namespace XIVLauncher.Common.Dalamud
 
             var versionInfoJson = client.DownloadString(REMOTE_BASE + "release");
             var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
-
-            if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
-                return false;
 
             return true;
         }

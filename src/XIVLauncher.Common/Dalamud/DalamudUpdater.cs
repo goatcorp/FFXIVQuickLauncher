@@ -178,17 +178,6 @@ namespace XIVLauncher.Common.Dalamud
 
             var remoteVersionInfo = versionInfoRelease;
 
-            if (versionInfoStaging?.Key != null && versionInfoStaging.Key == settings.DalamudBetaKey)
-            {
-                remoteVersionInfo = versionInfoStaging;
-                IsStaging = true;
-                Log.Information("[DUPDATE] Using staging version {Kind} with key {Key} ({Hash})", settings.DalamudBetaKind, settings.DalamudBetaKey, remoteVersionInfo.AssemblyVersion);
-            }
-            else
-            {
-                Log.Information("[DUPDATE] Using release version ({Hash})", remoteVersionInfo.AssemblyVersion);
-            }
-
             var versionInfoJson = JsonConvert.SerializeObject(remoteVersionInfo);
 
             var addonPath = new DirectoryInfo(Path.Combine(this.addonDirectory.FullName, "Hooks"));
