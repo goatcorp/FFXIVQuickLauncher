@@ -282,7 +282,7 @@ namespace XIVLauncher.Windows.ViewModel
                     if (AccountManager.CurrentAccount != null && result != null && AccountManager.CurrentAccount.LastSuccessfulOtp == result)
                     {
                         otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
-                            "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
+                                                                   "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
                     }
                 }, _window);
             }
@@ -301,8 +301,7 @@ namespace XIVLauncher.Windows.ViewModel
             if (otp != null)
                 AccountManager.UpdateLastSuccessfulOtp(AccountManager.CurrentAccount, otp);
 
-            Log.Verbose(
-                $"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");
+            Log.Verbose($"[LR] {loginResult.State} {loginResult.PendingPatches.Length} {loginResult.OauthLogin?.Playable}");
 
             if (await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false))
             {
@@ -577,18 +576,6 @@ namespace XIVLauncher.Windows.ViewModel
                 return false;
             }
 
-            /*
-             * The server requested us to patch Boot, even though in order to get to this code, we just checked for boot patches.
-             *
-             * This means that something or someone modified boot binaries without our involvement.
-             * We have no way to go back to a "known" good state other than to do a full reinstall.
-             *
-             * This has happened multiple times with users that have viruses that infect other EXEs and change their hashes, causing the update
-             * server to reject our boot hashes.
-             *
-             * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
-             * complexity and if boot is fucked game probably is too.
-             */
             if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
             {
                 CustomMessageBox.Show(
@@ -914,8 +901,8 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (mutex.WaitOne(0, false))
             {
-                Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
-                Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0 ASSERTION FAILED");
+                Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null");
+                Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0");
 
                 Log.Information("STARTING REPAIR");
 
@@ -1053,10 +1040,14 @@ namespace XIVLauncher.Windows.ViewModel
 
         private Task<bool> InstallGamePatch(Launcher.LoginResult loginResult)
         {
-            Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
-                "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+            if (loginResult.State != Launcher.LoginState.NeedsPatchGame)
+                throw new ArgumentException(@"loginResult.State != Launcher.LoginState.NeedsPatchGame", nameof(loginResult));
 
-            Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
+            if (loginResult.PendingPatches == null)
+                throw new ArgumentException(@"loginResult.PendingPatches == null", nameof(loginResult));
+
+            if (loginResult.PendingPatches.Length == 0)
+                throw new ArgumentException(@"loginResult.PendingPatches.Length == 0", nameof(loginResult));
 
             return TryHandlePatchAsync(Repository.Ffxiv, loginResult.PendingPatches, loginResult.UniqueId);
         }
@@ -1290,19 +1281,21 @@ namespace XIVLauncher.Windows.ViewModel
                 App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
                 PatchListEntry[] bootPatches = null;
+
                 try
                 {
                     bootPatches = await this.Launcher.CheckBootVersion(App.Settings.GamePath).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Unable to check boot version.");
+                    Log.Error(ex, "Unable to check boot version");
                     CustomMessageBox.Show(Loc.Localize("CheckBootVersionError", "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
 
                     return false;
                 }
 
-                if (bootPatches == null)
+                Debug.Assert(bootPatches != null);
+                if (bootPatches.Length == 0)
                     return true;
 
                 return await TryHandlePatchAsync(Repository.Boot, bootPatches, null).ConfigureAwait(false);
