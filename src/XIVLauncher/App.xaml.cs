@@ -422,7 +422,14 @@ namespace XIVLauncher
                     Log.Information("Starting update check...");
 
                     _updateWindow = new UpdateLoadingDialog();
-                    _updateWindow.Show();
+                    if (!EnvironmentSettings.IsSilent)
+                    {
+                        _updateWindow.Show();
+                    }
+                    else
+                    {
+                        App.Settings.AutologinEnabled = true
+                    }
 
                     var updateMgr = new Updates();
                     updateMgr.OnUpdateCheckFinished += OnUpdateCheckFinished;

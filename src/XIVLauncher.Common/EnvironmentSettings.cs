@@ -10,6 +10,7 @@
         public static bool IsNoRunas => CheckEnvBool("XL_NO_RUNAS");
         public static bool IsIgnoreSpaceRequirements => CheckEnvBool("XL_NO_SPACE_REQUIREMENTS");
         public static bool IsOpenSteamMinimal => CheckEnvBool("XL_OPEN_STEAM_MINIMAL");
+        public static bool IsSilent => CheckEnvBool("XL_SILENT");
         private static bool CheckEnvBool(string var) => bool.Parse(System.Environment.GetEnvironmentVariable(var) ?? "false");
     }
 }
