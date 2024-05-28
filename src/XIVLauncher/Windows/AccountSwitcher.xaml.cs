@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using IWshRuntimeLibrary;
 using XIVLauncher.Accounts;
@@ -21,6 +23,9 @@ namespace XIVLauncher.Windows
     public partial class AccountSwitcher : Window
     {
         private readonly AccountManager _accountManager;
+
+        private System.Windows.Point startPoint;
+        private ListViewItem draggedItem;
 
         public EventHandler<XivAccount> OnAccountSwitchedEventHandler;
 
@@ -224,6 +229,80 @@ namespace XIVLauncher.Windows
             var account = _accountManager.Accounts.First(a => a.Id == selectedEntry.Account.Id);
             account.SavePassword = true;
             _accountManager.Save();
+        }
+
+        private void AccountListView_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.startPoint = e.GetPosition(null);
+            this.draggedItem = FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource);
+
+            if (this.draggedItem == null)
+                return;
+
+            this.draggedItem.IsSelected = true;
+        }
+
+        private void AccountListView_OnPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            var mousePos = e.GetPosition(null);
+            var diff = this.startPoint - mousePos;
+
+            if (sender is ListView listView &&
+                FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource) is ListViewItem listViewItem &&
+                listView.ItemContainerGenerator.ItemFromContainer(listViewItem) is AccountSwitcherEntry accountEntry &&
+                e.LeftButton == MouseButtonState.Pressed &&
+                (this.draggedItem != null && (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)))
+            {
+                var data = new DataObject("AccountSwitcherEntry", accountEntry);
+                DragDrop.DoDragDrop(listViewItem, data, DragDropEffects.Move);
+            }
+        }
+
+        private void AccountListView_OnDrop(object sender, DragEventArgs e)
+        {
+            if (this.draggedItem == null)
+                return;
+
+            var targetItem = FindAncestor<ListViewItem>((DependencyObject)e.OriginalSource);
+
+            if (targetItem == null)
+                return;
+
+            var targetIndex = AccountListView.ItemContainerGenerator.IndexFromContainer(targetItem);
+            var draggedIndex = AccountListView.ItemContainerGenerator.IndexFromContainer(this.draggedItem);
+
+            if (targetIndex < 0 || draggedIndex < 0)
+                return;
+
+            var accountEntries = AccountListView.ItemsSource as List<AccountSwitcherEntry>;
+
+            if (accountEntries == null)
+                return;
+
+            var draggedEntry = accountEntries[draggedIndex];
+            accountEntries.RemoveAt(draggedIndex);
+            accountEntries.Insert(targetIndex, draggedEntry);
+
+            _accountManager.Accounts.Clear();
+            foreach (var accountEntry in accountEntries)
+                _accountManager.Accounts.Add(accountEntry.Account);
+
+            _accountManager.Save();
+            RefreshEntries();
+        }
+
+        private static T FindAncestor<T>(DependencyObject current) where T : DependencyObject
+        {
+            do
+            {
+                if (current is T ancestor)
+                    return ancestor;
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+            while (current != null);
+
+            return null;
         }
     }
 }
