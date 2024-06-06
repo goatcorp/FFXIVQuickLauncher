@@ -453,6 +453,13 @@ namespace XIVLauncher.Windows.ViewModel
 
                 bool disableAutoLogin = false;
 
+                var steamMaintenanceInfo = string.Empty;
+                if (DateTime.UtcNow.DayOfWeek == DayOfWeek.Tuesday && DateTime.UtcNow.Hour >= 17 && DateTime.UtcNow.Hour < 24)
+                {
+                    steamMaintenanceInfo = Loc.Localize("SteamMaintenanceInfo",
+                        "The Steam servers may be undergoing maintenance at the moment. Maintenance is scheduled every Tuesday and may take up to 20 minutes.\n\nPlease try again later.");
+                }
+
                 if (ex is IOException)
                 {
                     msgbox

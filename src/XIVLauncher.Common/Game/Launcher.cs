@@ -299,6 +299,9 @@ public class Launcher
         if (exLevel >= 4)
             verReport += $"ex4\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex4.GetVer(gamePath))}\n";
 
+        if (exLevel >= 5)
+            verReport += $"ex5\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex5.GetVer(gamePath))}\n";
+
         return verReport;
     }
 
@@ -334,6 +337,12 @@ public class Launcher
         {
             failed |= IsBadVersionSanity(gamePath, Repository.Ex4);
             failed |= IsBadVersionSanity(gamePath, Repository.Ex4, true);
+        }
+
+        if (exLevel >= 5)
+        {
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex5);
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex5, true);
         }
 
         if (failed)
