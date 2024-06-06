@@ -454,10 +454,10 @@ namespace XIVLauncher.Windows.ViewModel
                 bool disableAutoLogin = false;
 
                 var steamMaintenanceInfo = string.Empty;
-                if (DateTime.UtcNow.DayOfWeek == DayOfWeek.Tuesday && DateTime.UtcNow.Hour >= 17 && DateTime.UtcNow.Hour < 24)
+                if (DateTime.UtcNow.DayOfWeek == DayOfWeek.Tuesday && DateTime.UtcNow.Hour >= 15 && DateTime.UtcNow.Hour < 24)
                 {
                     steamMaintenanceInfo = Loc.Localize("SteamMaintenanceInfo",
-                        "The Steam servers may be undergoing maintenance at the moment. Maintenance is scheduled every Tuesday and may take up to 20 minutes.\n\nPlease try again later.");
+                        "It's also possible that the Steam servers may be undergoing maintenance at the moment. Maintenance is scheduled every Tuesday and may take up to 20 minutes.\n\nPlease try again later.");
                 }
 
                 if (ex is IOException)
@@ -476,8 +476,13 @@ namespace XIVLauncher.Windows.ViewModel
                 }
                 else if (ex is SteamTicketNullException)
                 {
-                    msgbox.WithText(Loc.Localize("LoginSteamNullTicket",
-                        "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings."));
+                    var steamTicketWarning = Loc.Localize("LoginSteamNullTicket",
+                                                          "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.");
+
+                    if (!string.IsNullOrEmpty(steamMaintenanceInfo))
+                        steamTicketWarning += "\n\n" + steamMaintenanceInfo;
+
+                    msgbox.WithText(steamTicketWarning);
                 }
                 else if (ex is SteamException)
                 {
