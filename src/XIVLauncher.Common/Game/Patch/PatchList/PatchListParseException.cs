@@ -2,13 +2,7 @@ using System;
 
 namespace XIVLauncher.Common.Game.Patch.PatchList;
 
-public class PatchListParseException : Exception
+public class PatchListParseException(string list, string message = null, Exception innerException = null) : Exception(message ?? "Failed to parse patch list", innerException)
 {
-    public string List { get; private set; }
-
-    public PatchListParseException(string list, Exception innerException)
-        : base("Failed to parse patch list", innerException)
-    {
-        List = list;
-    }
+    public string List { get; private set; } = list;
 }

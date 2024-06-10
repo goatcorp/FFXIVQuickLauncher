@@ -29,11 +29,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public List<long> CompressedDataSourceOffsets { get; protected set; }
         public List<SqpkCompressedBlock> CompressedData { get; protected set; }
 
-        public SqpkFile(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public SqpkFile(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
             Operation = (OperationKind)this.Reader.ReadByte();
             this.Reader.ReadBytes(2); // Alignment
 

@@ -14,11 +14,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
         public long BlockNumber { get; protected set; }
 
 
-        public SqpkDeleteData(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public SqpkDeleteData(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
             this.Reader.ReadBytes(3); // Alignment
 
             TargetFile = new SqpackDatFile(this.Reader);

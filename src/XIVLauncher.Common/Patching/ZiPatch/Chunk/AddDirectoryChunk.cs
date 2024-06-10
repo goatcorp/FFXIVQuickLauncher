@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using XIVLauncher.Common.Patching.Util;
-using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -12,14 +11,14 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
             var dirNameLen = this.Reader.ReadUInt32BE();
 
             DirName = this.Reader.ReadFixedLengthString(dirNameLen);
         }
 
 
-        public AddDirectoryChunk(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public AddDirectoryChunk(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         public override void ApplyChunk(ZiPatchConfig config)
         {

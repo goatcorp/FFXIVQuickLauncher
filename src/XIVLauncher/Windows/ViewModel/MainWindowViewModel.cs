@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -220,6 +220,15 @@ namespace XIVLauncher.Windows.ViewModel
                 }
             }
 
+            if (!isOtp && !App.Settings.HasComplainedAboutNoOtp.GetValueOrDefault(false))
+            {
+                var otpComplainText = Loc.Localize("OtpComplaint", "Your account does not have OTP enabled. This is a security risk and we strongly recommend enabling it."
+                                                                   + "\n\nYou can enable OTP in the account settings on the game's website. We won't show you this message again.");
+
+                CustomMessageBox.Show(otpComplainText, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Warning, parentWindow: _window);
+                App.Settings.HasComplainedAboutNoOtp = true;
+            }
+
             if (string.IsNullOrEmpty(username))
             {
                 CustomMessageBox.Show(
@@ -273,7 +282,7 @@ namespace XIVLauncher.Windows.ViewModel
                     if (AccountManager.CurrentAccount != null && result != null && AccountManager.CurrentAccount.LastSuccessfulOtp == result)
                     {
                         otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
-                            "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
+                                                                   "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
                     }
                 }, _window);
             }
@@ -292,8 +301,7 @@ namespace XIVLauncher.Windows.ViewModel
             if (otp != null)
                 AccountManager.UpdateLastSuccessfulOtp(AccountManager.CurrentAccount, otp);
 
-            Log.Verbose(
-                $"[LR] {loginResult.State} {loginResult.PendingPatches != null} {loginResult.OauthLogin?.Playable}");
+            Log.Verbose($"[LR] {loginResult.State} {loginResult.PendingPatches.Length} {loginResult.OauthLogin?.Playable}");
 
             if (await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false))
             {
@@ -445,6 +453,13 @@ namespace XIVLauncher.Windows.ViewModel
 
                 bool disableAutoLogin = false;
 
+                var steamMaintenanceInfo = string.Empty;
+                if (DateTime.UtcNow.DayOfWeek == DayOfWeek.Tuesday && DateTime.UtcNow.Hour >= 15 && DateTime.UtcNow.Hour < 24)
+                {
+                    steamMaintenanceInfo = Loc.Localize("SteamMaintenanceInfo",
+                        "It's also possible that the Steam servers may be undergoing maintenance at the moment. Maintenance is scheduled every Tuesday and may take up to 20 minutes.\n\nPlease try again later.");
+                }
+
                 if (ex is IOException)
                 {
                     msgbox
@@ -461,8 +476,13 @@ namespace XIVLauncher.Windows.ViewModel
                 }
                 else if (ex is SteamTicketNullException)
                 {
-                    msgbox.WithText(Loc.Localize("LoginSteamNullTicket",
-                        "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings."));
+                    var steamTicketWarning = Loc.Localize("LoginSteamNullTicket",
+                                                          "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.");
+
+                    if (!string.IsNullOrEmpty(steamMaintenanceInfo))
+                        steamTicketWarning += "\n\n" + steamMaintenanceInfo;
+
+                    msgbox.WithText(steamTicketWarning);
                 }
                 else if (ex is SteamException)
                 {
@@ -568,18 +588,6 @@ namespace XIVLauncher.Windows.ViewModel
                 return false;
             }
 
-            /*
-             * The server requested us to patch Boot, even though in order to get to this code, we just checked for boot patches.
-             *
-             * This means that something or someone modified boot binaries without our involvement.
-             * We have no way to go back to a "known" good state other than to do a full reinstall.
-             *
-             * This has happened multiple times with users that have viruses that infect other EXEs and change their hashes, causing the update
-             * server to reject our boot hashes.
-             *
-             * In the future we may be able to just delete /boot and run boot patches again, but this doesn't happen often enough to warrant the
-             * complexity and if boot is fucked game probably is too.
-             */
             if (loginResult.State == Launcher.LoginState.NeedsPatchBoot)
             {
                 CustomMessageBox.Show(
@@ -905,8 +913,8 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (mutex.WaitOne(0, false))
             {
-                Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
-                Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0 ASSERTION FAILED");
+                Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null");
+                Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0");
 
                 Log.Information("STARTING REPAIR");
 
@@ -1044,34 +1052,24 @@ namespace XIVLauncher.Windows.ViewModel
 
         private Task<bool> InstallGamePatch(Launcher.LoginResult loginResult)
         {
-            Debug.Assert(loginResult.State == Launcher.LoginState.NeedsPatchGame,
-                "loginResult.State == Launcher.LoginState.NeedsPatchGame ASSERTION FAILED");
+            if (loginResult.State != Launcher.LoginState.NeedsPatchGame)
+                throw new ArgumentException(@"loginResult.State != Launcher.LoginState.NeedsPatchGame", nameof(loginResult));
 
-            Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null ASSERTION FAILED");
+            if (loginResult.PendingPatches == null)
+                throw new ArgumentException(@"loginResult.PendingPatches == null", nameof(loginResult));
+
+            if (loginResult.PendingPatches.Length == 0)
+                throw new ArgumentException(@"loginResult.PendingPatches.Length == 0", nameof(loginResult));
 
             return TryHandlePatchAsync(Repository.Ffxiv, loginResult.PendingPatches, loginResult.UniqueId);
         }
 
-        private void PatcherOnFail(PatchManager.FailReason reason, string versionId)
+        private void PatcherOnFail(PatchListEntry patch, string context)
         {
             var dlFailureLoc = Loc.Localize("PatchManDlFailure",
-                "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\nThis usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
-
-            switch (reason)
-            {
-                case PatchManager.FailReason.DownloadProblem:
-                    CustomMessageBox.Show(string.Format(dlFailureLoc, "Problem", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-                    break;
-
-                case PatchManager.FailReason.HashCheck:
-                    CustomMessageBox.Show(string.Format(dlFailureLoc, "IsHashCheckPass", versionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(reason), reason, null);
-            }
-
-            Environment.Exit(0);
+                                            "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\n"
+                                            + "This usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
+            CustomMessageBox.Show(string.Format(dlFailureLoc, context, patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
         }
 
         private void InstallerOnFail()
@@ -1295,19 +1293,21 @@ namespace XIVLauncher.Windows.ViewModel
                 App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
                 PatchListEntry[] bootPatches = null;
+
                 try
                 {
                     bootPatches = await this.Launcher.CheckBootVersion(App.Settings.GamePath).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Unable to check boot version.");
+                    Log.Error(ex, "Unable to check boot version");
                     CustomMessageBox.Show(Loc.Localize("CheckBootVersionError", "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
 
                     return false;
                 }
 
-                if (bootPatches == null)
+                Debug.Assert(bootPatches != null);
+                if (bootPatches.Length == 0)
                     return true;
 
                 return await TryHandlePatchAsync(Repository.Boot, bootPatches, null).ConfigureAwait(false);

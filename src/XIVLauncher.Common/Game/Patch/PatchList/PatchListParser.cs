@@ -16,7 +16,14 @@ namespace XIVLauncher.Common.Game.Patch.PatchList
 
                 var output = new List<PatchListEntry>();
 
-                for (var i = 5; i < lines.Length - 2; i++)
+                const int START_OFFSET = 5;
+
+                if (lines.Length < START_OFFSET + 2)
+                {
+                    throw new PatchListParseException(list, "Patch list is too short");
+                }
+
+                for (var i = START_OFFSET; i < lines.Length - 2; i++)
                 {
                     var fields = lines[i].Split('\t');
                     output.Add(new PatchListEntry()
@@ -37,7 +44,7 @@ namespace XIVLauncher.Common.Game.Patch.PatchList
             }
             catch (Exception ex)
             {
-                throw new PatchListParseException(list, ex);
+                throw new PatchListParseException(list, innerException: ex);
             }
         }
     }

@@ -90,14 +90,5 @@ namespace XIVLauncher.Common.Tests
             await AriaHttpPatchAcquisition.InitializeAsync(0, new FileInfo("aria2.log"));
             await TestPatchDownload(new AriaHttpPatchAcquisition());
         }
-
-        /*
-        [TestMethod]
-        public async Task TestTorrentDownload()
-        {
-            await TorrentPatchAcquisition.InitializeAsync(0);
-            await TestPatchDownload(new TorrentPatchAcquisition());
-        }
-        */
     }
 }

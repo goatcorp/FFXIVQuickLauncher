@@ -139,7 +139,7 @@ namespace XIVLauncher.Common.Game.Patch
             });
         }
 
-        public void StartInstall(DirectoryInfo gameDirectory, FileInfo file, PatchListEntry patch, Repository repo)
+        public void StartInstall(DirectoryInfo gameDirectory, FileInfo file, PatchListEntry patch)
         {
             State = InstallerState.Busy;
             this.rpc.SendMessage(new PatcherIpcEnvelope
@@ -149,7 +149,7 @@ namespace XIVLauncher.Common.Game.Patch
                 {
                     GameDirectory = gameDirectory,
                     PatchFile = file,
-                    Repo = repo,
+                    Repo = patch.GetRepo(),
                     VersionId = patch.VersionId,
                     KeepPatch = this.keepPatches,
                 }

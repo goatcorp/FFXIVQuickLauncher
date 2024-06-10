@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using CheapLoc;
 using IWshRuntimeLibrary;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
-using XIVLauncher.Common.Addon.Implementations;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
 
@@ -19,8 +17,6 @@ namespace XIVLauncher.Windows
     {
         public bool WasCompleted { get; private set; } = false;
 
-        private readonly string actPath;
-
         public FirstTimeSetup()
         {
             InitializeComponent();
@@ -30,8 +26,6 @@ namespace XIVLauncher.Windows
             var detectedPath = AppUtil.TryGamePaths();
 
             if (detectedPath != null) GamePathEntry.Text = detectedPath;
-
-            this.actPath = this.FindAct();
 
 #if !XL_NOAUTOUPDATE
             if (EnvironmentSettings.IsDisableUpdates || AppUtil.GetBuildOrigin() != "goatcorp/FFXIVQuickLauncher")
@@ -51,23 +45,6 @@ namespace XIVLauncher.Windows
             var shortcut = (IWshShortcut) shell.CreateShortcut(path);
 
             return shortcut.TargetPath;
-        }
-
-        private string FindAct()
-        {
-            try
-            {
-                var shortcutDir = new DirectoryInfo(Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs",
-                    "Advanced Combat Tracker"));
-                var shortcutPath = Path.Combine(shortcutDir.FullName, "ACT - Advanced Combat Tracker.lnk");
-
-                return System.IO.File.Exists(shortcutPath) ? GetShortcutTargetFile(shortcutPath) : null;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
@@ -109,34 +86,11 @@ namespace XIVLauncher.Windows
 
             if (SetupTabControl.SelectedIndex == 2)
             {
-                // Check if ACT is installed, if it isn't, just skip this step
-                if (string.IsNullOrEmpty(this.actPath))
-                {
-                    SetupTabControl.SelectedIndex++;
-                    NextButton_Click(null, null);
-                    return;
-                }
-            }
-
-            if (SetupTabControl.SelectedIndex == 3)
-            {
                 App.Settings.GamePath = new DirectoryInfo(GamePathEntry.Text);
                 App.Settings.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
                 App.Settings.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
 
                 App.Settings.AddonList = new List<AddonEntry>();
-
-                if (ActCheckBox.IsChecked == true)
-                {
-                    App.Settings.AddonList.Add(new AddonEntry
-                    {
-                        IsEnabled = true,
-                        Addon = new GenericAddon
-                        {
-                            Path = this.actPath
-                        }
-                    });
-                }
 
                 WasCompleted = true;
                 Close();

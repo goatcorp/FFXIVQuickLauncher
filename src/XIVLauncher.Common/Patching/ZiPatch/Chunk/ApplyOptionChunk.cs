@@ -1,5 +1,5 @@
-﻿using XIVLauncher.Common.Patching.Util;
-using XIVLauncher.Common.Patching.ZiPatch.Util;
+﻿using System.IO;
+using XIVLauncher.Common.Patching.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -18,11 +18,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         public bool OptionValue { get; protected set; }
 
-        public ApplyOptionChunk(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public ApplyOptionChunk(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
             OptionKind = (ApplyOptionKind)this.Reader.ReadUInt32BE();
 
             // Discarded padding, always 0x0000_0004 as far as observed
