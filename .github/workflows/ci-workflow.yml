@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-2022
     permissions:
       id-token: write
-      contents: read
+      contents: write # Must be 'write' to create a release
       attestations: write
     steps:
 #      - uses: nadock/verified_commits_check@f9b330e987c2e7121dfc0230e65cb5751ee5fac9
