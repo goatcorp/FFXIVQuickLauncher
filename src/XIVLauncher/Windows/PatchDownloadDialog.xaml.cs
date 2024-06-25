@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Timers;
@@ -99,7 +99,9 @@ namespace XIVLauncher.Windows
 
         public void SetLeft(long left, double rate)
         {
+            TimeSpan eta = rate == 0 ? TimeSpan.Zero : TimeSpan.FromSeconds(left / rate);
             BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, ApiHelpers.BytesToString(left), ApiHelpers.BytesToString(rate));
+            TimeLeftText.Text = ApiHelpers.GetTimeLeft(eta, ViewModel.PatchEtaTimeLoc);
         }
 
         public void SetPatchProgress(int index, string patchName, double pct, bool indeterminate)
