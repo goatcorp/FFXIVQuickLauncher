@@ -196,12 +196,17 @@ public class RemotePatchInstaller
 
         foreach (var repository in Enum.GetValues(typeof(Repository)).Cast<Repository>())
         {
+            // We haven't installed a patch for this repository yet
+            if (!repository.GetVerFile(gamePath).Exists)
+                continue;
+
             // Overwrite the old BCK with the new game version
             var ver = repository.GetVer(gamePath);
 
             try
             {
                 repository.SetVer(gamePath, ver, true);
+                Log.Information("[PATCHER] Copied {RepoName} to BCK for version {Ver}", repository, ver);
             }
             catch (Exception ex)
             {
