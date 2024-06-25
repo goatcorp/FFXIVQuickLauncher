@@ -54,11 +54,11 @@ jobs:
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
       - name: Create Release
-        uses: softprops/action-gh-release@91409e712cf565ce9eff10c87a8d1b11b81757ae
+        uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: src\Releases\**
+          files: ./src/Releases/**
           name: Release ${{ steps.build-squirrel.outputs.version }}
           body_path:  RELEASE.md
           prerelease: true
