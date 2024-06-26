@@ -411,7 +411,7 @@ namespace XIVLauncher.Windows
                     //TODO: Localize this text like a good programmer
                     
                     var importConfirmPromptResult = CustomMessageBox.Show(Loc.Localize("ConfigImportPrompt1", "XIVLauncher is going to import config from the file you selected.\n\n") + zipFile + Loc.Localize("ConfigImportPrompt2", "\n\nThis will overwrite any files that already exist.\n\nDo you want to proceed?"),
-                        Loc.Localize("ConfigImportPromptTitle", "Import confg file?"), MessageBoxButton.YesNo);
+                        Loc.Localize("ConfigImportPromptTitle", "Import config file?"), MessageBoxButton.YesNo);
 
                     if (importConfirmPromptResult == MessageBoxResult.Yes)
                     {

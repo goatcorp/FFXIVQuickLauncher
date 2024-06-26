@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.IO;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Support
 {
-    public class DalamudAndPluginConfigImportExport
+    public class DalamudAndPluginConfigImportExport : ZipMethods
     {
         public static async Task<string> ExportConfig(string storagePath)
         {
@@ -23,17 +24,17 @@ namespace XIVLauncher.Common.Support
             var dalamudVfsFile = Path.Combine(storagePath, "dalamudVfs.db");
             var pluginConfigsFolder = Path.Combine(storagePath, "pluginConfigs");
 
-            AddIfExist(accountsListFile, archive);
-            AddIfExist(dalamudConfigFile, archive);
-            AddIfExist(dalamudVfsFile, archive);
-            AddIfExist(pluginConfigsFolder, archive);
+            ZipMethods.AddIfExist(accountsListFile, archive);
+            ZipMethods.AddIfExist(dalamudConfigFile, archive);
+            ZipMethods.AddIfExist(dalamudVfsFile, archive);
+            ZipMethods.AddIfExist(pluginConfigsFolder, archive);
 
             // add some known special exceptions. It might be better to not build these expectations though
             var backupsFolder = Path.Combine(storagePath, "backups"); // Otter plugins
             var playerTrackBackupsFolder = Path.Combine(storagePath, "playerTrackBackups"); // PlayerTrack
 
-            AddIfExist(backupsFolder, archive);
-            AddIfExist(playerTrackBackupsFolder, archive);
+            ZipMethods.AddIfExist(backupsFolder, archive);
+            ZipMethods.AddIfExist(playerTrackBackupsFolder, archive);
 
             // return the folder containing our exported settings
             return outFile.FullName;
@@ -61,7 +62,10 @@ namespace XIVLauncher.Common.Support
 
             foreach (var entry in archive.Entries)
             {
-                var extractPath = storagePath + "\\" + entry.FullName;
+                //var extractPath = storagePath + "\\" + entry.FullName;
+                var extractPath = Path.Combine(storagePath, entry.FullName);
+
+
                 // If we were going to warn about overwriting files, it would go here.
                 /*
                 bool promptAlwaysForOverwrite = true;
@@ -79,42 +83,6 @@ namespace XIVLauncher.Common.Support
                     Directory.CreateDirectory(Path.GetDirectoryName(extractPath));
                 }
                 ZipFileExtensions.ExtractToFile(entry, extractPath, true);
-            }
-        }
-
-        private static void AddIfExist(string entryPath, ZipArchive zip)
-        {
-            if (File.Exists(entryPath))
-            {
-                using var stream = File.Open(entryPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-                var entry = zip.CreateEntry(new FileInfo(entryPath).Name);
-                using var entryStream = entry.Open();
-                stream.CopyTo(entryStream);
-                //zip.CreateEntryFromFile(file.FullName, file.Name);
-            }
-            // directory handling solution based on answer from https://stackoverflow.com/a/62797701
-            else if (Directory.Exists(entryPath))
-            {
-                var dir = new DirectoryInfo(entryPath);
-                var folders = new Stack<string>();
-                folders.Push(entryPath);
-
-                do
-                {
-                    var currentFolder = folders.Pop();
-                    foreach (var filename in Directory.GetFiles(currentFolder))
-                    {
-                        using var stream = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-                        var entry = zip.CreateEntry($"{dir.Name}\\{filename.Substring(entryPath.Length + 1)}");
-                        using var entryStream = entry.Open();
-                        stream.CopyTo(entryStream);
-                        //zip.CreateEntryFromFile(filename, $"{dir.Name}\\{filename.Substring(entryPath.Length + 1)}");
-                    }
-                    foreach (var dirname in Directory.GetDirectories(currentFolder))
-                    {
-                        folders.Push(dirname);
-                    }
-                } while (folders.Count > 0);
             }
         }
     }
