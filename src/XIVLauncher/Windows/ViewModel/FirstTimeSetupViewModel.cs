@@ -17,9 +17,6 @@ namespace XIVLauncher.Windows.ViewModel
                 "Please check this box if you are usually launching the game using Steam, or if you have an account with a Steam license.");
             FirstTimeSteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
             FirstTimeLanguageLoc = Loc.Localize("ChooseLanguageFTS", "Please select which language you want to load the game with.");
-            FirstTimeActLaunchLoc = Loc.Localize("FirstTimeActLaunch",
-                "Advanced Combat Tracker is installed on your computer.\r\nDo you want to launch it automatically when launching the game?");
-            FirstTimeActLaunchCheckBoxLoc = Loc.Localize("FirstTimeActLaunchCheckBox", "Enable ACT Auto-Launch");
             NextLoc = Loc.Localize("Next", "Next");
             FirstTimeDalamudLoc = Loc.Localize("FirstTimeDalamudNotice",
                 "Do you want to enable Dalamud?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.");
@@ -29,11 +26,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string FirstTimeGamePathLoc { get; private set; }
         public string FirstTimeSteamNoticeLoc { get; private set; }
         public string FirstTimeSteamCheckBoxLoc { get; private set; }
-        public string FirstTimeDirectXLoc { get; private set; }
-        public string DirectX9NoticeLoc { get; private set; }
         public string FirstTimeLanguageLoc { get; private set; }
-        public string FirstTimeActLaunchLoc { get; private set; }
-        public string FirstTimeActLaunchCheckBoxLoc { get; private set; }
         public string NextLoc { get; private set; }
         public string FirstTimeDalamudLoc { get; private set; }
         public string FirstTimeDalamudCheckBoxLoc { get; private set; }

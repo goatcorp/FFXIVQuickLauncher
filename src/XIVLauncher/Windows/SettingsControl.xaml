@@ -231,8 +231,6 @@
                     <ComboBox SelectedIndex="1" Margin="10, 3, 600, 0" x:Name="PatchAcquisitionComboBox"
                               Foreground="{DynamicResource MaterialDesignBody}">
                         <ComboBoxItem>.NET(HTTP)</ComboBoxItem>
-                        <ComboBoxItem Visibility="Collapsed">BitTorrent &amp; .NET</ComboBoxItem>
-                        <ComboBoxItem Visibility="Collapsed">BitTorrent &amp; ARIA</ComboBoxItem>
                         <ComboBoxItem>ARIA(HTTP)</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>

@@ -63,8 +63,8 @@ namespace XIVLauncher.Common.Unix
 
         public bool ShowFloatingGamepadTextInput(ISteam.EFloatingGamepadTextInputMode mode, int x, int y, int width, int height)
         {
-            // Facepunch.Steamworks doesn't have this...
-            return false;
+            SteamUtils.ShowFloatingGamepadTextInput((TextInputMode)mode, x, y, width, height);
+            return true;
         }
 
         public bool IsRunningOnSteamDeck() => SteamUtils.IsRunningOnSteamDeck;

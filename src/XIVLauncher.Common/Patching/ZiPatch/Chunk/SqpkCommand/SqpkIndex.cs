@@ -1,4 +1,5 @@
-﻿using XIVLauncher.Common.Patching.Util;
+﻿using System.IO;
+using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
@@ -25,11 +26,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand
 
 
 
-        public SqpkIndex(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public SqpkIndex(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
             IndexCommand = (IndexCommandKind)this.Reader.ReadByte();
             IsSynonym = this.Reader.ReadBoolean();
             this.Reader.ReadByte(); // Alignment

@@ -124,6 +124,12 @@ namespace XIVLauncher.Common.Game.Patch
 
             [JsonProperty("ex4Revision")]
             public int Ex4Revision { get; set; }
+
+            [JsonProperty("ex5")]
+            public string Ex5 { get; set; }
+
+            [JsonProperty("ex5Revision")]
+            public int Ex5Revision { get; set; }
         }
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
@@ -535,6 +541,11 @@ namespace XIVLauncher.Common.Game.Patch
             PatchSetIndex++;
             if (_maxExpansionToCheck >= 4)
                 await this.GetRepoMeta(Repository.Ex4, latestVersion.Ex4, metaFolder, latestVersion.Ex4Revision).ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            PatchSetIndex++;
+            if (_maxExpansionToCheck >= 5)
+                await this.GetRepoMeta(Repository.Ex5, latestVersion.Ex5, metaFolder, latestVersion.Ex5Revision).ConfigureAwait(false);
             _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             PatchSetIndex++;

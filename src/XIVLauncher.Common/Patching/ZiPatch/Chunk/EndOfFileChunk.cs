@@ -1,5 +1,4 @@
-﻿using XIVLauncher.Common.Patching.Util;
-using XIVLauncher.Common.Patching.ZiPatch.Util;
+﻿using System.IO;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -9,10 +8,10 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
         }
 
-        public EndOfFileChunk(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size) {}
+        public EndOfFileChunk(BinaryReader reader, long offset, long size) : base(reader, offset, size) {}
 
         public override string ToString()
         {

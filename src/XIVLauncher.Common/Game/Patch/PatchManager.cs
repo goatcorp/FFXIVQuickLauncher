@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,6 +11,7 @@ using Serilog;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
+using XIVLauncher.Common.Patching.ZiPatch;
 using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game.Patch
@@ -45,6 +46,8 @@ namespace XIVLauncher.Common.Game.Patch
         private readonly Launcher launcher;
         private readonly string sid;
 
+        private readonly Mutex downloadFinalizationLock = new Mutex();
+
         public readonly IReadOnlyList<PatchDownload> Downloads;
 
         public int CurrentInstallIndex { get; private set; }
@@ -70,7 +73,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         private bool hasError = false;
 
-        public event Action<FailReason, string> OnFail;
+        public event Action<PatchListEntry, string> OnFail;
 
         public enum FailReason
         {
@@ -159,17 +162,6 @@ namespace XIVLauncher.Common.Game.Patch
                     // ignored
                     break;
 
-                /*
-                case AcquisitionMethod.MonoTorrentNetFallback:
-                    await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    break;
-
-                case AcquisitionMethod.MonoTorrentAriaFallback:
-                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
-                    await TorrentPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    break;
-                */
-
                 case AcquisitionMethod.Aria:
                     await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE, aria2LogFile);
                     break;
@@ -184,7 +176,6 @@ namespace XIVLauncher.Common.Game.Patch
             try
             {
                 await AriaHttpPatchAcquisition.UnInitializeAsync();
-                //await TorrentPatchAcquisition.UnInitializeAsync();
             }
             catch (Exception ex)
             {
@@ -222,24 +213,6 @@ namespace XIVLauncher.Common.Game.Patch
                     acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
                     break;
 
-                /*
-                case AcquisitionMethod.MonoTorrentNetFallback:
-                    acquisition = new TorrentPatchAcquisition();
-
-                    var torrentAcquisition = acquisition as TorrentPatchAcquisition;
-                    if (!torrentAcquisition.IsApplicable(download.Patch))
-                        acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    break;
-
-                case AcquisitionMethod.MonoTorrentAriaFallback:
-                    acquisition = new TorrentPatchAcquisition();
-
-                    torrentAcquisition = acquisition as TorrentPatchAcquisition;
-                    if (!torrentAcquisition.IsApplicable(download.Patch))
-                        acquisition = new AriaHttpPatchAcquisition();
-                    break;
-                */
-
                 case AcquisitionMethod.Aria:
                     acquisition = new AriaHttpPatchAcquisition();
                     break;
@@ -256,20 +229,35 @@ namespace XIVLauncher.Common.Game.Patch
 
             acquisition.Complete += (sender, args) =>
             {
-                if (args == AcquisitionResult.Error)
+                void HandleError(string context)
                 {
                     if (this.hasError)
                         return;
 
-                    Log.Error("Download failed for {0}", download.Patch.VersionId);
-
-                    hasError = true;
-
-                    OnFail?.Invoke(FailReason.DownloadProblem, download.Patch.VersionId);
+                    this.hasError = true;
 
                     CancelAllDownloads();
+                    OnFail?.Invoke(download.Patch, context);
+
+                    Task.Run(async () => await UnInitializeAcquisition(), new CancellationTokenSource(5000).Token).GetAwaiter().GetResult();
+
+                    try
+                    {
+                        outFile.Delete();
+                    }
+                    catch (Exception ex)
+                    {
+                        // This is fine. We will catch it next try.
+                        Log.Error(ex, "Could not delete patch file");
+                    }
 
                     Environment.Exit(0);
+                }
+
+                if (args == AcquisitionResult.Error)
+                {
+                    Log.Error("Download failed for {VersionId}", download.Patch.VersionId);
+                    HandleError("Download");
                     return;
                 }
 
@@ -286,22 +274,13 @@ namespace XIVLauncher.Common.Game.Patch
 
                 var checkResult = CheckPatchValidity(download.Patch, outFile);
 
+                this.downloadFinalizationLock.WaitOne();
+
                 // Let's just bail for now, need better handling of this later
                 if (checkResult != HashCheckResult.Pass)
                 {
-                    if (this.hasError)
-                        return;
-
-                    Log.Error("IsHashCheckPass failed with {Result} for {VersionId} after DL", checkResult, download.Patch.VersionId);
-
-                    hasError = true;
-
-                    OnFail?.Invoke(FailReason.HashCheck, download.Patch.VersionId);
-
-                    CancelAllDownloads();
-
-                    outFile.Delete();
-                    Environment.Exit(0);
+                    Log.Error("CheckPatchValidity failed with {Result} for {VersionId} after DL", checkResult, download.Patch.VersionId);
+                    HandleError($"ValidityCheck ({checkResult})");
                     return;
                 }
 
@@ -313,6 +292,7 @@ namespace XIVLauncher.Common.Game.Patch
                 Log.Information("Patch at {0} downloaded completely", download.Patch.Url);
 
                 this.CheckIsDone();
+                this.downloadFinalizationLock.ReleaseMutex();
             };
 
             DownloadServices[index] = acquisition;
@@ -322,15 +302,17 @@ namespace XIVLauncher.Common.Game.Patch
 
         public void CancelAllDownloads()
         {
-            #if !DEBUG
-            return;
-            #endif
-
             foreach (var downloadService in DownloadServices)
             {
+                if (downloadService == null)
+                    continue;
+
                 try
                 {
-                    downloadService?.CancelAsync().GetAwaiter().GetResult();
+                    Task.Run(async () =>
+                    {
+                        await downloadService.CancelAsync();
+                    }, new CancellationTokenSource(5000).Token).GetAwaiter().GetResult();
                     Thread.Sleep(200);
                 }
                 catch (Exception ex)
@@ -416,7 +398,7 @@ namespace XIVLauncher.Common.Game.Patch
 
                 IsInstallerBusy = true;
 
-                this.installer.StartInstall(this.gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch, GetRepoForPatch(toInstall.Patch));
+                this.installer.StartInstall(this.gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch);
 
                 while (this.installer.State != PatchInstaller.InstallerState.Ready)
                 {
@@ -444,17 +426,46 @@ namespace XIVLauncher.Common.Game.Patch
             Pass,
             BadHash,
             BadLength,
+            CannotParse,
+            CrcMismatch,
+            UnknownHashType,
         }
 
         private static HashCheckResult CheckPatchValidity(PatchListEntry patchListEntry, FileInfo path)
         {
             if (patchListEntry.HashType != "sha1")
             {
+                // Boot patches do not have a hash. We can parse them here to see if they are valid.
+                if (patchListEntry.GetRepo() == Repository.Boot)
+                {
+                    try
+                    {
+                        using var fileStream = path.OpenRead();
+                        using var patch = new ZiPatchFile(fileStream, true);
+
+                        foreach (var chunk in patch.GetChunks())
+                        {
+                            if (!chunk.IsChecksumValid)
+                            {
+                                Log.Error("Boot patch {Patch} has invalid checksum in {ChunkType} chunk", patchListEntry, chunk.ChunkType);
+                                return HashCheckResult.CrcMismatch;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "Could not parse boot patch {Patch}", patchListEntry);
+                        return HashCheckResult.CannotParse;
+                    }
+
+                    return HashCheckResult.Pass;
+                }
+
                 Log.Error("??? Unknown HashType: {0} for {1}", patchListEntry.HashType, patchListEntry.Url);
-                return HashCheckResult.Pass;
+                return HashCheckResult.UnknownHashType;
             }
 
-            var stream = path.OpenRead();
+            using var stream = path.OpenRead();
 
             if (stream.Length != patchListEntry.Length)
             {
@@ -488,11 +499,9 @@ namespace XIVLauncher.Common.Game.Patch
                 if (sb.ToString() == patchListEntry.Hashes[i])
                     continue;
 
-                stream.Close();
                 return HashCheckResult.BadHash;
             }
 
-            stream.Close();
             return HashCheckResult.Pass;
         }
 
@@ -502,26 +511,6 @@ namespace XIVLauncher.Common.Game.Patch
             file.Directory.Create();
 
             return file;
-        }
-
-        private Repository GetRepoForPatch(PatchListEntry patch)
-        {
-            if (patch.Url.Contains("boot"))
-                return Repository.Boot;
-
-            if (patch.Url.Contains("ex1"))
-                return Repository.Ex1;
-
-            if (patch.Url.Contains("ex2"))
-                return Repository.Ex2;
-
-            if (patch.Url.Contains("ex3"))
-                return Repository.Ex3;
-
-            if (patch.Url.Contains("ex4"))
-                return Repository.Ex4;
-
-            return Repository.Ffxiv;
         }
 
         private long GetDownloadLength() => GetDownloadLength(Downloads.Count);

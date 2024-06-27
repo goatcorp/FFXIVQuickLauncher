@@ -17,10 +17,16 @@
     <Grid Margin="0,0,0,0">
         <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="390" Margin="0,0,10,0">
             <StackPanel Margin="16,16,10,0">
-                <ListView x:Name="AccountListView" MouseUp="AccountListView_OnMouseUp" MaxHeight="370">
+                <ListView x:Name="AccountListView"
+                          MaxHeight="370"
+                          AllowDrop="True"
+                          MouseUp="AccountListView_OnMouseUp" 
+                          PreviewMouseLeftButtonDown="AccountListView_OnPreviewMouseLeftButtonDown"
+                          PreviewMouseMove="AccountListView_OnPreviewMouseMove"
+                          Drop="AccountListView_OnDrop">
                     <ListView.ContextMenu>
                         <ContextMenu Opened="AccountListViewContext_Opened" StaysOpen="true">
-                            <MenuItem Header="{Binding AccountSwitcherSetProfilePicLoc}" Click="SetProfilePicture_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>
+                            <!--<MenuItem Header="{Binding AccountSwitcherSetProfilePicLoc}" Click="SetProfilePicture_OnClick"  Foreground="{DynamicResource MaterialDesignBody}"/>-->
                             <MenuItem Header="{Binding AccountSwitcherCreateShortcutLoc}" Click="CreateDesktopShortcut_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem Header="{Binding RemoveLoc}" Click="RemoveAccount_OnClick" Foreground="{DynamicResource MaterialDesignBody}"/>
                             <MenuItem x:Name="AccountEntrySavePasswordCheck" IsCheckable="True" Header="{Binding AccountSwitcherDontSavePasswordLoc}" Checked="DontSavePassword_OnChecked" Unchecked="DontSavePassword_OnUnchecked" Foreground="{DynamicResource MaterialDesignBody}"/>

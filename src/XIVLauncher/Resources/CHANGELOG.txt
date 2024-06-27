@@ -1,7 +1,12 @@
-﻿* Fixes an issue wherein required data files for Dalamud may not have been downloaded correctly under certain conditions
-* Fixes an issue wherein the banners shown on the main page were outdated
-* Fixes an issue wherein removing addons from the auto-launch page may not have been possible under certain conditions(by @nebel)
-* Adjusts to a change in the login protocol
-* Removes support for the DirectX 9 version of the game, as it has been discontinued
-* Clarifies an error message when encountering a disk I/O error during repair
-* Clarifies an error message when passwords could not be saved
+* Adds support for the fifth expansion
+* Adds the ability to reorder accounts in the account list (by @dbindley)
+* Adds a warning message if no OTP is used
+* Adds a better error message if login fails during a Steam maintenance window, if a Steam account is used
+* Adds an ETA to the patch download window (by @wolfcomp)
+* Fixes an issue wherein the "ACT auto-launch" prompt would pop up even if ACT was not installed
+* Fixes an issue wherein the backup tool could not be opened from the about page of the settings
+* Fixes an issue wherein boot patches may not have been detected properly under certain network conditions
+* Fixes an issue wherein boot patches may have failed to install with an unclear error message under bad network conditions
+* Fixes an issue wherein multiple error messages may have been shown if a patch failed to install
+* Fixes an issue wherein patches may have continued to download if a patch failed to install
+* Removed the ability to set a profile picture for an account based on a character name for now, as the API backing it has been disabled

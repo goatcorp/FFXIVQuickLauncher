@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.Patching.ZiPatch.Chunk.SqpkCommand;
-using XIVLauncher.Common.Patching.ZiPatch.Util;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 {
@@ -12,8 +11,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
         public new static string Type = "SQPK";
         public static string Command { get; protected set; }
 
-
-        private static readonly Dictionary<string, Func<ChecksumBinaryReader, long, long, SqpkChunk>> CommandTypes =
+        private static readonly Dictionary<string, Func<BinaryReader, long, long, SqpkChunk>> CommandTypes =
             new()
             {
                 { SqpkAddData.Command, (reader, offset, size) => new SqpkAddData(reader, offset, size) },
@@ -26,7 +24,7 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
                 { SqpkPatchInfo.Command, (reader, offset, size) => new SqpkPatchInfo(reader, offset, size) }
             };
 
-        public static ZiPatchChunk GetCommand(ChecksumBinaryReader reader, long offset, long size)
+        public static ZiPatchChunk GetCommand(BinaryReader reader, long offset, long size)
         {
             try
             {
@@ -52,10 +50,10 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Chunk
 
         protected override void ReadChunk()
         {
-            using var advanceAfter = new AdvanceOnDispose(this.Reader, Size);
+            using var advanceAfter = this.GetAdvanceOnDispose();
         }
 
-        protected SqpkChunk(ChecksumBinaryReader reader, long offset, long size) : base(reader, offset, size)
+        protected SqpkChunk(BinaryReader reader, long offset, long size) : base(reader, offset, size)
         { }
 
         public override string ToString()

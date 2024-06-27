@@ -64,6 +64,13 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
             @"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum",
             @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64",
             @"SOFTWARE\Classes\Installer\Dependencies\Microsoft.VS.VC_RuntimeMinimumVSU_amd64,v14",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.38,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.37,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.36,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.35,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.34,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.33,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.32,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.31,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.30,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.29,bundle",
@@ -80,7 +87,8 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
         {
             "ucrtbase_clr0400",
             "vcruntime140_clr0400",
-            "vcruntime140"
+            "vcruntime140",
+            "vcruntime140_1"
         };
 
         var passedRegistry = false;
@@ -94,7 +102,8 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 
             var vcVersioncheck = vcregcheck.GetValue("Version") ?? "";
 
-            if (((string)vcVersioncheck).StartsWith("14", StringComparison.Ordinal))
+            if (((string)vcVersioncheck).StartsWith("14", StringComparison.Ordinal) 
+                || ((string)vcVersioncheck).StartsWith("v14", StringComparison.Ordinal))
             {
                 passedRegistry = true;
                 Log.Debug("Passed Registry Check with: " + path);
@@ -106,6 +115,8 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
         {
             Log.Debug("Checking for DLL: " + path);
             passedDllChecks = passedDllChecks && CheckLibrary(path);
+            if (!CheckLibrary(path))
+                Log.Error("Cound not find " + path);
         }
 
         // Display our findings
@@ -116,7 +127,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 
         if (!passedDllChecks)
         {
-            Log.Error("Missing DLL files required by Dalamud.");
+            Log.Error("Missing DLL files required by Dalamud. Please try installing vcredist bundle again.");
         }
 
         return (passedRegistry && passedDllChecks);
