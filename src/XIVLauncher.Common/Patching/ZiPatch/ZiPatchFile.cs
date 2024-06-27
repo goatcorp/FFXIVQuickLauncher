@@ -27,8 +27,12 @@ namespace XIVLauncher.Common.Patching.ZiPatch
             _needsChecksum = needsChecksum;
 
             var reader = new BinaryReader(stream);
+
             if (zipatchMagic.Any(magic => magic != reader.ReadUInt32()))
+            {
+                stream.Dispose();
                 throw new ZiPatchException();
+            }
         }
 
         /// <summary>
