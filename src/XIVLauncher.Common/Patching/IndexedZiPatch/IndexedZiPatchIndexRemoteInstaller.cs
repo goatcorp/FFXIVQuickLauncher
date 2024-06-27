@@ -411,54 +411,87 @@ public class IndexedZiPatchIndexRemoteInstaller : IIndexedZiPatchIndexInstaller
                             Environment.Exit(0);
                             break;
 
-                        case var _ when this.instance is null:
-                            throw new InvalidOperationException("Installer is not initialized.");
-
                         case WorkerInboundOpcode.VerifyFiles:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             await this.instance.VerifyFiles(reader.ReadBoolean(), reader.ReadInt32(), cancelToken);
                             break;
 
                         case WorkerInboundOpcode.MarkFileAsMissing:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.MarkFileAsMissing(reader.ReadInt32());
                             break;
 
                         case WorkerInboundOpcode.SetTargetStreamFromPathReadOnly:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.SetTargetStreamForRead(reader.ReadInt32(), new FileStream(reader.ReadString(), FileMode.Open, FileAccess.Read));
                             break;
 
                         case WorkerInboundOpcode.SetTargetStreamFromPathReadWrite:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.SetTargetStreamForWriteFromFile(reader.ReadInt32(), new(reader.ReadString()));
                             break;
 
                         case WorkerInboundOpcode.SetTargetStreamsFromPathReadOnly:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.SetTargetStreamsFromPathReadOnly(reader.ReadString());
                             break;
 
                         case WorkerInboundOpcode.SetTargetStreamsFromPathReadWriteForMissingFiles:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.SetTargetStreamsFromPathReadWriteForMissingFiles(reader.ReadString());
                             break;
 
                         case WorkerInboundOpcode.RepairNonPatchData:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             await this.instance.RepairNonPatchData(cancelToken);
                             break;
 
                         case WorkerInboundOpcode.WriteVersionFiles:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.WriteVersionFiles(reader.ReadString());
                             break;
 
                         case WorkerInboundOpcode.QueueInstallFromUrl:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.QueueInstall(reader.ReadInt32(), reader.ReadString(), reader.ReadString(), reader.ReadInt32());
                             break;
 
                         case WorkerInboundOpcode.QueueInstallFromLocalFile:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             this.instance.QueueInstall(reader.ReadInt32(), new(reader.ReadString()), reader.ReadInt32());
                             break;
 
                         case WorkerInboundOpcode.Install:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             await this.instance.Install(reader.ReadInt32(), cancelToken);
                             break;
 
                         case WorkerInboundOpcode.GetMissingPartIndicesPerPatch:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             writer.Write(this.instance.MissingPartIndicesPerPatch.Count);
 
                             foreach (var e1 in this.instance.MissingPartIndicesPerPatch)
@@ -475,6 +508,9 @@ public class IndexedZiPatchIndexRemoteInstaller : IIndexedZiPatchIndexInstaller
                             break;
 
                         case WorkerInboundOpcode.GetMissingPartIndicesPerTargetFile:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             writer.Write(this.instance.MissingPartIndicesPerTargetFile.Count);
 
                             foreach (var e1 in this.instance.MissingPartIndicesPerTargetFile)
@@ -487,6 +523,9 @@ public class IndexedZiPatchIndexRemoteInstaller : IIndexedZiPatchIndexInstaller
                             break;
 
                         case WorkerInboundOpcode.GetSizeMismatchTargetFileIndices:
+                            if (this.instance is null)
+                                throw new InvalidOperationException("Installer is not initialized.");
+
                             writer.Write(this.instance.SizeMismatchTargetFileIndices.Count);
                             foreach (var e1 in this.instance.SizeMismatchTargetFileIndices)
                                 writer.Write(e1);

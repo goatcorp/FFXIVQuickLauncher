@@ -69,7 +69,7 @@ namespace XIVLauncher.Common.Game.Patch
         public long Speed { get; private set; }
         public Exception LastException { get; private set; }
 
-        private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/main/";
+        private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/dt/";
 
         public enum VerifyState
         {
