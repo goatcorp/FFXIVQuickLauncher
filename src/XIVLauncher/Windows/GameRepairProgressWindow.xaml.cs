@@ -73,7 +73,7 @@ namespace XIVLauncher.Windows
 
         private void UpdateStatusDisplay()
         {
-            _timer.Interval = _verify.ProgressUpdateInterval == 0 ? 100 : _verify.ProgressUpdateInterval;
+            _timer.Interval = _verify.ProgressUpdateInterval == TimeSpan.Zero ? 100 : _verify.ProgressUpdateInterval.TotalMilliseconds;
 
             switch (_verify.State)
             {

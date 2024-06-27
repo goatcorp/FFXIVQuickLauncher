@@ -11,7 +11,7 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class InstallCommand
 {
-    public static readonly Command COMMAND = new("install", "Install the given patch files in the specified order.");
+    public static readonly Command Command = new("install", "Install the given patch files in the specified order.");
 
     private static readonly Argument<string> GameRootPathArgument = new(
         "game-root",
@@ -24,9 +24,9 @@ public class InstallCommand
 
     static InstallCommand()
     {
-        COMMAND.AddArgument(GameRootPathArgument);
-        COMMAND.AddArgument(PatchFilesArgument);
-        COMMAND.SetHandler(x => new InstallCommand(x.ParseResult).Handle());
+        Command.AddArgument(GameRootPathArgument);
+        Command.AddArgument(PatchFilesArgument);
+        Command.SetHandler(x => new InstallCommand(x.ParseResult).Handle());
     }
 
     private readonly string gameRootPath;
@@ -52,7 +52,7 @@ public class InstallCommand
         }
     }
 
-    private async Task<int> Handle()
+    private Task<int> Handle()
     {
         foreach (var file in this.patchFiles)
         {
@@ -65,6 +65,6 @@ public class InstallCommand
 
         foreach (var file in this.patchFiles)
             RemotePatchInstaller.InstallPatch(file, this.gameRootPath);
-        return 0;
+        return Task.FromResult(0);
     }
 }

@@ -21,24 +21,24 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class IndexCreateIntegrityCommand
 {
-    public static readonly Command COMMAND = new("index-create-integrity", "Create integrity check data for a game installation.");
+    public static readonly Command Command = new("index-create-integrity", "Create integrity check data for a game installation.");
 
     private static readonly Argument<string> PatchRootPathArgument = new("patch-root-path", "Path to a folder containing relevant patch files.");
 
     private static readonly Argument<string[]> PatchIndexFilesArgument = new("patch-index-files", "Path to a patch index file. (*.patch.index)");
 
     private static readonly Option<int> ThreadCountOption = new(
-        new[] { "-t", "--threads" },
+        ["-t", "--threads"],
         () => Math.Min(Environment.ProcessorCount, 8),
         "Number of threads. Specifying 0 will use all available cores.");
 
     static IndexCreateIntegrityCommand()
     {
-        COMMAND.AddArgument(PatchRootPathArgument);
-        COMMAND.AddArgument(PatchIndexFilesArgument);
+        Command.AddArgument(PatchRootPathArgument);
+        Command.AddArgument(PatchIndexFilesArgument);
         ThreadCountOption.AddValidator(x => x.ErrorMessage = x.GetValueOrDefault<int>() >= 0 ? null : "Must be 0 or more");
-        COMMAND.AddOption(ThreadCountOption);
-        COMMAND.SetHandler(x => new IndexCreateIntegrityCommand(x.ParseResult).Handle(x.GetCancellationToken()));
+        Command.AddOption(ThreadCountOption);
+        Command.SetHandler(x => new IndexCreateIntegrityCommand(x.ParseResult).Handle(x.GetCancellationToken()));
     }
 
     private readonly string patchRootPath;
@@ -170,7 +170,8 @@ public class IndexCreateIntegrityCommand
                 result.Hashes[filename] = hash;
                 Log.Information("Hashed: {name} => {hash}", filename, hash);
             }
-        } finally
+        }
+        finally
         {
             cts.Cancel();
             await Task.WhenAll(tasks);
@@ -254,10 +255,11 @@ public class IndexCreateIntegrityCommand
                 remaining -= r;
             }
 
-            sha1.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+            sha1.TransformFinalBlock([], 0, 0);
 
             return string.Join(" ", sha1.Hash.Select(x => x.ToString("X2")));
-        } finally
+        }
+        finally
         {
             ArrayPool<byte>.Shared.Return(buf);
             stream.Dispose();

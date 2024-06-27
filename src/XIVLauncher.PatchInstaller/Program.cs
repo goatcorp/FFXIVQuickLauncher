@@ -18,16 +18,16 @@ public static class Program
                      .CreateLogger();
 
         var rc = new RootCommand();
-        rc.AddCommand(CheckIntegrityCommand.COMMAND);
-        rc.AddCommand(InstallCommand.COMMAND);
-        rc.AddCommand(IndexCreateCommand.COMMAND);
-        rc.AddCommand(IndexCreateIntegrityCommand.COMMAND);
-        rc.AddCommand(IndexVerifyCommand.COMMAND);
-        rc.AddCommand(IndexRepairCommand.COMMAND);
-        rc.AddCommand(IndexUpdateCommand.COMMAND);
-        rc.AddCommand(IndexRpcCommand.COMMAND);
-        rc.AddCommand(IndexRpcTestCommand.COMMAND);
-        rc.AddCommand(RpcCommand.COMMAND);
+        rc.AddCommand(CheckIntegrityCommand.Command);
+        rc.AddCommand(InstallCommand.Command);
+        rc.AddCommand(IndexCreateCommand.Command);
+        rc.AddCommand(IndexCreateIntegrityCommand.Command);
+        rc.AddCommand(IndexVerifyCommand.Command);
+        rc.AddCommand(IndexRepairCommand.Command);
+        rc.AddCommand(IndexUpdateCommand.Command);
+        rc.AddCommand(IndexRpcCommand.Command);
+        rc.AddCommand(IndexRpcTestCommand.Command);
+        rc.AddCommand(RpcCommand.Command);
 
         var ret = -1;
 

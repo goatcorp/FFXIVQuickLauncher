@@ -9,7 +9,7 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class IndexRepairCommand
 {
-    public static readonly Command COMMAND = new("index-repair", "Repair a game installation.");
+    public static readonly Command Command = new("index-repair", "Repair a game installation.");
 
     private static readonly Argument<string> PatchIndexFileArgument = new("patch-index-file", "Path to a patch index file. (*.patch.index)");
 
@@ -20,18 +20,18 @@ public class IndexRepairCommand
     private static readonly Argument<string> PatchRootPathArgument = new("patch-root-path", "Path to a folder containing relevant patch files.");
 
     private static readonly Option<int> ThreadCountOption = new(
-        new[] { "-t", "--threads" },
+        ["-t", "--threads"],
         () => Math.Min(Environment.ProcessorCount, 8),
         "Number of threads. Specifying 0 will use all available cores.");
 
     static IndexRepairCommand()
     {
-        COMMAND.AddArgument(PatchIndexFileArgument);
-        COMMAND.AddArgument(GameRootPathArgument);
-        COMMAND.AddArgument(PatchRootPathArgument);
+        Command.AddArgument(PatchIndexFileArgument);
+        Command.AddArgument(GameRootPathArgument);
+        Command.AddArgument(PatchRootPathArgument);
         ThreadCountOption.AddValidator(x => x.ErrorMessage = x.GetValueOrDefault<int>() >= 0 ? null : "Must be 0 or more");
-        COMMAND.AddOption(ThreadCountOption);
-        COMMAND.SetHandler(x => new IndexRepairCommand(x.ParseResult).Handle());
+        Command.AddOption(ThreadCountOption);
+        Command.SetHandler(x => new IndexRepairCommand(x.ParseResult).Handle());
     }
 
     private readonly string patchIndexFile;

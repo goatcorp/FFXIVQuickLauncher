@@ -13,7 +13,7 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class IndexVerifyCommand
 {
-    public static readonly Command COMMAND = new("index-verify", "Verify and optionally repair a game installation.");
+    public static readonly Command Command = new("index-verify", "Verify and optionally repair a game installation.");
 
     private static readonly Argument<string> GameRootPathArgument = new(
         "game-path",
@@ -22,17 +22,17 @@ public class IndexVerifyCommand
     private static readonly Argument<string[]> PatchIndexFilesArgument = new("patch-index-files", "Path to a patch index file. (*.patch.index)");
 
     private static readonly Option<int> ThreadCountOption = new(
-        new[] { "-t", "--threads" },
+        ["-t", "--threads"],
         () => Math.Min(Environment.ProcessorCount, 8),
         "Number of threads. Specifying 0 will use all available cores.");
 
     static IndexVerifyCommand()
     {
-        COMMAND.AddArgument(GameRootPathArgument);
-        COMMAND.AddArgument(PatchIndexFilesArgument);
+        Command.AddArgument(GameRootPathArgument);
+        Command.AddArgument(PatchIndexFilesArgument);
         ThreadCountOption.AddValidator(x => x.ErrorMessage = x.GetValueOrDefault<int>() >= 0 ? null : "Must be 0 or more");
-        COMMAND.AddOption(ThreadCountOption);
-        COMMAND.SetHandler(x => new IndexVerifyCommand(x.ParseResult).Handle(x.GetCancellationToken()));
+        Command.AddOption(ThreadCountOption);
+        Command.SetHandler(x => new IndexVerifyCommand(x.ParseResult).Handle(x.GetCancellationToken()));
     }
 
     private readonly string gameRootPath;

@@ -26,7 +26,7 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class IndexUpdateCommand
 {
-    public static readonly Command COMMAND = new("index-update", "Update patch index files from internet.");
+    public static readonly Command Command = new("index-update", "Update patch index files from internet.");
 
     private static readonly Option<string?> PatchRootPathOption = new(
         "-r",
@@ -42,13 +42,13 @@ public class IndexUpdateCommand
 
     static IndexUpdateCommand()
     {
-        COMMAND.AddOption(PatchRootPathOption);
-        COMMAND.AddOption(UserNameOption);
-        COMMAND.AddOption(PasswordOption);
-        COMMAND.AddOption(OtpOption);
-        COMMAND.AddOption(NoVerifyOldPatchHashOption);
-        COMMAND.AddOption(NoVerifyNewPatchHashOption);
-        COMMAND.SetHandler(x => new IndexUpdateCommand(x.ParseResult).Handle(x.GetCancellationToken()));
+        Command.AddOption(PatchRootPathOption);
+        Command.AddOption(UserNameOption);
+        Command.AddOption(PasswordOption);
+        Command.AddOption(OtpOption);
+        Command.AddOption(NoVerifyOldPatchHashOption);
+        Command.AddOption(NoVerifyNewPatchHashOption);
+        Command.SetHandler(x => new IndexUpdateCommand(x.ParseResult).Handle(x.GetCancellationToken()));
     }
 
     private readonly TempSettings settings;
@@ -327,7 +327,8 @@ public class IndexUpdateCommand
 
                     File.Move($"{patchFilePath}.index.tmp", $"{patchFilePath}.index");
                 }
-            } finally
+            }
+            finally
             {
                 foreach (var source in sources)
                     source.Dispose();
@@ -359,7 +360,7 @@ public class IndexUpdateCommand
                     remaining -= r;
                 }
 
-                sha1.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                sha1.TransformFinalBlock([], 0, 0);
 
                 if (string.Join("", sha1.Hash.Select(x => x.ToString("x2"))) != patch.Hashes[j])
                 {
@@ -368,7 +369,8 @@ public class IndexUpdateCommand
             }
 
             return true;
-        } finally
+        }
+        finally
         {
             ArrayPool<byte>.Shared.Return(buf);
         }

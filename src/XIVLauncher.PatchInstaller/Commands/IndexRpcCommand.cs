@@ -11,7 +11,7 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class IndexRpcCommand
 {
-    public static readonly Command COMMAND = new("index-rpc") { IsHidden = true };
+    public static readonly Command Command = new("index-rpc") { IsHidden = true };
 
     private static readonly Argument<int> MonitorProcessIDArgument = new("process-id");
 
@@ -19,9 +19,9 @@ public class IndexRpcCommand
 
     static IndexRpcCommand()
     {
-        COMMAND.AddArgument(MonitorProcessIDArgument);
-        COMMAND.AddArgument(ChannelNameArgument);
-        COMMAND.SetHandler(x => new IndexRpcCommand(x.ParseResult).Handle());
+        Command.AddArgument(MonitorProcessIDArgument);
+        Command.AddArgument(ChannelNameArgument);
+        Command.SetHandler(x => new IndexRpcCommand(x.ParseResult).Handle());
     }
 
     private readonly int monitorProcessId;
@@ -33,7 +33,7 @@ public class IndexRpcCommand
         this.channelName = parseResult.GetValueForArgument(ChannelNameArgument);
     }
 
-    private async Task<int> Handle()
+    private Task<int> Handle()
     {
         Log.Logger = new LoggerConfiguration()
                      .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Fatal)
@@ -43,6 +43,6 @@ public class IndexRpcCommand
                      .CreateLogger();
 
         new IndexedZiPatchIndexRemoteInstaller.WorkerSubprocessBody(this.monitorProcessId, this.channelName).RunToDisposeSelf();
-        return 0;
+        return Task.FromResult(0);
     }
 }

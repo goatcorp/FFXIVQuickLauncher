@@ -18,35 +18,35 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class CheckIntegrityCommand
 {
-    public static readonly Command COMMAND = new("check-integrity");
+    public static readonly Command Command = new("check-integrity");
 
     private static readonly Argument<string> GameRootPathArgument = new(
         "game-path",
         "Root folder of a game installation, such as \"C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV - A Realm Reborn\"");
 
     private static readonly Option<string> IntegrityFilePathOption = new(
-        new[] { "-f", "--integrity-file" },
+        ["-f", "--integrity-file"],
         $"Path to integrity check file. Leave it empty to download from: {new Uri(IntegrityCheck.INTEGRITY_CHECK_BASE_URL).Host}");
 
     private static readonly Option<bool> IndexOnlyOption = new(
-        new[] { "-i", "--index-only" },
+        ["-i", "--index-only"],
         () => false,
         $"Path to integrity check file. Leave it empty to download from: {new Uri(IntegrityCheck.INTEGRITY_CHECK_BASE_URL).Host}");
 
     private static readonly Option<int> ThreadCountOption = new(
-        new[] { "-t", "--threads" },
+        ["-t", "--threads"],
         () => Math.Min(Environment.ProcessorCount, 8),
         "Number of threads. Specifying 0 will use all available cores.");
 
     static CheckIntegrityCommand()
     {
-        COMMAND.AddAlias("check-integrity");
-        COMMAND.AddArgument(GameRootPathArgument);
-        COMMAND.AddOption(IntegrityFilePathOption);
-        COMMAND.AddOption(IndexOnlyOption);
+        Command.AddAlias("check-integrity");
+        Command.AddArgument(GameRootPathArgument);
+        Command.AddOption(IntegrityFilePathOption);
+        Command.AddOption(IndexOnlyOption);
         ThreadCountOption.AddValidator(x => x.ErrorMessage = x.GetValueOrDefault<int>() >= 0 ? null : "Must be 0 or more");
-        COMMAND.AddOption(ThreadCountOption);
-        COMMAND.SetHandler(x => new CheckIntegrityCommand(x.ParseResult).Handle(x.GetCancellationToken()));
+        Command.AddOption(ThreadCountOption);
+        Command.SetHandler(x => new CheckIntegrityCommand(x.ParseResult).Handle(x.GetCancellationToken()));
     }
 
     private readonly string gameRootPath;
@@ -138,13 +138,14 @@ public class CheckIntegrityCommand
                     remaining -= r;
                 }
 
-                sha1.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+                sha1.TransformFinalBlock([], 0, 0);
                 hash = string.Join(" ", sha1.Hash.Select(x => x.ToString("X2")));
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
                 exception = e;
-            } finally
+            }
+            finally
             {
                 ArrayPool<byte>.Shared.Return(buf);
             }

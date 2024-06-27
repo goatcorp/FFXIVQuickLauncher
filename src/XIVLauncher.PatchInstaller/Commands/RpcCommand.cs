@@ -17,14 +17,14 @@ namespace XIVLauncher.PatchInstaller.Commands;
 
 public class RpcCommand
 {
-    public static readonly Command COMMAND = new("rpc") { IsHidden = true };
+    public static readonly Command Command = new("rpc") { IsHidden = true };
 
     private static readonly Argument<string> ChannelNameArgument = new("channel-name");
 
     static RpcCommand()
     {
-        COMMAND.AddArgument(ChannelNameArgument);
-        COMMAND.SetHandler(x => new RpcCommand(x.ParseResult).Handle());
+        Command.AddArgument(ChannelNameArgument);
+        Command.SetHandler(x => new RpcCommand(x.ParseResult).Handle());
     }
 
     private readonly string channelName;
@@ -34,7 +34,7 @@ public class RpcCommand
         this.channelName = parseResult.GetValueForArgument(ChannelNameArgument);
     }
 
-    private async Task<int> Handle()
+    private Task<int> Handle()
     {
         Log.Logger = new LoggerConfiguration()
                      .WriteTo.Console(standardErrorFromLevel: LogEventLevel.Fatal)
@@ -53,7 +53,7 @@ public class RpcCommand
                 if ((Process.GetProcesses().All(x => x.ProcessName != "XIVLauncher") && !installer.HasQueuedInstalls) || installer.IsDone)
                 {
                     Environment.Exit(0);
-                    return 0; // does not run
+                    return Task.FromResult(0); // does not run
                 }
 
                 Thread.Sleep(1000);
@@ -62,7 +62,7 @@ public class RpcCommand
                 {
                     Log.Information("Exited due to failure");
                     Environment.Exit(-1);
-                    return -1; // does not run
+                    return Task.FromResult(-1); // does not run
                 }
             }
         }
