@@ -77,6 +77,12 @@ namespace XIVLauncher.Windows
 
             OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
 
+            if (OtpServerCheckBox.IsChecked == true)
+                OtpYubiKeyCheckBox.IsChecked = App.Settings.OtpYubiKeyEnabled;
+            else
+                OtpYubiKeyCheckBox.IsChecked = false;
+
+
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
@@ -125,6 +131,8 @@ namespace XIVLauncher.Windows
                 App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.EntryPoint;
 
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
+
+            App.Settings.OtpYubiKeyEnabled = OtpYubiKeyCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
@@ -415,6 +423,23 @@ namespace XIVLauncher.Windows
         private void LearnMoreButton_OnClick(object sender, RoutedEventArgs e)
         {
             PlatformHelpers.OpenBrowser("https://goatcorp.github.io/faq/mobile_otp");
+        }
+        private void LearnMoreYubiKeyButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            PlatformHelpers.OpenBrowser("https://goatcorp.github.io/faq/yubikey");
+        }
+        private void YubiKeySetupAuthButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var authKey = string.Empty;
+            authKey = SecurityKeySetupDialog.AskForKey((securityKeySetupDialog, result) =>
+            {
+                if (securityKeySetupDialog.DialogResult == true)
+                {
+                    CustomMessageBox.Show(Loc.Localize("SetupAuthSuccess", $"YubiKey account \"{result}\" has been successfully created.\nYou may now use this YubiKey alongside XIVLauncher."),
+                    "XIVLauncher - YubiKey Setup", image: MessageBoxImage.Information, showDiscordLink: false, showHelpLinks: false);
+                }
+            }, Window.GetWindow(this));
+            
         }
 
         private void IsFreeTrialCheckbox_OnClick(object sender, RoutedEventArgs e)

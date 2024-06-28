@@ -1,0 +1,31 @@
+<Project>
+	<Choose>
+		<!-- If x86 architecture -->
+		<When Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X86' OR '$(Platform)' == 'x86'">
+			<ItemGroup>
+				<PackageReference Include="Yubico.NativeShims" Version="1.6.1">
+					<PrivateAssets>build</PrivateAssets>
+				</PackageReference>
+				<Content Include="$(NugetPackageRoot)\yubico.nativeshims\1.6.1\runtimes\win-x86\native\Yubico.NativeShims.dll">
+					<Link>Yubico.NativeShims.dll</Link>
+					<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+					<Visible>false</Visible>
+				</Content>
+			</ItemGroup>
+		</When>
+		
+		<!-- If x64 architecture -->
+		<When Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64' OR '$(Platform)' == 'x64'">
+			<ItemGroup>
+				<PackageReference Include="Yubico.NativeShims" Version="1.6.1">
+					<PrivateAssets>build</PrivateAssets>
+				</PackageReference>
+				<Content Include="$(NugetPackageRoot)\yubico.nativeshims\1.6.1\runtimes\win-x64\native\Yubico.NativeShims.dll">
+					<Link>Yubico.NativeShims.dll</Link>
+					<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+					<Visible>false</Visible>
+				</Content>
+			</ItemGroup>
+		</When>
+	</Choose>
+</Project>

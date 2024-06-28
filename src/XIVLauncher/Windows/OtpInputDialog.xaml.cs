@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -9,8 +10,13 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Serilog;
+using XIVLauncher.Accounts;
 using XIVLauncher.Common.Http;
 using XIVLauncher.Windows.ViewModel;
+using Yubico.PlatformInterop;
+using Yubico.YubiKey;
+using Yubico.YubiKey.Oath;
+using Yubico.YubiKey.Oath.Commands;
 
 namespace XIVLauncher.Windows
 {
@@ -28,6 +34,9 @@ namespace XIVLauncher.Windows
         private OtpListener _otpListener;
         private bool _ignoreCurrentOtp;
 
+        private YubiAuth _yubiAuth;
+        private readonly object _lock = new();
+        private Thread _yubiThread;
         public OtpInputDialog()
         {
             InitializeComponent();
@@ -50,6 +59,17 @@ namespace XIVLauncher.Windows
                 _otpListener = new OtpListener("legacy-" + AppUtil.GetAssemblyVersion());
                 _otpListener.OnOtpReceived += TryAcceptOtp;
 
+                if (App.Settings.OtpYubiKeyEnabled)
+                {
+                    _yubiAuth = new YubiAuth();
+                    if (_yubiAuth.DeviceListener != null)
+                    {
+                        _yubiAuth.DeviceListener.Arrived += OnYubiKeyArrived;
+                        _yubiAuth.DeviceListener.Removed += OnYubiKeyRemoved;
+                    }
+                    AttemptYubiAuth();
+                }
+
                 try
                 {
                     // Start Listen
@@ -71,6 +91,15 @@ namespace XIVLauncher.Windows
             OtpInputPrompt.Foreground = _otpInputPromptDefaultBrush;
             OtpTextBox.Text = "";
             OtpTextBox.Focus();
+        }
+        public void ResetPrompt()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                OtpInputPrompt.Text = ViewModel.OtpInputPromptLoc;
+                OtpInputPrompt.Foreground = _otpInputPromptDefaultBrush;
+                OtpTextBox.Focus();
+            });
         }
 
         public void IgnoreCurrentResult(string reason)
@@ -114,6 +143,7 @@ namespace XIVLauncher.Windows
                 else
                 {
                     _otpListener?.Stop();
+                    CleanupYubi();
                     DialogResult = true;
                     Hide();
                 }
@@ -124,8 +154,18 @@ namespace XIVLauncher.Windows
         {
             OnResult?.Invoke(null);
             _otpListener?.Stop();
+            CleanupYubi();
             DialogResult = false;
             Hide();
+        }
+        private void CleanupYubi()
+        {
+            if (_yubiAuth != null)
+            {
+                _yubiAuth.DeviceListener.Arrived -= OnYubiKeyArrived;
+                _yubiAuth.DeviceListener.Removed -= OnYubiKeyRemoved;
+                _yubiThread?.Abort();
+            }
         }
 
         private void OtpInputDialog_OnMouseMove(object sender, MouseEventArgs e)
@@ -174,6 +214,126 @@ namespace XIVLauncher.Windows
         {
             this.OtpTextBox.Text = Clipboard.GetText();
             TryAcceptOtp(this.OtpTextBox.Text);
+        }
+        private void OnYubiKeyArrived(object sender, YubiKeyDeviceEventArgs e)
+        {
+            Log.Debug("YubiKey found! " + e.Device.ToString());
+            _yubiAuth.SetYubiDevice(e.Device);
+            AttemptYubiAuth();
+        }
+
+        private void OnYubiKeyRemoved(object sender, YubiKeyDeviceEventArgs e)
+        {
+            Log.Debug("YubiKey removed!");
+            _yubiAuth.SetYubiDevice(null);
+            ResetPrompt();
+        }
+
+        private void AttemptYubiAuth()
+        {
+            if (_yubiAuth.GetYubiDevice() == null)
+            {
+                return;
+            }
+
+            OathSession session = new OathSession(_yubiAuth.GetYubiDevice());
+            var totp = _yubiAuth.BuildCredential();
+
+            try
+            {
+                //Set prompt respectively
+                Dispatcher.Invoke(() =>
+                {
+                    if (_yubiAuth.CheckForCredential(session) == true)
+                    {
+                        OtpInputPrompt.Text = ViewModel.OtpInputPromptYubiLoc;
+                        OtpInputPrompt.Foreground = Brushes.LightGreen;
+                        Storyboard myStoryboard = (Storyboard)OtpInputPrompt.Resources["InvalidShake"];
+                        Storyboard.SetTarget(myStoryboard.Children.ElementAt(0), OtpInputPrompt);
+                        myStoryboard.Begin();
+                        OtpTextBox.Focus();
+                    }
+                    else
+                    {
+                        OtpInputPrompt.Text = ViewModel.OtpInputPromptYubiBadLoc;
+                        OtpInputPrompt.Foreground = Brushes.Red;
+                        Storyboard myStoryboard = (Storyboard)OtpInputPrompt.Resources["InvalidShake"];
+                        Storyboard.SetTarget(myStoryboard.Children.ElementAt(0), OtpInputPrompt);
+                        myStoryboard.Begin();
+                        OtpTextBox.Focus();
+                        throw new InvalidOperationException("Unable to find valid YubiKey credential.");
+                    }
+                });
+
+            }
+            catch (SCardException)
+            {
+                Log.Error("YubiKey was removed while performing operation.");
+                return;
+            }
+
+            catch (InvalidOperationException e)
+            {
+                Log.Error(e.Message);
+                return;
+            }
+
+            byte retries = 0;
+            _yubiThread = new Thread(() =>
+            {
+                //Handle touch-based authentication, gives user three attempts to touch YubiKey
+                //Attempts are approximately 15 seconds by defualt
+                while (retries < 3 && _yubiAuth.GetYubiDevice() != null)
+                {
+                    CalculateCredentialResponse ccr = null;
+                    try
+                    {
+                        //Attempts to generate otp and then login
+                        CalculateCredentialCommand ccd = new CalculateCredentialCommand(totp, ResponseFormat.Truncated);
+                        ccr = session.Connection.SendCommand(ccd);
+
+                        Log.Debug("Status: " + ccr.Status);
+                        Log.Debug("Status Message: " + ccr.StatusMessage);
+                        Log.Debug("Data: " + ccr.GetData().Value);
+                        TryAcceptOtp(ccr.GetData().Value);
+                        break;
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        Log.Debug(ex.Message);
+
+                        retries++;
+
+                        //Handle authentication timeout
+                        if (ccr != null)
+                        {
+                            Log.Debug("Status: " + ccr.Status);
+                            Log.Debug("Status Message: " + ccr.StatusMessage);
+                        }
+
+                        if (retries == 3)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                OtpInputPrompt.Text = ViewModel.OtpInputPromptYubiTimeoutLoc;
+                                OtpInputPrompt.Foreground = Brushes.Red;
+                                Storyboard myStoryboard = (Storyboard)OtpInputPrompt.Resources["InvalidShake"];
+                                Storyboard.SetTarget(myStoryboard.Children.ElementAt(0), OtpInputPrompt);
+                                myStoryboard.Begin();
+                                OtpTextBox.Focus();
+                            });
+                            break;
+                        }
+                    }
+                    catch (SCardException)
+                    {
+                        Log.Error("YubiKey was removed during authentication attempt.");
+                        break;
+                    }
+                }
+            });
+            _yubiThread.Start();
+            
         }
 
         public void OpenShortcutInfo_MouseUp(object sender, RoutedEventArgs e)
