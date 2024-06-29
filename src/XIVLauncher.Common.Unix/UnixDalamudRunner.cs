@@ -74,12 +74,28 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add(gameArgs);
 
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
-        var output = dalamudProcess.StandardOutput.ReadLine();
 
-        if (output == null)
-            throw new DalamudRunnerException("An internal Dalamud error has occured");
+        DalamudConsoleOutput dalamudConsoleOutput = null;
+        int invalidJsonCount = 0;
 
-        Console.WriteLine(output);
+        // Keep checking for valid json output, but only 5 times. If it's still erroring out at that point, give up.
+        while (dalamudConsoleOutput == null && invalidJsonCount < 5)
+        {
+            var output = dalamudProcess.StandardOutput.ReadLine();
+            if (output == null)
+                throw new DalamudRunnerException("An internal Dalamud error has occured");
+            Console.WriteLine(output);
+
+            try
+            {
+                dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, $"Couldn't parse Dalamud output: {output}");
+            }
+            invalidJsonCount++;
+        }
 
         new Thread(() =>
         {
@@ -89,17 +105,15 @@ public class UnixDalamudRunner : IDalamudRunner
                 if (output != null)
                     Console.WriteLine(output);
             }
-
         }).Start();
 
         try
         {
-            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
             var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
 
             if (unixPid == 0)
             {
-                Log.Error("Could not retrive Unix process ID, this feature currently requires a patched wine version");
+                Log.Error("Could not retrieve Unix process ID");
                 return null;
             }
 
@@ -107,9 +121,9 @@ public class UnixDalamudRunner : IDalamudRunner
             Log.Verbose($"Got game process handle {gameProcess.Handle} with Unix pid {gameProcess.Id} and Wine pid {dalamudConsoleOutput.Pid}");
             return gameProcess;
         }
-        catch (JsonReaderException ex)
+        catch (Exception ex)
         {
-            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
+            Log.Error(ex, $"Could not retrieve game Process information");
             return null;
         }
     }
