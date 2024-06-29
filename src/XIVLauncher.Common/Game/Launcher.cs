@@ -46,23 +46,10 @@ public class Launcher
 
         ServicePointManager.Expect100Continue = false;
 
-#if NET6_0_OR_GREATER && !WIN32
-        var sslOptions = new SslClientAuthenticationOptions()
-        {
-            CipherSuitesPolicy = new CipherSuitesPolicy(new[] { TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 })
-        };
-
-        var handler = new SocketsHttpHandler
-        {
-            UseCookies = false,
-            SslOptions = sslOptions,
-        };
-#else
         var handler = new HttpClientHandler
         {
             UseCookies = false,
         };
-#endif
 
         this.client = new HttpClient(handler);
     }
@@ -98,8 +85,8 @@ public class Launcher
     public class LoginResult
     {
         public LoginState State { get; set; }
-        public PatchListEntry[] PendingPatches { get; set; }
-        public OauthLoginResult OauthLogin { get; set; }
+        public PatchListEntry[] PendingPatches { get; set; } = [];
+        public OauthLoginResult? OauthLogin { get; set; }
         public string? UniqueId { get; set; }
     }
 
@@ -387,11 +374,12 @@ public class Launcher
         return result;
     }
 
-    public async Task<PatchListEntry[]> CheckBootVersion(DirectoryInfo gamePath)
+    public async Task<PatchListEntry[]> CheckBootVersion(DirectoryInfo gamePath, bool forceBaseVersion = false)
     {
+        var bootVersion = forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Boot.GetVer(gamePath);
         var request = new HttpRequestMessage(HttpMethod.Get,
-                                             $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{Repository.Boot.GetVer(gamePath)}/?time=" +
-                                             GetLauncherFormattedTimeLongRounded());
+            $"http://patch-bootver.ffxiv.com/http/win32/ffxivneo_release_boot/{bootVersion}/?time=" +
+            GetLauncherFormattedTimeLongRounded());
 
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
         request.Headers.AddWithoutValidation("Host", "patch-bootver.ffxiv.com");

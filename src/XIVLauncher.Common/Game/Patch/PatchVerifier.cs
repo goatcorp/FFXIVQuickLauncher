@@ -54,7 +54,7 @@ namespace XIVLauncher.Common.Game.Patch
         private Task _verificationTask;
         private List<Tuple<long, long>> _reportedProgresses = new();
 
-        public int ProgressUpdateInterval { get; private set; }
+        public TimeSpan ProgressUpdateInterval { get; private set; }
         public int NumBrokenFiles { get; private set; } = 0;
         public string MovedFileToDir { get; private set; } = null;
         public List<string> MovedFiles { get; private set; } = new();
@@ -69,7 +69,7 @@ namespace XIVLauncher.Common.Game.Patch
         public long Speed { get; private set; }
         public Exception LastException { get; private set; }
 
-        private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/main/";
+        private const string BASE_URL = "https://raw.githubusercontent.com/goatcorp/patchinfo/dt/";
 
         public enum VerifyState
         {
@@ -134,7 +134,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
 
-        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, int progressUpdateInterval, int maxExpansion, bool external = true)
+        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, TimeSpan progressUpdateInterval, int maxExpansion, bool external = true)
         {
             this._settings = settings;
             _client = new HttpClient();
@@ -353,7 +353,7 @@ namespace XIVLauncher.Common.Game.Patch
                             foreach (var metaPath in _repoMetaPaths)
                             {
                                 var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
-                                var adjustedGamePath = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? bootPath : gamePath;
+                                var adjustedGamePath = patchIndex.ExpacVersion == IndexedZiPatchIndex.ExpacVersionBoot ? bootPath : gamePath;
 
                                 foreach (var target in patchIndex.Targets)
                                     targetRelativePaths.Add(target.RelativePath);
@@ -413,7 +413,7 @@ namespace XIVLauncher.Common.Game.Patch
                                         var missing = await indexedZiPatchIndexInstaller.GetMissingPartIndicesPerPatch().ConfigureAwait(false);
 
                                         await indexedZiPatchIndexInstaller.SetTargetStreamsFromPathReadWriteForMissingFiles(adjustedGamePath).ConfigureAwait(false);
-                                        var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.EXPAC_VERSION_BOOT ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
+                                        var prefix = patchIndex.ExpacVersion == IndexedZiPatchIndex.ExpacVersionBoot ? "boot:" : $"ex{patchIndex.ExpacVersion}:";
                                         for (var i = 0; i < patchIndex.Sources.Count; i++)
                                         {
                                             var patchSourceKey = prefix + patchIndex.Sources[i];

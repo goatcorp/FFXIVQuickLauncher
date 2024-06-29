@@ -12,20 +12,34 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
         {
             // Normalise path
             path = Path.GetFullPath(path);
+            var key = path.ToLowerInvariant();
 
-            if (_streams.TryGetValue(path, out var stream))
+            if (_streams.TryGetValue(key, out var stream))
                 return stream;
 
             stream = SqexFileStream.WaitForStream(path, mode, tries, sleeptime);
-            _streams.Add(path, stream);
+            _streams.Add(key, stream);
 
             return stream;
+        }
+
+        public void CloseStream(string path)
+        {
+            path = Path.GetFullPath(path);
+            var key = path.ToLowerInvariant();
+
+            if (this._streams.TryGetValue(key, out var s))
+            {
+                this._streams.Remove(key);
+                s.Dispose();
+            }
         }
 
         public void Dispose()
         {
             foreach (var stream in _streams.Values)
                 stream.Dispose();
+            this._streams.Clear();
         }
     }
 }

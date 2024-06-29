@@ -1,4 +1,4 @@
-﻿<Window x:Class="XIVLauncher.Windows.PatchDownloadDialog"
+<Window x:Class="XIVLauncher.Windows.PatchDownloadDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,7 +13,7 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="225" Width="340"
+        WindowStyle="None" Height="240" Width="340"
         d:DataContext="{d:DesignInstance viewModel:PatchDownloadDialogViewModel}" Closing="PatchDownloadDialog_OnClosing">
     <Grid Margin="0,0,0,0">
         <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="Auto" Margin="0,0,10,0">
@@ -31,7 +31,8 @@
                 <TextBlock x:Name="InstallingText" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding PatchInstallingLoc}"></TextBlock>
                 <ProgressBar IsIndeterminate="True" Margin="0,0,0,11" />
 
-                <TextBlock x:Name="BytesLeftText" Foreground="DarkGray" Margin="0,8,0,12" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>
+                <TextBlock x:Name="BytesLeftText" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>
+                <TextBlock x:Name="TimeLeftText" Foreground="DarkGray" Margin="0,0,0,12" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

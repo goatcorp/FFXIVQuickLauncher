@@ -222,8 +222,8 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (!isOtp && !App.Settings.HasComplainedAboutNoOtp.GetValueOrDefault(false))
             {
-                var otpComplainText = Loc.Localize("OtpComplaint", "Your account does not have OTP enabled. This is a security risk and we strongly recommend enabling it."
-                                                                   + "\n\nYou can enable OTP in the account settings on the game's website. We won't show you this message again.");
+                var otpComplainText = Loc.Localize("OtpComplaint", "Your account does not have One-Time Passwords enabled. This is a security risk and we strongly recommend enabling them."
+                                                                   + "\n\nYou can enable One-Time Passwords in the account settings on the game's website. We won't show you this message again.");
 
                 CustomMessageBox.Show(otpComplainText, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Warning, parentWindow: _window);
                 App.Settings.HasComplainedAboutNoOtp = true;
@@ -301,7 +301,10 @@ namespace XIVLauncher.Windows.ViewModel
             if (otp != null)
                 AccountManager.UpdateLastSuccessfulOtp(AccountManager.CurrentAccount, otp);
 
-            Log.Verbose($"[LR] {loginResult.State} {loginResult.PendingPatches.Length} {loginResult.OauthLogin?.Playable}");
+            Log.Verbose("[LR] {State} {NumPatches} {Playable}",
+                        loginResult.State,
+                        loginResult.PendingPatches.Length,
+                        loginResult.OauthLogin?.Playable);
 
             if (await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false))
             {
@@ -927,7 +930,7 @@ namespace XIVLauncher.Windows.ViewModel
                     }))
                     return false;
 
-                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, 20, loginResult.OauthLogin.MaxExpansion);
+                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
 
                 Hide();
                 IsEnabled = false;

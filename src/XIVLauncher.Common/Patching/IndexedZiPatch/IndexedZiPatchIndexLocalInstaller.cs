@@ -6,149 +6,185 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace XIVLauncher.Common.Patching.IndexedZiPatch
+#nullable enable
+
+namespace XIVLauncher.Common.Patching.IndexedZiPatch;
+
+public class IndexedZiPatchIndexLocalInstaller : IIndexedZiPatchIndexInstaller
 {
-    public class IndexedZiPatchIndexLocalInstaller : IIndexedZiPatchIndexInstaller
+    private bool isDisposed;
+    private IndexedZiPatchInstaller? instance;
+
+    public event IndexedZiPatchInstaller.OnInstallProgressDelegate? OnInstallProgress;
+    public event IndexedZiPatchInstaller.OnVerifyProgressDelegate? OnVerifyProgress;
+
+    public void Dispose()
     {
-        private int cancellationTokenCounter = 1;
-        private long lastProgressUpdateCounter = 0;
-        private bool isDisposed = false;
-        private IndexedZiPatchInstaller? instance;
+        if (this.isDisposed)
+            throw new ObjectDisposedException(GetType().FullName);
 
-        public event IndexedZiPatchInstaller.OnInstallProgressDelegate OnInstallProgress;
-        public event IndexedZiPatchInstaller.OnVerifyProgressDelegate OnVerifyProgress;
+        this.isDisposed = true;
+    }
 
-        public IndexedZiPatchIndexLocalInstaller()
+    public Task ConstructFromPatchFile(IndexedZiPatchIndex patchIndex, TimeSpan progressReportInterval = default)
+    {
+        this.instance?.Dispose();
+        this.instance = new(patchIndex)
         {
-            this.instance = null;
-        }
+            ProgressReportInterval = progressReportInterval.TotalMilliseconds > 0 ? (int)progressReportInterval.TotalMilliseconds : 250,
+        };
+        this.instance.OnInstallProgress += OnInstallProgress;
+        this.instance.OnVerifyProgress += OnVerifyProgress;
+        return Task.CompletedTask;
+    }
 
-        public void Dispose()
-        {
-            if (this.isDisposed)
-                throw new ObjectDisposedException(GetType().FullName);
+    public async Task VerifyFiles(bool refine = false, int concurrentCount = 8, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-            this.isDisposed = true;
-        }
+        await this.instance.VerifyFiles(refine, concurrentCount, cancellationToken);
+    }
 
-        public Task ConstructFromPatchFile(IndexedZiPatchIndex patchIndex, int progressReportInterval = 250)
-        {
-            this.instance?.Dispose();
-            this.instance = new(patchIndex)
-            {
-                ProgressReportInterval = progressReportInterval,
-            };
-            this.instance.OnInstallProgress += OnInstallProgress;
-            this.instance.OnVerifyProgress += OnVerifyProgress;
-            return Task.CompletedTask;
-        }
+    public Task MarkFileAsMissing(int targetIndex, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public async Task VerifyFiles(bool refine = false, int concurrentCount = 8, CancellationToken? cancellationToken = null)
-        {
-            await this.instance.VerifyFiles(refine, concurrentCount, cancellationToken);
-        }
+        this.instance.MarkFileAsMissing(targetIndex);
+        return Task.CompletedTask;
+    }
 
-        public Task MarkFileAsMissing(int targetIndex, CancellationToken? cancellationToken = null)
-        {
-            this.instance.MarkFileAsMissing(targetIndex);
-            return Task.CompletedTask;
-        }
+    public Task SetTargetStreamFromPathReadOnly(int targetIndex, string path, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public Task SetTargetStreamFromPathReadOnly(int targetIndex, string path, CancellationToken? cancellationToken = null)
-        {
-            this.instance.SetTargetStreamForRead(targetIndex, new FileStream(path, FileMode.Open, FileAccess.Read));
-            return Task.CompletedTask;
-        }
+        this.instance.SetTargetStreamForRead(targetIndex, new FileStream(path, FileMode.Open, FileAccess.Read));
+        return Task.CompletedTask;
+    }
 
-        public Task SetTargetStreamFromPathReadWrite(int targetIndex, string path, CancellationToken? cancellationToken = null)
-        {
-            this.instance.SetTargetStreamForWriteFromFile(targetIndex, new FileInfo(path));
-            return Task.CompletedTask;
-        }
+    public Task SetTargetStreamFromPathReadWrite(int targetIndex, string path, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public Task SetTargetStreamsFromPathReadOnly(string rootPath, CancellationToken? cancellationToken = null)
-        {
-            this.instance.SetTargetStreamsFromPathReadOnly(rootPath);
-            return Task.CompletedTask;
-        }
+        this.instance.SetTargetStreamForWriteFromFile(targetIndex, new(path));
+        return Task.CompletedTask;
+    }
 
-        public Task SetTargetStreamsFromPathReadWriteForMissingFiles(string rootPath, CancellationToken? cancellationToken = null)
-        {
-            this.instance.SetTargetStreamsFromPathReadWriteForMissingFiles(rootPath);
-            return Task.CompletedTask;
-        }
+    public Task SetTargetStreamsFromPathReadOnly(string rootPath, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public async Task RepairNonPatchData(CancellationToken? cancellationToken = null)
-        {
-            await this.instance.RepairNonPatchData(cancellationToken);
-        }
+        this.instance.SetTargetStreamsFromPathReadOnly(rootPath);
+        return Task.CompletedTask;
+    }
 
-        public Task WriteVersionFiles(string rootPath, CancellationToken? cancellationToken = null)
-        {
-            this.instance.WriteVersionFiles(rootPath);
-            return Task.CompletedTask;
-        }
+    public Task SetTargetStreamsFromPathReadWriteForMissingFiles(string rootPath, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public Task QueueInstall(int sourceIndex, Uri sourceUrl, string sid, int splitBy = 8, CancellationToken? cancellationToken = null)
-        {
-            this.instance.QueueInstall(sourceIndex, sourceUrl.OriginalString, sid, splitBy);
-            return Task.CompletedTask;
-        }
+        this.instance.SetTargetStreamsFromPathReadWriteForMissingFiles(rootPath);
+        return Task.CompletedTask;
+    }
 
-        public Task QueueInstall(int sourceIndex, FileInfo sourceFile, int splitBy = 8, CancellationToken? cancellationToken = null)
-        {
-            this.instance.QueueInstall(sourceIndex, sourceFile, splitBy);
-            return Task.CompletedTask;
-        }
+    public async Task RepairNonPatchData(CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public async Task Install(int concurrentCount, CancellationToken? cancellationToken = null)
-        {
-            await this.instance.Install(concurrentCount, cancellationToken);
-        }
+        await this.instance.RepairNonPatchData(cancellationToken);
+    }
 
-        public Task<List<SortedSet<Tuple<int, int>>>> GetMissingPartIndicesPerPatch(CancellationToken? cancellationToken = null)
-        {
-            return Task.FromResult(this.instance.MissingPartIndicesPerPatch);
-        }
+    public Task WriteVersionFiles(string rootPath, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public Task<List<SortedSet<int>>> GetMissingPartIndicesPerTargetFile(CancellationToken? cancellationToken = null)
-        {
-            return Task.FromResult(this.instance.MissingPartIndicesPerTargetFile);
-        }
+        this.instance.WriteVersionFiles(rootPath);
+        return Task.CompletedTask;
+    }
 
-        public Task<SortedSet<int>> GetSizeMismatchTargetFileIndices(CancellationToken? cancellationToken = null)
-        {
-            return Task.FromResult(this.instance.SizeMismatchTargetFileIndices);
-        }
+    public Task QueueInstall(int sourceIndex, Uri sourceUrl, string? sid, int splitBy = 8, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public Task SetWorkerProcessPriority(ProcessPriorityClass subprocessPriority, CancellationToken? cancellationToken = null)
-        {
-            return Task.CompletedTask; // is a no-op locally
-        }
+        this.instance.QueueInstall(sourceIndex, sourceUrl.OriginalString, sid, splitBy);
+        return Task.CompletedTask;
+    }
 
-        public Task MoveFile(string sourceFile, string targetFile, CancellationToken? cancellationToken = null)
-        {
-            var sourceParentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFile));
-            var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFile.EndsWith("/") ? targetFile.Substring(0, targetFile.Length - 1) : targetFile));
-            targetParentDir.Create();
-            Directory.Move(sourceFile, targetFile);
+    public Task QueueInstall(int sourceIndex, FileInfo sourceFile, int splitBy = 8, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-            if (!sourceParentDir.GetFileSystemInfos().Any())
-                sourceParentDir.Delete(false);
+        this.instance.QueueInstall(sourceIndex, sourceFile, splitBy);
+        return Task.CompletedTask;
+    }
 
-            return Task.CompletedTask;
-        }
+    public async Task Install(int concurrentCount, CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
 
-        public Task CreateDirectory(string dir, CancellationToken? cancellationToken = null)
-        {
-            new DirectoryInfo(dir).Create();
-            return Task.CompletedTask;
-        }
+        await this.instance.Install(concurrentCount, cancellationToken);
+    }
 
-        public Task RemoveDirectory(string dir, bool recursive = false, CancellationToken? cancellationToken = null)
-        {
-            new DirectoryInfo(dir).Delete(recursive);
-            return Task.CompletedTask;
-        }
+    public Task<List<SortedSet<Tuple<int, int>>>> GetMissingPartIndicesPerPatch(CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
+
+        return Task.FromResult(this.instance.MissingPartIndicesPerPatch);
+    }
+
+    public Task<List<SortedSet<int>>> GetMissingPartIndicesPerTargetFile(CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
+
+        return Task.FromResult(this.instance.MissingPartIndicesPerTargetFile);
+    }
+
+    public Task<SortedSet<int>> GetSizeMismatchTargetFileIndices(CancellationToken cancellationToken = default)
+    {
+        if (this.instance is null)
+            throw new InvalidOperationException("Installer is not initialized.");
+
+        return Task.FromResult(this.instance.SizeMismatchTargetFileIndices);
+    }
+
+    public Task SetWorkerProcessPriority(ProcessPriorityClass subprocessPriority, CancellationToken cancellationToken = default)
+    {
+        return Task.CompletedTask; // is a no-op locally
+    }
+
+    public Task MoveFile(string sourceFile, string targetFile, CancellationToken cancellationToken = default)
+    {
+        var sourceParentDir = new DirectoryInfo(Path.GetDirectoryName(sourceFile) ?? throw new InvalidOperationException());
+        var targetParentDir = new DirectoryInfo(Path.GetDirectoryName(targetFile.EndsWith("/", StringComparison.Ordinal) ? targetFile.Substring(0, targetFile.Length - 1) : targetFile) ?? throw new InvalidOperationException());
+        targetParentDir.Create();
+        Directory.Move(sourceFile, targetFile);
+
+        if (!sourceParentDir.GetFileSystemInfos().Any())
+            sourceParentDir.Delete(false);
+
+        return Task.CompletedTask;
+    }
+
+    public Task CreateDirectory(string dir, CancellationToken cancellationToken = default)
+    {
+        new DirectoryInfo(dir).Create();
+        return Task.CompletedTask;
+    }
+
+    public Task RemoveDirectory(string dir, bool recursive = false, CancellationToken cancellationToken = default)
+    {
+        new DirectoryInfo(dir).Delete(recursive);
+        return Task.CompletedTask;
     }
 }

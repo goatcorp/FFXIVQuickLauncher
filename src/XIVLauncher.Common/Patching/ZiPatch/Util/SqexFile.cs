@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace XIVLauncher.Common.Patching.ZiPatch.Util
 {
@@ -21,6 +22,31 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
         public SqexFileStream OpenStream(SqexFileStreamStore store, string basePath, FileMode mode,
                                          int tries = 5, int sleeptime = 1) =>
             store.GetStream($@"{basePath}/{RelativePath}", mode, tries, sleeptime);
+
+        public void Delete(SqexFileStreamStore? store, string basePath, int tries = 5, int sleeptime = 1)
+        {
+            var path = $"{basePath}/{this.RelativePath}";
+
+            while (File.Exists(path))
+            {
+                store?.CloseStream($"{basePath}/{this.RelativePath}");
+
+                try
+                {
+                    File.Delete(path);
+                }
+                catch (IOException ioe)
+                {
+                    if (ioe is FileNotFoundException or DirectoryNotFoundException)
+                        break;
+
+                    if (tries-- <= 0)
+                        throw;
+
+                    Thread.Sleep(sleeptime * 1000);
+                }
+            }
+        }
 
         public void CreateDirectoryTree(string basePath)
         {
