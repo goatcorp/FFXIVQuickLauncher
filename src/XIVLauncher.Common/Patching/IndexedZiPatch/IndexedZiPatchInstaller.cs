@@ -534,12 +534,11 @@ public class IndexedZiPatchInstaller : IDisposable
             }
 
             using HttpRequestMessage req = new(HttpMethod.Get, SourceUrl);
-            req.Headers.Range = new()
-            {
-                Unit = "bytes"
-            };
-            foreach (var (rangeFrom, rangeToExclusive) in offsets)
+            req.Headers.Range = new() { Unit = "bytes" };
+            foreach (var (rangeFrom, rangeToExclusive) in offsets.Take(400))
                 req.Headers.Range.Ranges.Add(new(rangeFrom, rangeToExclusive + 1));
+            // "1000000000-1000000000,": 22 bytes; 22x400=8800 bytes in HTTP header should be fine?
+
             if (this.sid != null)
                 req.Headers.Add("X-Patch-Unique-Id", this.sid);
             req.Headers.Add("User-Agent", Constants.PatcherUserAgent);
