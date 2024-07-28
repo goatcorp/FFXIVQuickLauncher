@@ -28,12 +28,12 @@ public class OauthLoginException : Exception
     {
         var matches = errorMessageRegex.Matches(document);
 
-        // Handle xlcore error messages
-        if (xlcoreMessages.Contains(document))
-            return document;
-
         if (matches.Count is 0 or > 1)
         {
+            // Handle xlcore error messages
+            if (xlcoreMessages.Contains(document))
+                return document;
+
             Log.Error("Could not get login error\n{Doc}", document);
             return null;
         }
