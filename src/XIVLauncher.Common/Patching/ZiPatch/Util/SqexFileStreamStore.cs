@@ -38,7 +38,11 @@ namespace XIVLauncher.Common.Patching.ZiPatch.Util
         public void Dispose()
         {
             foreach (var stream in _streams.Values)
+            {
+                stream.Flush(true);
                 stream.Dispose();
+            }
+
             this._streams.Clear();
         }
     }
