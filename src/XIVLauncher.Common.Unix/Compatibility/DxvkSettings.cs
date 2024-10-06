@@ -22,11 +22,9 @@ public class DxvkSettings
         DownloadUrl = url;
         Enabled = enabled;
 
-        var dxvkConfigPath = new DirectoryInfo(Path.Combine(storageFolder, "compatibilitytool", "dxvk"));
         Environment = new Dictionary<string, string>
         {
             { "DXVK_LOG_PATH", Path.Combine(storageFolder, "logs") },
-            { "DXVK_CONFIG_FILE", Path.Combine(dxvkConfigPath.FullName, "dxvk.conf") },
         };
         
         if (maxFrameRate != 0)
@@ -35,7 +33,7 @@ public class DxvkSettings
         if (async)
             Environment.Add("DXVK_ASYNC", "1");
         
-        var dxvkCachePath = new DirectoryInfo(Path.Combine(dxvkConfigPath.FullName, "cache"));
+        var dxvkCachePath = new DirectoryInfo(Path.Combine(storageFolder, "compatibilitytool", "dxvk", "cache"));
         if (!dxvkCachePath.Exists) dxvkCachePath.Create();
         Environment.Add("DXVK_STATE_CACHE_PATH", Path.Combine(dxvkCachePath.FullName, folder));
 
