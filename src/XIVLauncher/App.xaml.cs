@@ -95,12 +95,6 @@ namespace XIVLauncher
         public static byte[] GlobalSteamTicket { get; private set; }
         public static DalamudUpdater DalamudUpdater { get; private set; }
 
-        public static Brush UaBrush = new LinearGradientBrush(new GradientStopCollection()
-        {
-            new(Color.FromArgb(0xFF, 0x00, 0x57, 0xB7), 0.5f),
-            new(Color.FromArgb(0xFF, 0xFF, 0xd7, 0x00), 0.5f),
-        }, 0.7f);
-
         public App()
         {
 #if !DEBUG
@@ -451,27 +445,6 @@ namespace XIVLauncher
                 }
             }
 #endif
-
-            try
-            {
-                if (App.Settings.LauncherLanguage == LauncherLanguage.Russian)
-                {
-                    var dict = new ResourceDictionary
-                    {
-                        { "PrimaryHueLightBrush", UaBrush },
-                        //{"PrimaryHueLightForegroundBrush", uaBrush},
-                        { "PrimaryHueMidBrush", UaBrush },
-                        //{"PrimaryHueMidForegroundBrush", uaBrush},
-                        { "PrimaryHueDarkBrush", UaBrush },
-                        //{"PrimaryHueDarkForegroundBrush", uaBrush},
-                    };
-                    this.Resources.MergedDictionaries.Add(dict);
-                }
-            }
-            catch
-            {
-                // ignored
-            }
 
             if (EnvironmentSettings.IsDisableUpdates)
             {
