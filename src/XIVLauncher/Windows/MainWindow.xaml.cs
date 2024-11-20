@@ -559,7 +559,7 @@ namespace XIVLauncher.Windows
             {
                 OauthLogin = new Launcher.OauthLoginResult
                 {
-                    MaxExpansion = 4,
+                    MaxExpansion = 5,
                     Playable = true,
                     Region = 0,
                     SessionId = "0",
