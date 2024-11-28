@@ -32,6 +32,7 @@ public class WindowsGameRunner : IGameRunner
                 _ => throw new ArgumentOutOfRangeException()
             };
             environment.Add("__COMPAT_LAYER", compat);
+            environment.Add("XL_PLATFORM", "Windows");
 
             var prevDalamudRuntime = Environment.GetEnvironmentVariable("DALAMUD_RUNTIME");
             if (string.IsNullOrWhiteSpace(prevDalamudRuntime))
