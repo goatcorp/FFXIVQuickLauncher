@@ -13,7 +13,8 @@ namespace XIVLauncher.Common.Windows
 {
     public class WindowsSteam : ISteam
     {
-        private const int MAX_INIT_TRIES_AFTER_START = 15;
+        //MATUK MOD BUG FIX
+        private const int MAX_INIT_TRIES_AFTER_START = 60;
 
         public Task? AsyncStartTask { get; private set; }
 

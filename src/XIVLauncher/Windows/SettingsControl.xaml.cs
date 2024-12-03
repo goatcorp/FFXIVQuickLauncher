@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -77,6 +77,10 @@ namespace XIVLauncher.Windows
 
             OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
 
+            //MATUK MOD
+            OTPCodeConfig.Text = App.Settings.OTPCodeConfig;
+
+
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
@@ -123,6 +127,10 @@ namespace XIVLauncher.Windows
                 App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.DllInject;
             else
                 App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.EntryPoint;
+
+            //MATUK
+            App.Settings.OTPCodeConfig = OTPCodeConfig.Text;
+
 
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
 
@@ -432,6 +440,11 @@ namespace XIVLauncher.Windows
         {
             var asw = new AdvancedSettingsWindow();
             asw.ShowDialog();
+        }
+
+        private void SetupTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
