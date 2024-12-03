@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -415,7 +415,7 @@ namespace XIVLauncher
             }
 
 #if !XL_NOAUTOUPDATE
-            if (!EnvironmentSettings.IsDisableUpdates)
+            if (false)
             {
                 try
                 {
@@ -473,7 +473,7 @@ namespace XIVLauncher
                 // ignored
             }
 
-            if (EnvironmentSettings.IsDisableUpdates)
+            if (false)
             {
                 OnUpdateCheckFinished(true);
                 return;

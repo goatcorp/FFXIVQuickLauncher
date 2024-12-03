@@ -45,5 +45,6 @@
     <ItemGroup>
         <!-- Custom steamworks, based on the chippy branch of Facepunch.Steamworks -->
         <PackageReference Include="goaaats.Steamworks" Version="2.3.4" />
+        <PackageReference Include="Otp.NET" Version="1.4.0" />
     </ItemGroup>
 </Project>

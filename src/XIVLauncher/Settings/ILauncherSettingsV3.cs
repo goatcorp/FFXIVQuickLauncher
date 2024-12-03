@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
@@ -16,6 +16,10 @@ namespace XIVLauncher.Settings
         bool AutologinEnabled { get; set; }
         List<AddonEntry> AddonList { get; set; }
         bool UniqueIdCacheEnabled { get; set; }
+
+        //MATUK MOD
+        string OTPCodeConfig { get; set; }
+
         string AdditionalLaunchArgs { get; set; }
         bool InGameAddonEnabled { get; set; }
         DalamudLoadMethod? InGameAddonLoadMethod { get; set; }

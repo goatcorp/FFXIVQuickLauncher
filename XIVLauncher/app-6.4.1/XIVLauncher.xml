@@ -1,0 +1,362 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>XIVLauncher</name>
+    </assembly>
+    <members>
+        <member name="T:XIVLauncher.App">
+            <summary>
+                Interaction logic for App.xaml
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.AppUtil.GetGitHash">
+            <summary>
+                Gets the git hash value from the assembly
+                or null if it cannot be found.
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.AppUtil.GetBuildOrigin">
+            <summary>
+                Gets the build origin from the assembly
+                or null if it cannot be found.
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.AppUtil.TryYellOnGameFilesBeingOpen(System.Windows.Window,System.Func{System.Int32,System.String})">
+            <summary>
+            Check if any file in the game directory is currently being used, and yell at the user if any.
+            
+            This function works on best effort basis, and is slow.
+            </summary>
+            <param name="parentWindow">Parent window.</param>
+            <param name="messageGenerator">Function that returns the relevant message.</param>
+            <returns>False if cancelled.</returns>
+        </member>
+        <member name="T:XIVLauncher.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Properties.Resources.dalamud_icon">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Properties.Resources.placeholder_news">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Support.Troubleshooting">
+            <summary>
+            Class responsible for printing troubleshooting information to the log.
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Support.Troubleshooting.LastException">
+            <summary>
+            Gets the most recent exception to occur.
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Support.Troubleshooting.LogException(System.Exception,System.String)">
+            <summary>
+            Log the last exception in a parseable format to serilog.
+            </summary>
+            <param name="exception">The exception to log.</param>
+            <param name="context">Additional context.</param>
+        </member>
+        <member name="M:XIVLauncher.Support.Troubleshooting.LogTroubleshooting">
+            <summary>
+            Log troubleshooting information in a parseable format to Serilog.
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.AccountSwitcher">
+            <summary>
+            Interaction logic for AccountSwitcher.xaml
+            </summary>
+            <summary>
+            AccountSwitcher
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.AccountSwitcher.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.AdvancedSettingsWindow">
+            <summary>
+                Interaction logic for FirstTimeSetup.xaml
+            </summary>
+            <summary>
+            AdvancedSettingsWindow
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.AdvancedSettingsWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.ChangelogWindow">
+            <summary>
+            Interaction logic for ErrorWindow.xaml
+            </summary>
+            <summary>
+            ChangelogWindow
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.ChangelogWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.CustomMessageBox">
+            <summary>
+            Interaction logic for CustomMessageBox.xaml
+            </summary>
+            <summary>
+            CustomMessageBox
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.CustomMessageBox.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.DalamudLoadingOverlay">
+            <summary>
+            Interaction logic for DalamudLoadingOverlay.xaml
+            </summary>
+            <summary>
+            DalamudLoadingOverlay
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.DalamudLoadingOverlay.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.FirstTimeSetup">
+            <summary>
+                Interaction logic for FirstTimeSetup.xaml
+            </summary>
+            <summary>
+            FirstTimeSetup
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.FirstTimeSetup.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.GameRepairProgressWindow">
+            <summary>
+                Interaction logic for GameRepairProgressWindow.xaml
+            </summary>
+            <summary>
+            GameRepairProgressWindow
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.GameRepairProgressWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.GenericAddonSetupWindow">
+            <summary>
+                Interaction logic for FirstTimeSetup.xaml
+            </summary>
+            <summary>
+            GenericAddonSetupWindow
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.GenericAddonSetupWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.IntegrityCheckProgressWindow">
+            <summary>
+                Interaction logic for FirstTimeSetup.xaml
+            </summary>
+            <summary>
+            IntegrityCheckProgressWindow
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.IntegrityCheckProgressWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.MainWindow">
+            <summary>
+                Interaction logic for MainWindow.xaml
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.OtpInputDialog">
+            <summary>
+            Interaction logic for OtpInputDialog.xaml
+            </summary>
+            <summary>
+            OtpInputDialog
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.OtpInputDialog.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.PatchDownloadDialog">
+            <summary>
+            Interaction logic for PatchDownloadDialog.xaml
+            </summary>
+            <summary>
+            PatchDownloadDialog
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.PatchDownloadDialog.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.ProfilePictureInputWindow">
+            <summary>
+            Interaction logic for FirstTimeSetup.xaml
+            </summary>
+            <summary>
+            ProfilePictureInputWindow
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.ProfilePictureInputWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.SettingsControl">
+            <summary>
+                Interaction logic for SettingsControl.xaml
+            </summary>
+            <summary>
+            SettingsControl
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.SettingsControl.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Windows.UpdateLoadingDialog">
+            <summary>
+            Interaction logic for OtpInputDialog.xaml
+            </summary>
+            <summary>
+            UpdateLoadingDialog
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Windows.UpdateLoadingDialog.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Windows.ViewModel.SettingsControlViewModel.IsRunIntegrityCheckPossible">
+            <summary>
+            Gets a value indicating whether the "Run Integrity Checks" button is enabled.
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Windows.ViewModel.SettingsControlViewModel.GamePath">
+            <summary>
+            Gets or sets the path to the game folder.
+            </summary>
+        </member>
+        <member name="P:XIVLauncher.Windows.ViewModel.SettingsControlViewModel.PatchPath">
+            <summary>
+            Gets or sets the path to the game folder.
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Xaml.Components.FileEntry">
+            <summary>
+            Interaction logic for FolderEntry.xaml
+            </summary>
+            <summary>
+            FileEntry
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Xaml.Components.FileEntry.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XIVLauncher.Xaml.Components.FolderEntry">
+            <summary>
+                Interaction logic for FolderEntry.xaml
+            </summary>
+            <summary>
+            FolderEntry
+            </summary>
+        </member>
+        <member name="M:XIVLauncher.Xaml.Components.FolderEntry.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XamlGeneratedNamespace.GeneratedInternalTypeHelper">
+            <summary>
+            GeneratedInternalTypeHelper
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            CreateInstance
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            GetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            SetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
+            <summary>
+            CreateDelegate
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
+            <summary>
+            AddEventHandler
+            </summary>
+        </member>
+    </members>
+</doc>

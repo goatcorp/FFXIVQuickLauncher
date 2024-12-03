@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>XIVLauncher.PatchInstaller</name>
+    </assembly>
+    <members>
+        <member name="M:XIVLauncher.PatchInstaller.Commands.CheckIntegrityCommand.RunThreadLimited``1(System.Collections.Generic.IEnumerable{System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{``0}}},System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Runs given tasks, up to <paramref name="numThreads"/> concurrent tasks active.
+            </summary>
+            <param name="tasks">Functions that return tasks to be run.</param>
+            <param name="numThreads">Number of active threads.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <typeparam name="T">Return type.</typeparam>
+            <returns>Enumerator for return values. Note that the order from <paramref name="tasks"/> is NOT preserved.</returns>
+            <exception cref="T:System.AggregateException">If any of the tasks fail.</exception>
+        </member>
+    </members>
+</doc>

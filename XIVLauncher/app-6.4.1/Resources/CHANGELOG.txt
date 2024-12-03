@@ -1,0 +1,2 @@
+* Fixed an issue wherein the launcher would crash when attempting to log in with an account that was not eligible to play
+* Fixed an issue wherein repair data files did not support new data layouts introduced in the latest patch (thanks to @srkizer)
