@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="XIVLauncher.Windows.SettingsControl"
+<UserControl x:Class="XIVLauncher.Windows.SettingsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -17,7 +17,7 @@
              d:DataContext="{d:DesignInstance viewModel:SettingsControlViewModel}">
     <Grid>
         <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl"
-                                 Style="{StaticResource MaterialDesignTabablzControlStyle}">
+                                 Style="{StaticResource MaterialDesignTabablzControlStyle}" SelectionChanged="SetupTabControl_SelectionChanged">
             <TabItem Header="{Binding SettingsGameLoc}">
                 <StackPanel Margin="10,10,0,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -37,7 +37,13 @@
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                Foreground="Red" Text="{Binding GamePathSafeguardLoc}" x:Name="GamePathSafeguardText" Visibility="Collapsed"/>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <TextBox Width="200" VerticalAlignment="Center"
+                            HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
+                            Margin="0,0,0,0" x:Name="OTPCodeConfig" materialDesign:HintAssist.Hint="Type your OTP code here" materialDesign:HintAssist.IsFloating="True"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,15,0,0" Visibility="Collapsed">
                         <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
                                   x:Name="OtpServerCheckBox" Content="{Binding OtpServerCheckBoxLoc}" ToolTip="{Binding OtpServerTooltipLoc}"/>
                         <Button Style="{DynamicResource MaterialDesignFlatButton}"

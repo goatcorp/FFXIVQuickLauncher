@@ -22,6 +22,7 @@ using XIVLauncher.Common.Util;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 using XIVLauncher.Xaml;
+using OtpNet;
 using Timer = System.Timers.Timer;
 
 namespace XIVLauncher.Windows
@@ -95,7 +96,7 @@ namespace XIVLauncher.Windows
 #endif
 
 #if !XL_NOAUTOUPDATE
-            if (EnvironmentSettings.IsDisableUpdates)
+            if (true)
 #endif
             {
                 Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";

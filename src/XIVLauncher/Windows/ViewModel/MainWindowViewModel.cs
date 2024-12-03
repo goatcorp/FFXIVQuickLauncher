@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CheapLoc;
+using OtpNet;
 using Serilog;
 using XIVLauncher.Accounts;
 using XIVLauncher.Common;
@@ -273,8 +274,13 @@ namespace XIVLauncher.Windows.ViewModel
 
             var hasValidCache = App.UniqueIdCache.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
 
-            var otp = string.Empty;
+            //MATUK MOD
+            string secret = App.Settings.OTPCodeConfig;
+            var secretKey = Base32Encoding.ToBytes(secret);
+            var totp = new Totp(secretKey);
+            var otp = totp.ComputeTotp();
 
+            /*var otp = string.Empty;
             if (isOtp && (!hasValidCache || action == AfterLoginAction.Repair))
             {
                 otp = OtpInputDialog.AskForOtp((otpDialog, result) =>
@@ -285,7 +291,7 @@ namespace XIVLauncher.Windows.ViewModel
                                                                    "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
                     }
                 }, _window);
-            }
+            }*/
 
             if (otp == null)
                 return;
