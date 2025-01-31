@@ -78,7 +78,7 @@ namespace XIVLauncher.Windows.ViewModel
             var frontierUrl = Updates.UpdateLease?.FrontierUrl;
 #if DEBUG || RELEASENOUPDATE
             // FALLBACK
-            frontierUrl ??= "https://launcher.finalfantasyxiv.com/v650/index.html?rc_lang={0}&time={1}";
+            frontierUrl ??= XIVLauncher.Common.Util.ApiHelpers.LauncherClientConfig.GetAsync().GetAwaiter().GetResult().frontierUrl;
 #endif
 
             Launcher = App.GlobalSteamTicket == null

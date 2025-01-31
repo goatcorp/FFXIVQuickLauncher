@@ -1,6 +1,10 @@
+using Serilog;
 using System;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Util;
 
@@ -94,5 +98,35 @@ public static class ApiHelpers
         var memInfo = type.GetMember(value.ToString());
         var attributes = memInfo[0].GetCustomAttributes(typeof(TAttribute), false);
         return (attributes.Length > 0) ? (TAttribute)attributes[0] : null;
+    }
+
+    /// <summary>
+    ///     Represents a response from Kamori's GetLauncherClientConfig endpoint.
+    /// </summary>
+    public struct LauncherClientConfig
+    {
+        public string frontierUrl { get; set; }
+        public string? cutOffBootver { get; set; }
+        public uint flags { get; set; }
+
+        public static async Task<LauncherClientConfig> GetAsync()
+        {
+            try
+            {
+                HttpClient HttpClient = new()
+                {
+                    Timeout = TimeSpan.FromSeconds(5)
+                };
+                return await HttpClient.GetFromJsonAsync<LauncherClientConfig>(Constants.LAUNCHER_CONFIG_URL).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not obtain LauncherClientConfig");
+                return new LauncherClientConfig()
+                {
+                    frontierUrl = Constants.FRONTIER_FALLBACK,
+                };
+            }
+        }
     }
 }
