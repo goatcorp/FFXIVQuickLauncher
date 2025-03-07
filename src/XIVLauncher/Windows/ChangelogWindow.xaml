@@ -5,13 +5,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
     mc:Ignorable="d"
     Title="XIVLauncher Update" Height="Auto" MaxWidth="800" WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
-    FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" Topmost="True">
+    FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" Topmost="True"
+    d:DataContext="{d:DesignInstance viewModel:ChangeLogWindowViewModel}">
     <StackPanel>
         <StackPanel>
             <StackPanel

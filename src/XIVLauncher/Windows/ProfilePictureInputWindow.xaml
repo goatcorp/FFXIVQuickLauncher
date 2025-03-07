@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
         mc:Ignorable="d"
         Title="{Binding ProfilePictureInputTitleLoc}" Height="268.361" Width="535.302" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        d:DataContext="{d:DesignInstance viewModel:ProfilePictureInputWindowViewModel}">
     <StackPanel>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Text="{Binding ProfilePictureInputDescriptionLoc}"/>
 

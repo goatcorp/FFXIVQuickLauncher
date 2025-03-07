@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
     mc:Ignorable="d"
     Title="XIVLauncher Error" Height="Auto" Width="Auto" WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
@@ -12,7 +13,8 @@
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
     FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-    SizeToContent="WidthAndHeight">
+    SizeToContent="WidthAndHeight"
+    d:DataContext="{d:DesignInstance viewModel:CustomMessageBoxViewModel}">
     <Grid MouseMove="CustomMessageBox_MouseMove">
         <StackPanel
             Orientation="Horizontal" Margin="10 10 10 50">

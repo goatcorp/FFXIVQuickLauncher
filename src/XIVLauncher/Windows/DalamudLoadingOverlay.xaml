@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
         mc:Ignorable="d"
         Title="XIVLauncher Update" WindowStartupLocation="Manual" Left="0" Top="0"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
@@ -14,7 +15,8 @@
         Background="Transparent" ShowInTaskbar="False"
         Topmost="True"
         WindowStyle="None" Height="186.088" Width="270"
-        Loaded="DalamudLoadingOverlay_OnLoaded">
+        Loaded="DalamudLoadingOverlay_OnLoaded"
+        d:DataContext="{d:DesignInstance viewModel:DalamudLoadingOverlayViewModel}">
     <Grid Margin="0,0,0,0">
         <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="124" Margin="0,0,56,0">
             <StackPanel Margin="16,16,16,0">

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
         mc:Ignorable="d"
         Title="Integrity check progress" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
@@ -12,7 +13,8 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="200" Width="263.516" Closing="GameRepairProgressWindow_OnClosing">
+        WindowStyle="None" Height="200" Width="263.516" Closing="GameRepairProgressWindow_OnClosing"
+        d:DataContext="{d:DesignInstance viewModel:GameRepairProgressWindowViewModel}">
     <Grid>
         <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="188" Margin="0,0,10,0">
             <StackPanel Margin="16,16,10,10">

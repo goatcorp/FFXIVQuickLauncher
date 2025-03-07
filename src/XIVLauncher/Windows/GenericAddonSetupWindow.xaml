@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XIVLauncher"
         xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
+        xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
         mc:Ignorable="d"
         Title="{Binding GenericAddonSetupTitleLoc}" Height="281.747" Width="533.495"
         WindowStartupLocation="CenterScreen"
@@ -12,7 +13,8 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        d:DataContext="{d:DesignInstance viewModel:GenericAddonSetupWindowViewModel}">
     <Grid>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"
                    Text="{Binding GenericAddonSetupDescriptionLoc}" />

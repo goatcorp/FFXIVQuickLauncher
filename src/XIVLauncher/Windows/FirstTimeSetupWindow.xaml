@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XIVLauncher"
         xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
+        xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
         mc:Ignorable="d"
         Title="XIVLauncher Setup" SizeToContent="Height" Width="450" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
-        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        d:DataContext="{d:DesignInstance viewModel:FirstTimeSetupViewModel}">
     <Grid>
         <TabControl IsEnabled="True" BorderThickness="0" x:Name="SetupTabControl"
                     Background="{DynamicResource MaterialDesignPaper}">
