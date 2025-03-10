@@ -43,10 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
   </ItemGroup>
 
