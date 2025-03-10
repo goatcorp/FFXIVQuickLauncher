@@ -1,21 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Windows;
-using CheapLoc;
 using Newtonsoft.Json;
 using Serilog;
-using Squirrel;
-using XIVLauncher.Accounts;
-using XIVLauncher.Common;
-using XIVLauncher.Common.Util;
 using XIVLauncher.Windows;
 
 #nullable enable
@@ -83,6 +72,7 @@ namespace XIVLauncher
 
         private const string FAKE_URL_PREFIX = "https://example.com/";
 
+        /*
         private class FakeSquirrelFileDownloader : IFileDownloader
         {
             private readonly Lease lease;
@@ -121,6 +111,7 @@ namespace XIVLauncher
                 throw new ArgumentException($"DownloadUrl called for unknown file: {url}");
             }
         }
+        */
 
         public class LeaseAcquisitionException : Exception
         {
@@ -130,6 +121,7 @@ namespace XIVLauncher
             }
         }
 
+        /*
         private class UpdateResult
         {
             public UpdateResult(UpdateManager manager, Lease lease)
@@ -176,7 +168,7 @@ namespace XIVLauncher
             var manager = new UpdateManager(FAKE_URL_PREFIX, "XIVLauncher", null, fakeDownloader);
 
             return new UpdateResult(manager, leaseData);
-        }
+        }*/
 
         public static async Task<ErrorNewsData?> GetErrorNews()
         {
@@ -209,6 +201,8 @@ namespace XIVLauncher
 
         public async Task Run(bool downloadPrerelease, ChangelogWindow changelogWindow)
         {
+            OnUpdateCheckFinished?.Invoke(true);
+            /*
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -346,6 +340,7 @@ namespace XIVLauncher
 
             // Reset security protocol after updating
             ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
+            */
         }
     }
 }
