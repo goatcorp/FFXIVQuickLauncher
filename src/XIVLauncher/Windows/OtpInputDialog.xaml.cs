@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -39,6 +39,7 @@ namespace XIVLauncher.Windows
             MouseMove += OtpInputDialog_OnMouseMove;
             Activated += (_, _) => OtpTextBox.Focus();
             GotFocus += (_, _) => OtpTextBox.Focus();
+            Topmost = App.Settings.OtpAlwaysOnTopEnabled;
         }
 
         public new bool? ShowDialog()

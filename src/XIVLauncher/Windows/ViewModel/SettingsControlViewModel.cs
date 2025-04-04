@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using CheapLoc;
@@ -72,6 +72,8 @@ namespace XIVLauncher.Windows.ViewModel
             OtpServerTooltipLoc = Loc.Localize("OtpServerTooltip", "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.");
             LearnMoreLoc = Loc.Localize("LearnMore", "Learn More");
             OtpLearnMoreTooltipLoc = Loc.Localize("OtpLearnMoreTooltipLoc", "Open a guide in your web browser.");
+            OtpAlwaysOnTopCheckBoxLoc = Loc.Localize("OtpAlwaysOnTopCheckBox", "Keep the OTP Window Always on Top");
+            OtpAlwaysOnTopTooltipLoc = Loc.Localize("OtpAlwaysOnTopTooltip", "This will keep the One Time Password Popup ontop of any window, even if it looses focus.");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
             ChooseDpiAwarenessLoc = Loc.Localize("ChooseDpiAwareness", "Game DPI Awareness");
             DpiAwarenessAwareLoc = Loc.Localize("DpiAwarenessAware", "Aware");
@@ -176,6 +178,8 @@ namespace XIVLauncher.Windows.ViewModel
         public string OtpServerTooltipLoc { get; private set; }
         public string LearnMoreLoc { get; private set; }
         public string OtpLearnMoreTooltipLoc { get; private set; }
+        public string OtpAlwaysOnTopCheckBoxLoc { get; private set; }
+        public string OtpAlwaysOnTopTooltipLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
         public string ChooseDpiAwarenessLoc { get; private set; }
         public string ChooseDpiAwarenessHintLoc { get; private set; }
