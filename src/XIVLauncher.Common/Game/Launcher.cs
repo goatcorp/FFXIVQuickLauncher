@@ -573,6 +573,7 @@ public class Launcher
         var request = new HttpRequestMessage(HttpMethod.Post,
                                              "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
 
+        // NOTE: HttpClient seems to automatically add Connection and Content-Type, declaring it here will add it twice!
         request.Headers.AddWithoutValidation("Host", request.RequestUri.Host);
         request.Headers.AddWithoutValidation("Cache-Control", "max-age=0");
         request.Headers.AddWithoutValidation("sec-ch-ua", "\"Microsoft Edge WebView2\";v=\"135\", \"Chromium\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Microsoft Edge\";v=\"135\"");
