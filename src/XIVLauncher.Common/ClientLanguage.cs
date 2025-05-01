@@ -35,5 +35,29 @@ namespace XIVLauncher.Common
                     return "en-gb";
             }
         }
+
+        public static string GetLangCodeLodestone(this ClientLanguage language, bool forceNa = false)
+        {
+            switch (language)
+            {
+                case ClientLanguage.Japanese:
+                    return "jp";
+
+                case ClientLanguage.English when GameHelpers.IsRegionNorthAmerica() || forceNa:
+                    return "na";
+
+                case ClientLanguage.English:
+                    return "eu";
+
+                case ClientLanguage.German:
+                    return "de";
+
+                case ClientLanguage.French:
+                    return "fr";
+
+                default:
+                    return "eu";
+            }
+        }
     }
 }
