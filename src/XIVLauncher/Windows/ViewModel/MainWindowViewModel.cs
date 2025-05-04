@@ -1120,8 +1120,8 @@ namespace XIVLauncher.Windows.ViewModel
                 Log.Error(ex, "No Dalamud Redists found");
 
                 CustomMessageBox.Show(
-                    Loc.Localize("DalamudVc2019RedistError",
-                        "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
+                    Loc.Localize("DalamudVc2022RedistError",
+                        "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2022 redistributable to be installed to continue. Please install it from the Microsoft homepage."),
                     "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: _window);
             }
             catch (IDalamudCompatibilityCheck.ArchitectureNotSupportedException ex)
