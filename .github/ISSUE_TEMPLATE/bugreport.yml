@@ -8,6 +8,14 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report! Please read all prompts on this page carefully and make sure that you have entered the relevant details **before** submitting.
+    - type: checkboxes
+    id: subscription
+    attributes:
+      label: Active Subscription disclaimer
+      description: In order to download FFXIV Game patch files, you need an active subscription. (Free Trial has an implicit active trial subscription)
+      options:
+        - label: Yes, I have checked on the Mog Station and my account subscription is active.
+          required: true
   - type: checkboxes
     id: terms
     attributes:
