@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Product>XIVLauncher.Common</Product>
         <AssemblyTitle>XIVLauncher.Common</AssemblyTitle>
@@ -52,6 +52,7 @@
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="SharedMemory" Version="2.3.2" />
         <PackageReference Include="System.Memory" Version="4.5.4" />
+        <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
         <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
         <PackageReference Include="System.Text.Json" Version="6.0.6" />
     </ItemGroup>
