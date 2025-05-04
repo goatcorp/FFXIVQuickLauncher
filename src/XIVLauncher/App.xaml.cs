@@ -23,6 +23,7 @@ using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Settings;
 using XIVLauncher.Settings.Parsers;
 using XIVLauncher.Support;
+using XIVLauncher.Utilities;
 using XIVLauncher.Windows;
 using XIVLauncher.Xaml;
 
@@ -297,6 +298,9 @@ namespace XIVLauncher
             {
                 // ignored
             }
+
+            // needs to be set early, and needs to be the same as what Squirrel sets for sanity's sake.
+            NativeFunctions.SetCurrentProcessExplicitAppUserModelID("com.squirrel.XIVLauncher.XIVLauncher");
 
             try
             {
