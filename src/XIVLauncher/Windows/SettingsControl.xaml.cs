@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +18,7 @@ using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
+using XIVLauncher.Common.Support;
 
 namespace XIVLauncher.Windows
 {
@@ -368,6 +369,84 @@ namespace XIVLauncher.Windows
             else
             {
                 GamePathSafeguardText.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ImportConfigButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var selectConfImportDialog = new Microsoft.Win32.OpenFileDialog();
+            selectConfImportDialog.InitialDirectory = Paths.RoamingPath;
+            selectConfImportDialog.DefaultExt = ".xlconf";
+            selectConfImportDialog.Filter = "XLConfig Export|*.xlconf";
+
+            // Show open file dialog box
+            bool? result = selectConfImportDialog.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                try
+                {
+                    // Open document
+                    string zipFile = selectConfImportDialog.FileName;
+
+                    //TODO: Localize this text like a good programmer
+                    
+                    var importConfirmPromptResult = CustomMessageBox.Show(Loc.Localize("ConfigImportPrompt1", "XIVLauncher is going to import config from the file you selected.\n\n") + zipFile + Loc.Localize("ConfigImportPrompt2", "\n\nThis will overwrite any files that already exist.\n\nDo you want to proceed?"),
+                        Loc.Localize("ConfigImportPromptTitle", "Import config file?"), MessageBoxButton.YesNo);
+
+                    if (importConfirmPromptResult == MessageBoxResult.Yes)
+                    {
+                        var window = new ConfigImportExportProgressWindow();
+                        window.SetTitle(Loc.Localize("ConfigImportRunning", "Running config import..."));
+
+                        Task.Run(() => DalamudAndPluginConfigImportExport.ImportConfig(zipFile, Paths.RoamingPath)).ContinueWith(async task =>
+                        {
+                            await task;
+                            window.Dispatcher.Invoke(() => window.Close());
+
+                            CustomMessageBox.Show(Loc.Localize("ConfigImportSuccess", "Dalamud and Plugin configuration import completed."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
+                        });
+
+                        window.ShowDialog();
+                    }
+                    if (importConfirmPromptResult == MessageBoxResult.No)
+                    {
+                        CustomMessageBox.Show(Loc.Localize("ConfigImportCancelled", "Dalamud and Plugin configuration import cancelled."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CustomMessageBox.Show(ex.ToString(), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+            }
+        }
+        private void ExportConfigButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var window = new ConfigImportExportProgressWindow();
+                window.SetTitle(Loc.Localize("ConfigExportRunning", "Running config export..."));
+
+                Task.Run(async () => await DalamudAndPluginConfigImportExport.ExportConfig(Paths.RoamingPath)).ContinueWith(async task =>
+                {
+                    var filename = await task;
+                    window.Dispatcher.Invoke(() => window.Close());
+
+                    var exportedFile = new FileInfo(filename);
+
+                    
+                    CustomMessageBox.Show(Loc.Localize("ConfigExportSuccess", "Exported config as ") + exportedFile.Name, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Process.Start("explorer.exe", $"/select, \"{filename}\"");
+                });               
+
+                window.ShowDialog();
+
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show(ex.ToString(), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

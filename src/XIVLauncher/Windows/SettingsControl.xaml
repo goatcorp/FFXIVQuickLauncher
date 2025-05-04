@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="XIVLauncher.Windows.SettingsControl"
+<UserControl x:Class="XIVLauncher.Windows.SettingsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -193,6 +193,24 @@
                                 <RadioButton GroupName="dalamudLoadMethod" x:Name="DllInjectDalamudLoadMethodRadioButton"
                                              Foreground="{DynamicResource MaterialDesignBody}"
                                              Content="{Binding InGameAddonLoadMethodDllInjectLoc}" ToolTip="{Binding InGameAddonLoadMethodDllInjectDescriptionLoc}" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button  x:Name="ImportConfig"
+                                    Content="{Binding ImportConfigLoc}"
+                                    HorizontalAlignment="Left" Margin="0,7,0,7" Click="ImportConfigButton_OnClick">
+                                        <Button.ToolTip>
+                                            <TextBlock Text="{Binding ImportConfigTipLoc}" />
+                                        </Button.ToolTip>
+                                    </Button>
+                                    <Button x:Name="ExportConfig"
+                                    Content="{Binding ExportConfigLoc}"
+                                    HorizontalAlignment="Left" Margin="7,7,0,7" Click="ExportConfigButton_OnClick">
+                                        <Button.ToolTip>
+                                            <TextBlock Text="{Binding ExportConfigTipLoc}" />
+                                        </Button.ToolTip>
+                                    </Button>
+                                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="7,15,0,0"
+                                           Foreground="DarkGray" Text="{Binding ImportExportConfigDescLoc}" />
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
