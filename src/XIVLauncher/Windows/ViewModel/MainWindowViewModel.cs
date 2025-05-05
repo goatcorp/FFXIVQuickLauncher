@@ -259,6 +259,7 @@ namespace XIVLauncher.Windows.ViewModel
             }
 
             username = username.Replace(" ", string.Empty); // Remove whitespace
+            YubiAuth.SetUsername(username);
 
             if (Repository.Ffxiv.GetVer(App.Settings.GamePath) == Constants.BASE_GAME_VERSION &&
                 App.Settings.UniqueIdCacheEnabled)

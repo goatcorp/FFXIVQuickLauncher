@@ -725,3 +725,4 @@ aria2                                     https://github.com/aria2/aria2/blob/ma
 Spooky                                    https://github.com/Yortw/Spooky/blob/master/LICENSE                                    
 AriaNet                                   https://creativecommons.org/licenses/by-nc-sa/3.0/au/                                  
 SharedMemory                              https://github.com/spazzarama/SharedMemory/blob/master/LICENSE.md
+Yubico.NET.SDK                            https://github.com/Yubico/Yubico.NET.SDK/blob/develop/LICENSE.txt
