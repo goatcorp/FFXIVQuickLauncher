@@ -314,7 +314,22 @@ namespace XIVLauncher.Windows
                 App.Settings.AutologinEnabled = false;
                 AutoLoginCheckBox.IsChecked = false;
             }
-
+            
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && Keyboard.Modifiers.HasFlag(ModifierKeys.Alt))
+            {
+                List<DirectoryInfo> directoriesToDelete = new List<DirectoryInfo>();
+                directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "installedPlugins")));
+                directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon", "Hooks")));
+                directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets")));
+                directoriesToDelete.Add(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "pluginConfigs")));
+                foreach (var directory in directoriesToDelete)
+                {
+                    if (directory.Exists)
+                        directory.Delete(true);
+                }
+                CustomMessageBox.Show("Dalamud files, installed plugins and their configuration files were deleted.", "Dalamud cleanup.");
+            }
+            
             if (App.Settings.GamePath?.Exists != true)
             {
                 var setup = new FirstTimeSetup();
