@@ -69,7 +69,10 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.42,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.41,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.40,bundle",
-            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.39,bundle",
+
+            // legacy checks. As of Dalamud 13.0.0, we need to enforce the user has vcrun2022, not just 2015+
+            /*
+                        @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.39,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.38,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.37,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.36,bundle",
@@ -79,9 +82,6 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.32,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.31,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.30,bundle",
-            // legacy checks. As of Dalamud 13.0.0, we need to enforce the user has vcrun2022, not just 2015+
-            /*
-            
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.29,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.28,bundle",
             // technically, this was introduced in VCrun2017 with 14.16
@@ -117,7 +117,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
                 regEntryVersionString = regEntryVersionString.TrimStart('v');
             Version.TryParse(regEntryVersionString, out var regEntryVersion);
 
-            if (regEntryVersion >= new Version("14.30.0"))
+            if (regEntryVersion >= new Version("14.40.0"))
             {
                 passedRegistry = true;
                 Log.Debug("Passed Registry Check with: " + path);
