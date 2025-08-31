@@ -12,17 +12,14 @@ using CommandLine;
 using Config.Net;
 using Newtonsoft.Json;
 using Serilog;
-using Serilog.Events;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Common.Support;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Settings;
 using XIVLauncher.Settings.Parsers;
-using XIVLauncher.Support;
 using XIVLauncher.Windows;
 using XIVLauncher.Xaml;
 
@@ -116,14 +113,6 @@ namespace XIVLauncher
 #endif
         }
 
-        private static void OnSerilogLogLine(object sender, (string Line, LogEventLevel Level, DateTimeOffset TimeStamp, Exception Exception) e)
-        {
-            if (e.Exception == null)
-                return;
-
-            Troubleshooting.LogException(e.Exception, e.Line);
-        }
-
         private void SetupSettings()
         {
             Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
@@ -169,7 +158,7 @@ namespace XIVLauncher
         {
             Dispatcher.Invoke(() =>
             {
-                _useFullExceptionHandler = true;
+                this.useFullExceptionHandler = true;
 
 #if !XL_NOAUTOUPDATE
                 if (_updateWindow != null)
@@ -251,7 +240,7 @@ namespace XIVLauncher
             Environment.Exit(0);
         }
 
-        private bool _useFullExceptionHandler = false;
+        private bool useFullExceptionHandler = false;
 
         private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
@@ -265,7 +254,7 @@ namespace XIVLauncher
             {
                 Log.Error((Exception)e.ExceptionObject, "Unhandled exception");
 
-                if (_useFullExceptionHandler)
+                if (this.useFullExceptionHandler)
                 {
                     CustomMessageBox.Builder
                                     .NewFrom((Exception)e.ExceptionObject, "Unhandled", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
@@ -296,22 +285,6 @@ namespace XIVLauncher
             catch
             {
                 // ignored
-            }
-
-            try
-            {
-                LogInit.Setup(
-                    Path.Combine(Paths.RoamingPath, "output.log"),
-                    Environment.GetCommandLineArgs());
-
-                Log.Information("========================================================");
-                Log.Information("Starting a session(v{Version} - {Hash})", AppUtil.GetAssemblyVersion(), AppUtil.GetGitHash());
-
-                SerilogEventSink.Instance.LogLine += OnSerilogLogLine;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Could not set up logging. Please report this error.\n\n" + ex.Message, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             try

@@ -75,6 +75,7 @@
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.2" />
     <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
     <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
+    <PackageReference Include="Velopack" Version="0.0.1298" />
   </ItemGroup>
 
   <ItemGroup>
