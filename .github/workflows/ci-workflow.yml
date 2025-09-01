@@ -71,7 +71,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ./src/Releases/**
+          files: ./src/XIVLauncher/Releases/**
           name: Release ${{ steps.build-velopack.outputs.version }}
           body_path:  RELEASE.md
           prerelease: true
