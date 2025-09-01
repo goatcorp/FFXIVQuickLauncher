@@ -75,11 +75,13 @@ jobs:
           name: Release ${{ steps.build-velopack.outputs.version }}
           body_path:  RELEASE.md
           prerelease: true
-      - name: VirusTotal Scan
-        uses: crazy-max/ghaction-virustotal@a3f74cfd584b0658320aec5e94ab6a8d16dca05f
-        with:
-          vt_api_key: ${{ secrets.VT_API_KEY }}
-          files: ./src/XIVLauncher/Releases/*.exe
+
+      # Disabled, file too large now that we're doing self-contained
+      #- name: VirusTotal Scan
+      #  uses: crazy-max/ghaction-virustotal@a3f74cfd584b0658320aec5e94ab6a8d16dca05f
+      #  with:
+      #    vt_api_key: ${{ secrets.VT_API_KEY }}
+      #    files: ./src/XIVLauncher/Releases/*.exe
 
   build:
     name: Build on Windows
