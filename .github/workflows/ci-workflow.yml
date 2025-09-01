@@ -56,6 +56,7 @@ jobs:
           Start-Sleep -s 60
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
+          rm ".\Releases\XIVLauncher-win-Portable.zip"
       - name: Attest Setup
         if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
         uses: actions/attest-build-provenance@v1
