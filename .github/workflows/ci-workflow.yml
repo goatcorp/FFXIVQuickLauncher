@@ -5,7 +5,7 @@ concurrency: build_xl
 jobs:
   build-release:
     name: Build Release on Windows
-    #if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: windows-2022
     permissions:
       id-token: write
@@ -52,18 +52,20 @@ jobs:
           Invoke-WebRequest -Uri $full_file.browser_download_url -OutFile ".\Releases\$($full_file.name)"
           $setup_file = $current.assets | Where-Object -Property name -Value "Setup.exe" -EQ
           Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\Setup.exe
-          vpk pack -u XIVLauncher -v 9.9.9 -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico
+          vpk pack -u XIVLauncher -v $refver -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico
           Start-Sleep -s 60
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
       - name: Attest Setup
-        #if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
+        if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: |
-            src/Releases/*.exe
-            src/Releases/*.nupkg
-            src/Releases/RELEASES
+            src/XIVLauncher/Releases/*.exe
+            src/XIVLauncher/Releases/*.nupkg
+            src/XIVLauncher/Releases/RELEASES
+            src/XIVLauncher/Releases/releases.win.json
+            src/XIVLauncher/Releases/assets.win.json
       #- name: Create Release
       #  uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
       #  env:
@@ -77,7 +79,7 @@ jobs:
         uses: crazy-max/ghaction-virustotal@a3f74cfd584b0658320aec5e94ab6a8d16dca05f
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
-          files: ./src/Releases/*.exe
+          files: ./src/XIVLauncher/Releases/*.exe
 
   build:
     name: Build on Windows
