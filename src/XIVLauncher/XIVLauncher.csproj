@@ -12,7 +12,6 @@
     <UseWPF>true</UseWPF>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
-    <OutputPath>..\bin\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <StartupObject>XIVLauncher.Program</StartupObject>
   </PropertyGroup>
