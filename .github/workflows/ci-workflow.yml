@@ -66,15 +66,15 @@ jobs:
             src/XIVLauncher/Releases/RELEASES
             src/XIVLauncher/Releases/releases.win.json
             src/XIVLauncher/Releases/assets.win.json
-      #- name: Create Release
-      #  uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #  with:
-      #    files: ./src/Releases/**
-      #    name: Release ${{ steps.build-velopack.outputs.version }}
-      #    body_path:  RELEASE.md
-      #    prerelease: true
+      - name: Create Release
+        uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ./src/Releases/**
+          name: Release ${{ steps.build-velopack.outputs.version }}
+          body_path:  RELEASE.md
+          prerelease: true
       - name: VirusTotal Scan
         uses: crazy-max/ghaction-virustotal@a3f74cfd584b0658320aec5e94ab6a8d16dca05f
         with:
