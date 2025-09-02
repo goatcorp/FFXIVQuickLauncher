@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -15,6 +15,7 @@ namespace XIVLauncher.Common.Game.Patch
     {
         private readonly bool keepPatches;
         private IRpc rpc;
+        private readonly DirectoryInfo gamepath;
 
         private RemotePatchInstaller? internalPatchInstaller;
 
@@ -31,9 +32,29 @@ namespace XIVLauncher.Common.Game.Patch
 
         public event Action OnFail;
 
-        public PatchInstaller(bool keepPatches)
+        public PatchInstaller(DirectoryInfo gamepath, bool keepPatches)
         {
+            this.gamepath = gamepath;
             this.keepPatches = keepPatches;
+        }
+
+        private bool AdminAccessRequired(string gameRootPath)
+        {
+            string tempFn;
+            do
+            {
+                tempFn = Path.Combine(gameRootPath, Guid.NewGuid().ToString());
+            } while (File.Exists(tempFn));
+            try
+            {
+                File.WriteAllText(tempFn, "");
+                File.Delete(tempFn);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return true;
+            }
+            return false;
         }
 
         public void StartIfNeeded(bool external = true)
@@ -54,8 +75,10 @@ namespace XIVLauncher.Common.Game.Patch
                 startInfo.UseShellExecute = true;
 
                 //Start as admin if needed
-                if (!EnvironmentSettings.IsNoRunas && Environment.OSVersion.Version.Major >= 6)
-                    startInfo.Verb = "runas";
+                startInfo.Verb = (AdminAccessRequired(gamepath.FullName) // adapted from PatchVerifier
+                    && !EnvironmentSettings.IsNoRunas 
+                    && Environment.OSVersion.Version.Major >= 6) 
+                    ? "runas" : "open";
 
                 if (!Debugger.IsAttached)
                 {

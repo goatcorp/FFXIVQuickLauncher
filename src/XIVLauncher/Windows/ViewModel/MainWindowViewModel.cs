@@ -1368,7 +1368,7 @@ namespace XIVLauncher.Windows.ViewModel
                 }))
                 return false;
 
-            using var installer = new Common.Game.Patch.PatchInstaller(App.Settings.KeepPatches ?? false);
+            using var installer = new Common.Game.Patch.PatchInstaller(App.Settings.GamePath, App.Settings.KeepPatches ?? false);
             var patcher = new PatchManager(App.Settings.PatchAcquisitionMethod ?? AcquisitionMethod.Aria, App.Settings.SpeedLimitBytes,
                 repository, pendingPatches, App.Settings.GamePath, App.Settings.PatchPath, installer, this.Launcher, sid);
             patcher.OnFail += this.PatcherOnFail;
