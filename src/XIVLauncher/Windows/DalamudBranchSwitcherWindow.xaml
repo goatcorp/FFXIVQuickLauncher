@@ -56,7 +56,9 @@
             </Grid.ColumnDefinitions>
             <Button Content="Have a beta key?" Height="32" Width="160" Grid.Column="0" HorizontalAlignment="Left" Click="BetaKeyButton_Click" />
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
-                <Button Content="Never mind" Height="32" Width="120" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="Gray" Margin="0,0,10,0" Click="NeverMindButton_Click" />
+                <Border BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}" BorderThickness="2" CornerRadius="4" Margin="0,0,10,0" HorizontalAlignment="Left">
+                    <Button Content="Never mind" Height="32" Width="120" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="Gray" Click="NeverMindButton_Click" />
+                </Border>
                 <Button Content="Switch Branch" Width="150" Height="32" Click="SwitchBranchButton_Click" />
             </StackPanel>
         </Grid>
