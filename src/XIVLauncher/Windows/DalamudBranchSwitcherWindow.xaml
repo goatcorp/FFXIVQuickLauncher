@@ -46,7 +46,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" />
-                <DataGridTextColumn Header="Runtime Version" Binding="{Binding RuntimeVersion}" Width="*" />
+                <DataGridTextColumn Header="Version" Binding="{Binding AssemblyVersion}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
         <Grid Margin="10" Grid.Row="2">
