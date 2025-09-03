@@ -8,12 +8,12 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class DalamudBranchSwitcherWindow : Window
     {
-        private BranchSwitcherViewModel Model => this.DataContext as BranchSwitcherViewModel;
+        private DalamudBranchSwitcherViewModel Model => this.DataContext as DalamudBranchSwitcherViewModel;
 
         public DalamudBranchSwitcherWindow()
         {
             InitializeComponent();
-            DataContext = new BranchSwitcherViewModel();
+            DataContext = new DalamudBranchSwitcherViewModel();
             Loaded += DalamudBranchSwitcherWindow_Loaded;
         }
 
