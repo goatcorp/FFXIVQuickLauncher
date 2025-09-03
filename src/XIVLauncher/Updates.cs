@@ -121,7 +121,7 @@ namespace XIVLauncher
                 if (fileNeeded.StartsWith("RELEASES", StringComparison.Ordinal))
                     return Task.FromResult(Encoding.UTF8.GetBytes(lease.ReleasesList));
 
-                if (fileNeeded.Equals("releases.win.json", StringComparison.Ordinal) && !string.IsNullOrEmpty(lease.ReleasesJson))
+                if (fileNeeded.StartsWith("releases.win.json", StringComparison.Ordinal) && !string.IsNullOrEmpty(lease.ReleasesJson))
                     return Task.FromResult(Encoding.UTF8.GetBytes(lease.ReleasesJson));
 
                 throw new ArgumentException($"DownloadUrl called for unknown file: {url}");
@@ -135,7 +135,7 @@ namespace XIVLauncher
                 if (fileNeeded.StartsWith("RELEASES", StringComparison.Ordinal))
                     return Task.FromResult(lease.ReleasesList);
 
-                if (fileNeeded.Equals("releases.win.json", StringComparison.Ordinal) && !string.IsNullOrEmpty(lease.ReleasesJson))
+                if (fileNeeded.StartsWith("releases.win.json", StringComparison.Ordinal) && !string.IsNullOrEmpty(lease.ReleasesJson))
                     return Task.FromResult(lease.ReleasesJson);
 
                 throw new ArgumentException($"DownloadUrl called for unknown file: {url}");
