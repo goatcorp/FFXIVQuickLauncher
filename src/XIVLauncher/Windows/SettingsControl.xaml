@@ -171,6 +171,18 @@
                                 <TextBlock Foreground="DarkGray" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,2,0,0"
                                            Text="{Binding InGameAddonCommandHintLoc}" />
                             </StackPanel>
+                            
+                            <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Left"
+                                    Click="OpenDalamudBranchSwitcher_OnClick" Margin="10 5 0 5">
+                                <Button.ToolTip>
+                                    <TextBlock Text="{Binding OpenDalamudBranchSwitcherTipLoc}" />
+                                </Button.ToolTip>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
+                                               Foreground="DarkGray" FontSize="12" Text="{Binding OpenDalamudBranchSwitcherLoc}"/>
+                                </StackPanel>
+                            </Button>
 
                             <StackPanel Margin="22,0,0,0"
                                         IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">

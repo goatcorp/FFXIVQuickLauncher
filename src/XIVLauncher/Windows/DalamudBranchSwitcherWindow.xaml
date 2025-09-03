@@ -1,0 +1,54 @@
+﻿<Window
+    x:Class="XIVLauncher.Windows.DalamudBranchSwitcherWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    mc:Ignorable="d"
+    Title="XIVLauncher - Dalamud Branch Switcher" Height="400" MaxWidth="1200" Width="850" WindowStartupLocation="CenterScreen"
+    Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="CanResize" SizeToContent="Manual"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    Background="{DynamicResource MaterialDesignPaper}"
+    TextElement.FontWeight="Medium"
+    FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Select a Dalamud branch" Margin="10" FontWeight="Bold" FontSize="16" />
+            <TextBlock Text="Select a branch from the list below to switch your Dalamud version. Hidden branches require a key to unlock." Margin="10,0,10,10" TextWrapping="Wrap" Foreground="DarkGray" FontSize="13" />
+            <TextBlock Text="Dalamud developers sometimes share these keys when they would like you to test new features." Margin="10,0,10,10" TextWrapping="Wrap" Foreground="DarkGray" FontSize="13" />
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding Branches}" SelectedItem="{Binding SelectedBranch}" AutoGenerateColumns="False" Margin="10" Grid.Row="1" IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserReorderColumns="False"
+                  CanUserSortColumns="False"
+                  CanUserResizeRows="False"
+                  CanUserResizeColumns="False"
+                  SelectionMode="Single"
+                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="*" />
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" />
+                <DataGridTextColumn Header="Runtime Version" Binding="{Binding RuntimeVersion}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Margin="10" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Content="Have a beta key?" Height="32" Width="160" Grid.Column="0" HorizontalAlignment="Left" Click="BetaKeyButton_Click" />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                <Button Content="Never mind" Height="32" Width="120" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="Gray" Margin="0,0,10,0" Click="NeverMindButton_Click" />
+                <Button Content="Switch Branch" Width="150" Height="32" Click="SwitchBranchButton_Click" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -39,16 +39,16 @@ public static class Program
             VelopackApp.Build()
                        .SetLogger(serilogLogger)
                        .Run();
-
-            // Now run the WPF app.
-            var app = new App();
-            app.InitializeComponent();
-            app.Run();
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Could not run XIVLauncher. Please report this error.\n\n" + ex, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("Could not update XIVLauncher. Please report this error.\n\n" + ex, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        // Now run the WPF app.
+        var app = new App();
+        app.InitializeComponent();
+        app.Run();
     }
 
     private static void OnSerilogLogLine(object sender, (string Line, LogEventLevel Level, DateTimeOffset TimeStamp, Exception Exception) e)

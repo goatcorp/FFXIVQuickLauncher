@@ -195,7 +195,10 @@ namespace XIVLauncher
                     while (DalamudUpdater.Overlay == null)
                         Thread.Yield();
 
-                    DalamudUpdater.Run(Updates.HaveFeatureFlag(Updates.LeaseFeatureFlags.ForceProxyDalamudAndAssets));
+                    DalamudUpdater.Run(
+                        Settings.DalamudBetaKind,
+                        Settings.DalamudBetaKey,
+                        Updates.HaveFeatureFlag(Updates.LeaseFeatureFlags.ForceProxyDalamudAndAssets));
                 }
                 catch (Exception ex)
                 {

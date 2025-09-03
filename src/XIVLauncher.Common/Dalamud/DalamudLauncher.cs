@@ -94,7 +94,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 Language = language,
                 PluginDirectory = ingamePluginPath,
-                ConfigurationPath = DalamudSettings.GetConfigPath(this.configDirectory),
+                ConfigurationPath = GetConfigPath(this.configDirectory),
                 LoggingPath = this.logPath.FullName,
                 AssetDirectory = this.updater.AssetDirectory.FullName,
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
@@ -160,5 +160,7 @@ namespace XIVLauncher.Common.Dalamud
 
             return true;
         }
+
+        private static string GetConfigPath(DirectoryInfo configFolder) => Path.Combine(configFolder.FullName, "dalamudConfig.json");
     }
 }

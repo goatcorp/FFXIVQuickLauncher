@@ -371,6 +371,16 @@ namespace XIVLauncher.Windows
             }
         }
 
+        private void OpenDalamudBranchSwitcher_OnClick(object sender, RoutedEventArgs e)
+        {
+            var window = new DalamudBranchSwitcherWindow
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            window.ShowDialog();
+        }
+
         private void LicenseText_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
             Process.Start(Path.Combine(Paths.ResourcesPath, "LICENSE.txt"));

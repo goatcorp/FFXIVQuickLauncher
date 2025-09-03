@@ -161,6 +161,9 @@ namespace XIVLauncher.Windows.ViewModel
             OpenAdvancedSettingsLoc = Loc.Localize("OpenAdvancedSettings", "Open Advanced Settings");
             OpenAdvancedSettingsTipLoc = Loc.Localize("OpenAdvancedSettingsTip", "Opens some settings for advanced users. Please only use these if you know what you're doing.");
 
+            OpenDalamudBranchSwitcherLoc = Loc.Localize("OpenDalamudBranchSwitcher", "Switch Dalamud Branch");
+            OpenDalamudBranchSwitcherTipLoc = Loc.Localize("OpenDalamudBranchSwitcherTip", "Open an interface that lets you opt into testing releases for Dalamud.");
+
             PluginDisabledTagLoc = Loc.Localize("DisabledPlugin", " (disabled)");
         }
 
@@ -245,6 +248,8 @@ namespace XIVLauncher.Windows.ViewModel
         public string IsFreeTrialLoc { get; private set; }
         public string OpenAdvancedSettingsLoc { get; private set; }
         public string OpenAdvancedSettingsTipLoc { get; private set; }
+        public string OpenDalamudBranchSwitcherLoc { get; private set; }
+        public string OpenDalamudBranchSwitcherTipLoc { get; private set; }
 
         public string PluginDisabledTagLoc { get; private set; }
     }
