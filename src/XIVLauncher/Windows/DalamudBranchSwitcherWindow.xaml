@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="XIVLauncher.Windows.DalamudBranchSwitcherWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -56,10 +56,8 @@
             </Grid.ColumnDefinitions>
             <Button Content="Have a beta key?" Height="32" Width="160" Grid.Column="0" HorizontalAlignment="Left" Click="BetaKeyButton_Click" />
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
-                <Border BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}" BorderThickness="2" CornerRadius="4" Margin="0,0,10,0" HorizontalAlignment="Left">
-                    <Button Content="Never mind" Height="32" Width="120" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="Gray" Click="NeverMindButton_Click" />
-                </Border>
-                <Button Content="Switch Branch" Width="150" Height="32" Click="SwitchBranchButton_Click" />
+                <Button Content="Switch Branch" Width="150" Height="32" Margin="0,0,10,0" Click="SwitchBranchButton_Click" />
+                <Button Content="Never mind" Style="{StaticResource MaterialDesignRaisedCancelButton}" Width="150" Height="32" Click="NeverMindButton_Click" />
             </StackPanel>
         </Grid>
     </Grid>

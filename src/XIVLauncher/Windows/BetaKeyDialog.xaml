@@ -18,8 +18,8 @@
         <TextBlock Text="Enter your beta key to unlock hidden branches." Grid.Row="0" Margin="0,0,0,10" FontSize="14"/>
         <TextBox x:Name="BetaKeyTextBox" Grid.Row="1" Height="32" materialDesign:HintAssist.Hint="Beta Key" Margin="0,0,0,10" />
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Cancel" Width="80" Margin="0,0,10,0" Click="CancelButton_Click" />
-            <Button Content="Unlock" Width="80" Click="UnlockButton_Click" />
+            <Button Content="Unlock" Width="80" Margin="0,0,10,0" Click="UnlockButton_Click" />
+            <Button Content="Cancel" Width="80" Click="CancelButton_Click" Style="{StaticResource MaterialDesignRaisedCancelButton}" />
         </StackPanel>
     </Grid>
 </Window>
