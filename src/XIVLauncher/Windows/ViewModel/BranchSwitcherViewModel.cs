@@ -34,6 +34,16 @@ namespace XIVLauncher.Windows.ViewModel
         public string SupportedGameVer { get; set; }
         [JsonPropertyName("isApplicableForCurrentGameVer")]
         public bool IsApplicableForCurrentGameVer { get; set; }
+
+        public string DisplayNameWithAvailability
+        {
+            get
+            {
+                if (!IsApplicableForCurrentGameVer)
+                    return $"{DisplayName} (unavailable)";
+                return DisplayName;
+            }
+        }
     }
 
     public class BranchSwitcherViewModel : INotifyPropertyChanged
@@ -81,7 +91,7 @@ namespace XIVLauncher.Windows.ViewModel
             {
                 foreach (var branch in dict.Values)
                 {
-                    if ((!branch.Hidden || (branch.Hidden && branch.Key == this.AppliedBetaKey)) && branch.IsApplicableForCurrentGameVer)
+                    if (!branch.Hidden || (branch.Hidden && branch.Key == this.AppliedBetaKey))
                         Branches.Add(branch);
                 }
             }

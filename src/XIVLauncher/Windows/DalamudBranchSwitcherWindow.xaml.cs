@@ -19,6 +19,7 @@ namespace XIVLauncher.Windows
 
         private async void DalamudBranchSwitcherWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            Model.AppliedBetaKey = App.Settings.DalamudBetaKey;
             await Model.FetchBranchesAsync();
         }
 
@@ -26,6 +27,12 @@ namespace XIVLauncher.Windows
         {
             if (Model.SelectedBranch != null)
             {
+                if (!Model.SelectedBranch.IsApplicableForCurrentGameVer && Model.SelectedBranch.Track != "release")
+                {
+                    MessageBox.Show("This branch is not available for the current game version.\nDalamud needs to be updated after patches, which may take a while.", "Unavailable Branch", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 App.Settings.DalamudBetaKind = Model.SelectedBranch.Track;
                 App.Settings.DalamudBetaKey = Model.SelectedBranch.Key;
 

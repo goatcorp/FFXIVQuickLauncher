@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d"
-    Title="XIVLauncher - Dalamud Branch Switcher" Height="400" MaxWidth="1200" Width="850" WindowStartupLocation="CenterScreen"
+    Title="XIVLauncher - Dalamud Branch Switcher" Height="400" MaxWidth="1200" Width="920" WindowStartupLocation="CenterScreen"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="CanResize" SizeToContent="Manual"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
@@ -34,7 +34,17 @@
                   VerticalAlignment="Stretch"
                   HorizontalAlignment="Stretch">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="*" />
+                <DataGridTextColumn Header="Name" Binding="{Binding DisplayNameWithAvailability}" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsApplicableForCurrentGameVer}" Value="False">
+                                    <Setter Property="Foreground" Value="Red" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*" />
                 <DataGridTextColumn Header="Runtime Version" Binding="{Binding RuntimeVersion}" Width="*" />
             </DataGrid.Columns>
