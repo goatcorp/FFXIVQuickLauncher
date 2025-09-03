@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -78,6 +78,7 @@ namespace XIVLauncher.Windows
                 case MessageBoxButton.OKCancel:
                     Button1.Content = builder.OkButtonText ?? ViewModel.OkLoc;
                     Button2.Content = builder.CancelButtonText ?? ViewModel.CancelWithShortcutLoc;
+                    Button2.Style = (Style)this.FindResource("MaterialDesignRaisedCancelButton");
                     Button3.Visibility = Visibility.Collapsed;
                     (builder.DefaultResult switch
                     {
@@ -89,7 +90,9 @@ namespace XIVLauncher.Windows
                 case MessageBoxButton.YesNoCancel:
                     Button1.Content = builder.YesButtonText ?? ViewModel.YesWithShortcutLoc;
                     Button2.Content = builder.NoButtonText ?? ViewModel.NoWithShortcutLoc;
+                    Button2.Style = (Style)this.FindResource("MaterialDesignRaisedCancelButton");
                     Button3.Content = builder.CancelButtonText ?? ViewModel.CancelWithShortcutLoc;
+                    Button3.Style = (Style)this.FindResource("MaterialDesignRaisedCancelButton");
                     (builder.DefaultResult switch
                     {
                         MessageBoxResult.Yes => Button1,
@@ -101,6 +104,7 @@ namespace XIVLauncher.Windows
                 case MessageBoxButton.YesNo:
                     Button1.Content = builder.YesButtonText ?? ViewModel.YesWithShortcutLoc;
                     Button2.Content = builder.NoButtonText ?? ViewModel.NoWithShortcutLoc;
+                    Button2.Style = (Style)this.FindResource("MaterialDesignRaisedCancelButton");
                     Button3.Visibility = Visibility.Collapsed;
                     (builder.DefaultResult switch
                     {
