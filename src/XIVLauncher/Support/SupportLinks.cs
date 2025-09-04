@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using System.Windows;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Support
 {
@@ -7,12 +7,12 @@ namespace XIVLauncher.Support
     {
         public static void OpenDiscord(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://discord.gg/3NMcUV5");
+            PlatformHelpers.OpenBrowser("https://discord.gg/3NMcUV5");
         }
 
         public static void OpenFaq(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://goatcorp.github.io/faq/");
+            PlatformHelpers.OpenBrowser("https://goatcorp.github.io/faq/");
         }
     }
 }

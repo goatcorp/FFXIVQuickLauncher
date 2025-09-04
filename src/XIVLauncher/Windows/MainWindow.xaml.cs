@@ -349,7 +349,7 @@ namespace XIVLauncher.Windows
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            if (_headlines != null) Process.Start(_banners[_currentBannerIndex].Link.ToString());
+            if (_headlines != null) PlatformHelpers.OpenBrowser(_banners[_currentBannerIndex].Link.ToString());
         }
 
         private void NewsListView_OnMouseUp(object sender, MouseButtonEventArgs e)
@@ -365,7 +365,7 @@ namespace XIVLauncher.Windows
 
             if (!string.IsNullOrEmpty(item.Url))
             {
-                Process.Start(item.Url);
+                PlatformHelpers.OpenBrowser(item.Url);
             }
             else
             {
@@ -398,13 +398,13 @@ namespace XIVLauncher.Windows
                         break;
                 }
 
-                Process.Start(url + item.Id);
+                PlatformHelpers.OpenBrowser(url + item.Id);
             }
         }
 
         private void WorldStatusButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://is.xivup.com/");
+            PlatformHelpers.OpenBrowser("https://is.xivup.com/");
         }
 
         private void QueueButton_OnClick(object sender, RoutedEventArgs e)
