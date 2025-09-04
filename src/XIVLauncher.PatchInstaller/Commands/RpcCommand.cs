@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Serilog;
 using Serilog.Events;
 using XIVLauncher.Common;
@@ -68,7 +67,7 @@ public class RpcCommand
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Patcher init failed.\n\n" + ex, "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+            Log.Error(ex, "Patcher init failed.");
             throw;
         }
     }
