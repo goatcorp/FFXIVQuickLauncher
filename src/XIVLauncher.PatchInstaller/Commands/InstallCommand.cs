@@ -60,7 +60,7 @@ public class InstallCommand
             if (!fi.Exists)
                 throw new FileNotFoundException("File not found", file);
             if (fi.Length == 0)
-                throw new FileFormatException($"File is empty: {file}");
+                throw new InvalidOperationException($"File is empty: {file}");
         }
 
         foreach (var file in this.patchFiles)
