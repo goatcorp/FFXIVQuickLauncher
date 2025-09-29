@@ -50,8 +50,6 @@ jobs:
           Invoke-WebRequest -Uri $delta_file.browser_download_url -OutFile ".\Releases\$($delta_file.name)"
           $full_file = $current.assets | Where-Object -Property name -Value "*full.nupkg" -Like
           Invoke-WebRequest -Uri $full_file.browser_download_url -OutFile ".\Releases\$($full_file.name)"
-          $setup_file = $current.assets | Where-Object -Property name -Value "Setup.exe" -EQ
-          Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\Setup.exe
           vpk pack -u XIVLauncher -v $refver -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico
           Start-Sleep -s 60
           rm ".\Releases\$($delta_file.name)"
