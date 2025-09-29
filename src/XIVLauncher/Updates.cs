@@ -243,11 +243,13 @@ namespace XIVLauncher
                 }
 
                 var updateManager = updateResult.Manager;
-                await updateManager.CheckForUpdatesAsync().ConfigureAwait(false);
-                var update = updateManager.UpdatePendingRestart;
+                var updateInfo = await updateManager.CheckForUpdatesAsync().ConfigureAwait(false);
 
-                if (update != null)
+                if (updateInfo != null)
                 {
+                    Log.Information("Downloading update {Version}", updateInfo.TargetFullRelease.Version);
+                    await updateManager.DownloadUpdatesAsync(updateInfo).ConfigureAwait(false);
+
                     try
                     {
                         // Reset UID cache after updating
@@ -258,10 +260,12 @@ namespace XIVLauncher
                         // ignored
                     }
 
+                    Log.Information("Update ready to install");
+
                     if (changelogWindow == null)
                     {
                         Log.Error("changelogWindow was null");
-                        updateManager.ApplyUpdatesAndRestart(update);
+                        updateManager.ApplyUpdatesAndRestart(updateInfo);
                         return;
                     }
 
@@ -269,11 +273,11 @@ namespace XIVLauncher
                     {
                         changelogWindow.Dispatcher.Invoke(() =>
                         {
-                            changelogWindow.UpdateVersion(update.Version.ToString());
+                            changelogWindow.UpdateVersion(updateInfo.TargetFullRelease.Version.ToString());
                             changelogWindow.Show();
                             changelogWindow.Closed += (_, _) =>
                             {
-                                updateManager.ApplyUpdatesAndRestart(update);
+                                updateManager.ApplyUpdatesAndRestart(updateInfo);
                             };
                         });
 
@@ -282,7 +286,7 @@ namespace XIVLauncher
                     catch (Exception ex)
                     {
                         Log.Error(ex, "Could not show changelog window");
-                        updateManager.ApplyUpdatesAndRestart(update);
+                        updateManager.ApplyUpdatesAndRestart(updateInfo);
                     }
                 }
 #if !XL_NOAUTOUPDATE
