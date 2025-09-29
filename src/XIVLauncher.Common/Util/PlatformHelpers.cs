@@ -96,6 +96,51 @@ public static class PlatformHelpers
         }
     }
 
+    /// <summary>
+    /// Recursively create all directories in the specified path.
+    /// </summary>
+    /// <param name="dir"></param>
+    public static void CreateDirectoryHierarchy(DirectoryInfo dir)
+    {
+        if (dir.Parent != null)
+            CreateDirectoryHierarchy(dir.Parent);
+
+        if (!dir.Exists)
+            dir.Create();
+    }
+
+    /// <summary>
+    /// Check if elevation is required to write to the specified directory.
+    /// This is done by attempting to write a temporary file to the directory.
+    ///
+    /// Creates the directory if it does not exist.
+    /// </summary>
+    /// <param name="dir">The directory to check.</param>
+    /// <returns>Whether elevation is required.</returns>
+    public static bool IsElevationRequiredForWrite(DirectoryInfo dir)
+    {
+        string tempFn;
+
+        do
+        {
+            tempFn = Path.Combine(dir.FullName, Guid.NewGuid().ToString());
+        }
+        while (File.Exists(tempFn));
+
+        try
+        {
+            CreateDirectoryHierarchy(dir);
+            File.WriteAllText(tempFn, "");
+            File.Delete(tempFn);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public static void Untar(string path, string output)
     {
         var psi = new ProcessStartInfo("tar")

@@ -16,6 +16,7 @@ using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.PlatformAbstractions;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game.Patch
 {
@@ -196,25 +197,6 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
-        private bool AdminAccessRequired(string gameRootPath)
-        {
-            string tempFn;
-            do
-            {
-                tempFn = Path.Combine(gameRootPath, Guid.NewGuid().ToString());
-            } while (File.Exists(tempFn));
-            try
-            {
-                File.WriteAllText(tempFn, "");
-                File.Delete(tempFn);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return true;
-            }
-            return false;
-        }
-
         private void RecordProgressForEstimation()
         {
             var now = DateTime.Now.Ticks;
@@ -308,14 +290,22 @@ namespace XIVLauncher.Common.Game.Patch
             State = VerifyState.NotStarted;
             LastException = null;
             IIndexedZiPatchIndexInstaller indexedZiPatchIndexInstaller = null;
+
+            var needElevation = PlatformHelpers.IsElevationRequiredForWrite(_settings.GamePath);
+
             try
             {
                 var assemblyLocation = AppContext.BaseDirectory;
+
                 if (_external)
+                {
                     indexedZiPatchIndexInstaller = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
-                        AdminAccessRequired(_settings.GamePath.FullName));
+                                                                                          needElevation);
+                }
                 else
+                {
                     indexedZiPatchIndexInstaller = new IndexedZiPatchIndexLocalInstaller();
+                }
 
                 await indexedZiPatchIndexInstaller.SetWorkerProcessPriority(ProcessPriorityClass.Idle).ConfigureAwait(false);
 
