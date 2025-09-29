@@ -4,15 +4,16 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using IWshRuntimeLibrary;
 using XIVLauncher.Accounts;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Windows;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -168,20 +169,19 @@ namespace XIVLauncher.Windows
 
                 thumbnailPath = Path.Combine(thumbnailDirectory, $"{selectedEntry.Account.Id}.ico");
 
-                SaveAsIcon(BitmapImage2Bitmap((BitmapImage) selectedEntry.ProfileImage), thumbnailPath);
+                SaveAsIcon(BitmapImage2Bitmap((BitmapImage)selectedEntry.ProfileImage), thumbnailPath);
             }
 
-            var shDesktop = (object)"Desktop";
+            var link = (IShellLink)new ShellLink();
+            link.SetDescription($"Open XIVLauncher with the \"{selectedEntry.Account.UserName}\" account.");
+            link.SetPath(Path.Combine(new DirectoryInfo(Environment.CurrentDirectory).Parent!.FullName, "XIVLauncher.exe"));
+            link.SetArguments($"--account={selectedEntry.Account.Id}");
+            link.SetWorkingDirectory(Environment.CurrentDirectory);
+            link.SetIconLocation(thumbnailPath, 0);
 
-            var shell = new WshShell();
-            var shortcutAddress = (string)shell.SpecialFolders.Item(ref shDesktop) + $@"\XIVLauncher - {selectedEntry.Account.UserName} {(selectedEntry.Account.UseSteamServiceAccount ? "(Steam)" : "")}.lnk";
-            var shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
-            shortcut.Description = $"Open XIVLauncher with the \"{selectedEntry.Account.UserName}\" account.";
-            shortcut.TargetPath = Path.Combine(new DirectoryInfo(Environment.CurrentDirectory).Parent.FullName, "XIVLauncher.exe");
-            shortcut.Arguments = $"--account={selectedEntry.Account.Id}";
-            shortcut.WorkingDirectory = Environment.CurrentDirectory;
-            shortcut.IconLocation = thumbnailPath;
-            shortcut.Save();
+            var file = (IPersistFile)link;
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            file.Save(Path.Combine(desktopPath, $@"\XIVLauncher - {selectedEntry.Account.UserName} {(selectedEntry.Account.UseSteamServiceAccount ? "(Steam)" : "")}.lnk"), false);
         }
 
         private void RemoveAccount_OnClick(object sender, RoutedEventArgs e)

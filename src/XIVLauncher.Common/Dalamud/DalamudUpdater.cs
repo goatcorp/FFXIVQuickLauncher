@@ -102,7 +102,7 @@ namespace XIVLauncher.Common.Dalamud
             Overlay!.ReportProgress(size, downloaded, progress);
         }
 
-        public void Run(bool overrideForceProxy = false)
+        public void Run(string? betaKind, string? betaKey, bool overrideForceProxy = false)
         {
             Log.Information("[DUPDATE] Starting... (forceProxy: {ForceProxy})", overrideForceProxy);
             this.State = DownloadState.Unknown;
@@ -119,7 +119,7 @@ namespace XIVLauncher.Common.Dalamud
                 {
                     try
                     {
-                        await UpdateDalamud().ConfigureAwait(true);
+                        await UpdateDalamud(betaKind, betaKey).ConfigureAwait(true);
                         isUpdated = true;
                         break;
                     }
@@ -135,10 +135,10 @@ namespace XIVLauncher.Common.Dalamud
             });
         }
 
-        private static string GetBetaTrackName(DalamudSettings settings) =>
-            string.IsNullOrEmpty(settings.DalamudBetaKind) ? "staging" : settings.DalamudBetaKind;
+        private static string GetBetaTrackName(string betaKind) =>
+            string.IsNullOrEmpty(betaKind) ? "staging" : betaKind;
 
-        private async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(DalamudSettings settings)
+        private async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(string? betaKind, string? betaKey)
         {
             using var client = new HttpClient
             {
@@ -156,9 +156,9 @@ namespace XIVLauncher.Common.Dalamud
 
             DalamudVersionInfo? versionInfoStaging = null;
 
-            if (!string.IsNullOrEmpty(settings.DalamudBetaKey))
+            if (!string.IsNullOrEmpty(betaKey))
             {
-                var versionInfoJsonStaging = await client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(settings)).ConfigureAwait(false);
+                var versionInfoJsonStaging = await client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(betaKind)).ConfigureAwait(false);
 
                 if (versionInfoJsonStaging.StatusCode != HttpStatusCode.BadRequest)
                     versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoJsonStaging.Content.ReadAsStringAsync().ConfigureAwait(false));
@@ -167,22 +167,20 @@ namespace XIVLauncher.Common.Dalamud
             return (versionInfoRelease, versionInfoStaging);
         }
 
-        private async Task UpdateDalamud()
+        private async Task UpdateDalamud(string? betaKind, string? betaKey)
         {
-            var settings = DalamudSettings.GetSettings(this.configDirectory);
-
             // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(settings).ConfigureAwait(false);
+            var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(betaKind, betaKey).ConfigureAwait(false);
 
             var remoteVersionInfo = versionInfoRelease;
 
-            if (versionInfoStaging?.Key != null && versionInfoStaging.Key == settings.DalamudBetaKey)
+            if (versionInfoStaging?.Key != null && versionInfoStaging.Key == betaKey)
             {
                 remoteVersionInfo = versionInfoStaging;
                 IsStaging = true;
-                Log.Information("[DUPDATE] Using staging version {Kind} with key {Key} ({Hash})", settings.DalamudBetaKind, settings.DalamudBetaKey, remoteVersionInfo.AssemblyVersion);
+                Log.Information("[DUPDATE] Using staging version {Kind} with key {Key} ({Hash})", betaKind, betaKey, remoteVersionInfo.AssemblyVersion);
             }
             else
             {
@@ -220,7 +218,7 @@ namespace XIVLauncher.Common.Dalamud
                 }
             }
 
-            if (remoteVersionInfo.RuntimeRequired || settings.DoDalamudRuntime)
+            if (remoteVersionInfo.RuntimeRequired)
             {
                 Log.Information("[DUPDATE] Now starting for .NET Runtime {0}", remoteVersionInfo.RuntimeVersion);
 

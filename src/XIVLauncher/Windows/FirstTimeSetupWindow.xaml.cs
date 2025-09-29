@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows;
 using CheapLoc;
-using IWshRuntimeLibrary;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Util;
@@ -37,14 +36,6 @@ namespace XIVLauncher.Windows
 #if !XL_NOAUTOUPDATE
             }
 #endif
-        }
-
-        public static string GetShortcutTargetFile(string path)
-        {
-            var shell = new WshShell();
-            var shortcut = (IWshShortcut) shell.CreateShortcut(path);
-
-            return shortcut.TargetPath;
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)

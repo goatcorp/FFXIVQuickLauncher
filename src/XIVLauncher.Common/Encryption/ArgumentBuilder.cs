@@ -94,22 +94,49 @@ namespace XIVLauncher.Common.Encryption
             return BuildEncrypted(key);
         }
 
+#if WIN32
+        private uint GetRawTickCount()
+        {
+            return (uint)Environment.TickCount;
+        }
+#endif
+
+#if LINUX
+        [StructLayout(LayoutKind.Sequential)]
+        private struct timespec
+        {
+            public long tv_sec;
+            public long tv_nsec;
+        }
+
+        private uint GetRawTickCount()
+        {
+            [DllImport("c")]
+            static extern int clock_gettime(int clock_id, out timespec ts);
+
+            const int CLOCK_MONOTONIC_RAW = 4;
+            timespec ts;
+            clock_gettime(CLOCK_MONOTONIC_RAW, out ts);
+            var rawTickCount = (ulong)((ts.tv_sec * 1000) + (ts.tv_nsec / 1000000));
+            return (uint)rawTickCount;
+        }
+#endif
+
+#if OSX
+        private uint GetRawTickCount()
+        {
+            [DllImport("c")]
+            static extern ulong clock_gettime_nsec_np(int clock_id);
+
+            const int CLOCK_MONOTONIC_RAW = 4;
+            var rawTickCount = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) / 1000000;
+            return (uint)rawTickCount;
+        }
+#endif
+
         private uint DeriveKey()
         {
-            var rawTickCount = (uint)Environment.TickCount;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                [System.Runtime.InteropServices.DllImport("c")]
-                // ReSharper disable once InconsistentNaming
-                static extern ulong clock_gettime_nsec_np(int clock_id);
-
-                const int CLOCK_MONOTONIC_RAW = 4;
-                var rawTickCountFixed = (clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) / 1000000);
-                Log.Information("ArgumentBuilder::DeriveKey() fixing up rawTickCount from {0} to {1} on macOS", rawTickCount, rawTickCountFixed);
-                rawTickCount = (uint)rawTickCountFixed;
-            }
-
+            var rawTickCount = GetRawTickCount();
             var ticks = rawTickCount & 0xFFFF_FFFFu;
             var key = ticks & 0xFFFF_0000u;
 

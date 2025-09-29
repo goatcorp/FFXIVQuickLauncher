@@ -56,6 +56,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 
     private static bool CheckVcRedists()
     {
+        Log.Information("Checking for VC2015-2022 runtime > 14.30");
         // snipped from https://stackoverflow.com/questions/12206314/detect-if-visual-c-redistributable-for-visual-studio-2012-is-installed
         // and https://github.com/bitbeans/RedistributableChecker
 
@@ -64,6 +65,14 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
             @"SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum",
             @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64",
             @"SOFTWARE\Classes\Installer\Dependencies\Microsoft.VS.VC_RuntimeMinimumVSU_amd64,v14",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.43,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.42,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.41,bundle",
+            @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.40,bundle",
+
+            // legacy checks. As of Dalamud 13.0.0, we need to enforce the user has vcrun2022, not just 2015+
+            /*
+                        @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.39,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.38,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.37,bundle",
             @"SOFTWARE\Classes\Installer\Dependencies\VC,redist.x64,amd64,14.36,bundle",
@@ -81,6 +90,7 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
             @"Installer\Dependencies\,,amd64,14.0,bundle",
             // here's one for vcrun2015
             @"SOFTWARE\Classes\Installer\Dependencies\{d992c12e-cab2-426f-bde3-fb8c53950b0d}"
+            */
         };
 
         var dllPaths = new List<string>
@@ -102,8 +112,12 @@ public class WindowsDalamudCompatibilityCheck : IDalamudCompatibilityCheck
 
             var vcVersioncheck = vcregcheck.GetValue("Version") ?? "";
 
-            if (((string)vcVersioncheck).StartsWith("14", StringComparison.Ordinal) 
-                || ((string)vcVersioncheck).StartsWith("v14", StringComparison.Ordinal))
+            var regEntryVersionString = (string)vcVersioncheck;
+            if (regEntryVersionString.StartsWith("v"))
+                regEntryVersionString = regEntryVersionString.TrimStart('v');
+            Version.TryParse(regEntryVersionString, out var regEntryVersion);
+
+            if (regEntryVersion >= new Version("14.40.0"))
             {
                 passedRegistry = true;
                 Log.Debug("Passed Registry Check with: " + path);

@@ -46,6 +46,9 @@ namespace XIVLauncher.Settings
         bool? AutoStartSteam { get; set; }
         bool? ForceNorthAmerica { get; set; }
 
+        string? DalamudBetaKind { get; set; }
+        string? DalamudBetaKey { get; set; }
+
         PreserveWindowPosition.WindowPlacement? MainWindowPlacement { get; set; }
 
         #endregion

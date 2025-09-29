@@ -209,10 +209,6 @@ namespace XIVLauncher.Common.Game.Patch
 
             switch (this.acquisitionMethod)
             {
-                case AcquisitionMethod.NetDownloader:
-                    acquisition = new NetDownloaderPatchAcquisition(this.patchStore, this.speedLimitBytes / MAX_DOWNLOADS_AT_ONCE);
-                    break;
-
                 case AcquisitionMethod.Aria:
                     acquisition = new AriaHttpPatchAcquisition();
                     break;

@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
@@ -45,5 +45,7 @@
     <ItemGroup>
         <!-- Custom steamworks, based on the chippy branch of Facepunch.Steamworks -->
         <PackageReference Include="goaaats.Steamworks" Version="2.3.4" />
+        <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
     </ItemGroup>
 </Project>

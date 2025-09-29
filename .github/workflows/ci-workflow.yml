@@ -16,46 +16,34 @@ jobs:
       - uses: actions/checkout@v1
       - name: Initialize Submodules
         run: git submodule update --init --recursive
-      - name: Restore Nuget Packages
+      - name: Install VPK
         run: |
-          cd .\src\
-          dotnet restore
-          cd ..
-      - name: Define VERSION
+          dotnet tool install -g vpk
+      - name: Publish XIVLauncher
         run: |
-          $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
-          $env:REPO_NAME = $env:GITHUB_REPOSITORY -replace '.*/'
-          $env:BRANCH = $env:GITHUB_REF -replace '.*/'
-
-          ($env:REPO_NAME) >> VERSION
-          ($env:BRANCH) >> VERSION
-          ($env:COMMIT) >> VERSION
-      - name: Build DotNet4 for Release
-        run: |
-          cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\src\XIVLauncher.sln /t:Build /p:Configuration=Release
+          cd src/XIVLauncher
+          dotnet publish --self-contained -r win-x64 -o publish
       - name: Generate Hashes File
-        run: .\scripts\CreateHashList.ps1 .\src\bin
+        run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish
       - name: Attest Artifacts
         if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: |
-            src/bin/XIVLauncher.exe
-            src/bin/XIVLauncher.*.dll
-            src/bin/XIVLauncher.*.exe
-            src/bin/hashes.json
-      - name: Build Squirrel Release
-        id: build-squirrel
+            src/XIVLauncher/publish/XIVLauncher.exe
+            src/XIVLauncher/publish/XIVLauncher.*.dll
+            src/XIVLauncher/publish/XIVLauncher.*.exe
+            src/XIVLauncher/publish/hashes.json
+      - name: Build Velopack Release
+        id: build-velopack
         run: |
-          cd src\
+          cd src/XIVLauncher
           $releases = Invoke-WebRequest -Uri 'https://api.github.com/repos/goatcorp/FFXIVQuickLauncher/releases'
           $current = ConvertFrom-Json -InputObject $releases.Content | Select-Object -First 1
           $refver = $env:GITHUB_REF -replace '.*/'
           echo "::set-output name=version::$refver"
-          nuget pack .\XIVLauncher.nuspec -properties version=$refver
           mkdir Releases
-          cp .\XIVLauncher\Resources\CHANGELOG.txt .\Releases\
+          cp .\Resources\CHANGELOG.txt .\Releases\
           $release_file = $current.assets | Where-Object -Property name -Value RELEASES -EQ
           Invoke-WebRequest -Uri $release_file.browser_download_url -OutFile .\Releases\RELEASES
           $delta_file = $current.assets | Where-Object -Property name -Value "*delta.nupkg" -Like
@@ -64,32 +52,37 @@ jobs:
           Invoke-WebRequest -Uri $full_file.browser_download_url -OutFile ".\Releases\$($full_file.name)"
           $setup_file = $current.assets | Where-Object -Property name -Value "Setup.exe" -EQ
           Invoke-WebRequest -Uri $setup_file.browser_download_url -OutFile .\Releases\Setup.exe
-           ~\.nuget\packages\squirrel.windows\1.9.1\tools\Squirrel.exe --no-msi --releasify .\XIVLauncher.$refver.nupkg --setupIcon=.\XIVLauncher\Resources\dalamud_icon.ico --icon=.\XIVLauncher\Resources\dalamud_icon.ico
+          vpk pack -u XIVLauncher -v $refver -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico
           Start-Sleep -s 60
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
+          rm ".\Releases\XIVLauncher-win-Portable.zip"
       - name: Attest Setup
         if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: |
-            src/Releases/*.exe
-            src/Releases/*.nupkg
-            src/Releases/RELEASES
+            src/XIVLauncher/Releases/*.exe
+            src/XIVLauncher/Releases/*.nupkg
+            src/XIVLauncher/Releases/RELEASES
+            src/XIVLauncher/Releases/releases.win.json
+            src/XIVLauncher/Releases/assets.win.json
       - name: Create Release
         uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ./src/Releases/**
-          name: Release ${{ steps.build-squirrel.outputs.version }}
+          files: ./src/XIVLauncher/Releases/**
+          name: Release ${{ steps.build-velopack.outputs.version }}
           body_path:  RELEASE.md
           prerelease: true
-      - name: VirusTotal Scan
-        uses: crazy-max/ghaction-virustotal@a3f74cfd584b0658320aec5e94ab6a8d16dca05f
-        with:
-          vt_api_key: ${{ secrets.VT_API_KEY }}
-          files: ./src/Releases/*.exe
+
+      # Disabled, file too large now that we're doing self-contained
+      #- name: VirusTotal Scan
+      #  uses: crazy-max/ghaction-virustotal@a3f74cfd584b0658320aec5e94ab6a8d16dca05f
+      #  with:
+      #    vt_api_key: ${{ secrets.VT_API_KEY }}
+      #    files: ./src/XIVLauncher/Releases/*.exe
 
   build:
     name: Build on Windows
@@ -103,38 +96,23 @@ jobs:
       - uses: actions/checkout@v1
       - name: Initialize Submodules
         run: git submodule update --init --recursive
-          
-      - name: Restore Nuget Packages
+      - name: Publish XIVLauncher
         run: |
-          cd .\src\
-          dotnet restore
-          cd ..
-      - name: Define VERSION
-        run: |
-          $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
-          $env:REPO_NAME = $env:GITHUB_REPOSITORY -replace '.*/'
-          $env:BRANCH = $env:GITHUB_REF -replace '.*/'
-
-          ($env:REPO_NAME) >> VERSION
-          ($env:BRANCH) >> VERSION
-          ($env:COMMIT) >> VERSION
-      - name: Build DotNet4 Master
-        run: |
-          cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\"
-           .\MSBuild.exe $Env:GITHUB_WORKSPACE\src\XIVLauncher.sln /t:Build /p:Configuration=ReleaseNoUpdate
+          cd src/XIVLauncher
+          dotnet publish --self-contained -r win-x64 -o publish
       - name: Generate Hashes File
-        run: .\scripts\CreateHashList.ps1 .\src\bin
+        run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish/
       - name: Attest Artifacts
         if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: |
-            src/bin/XIVLauncher.exe
-            src/bin/XIVLauncher.*.dll
-            src/bin/XIVLauncher.*.exe
-            src/bin/hashes.json
+            src/XIVLauncher/publish/XIVLauncher.exe
+            src/XIVLauncher/publish/XIVLauncher.*.dll
+            src/XIVLauncher/publish/XIVLauncher.*.exe
+            src/XIVLauncher/publish/hashes.json
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
           name: xivlauncher-artifact
-          path: src\bin\
+          path: src/XIVLauncher/publish/

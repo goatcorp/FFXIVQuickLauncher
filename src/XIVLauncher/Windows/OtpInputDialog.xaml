@@ -1,4 +1,4 @@
-﻿<Window x:Class="XIVLauncher.Windows.OtpInputDialog"
+<Window x:Class="XIVLauncher.Windows.OtpInputDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -70,6 +70,7 @@
                         Width="100"
                         Click="OkButton_OnClick" />
                     <Button
+                        Style="{StaticResource MaterialDesignRaisedCancelButton}"
                         Content="{Binding CancelWithShortcutLoc}"
                         Margin="7,0,0,0"
                         Width="100"
