@@ -4,7 +4,9 @@ using System.Text;
 using System.Linq;
 using Serilog;
 using XIVLauncher.Common.Util;
+#if LINUX || OSX
 using System.Runtime.InteropServices;
+#endif
 
 namespace XIVLauncher.Common.Encryption
 {
