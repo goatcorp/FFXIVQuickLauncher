@@ -1,0 +1,1130 @@
+{
+  "Refresh": {
+    "message": "_Frissítés",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "Ignore": {
+    "message": "F_igyelmen kívül hagyás",
+    "description": "AppUtil.TryYellOnGameFilesBeingOpen"
+  },
+  "UninstallQuestion": {
+    "message": "Sajnáljuk, hogy elmész!\nSzeretnéd törölni a mentett beállításokat, bővítményeket és jelszavakat?",
+    "description": "<>c__DisplayClass20_1.<Run>b__2"
+  },
+  "updatefailureerror": {
+    "message": "A frissítések keresése meghiúsult. Lehetséges, hogy megszakadt az internetkapcsolat. Várj egy pár percet, majd próbáld újra.\nHa VPN-t használsz, javasoljuk kikapcsolni. Lehetséges, hogy a XIVLaunchert a vírusirtód fehérlistájára is fel kell venned.\nHa pár perc után ugyancsak nem sikerül a frissítés, ld. a GYIK-et.",
+    "description": "<Run>d__20.MoveNext"
+  },
+  "RunOfficialLauncherNotPresentError": {
+    "message": "A játék nincs telepítve. A XIVLauncher nem képes a hivatalos indítókliens futtatására.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherConfirmSteam": {
+    "message": "Össze van kapcsolva a Square Enix- és a Steam-fiókod? Ha igen, akkor a folytatáshoz telepítened kell a Steamet.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherSteamError": {
+    "message": "A Steam indítása meghiúsult. Futtasd a játékot a Steamen keresztül.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "ErrorAssertionFailed": {
+    "message": "Egy lehetetlen eset beteljesült.",
+    "description": "CustomMessageBox.AssertOrShowError"
+  },
+  "ErrorExplanation": {
+    "message": "A XIVLauncher hibába ütközött. További információért ld. a GYIK-et. Ha a hiba továbbra is fennáll,\nakkor jelentsd a GitHubon az alábbi gomb segítségével, írd le a hibát és illeszd be a\nszövegdobozban található információt.",
+    "description": "CustomMessageBox..cctor"
+  },
+  "Restart": {
+    "message": "_Újraindítás",
+    "description": "Builder.NewFrom"
+  },
+  "Exit": {
+    "message": "_Kilépés",
+    "description": "Builder.NewFrom"
+  },
+  "UnexpectedErrorSummary": {
+    "message": "Ismeretlen hiba történt. ({0})",
+    "description": "Builder.NewFromUnexpectedException"
+  },
+  "UnexpectedErrorActionable": {
+    "message": "Kérjük, jelentsd ezt a hibát!",
+    "description": "Builder.NewFromUnexpectedException"
+  },
+  "DalamudUpdateDalamud": {
+    "message": "Mag frissítése folyamatban…",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUpdateAssets": {
+    "message": "Kellékek frissítése folyamatban…",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUpdateRuntime": {
+    "message": "Futtatókörnyezet frissítése folyamatban…",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudNowStarting": {
+    "message": "Indítás folyamatban…",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUnavailable": {
+    "message": "A bővítménytámogatás nem elérhető\negy játékfrissítés miatt.",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "GamePathEmptyError": {
+    "message": "Add meg a játék elérési útját!",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathSafeguardError": {
+    "message": "Ne a „game” vagy a „boot” mappákat válaszd ki, hanem azt a könyvtárat, ami ezeket tartalmazza.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathInvalidConfirm": {
+    "message": "A kiválasztott mappa nem tartalmazza a játékot.\nA XIVLauncher az első bejelentkezés alkalmával telepíteni fogja azt.\nRendben?",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathRegionConfirm": {
+    "message": "Lehetséges, hogy a kiválasztott mappa a játék kínai vagy koreai kiadását tartalmazza. A XIVLauncher csak a FFXIV nemzetközi kiadását támogatja.\nBiztos, hogy a megadott mappa a játék nemzetközi kiadását tartalmazza?",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "NewsLoading": {
+    "message": "Betöltés folyamatban…",
+    "description": "MainWindow..ctor"
+  },
+  "NewsDlFailed": {
+    "message": "A hírek letöltése meghiúsult.",
+    "description": "MainWindow.<SetupHeadlines>b__13_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "Frissítést észleltünk a hivatalos indítóklienshez.\nEz általában azt jelenti, hogy a játékhoz is megjelent egy frissítés.\n\nA következő lépéshez be kell jelentkezned.",
+    "description": "<OnMaintenanceQueueTimerEvent>d__22.MoveNext"
+  },
+  "SettingsGamePatchPathError": {
+    "message": "A játék- és a frissítések letöltési mappája nem egyezhet meg.\nAdj meg külön könyvtárakat mindkettőnek!",
+    "description": "SettingsControl.AcceptButton_Click"
+  },
+  "LaunchAsSteam": {
+    "message": "El akarod indítani a játékot Steam-felhasználóként?",
+    "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "IntegrityCheckBase": {
+    "message": "A játék nem található a megadott könyvtárban.\nA fájlok épségének ellenőrzése előtt telepítened kell a játékot.",
+    "description": "SettingsControl.RunIntegrityCheck_OnClick"
+  },
+  "DalamudIncompatible": {
+    "message": "A Dalamudot még nem frissítették a játék jelenlegi verziójához.\nEz normális a játékfrissítések utáni időszakban – légy türelemmel vagy kérdezd meg a Discord-szerveren, hogy van-e helyzetjelentés!",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "DalamudCompatCheckFailed": {
+    "message": "A Dalamud-kiszolgáló nem válaszol, ezért a legújabb verzió letöltése meghiúsult. Lehetséges, hogy a gépedre telepített .NET-keretrendszer elavult.\nTovábbi információért ld. a Discord-szervert.",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "SteamFtToggleAutoStartWarning": {
+    "message": "A beállítás érvénybe léptetéséhez újra kell indítani a XIVLaunchert.",
+    "description": "SettingsControl.IsFreeTrialCheckbox_OnClick"
+  },
+  "IntegrityCheckImpossible": {
+    "message": "Ehhez a játékverzióhoz még nem jelent meg referenciajelentés. Próbáld újra később!",
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckNetworkError": {
+    "message": "A játékfájlok épségének ellenőrzéséhez szükséges referenciajelentés letöltése meghiúsult. Ellenőrizd az internetkapcsolatot, majd próbáld újra!",
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckFailed": {
+    "message": "Úgy tűnik, hogy bizonyos fájlok sérültek. \n\nHa TexTools-modokat használsz, akkor ez normális.\n\nHa nem használsz modokat, akkor kattints jobb gombbal a XIVLauncher kezdőlapján található Bejelentkezés gombra, majd válaszd ki a „Játékfájlok épségének ellenőrzése” lehetőséget.",
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckValid": {
+    "message": "A játék integritása megfelelő.",
+    "description": "<>c__DisplayClass20_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "AccountSwitcherSetProfilePic": {
+    "message": "Profilkép megváltoztatása",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherCreateShortcut": {
+    "message": "Asztali parancsikon létrehozása",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "Remove": {
+    "message": "Eltávolítás",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherDontSavePassword": {
+    "message": "Ne mentse a jelszót",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AdvancedSettings": {
+    "message": "Haladó beállítások",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "EnabledUidCache": {
+    "message": "Kísérleti UID-gyorsítótár engedélyezése (ez csak a legközelebbi játékfrissítésig fog működni!)",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ResetUidCacheTip": {
+    "message": "Az UID-gyorsítótár alaphelyzetbe állításához tartsd lenyomva a Ctrl billentyűt, amikor a XIVLauncher elindul",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ExitLauncherAfterGameExitLoc": {
+    "message": "A XIVLauncher bezárása a játékkal együtt",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "TreatNonZeroExitCodeAsFailureLoc": {
+    "message": "Nem nullás kilépési kódok hibának érzékelése",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "ForceNorthAmerica": {
+    "message": "Csak az észak-amerikai hírek, szalagcímek és indexképek betöltése",
+    "description": "AdvancedSettingsViewModel..ctor"
+  },
+  "UpdateNotice": {
+    "message": "A XIVLauncher frissítése a(z) {0} verzióra sikeresen befejeződött.",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoading": {
+    "message": "Változásnapló betöltése folyamatban…",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoadingError": {
+    "message": "A változásnapló betöltése meghiúsult. A változásnapló megtekintéséhez ld. a GitHubot vagy a Discord-szervert!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "JoinDiscord": {
+    "message": "Csatlakozás a Discord-szerverhez",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "SendEmail": {
+    "message": "Email küldése",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "EmailInfo": {
+    "message": "A XIVLauncher egy ingyenes, nyílt forráskódú program. Semmilyen adatgyűjtést sem végzünk, de sokat segítene, ha küldenél nekünk egy rövid emailt, amelyben megemlíted az operációs rendszeredet, hogy miért használod a XIVLaunchert és ha van, bármilyen kritikát vagy visszajelzést, hogy javíthassunk a felhasználói élményen. Az emailed vizsgálat után rögtön törölve lesz és nem fogjuk felvenni Veled a kapcsolatot.\n\nKöszönjük, hogy a XIVLaunchert használod!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogThanks": {
+    "message": "A XIVLauncher egy ingyenes, nyílt forráskódú program, amit sokféle személy használ a világ minden táján.\nKöszönjük, hogy velünk vagy!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChatChannelSetupTitle": {
+    "message": "Csevegőcsatorna beállítása",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "ChatChannelSetupDescription": {
+    "message": "Add meg a XIVLauncher által értesítendő szervercsatornát vagy személyt\nés a hozzájuk tartozó azonosítókat!",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "HowToHint": {
+    "message": "Útmutató",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "StartOfficialLauncher": {
+    "message": "Hivatalos indítókliens",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "Integritási jelentés megnyitása",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "OpenFaq": {
+    "message": "GYIK megnyitása",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "ReportError": {
+    "message": "Hibajelentés",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Yes": {
+    "message": "_Igen",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "No": {
+    "message": "_Nem",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Cancel": {
+    "message": "_Mégse",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Copy": {
+    "message": "M_ásolás",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "A Dalamud frissítése folyamatban…",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
+  },
+  "ChooseGamePathFTS": {
+    "message": "Add meg a játékot tartalmazó könyvtárat!\nEz a könyvtár a „game” és „boot” mappákat tartalmazza.\n\nHa még nincs telepítve a játék, akkor megadhatsz egy üres könyvtárat, ahova a XIVLauncher telepíteni fogja azt.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamNotice": {
+    "message": "Pipáld ki ezt a jelölőnégyzetet, ha a játékot általában a Steamen keresztül indítod el vagy ha a Steamen van meg a játék",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamCheckBox": {
+    "message": "Steam-integráció engedélyezése",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseDirectXFTS": {
+    "message": "Válaszd ki a használni kívánt DirectX-verziót.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "DirectX9NoticeFTS": {
+    "message": "A DirectX 9 már nem támogatott. Ugyan a játék így is el fog indulni, de nem számíthatsz a SE támogatására, ha technikai problémába ütközöl és a XIVLauncher bizonyos funkciói (pl.: a Rich Presence és a Dalamud) nem fognak működni.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseLanguageFTS": {
+    "message": "Add meg a játék használni kívánt nyelvét.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunch": {
+    "message": "Az Advanced Combat Tracker telepítve van.\nSzeretnéd automatikusan elindítani a játékkal együtt?",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunchCheckBox": {
+    "message": "ACT automatikus indításának engedélyezése",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "Next": {
+    "message": "Tovább",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudNotice": {
+    "message": "Szeretnéd igénybe venni a Dalamudot?\nA Dalamud képes új funkciókkal kibővíteni a játékot, mint pl.: a valódi-pénzcserés csevegőüzenetek kiszűrésével és Discordos értesítésekkel az üzenetekről vagy a Duty Finder készenlétéről.\n\nEzeket a beállításokat a XIVLauncher beállításaiban, a „Dalamud” fülön szabhatod személyre.\nLehetséges, hogy a funkció engedélyezése tévesen aktiválhatja a számítógépre telepített vírusirtót – ha problémákba ütközöl, tedd fehérlistára a XIVLaunchert.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudCheckBox": {
+    "message": "A Dalamud engedélyezése",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "NowDownloadingMeta": {
+    "message": "Metaadatok letöltése folyamatban…",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowVerifying": {
+    "message": "A játékfájlok épségének ellenőrzése folyamatban…",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairing": {
+    "message": "A játékfájlok javítása folyamatban…",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingConnecting": {
+    "message": "Csatlakozás folyamatban…",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingReattemptWaiting": {
+    "message": "Várakozás az újrapróbálkozás előtt…",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingFinishing": {
+    "message": "Véglegesítés folyamatban…",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "SpeedUnitPerSecLoc": {
+    "message": "{0}/mp",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDuration": {
+    "message": "{0:00}:{1:00} maradt",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDurationWithHours": {
+    "message": "{0:00}:{1:00}:{2:00} maradt",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "GenericAddonSetupTitle": {
+    "message": "Automatikus indítás beállítása",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "GenericAddonSetupDescription": {
+    "message": "Add meg az indítandó alkalmazás elérési útját, az indítási paramétereit,\nés hogy rendszergazdaként fusson-e.",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "CommandLineParameters": {
+    "message": "Indítási paraméterek",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "RunAsAdminLoc": {
+    "message": "Futtatás rendszergazdaként",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "RunOnCloseLoc": {
+    "message": "Indítás a játék bezárásakor",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "KillAfterCloseLoc": {
+    "message": "Bezárás a játékkal együtt",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "IntegrityCheckRunning": {
+    "message": "Integritás ellenőrzése folyamatban…",
+    "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
+  },
+  "PatchManDlFailure": {
+    "message": "A XIVLauncher nem tudta ellenőrizni a játékfájlok épségét. Indítsd újra az alkalmazást, majd próbáld újra!\n\nEz a hiba általában az internetkapcsolat megszakadásából ered.\nHa a probléma továbbra is fennáll, javasoljuk egy Japánba bújtatott VPN használatát.\n\nTovábbi információ: {0}\n{1}",
+    "description": "MainWindowViewModel.PatcherOnFail"
+  },
+  "PatchInstallerInstallFailed": {
+    "message": "A frissítő hibába ütközött.\nKérjük, jelentsd ezt a hibát!\n\nPróbáld újra vagy használd a hivatalos indítóklienst a játékhoz.",
+    "description": "MainWindowViewModel.InstallerOnFail"
+  },
+  "LoginBoxUsername": {
+    "message": "Felhasználónév",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxPassword": {
+    "message": "Jelszó",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxAutoLogin": {
+    "message": "Automatikus bejelentkezés",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxOtp": {
+    "message": "Kétlépcsős azonosítás",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxSteam": {
+    "message": "Steam-fiók használata",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLogin": {
+    "message": "Bejelentkezés",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoStartLogin": {
+    "message": "Frissítés indítás nélkül",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxRepairLogin": {
+    "message": "Játékfájlok épségének ellenőrzése",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoDalamudLogin": {
+    "message": "Indítás a Dalamud nélkül",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoPluginLogin": {
+    "message": "Indítás bővítmények nélkül",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoThirdLogin": {
+    "message": "Indítás egyéni adattáras bővítmények nélkül",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLoginTooltip": {
+    "message": "Bejelentkezés a megadott adatokkal",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLaunchOptions": {
+    "message": "Indítási opciók",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxWaitingForMaint": {
+    "message": "Várakozás a karbantartás befejezésére…",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "CancelWithShortcut": {
+    "message": "_Mégse",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "OpenAccountSwitcher": {
+    "message": "Fiókváltás",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "Settings": {
+    "message": "Beállítások",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "WorldStatus": {
+    "message": "Világállapot",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "MaintenanceQueue": {
+    "message": "Várakozás a karbantartás befejezésére",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoadingDialogIsLoggingIn": {
+    "message": "Bejelentkezés folyamatban…",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "DuplicateOtpAfterSuccess": {
+    "message": "Ezt a kétlépcsős azonosítási kódot már felhasználták.\nAkár 30 másodpercig is eltarthat egy új kód kiállítása.",
+    "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "GameRepairProcessExitRequired1": {
+    "message": "A játékfájlok javításához be kell zárnod az alábbi alkalmazást.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameRepairProcessExitRequiredPlural": {
+    "message": "A játékfájlok javításához be kell zárnod az alábbi alkalmazásokat.",
+    "description": "<>c.<RepairGame>b__25_1"
+  },
+  "GameUpdateExitRequired1": {
+    "message": "A játék frissítéséhez be kell zárnod az alábbi alkalmazást.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "GameUpdateExitRequiredPlural": {
+    "message": "A játék frissítéséhez be kell zárnod az alábbi alkalmazásokat.",
+    "description": "<>c.<TryHandlePatchAsync>b__34_2"
+  },
+  "AutoLoginIntro": {
+    "message": "Az automatikus bejelentkezés bekapcsolásával a jövőben ezt az ablakot nem fogod látni és a XIVLauncher megnyitáskor azonnal a most megadott adatokkal fogja elindítani a játékot.\n\nAz automatikus bejelentkezés felfüggesztéséhez tartsd lenyomva a Shift billentyűt, amikor rákattintasz a XIVLauncher ikonjára.",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GameIsOpenRepairError": {
+    "message": "A játék és/vagy a hivatalos indítókliens jelenleg fut. A XIVLauncher így nem tudja megjavítani a játékfájlokat.\nZárd be a játékot, majd próbáld újra!",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GameRepairDisclaimer": {
+    "message": "A XIVLauncher most megpróbálja megtalálni a sérült fájlokat és megjavítani őket.\nHa TexTools modokat használsz, akkor a fájlok helyreállítása a modok eltávolítását is jelenti.\n\nKezdődhet a folyamat?",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GateUnreachable": {
+    "message": "A bejelentkezési kiszolgáló nem található. Ezt a hibát általában a játék karbantartása vagy a kapcsolatod megszakadása okozza.\n\nPróbáld újra később!",
+    "description": "<CheckGateStatus>d__22.MoveNext"
+  },
+  "GateClosed": {
+    "message": "A játék karbantartás alatt áll. Próbáld újra később vagy keresd fel a hivatalos hírforrásokat a további információért.",
+    "description": "<CheckGateStatus>d__22.MoveNext"
+  },
+  "CheckBootVersionError": {
+    "message": "A játék verziójának ellenőrzése meghiúsult. Lehetséges, hogy a játék éppen karbantartás alatt áll vagy a verzióhitelesítési kiszolgáló nem található. Ha képes vagy bejelentkezni a hivatalos indítóklienssel, de a XIVLauncherrel nem, kérjük jelentsd a hibát.",
+    "description": "<HandleBootCheck>d__33.MoveNext"
+  },
+  "BootPatchFailure": {
+    "message": "A „boot” frissítése sikertelen.",
+    "description": "<HandleBootCheck>d__33.MoveNext"
+  },
+  "KillswitchText": {
+    "message": "A XIVLauncher jelenleg nem képes elindítani a játékot, ugyanis egy nemrég megjelent frissítés megváltoztatta a bejelentkezési folyamatot.\nA XIVLauncher bejelentkezési folyamatának frissítése és a változtatások biztonságának ellenőrzése alatt nem használhatod azt. Próbáld újra később!\n\nA kellemetlenségért elnézést kérünk.\n\nHa mégis el akarod indítani a játékot és egyelőre mellőznéd a XIVLauncher használatát, akkor a „Hivatalos indítókliens” gombbal megnyithatod azt.\n",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmptyUsernameError": {
+    "message": "Nem adtad meg a felhasználónevedet!",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmailUsernameError": {
+    "message": "A SE-felhasználónevedet kell megadnod, nem pedig az email-címedet!",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmptyPasswordError": {
+    "message": "Nem adtad meg a jelszavadat!",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "UidCacheInstallError": {
+    "message": "Engedélyezted az UID-gyorsítótárat a beállításokban.\nAmíg ez a funkció aktív, addig nem telepítheted újra a játékot.\n\nHa szeretnéd újratelepíteni a játékot, akkor először ki kell kapcsolnod az UID-gyorsítótárat.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "GameRepairSuccess0": {
+    "message": "A játékfájlok épek.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess1": {
+    "message": "A XIVLauncher sikeresen kijavított 1 játékfájlt.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccessPlural": {
+    "message": "A XIVLauncher sikeresen kijavított {0} játékfájlt.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccessMoved1": {
+    "message": "Emellett találtunk 1 olyan fájlt, ami nem a játék része. Ez az alábbi helyre lett áthelyezve: {0}.\nHa korábban a ReShade-et használtad, akkor azt újra kell telepítened.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccessMovedPlural": {
+    "message": "Emellett találtunk {0} olyan fájlt, ami nem a játék része. Ez az alábbi helyre lett áthelyezve: {1}.\nHa korábban a ReShade-et használtad, akkor azt újra kell telepítened.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_LaunchGame": {
+    "message": "Játék _indítása",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_VerifyAgain": {
+    "message": "_Ellenőrzés ismét",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_Close": {
+    "message": "_Bezárás",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "NoVersionReferenceError": {
+    "message": "A játék jelenlegi verzióját még nem képes a XIVLauncher megjavítani, mert a referenciaadatok még nem állnak rendelkezésre.\nPróbáld újra később!",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairSuccess_TryAgain": {
+    "message": "_Újra",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "GameRepairError": {
+    "message": "Hiba történt a fájlok ellenőrzése közben.\nLehetséges, hogy újra kell telepítened a játékot.",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "A XIVLauncher egy másik munkamenetben már frissíti a játékot. Ellenőrizd, hogy nincs-e nyitva még egy XIVLauncher ablak!",
+    "description": "<RepairGame>d__25.MoveNext"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "A XIVLauncher játékbeli bővítményének szüksége van a Microsoft Visual C++ 2015–2019 terjeszthető összetevőire. Ezeket a Microsoft honlapjáról letöltheted.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
+  },
+  "DalamudArchError": {
+    "message": "A Dalamud nem képes futni ezen az architektúrán. Ellenőrizd, hogy a Windows 64-bites verziója van-e telepítve a számítógépre!\nHa ARM-es Windowst használsz, akkor a XIVLauncher futtatásához engedélyezned kell az x64-emulációt.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
+  },
+  "DalamudEnsurementError": {
+    "message": "A Dalamud és a bővítmények használatához szükséges fájlok letöltése meghiúsult.\nLehetséges, hogy megszakadt az internetkapcsolat vagy egy vírusirtó helyezte karanténba a fájlokat. A játék így is képes futni, de a hiba elhárításáig bővítményeket nem használhatsz.\n\nTovábbi információért ld. a GYIK-et.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
+  },
+  "AddonLoadError": {
+    "message": "Lehetséges, hogy ezt a hibát a vírusirtód okozza. Ellenőrizd a vírusirtó naplóját és ha kell, helyezd fehérlistára a XIVLaunchert.",
+    "description": "<StartGameAndAddon>d__29.MoveNext"
+  },
+  "GameIsOpenError": {
+    "message": "A játék és/vagy a hivatalos indítókliens jelenleg fut. A XIVLauncher így nem tudja frissíteni a játékot.\nZárd be a hivatalos indítóklienst, majd próbáld újra!",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
+  },
+  "PatchManNoInstaller": {
+    "message": "A frissítő elindítása meghiúsult.\n{0}\n\nHa megtagadtad a hozzáférést, próbáld újra! Ha a probléma továbbra is fennáll, vedd fel velünk a kapcsolatot Discordon.",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
+  },
+  "FreeSpaceError": {
+    "message": "Nincs elég szabad hely a frissítések letöltéséhez.\n\nHa kell, a frissítések letöltési mappáját a beállításokban változtathatod meg.\n\nSzükséges hely: {0}\nSzabad hely: {1}",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
+  },
+  "FreeSpaceErrorAll": {
+    "message": "Nincs elég szabad hely az összes frissítés letöltéséhez.\n\nHa kell, a frissítések letöltési mappáját a XIVLauncher beállításaiban változtathatod meg.\n\nSzükséges hely: {0}\nSzabad hely: {1}",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
+  },
+  "FreeSpaceGameError": {
+    "message": "Nincs elég szabad hely a frissítések telepítéséhez.\n\nHa kell, a játék mappáját a beállításokban változtathatod meg.\n\nSzükséges hely: {0}\nSzabad hely: {1}",
+    "description": "<TryHandlePatchAsync>d__34.MoveNext"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Bejelentkezési hiba",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginIoErrorSummary": {
+    "message": "A játékfájlok nem találhatóak.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginIoErrorActionable": {
+    "message": "Lehetséges, hogy a játék telepítési könyvtára jelenleg nem elérhető, mert egy lecsatlakoztatott külső- vagy hálózati meghajtón található. Ellenőrizd a játék elérési útját a XIVLauncher beállításaiban!",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginInvalidVersionFiles": {
+    "message": "Nem lehet megítélni a játék telepített verzióját.\n\nÚjra kell telepítened a játékot vagy ellenőrizned kell a fájlok épségét. Kattints jobb gombbal a Bejelentkezés gombra és válaszd ki a „Játékfájlok épségének ellenőrzése” lehetőséget!",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginSteamNullTicket": {
+    "message": "A Steam nem tudta igazolni a kilétedet. Ez valószínűleg csak egy átmeneti hiba – pár perc múlva próbáld újra!\n\nHa a probléma továbbra is fennáll, ellenőrizd hogy a Steam fut és a SE-fiókodhoz kapcsolt Steam-fiókkal vagy bejelentkezve.\nHa az ingyenes próbaverziót játszod, akkor a XIVLauncher beállításaiban, a „Próbav./Nyelv” fülön pipáld ki a „Próbaverziós fiók használata” lehetőséget.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginSteamIssue": {
+    "message": "A Steam nem tudta igazolni a kilétedet. Ellenőrizd hogy a Steam fut és a SE-fiókodhoz kapcsolt Steam-fiókkal vagy bejelentkezve.\nHa az ingyenes próbaverziót játszod, akkor a XIVLauncher beállításaiban, a „Próbav./Nyelv” fülön pipáld ki a „Próbaverziós fiók használata” lehetőséget.\n\nTovábbi információ: {0}",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginSteamWrongAccount": {
+    "message": "Nem azt a fiókot adtad meg, ami a Steammel van összekapcsolva. Csak a Steammel összekapcsolt SE-azonosítóval jelentkezhetsz be.\n\nA Steamhez kapcsolt fiókod az alábbi: {0}. Ellenőrizd, hogy nem írtál-e el valamit!",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginSteamLinkNeeded": {
+    "message": "Az első bejelentkezés előtt össze kell kapcsolnod a Steam-fiókodat a SE-azonosítóddal a hivatalos indítókliensben.\nPróbáld újra, miután ezt megtetted! A hivatalos kliens megnyitásához kattints a „Hivatalos indítókliens” gombra.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericError": {
+    "message": "A bejelentkezés meghiúsult.\nEllenőrizd a felhasználónevet és a jelszót!",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericErrorCheckOtpUse": {
+    "message": "Ha kétlépcsős azonosítással akarsz bejelentkezni,\npipáld ki a „{0}” jelölőnégyzetet, majd próbáld újra!",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericErrorCheckOtp": {
+    "message": "Ellenőrizd, hogy a kétlépcsős azonosításhoz használt eszközöd órája\nmegfelelően van beállítva! Ha nemrég már bejelentkeztél, akkor\npróbáld újra 30 másodperc múlva.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginWebExceptionContent": {
+    "message": "A játékkiszolgáló nem található.\n\nLehetséges, hogy ez egy átmeneti hiba vagy megszakadt az internetkapcsolatod. Próbáld újra később!",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "A kiszolgáló érvénytelen választ adott. Ez általában üzemszünetek vagy túlterhelés közben szokott előfordulni.\nVárj egy kicsit és próbáld újra, vagy próbálj bejelentkezni a hivatalos indítóklienssel!\n\nAz üzemszünetekről a Lodestone-on tájékozódhatsz.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "CheckLoginInfoNotAdditionally": {
+    "message": "Ellenőrizd a megadott adatokat vagy próbáld újra!",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nAz automatikus bejelentkezés szünetel.",
+    "description": "<TryLoginToGame>d__23.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "A felhasználói fióknak nincs hozzáférése a játékhoz. Ellenőrizd, hogy van-e aktív előfizetésed, és hogy nincs-e hátralékod!\n\nHa a Steamen vásároltad meg a játékot, akkor pipáld ki a „Steam-fiók használata” jelölőnégyzetet!\nHa be van kapcsolva az automatikus bejelentkezés, akkor a Shift gomb nyomvatartásával férhetsz hozzá a beállításokhoz.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LoginAcceptTermsMessage": {
+    "message": "A folytatáshoz el kell fogadnod a felhasználási feltételeket a hivatalos indítókliensben.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "EverythingIsFuckedMessage": {
+    "message": "Egy harmadik féltől származó program miatt bizonyos játékfájlok sérültek, ezért a játékot nem lehet elindítani vagy frissíteni.\nA folytatáshoz újra kell telepítened a játékot.\n\nHa a probléma továbbra is fennáll, vedd fel velünk a kapcsolatot Discordon!",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LoginRepairResponseIsNotNeedsPatchGame": {
+    "message": "A kiszolgáló érvénytelen választ küldött – a javítás félbeszakadt.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "PatchInstallDisclaimer": {
+    "message": "Elérhetővé vált egy új frissítés, amit a folytatás előtt telepítened kell.\nSzeretnéd a játékot a XIVLauncheren belül frissíteni?",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LoginNoStartOk": {
+    "message": "A frissítések keresése befejeződött és a függőben lévő frissítések telepítésre kerültek.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameNonZeroExitCode": {
+    "message": "A játékban helyreállíthatatlan hiba történt, ezért meg kellett szakítani a folyamatát. Szeretnéd újraindítani a játékot?\n\nKilépési kód: 0x{0:X8}",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameRelaunch": {
+    "message": "_Újraindítás",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameClose": {
+    "message": "_Bezárás",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameDoNotAskAgain": {
+    "message": "_Ne jelenlen meg többé",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameRetry": {
+    "message": "_Újra",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "MultiboxDeniedWarningSummary": {
+    "message": "Alapértelmezésből a játéknak egyszerre csak egy példánya futhat.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "MultiboxDeniedWarningActionable": {
+    "message": "Ellenőrizd, hogy fut-e még egy olyan példánya a játéknak, ami nem záródott be megfelelően! (Észlelt példány: {0})",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "LaunchGameKillThenRetry": {
+    "message": "_Feladat befejezése és újrapróbálás",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "GameExitedPrematurelyErrorSummary": {
+    "message": "A játék indítása meghiúsult.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "GameExitedPrematurelyErrorActionable": {
+    "message": "Lehetséges, hogy ez egy átmeneti hiba. Próbáld újraindítani a számítógépet!\nElőfordulhat, hogy a játékfájlok sérültek – a vizsgálathoz kattints jobb gombbal a Bejelentkezés gombra, majd válaszd ki a „Játékfájlok épségének ellenőrzése” lehetőséget.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "GameExitedPrematurelyErrorAV": {
+    "message": "\nEzt a hibát a vírusirtód is okozhatja – ha ez a probléma forrása, próbáld meg fehérlistára helyezni a XIVLaunchert. További információért ld. a GYIK-et.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "BinaryNotPresentErrorSummary": {
+    "message": "A játék futtatható fájlja nem található.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "BinaryNotPresentErrorActionable": {
+    "message": "Lehet, hogy ezt a hibát a vírusirtód okozza. Előfordulhat, hogy a játékot újra kell telepíteni.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "MultipleErrors": {
+    "message": "Számos hiba történt.",
+    "description": "<TryProcessLoginResult>d__24.MoveNext"
+  },
+  "OtpInputPrompt": {
+    "message": "Add meg a kétlépcsős azonosítási kódot!",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "OtpOneClickHint": {
+    "message": "Az alkalmazást is használhatod.\nTovábbi információért kattints ide!",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "OtpInputPromptBad": {
+    "message": "A megadott kód formátuma nem megfelelő.\nEgy érvényes kétlépcsős azonosítási kód 6 számjegyből áll.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PasteButton": {
+    "message": "Beillesztés vágólapról.",
+    "description": "OtpInputDialogViewModel.SetupLoc"
+  },
+  "PatchPreparing": {
+    "message": "Előkészítés folyamatban…",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchGeneralStatus": {
+    "message": "{0} frissítés telepítése folyamatban…",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchChecking": {
+    "message": "Ellenőrzés folyamatban…",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchDone": {
+    "message": "A letöltés sikeresen befejeződött.",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstalling": {
+    "message": "Telepítés folyamatban…",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingFormatted": {
+    "message": "{0}. frissítés telepítése folyamatban…",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchInstallingIdle": {
+    "message": "Várakozás a letöltésre…",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "PatchEta": {
+    "message": "{0} frissítés maradt. Sebesség: {1}/mp.",
+    "description": "PatchDownloadDialogViewModel.SetupLoc"
+  },
+  "ProfilePictureInputTitle": {
+    "message": "Profilkép beállítása",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "ProfilePictureInputDescription": {
+    "message": "Add meg a karakter nevét és világát!",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "CharacterName": {
+    "message": "Karakternév",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "WorldName": {
+    "message": "Világnév",
+    "description": "ProfilePictureInputWindowViewModel.SetupLoc"
+  },
+  "OpenPluginsFolder": {
+    "message": "Bővítmények mappájának megnyitása",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SaveSettings": {
+    "message": "Beállítások mentése",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsGame": {
+    "message": "Játék",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseGamePath": {
+    "message": "Add meg a játékot tartalmazó könyvtárat!\nEz a könyvtár a „game” és „boot” mappákat tartalmazza.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "GamePathSafeguardRegionWarning": {
+    "message": "A XIVLauncher nem támogatja a játék kínai és koreai kiadásait. Ellenőrizd, hogy a nemzetközi kiadás könyvtárát adtad-e meg!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpServerCheckBox": {
+    "message": "XL Authenticator alkalmazás / kétlépcsős azonosítási makró engedélyezése",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpServerTooltip": {
+    "message": "Ezzel a funkcióval közvetlenül elküldheted a kétlépcsős azonosítási kódot a\ntelefonodról a XIVLaunchernek.\nA beállításhoz kattints a „További információ” gombra.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LearnMore": {
+    "message": "További információ",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OtpLearnMoreTooltipLoc": {
+    "message": "Útmutató megnyitása a böngészőben.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AdditionalArguments": {
+    "message": "Indítási opciók",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDpiAwareness": {
+    "message": "DPI-figyelés",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessAware": {
+    "message": "Figyelés",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DpiAwarenessUnaware": {
+    "message": "Nincs figyelés",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDpiAwarenessHint": {
+    "message": "Ha a játék méretezése nem megfelelő a XIVLauncher használata mellett, próbáld meg ezt átállítani.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "RunIntegrityCheck": {
+    "message": "Integritási ellenőrzés futtatása",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "RunIntegrityCheckTooltip": {
+    "message": "A játékfájlok épségének ellenőrzése.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteam": {
+    "message": "A Steam futtatása a XIVLauncherrel",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoStartSteamTooltip": {
+    "message": "A XIVLauncher induláskor ellenőrizni fogja, hogy a Steam már fut-e és elindítja azt, ha nem.\nEzután a Steames állapotod automatikusan „Játékban”-ra lesz állítva.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsGameSettings": {
+    "message": "Próbav./Nyelv",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseDirectX": {
+    "message": "Válaszd ki a használni kívánt DirectX-verziót.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DirectX9Notice": {
+    "message": "A DirectX 9 már nem támogatott. Ugyan a játék így is el fog indulni, de nem számíthatsz a\nSE támogatására, ha technikai problémába ütközöl és a XIVLauncher bizonyos funkciói\n(pl.: a Rich Presence és a játékbeli bővítmények) nem fognak működni.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLanguage": {
+    "message": "Add meg a játék használni kívánt nyelvét.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChooseLauncherLanguage": {
+    "message": "Add meg a XIVLauncher használni kívánt nyelvét. (A változtatások érvénybe léptetéséhez újraindítás szükséges.)",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageHelpCtaLoc": {
+    "message": "Hibát találtál? A XIVLauncher fordításához itt járulhatsz hozzá.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "LauncherLanguageNotice": {
+    "message": "A nyelvi beállítások érvénybe léptetéséhez újraindítás szükséges.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsAutoLaunch": {
+    "message": "Automatikus indítás",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoLaunchHint": {
+    "message": "Az alábbi alkalmazások a játékkal együtt fognak elindulni.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AddNew": {
+    "message": "Új elem",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AutoLaunchAddNewToolTip": {
+    "message": "Új automatikus indítási elem hozzáadása egy program indításához.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsInGame": {
+    "message": "Dalamud",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonDescription": {
+    "message": "Az alábbi lehetőségek a XIVLauncher Dalamud által fenntartott játékbeli funkcióit befolyásolják. Ezek a funkciók\nautomatikusan igénybe lesznek véve, ha az alábbi jelölőnégyzet ki van pipálva, a játékot DirectX 11 módban futtatod és\na játék telepített verziója kompatibilis.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonCommandHint": {
+    "message": "Ha ez baevan kapcsolva, akkor a játékon belül az „/xlhelp” paranccsal listázhatod az elérhető parancsokat.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonEnabledCheckBox": {
+    "message": "A Dalamud engedélyezése",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "ChatSettings": {
+    "message": "Csevegési beállítások",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DiscordBotToken": {
+    "message": "Discord bot biztonsági jogkivonata",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AddChatChannel": {
+    "message": "Új csevegési csatorna",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetCfChannel": {
+    "message": "A Duty Finder értesítési csatornája",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetRouletteChannel": {
+    "message": "A Duty Finder bónuszának értesítési csatornája",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonSetRetainerChannel": {
+    "message": "Az eladások értesítési csatornája",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonChatDelay": {
+    "message": "Üzenetküldési késleltetés",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonChatDelayDescription": {
+    "message": "Ha több felhasználó szeretné ugyanazt az értesítési csatornát használni,\nakkor érdemes beállítani egy millimásodpercekben megadott késleltetést (pl.: 1000) az\nismételt üzenetek elkerülése érdekében.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayLoc": {
+    "message": "Bővítmény-befecskendezési késleltetés",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonInjectionDelayDescriptionLoc": {
+    "message": "Ha szeretnéd a Dalamudot elrejteni más befecskendezések (pl.: OBS vagy Discord) elől, akkor késleltetheted azt.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodLoc": {
+    "message": "Add meg a Dalamud betöltési módszerét!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodEntryPointLoc": {
+    "message": "Új: Javított kompatibilitás más programokkal és a korán betöltendő bővítményekkel.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectLoc": {
+    "message": "Örökölt: A Dalamud régebbi befecskendezési módszere, ami bizonyos esetekben stabilabb lehet.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodEntryPointDescriptionLoc": {
+    "message": "Ez a módszer belépésipont-átirányitást használ a Dalamut betöltéséhez, ami bizonyos esetekben kompatibilisebb lehet más programokkal (pl.: vírusirtókkal).",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "InGameAddonLoadMethodDllInjectDescriptionLoc": {
+    "message": "Ez a módszer DLL-befecskendezést használ, ami bizonyos rendszereken stabilabb lehet.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UniversalisHint": {
+    "message": "Az apróhirdetések adatait az Universalis szolgálja.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UniversalisOptOut": {
+    "message": "Kilépés a névtelen apróhirdetés-adathozzájárulásból",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PluginsDescriptionLoc": {
+    "message": "Az alábbi bővítmények vannak jelenleg telepítve.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Toggle": {
+    "message": "Ki/be",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Delete": {
+    "message": "Törlés",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PluginsInstallHint": {
+    "message": "A bővítmények telepítéséhez játékon belül nyomd meg a „bővítménytelepítő” gombot vagy használd az „/xlplugins” parancsot!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsPatching": {
+    "message": "Frissítés",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "AskBeforePatch": {
+    "message": "Megerősítés egy frissítés telepítése előtt",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchPath": {
+    "message": "Frissítések letöltési mappája",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchSpeedLimit": {
+    "message": "Letöltési sebességkorlát",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "KeepPatches": {
+    "message": "Letöltött frissítések megtartása a jövőbeli újratelepítések felgyorsítása érdekében",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "PatchAcquisitionMethod": {
+    "message": "Add meg a frissítések lekérési módszerét! Javasolt: „ARIA(HTTP)”.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "SettingsAbout": {
+    "message": "Névjegy",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "Credits": {
+    "message": "Készítette goat. Külön köszönet: Mino, sky, LeonBlade, Wintermute, Zyian,\nRoy, Meli, Aida Enna, Aireil, kizer és the angry paissa artist!\n\nVisszajelzésed van? Csatlakozz a Discord-szerverhez vagy hozz létre egy hibajelentést a GitHubon!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "License": {
+    "message": "Licenc: GPLv3 vagy újabb. További információ.",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "StartBackupTool": {
+    "message": "Biztonsági mentés készítése…",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "StartOriginalLauncher": {
+    "message": "Hivatalos indítókliens megnyitása",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "IsFreeTrial": {
+    "message": "Próbaverziós fiók használata",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettings": {
+    "message": "Haladó beállítások",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "OpenAdvancedSettingsTip": {
+    "message": "A haladó felhasználóknak szóló beállítások megnyitása. Ezeket csak akkor módosítsd, ha tudod, hogy mit csinálsz!",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "DisabledPlugin": {
+    "message": " (letiltva)",
+    "description": "SettingsControlViewModel.SetupLoc"
+  },
+  "UpdateCheckMsg": {
+    "message": "Frissítések keresése folyamatban…",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "AutoLoginHint": {
+    "message": "A beállítások megváltoztatásához\ntartsd lenyomva a Shift billentyűt!",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "ResetUidCacheHint": {
+    "message": "Az UID-gyorsítótár alaphelyzetbe állításához\ntartsd lenyomva a Ctrl billentyűt!",
+    "description": "UpdateLoadingDialogViewModel.SetupLoc"
+  },
+  "AdminCheck": {
+    "message": "A XIVLauncher és/vagy a játék jelenleg rendszergazdai jogosultságokkal fut.\nEz számos problémát okozhat, pl.: a bővítmények indításának meghiúsulását vagy a billentyűkombinációk nem működését.\n\nSzeretnéd ezt a problémát automatikusan helyreállítani?",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "AdminCheckNag": {
+    "message": "A XIVLauncher jelenleg rendszergazdai jogosultságokkal fut.\nEz számos problémát okozhat, pl.: a bővítmények indításának meghiúsulását vagy a billentyűkombinációk nem működését.\n\nNe nyisd meg a XIVLaunchert rendszergazdaként!",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "MacTypeNag": {
+    "message": "A MacType jelenlétét észleltük ezen a számítógépen.\nEz a program közismerten problémákat okoz a játékkal – mind a hivatalos indítóklienssel, mind a XIVLauncherrel.\n\nHelyezd a MacType-on belül feketelistára az alábbi programokat: XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater, ffxiv_dx11!",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "MyGamesWriteAccessNag": {
+    "message": "Ennek a felhasználói fióknak nincs jogosultsága adatokat írni a játék „My Games” mappájába.\nEz azt jelenti, hogy a program nem fogja tudni menteni a játék közben létrehozott képernyőmentéseket és bizonyos karakteradatokat.\n\nLehetséges, hogy ezt a mappa rosszul beállított jogosultságai vagy a vírusírtód okozza. Ellenőrizd a mappa jogosultságait!",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "GShadeSymlinks": {
+    "message": "A GShade szimbolikus hivatkozásai sérültek.\n\nA játék ebben az állapotban nem futtatható. Szeretnéd, hogy a XIVLauncher automatikusan kijavítsa ezt?\nA művelet befejezése után újra kell majd telepítened a GShade-et.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "GShadeError": {
+    "message": "Egy sérült GShade-telepítést észleltünk a számítógépen.\n\nA játék ebben az állapotban nem futtatható. Szeretnéd, hogy a XIVLauncher automatikusan kijavítsa ezt?\nA művelet befejezése után újra kell majd telepítened a GShade-et.",
+    "description": "ProblemCheck.RunCheck"
+  },
+  "GShadeWrongMode": {
+    "message": "A GShade jelenleg olyan módban van telepítve, ami nem optimális a XIVLauncherrel való használathoz.\nSzeretnéd, hogy a XIVLauncher automatikusan kijavítsa ezt?\n\nEz a művelet nem fogja átállítani a sablonaidat vagy a beállításaidat – csupán növeli a\nXIVLauncher funkcióival való kompatibilitást.",
+    "description": "ProblemCheck.RunCheck"
+  }
+}
