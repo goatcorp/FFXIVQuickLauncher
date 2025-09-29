@@ -23,6 +23,15 @@ jobs:
         run: |
           cd src/XIVLauncher
           dotnet publish --self-contained -r win-x64 -o publish
+      - name: Publish XIVLauncher.Patcher # This is to fix the missing .deps.json
+        run: |
+          cd src/XIVLauncher.PatchInstaller
+          dotnet publish --self-contained -r win-x64 -o publish
+      - name: Combine Publishes # This is to fix the missing .deps.json but skips same files
+        run: |
+          $SourceFolder = "./src/XIVLauncher.PatchInstaller/publish"
+          $DestinationFolder = "./src/XIVLauncher/publish"
+          robocopy $SourceFolder $DestinationFolder /S /E /XO /IT
       - name: Generate Hashes File
         run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish
       - name: Attest Artifacts
