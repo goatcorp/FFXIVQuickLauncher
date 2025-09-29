@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -77,6 +77,8 @@ namespace XIVLauncher.Windows
 
             OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
 
+            OtpAlwaysOnTopCheckBox.IsChecked = App.Settings.OtpAlwaysOnTopEnabled;
+
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
@@ -125,6 +127,8 @@ namespace XIVLauncher.Windows
                 App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.EntryPoint;
 
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
+
+            App.Settings.OtpAlwaysOnTopEnabled = OtpAlwaysOnTopCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
 
