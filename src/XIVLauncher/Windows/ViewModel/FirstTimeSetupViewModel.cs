@@ -19,7 +19,7 @@ namespace XIVLauncher.Windows.ViewModel
             FirstTimeLanguageLoc = Loc.Localize("ChooseLanguageFTS", "Please select which language you want to load the game with.");
             NextLoc = Loc.Localize("Next", "Next");
             FirstTimeDalamudLoc = Loc.Localize("FirstTimeDalamudNotice",
-                "Do you want to enable Dalamud?\r\nThis will add some extra functionality to your game, such as RMT chat filtering and Discord notifications for chat messages or Duty Finder pops.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.");
+                "Do you want to enable Dalamud?\r\nDalamud allows you to extend your game with useful features through a variety of plugins created by external developers.\r\n\r\nTo configure these settings, please use the XIVLauncher settings menu and switch to the \"Dalamud\" tab.\r\nEnabling this, however, could cause a false positive in your antivirus software, please check its settings and add any needed exclusions if you run into problems.");
             FirstTimeDalamudCheckBoxLoc = Loc.Localize("FirstTimeDalamudCheckBox", "Enable Dalamud");
         }
 
