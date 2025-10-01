@@ -26,32 +26,7 @@ jobs:
       - name: Publish XIVLauncher.Patcher # This is to fix the missing .deps.json
         run: |
           cd src/XIVLauncher.PatchInstaller
-          dotnet publish --self-contained -r win-x64 -o publish
-      - name: Combine Publishes # This is to fix the missing .deps.json but skips same files
-        run: |
-          $SourceFolder = "./src/XIVLauncher.PatchInstaller/publish"
-          $DestinationFolder = "./src/XIVLauncher/publish"
-          robocopy $SourceFolder $DestinationFolder /S /E /XO /IT
-          $lastExitCode = $LASTEXITCODE
-          if ($lastExitCode -eq 0) {
-            Write-Host "Robocopy completed successfully with no changes."
-          } elseif ($lastExitCode -eq 1) {
-            Write-Host "Robocopy completed successfully; All files were copied successfully."
-          } elseif ($lastExitCode -eq 2) {
-            Write-Host "Robocopy completed successfully; There are some additional files in the destination directory that aren't present in the source directory. No files were copied."
-          } elseif ($lastExitCode -eq 3) {
-            Write-Host "Robocopy completed successfully; Some files were copied. Additional files were present. No failure was met."
-          } elseif ($lastExitCode -eq 5) {
-            Write-Host "Robocopy completed successfully; Some files were copied. Some files were mismatched. No failure was met."
-          } elseif ($lastExitCode -eq 6) {
-            Write-Host "Robocopy completed successfully; Additional files and mismatched files exist. No files were copied and no failures were met. Which means that the files already exist in the destination directory."
-          } elseif ($lastExitCode -eq 7) {
-            Write-Host "Robocopy completed successfully; Files were copied, a file mismatch was present, and additional files were present."
-          } else {
-            Write-Error "Robocopy encountered errors. Exit code: $lastExitCode"
-            exit 1
-          }
-          exit 0
+          dotnet publish --self-contained -r win-x64 -o ../XIVLauncher/publish/patcher
       - name: Generate Hashes File
         run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish
       - name: Attest Artifacts
@@ -79,11 +54,9 @@ jobs:
           Invoke-WebRequest -Uri $delta_file.browser_download_url -OutFile ".\Releases\$($delta_file.name)"
           $full_file = $current.assets | Where-Object -Property name -Value "*full.nupkg" -Like
           Invoke-WebRequest -Uri $full_file.browser_download_url -OutFile ".\Releases\$($full_file.name)"
-          vpk pack -u XIVLauncher -v $refver -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico
-          Start-Sleep -s 60
+          vpk pack -u XIVLauncher -v $refver -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico --noProtable
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
-          rm ".\Releases\XIVLauncher-win-Portable.zip"
       - name: Attest Setup
         if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
         uses: actions/attest-build-provenance@v1
