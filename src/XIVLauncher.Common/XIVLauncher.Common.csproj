@@ -4,7 +4,7 @@
         <AssemblyTitle>XIVLauncher.Common</AssemblyTitle>
         <Description>Common components for XIVLauncher.</Description>
         <VersionPrefix>1.0.0</VersionPrefix>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
 
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
 
