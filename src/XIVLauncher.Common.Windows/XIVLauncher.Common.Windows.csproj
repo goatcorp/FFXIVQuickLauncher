@@ -4,7 +4,7 @@
         <AssemblyTitle>XIVLauncher.Common.Windows</AssemblyTitle>
         <Description>Shared XIVLauncher platform-specific implementations for Windows.</Description>
         <VersionPrefix>1.0.0</VersionPrefix>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 

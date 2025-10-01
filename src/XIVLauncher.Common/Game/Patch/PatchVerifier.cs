@@ -299,7 +299,7 @@ namespace XIVLauncher.Common.Game.Patch
 
                 if (_external)
                 {
-                    indexedZiPatchIndexInstaller = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "XIVLauncher.PatchInstaller.exe"),
+                    indexedZiPatchIndexInstaller = new IndexedZiPatchIndexRemoteInstaller(Path.Combine(assemblyLocation!, "patcher", "XIVLauncher.PatchInstaller.exe"),
                                                                                           needElevation);
                 }
                 else
