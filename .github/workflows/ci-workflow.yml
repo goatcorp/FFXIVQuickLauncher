@@ -23,6 +23,10 @@ jobs:
         run: |
           cd src/XIVLauncher
           dotnet publish --self-contained -r win-x64 -o publish
+      - name: Publish XIVLauncher.Patcher
+        run: |
+          cd src/XIVLauncher.PatchInstaller
+          dotnet publish --self-contained -r win-x64 -o ../XIVLauncher/publish/patcher
       - name: Generate Hashes File
         run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish
       - name: Attest Artifacts
@@ -50,11 +54,10 @@ jobs:
           Invoke-WebRequest -Uri $delta_file.browser_download_url -OutFile ".\Releases\$($delta_file.name)"
           $full_file = $current.assets | Where-Object -Property name -Value "*full.nupkg" -Like
           Invoke-WebRequest -Uri $full_file.browser_download_url -OutFile ".\Releases\$($full_file.name)"
-          vpk pack -u XIVLauncher -v $refver -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico
-          Start-Sleep -s 60
+          vpk pack -u XIVLauncher -v $refver -p .\publish\ -e XIVLauncher.exe -i .\Resources\dalamud_icon.ico --noPortable
+          Start-Sleep -s 10
           rm ".\Releases\$($delta_file.name)"
           rm ".\Releases\$($full_file.name)"
-          rm ".\Releases\XIVLauncher-win-Portable.zip"
       - name: Attest Setup
         if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
         uses: actions/attest-build-provenance@v1
@@ -98,6 +101,10 @@ jobs:
         run: |
           cd src/XIVLauncher
           dotnet publish --self-contained -r win-x64 -o publish
+      - name: Publish XIVLauncher.Patcher
+        run: |
+          cd src/XIVLauncher.PatchInstaller
+          dotnet publish --self-contained -r win-x64 -o ../XIVLauncher/publish/patcher
       - name: Generate Hashes File
         run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish/
       - name: Attest Artifacts
