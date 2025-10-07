@@ -68,7 +68,7 @@ jobs:
             src/XIVLauncher/Releases/RELEASES
             src/XIVLauncher/Releases/releases.win.json
             src/XIVLauncher/Releases/assets.win.json
-      - name: Create Release
+      - name: Upload release assets
         uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -76,6 +76,14 @@ jobs:
           files: ./src/XIVLauncher/Releases/**
           name: Release ${{ steps.build-velopack.outputs.version }}
           body_path:  RELEASE.md
+          draft: true
+          prerelease: true
+      - name: Publish release
+        uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: false
           prerelease: true
 
       # Disabled, file too large now that we're doing self-contained
