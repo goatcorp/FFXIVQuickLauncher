@@ -69,7 +69,7 @@ jobs:
             src/XIVLauncher/Releases/releases.win.json
             src/XIVLauncher/Releases/assets.win.json
       - name: Upload release assets
-        uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
+        uses: softprops/action-gh-release@aec2ec56f94eb8180ceec724245f64ef008b89f5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -79,7 +79,7 @@ jobs:
           draft: true
           prerelease: true
       - name: Publish release
-        uses: softprops/action-gh-release@a74c6b72af54cfa997e81df42d94703d6313a2d0
+        uses: softprops/action-gh-release@aec2ec56f94eb8180ceec724245f64ef008b89f5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
