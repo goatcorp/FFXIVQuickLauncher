@@ -999,9 +999,10 @@ namespace XIVLauncher.Windows.ViewModel
                             {
                                 doVerify = CustomMessageBox.Builder
                                     .NewFrom(Loc.Localize("NoVersionReferenceError",
-                                        "The version of the game you are on cannot be repaired by XIVLauncher yet, as reference information is not yet available.\nPlease try again later."))
-                                    .WithImage(MessageBoxImage.Exclamation)
+                                        "The version of the game you are on cannot be repaired by XIVLauncher yet, as it is too recent.\n\nPlease try again later, or verify your game instead from the settings."))
+                                    .WithImage(MessageBoxImage.Error)
                                     .WithButtons(MessageBoxButton.OKCancel)
+                                    .WithShowHelpLinks()
                                     .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
                                     .WithParentWindow(_window)
                                     .Show() == MessageBoxResult.OK;

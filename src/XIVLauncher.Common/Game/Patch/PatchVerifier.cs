@@ -49,7 +49,11 @@ namespace XIVLauncher.Common.Game.Patch
         private HttpClient _client;
         private CancellationTokenSource _cancellationTokenSource = new();
 
-        private Dictionary<Repository, string> _repoMetaPaths = new();
+        Launcher.LoginResult _currentLoginResult;
+
+        record struct RepoMetaInfo(string Path, string Version);
+
+        private Dictionary<Repository, RepoMetaInfo> _repoMetaPaths = new();
         private Dictionary<string, PatchSource> _patchSources = new();
 
         private Task _verificationTask;
@@ -142,8 +146,9 @@ namespace XIVLauncher.Common.Game.Patch
             ProgressUpdateInterval = progressUpdateInterval;
             _maxExpansionToCheck = maxExpansion;
             _external = external;
+            _currentLoginResult = loginResult;
 
-            SetLoginState(loginResult);
+            this.CreatePatchSources(loginResult);
         }
 
         public void Start()
@@ -179,7 +184,7 @@ namespace XIVLauncher.Common.Game.Patch
             return _verificationTask ?? Task.CompletedTask;
         }
 
-        private void SetLoginState(Launcher.LoginResult result)
+        private void CreatePatchSources(Launcher.LoginResult result)
         {
             _patchSources.Clear();
 
@@ -313,7 +318,6 @@ namespace XIVLauncher.Common.Game.Patch
                 {
                     switch (State)
                     {
-
                         case VerifyState.NotStarted:
                             State = VerifyState.DownloadMeta;
                             break;
@@ -321,6 +325,20 @@ namespace XIVLauncher.Common.Game.Patch
                         case VerifyState.DownloadMeta:
                             await this.GetPatchMeta().ConfigureAwait(false);
                             State = VerifyState.VerifyAndRepair;
+
+                            // Double-check that the indices we have are actually appropriate for the version of the game we want.
+                            foreach (var patch in _currentLoginResult.PendingPatches.GroupBy(x => x.GetRepo()))
+                            {
+                                if (!patch.Any())
+                                    continue;
+
+                                if (!_repoMetaPaths.TryGetValue(patch.Key, out var repoMeta))
+                                    throw new NoVersionReferenceException(patch.Key, "(repo does not exist)");
+
+                                if (!repoMeta.Version.EndsWith(patch.Last().VersionId, StringComparison.Ordinal))
+                                    throw new NoVersionReferenceException(patch.Key, patch.Last().VersionId);
+                            }
+
                             break;
 
                         case VerifyState.VerifyAndRepair:
@@ -340,9 +358,9 @@ namespace XIVLauncher.Common.Game.Patch
                             var bootPath = Path.Combine(_settings.GamePath.FullName, "boot");
                             var gamePath = Path.Combine(_settings.GamePath.FullName, "game");
 
-                            foreach (var metaPath in _repoMetaPaths)
+                            foreach (var meta in _repoMetaPaths)
                             {
-                                var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(metaPath.Value, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
+                                var patchIndex = new IndexedZiPatchIndex(new BinaryReader(new DeflateStream(new FileStream(meta.Value.Path, FileMode.Open, FileAccess.Read), CompressionMode.Decompress)));
                                 var adjustedGamePath = patchIndex.ExpacVersion == IndexedZiPatchIndex.ExpacVersionBoot ? bootPath : gamePath;
 
                                 foreach (var target in patchIndex.Targets)
@@ -613,7 +631,7 @@ namespace XIVLauncher.Common.Game.Patch
                 }
             }
 
-            _repoMetaPaths.Add(repo, filePath);
+            _repoMetaPaths.Add(repo, new RepoMetaInfo(filePath, latestVersion));
             Log.Verbose("Downloaded patch index for {Repo}({Version})", repo, latestVersion);
         }
 

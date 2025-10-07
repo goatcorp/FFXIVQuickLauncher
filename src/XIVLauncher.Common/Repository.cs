@@ -92,29 +92,5 @@ namespace XIVLauncher.Common
         {
             return repo.GetVer(gamePath) == Constants.BASE_GAME_VERSION;
         }
-
-        // TODO
-        public static string GetRepoHash(this Repository repo)
-        {
-            switch (repo)
-            {
-                case Repository.Boot:
-                    return null;
-                case Repository.Ffxiv:
-                    return null;
-                case Repository.Ex1:
-                    return null;
-                case Repository.Ex2:
-                    return null;
-                case Repository.Ex3:
-                    return null;
-                case Repository.Ex4:
-                    return null;
-                case Repository.Ex5:
-                    return null;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(repo), repo, null);
-            }
-        }
     }
 }
