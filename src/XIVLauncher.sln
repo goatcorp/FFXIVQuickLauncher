@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher", "XIVLauncher\XIVLauncher.csproj", "{BEB33308-6E15-41F7-ACC8-86BB786E2E56}"
+	ProjectSection(ProjectDependencies) = postProject
+		{395CDFAB-48F8-4EC5-833D-05F5795A157D} = {395CDFAB-48F8-4EC5-833D-05F5795A157D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.PatchInstaller", "XIVLauncher.PatchInstaller\XIVLauncher.PatchInstaller.csproj", "{395CDFAB-48F8-4EC5-833D-05F5795A157D}"
 EndProject
@@ -33,8 +36,6 @@ Global
 		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|Any CPU.ActiveCfg = ReleaseNoUpdate|Any CPU
-		{BEB33308-6E15-41F7-ACC8-86BB786E2E56}.ReleaseNoUpdate|Any CPU.Build.0 = ReleaseNoUpdate|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{395CDFAB-48F8-4EC5-833D-05F5795A157D}.Release|Any CPU.ActiveCfg = Release|Any CPU

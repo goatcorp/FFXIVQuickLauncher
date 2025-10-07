@@ -56,6 +56,23 @@
     </Content>
   </ItemGroup>
 
+  <!--
+      Post-build: Copy XIVLauncher.PatchInstaller bin directory to patcher/ in XIVLauncher bin directory.
+      Only runs if not publishing (i.e., normal build, not dotnet publish).
+  -->
+  <Target Name="CopyPatcherBin" AfterTargets="Build" Condition="'$(DeployOnBuild)' != 'true'">
+    <Message Importance="high" Text="[CopyPatcherBin] Copying PatchInstaller bin to patcher directory..." />
+    <PropertyGroup>
+      <PatcherBinDir>..\XIVLauncher.PatchInstaller\bin\$(Configuration)\</PatcherBinDir>
+      <LauncherBinDir>$(OutputPath)</LauncherBinDir>
+      <PatcherTargetDir>$(LauncherBinDir)patcher\</PatcherTargetDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <PatcherFiles Include="$(PatcherBinDir)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PatcherFiles)" DestinationFolder="$(PatcherTargetDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+    
   <ItemGroup>
     <PackageReference Include="AdysTech.CredentialManager" Version="1.8.0" />
     <PackageReference Include="CheapLoc" Version="1.1.6" />
