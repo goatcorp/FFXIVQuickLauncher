@@ -366,8 +366,8 @@
                                                 </materialDesign:PopupBox>
                                                 <Button HorizontalAlignment="Left"
                                                         x:Name="AccountSwitcherButton" Margin="0 0 0 0"
-                                                        Background="#FF0096DB"
-                                                        BorderBrush="#FF0096DB"
+                                                        Background="{DynamicResource PrimaryHueMidBrush}"
+                                                        BorderBrush="{DynamicResource PrimaryHueMidBrush}"
                                                         ToolTip="{Binding OpenAccountSwitcherLoc}"
                                                         Click="AccountSwitcherButton_OnClick">
                                                     <StackPanel Orientation="Horizontal" Margin="0">
