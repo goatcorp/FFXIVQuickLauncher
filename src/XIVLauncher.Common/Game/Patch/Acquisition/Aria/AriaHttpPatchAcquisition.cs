@@ -55,7 +55,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
                 var ariaHost = $"http://localhost:{ariaPort}/jsonrpc";
 
                 var ariaArgs =
-                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{logFile.FullName}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false --allow-overwrite=true";
+                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{logFile.FullName}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false --allow-overwrite=true --async-dns=false";
 
                 Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath} {ariaArgs}...");
 
