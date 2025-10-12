@@ -62,7 +62,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public readonly long[] Progresses = new long[MAX_DOWNLOADS_AT_ONCE];
         public readonly double[] Speeds = new double[MAX_DOWNLOADS_AT_ONCE];
-        public readonly PatchDownload[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
+        public readonly PatchDownload?[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
         public readonly SlotState[] Slots = new SlotState[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchAcquisition?[] Acquisitions = new PatchAcquisition[MAX_DOWNLOADS_AT_ONCE];
 
@@ -441,7 +441,7 @@ namespace XIVLauncher.Common.Game.Patch
 
                 while (this.installer.State != PatchInstaller.InstallerState.Ready)
                 {
-                    Thread.Yield();
+                    Thread.Sleep(100);
                 }
 
                 // TODO need to handle this better

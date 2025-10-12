@@ -63,7 +63,13 @@ namespace XIVLauncher.Windows
                 {
                     var activePatch = _manager.Actives[i];
 
-                    if (_manager.Slots[i] == PatchManager.SlotState.Done || activePatch == null)
+                    if (activePatch == null)
+                    {
+                        SetPatchProgress(i, ViewModel.PatchWaitingLoc, 0f, true);
+                        continue;
+                    }
+
+                    if (_manager.Slots[i] == PatchManager.SlotState.Done)
                     {
                         SetPatchProgress(i, ViewModel.PatchDoneLoc, 100f, false);
                         continue;
@@ -108,7 +114,7 @@ namespace XIVLauncher.Windows
                 this.Progress3.Foreground = Brushes.OrangeRed;
                 this.Progress4.Foreground = Brushes.OrangeRed;
                 this.TotalProgress.Foreground = Brushes.OrangeRed;
-                this.PatchProgressText.Text = "Cancelling...";
+                this.PatchProgressText.Text = this.ViewModel.PatchCancellingLoc;
             }
         }
 
