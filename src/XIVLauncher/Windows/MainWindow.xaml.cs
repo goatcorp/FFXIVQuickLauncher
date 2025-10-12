@@ -161,6 +161,9 @@ namespace XIVLauncher.Windows
 
                 _bannerChangeTimer.Elapsed += (o, args) =>
                 {
+                    if (!this.IsVisible)
+                        return;
+
                     _bannerDotList.ToList().ForEach(x => x.Active = false);
 
                     if (_currentBannerIndex + 1 > _banners.Count - 1)
@@ -582,11 +585,17 @@ namespace XIVLauncher.Windows
             _currentBannerIndex = _bannerDotList.FirstOrDefault(x => x.Active)?.Index ?? _currentBannerIndex;
             Dispatcher.BeginInvoke(new Action(() => BannerImage.Source = _bannerBitmaps[_currentBannerIndex]));
 
+            if (!_bannerChangeTimer.Enabled)
+                return;
+
             _bannerChangeTimer.Stop();
         }
 
         private void RadioButton_MouseLeave(object sender, MouseEventArgs e)
         {
+            if (_bannerChangeTimer.Enabled)
+                return;
+
             _bannerChangeTimer.Start();
         }
 
