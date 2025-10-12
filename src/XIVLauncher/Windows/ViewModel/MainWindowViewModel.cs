@@ -1369,9 +1369,9 @@ namespace XIVLauncher.Windows.ViewModel
                 }))
                 return false;
 
-            using var installer = new Common.Game.Patch.PatchInstaller(App.Settings.GamePath, App.Settings.KeepPatches ?? false);
+            using var installer = new PatchInstaller(App.Settings.GamePath, App.Settings.KeepPatches ?? false);
             var patcher = new PatchManager(App.Settings.PatchAcquisitionMethod ?? AcquisitionMethod.Aria, App.Settings.SpeedLimitBytes,
-                repository, pendingPatches, App.Settings.GamePath, App.Settings.PatchPath, installer, this.Launcher, sid);
+                                           repository, pendingPatches, App.Settings.GamePath, App.Settings.PatchPath, installer, this.Launcher, sid);
             patcher.OnFail += this.PatcherOnFail;
             installer.OnFail += this.InstallerOnFail;
 
@@ -1389,8 +1389,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             try
             {
-                await patcher.PatchAsync(new FileInfo(Path.Combine(Paths.RoamingPath, "aria2.log"))).ConfigureAwait(false);
-                return true;
+                return await patcher.PatchAsync(new FileInfo(Path.Combine(Paths.RoamingPath, "aria2.log"))).ConfigureAwait(false);
             }
             catch (PatchInstallerException ex)
             {

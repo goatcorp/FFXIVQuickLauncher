@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AriaNet;
+using AriaNet.Attributes;
 using Serilog;
 using XIVLauncher.Common.Util;
 
@@ -15,14 +16,11 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 {
     public class AriaHttpPatchAcquisition : PatchAcquisition
     {
-        private static Process ariaProcess;
-        private static AriaManager manager;
-        private static long maxDownloadSpeed;
+        private static Process? ariaProcess;
+        private static AriaManager? manager;
 
-        public static async Task InitializeAsync(long maxDownloadSpeed, FileInfo logFile)
+        public static async Task InitializeAsync(long bytesPerSecond, FileInfo logFile)
         {
-            AriaHttpPatchAcquisition.maxDownloadSpeed = maxDownloadSpeed;
-
             if (ariaProcess == null || ariaProcess.HasExited)
             {
                 // Kill stray aria2c-xl processes
@@ -40,7 +38,6 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
                     }
                 }
 
-                // I don't really see the point of this, but aria complains if we don't provide a secret
                 var rng = new Random();
                 var secret = BitConverter.ToString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes($"{rng.Next()}{rng.Next()}{rng.Next()}{rng.Next()}")));
 
@@ -55,7 +52,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
                 var ariaHost = $"http://localhost:{ariaPort}/jsonrpc";
 
                 var ariaArgs =
-                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{logFile.FullName}\" --log-level=notice --max-connection-per-server=8 --auto-file-renaming=false --allow-overwrite=true";
+                    $"--enable-rpc --rpc-secret={secret} --rpc-listen-port={ariaPort} --log=\"{logFile.FullName}\" --log-level=notice --max-overall-download-limit={bytesPerSecond} --max-connection-per-server=8 --auto-file-renaming=false --allow-overwrite=true";
 
                 Log.Verbose($"[ARIA] Aria process not there, creating from {ariaPath} {ariaArgs}...");
 
@@ -84,18 +81,21 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 
         public static async Task UnInitializeAsync()
         {
-            if (ariaProcess is {HasExited: false})
+            if (ariaProcess is { HasExited: false })
             {
-                try
+                if (manager != null)
                 {
-                    await manager.Shutdown();
-                }
-                catch (Exception)
-                {
-                    // ignored
+                    try
+                    {
+                        await manager.Shutdown();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
                 if (!ariaProcess.HasExited)
                     ariaProcess.Kill();
@@ -104,19 +104,15 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 
         public override async Task StartDownloadAsync(string url, FileInfo outFile)
         {
-            await manager.AddUri(new List<string>()
+            await manager.AddUri([url], new Dictionary<string, string>
             {
-                url
-            }, new Dictionary<string, string>()
-            {
-                {"user-agent", Constants.PatcherUserAgent},
-                {"out", outFile.Name},
-                {"dir", outFile.Directory.FullName},
-                {"max-connection-per-server", "8"},
-                {"max-tries", "100"},
-                {"max-download-limit", maxDownloadSpeed.ToString()},
-                {"auto-file-renaming", "false"},
-                {"allow-overwrite", "true"},
+                { "user-agent", Constants.PatcherUserAgent },
+                { "out", outFile.Name },
+                { "dir", outFile.Directory!.FullName },
+                { "max-connection-per-server", "8" },
+                { "max-tries", "100" },
+                { "auto-file-renaming", "false" },
+                { "allow-overwrite", "true" },
             }).ContinueWith(t =>
             {
                 if (t.IsFaulted || t.IsCanceled)
@@ -181,7 +177,21 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria
 
         public override async Task CancelAsync()
         {
+            if (manager == null)
+                throw new InvalidOperationException("AriaManager not initialized.");
+
             await manager.PauseAllTasks();
+        }
+
+        public static async Task SetDownloadSpeedLimit(long bytesPerSecond)
+        {
+            if (manager == null)
+                throw new InvalidOperationException("AriaManager not initialized.");
+
+            await manager.ChangeGlobalOption(new AriaOption
+            {
+                MaxOverallDownloadLimit = bytesPerSecond.ToString()
+            });
         }
     }
 }

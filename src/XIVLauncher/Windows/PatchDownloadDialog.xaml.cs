@@ -54,7 +54,10 @@ namespace XIVLauncher.Windows
 
             this.Dispatcher.Invoke(() =>
             {
-                SetGeneralProgress(_manager.CurrentInstallIndex, _manager.Downloads.Count, this._manager.IsInstallerBusy);
+                SetGeneralProgress(_manager.CurrentInstallIndex, _manager.Downloads.Count, _manager.IsInstallerBusy, _manager.IsCancelling);
+
+                if (_manager.IsCancelling)
+                    return;
 
                 for (var i = 0; i < PatchManager.MAX_DOWNLOADS_AT_ONCE; i++)
                 {
@@ -73,7 +76,7 @@ namespace XIVLauncher.Windows
                     }
                     else
                     {
-                        var pct = Math.Round((double) (100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
+                        var pct = Math.Round((double)(100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
                         SetPatchProgress(i,
                                          $"{activePatch.Patch} ({pct:#0.0}%, {ApiHelpers.BytesToString(_manager.Speeds[i])}/s)",
                                          pct, false);
@@ -91,12 +94,22 @@ namespace XIVLauncher.Windows
             });
         }
 
-        public void SetGeneralProgress(int curr, int final, bool busy)
+        public void SetGeneralProgress(int curr, int final, bool busy, bool cancelling)
         {
             PatchProgressText.Text = busy ? string.Format(ViewModel.PatchInstallingFormattedLoc, curr) :
                                      _manager.DownloadsDone ? string.Empty : ViewModel.PatchInstallingIdleLoc;
             InstallingText.Text = string.Format(ViewModel.PatchGeneralStatusLoc, $"{curr}/{final}");
             TotalProgress.Value = final == 0 ? 100 : (double)(100 * curr) / final;
+
+            if (cancelling)
+            {
+                this.Progress1.Foreground = Brushes.OrangeRed;
+                this.Progress2.Foreground = Brushes.OrangeRed;
+                this.Progress3.Foreground = Brushes.OrangeRed;
+                this.Progress4.Foreground = Brushes.OrangeRed;
+                this.TotalProgress.Foreground = Brushes.OrangeRed;
+                this.PatchProgressText.Text = "Cancelling...";
+            }
         }
 
         public void SetLeft(long left, double rate)
@@ -113,12 +126,15 @@ namespace XIVLauncher.Windows
                 case 0:
                     SetProgressBar1Progress(patchName, pct, indeterminate);
                     break;
+
                 case 1:
                     SetProgressBar2Progress(patchName, pct, indeterminate);
                     break;
+
                 case 2:
                     SetProgressBar3Progress(patchName, pct, indeterminate);
                     break;
+
                 case 3:
                     SetProgressBar4Progress(patchName, pct, indeterminate);
                     break;
@@ -172,6 +188,36 @@ namespace XIVLauncher.Windows
         private void PatchDownloadDialog_OnClosing(object sender, CancelEventArgs e)
         {
             e.Cancel = true; // We can't cancel patching yet, big TODO
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            _manager?.StartCancellation();
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as System.Windows.Controls.Button;
+            if (button == null) return;
+
+            // Get the ContextMenu from XAML resources
+            var contextMenu = this.Resources["SettingsContextMenu"] as System.Windows.Controls.ContextMenu;
+            if (contextMenu == null) return;
+
+            // Detach from any previous placement
+            contextMenu.PlacementTarget = button;
+            contextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            contextMenu.IsOpen = true;
+        }
+
+        private void SpeedLimitSpinBox_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            var newValue = e.NewValue;
+
+            const int BYTES_TO_MB = 1048576;
+            App.Settings.SpeedLimitBytes = (long)(newValue * BYTES_TO_MB);
+
+            _manager.SetSpeedLimitAsync(App.Settings.SpeedLimitBytes).ConfigureAwait(false);
         }
     }
 }

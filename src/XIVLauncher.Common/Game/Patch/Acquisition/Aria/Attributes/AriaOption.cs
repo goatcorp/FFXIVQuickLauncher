@@ -220,6 +220,9 @@ namespace AriaNet.Attributes
         [JsonProperty("max-download-limit")]
         public string MaxDownloadLimit { get; set; }
 
+        [JsonProperty("max-overall-download-limit")]
+        public string MaxOverallDownloadLimit { get; set; }
+
         [JsonProperty("max-file-not-found")]
         public string MaxFileNotFound { get; set; }
 

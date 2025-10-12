@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
+        xmlns:xaml="clr-namespace:XIVLauncher.Xaml"
         mc:Ignorable="d"
         Title="XIVLauncher Update" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
@@ -15,6 +16,15 @@
         Background="Transparent"
         WindowStyle="None" Height="240" Width="340"
         d:DataContext="{d:DesignInstance viewModel:PatchDownloadDialogViewModel}" Closing="PatchDownloadDialog_OnClosing">
+    <Window.Resources>
+        <ContextMenu x:Key="SettingsContextMenu">
+            <MenuItem Header="Speed Limit">
+                <xaml:SpeedSpinBox x:Name="SpeedLimitSpinBox" Width="200" Height="30" Min="0" Max="10000" Step="1" Unit="MB/s" Value="50" ValueChanged="SpeedLimitSpinBox_ValueChanged"/>
+            </MenuItem>
+            <Separator/>
+            <MenuItem Header="Cancel" Click="Cancel_Click"/>
+        </ContextMenu>
+    </Window.Resources>
     <Grid Margin="0,0,0,0">
         <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="Auto" Margin="0,0,10,0">
             <StackPanel Margin="16,16,16,0">
@@ -35,5 +45,41 @@
                 <TextBlock x:Name="TimeLeftText" Foreground="DarkGray" Margin="0,0,0,12" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>
             </StackPanel>
         </materialDesign:Card>
+
+        <Button x:Name="SettingsButton"
+                Width="32" Height="32"
+                HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="4,4,0,0"
+                Background="Transparent" BorderBrush="Transparent"
+                ToolTip="Settings"
+                Focusable="False"
+                Cursor="Hand"
+                Click="SettingsButton_Click">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse x:Name="ellipse" Fill="Transparent"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ellipse" Property="Fill" Value="#22000000"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="ellipse" Property="Fill" Value="#33000000"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <materialDesign:PackIcon Kind="Cog" Width="20" Height="20" Foreground="{DynamicResource MaterialDesignBody}"/>
+        </Button>
     </Grid>
 </Window>

@@ -5,8 +5,11 @@ namespace XIVLauncher.Xaml
 {
     public partial class SpeedSpinBox : UserControl
     {
+        public event RoutedPropertyChangedEventHandler<double> ValueChanged;
+
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value), typeof(double), typeof(SpeedSpinBox), new PropertyMetadata(0.0));
+            nameof(Value), typeof(double), typeof(SpeedSpinBox),
+            new PropertyMetadata(0.0, OnValueChanged));
 
         public static readonly DependencyProperty UnitProperty = DependencyProperty.Register(
             nameof(Unit), typeof(string), typeof(SpeedSpinBox), new PropertyMetadata("MB/s"));
@@ -66,6 +69,13 @@ namespace XIVLauncher.Xaml
             if (Value - Step >= Min)
                 Value -= Step;
         }
+
+        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (SpeedSpinBox)d;
+            double oldValue = (double)e.OldValue;
+            double newValue = (double)e.NewValue;
+            control.ValueChanged?.Invoke(control, new RoutedPropertyChangedEventArgs<double>(oldValue, newValue));
+        }
     }
 }
-
