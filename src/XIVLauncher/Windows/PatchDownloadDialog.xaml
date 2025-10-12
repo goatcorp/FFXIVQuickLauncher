@@ -29,7 +29,7 @@
                 <TextBlock x:Name="Progress4Text" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding PatchDoneLoc}"></TextBlock>
                 <ProgressBar x:Name="Progress4" Value="0" Margin="0,0,0,10" />
                 <TextBlock x:Name="InstallingText" Foreground="{DynamicResource MaterialDesignBody}" HorizontalAlignment="Center" Text="{Binding PatchInstallingLoc}"></TextBlock>
-                <ProgressBar IsIndeterminate="True" Margin="0,0,0,11" />
+                <ProgressBar x:Name="TotalProgress" Value="0" Margin="0,0,0,11" />
 
                 <TextBlock x:Name="BytesLeftText" Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>
                 <TextBlock x:Name="TimeLeftText" Foreground="DarkGray" Margin="0,0,0,12" TextAlignment="Center" Text="{Binding PatchPreparingLoc}"/>

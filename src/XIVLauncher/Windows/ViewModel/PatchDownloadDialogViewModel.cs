@@ -12,12 +12,12 @@ namespace XIVLauncher.Windows.ViewModel
         private void SetupLoc()
         {
             PatchPreparingLoc = Loc.Localize("PatchPreparing", "Preparing...");
-            PatchGeneralStatusLoc = Loc.Localize("PatchGeneralStatus", "Patching through {0} updates...");
+            PatchGeneralStatusLoc = Loc.Localize("PatchGeneralStatus", "Installed {0} patches");
             PatchCheckingLoc = Loc.Localize("PatchChecking", "Checking...");
             PatchDoneLoc = Loc.Localize("PatchDone", "Download done!");
             PatchInstallingLoc = Loc.Localize("PatchInstalling", "Installing...");
-            PatchInstallingFormattedLoc = Loc.Localize("PatchInstallingFormatted", "Installing #{0}...");
-            PatchInstallingIdleLoc = Loc.Localize("PatchInstallingIdle", "Waiting for download...");
+            PatchInstallingFormattedLoc = Loc.Localize("PatchInstallingFormatted", "Installing patch #{0}...");
+            PatchInstallingIdleLoc = Loc.Localize("PatchInstallingIdle", "Waiting for downloads...");
             PatchEtaLoc = Loc.Localize("PatchEta", "{0} left to download at {1}/s.");
             PatchEtaTimeLoc = new[]
             {

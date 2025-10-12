@@ -93,9 +93,10 @@ namespace XIVLauncher.Windows
 
         public void SetGeneralProgress(int curr, int final, bool busy)
         {
-            PatchProgressText.Text = string.Format(ViewModel.PatchGeneralStatusLoc, $"{curr}/{final}");
-            InstallingText.Text = busy ? string.Format(ViewModel.PatchInstallingFormattedLoc, curr) :
-                                  _manager.DownloadsDone ? string.Empty : ViewModel.PatchInstallingIdleLoc;
+            PatchProgressText.Text = busy ? string.Format(ViewModel.PatchInstallingFormattedLoc, curr) :
+                                     _manager.DownloadsDone ? string.Empty : ViewModel.PatchInstallingIdleLoc;
+            InstallingText.Text = string.Format(ViewModel.PatchGeneralStatusLoc, $"{curr}/{final}");
+            TotalProgress.Value = final == 0 ? 100 : (double)(100 * curr) / final;
         }
 
         public void SetLeft(long left, double rate)
