@@ -9,15 +9,23 @@
              xmlns:components="clr-namespace:XIVLauncher.Xaml.Components"
              xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:xaml="clr-namespace:XIVLauncher.Xaml"
+             xmlns:materialDesignAssist="http://materialdesigninxaml.net/winfx/xaml/controls"
+             xmlns:themes="clr-namespace:Dragablz.Themes;assembly=Dragablz"
              mc:Ignorable="d"
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              Background="{DynamicResource MaterialDesignPaper}"
              TextElement.FontWeight="Medium"
              FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
              d:DataContext="{d:DesignInstance viewModel:SettingsControlViewModel}">
+    <UserControl.Resources>
+        <Style x:Key="WhiteIndicatorTabItemStyle" TargetType="dragablz:DragablzItem" BasedOn="{StaticResource MaterialDesignDragableTabItemStyle}">
+            <Setter Property="themes:MaterialDesignAssist.IndicatorBrush" Value="White" />
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" x:Name="SetupTabControl"
-                                 Style="{StaticResource MaterialDesignTabablzControlStyle}">
+        <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" Style="{StaticResource MaterialDesignTabablzControlStyle}"
+        ItemContainerStyle="{StaticResource WhiteIndicatorTabItemStyle}" BorderThickness="0">
             <TabItem Header="{Binding SettingsGameLoc}">
                 <StackPanel Margin="10,10,0,0">
                     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -232,10 +240,8 @@
                     <Label HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="5,10,0,0"
                            Content="{Binding PatchSpeedLimitLoc}" />
 
-                    <StackPanel Orientation="Horizontal">
-                        <xctk:DecimalUpDown x:Name="SpeedLimiterUpDown" Margin="10,0,0,0" Width="60" HorizontalAlignment="Left" Value="0"/>
-                        <Label Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
-                               Content="MB/s" />
+                    <StackPanel Orientation="Horizontal" Margin="10,0, 0, 0">
+                        <xaml:SpeedSpinBox x:Name="SpeedLimitSpinBox" Width="200" Height="40" Min="0" Max="10000" Step="1" Unit="MB/s" Value="50"/>
                     </StackPanel>
 
                     <CheckBox x:Name="KeepPatchesCheckBox"
