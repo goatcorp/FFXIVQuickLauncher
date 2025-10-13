@@ -118,7 +118,7 @@ namespace XIVLauncher.Windows
                 {
                     this.ProgressBar.IsIndeterminate = false;
                     this.ProgressBar.Value = progress.Value;
-                    this.PercentageTextBlock.Text = $"{progress.Value:0}% ({ApiHelpers.BytesToString(downloaded)}/{ApiHelpers.BytesToString(size.Value)})";
+                    this.PercentageTextBlock.Text = $"{progress.Value:0}% ({MathHelpers.BytesToString(downloaded)}/{MathHelpers.BytesToString(size.Value)})";
                 }
             });
         }

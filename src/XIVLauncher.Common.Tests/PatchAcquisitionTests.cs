@@ -76,7 +76,7 @@ namespace XIVLauncher.Common.Tests
 
             acquisition.ProgressChanged += (sender, progress) =>
             {
-                Debug.WriteLine($"[{acquisition.GetType().FullName}] recv: {progress.Progress} - speed: {ApiHelpers.BytesToString(progress.BytesPerSecondSpeed)}");
+                Debug.WriteLine($"[{acquisition.GetType().FullName}] recv: {progress.Progress} - speed: {MathHelpers.BytesToString(progress.BytesPerSecondSpeed)}");
             };
 
             await acquisition.StartDownloadAsync(testPatch.Url, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));

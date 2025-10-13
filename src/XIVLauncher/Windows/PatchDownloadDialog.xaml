@@ -17,9 +17,9 @@
         WindowStyle="None" Height="240" Width="340"
         d:DataContext="{d:DesignInstance viewModel:PatchDownloadDialogViewModel}" Closing="PatchDownloadDialog_OnClosing">
     <Window.Resources>
-        <ContextMenu x:Key="SettingsContextMenu">
-            <MenuItem Header="Speed Limit">
-                <xaml:SpeedSpinBox x:Name="SpeedLimitSpinBox" Width="200" Height="30" Min="0" Max="10000" Step="1" Unit="MB/s" Value="50" ValueChanged="SpeedLimitSpinBox_ValueChanged"/>
+        <ContextMenu x:Key="SettingsContextMenu" Opened="SettingsContextMenu_OnOpened">
+            <MenuItem Header="Speed Limit" x:Name="SpeedLimitMenuItem">
+                <xaml:SpeedSpinBox x:Name="SpeedLimitSpinBox" Width="200" Height="30" Min="0" Max="10000" Step="1" Unit="MB/s" ValueChanged="SpeedLimitSpinBox_ValueChanged"/>
             </MenuItem>
             <Separator/>
             <MenuItem Header="Cancel" Click="Cancel_Click"/>

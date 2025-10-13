@@ -31,10 +31,6 @@ namespace XIVLauncher.Windows
 
         private SettingsControlViewModel ViewModel => DataContext as SettingsControlViewModel;
 
-        private const int BYTES_TO_MB = 1048576;
-
-        private bool _hasTriggeredLogo = false;
-
         public SettingsControl()
         {
             InitializeComponent();
@@ -85,7 +81,7 @@ namespace XIVLauncher.Windows
 
             VersionLabel.Text += " - v" + AppUtil.GetAssemblyVersion() + " - " + AppUtil.GetGitHash() + " - " + Environment.Version;
 
-            var val = (decimal) App.Settings.SpeedLimitBytes / BYTES_TO_MB;
+            var val = (decimal) App.Settings.SpeedLimitBytes / MathHelpers.BYTES_TO_MB;
 
             this.SpeedLimitSpinBox.Value = (double)val;
 
@@ -136,7 +132,7 @@ namespace XIVLauncher.Windows
 
             SettingsDismissed?.Invoke(this, null);
 
-            App.Settings.SpeedLimitBytes = (long)(this.SpeedLimitSpinBox.Value * BYTES_TO_MB);
+            App.Settings.SpeedLimitBytes = (long)(this.SpeedLimitSpinBox.Value * MathHelpers.BYTES_TO_MB);
 
             App.Settings.IsFt = this.IsFreeTrialCheckbox.IsChecked == true;
 

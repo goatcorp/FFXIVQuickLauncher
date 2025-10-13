@@ -1401,8 +1401,8 @@ namespace XIVLauncher.Windows.ViewModel
             }
             catch (NotEnoughSpaceException sex)
             {
-                var bytesRequired = ApiHelpers.BytesToString(sex.BytesRequired);
-                var bytesFree = ApiHelpers.BytesToString(sex.BytesFree);
+                var bytesRequired = MathHelpers.BytesToString(sex.BytesRequired);
+                var bytesFree = MathHelpers.BytesToString(sex.BytesFree);
 
                 switch (sex.Kind)
                 {

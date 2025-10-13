@@ -7,6 +7,7 @@ using System.Windows.Input;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
+using XIVLauncher.Xaml;
 using Brushes = System.Windows.Media.Brushes;
 
 namespace XIVLauncher.Windows
@@ -84,7 +85,7 @@ namespace XIVLauncher.Windows
                     {
                         var pct = Math.Round((double)(100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
                         SetPatchProgress(i,
-                                         $"{activePatch.Patch} ({pct:#0.0}%, {ApiHelpers.BytesToString(_manager.Speeds[i])}/s)",
+                                         $"{activePatch.Patch} ({pct:#0.0}%, {MathHelpers.BytesToString(_manager.Speeds[i])}/s)",
                                          pct, false);
                     }
                 }
@@ -120,9 +121,9 @@ namespace XIVLauncher.Windows
 
         public void SetLeft(long left, double rate)
         {
-            TimeSpan eta = rate == 0 ? TimeSpan.Zero : TimeSpan.FromSeconds(left / rate);
-            BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, ApiHelpers.BytesToString(left), ApiHelpers.BytesToString(rate));
-            TimeLeftText.Text = ApiHelpers.GetTimeLeft(eta, ViewModel.PatchEtaTimeLoc);
+            var eta = rate == 0 ? TimeSpan.Zero : TimeSpan.FromSeconds(left / rate);
+            BytesLeftText.Text = string.Format(ViewModel.PatchEtaLoc, MathHelpers.BytesToString(left), MathHelpers.BytesToString(rate));
+            TimeLeftText.Text = MathHelpers.GetTimeLeft(eta, ViewModel.PatchEtaTimeLoc);
         }
 
         public void SetPatchProgress(int index, string patchName, double pct, bool indeterminate)
@@ -220,10 +221,23 @@ namespace XIVLauncher.Windows
         {
             var newValue = e.NewValue;
 
-            const int BYTES_TO_MB = 1048576;
-            App.Settings.SpeedLimitBytes = (long)(newValue * BYTES_TO_MB);
-
+            App.Settings.SpeedLimitBytes = (long)(newValue * MathHelpers.BYTES_TO_MB);
             _manager.SetSpeedLimitAsync(App.Settings.SpeedLimitBytes).ConfigureAwait(false);
+        }
+
+        private void SettingsContextMenu_OnOpened(object sender, RoutedEventArgs e)
+        {
+            // Populate spinbox with current value
+            if (e.OriginalSource is System.Windows.Controls.ContextMenu menu)
+            {
+                var speedLimitSpinBoxItem = menu.Items.OfType<System.Windows.Controls.MenuItem>()
+                                                .FirstOrDefault(i => i.Name == "SpeedLimitMenuItem");
+
+                if (speedLimitSpinBoxItem?.Items[0] is SpeedSpinBox speedSpinBox)
+                {
+                    speedSpinBox.Value = App.Settings.SpeedLimitBytes / (double)MathHelpers.BYTES_TO_MB;
+                }
+            }
         }
     }
 }
