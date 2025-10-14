@@ -31,6 +31,8 @@ namespace XIVLauncher.Windows
 
         private SettingsControlViewModel ViewModel => DataContext as SettingsControlViewModel;
 
+        private bool _hasTriggeredLogo = false;
+
         public SettingsControl()
         {
             InitializeComponent();
