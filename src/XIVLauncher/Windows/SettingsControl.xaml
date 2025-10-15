@@ -166,7 +166,7 @@
             <TabItem Header="{Binding SettingsInGameLoc}">
                 <Grid>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="10,5,10,0">
+                        <StackPanel Margin="10,10,10,0">
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top"
                                        Foreground="{DynamicResource MaterialDesignBody}"
                                        Text="{Binding InGameAddonDescriptionLoc}" />
@@ -199,25 +199,6 @@
 
                             <StackPanel Margin="22,0,0,0"
                                         IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,0"
-                                           Text="{Binding InGameAddonInjectionDelayLoc}" />
-
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <xctk:DecimalUpDown x:Name="InjectionDelayUpDown" Width="60" HorizontalAlignment="Left" Value="0"/>
-                                    <Label Foreground="{DynamicResource MaterialDesignBody}"
-                                           Content="ms" ToolTip="{Binding InGameAddonInjectionDelayDescriptionLoc}"/>
-                                </StackPanel>
-
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,15,0,5"
-                                           Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding InGameAddonLoadMethodLoc}" />
-
-                                <RadioButton GroupName="dalamudLoadMethod" x:Name="EntryPointDalamudLoadMethodRadioButton"
-                                             Foreground="{DynamicResource MaterialDesignBody}" IsChecked="True"
-                                             Content="{Binding InGameAddonLoadMethodEntryPointLoc}" ToolTip="{Binding InGameAddonLoadMethodEntryPointDescriptionLoc}"/>
-                                <RadioButton GroupName="dalamudLoadMethod" x:Name="DllInjectDalamudLoadMethodRadioButton"
-                                             Foreground="{DynamicResource MaterialDesignBody}"
-                                             Content="{Binding InGameAddonLoadMethodDllInjectLoc}" ToolTip="{Binding InGameAddonLoadMethodDllInjectDescriptionLoc}" />
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>

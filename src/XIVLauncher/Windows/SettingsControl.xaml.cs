@@ -61,13 +61,6 @@ namespace XIVLauncher.Windows
             PatchAcquisitionComboBox.SelectedIndex = (int) App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria);
             AutoStartSteamCheckBox.IsChecked = App.Settings.AutoStartSteam;
 
-            InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
-
-            if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
-                DllInjectDalamudLoadMethodRadioButton.IsChecked = true;
-            else
-                EntryPointDalamudLoadMethodRadioButton.IsChecked = true;
-
             // Prevent raising events...
             this.EnableHooksCheckBox.Checked -= this.EnableHooksCheckBox_OnChecked;
             EnableHooksCheckBox.IsChecked = App.Settings.InGameAddonEnabled;
@@ -115,14 +108,6 @@ namespace XIVLauncher.Windows
             App.Settings.AutoStartSteam = AutoStartSteamCheckBox.IsChecked == true;
 
             App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
-
-            if (InjectionDelayUpDown.Value.HasValue)
-                App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
-
-            if (DllInjectDalamudLoadMethodRadioButton.IsChecked == true)
-                App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.DllInject;
-            else
-                App.Settings.InGameAddonLoadMethod = DalamudLoadMethod.EntryPoint;
 
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
 

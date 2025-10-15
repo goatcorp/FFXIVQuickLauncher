@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="{Binding AdvancedSettingsTitleLoc}" SizeToContent="Height" Width="450" WindowStartupLocation="CenterScreen"
+        Title="{Binding AdvancedSettingsTitleLoc}" SizeToContent="Height" Width="650" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.Foreground="DarkGray"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.FontWeight="Medium"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
@@ -41,6 +42,23 @@
             <CheckBox x:Name="ForceNorthAmericaCheckbox"
                       Content="{Binding ForceNorthAmericaLoc}"
                       HorizontalAlignment="Left" Margin="0,0,0,7" Foreground="DarkGray" />
+
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,15,0,5"
+                       Foreground="DarkGray" Text="{Binding InGameAddonLoadMethodLoc}" />
+            <RadioButton GroupName="dalamudLoadMethod" x:Name="EntryPointDalamudLoadMethodRadioButton"
+                         Foreground="DarkGray"
+                         Content="{Binding InGameAddonLoadMethodEntryPointLoc}" ToolTip="{Binding InGameAddonLoadMethodEntryPointDescriptionLoc}"/>
+            <RadioButton GroupName="dalamudLoadMethod" x:Name="DllInjectDalamudLoadMethodRadioButton"
+                         Foreground="DarkGray"
+                         Content="{Binding InGameAddonLoadMethodDllInjectLoc}" ToolTip="{Binding InGameAddonLoadMethodDllInjectDescriptionLoc}" />
+            
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="DarkGray" Margin="0,20,0,0"
+                       Text="{Binding InGameAddonInjectionDelayLoc}" />
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <xctk:DecimalUpDown x:Name="InjectionDelayUpDown" Width="60" HorizontalAlignment="Left" />
+                <Label Foreground="DarkGray"
+                       Content="ms" ToolTip="{Binding InGameAddonInjectionDelayDescriptionLoc}"/>
+            </StackPanel>
         </StackPanel>
         
         <Button Content="{Binding CloseLoc}" Width="79" VerticalAlignment="Bottom"

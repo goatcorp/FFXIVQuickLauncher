@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -24,6 +25,13 @@ namespace XIVLauncher.Windows
             ExitLauncherAfterGameExitCheckbox.IsChecked = App.Settings.ExitLauncherAfterGameExit ?? true;
             TreatNonZeroExitCodeAsFailureCheckbox.IsChecked = App.Settings.TreatNonZeroExitCodeAsFailure ?? false;
             ForceNorthAmericaCheckbox.IsChecked = App.Settings.ForceNorthAmerica ?? false;
+
+            InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
+
+            if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
+                DllInjectDalamudLoadMethodRadioButton.IsChecked = true;
+            else
+                EntryPointDalamudLoadMethodRadioButton.IsChecked = true;
         }
 
         private void Save()
@@ -32,6 +40,13 @@ namespace XIVLauncher.Windows
             App.Settings.ExitLauncherAfterGameExit = ExitLauncherAfterGameExitCheckbox.IsChecked == true;
             App.Settings.TreatNonZeroExitCodeAsFailure = TreatNonZeroExitCodeAsFailureCheckbox.IsChecked == true;
             App.Settings.ForceNorthAmerica = ForceNorthAmericaCheckbox.IsChecked == true;
+
+            if (InjectionDelayUpDown.Value.HasValue)
+                App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
+
+            App.Settings.InGameAddonLoadMethod = this.DllInjectDalamudLoadMethodRadioButton.IsChecked == true ?
+                                                     DalamudLoadMethod.DllInject :
+                                                     DalamudLoadMethod.EntryPoint;
         }
 
         private void CloseButton_OnClick(object sender, RoutedEventArgs e)
