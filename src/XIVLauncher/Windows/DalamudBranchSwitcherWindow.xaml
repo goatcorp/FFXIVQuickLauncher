@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d"
-    Title="XIVLauncher - Dalamud Branch Switcher" Height="400" MaxWidth="1200" Width="920" WindowStartupLocation="CenterScreen"
+    Title="XIVLauncher - Dalamud Branch Switcher" Height="400" MaxWidth="1200" Width="920" WindowStartupLocation="CenterScreen" MinHeight="300" MinWidth="600"
     Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="CanResize" SizeToContent="Manual"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"

@@ -49,6 +49,17 @@ namespace XIVLauncher.Windows.ViewModel
                 if (!branch.Hidden || (branch.Hidden && branch.Key == this.AppliedBetaKey))
                     Branches.Add(branch);
             }
+
+            SelectedBranch = null;
+
+            foreach (var branch in Branches)
+            {
+                if (branch.Track == App.Settings.DalamudBetaKind && branch.Key == App.Settings.DalamudBetaKey)
+                {
+                    SelectedBranch = branch;
+                    break;
+                }
+            }
         }
     }
 }
