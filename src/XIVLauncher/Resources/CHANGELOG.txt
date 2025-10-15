@@ -1,2 +1,14 @@
-* Fixed an issue wherein the launcher would crash when attempting to log in with an account that was not eligible to play
-* Fixed an issue wherein repair data files did not support new data layouts introduced in the latest patch (thanks to @srkizer)
+* Added a branch switcher for Dalamud. Beta users can now easily switch between branches without having to manually edit config files. Beta keys/passwords are no longer required.
+* Added a setting to allow the OTP window to be always on top. (by @StoiaCode)
+* Added a settings button to the patch dialog allowing users to cancel patching or change the download speed limit during patching.
+* Updated launcher to .NET 9 to fix various stability issues and crashes, and to improve performance.
+* Updated wording in various places.
+* Updated visual style of various dialogues to indicate importance. (by @Haselnussbomber)
+* The launcher will no longer request administrator privileges to install patches if they are not required.
+* Fixed an issue wherein repair may have failed to download files under certain conditions. (by @srkizer)
+* Fixed an issue wherein button colors were slightly mismatched on the login screen.
+* Fixed an issue wherein the launcher would not show a proper error message when no repair data could be found.
+* Fixed an issue wherein the launcher would not function for certain Brazilian users.
+* Fixed an issue wherein certain news links may not have opened correctly in the browser.
+* Fixed an issue wherein an irrelevant error message may appear during gameplay under certain conditions.
+* Fixed an issue wherein the launcher may have indicated patch downloads as done, even though they had not actually started.
