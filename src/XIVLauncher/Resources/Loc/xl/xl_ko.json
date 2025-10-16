@@ -8,7 +8,7 @@
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "UninstallQuestion": {
-    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "message": "가신다니 아쉬워요.\n모든 설정, 플러그인 및 비밀번호를 제거할까요?",
     "description": "<>c__DisplayClass20_1.<Run>b__2"
   },
   "updatefailureerror": {
@@ -412,11 +412,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoPluginLogin": {
-    "message": "Start w/o any Plugins",
+    "message": "플러그인 없이 시작",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Custom Repo Plugins",
+    "message": "커스텀 플러그인 없이 시작",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -424,7 +424,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLaunchOptions": {
-    "message": "Additional launch options",
+    "message": "추가 구동 옵션",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
@@ -536,11 +536,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "또한, 게임 설치 시에 제공되지 않았던 1개의 파일이 다음 경로로 이동되었습니다. {0}\nReShade를 사용하고 있었다면 재설치해야 합니다.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "또한, 게임 설치 시에 제공되지 않았던 {0}개의 파일이 다음 경로로 이동되었습니다. {1}\nReShade를 사용하고 있었다면 재설치해야 합니다.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -624,7 +624,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamNullTicket": {
-    "message": "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.",
+    "message": "Steam에서 인증하지 못했습니다. 이는 Steam의 일시적인 문제일 수 있으며 몇 분 후에 다시 시도해 보시기 바랍니다.\n\n문제가 지속되면 Steam이 실행 중이고 SE ID에 연결된 계정으로 로그인했는지 확인하세요.\n무료 트라이을 사용하여 플레이하는 경우, XIVLauncher 설정의 \"게임 설정\" 탭에서 \"무료 트라이얼 계정 사용\" 체크박스를 선택해 주세요.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
@@ -632,7 +632,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.",
+    "message": "로그인 한 계정은 PC의 스팀 계정과 연결된 계정이 아닙니다. 이 Steam 계정을 이용중일 땐, SE ID와 연동된 계정으로만 로그인 할 수 있습니다.\n\n일치하는 계정으로 로그인해 주세요. Steam에 연결된 계정은 \"{0}\"입니다 - 오타가 없는지 확인하세요.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -732,7 +732,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorAV": {
-    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "message": "\n이 문제는 안티 바이러스 프로그램이 XIVLauncher를 악성으로 오진하여 발생할 수도 있습니다. 안티 바이러스 프로그램 설정에서 예외 항목을 추가해야 할 수도 있습니다. 자세한 내용은 FAQ를 참조하세요.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -760,7 +760,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PasteButton": {
-    "message": "Click here to paste from the clipboard.",
+    "message": "클립보드에서 붙여넣으려면 여기를 클릭하세요.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
