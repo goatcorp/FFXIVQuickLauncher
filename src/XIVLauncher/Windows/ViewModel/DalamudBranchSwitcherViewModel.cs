@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using XIVLauncher.Common.Dalamud;
@@ -50,16 +51,8 @@ namespace XIVLauncher.Windows.ViewModel
                     Branches.Add(branch);
             }
 
-            SelectedBranch = null;
-
-            foreach (var branch in Branches)
-            {
-                if (branch.Track == App.Settings.DalamudBetaKind && branch.Key == App.Settings.DalamudBetaKey)
-                {
-                    SelectedBranch = branch;
-                    break;
-                }
-            }
+            SelectedBranch = this.Branches.FirstOrDefault(x => x.Track == App.Settings.DalamudBetaKind && x.Key == App.Settings.DalamudBetaKey) ??
+                             this.Branches.FirstOrDefault(x => x.Track == "release");
         }
     }
 }
