@@ -1097,7 +1097,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud, bool noThird, bool noPlugins)
         {
-            var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
+            var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(App.DalamudUpdater.Runtime), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
                 App.Settings.GamePath,
                 new DirectoryInfo(Paths.RoamingPath),
                 new DirectoryInfo(Paths.RoamingPath),
@@ -1165,7 +1165,7 @@ namespace XIVLauncher.Windows.ViewModel
                 }
             }
 
-            var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk, App.DalamudUpdater.Runtime);
+            var gameRunner = new WindowsGameRunner(dalamudLauncher, dalamudOk);
 
             // We won't do any sanity checks here anymore, since that should be handled in StartLogin
             var launched = this.Launcher.LaunchGame(gameRunner,

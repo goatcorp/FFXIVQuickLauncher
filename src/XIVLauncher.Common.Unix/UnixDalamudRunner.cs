@@ -38,9 +38,8 @@ public class UnixDalamudRunner : IDalamudRunner
             () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory); }
         );
 
-        var prevDalamudRuntime = Environment.GetEnvironmentVariable("DALAMUD_RUNTIME");
-        if (string.IsNullOrWhiteSpace(prevDalamudRuntime))
-            environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
+        environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
+        environment.Add("DOTNET_ROOT", dotnetRuntimePath);
 
         var launchArguments = new List<string>
         {

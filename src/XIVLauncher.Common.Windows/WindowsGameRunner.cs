@@ -12,13 +12,11 @@ public class WindowsGameRunner : IGameRunner
 {
     private readonly DalamudLauncher dalamudLauncher;
     private readonly bool dalamudOk;
-    private readonly DirectoryInfo dotnetRuntimePath;
 
-    public WindowsGameRunner(DalamudLauncher dalamudLauncher, bool dalamudOk, DirectoryInfo dotnetRuntimePath)
+    public WindowsGameRunner(DalamudLauncher dalamudLauncher, bool dalamudOk)
     {
         this.dalamudLauncher = dalamudLauncher;
         this.dalamudOk = dalamudOk;
-        this.dotnetRuntimePath = dotnetRuntimePath;
     }
 
     public Process Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
@@ -32,10 +30,6 @@ public class WindowsGameRunner : IGameRunner
                 _ => throw new ArgumentOutOfRangeException()
             };
             environment.Add("__COMPAT_LAYER", compat);
-
-            var prevDalamudRuntime = Environment.GetEnvironmentVariable("DALAMUD_RUNTIME");
-            if (string.IsNullOrWhiteSpace(prevDalamudRuntime))
-                environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath.FullName);
 
             return this.dalamudLauncher.Run(new FileInfo(path), arguments, environment);
         }

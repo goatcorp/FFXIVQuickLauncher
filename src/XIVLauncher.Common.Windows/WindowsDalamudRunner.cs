@@ -16,6 +16,13 @@ namespace XIVLauncher.Common.Windows;
 
 public class WindowsDalamudRunner : IDalamudRunner
 {
+    private readonly DirectoryInfo dotnetRuntimePath;
+
+    public WindowsDalamudRunner(DirectoryInfo dotnetRuntimePath)
+    {
+        this.dotnetRuntimePath = dotnetRuntimePath;
+    }
+
     public unsafe Process? Run(FileInfo runner, bool fakeLogin, bool noPlugins, bool noThirdPlugins, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo dalamudStartInfo)
     {
         var inheritableCurrentProcess = GetInheritableCurrentProcessHandle();
@@ -43,6 +50,9 @@ public class WindowsDalamudRunner : IDalamudRunner
             DalamudInjectorArgs.DelayInitialize(dalamudStartInfo.DelayInitializeMs),
             DalamudInjectorArgs.TsPackB64(Convert.ToBase64String(Encoding.UTF8.GetBytes(dalamudStartInfo.TroubleshootingPackData))),
         };
+
+        environment.Add("DALAMUD_RUNTIME", this.dotnetRuntimePath.FullName);
+        environment.Add("DOTNET_ROOT", this.dotnetRuntimePath.FullName);
 
         if (inheritableCurrentProcess != null)
             launchArguments.Add(DalamudInjectorArgs.HandleOwner((long)inheritableCurrentProcess.Handle));
