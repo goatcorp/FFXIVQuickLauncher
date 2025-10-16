@@ -22,7 +22,7 @@
     d:DataContext="{d:DesignInstance viewModel:MainWindowViewModel}">
 
     <Window.Resources>
-        <system:Double x:Key="BannerCardWidth">544</system:Double>
+        <system:Double x:Key="BannerCardWidth">644</system:Double>
         <system:Double x:Key="BannerCardHeight">213</system:Double>
     </Window.Resources>
 
