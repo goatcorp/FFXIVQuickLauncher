@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -342,7 +343,7 @@ namespace XIVLauncher.Windows
                 this.WithAppendDescription("\n\nVersion: " + AppUtil.GetAssemblyVersion())
                     .WithAppendDescription("\nGit Hash: " + AppUtil.GetGitHash())
                     .WithAppendDescription("\nContext: " + context)
-                    .WithAppendDescription("\nOS: " + Environment.OSVersion)
+                    .WithAppendDescription("\nOS: " + RuntimeInformation.OSDescription)
                     .WithAppendDescription("\n64bit? " + Environment.Is64BitProcess);
                 if (App.Settings != null)
                 {
