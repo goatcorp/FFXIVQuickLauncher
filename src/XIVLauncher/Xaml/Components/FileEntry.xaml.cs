@@ -1,6 +1,5 @@
 ﻿using System.Windows;
-using System.Windows.Data;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.Win32;
 
 namespace XIVLauncher.Xaml.Components
 {
@@ -44,32 +43,19 @@ namespace XIVLauncher.Xaml.Components
 
         private void BrowseFolder(object sender, RoutedEventArgs e)
         {
-            using (var dlg = new CommonOpenFileDialog())
+            var dlg = new OpenFileDialog();
+            var parent = Window.GetWindow(this);
+
+            dlg.Multiselect = false;
+            dlg.Title = Description;
+            dlg.Filter = Filters;
+            dlg.ValidateNames = true;
+
+            if (dlg.ShowDialog(parent) == true)
             {
-                var parent = Window.GetWindow(this);
-
-                dlg.Multiselect = false;
-                dlg.IsFolderPicker = false;
-                dlg.EnsurePathExists = true;
-                dlg.Title = Description;
-
-                var filterSets = Filters.Split(';');
-
-                foreach (var filterSet in filterSets)
-                {
-                    var filterOptions = filterSet.Split(',');
-                    dlg.Filters.Add(new CommonFileDialogFilter(filterOptions[0], filterOptions[1]));
-                }
-
-                var result = dlg.ShowDialog(parent);
-
-                if (result == CommonFileDialogResult.Ok)
-                {
-                    Text = dlg.FileName;
-                    BindingExpression be = GetBindingExpression(TextProperty);
-                    if (be != null)
-                        be.UpdateSource();
-                }
+                Text = dlg.FileName;
+                var be = GetBindingExpression(TextProperty);
+                be?.UpdateSource();
             }
         }
     }
