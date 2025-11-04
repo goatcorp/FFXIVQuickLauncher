@@ -58,6 +58,14 @@ namespace XIVLauncher.Common.Dalamud
 
         public string? RolloutBucket { get; }
 
+        /// <summary>
+        /// A bucket ID for canary releases. Currently calculated based on the creation time of the install folder.
+        /// It is not within our interests to allow users to opt in (or out) of canary, so this is a calculated value.
+        ///
+        /// Current precision: 1,000 buckets (min rollout 0.1% of users)
+        /// </summary>
+        public uint RolloutBucketId { get; private set; }
+
         public enum DownloadState
         {
             Unknown,
@@ -73,13 +81,8 @@ namespace XIVLauncher.Common.Dalamud
             this.configDirectory = configDirectory;
             this.cache = cache;
 
-            this.RolloutBucket = dalamudRolloutBucket;
-
-            if (this.RolloutBucket == null)
-            {
-                var rng = new Random();
-                this.RolloutBucket = rng.Next(0, 9) >= 7 ? "Canary" : "Control";
-            }
+            this.RolloutBucketId = (uint)this.addonDirectory.CreationTimeUtc.Ticks % 1_000;
+            this.RolloutBucket = dalamudRolloutBucket ?? (this.RolloutBucketId % 10 >= 7 ? "Canary" : "Control");
         }
 
         public void SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep progress)
@@ -150,7 +153,8 @@ namespace XIVLauncher.Common.Dalamud
                 NoCache = true,
             };
 
-            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}").ConfigureAwait(false);
+            var versionPath = DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}&bucketId={this.RolloutBucketId}";
+            var versionInfoJsonRelease = await client.GetStringAsync(versionPath).ConfigureAwait(false);
 
             DalamudVersionInfo versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
 
