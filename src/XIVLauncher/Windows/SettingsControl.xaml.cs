@@ -311,7 +311,7 @@ namespace XIVLauncher.Windows
             try
             {
                 Directory.CreateDirectory(pluginsPath);
-                Process.Start(pluginsPath);
+                Process.Start("explorer.exe", pluginsPath);
             }
             catch (Exception ex)
             {
