@@ -57,7 +57,7 @@
             <Button Content="Have a beta key?" Height="32" Width="160" Grid.Column="0" HorizontalAlignment="Left" Click="BetaKeyButton_Click" />
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
                 <Button Content="Switch Branch" Width="150" Height="32" Margin="0,0,10,0" Click="SwitchBranchButton_Click" />
-                <Button Content="Never mind" Style="{StaticResource MaterialDesignRaisedCancelButton}" Width="150" Height="32" Click="NeverMindButton_Click" />
+                <Button Content="Cancel" Style="{StaticResource MaterialDesignRaisedCancelButton}" Width="150" Height="32" Click="NeverMindButton_Click" />
             </StackPanel>
         </Grid>
     </Grid>
