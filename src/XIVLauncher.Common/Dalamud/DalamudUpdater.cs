@@ -83,6 +83,7 @@ namespace XIVLauncher.Common.Dalamud
         public enum DownloadState
         {
             Unknown,
+            Running,
             Done,
             NoIntegrity, // fail with error message
         }
@@ -126,7 +127,7 @@ namespace XIVLauncher.Common.Dalamud
         public void Run(string? betaKind, string? betaKey, bool overrideForceProxy = false)
         {
             Log.Information("[DUPDATE] Starting... (forceProxy: {ForceProxy})", overrideForceProxy);
-            this.State = DownloadState.Unknown;
+            this.State = DownloadState.Running;
 
             this.forceProxy = overrideForceProxy;
 

@@ -382,6 +382,14 @@ namespace XIVLauncher.Windows
 
         private void OpenDalamudBranchSwitcher_OnClick(object sender, RoutedEventArgs e)
         {
+            // TODO: Queue this?
+            if (App.DalamudUpdater.State == DalamudUpdater.DownloadState.Running)
+            {
+                CustomMessageBox.Show(Loc.Localize("DalamudBranchSwitcherBusy", "Cannot switch Dalamud branches while an update is in progress.\nPlease wait a little while before trying again."),
+                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Warning, parentWindow: Window.GetWindow(this));
+                return;
+            }
+
             var window = new DalamudBranchSwitcherWindow
             {
                 Owner = Window.GetWindow(this)
