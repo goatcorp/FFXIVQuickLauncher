@@ -102,9 +102,9 @@ namespace XIVLauncher.Windows.ViewModel
 
             SettingsInGameLoc = Loc.Localize("SettingsInGame", "Dalamud");
             InGameAddonDescriptionLoc = Loc.Localize("InGameAddonDescription",
-                "These options affect the XIVLauncher in-game features, provided by Dalamud. These features will be automatically\r\nenabled if you are running the DirectX 11 version of the game, the version of the game is\r\ncompatible, and the checkbox below is ticked.");
+                "These options affect Dalamud, the XIVLauncher plugin loader.\nDalamud will be enabled if the version of the game is compatible, and the checkbox below is ticked.");
             InGameAddonCommandHintLoc = Loc.Localize("InGameAddonCommandHint",
-                "When enabled, type \"/xlhelp\" in-game to see other available commands.");
+                "When enabled, hover the red moon logo on the title screen for options.");
             InGameAddonEnabledCheckBoxLoc = Loc.Localize("InGameAddonEnabledCheckBox", "Enable Dalamud");
             InGameAddonInjectionDelayLoc = Loc.Localize("InGameAddonInjectionDelayLoc", "Addon Injection Delay");
             InGameAddonInjectionDelayDescriptionLoc = Loc.Localize("InGameAddonInjectionDelayDescriptionLoc",
