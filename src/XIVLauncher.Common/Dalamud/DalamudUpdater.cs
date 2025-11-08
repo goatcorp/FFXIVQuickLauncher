@@ -21,6 +21,7 @@ namespace XIVLauncher.Common.Dalamud
     public class DalamudUpdater
     {
         private readonly DirectoryInfo addonDirectory;
+        private readonly DirectoryInfo assetRootDirectory;
         private readonly IUniqueIdCache? cache;
 
         private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(15);
@@ -33,7 +34,7 @@ namespace XIVLauncher.Common.Dalamud
 
         public Exception? EnsurementException { get; private set; }
 
-        private FileInfo runnerInternal;
+        private FileInfo? runnerInternal;
 
         public FileInfo Runner
         {
@@ -42,7 +43,7 @@ namespace XIVLauncher.Common.Dalamud
                 if (RunnerOverride != null)
                     return RunnerOverride;
 
-                return runnerInternal;
+                return runnerInternal ?? throw new InvalidOperationException("Runner not prepared yet");
             }
             private set => runnerInternal = value;
         }
@@ -51,7 +52,7 @@ namespace XIVLauncher.Common.Dalamud
 
         public FileInfo? RunnerOverride { get; set; }
 
-        public DirectoryInfo AssetDirectory { get; private set; }
+        public DirectoryInfo? AssetDirectory { get; private set; }
 
         public IDalamudLoadingOverlay? Overlay { get; set; }
 
@@ -88,11 +89,13 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity, // fail with error message
         }
 
-        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
+        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetRootDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
         {
             this.addonDirectory = addonDirectory;
+            this.assetRootDirectory = assetRootDirectory;
+
             this.Runtime = runtimeDirectory;
-            this.AssetDirectory = assetDirectory;
+            this.AssetDirectory = null;
             this.cache = cache;
 
             this.RolloutBucket = dalamudRolloutBucket;
@@ -313,7 +316,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
                 this.ReportOverlayProgress(null, 0, null);
-                var assetResult = await AssetManager.EnsureAssets(this, this.AssetDirectory).ConfigureAwait(true);
+                var assetResult = await AssetManager.EnsureAssets(this, this.assetRootDirectory).ConfigureAwait(true);
                 AssetDirectory = assetResult.AssetDir;
                 assetVer = assetResult.Version;
             }
