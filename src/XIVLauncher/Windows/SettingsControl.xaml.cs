@@ -44,6 +44,17 @@ namespace XIVLauncher.Windows
             ReloadSettings();
         }
 
+        private void OnResolvedBranchChanged(DalamudVersionInfo? branch)
+        {
+            this.Dispatcher.Invoke(() => { this.DalamudBranchTextBlock.Text = branch == null ? "Transmitting..." : $"{branch.DisplayName} ({branch.Track})"; });
+        }
+
+        public void SetUpdater(DalamudUpdater updater)
+        {
+            updater.ResolvedBranchChanged += OnResolvedBranchChanged;
+            OnResolvedBranchChanged(updater.ResolvedBranch);
+        }
+
         public void ReloadSettings()
         {
             if (App.Settings.GamePath != null)
@@ -286,9 +297,20 @@ namespace XIVLauncher.Windows
 
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(ViewModel.GamePath) || !GameHelpers.IsValidGamePath(ViewModel.GamePath))
+                return;
+
             try
             {
-                if (!string.IsNullOrEmpty(ViewModel.GamePath) && GameHelpers.IsValidGamePath(ViewModel.GamePath) && !DalamudLauncher.CanRunDalamud(new DirectoryInfo(ViewModel.GamePath)))
+                var applicable = App.DalamudUpdater.ReCheckVersion(new DirectoryInfo(ViewModel.GamePath));
+
+                if (!applicable.HasValue)
+                {
+                    CustomMessageBox.Show(
+                        Loc.Localize("DalamudEnsureFail", "Could not determine Dalamud compatibility for the selected game version.\nPlease ensure that the game path is correct and that the game is fully updated."),
+                        "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
+                }
+                else if ((bool)!applicable)
                 {
                     CustomMessageBox.Show(
                         Loc.Localize("DalamudIncompatible", "Dalamud was not yet updated for your current game version.\nThis is common after patches, so please be patient or ask on the Discord for a status update!"),

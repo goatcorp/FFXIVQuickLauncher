@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Threading;
-using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.PlatformAbstractions;
 
@@ -70,7 +68,8 @@ namespace XIVLauncher.Common.Dalamud
             if (!this.updater.Runner.Exists)
                 throw new DalamudRunnerException("Runner did not exist.");
 
-            if (!ReCheckVersion(gamePath))
+            var applicable = this.updater.ReCheckVersion(gamePath) ?? throw new DalamudRunnerException("ReCheckVersion returned null.");
+            if (!applicable)
             {
                 this.updater.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Unavailable);
                 this.updater.ShowOverlay();
@@ -129,36 +128,6 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Information("[HOOKS] Started dalamud!");
 
             return process;
-        }
-
-        private bool ReCheckVersion(DirectoryInfo gamePath)
-        {
-            if (this.updater.State != DalamudUpdater.DownloadState.Done)
-                return false;
-
-            if (this.updater.RunnerOverride != null)
-                return true;
-
-            var info = DalamudVersionInfo.Load(new FileInfo(Path.Combine(this.updater.Runner.DirectoryName!,
-                "version.json")));
-
-            if (Repository.Ffxiv.GetVer(gamePath) != info.SupportedGameVer)
-                return false;
-
-            return true;
-        }
-
-        public static bool CanRunDalamud(DirectoryInfo gamePath)
-        {
-            using var client = new WebClient();
-
-            var versionInfoJson = client.DownloadString(REMOTE_BASE + "release");
-            var remoteVersionInfo = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJson);
-
-            if (Repository.Ffxiv.GetVer(gamePath) != remoteVersionInfo.SupportedGameVer)
-                return false;
-
-            return true;
         }
 
         private static string GetConfigPath(DirectoryInfo configFolder) => Path.Combine(configFolder.FullName, "dalamudConfig.json");

@@ -21,13 +21,12 @@ namespace XIVLauncher.Common.Dalamud
     public class DalamudUpdater
     {
         private readonly DirectoryInfo addonDirectory;
-        private readonly DirectoryInfo assetDirectory;
-        private readonly DirectoryInfo configDirectory;
         private readonly IUniqueIdCache? cache;
 
         private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(15);
 
         private bool forceProxy = false;
+        private DalamudVersionInfo? resolvedBranch;
 
         public DownloadState State { get; private set; } = DownloadState.Unknown;
         public bool IsStaging { get; private set; } = false;
@@ -58,6 +57,29 @@ namespace XIVLauncher.Common.Dalamud
 
         public string? RolloutBucket { get; }
 
+        public event Action<DalamudVersionInfo?>? ResolvedBranchChanged;
+
+        public DalamudVersionInfo? ResolvedBranch
+        {
+            get => resolvedBranch;
+            private set
+            {
+                if (resolvedBranch == value)
+                    return;
+
+                resolvedBranch = value;
+
+                try
+                {
+                    ResolvedBranchChanged?.Invoke(resolvedBranch);
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+        }
+
         public enum DownloadState
         {
             Unknown,
@@ -65,12 +87,11 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity, // fail with error message
         }
 
-        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, DirectoryInfo configDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
+        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
         {
             this.addonDirectory = addonDirectory;
             this.Runtime = runtimeDirectory;
-            this.assetDirectory = assetDirectory;
-            this.configDirectory = configDirectory;
+            this.AssetDirectory = assetDirectory;
             this.cache = cache;
 
             this.RolloutBucket = dalamudRolloutBucket;
@@ -109,6 +130,8 @@ namespace XIVLauncher.Common.Dalamud
 
             this.forceProxy = overrideForceProxy;
 
+            this.ResolvedBranch = null;
+
             Task.Run(async () =>
             {
                 const int MAX_TRIES = 10;
@@ -133,6 +156,20 @@ namespace XIVLauncher.Common.Dalamud
 
                 this.State = isUpdated ? DownloadState.Done : DownloadState.NoIntegrity;
             });
+        }
+
+        public bool? ReCheckVersion(DirectoryInfo gamePath)
+        {
+            if (this.State != DownloadState.Done)
+                return null;
+
+            if (this.RunnerOverride != null)
+                return true;
+
+            var info = DalamudVersionInfo.Load(new FileInfo(Path.Combine(this.Runner.DirectoryName!,
+                "version.json")));
+
+            return Repository.Ffxiv.GetVer(gamePath) == info.SupportedGameVer;
         }
 
         private static string GetBetaTrackName(string betaKind) =>
@@ -186,6 +223,9 @@ namespace XIVLauncher.Common.Dalamud
             {
                 Log.Information("[DUPDATE] Using release version ({Hash})", remoteVersionInfo.AssemblyVersion);
             }
+
+            // Update resolved branch to reflect what the server actually selected
+            this.ResolvedBranch = remoteVersionInfo;
 
             var versionInfoJson = JsonConvert.SerializeObject(remoteVersionInfo);
 
@@ -272,7 +312,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
                 this.ReportOverlayProgress(null, 0, null);
-                var assetResult = await AssetManager.EnsureAssets(this, this.assetDirectory).ConfigureAwait(true);
+                var assetResult = await AssetManager.EnsureAssets(this, this.AssetDirectory).ConfigureAwait(true);
                 AssetDirectory = assetResult.AssetDir;
                 assetVer = assetResult.Version;
             }
@@ -310,7 +350,7 @@ namespace XIVLauncher.Common.Dalamud
             return true;
         }
 
-        public static bool IsIntegrity(DirectoryInfo addonPath)
+        private static bool IsIntegrity(DirectoryInfo addonPath)
         {
             var files = addonPath.GetFiles();
 

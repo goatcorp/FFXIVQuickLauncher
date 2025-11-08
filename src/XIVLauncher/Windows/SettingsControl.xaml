@@ -183,6 +183,10 @@
                                            Text="{Binding InGameAddonCommandHintLoc}" />
                             </StackPanel>
                             
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0"
+                                       Foreground="{DynamicResource MaterialDesignBody}"
+                                       Text="{Binding InGameAddonBranchSwitcherDescriptionLoc}" />
+                            
                             <Border BorderBrush="{DynamicResource MaterialDesign.Brush.Primary}" BorderThickness="2" CornerRadius="4" Margin="10 5 0 10" HorizontalAlignment="Left">
                                 <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                         HorizontalAlignment="Center"
@@ -196,6 +200,13 @@
                                     </StackPanel>
                                 </Button>
                             </Border>
+                            
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0"
+                                       Foreground="DarkGray"
+                                       Text="{Binding InGameAddonBranchSwitcherCurrentBranchLoc}" />
+
+                            <TextBlock x:Name="DalamudBranchTextBlock" Margin="22,0,0,0" VerticalAlignment="Top"
+                                       Foreground="DarkGray" Text="" />
 
                             <StackPanel Margin="22,0,0,0"
                                         IsEnabled="{Binding ElementName=EnableHooksCheckBox, Path=IsChecked}">
