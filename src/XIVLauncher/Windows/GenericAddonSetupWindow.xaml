@@ -17,7 +17,7 @@
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"
                    Text="{Binding GenericAddonSetupDescriptionLoc}" />
         <components:FileEntry x:Name="PathEntry" Description="Select an Addon file"
-                              Filters="EXE File, *.exe;Powershell Script, *.ps1;Shell Script, *.bat" Margin="10,0,0,80"
+                              Filters="EXE File|*.exe|Powershell Script|*.ps1|Shell Script|*.bat" Margin="10,0,0,80"
                               Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" />
         <Label Margin="10,0,0,10" Width="400" VerticalAlignment="Center" HorizontalAlignment="Left" Content="{Binding CommandLineParametersLoc}"/>
         <TextBox x:Name="CommandLineTextBox" Margin="10,0,0,-30" Width="400"
