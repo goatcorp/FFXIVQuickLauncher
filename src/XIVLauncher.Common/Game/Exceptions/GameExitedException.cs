@@ -2,10 +2,4 @@
 
 namespace XIVLauncher.Common.Game.Exceptions;
 
-public class GameExitedException : Exception
-{
-    public GameExitedException()
-        : base("Game exited prematurely.")
-    {
-    }
-}
+public class GameExitedException(int exitCode) : Exception("Game exited prematurely. Exit code: " + exitCode);

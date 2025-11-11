@@ -397,18 +397,30 @@ namespace XIVLauncher.Common.Game
                 PInvoke.ResumeThread(lpProcessInformation.hThread);
 
                 // Ensure that the game main window is prepared
+                var startTime = DateTime.Now;
+
                 try
                 {
                     do
                     {
-                        process.WaitForInputIdle();
+                        if ((DateTime.Now - startTime).TotalSeconds > 30)
+                        {
+                            throw new TimeoutException("Timed out waiting for game window");
+                        }
+
+                        if (process.HasExited)
+                        {
+                            throw new Exception();
+                        }
 
                         Thread.Sleep(100);
-                    } while (IntPtr.Zero == TryFindGameWindow(process));
+                    }
+                    while (IntPtr.Zero == TryFindGameWindow(process));
                 }
-                catch (InvalidOperationException)
+                catch (Exception ex)
                 {
-                    throw new GameExitedException();
+                    Log.Error(ex, "[NativeAclFix] Caught error when waiting for game");
+                    throw new GameExitedException(process.ExitCode);
                 }
 
                 if (PInvoke.GetSecurityInfo(
