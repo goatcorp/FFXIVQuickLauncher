@@ -33,7 +33,13 @@ namespace XIVLauncher
         public class CmdLineOptions
         {
             [CommandLine.Option("dalamud-runner-override", Required = false, HelpText = "Path to a folder to override the dalamud runner with.")]
-            public string RunnerOverride { get; set; }
+            public string DalamudRunnerOverride { get; set; }
+
+            [CommandLine.Option("dalamud-beta-kind", Required = false, HelpText = "The Dalamud beta kind to use. Persists.")]
+            public string DalamudBetaKind { get; set; }
+
+            [CommandLine.Option("dalamud-beta-key", Required = false, HelpText = "The Dalamud beta key to use. Persists.")]
+            public string DalamudBetaKey { get; set; }
 
             [CommandLine.Option("roamingPath", Required = false, HelpText = "Path to a folder to override the roaming path for XL with.")]
             public string RoamingPath { get; set; }
@@ -146,6 +152,16 @@ namespace XIVLauncher
                 if (CommandLine.ClientLanguage != null)
                 {
                     App.Settings.Language = CommandLine.ClientLanguage;
+                }
+
+                if (!string.IsNullOrEmpty(CommandLine.DalamudBetaKind))
+                {
+                    Settings.DalamudBetaKind = CommandLine.DalamudBetaKind;
+                }
+
+                if (!string.IsNullOrEmpty(CommandLine.DalamudBetaKey))
+                {
+                    Settings.DalamudBetaKey = CommandLine.DalamudBetaKey;
                 }
             }
             catch (Exception ex)
@@ -313,9 +329,9 @@ namespace XIVLauncher
                     Paths.OverrideRoamingPath(CommandLine.RoamingPath);
                 }
 
-                if (!string.IsNullOrEmpty(CommandLine.RunnerOverride))
+                if (!string.IsNullOrEmpty(CommandLine.DalamudRunnerOverride))
                 {
-                    this._dalamudRunnerOverride = new FileInfo(CommandLine.RunnerOverride);
+                    this._dalamudRunnerOverride = new FileInfo(CommandLine.DalamudRunnerOverride);
                 }
 
                 if (CommandLine.NoAutoLogin)
