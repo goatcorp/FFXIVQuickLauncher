@@ -7,45 +7,78 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     mc:Ignorable="d"
     Title="XIVLauncher Update" Height="Auto" MaxWidth="800" WindowStartupLocation="CenterScreen"
-    Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+    ResizeMode="NoResize" SizeToContent="WidthAndHeight"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     Background="{DynamicResource MaterialDesignPaper}"
     TextElement.FontWeight="Medium"
-    FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" Topmost="True">
-    <StackPanel>
-        <StackPanel>
-            <StackPanel
-                Orientation="Horizontal">
-                <StackPanel Orientation="Vertical">
-                    <TextBlock
-                        x:Name="UpdateNotice"
-                        Margin="10,10,10,0"
-                        TextWrapping="Wrap"
-                        Foreground="{DynamicResource MaterialDesignBody}">
-                    </TextBlock>
-                    <TextBlock Margin="10" MaxWidth="650" Height="Auto" x:Name="ChangeLogText" TextWrapping="Wrap"></TextBlock>
-                </StackPanel>
+    FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+    Topmost="True"
+    UseLayoutRounding="True">
 
-                <materialDesign:PackIcon Kind="Globe" HorizontalAlignment="Stretch" Foreground="DodgerBlue"
-                                         VerticalAlignment="Stretch" Width="30" Height="30" Margin="10,0,20,0" />
+    <Grid SnapsToDevicePixels="True">
+        <Image Source="pack://application:,,,/Resources/logo.png"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Bottom"
+               Width="300"
+               Height="300"
+               Margin="8"
+               Opacity="0.35"
+               IsHitTestVisible="False"
+               Stretch="Uniform"
+               RenderOptions.BitmapScalingMode="HighQuality"
+               Panel.ZIndex="0"
+               Grid.RowSpan="3"
+               SnapsToDevicePixels="True">
+            <Image.RenderTransform>
+                <TranslateTransform Y="50" X="-14"/>
+            </Image.RenderTransform>
+        </Image>
+
+        <Grid Margin="12" ClipToBounds="True" Panel.ZIndex="1" SnapsToDevicePixels="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="UpdateNotice"
+                       Grid.Row="0"
+                       Margin="4 6 4 8"
+                       TextWrapping="Wrap"
+                       Foreground="{DynamicResource MaterialDesignBody}" />
+
+            <Border Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#a0202020"
+                    BorderBrush="{DynamicResource MaterialDesignDivider}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12"
+                    MaxWidth="720"
+                    MaxHeight="420"
+                    SnapsToDevicePixels="True">
+
+                <FlowDocumentScrollViewer Name="ChangeLogViewer" VerticalScrollBarVisibility="Auto" IsToolBarVisible="False"
+                                          Padding="0" Margin="0" IsSelectionEnabled="False">
+                    <FlowDocument />
+                </FlowDocumentScrollViewer>
+            </Border>
+
+            <StackPanel Grid.Row="2" Orientation="Vertical">
+                <TextBlock Margin="4 12 4 8" MaxWidth="800" Height="Auto" Text="{Binding ChangelogThanksLoc}" TextWrapping="Wrap" />
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0 6 0 0">
+                    <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left" x:Name="DiscordButton" Margin="0,0,6,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Chat" />
+                            <TextBlock Margin="8 0 0 0" VerticalAlignment="Center" Text="{Binding JoinDiscordLoc}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click" Content="{Binding OkLoc}"/>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
-
-        <TextBlock Margin="10 20 10 20" MaxWidth="800" Height="Auto" Text="{Binding ChangelogThanksLoc}" TextWrapping="Wrap"></TextBlock>
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom" Margin="0 15 10 10">
-
-            <Button Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
-                    x:Name="DiscordButton" Margin="0,0,5,0">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Chat" />
-                    <TextBlock Margin="8 0 0 0" VerticalAlignment="Center"
-                               Text="{Binding JoinDiscordLoc}" />
-                </StackPanel>
-            </Button>
-
-            <Button Margin="0,0,0,0" HorizontalAlignment="Right" Click="CloseButton_Click" Content="{Binding OkLoc}"/>
-        </StackPanel>
-    </StackPanel>
+        </Grid>
+    </Grid>
 </Window>

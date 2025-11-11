@@ -3,6 +3,9 @@ using System.Media;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Support;
@@ -54,7 +57,7 @@ namespace XIVLauncher.Windows
             var vm = new ChangeLogWindowViewModel();
             DataContext = vm;
 
-            this.ChangeLogText.Text = vm.ChangelogLoadingLoc;
+            ChangeLogViewer.Document = BuildFlowDocumentFromPlainText(vm.ChangelogLoadingLoc);
 
             Activate();
             Topmost = true;
@@ -71,39 +74,131 @@ namespace XIVLauncher.Windows
         {
             Close();
         }
-        
+
         public new void Show()
         {
+            LoadChangelog();
+
             SystemSounds.Asterisk.Play();
             base.Show();
-
-            LoadChangelog();
         }
 
         public new void ShowDialog()
         {
-            base.ShowDialog();
-            
             LoadChangelog();
+
+            base.ShowDialog();
         }
-        
+
         private void LoadChangelog()
         {
-            var _ = Task.Run(async () =>
-            {
-                try
-                {
-                    using var client = new HttpClient();
-                    var response = JsonConvert.DeserializeObject<ReleaseMeta>(await client.GetStringAsync(META_URL));
+            var _ = Task.Run(this.FetchChangelogAsync);
+        }
 
-                    Dispatcher.Invoke(() => this.ChangeLogText.Text = _prerelease ? response.PrereleaseVersion.Changelog : response.ReleaseVersion.Changelog);
-                }
-                catch (Exception ex)
+        private async Task FetchChangelogAsync()
+        {
+            try
+            {
+                using var client = new HttpClient();
+                var response = JsonConvert.DeserializeObject<ReleaseMeta>(await client.GetStringAsync(META_URL));
+
+                var text = _prerelease ? response.PrereleaseVersion?.Changelog : response.ReleaseVersion?.Changelog;
+                Dispatcher.Invoke(() => ChangeLogViewer.Document = BuildFlowDocumentFromPlainText(text));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not get changelog");
+                Dispatcher.Invoke(() => ChangeLogViewer.Document = BuildFlowDocumentFromPlainText(Model.ChangelogLoadingErrorLoc));
+            }
+        }
+
+        private FlowDocument BuildFlowDocumentFromPlainText(string text)
+        {
+            var doc = new FlowDocument
+            {
+                FontFamily = new FontFamily("pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"),
+                FontSize = 12,
+                PagePadding = new Thickness(0),
+                ColumnWidth = double.PositiveInfinity // don't flow into newspaper columns
+            };
+
+            if (string.IsNullOrEmpty(text))
+                return doc;
+
+            // Normalize line endings
+            var normalized = text.Replace("\r\n", "\n").Replace("\r", "\n");
+            var lines = normalized.Split('\n');
+
+            List currentList = null;
+            var paraLines = new List<string>();
+
+            foreach (var raw in lines)
+            {
+                if (string.IsNullOrWhiteSpace(raw))
                 {
-                    Log.Error(ex, "Could not get changelog");
-                    Dispatcher.Invoke(() => this.ChangeLogText.Text = Model.ChangelogLoadingErrorLoc);
+                    // Empty line -> flush current list or paragraph
+                    if (currentList != null)
+                    {
+                        doc.Blocks.Add(currentList);
+                        currentList = null;
+                    }
+
+                    if (paraLines.Count > 0)
+                    {
+                        var p = new Paragraph(new Run(string.Join(" ", paraLines)));
+                        p.Margin = new Thickness(0, 0, 0, 8);
+                        doc.Blocks.Add(p);
+                        paraLines.Clear();
+                    }
+
+                    continue;
                 }
-            });
+
+                var trimmedStart = raw.TrimStart();
+                if (trimmedStart.StartsWith('*'))
+                {
+                    // Flush paragraph buffer
+                    if (paraLines.Count > 0)
+                    {
+                        var p = new Paragraph(new Run(string.Join(" ", paraLines)));
+                        p.Margin = new Thickness(0, 0, 0, 8);
+                        doc.Blocks.Add(p);
+                        paraLines.Clear();
+                    }
+
+                    // Start a new list if needed
+                    currentList ??= new List
+                    {
+                        MarkerStyle = TextMarkerStyle.Disc,
+                        Margin = new Thickness(6, 0, 0, 8),
+                        MarkerOffset = 15
+                    };
+
+                    var itemText = trimmedStart.TrimStart('*').Trim();
+                    var itemPara = new Paragraph(new Run(itemText)) { Margin = new Thickness(0, 0, 0, 4) };
+                    currentList.ListItems.Add(new ListItem(itemPara));
+                }
+                else
+                {
+                    // Normal text line, accumulate into paragraph
+                    paraLines.Add(raw.Trim());
+                }
+            }
+
+            // Flush remaining buffers
+            if (currentList != null)
+                doc.Blocks.Add(currentList);
+
+            if (paraLines.Count > 0)
+            {
+                var p = new Paragraph(new Run(string.Join(" ", paraLines)));
+                p.Margin = new Thickness(0, 0, 0, 8);
+                doc.Blocks.Add(p);
+            }
+
+            return doc;
         }
     }
 }
+
+
