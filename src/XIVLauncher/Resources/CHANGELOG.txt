@@ -6,9 +6,10 @@
 * Updated visual style of various dialogues to indicate importance. (by @Haselnussbomber)
 * The launcher will no longer request administrator privileges to install patches if they are not required.
 * Fixed an issue wherein repair may have failed to download files under certain conditions. (by @srkizer)
-* Fixed an issue wherein button colors were slightly mismatched on the login screen.
-* Fixed an issue wherein the launcher would not show a proper error message when no repair data could be found.
+* Fixed an issue wherein the game may not have started on certain Windows 11 systems if Dalamud was disabled.
 * Fixed an issue wherein the launcher would not function for certain Brazilian users.
+* Fixed an issue wherein the launcher would not show a proper error message when no repair data could be found.
+* Fixed an issue wherein the launcher may have indicated patch downloads as done, even though they had not actually started.
+* Fixed an issue wherein button colors were slightly mismatched on the login screen.
 * Fixed an issue wherein certain news links may not have opened correctly in the browser.
 * Fixed an issue wherein an irrelevant error message may appear during gameplay under certain conditions.
-* Fixed an issue wherein the launcher may have indicated patch downloads as done, even though they had not actually started.
