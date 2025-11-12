@@ -416,7 +416,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Custom Repo Plugins",
+    "message": "Démarrer sans dépôt de plugins personnalisé",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -424,7 +424,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLaunchOptions": {
-    "message": "Additional launch options",
+    "message": "Paramètres de lancement additionnels",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
@@ -916,7 +916,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoLaunchHint": {
-    "message": "Applications qui sont lancées en même temps que le jeu.",
+    "message": "Les add-ons sont des applications qui s'exécutent dès que le jeu s'est lancé.",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AddNew": {
