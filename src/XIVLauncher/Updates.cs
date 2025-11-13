@@ -188,7 +188,15 @@ namespace XIVLauncher
 
             var fakeDownloader = new FakeSquirrelFileDownloader(leaseData, prerelease);
             var source = new SimpleWebSource(FAKE_URL_PREFIX, fakeDownloader);
-            var manager = new UpdateManager(source);
+
+            // Velopack bug: Delta updates are not reliable at the moment
+            // https://github.com/velopack/velopack/issues/751
+            var updateOptions = new UpdateOptions
+            {
+                MaximumDeltasBeforeFallback = -1,
+            };
+
+            var manager = new UpdateManager(source, updateOptions);
 
             return new UpdateResult(manager, leaseData);
         }
