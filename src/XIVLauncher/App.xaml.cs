@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -86,7 +86,7 @@ namespace XIVLauncher
         public static CommonUniqueIdCache UniqueIdCache;
 
 #if !XL_NOAUTOUPDATE
-        private UpdateLoadingDialog _updateWindow;
+         private UpdateLoadingDialog _updateWindow;
 #endif
 
         public static CmdLineOptions CommandLine { get; private set; }

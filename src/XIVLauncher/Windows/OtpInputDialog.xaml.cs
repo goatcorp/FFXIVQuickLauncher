@@ -11,6 +11,11 @@ using Serilog;
 using XIVLauncher.Common.Http;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
+using Microsoft.Web.WebView2.Wpf;
+using Microsoft.Web.WebView2.Core;
+using System.Text.Json;
+using System.Collections.Generic;
+using System.IO;
 
 namespace XIVLauncher.Windows
 {
@@ -19,7 +24,7 @@ namespace XIVLauncher.Windows
     /// </summary>
     public partial class OtpInputDialog : Window
     {
-        public event Action<string> OnResult;
+        public event Action<string, string> OnResult;
 
         private readonly Brush _otpInputPromptDefaultBrush;
 
@@ -40,6 +45,10 @@ namespace XIVLauncher.Windows
             Activated += (_, _) => OtpTextBox.Focus();
             GotFocus += (_, _) => OtpTextBox.Focus();
             Topmost = App.Settings.OtpAlwaysOnTopEnabled;
+
+            // Initialize reCAPTCHA WebView2
+            RecaptchaWebView.WebMessageReceived += RecaptchaWebView_WebMessageReceived;
+            this.Loaded += OtpInputDialog_Loaded;
         }
 
         public new bool? ShowDialog()
@@ -101,7 +110,7 @@ namespace XIVLauncher.Windows
             }
 
             _ignoreCurrentOtp = false;
-            OnResult?.Invoke(otp);
+            OnResult?.Invoke(otp, recaptchaToken.Text);
 
             Dispatcher.Invoke(() =>
             {
@@ -123,7 +132,7 @@ namespace XIVLauncher.Windows
 
         private void Cancel()
         {
-            OnResult?.Invoke(null);
+            OnResult?.Invoke(null, null);
             _otpListener?.Stop();
             DialogResult = false;
             Hide();
@@ -182,7 +191,7 @@ namespace XIVLauncher.Windows
             PlatformHelpers.OpenBrowser($"https://goatcorp.github.io/faq/mobile_otp");
         }
 
-        public static string AskForOtp(Action<OtpInputDialog, string> onOtpResult, Window parentWindow)
+        public static string AskForOtp(Action<OtpInputDialog, string, string> onOtpResult, Window parentWindow)
         {
             if (Dispatcher.CurrentDispatcher != parentWindow.Dispatcher)
                 return parentWindow.Dispatcher.Invoke(() => AskForOtp(onOtpResult, parentWindow));
@@ -195,8 +204,61 @@ namespace XIVLauncher.Windows
             }
 
             string result = null;
-            dialog.OnResult += otp => onOtpResult(dialog, result = otp);
+            dialog.OnResult += (otp, token) => onOtpResult(dialog, result = otp, token);
             return dialog.ShowDialog() == true ? result : null;
+        }
+
+        private async void OtpInputDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            await RecaptchaWebView.EnsureCoreWebView2Async();
+            
+            // Create a temporary file for the HTML
+            var tempDir = Path.GetTempPath();
+            var tempFile = Path.Combine(tempDir, "recaptcha_page.html");
+            var htmlPath = Path.Combine(AppContext.BaseDirectory, "Resources", "recaptcha_page.html");
+            var htmlContent = File.ReadAllText(htmlPath);
+            File.WriteAllText(tempFile, htmlContent);
+            
+            // Set up virtual host mapping
+            RecaptchaWebView.CoreWebView2.SetVirtualHostNameToFolderMapping("user.ffxiv.com.tw", tempDir, Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
+            
+            // Navigate to the virtual host
+            RecaptchaWebView.Source = new Uri("https://user.ffxiv.com.tw/recaptcha_page.html");
+            
+            // Clean up temp file when dialog closes
+            this.Closed += (s, args) => { try { File.Delete(tempFile); } catch { } };
+        }
+
+        private void RecaptchaWebView_WebMessageReceived(object sender, Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs e)
+        {
+            try
+            {
+                var json = e.WebMessageAsJson;
+                var payload = ParseRecaptchaMessage(json);
+                if (payload != null && payload.TryGetValue("token", out var token))
+                {
+                    recaptchaToken.Text = token;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to parse reCAPTCHA token");
+            }
+        }
+
+        private Dictionary<string, string> ParseRecaptchaMessage(string webMessageAsJson)
+        {
+            try
+            {
+                // WebMessageAsJson is a JSON string containing another JSON string, so deserialize twice
+                var innerJson = JsonSerializer.Deserialize<string>(webMessageAsJson);
+                return JsonSerializer.Deserialize<Dictionary<string, string>>(innerJson);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to parse reCAPTCHA message");
+                return null;
+            }
         }
     }
 }

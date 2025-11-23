@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
         Title="Enter OTP key" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
@@ -12,7 +13,7 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None" Height="196.088" Width="269.186">
+        WindowStyle="None" Height="200" Width="269.186">
     <Grid Margin="0,0,0,0">
         <materialDesign:Card Background="{DynamicResource MaterialDesignPaper}" Height="165" Margin="0,0,10,0">
             <StackPanel Margin="16,8,10,0">
@@ -77,6 +78,8 @@
                         Click="CancelButton_OnClick" />
                 </StackPanel>
                 <TextBlock Foreground="DarkGray" Margin="0,8,0,0" TextAlignment="Center" Cursor="Hand" MouseUp="OpenShortcutInfo_MouseUp" Text="{Binding OtpOneClickHintLoc}"/>
+                <TextBox x:Name="recaptchaToken" Visibility="Hidden" />
+                <wv2:WebView2 x:Name="RecaptchaWebView" Visibility="Hidden" Height="100" Width="200" />
             </StackPanel>
         </materialDesign:Card>
     </Grid>

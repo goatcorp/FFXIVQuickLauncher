@@ -24,6 +24,7 @@ using XIVLauncher.Common.Encryption;
 using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
+using System.Security.Authentication;
 
 namespace XIVLauncher.Common.Game;
 
@@ -48,10 +49,16 @@ public class Launcher
 
         var handler = new HttpClientHandler
         {
+            AllowAutoRedirect = true,
+            AutomaticDecompression = DecompressionMethods.None,
             UseCookies = false,
+            PreAuthenticate = false,
+            UseProxy = false,
+            UseDefaultCredentials = false,
+            SslProtocols = SslProtocols.None
         };
 
-        this.client = new HttpClient(handler);
+        this.client = new HttpClient(handler, true);
     }
 
     public Launcher(byte[] overriddenSteamTicket, IUniqueIdCache uniqueIdCache, ISettings settings, string frontierUrl)
@@ -90,7 +97,7 @@ public class Launcher
         public string? UniqueId { get; set; }
     }
 
-    public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
+    public async Task<LoginResult> Login(string userName, string password, string otp, string recaptchaToken, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
     {
         string? uid;
         var pendingPatches = Array.Empty<PatchListEntry>();
@@ -164,7 +171,7 @@ public class Launcher
 
         if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
         {
-            oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
+            oauthLoginResult = await OauthLogin(userName, password, otp, recaptchaToken, isFreeTrial, isSteam, 3, steamTicket);
 
             Log.Information("OAuth login successful - playable:{IsPlayable} terms:{TermsAccepted} region:{Region} ex:{MaxExpansion}",
                             oauthLoginResult.Playable,
@@ -220,6 +227,7 @@ public class Launcher
         };
     }
 
+    // FOR FFXIV TC
     public Process? LaunchGame(
         IGameRunner runner, string sessionId, int region, int expansionLevel,
         bool isSteamServiceAccount, string additionalArguments,
@@ -229,19 +237,17 @@ public class Launcher
         Log.Information("XivGame::LaunchGame(steamServiceAccount:{IsSteam}, args:{AdditionalArguments})",
                         isSteamServiceAccount,
                         additionalArguments);
-
+        var tcSessionId = ExchangeSessionId(sessionId).Result;
         var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
         var environment = new Dictionary<string, string>();
-
         var argumentBuilder = new ArgumentBuilder()
-                              .Append("DEV.DataPathType", "1")
-                              .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
-                              .Append("DEV.TestSID", sessionId)
-                              .Append("DEV.UseSqPack", "1")
-                              .Append("SYS.Region", region.ToString())
-                              .Append("language", ((int)language).ToString())
-                              .Append("resetConfig", "0")
-                              .Append("ver", Repository.Ffxiv.GetVer(gamePath));
+                              .Append("DEV.LobbyHost01", "neolobby01.ffxiv.com.tw")
+                              .Append("DEV.LobbyPort01", "54994")
+                              .Append("DEV.GMServerHost", "frontier.ffxiv.com.tw")
+                              .Append("DEV.TestSID", tcSessionId)
+                              .Append("SYS.resetConfig", "0")
+                              .Append("DEV.SaveDataBankHost", "config-dl.ffxiv.com.tw")
+                              .Append("resetConfig", "0");
 
         if (isSteamServiceAccount)
         {
@@ -269,6 +275,79 @@ public class Launcher
 
         return runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
     }
+
+    public async Task<string> ExchangeSessionId(string token)
+    {
+        var requestObj = new Dictionary<string, string>{
+            { "token", token }
+        };
+        var url = "https://user.ffxiv.com.tw/api/login/launcherSession";
+        var content = new StringContent(JsonConvert.SerializeObject(requestObj), Encoding.UTF8, "application/json");
+        var response = await this.client.PostAsync(url, content);
+        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var responseObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseBody)
+            ?? throw new Exception("Failed to exchange session ID: could not parse server response.");
+        if (responseObj.TryGetValue("error", out var errorNews))
+        {
+            throw new Exception($"Failed to exchange session ID: server returned error: {errorNews}");
+        }
+        if (responseObj.TryGetValue("sessionId", out var sessionId))
+        {
+            return sessionId;
+        }
+        throw new Exception("Failed to exchange session ID: server response did not contain a session ID.");
+    }
+
+    // public Process? LaunchGame(
+    //     IGameRunner runner, string sessionId, int region, int expansionLevel,
+    //     bool isSteamServiceAccount, string additionalArguments,
+    //     DirectoryInfo gamePath, ClientLanguage language,
+    //     bool encryptArguments, DpiAwareness dpiAwareness)
+    // {
+    //     Log.Information("XivGame::LaunchGame(steamServiceAccount:{IsSteam}, args:{AdditionalArguments})",
+    //                     isSteamServiceAccount,
+    //                     additionalArguments);
+
+    //     var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
+    //     var environment = new Dictionary<string, string>();
+
+    //     var argumentBuilder = new ArgumentBuilder()
+    //                           .Append("DEV.DataPathType", "1")
+    //                           .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
+    //                           .Append("DEV.TestSID", sessionId)
+    //                           .Append("DEV.UseSqPack", "1")
+    //                           .Append("SYS.Region", region.ToString())
+    //                           .Append("language", ((int)language).ToString())
+    //                           .Append("resetConfig", "0")
+    //                           .Append("ver", Repository.Ffxiv.GetVer(gamePath));
+
+    //     if (isSteamServiceAccount)
+    //     {
+    //         // These environment variable and arguments seems to be set when ffxivboot is started with "-issteam" (27.08.2019)
+    //         environment.Add("IS_FFXIV_LAUNCH_FROM_STEAM", "1");
+    //         argumentBuilder.Append("IsSteam", "1");
+    //     }
+
+    //     // This is a bit of a hack; ideally additionalArguments would be a dictionary or some KeyValue structure
+    //     if (!string.IsNullOrEmpty(additionalArguments))
+    //     {
+    //         var regex = new Regex(@"\s*(?<key>[^\s=]+)\s*=\s*(?<value>([^=]*$|[^=]*\s(?=[^\s=]+)))\s*", RegexOptions.Compiled);
+    //         foreach (Match match in regex.Matches(additionalArguments))
+    //             argumentBuilder.Append(match.Groups["key"].Value, match.Groups["value"].Value.Trim());
+    //     }
+
+    //     if (!File.Exists(exePath))
+    //         throw new BinaryNotPresentException(exePath);
+
+    //     var workingDir = Path.Combine(gamePath.FullName, "game");
+
+    //     var arguments = encryptArguments
+    //                         ? argumentBuilder.BuildEncrypted()
+    //                         : argumentBuilder.Build();
+
+    //     return runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
+    // }
 
     private static string GetVersionReport(DirectoryInfo gamePath, int exLevel, bool forceBaseVersion)
     {
@@ -402,11 +481,65 @@ public class Launcher
             throw;
         }
     }
+    // FOR FFXIV TC
+    // private async Task<(string? Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
+    // {
+
+
+    //     if (!forceBaseVersion)
+    //         EnsureVersionSanity(gamePath, loginResult.MaxExpansion);
+
+    //     var text = await CheckVersion(gamePath);
+    //     if (string.IsNullOrEmpty(text))
+    //         return (null, LoginState.Ok, Array.Empty<PatchListEntry>());
+
+    //     Log.Verbose("Game Patching is needed... List:\n{PatchList}", text);
+
+    //     var pendingPatches = PatchListParser.Parse(text);
+    //     return (null, LoginState.NeedsPatchGame, pendingPatches);
+    // }
+
+    // // FOR FFXIV TC
+    // private async Task<string> CheckVersion(DirectoryInfo gamePath)
+    // {
+    //     // check local ver files
+    //     var localVers = new List<string>
+    //     {
+    //         Repository.Ffxiv.GetVer(gamePath),
+    //         Repository.Ex1.GetVer(gamePath),
+    //         Repository.Ex2.GetVer(gamePath),
+    //         Repository.Ex3.GetVer(gamePath),
+    //         Repository.Ex4.GetVer(gamePath),
+    //         Repository.Ex5.GetVer(gamePath),
+    //     };
+    //     localVers.RemoveAll(x => x ==  Constants.BASE_GAME_VERSION);
+    //     var contentList = localVers.Select((x, i) => $"ex{i}\t{x}").ToList();
+    //     // get latest ver files from server
+    //     var request = new HttpRequestMessage(HttpMethod.Get, $"https://user-cdn.ffxiv.com.tw/launcher/patch/v1.txt");
+    //     var resp = await this.client.SendAsync(request);
+    //     var text = await resp.Content.ReadAsStringAsync();
+    //     var lines = text.Split( ["\r\n", "\r", "\n", Environment.NewLine], StringSplitOptions.None);
+        
+    //     return await GetTCPatchList(string.Join(Environment.NewLine, contentList), gamePath);
+    // }
+
+    // private async Task<string> GetTCPatchList(string StringContent, DirectoryInfo gamePath)
+    // {
+    //     var gamever = Repository.Ffxiv.GetVer(gamePath);
+    //     var url = $"http://patch-gamever.ffxiv.com.tw/http/win32/ffxivtc_release_tc_game/{gamever}/";
+    //     // var curlArgs = $"-X POST \"{url}\" -H \"X-Hash-Check: enabled\" -H \"User-Agent: Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Orbit/1.0)\" -H \"Accept: */*\" -H \"Accept-Language: en-US,en\" -H \"Connection: keep-alive\" -H \"Content-Type: text/plain\" -d \"{stringContent.Replace(Environment.NewLine, "\\n").Replace("\t", "\\t")}\"";
+    //     var request = new HttpRequestMessage(HttpMethod.Post, url);
+    //     var content = new StringContent(StringContent, Encoding.UTF8, "text/plain");
+    //     request.Content = content;
+    //     request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
+    //     var resp = await this.client.SendAsync(request, HttpCompletionOption.ResponseContentRead);
+    //     return await resp.Content.ReadAsStringAsync();
+    // }
 
     private async Task<(string? Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
     {
         var request = new HttpRequestMessage(HttpMethod.Post,
-                                             $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{loginResult.SessionId}");
+                                             $"http://patch-gamever.ffxiv.com.tw/http/win32/ffxivtc_release_tc_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{loginResult.SessionId}");
 
         request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);
@@ -551,70 +684,49 @@ public class Launcher
 
         return url;
     }
-
-    private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket)
+    
+    // FOR FFXIV TC
+    private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, string token, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket)
     {
-        if (isSteam && steamTicket == null)
-            throw new ArgumentNullException(nameof(steamTicket), "isSteam, but steamTicket == null");
 
-        var topUrl = GetOauthTopUrl(region, isFreeTrial, isSteam, steamTicket);
-        var topResult = await GetOauthTop(topUrl, isSteam);
-
-        var request = new HttpRequestMessage(HttpMethod.Post,
-                                             "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
-
-        request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-        request.Headers.AddWithoutValidation("Referer", topUrl);
-        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
-        request.Headers.AddWithoutValidation("User-Agent", this.userAgent);
-        //request.Headers.AddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
-        request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-        request.Headers.AddWithoutValidation("Host", "ffxiv-login.square-enix.com");
-        request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
-        request.Headers.AddWithoutValidation("Cache-Control", "no-cache");
-        request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
-
-        if (isSteam)
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://user.ffxiv.com.tw/api/login/launcherLogin");
+        var loginData = new Dictionary<string, string>
         {
-            if (!string.Equals(userName, topResult.SteamLinkedId, StringComparison.OrdinalIgnoreCase))
-                throw new SteamWrongAccountException(userName, topResult.SteamLinkedId);
-
-            if (string.IsNullOrEmpty(topResult.SteamLinkedId))
-                throw new SteamException($"Steam linked ID is empty or null. ({topResult.SteamLinkedId})");
-
-            userName = topResult.SteamLinkedId!;
-        }
-
-        request.Content = new FormUrlEncodedContent(
-            new Dictionary<string, string>
-            {
-                { "_STORED_", topResult.Stored },
-                { "sqexid", userName },
-                { "password", password },
-                { "otppw", otp },
-                // { "saveid", "1" } // NOTE(goat): This adds a Set-Cookie with a filled-out _rsid value in the login response.
-            });
-
-        var response = await this.client.SendAsync(request);
+            { "email", ToHexString(userName).ToLowerInvariant() },
+            { "password", ToHexString(password).ToLowerInvariant() },
+            { "code", otp },
+            { "token", token }
+            
+        };
+        var content = new StringContent(JsonConvert.SerializeObject(loginData), Encoding.UTF8, "application/json");
+        httpRequest.Content = content;
+        var response = await this.client.SendAsync(httpRequest);
 
         var reply = await response.Content.ReadAsStringAsync();
 
-        var regex = new Regex(@"window.external.user\(""login=auth,ok,(?<launchParams>.*)\);");
-        var matches = regex.Matches(reply);
-
-        if (matches.Count == 0)
-            throw new OauthLoginException(reply);
-
-        var launchParams = matches[0].Groups["launchParams"].Value.Split(',');
-
+        //TODO: 取到Error massage或是取不到token，代表登入失敗惹。
+        var loginResult = JsonConvert.DeserializeObject<Dictionary<string, object>>(reply);
+        if (loginResult.TryGetValue("error", out var error) || !loginResult.TryGetValue("token", out var sessionId))
+        {
+            throw new OauthLoginException($"Login failed: {error}");
+        }
+        var remainSeconds = int.Parse(loginResult["remain"].ToString() ?? "0");
         return new OauthLoginResult
         {
-            SessionId = launchParams[1],
-            Region = int.Parse(launchParams[5]),
-            TermsAccepted = launchParams[3] != "0",
-            Playable = launchParams[9] != "0",
-            MaxExpansion = int.Parse(launchParams[13])
+            SessionId = sessionId.ToString(),
+            Region = 1, // Taiwan No 1!!
+            TermsAccepted = true,
+            Playable = remainSeconds > 0,
+            MaxExpansion = 7
         };
+        string ToHexString(string str)
+        {
+            var bytes = Encoding.UTF8.GetBytes(str);
+            var stringBuilder = new StringBuilder(bytes.Length + bytes.Length);
+            foreach (var num in bytes)
+                stringBuilder.Append(num.ToString("x2"));
+            return stringBuilder.ToString();
+        }
     }
 
     private static string GetFileHash(string file)

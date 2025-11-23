@@ -97,7 +97,7 @@ public class IndexUpdateCommand
         if (this.username is not null && this.password is not null)
         {
             Log.Information("Logging in and fetching game patch information.");
-            var lr = await la.Login(this.username, this.password, this.otp ?? "", false, false, this.settings.GamePath, true, false);
+            var lr = await la.Login(this.username, this.password, this.otp ?? "", "", false, false, this.settings.GamePath, true, false);
             gamePatchList = lr.PendingPatches;
             File.WriteAllText(gamePatchListFile.FullName, JsonConvert.SerializeObject(gamePatchList, Formatting.Indented));
         }

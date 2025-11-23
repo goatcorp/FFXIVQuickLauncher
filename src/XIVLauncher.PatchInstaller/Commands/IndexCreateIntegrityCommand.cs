@@ -188,8 +188,10 @@ public class IndexCreateIntegrityCommand
         public int Compare(string l, string r)
         {
             int comp;
-            var llist = l.Split('\\').Reverse().ToList();
-            var rlist = r.Split('\\').Reverse().ToList();
+            var llist = l.Split('\\').ToList();
+            llist.Reverse();
+            var rlist = r.Split('\\').ToList();
+            rlist.Reverse();
 
             while (llist.Count > 1 && rlist.Count > 1)
             {

@@ -238,14 +238,14 @@ namespace XIVLauncher.Windows.ViewModel
                 return;
             }
 
-            if (username.Contains("@"))
-            {
-                CustomMessageBox.Show(
-                    Loc.Localize("EmailUsernameError", "Please enter your SE account name, not your email address."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
+            // if (username.Contains("@"))
+            // {
+            //     CustomMessageBox.Show(
+            //         Loc.Localize("EmailUsernameError", "Please enter your SE account name, not your email address."),
+            //         "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
 
-                return;
-            }
+            //     return;
+            // }
 
             if (string.IsNullOrEmpty(password))
             {
@@ -274,16 +274,18 @@ namespace XIVLauncher.Windows.ViewModel
             var hasValidCache = App.UniqueIdCache.HasValidCache(username) && App.Settings.UniqueIdCacheEnabled;
 
             var otp = string.Empty;
+            var recaptchaToken = string.Empty;
 
             if (isOtp && (!hasValidCache || action == AfterLoginAction.Repair))
             {
-                otp = OtpInputDialog.AskForOtp((otpDialog, result) =>
+                otp = OtpInputDialog.AskForOtp((otpDialog, result, token) =>
                 {
                     if (AccountManager.CurrentAccount != null && result != null && AccountManager.CurrentAccount.LastSuccessfulOtp == result)
                     {
                         otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
                                                                    "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
                     }
+                    recaptchaToken = token;
                 }, _window);
             }
 
@@ -294,7 +296,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (!doingAutoLogin) App.Settings.AutologinEnabled = IsAutoLogin;
 
-            var loginResult = await TryLoginToGame(username, password, otp, isSteam, action).ConfigureAwait(false);
+            var loginResult = await TryLoginToGame(username, password, otp, recaptchaToken, isSteam, action).ConfigureAwait(false);
             if (loginResult == null)
                 return;
 
@@ -373,7 +375,7 @@ namespace XIVLauncher.Windows.ViewModel
             return true;
         }
 
-        private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, bool isSteam, AfterLoginAction action)
+        private async Task<Launcher.LoginResult> TryLoginToGame(string username, string password, string otp, string recaptchaToken, bool isSteam, AfterLoginAction action)
         {
             bool? loginStatus = null;
 
@@ -439,9 +441,9 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 if (action == AfterLoginAction.Repair)
-                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, recaptchaToken, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
                 else
-                    return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, recaptchaToken, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

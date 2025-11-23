@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Recaptcha Host</title>
+</head>
+<body>
+  <div id="tokenPreview" style="display:none;"> </div>
+  <script>
+    // !!IMPORTANT!! - You MUST set your site key here for recaptcha to work  !!IMPORTANT!!
+    // !!IMPORTANT!! - You MUST set your site key here for recaptcha to work  !!IMPORTANT!!
+    // !!IMPORTANT!! - You MUST set your site key here for recaptcha to work  !!IMPORTANT!!
+    // 非常重要所以要說三次，一定要設定SITE_KEY後reCaptcha才能運作，請務必更改此處！！
+    // 稍微有點技術能力應該有辦法找到.....
+    const SITE_KEY = "";
+
+    function postTokenToHost(token) {
+      try {
+        const payload = { token };
+        // Try to post the token to the host (WebView2 exposes window.chrome.webview.postMessage)
+        if (window.chrome && window.chrome.webview && typeof window.chrome.webview.postMessage === 'function') {
+          window.chrome.webview.postMessage(JSON.stringify(payload));
+        }
+      } catch (e) {
+        // swallow - host may not be listening
+        console.error('postTokenToHost error', e);
+      }
+    }
+
+    // Load enterprise grecaptcha and execute once ready
+    (function() {
+      try {
+        var s = document.createElement('script');
+        s.src = 'https://www.google.com/recaptcha/enterprise.js?render=' + SITE_KEY;
+        s.async = true;
+        s.defer = true;
+        s.onload = function() {
+          try {
+            if (typeof grecaptcha === 'undefined' || !grecaptcha.enterprise) {
+              console.error('grecaptcha.enterprise not available');
+              return;
+            }
+            grecaptcha.enterprise.ready(function() {
+              grecaptcha.enterprise.execute(SITE_KEY, { action: 'LOGIN' }).then(function(token) {
+                try {
+                  var el = document.getElementById('tokenPreview');
+                  if (el) el.textContent = token || '';
+                  // Post token to host
+                  postTokenToHost(token);
+                } catch (e) { console.error(e); }
+              }).catch(function(e){ console.error('execute failed', e); });
+            });
+          }
+          catch (e) { console.error('grecaptcha onload handler error', e); }
+        };
+        s.onerror = function(e) { console.error('failed to load enterprise.js', e); };
+        document.head.appendChild(s);
+      } catch (e) { console.error('recaptcha init error', e); }
+    })();
+  </script>
+</body>
+</html>
+
