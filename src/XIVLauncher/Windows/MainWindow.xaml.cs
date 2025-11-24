@@ -113,10 +113,14 @@ namespace XIVLauncher.Windows
                 AccountSwitcherButton.Background = App.UaBrush;
                 AccountSwitcherButton.BorderBrush = App.UaBrush;
             }
+            TcWebView.Source = new Uri("https://user-cdn.ffxiv.com.tw/news/251115/launcher_left.html");
+
         }
 
         private async Task SetupHeadlines()
         {
+            // TC Region: disable headlines
+            return;
             try
             {
                 _bannerChangeTimer?.Stop();

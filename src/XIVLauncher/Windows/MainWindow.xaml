@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="XIVLauncher.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,6 +9,7 @@
     xmlns:windows="clr-namespace:XIVLauncher.Windows"
     xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
     xmlns:game="clr-namespace:XIVLauncher.Common.Game;assembly=XIVLauncher.Common"
+    xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     mc:Ignorable="d"
     Title="XIVLauncher"
     Width="845"
@@ -54,102 +55,113 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <materialDesign:Card
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="0"
-                                HorizontalAlignment="Left"
-                                Width="{DynamicResource BannerCardWidth}" Height="{DynamicResource BannerCardHeight}"
-                                Cursor="Hand"
-                                MouseUp="BannerCard_MouseUp">
-                                <Viewbox>
-                                    <Image x:Name="BannerImage"
-                                           Source="pack://application:,,,/Resources/placeholder-news.png" />
-                                </Viewbox>
-                            </materialDesign:Card>
+                            <Grid x:Name="NewsContainer">
+                                <Grid x:Name="TcNewsContainer" Background="White">
+                                    <wv2:WebView2 x:Name="TcWebView" DefaultBackgroundColor="White" />
+                                </Grid>
+                                <Grid x:Name="XivNewsContainer"
+                                      Visibility="Hidden">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
 
-                            <Border CornerRadius="8" Background="#aa333333" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,8,8">
-                                <ItemsControl x:Name="BannerDot" d:ItemsSource="{d:SampleData ItemCount=5}" Opacity="1"  >
-                                    <ItemsControl.LayoutTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="-90"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </ItemsControl.LayoutTransform>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <RadioButton GroupName="banner" IsChecked="{Binding Active}" RenderTransformOrigin="0.5,0.5" MouseEnter="RadioButton_MouseEnter" MouseLeave="RadioButton_MouseLeave">
-                                                <RadioButton.RenderTransform>
-                                                    <TransformGroup>
-                                                        <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
-                                                        <SkewTransform/>
-                                                        <RotateTransform/>
-                                                        <TranslateTransform/>
-                                                    </TransformGroup>
-                                                </RadioButton.RenderTransform>
-                                            </RadioButton>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Border>
+                                    <materialDesign:Card
+                                        Grid.Row="0"
+                                        Margin="0"
+                                        HorizontalAlignment="Left"
+                                        Width="{DynamicResource BannerCardWidth}" Height="{DynamicResource BannerCardHeight}"
+                                        Cursor="Hand"
+                                        MouseUp="BannerCard_MouseUp">
+                                        <Viewbox>
+                                            <Image x:Name="BannerImage"
+                                                   Source="pack://application:,,,/Resources/placeholder-news.png" />
+                                        </Viewbox>
+                                    </materialDesign:Card>
 
-                            <materialDesign:Card
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Margin="0 10 0 0"
-                                Height="94"
-                                HorizontalAlignment="Left" Width="{DynamicResource BannerCardWidth}">
-                                <ListView x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:Name="SingleLineDataTemplate"
-                                                      DataType="game:News">
-                                            <StackPanel Orientation="Horizontal" Height="15">
-                                                <materialDesign:PackIcon
-                                                                         Height="Auto" Width="Auto">
-                                                    <materialDesign:PackIcon.Style>
-                                                        <Style TargetType="materialDesign:PackIcon">
-                                                            <Setter Property="Kind" Value="Newspaper" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger
-                                                                             Binding="{Binding Tag}" Value="Important">
-                                                                    <Setter Property="Kind"
-                                                                            Value="AlertCircle" />
-                                                                    <Setter Property="Foreground"
-                                                                            Value="Red" />
-                                                                </DataTrigger>
-                                                                <DataTrigger
-                                                                             Binding="{Binding Tag}" Value="Follow-up">
-                                                                    <Setter Property="Kind"
-                                                                            Value="InformationOutline" />
-                                                                    <Setter Property="Foreground"
-                                                                            Value="#FFFFB900" />
-                                                                </DataTrigger>
-                                                                <DataTrigger
-                                                                             Binding="{Binding Tag}" Value="DlError">
-                                                                    <Setter Property="Kind"
-                                                                            Value="LanDisconnect" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </materialDesign:PackIcon.Style>
-                                                </materialDesign:PackIcon>
-                                                <TextBlock Text="{Binding Title}"
-                                                           VerticalAlignment="Center" Margin="12,0,0,0" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </materialDesign:Card>
+                                    <Border CornerRadius="8" Background="#aa333333" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,8,8" Grid.Row="0">
+                                        <ItemsControl x:Name="BannerDot" d:ItemsSource="{d:SampleData ItemCount=5}" Opacity="1"  >
+                                            <ItemsControl.LayoutTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform Angle="-90"/>
+                                                    <TranslateTransform/>
+                                                </TransformGroup>
+                                            </ItemsControl.LayoutTransform>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <RadioButton GroupName="banner" IsChecked="{Binding Active}" RenderTransformOrigin="0.5,0.5" MouseEnter="RadioButton_MouseEnter" MouseLeave="RadioButton_MouseLeave">
+                                                        <RadioButton.RenderTransform>
+                                                            <TransformGroup>
+                                                                <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
+                                                                <SkewTransform/>
+                                                                <RotateTransform/>
+                                                                <TranslateTransform/>
+                                                            </TransformGroup>
+                                                        </RadioButton.RenderTransform>
+                                                    </RadioButton>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+
+                                    <materialDesign:Card
+                                        Grid.Row="1"
+                                        Margin="0 10 0 0"
+                                        Height="94"
+                                        HorizontalAlignment="Left" Width="{DynamicResource BannerCardWidth}">
+                                        <ListView x:Name="NewsListView" MouseUp="NewsListView_OnMouseUp">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate x:Name="SingleLineDataTemplate"
+                                                              DataType="game:News">
+                                                    <StackPanel Orientation="Horizontal" Height="15">
+                                                        <materialDesign:PackIcon
+                                                                                 Height="Auto" Width="Auto">
+                                                            <materialDesign:PackIcon.Style>
+                                                                <Style TargetType="materialDesign:PackIcon">
+                                                                    <Setter Property="Kind" Value="Newspaper" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger
+                                                                                     Binding="{Binding Tag}" Value="Important">
+                                                                            <Setter Property="Kind"
+                                                                                    Value="AlertCircle" />
+                                                                            <Setter Property="Foreground"
+                                                                                    Value="Red" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger
+                                                                                     Binding="{Binding Tag}" Value="Follow-up">
+                                                                            <Setter Property="Kind"
+                                                                                    Value="InformationOutline" />
+                                                                            <Setter Property="Foreground"
+                                                                                    Value="#FFFFB900" />
+                                                                        </DataTrigger>
+                                                                        <DataTrigger
+                                                                                     Binding="{Binding Tag}" Value="DlError">
+                                                                            <Setter Property="Kind"
+                                                                                    Value="LanDisconnect" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </materialDesign:PackIcon.Style>
+                                                        </materialDesign:PackIcon>
+                                                        <TextBlock Text="{Binding Title}"
+                                                                   VerticalAlignment="Center" Margin="12,0,0,0" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </materialDesign:Card>
+                                </Grid>
+                            </Grid>
 
                             <StackPanel
-                                Grid.Row="1"
+                                Grid.Row="0"
                                 Grid.Column="1"
                                 Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Margin="0 0 -10 -10">
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Margin="30,220,0,0">
                                 <Button
                                     x:Name="QueueButton"
                                     Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
@@ -193,47 +205,51 @@
                                 </Button>
                             </StackPanel>
 
-                            <materialDesign:Card
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Width="255"
-                                Margin="0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                KeyDown="Card_KeyDown">
-                                <materialDesign:Transitioner SelectedIndex="{Binding LoginCardTransitionerIndex}">
-                                    <materialDesign:TransitionerSlide>
-                                        <materialDesign:TransitionerSlide.ForwardWipe>
-                                            <materialDesign:FadeWipe />
-                                        </materialDesign:TransitionerSlide.ForwardWipe>
+                            <Grid x:Name="LeftContainer" Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" MinHeight="203" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <materialDesign:Card
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Width="251"
+                                    Margin="20,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    KeyDown="Card_KeyDown">
+                                    <materialDesign:Transitioner SelectedIndex="{Binding LoginCardTransitionerIndex}">
+                                        <materialDesign:TransitionerSlide>
+                                            <materialDesign:TransitionerSlide.ForwardWipe>
+                                                <materialDesign:FadeWipe />
+                                            </materialDesign:TransitionerSlide.ForwardWipe>
 
-                                        <DockPanel
+                                            <DockPanel
                                             Margin="30,18,30,18">
-                                            <TextBlock Text="{Binding IsLoggingInLoc}"
+                                                <TextBlock Text="{Binding IsLoggingInLoc}"
                                                        DockPanel.Dock="Top"
                                                        HorizontalAlignment="Stretch"
                                                        VerticalAlignment="Top"
                                                        TextAlignment="Center"
                                                        Margin="0,50,0,0"/>
-                                            <ProgressBar
+                                                <ProgressBar
                                                 DockPanel.Dock="Top"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Top"
                                                 Style="{StaticResource MaterialDesignCircularProgressBar}"
                                                 Value="0"
                                                 IsIndeterminate="True" Height="30" Width="30" Margin="0 18 0 0" />
-                                        </DockPanel>
+                                            </DockPanel>
 
-                                    </materialDesign:TransitionerSlide>
+                                        </materialDesign:TransitionerSlide>
 
-                                    <materialDesign:TransitionerSlide>
-                                        <materialDesign:TransitionerSlide.BackwardWipe>
-                                            <materialDesign:FadeWipe />
-                                        </materialDesign:TransitionerSlide.BackwardWipe>
+                                        <materialDesign:TransitionerSlide>
+                                            <materialDesign:TransitionerSlide.BackwardWipe>
+                                                <materialDesign:FadeWipe />
+                                            </materialDesign:TransitionerSlide.BackwardWipe>
 
-                                        <DockPanel
+                                            <DockPanel
                                             Margin="30,18,30,18">
-                                            <TextBox
+                                                <TextBox
                                                 DockPanel.Dock="Top"
                                                 x:Name="LoginUsername"
                                                 HorizontalAlignment="Stretch"
@@ -242,7 +258,7 @@
                                                 VerticalAlignment="Top"
                                                 materialDesign:HintAssist.Hint="{Binding LoginUsernameLoc}"
                                                 Text="{Binding Username}" />
-                                            <PasswordBox
+                                                <PasswordBox
                                                 DockPanel.Dock="Top"
                                                 x:Name="LoginPassword"
                                                 HorizontalAlignment="Stretch"
@@ -252,7 +268,7 @@
                                                 PasswordChanged="LoginPassword_OnPasswordChanged"
                                                 materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}" />
 
-                                            <CheckBox
+                                                <CheckBox
                                                 DockPanel.Dock="Top"
                                                 Content="{Binding AutoLoginLoc}"
                                                 HorizontalAlignment="Left"
@@ -260,7 +276,7 @@
                                                 VerticalAlignment="Top"
                                                 x:Name="AutoLoginCheckBox"
                                                 IsChecked="{Binding IsAutoLogin}" />
-                                            <CheckBox
+                                                <CheckBox
                                                 DockPanel.Dock="Top"
                                                 Content="{Binding OtpLoc}"
                                                 HorizontalAlignment="Left"
@@ -268,7 +284,8 @@
                                                 VerticalAlignment="Top"
                                                 x:Name="OtpCheckBox"
                                                 IsChecked="{Binding IsOtp}" />
-                                            <CheckBox
+                                                <CheckBox
+                                                Visibility="Hidden"
                                                 DockPanel.Dock="Top"
                                                 Content="{Binding SteamLoc}"
                                                 HorizontalAlignment="Left"
@@ -276,35 +293,35 @@
                                                 VerticalAlignment="Top"
                                                 x:Name="SteamCheckBox"
                                                 IsChecked="{Binding IsSteam}" />
-                                            <StackPanel Orientation="Horizontal"
+                                                <StackPanel Orientation="Horizontal"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Bottom"
                                                         Width="160" Margin="0,0,0,0" DockPanel.Dock="Bottom">
-                                                <Button
+                                                    <Button
                                                     Content="{Binding LoginLoc}"
                                                     Command="{Binding Path=StartLoginCommand}"
                                                     Margin="0,0,0,0" Width="84"
                                                     ToolTip="{Binding LoginTooltipLoc}">
 
-                                                    <Button.ContextMenu>
-                                                        <ContextMenu x:Name="LoginContextMenu">
-                                                            <MenuItem Header="{Binding LoginRepairLoc}"
+                                                        <Button.ContextMenu>
+                                                            <ContextMenu x:Name="LoginContextMenu">
+                                                                <MenuItem Header="{Binding LoginRepairLoc}"
                                                                       Command="{Binding Path=LoginRepairCommand}" />
-                                                            <Separator/>
-                                                            <MenuItem Header="{Binding LoginNoDalamudLoc}"
+                                                                <Separator/>
+                                                                <MenuItem Header="{Binding LoginNoDalamudLoc}"
                                                                       Command="{Binding Path=LoginNoDalamudCommand}" />
-                                                            <MenuItem Header="{Binding LoginNoPluginsLoc}"
+                                                                <MenuItem Header="{Binding LoginNoPluginsLoc}"
                                                                       Command="{Binding Path=LoginNoPluginsCommand}" />
-                                                            <MenuItem Header="{Binding LoginNoThirdLoc}"
+                                                                <MenuItem Header="{Binding LoginNoThirdLoc}"
                                                                       Command="{Binding Path=LoginNoThirdCommand}" />
-                                                            <Separator/>
-                                                            <MenuItem Header="{Binding LoginNoStartLoc}"
+                                                                <Separator/>
+                                                                <MenuItem Header="{Binding LoginNoStartLoc}"
                                                                       Command="{Binding Path=LoginNoStartCommand}" />
-                                                        </ContextMenu>
-                                                    </Button.ContextMenu>
+                                                            </ContextMenu>
+                                                        </Button.ContextMenu>
 
-                                                </Button>
-                                                <materialDesign:PopupBox PopupMode="Click"
+                                                    </Button>
+                                                    <materialDesign:PopupBox PopupMode="Click"
                                                                          PlacementMode="BottomAndAlignCentres"
                                                                          StaysOpen="False"
                                                                          HorizontalAlignment="Left"
@@ -313,75 +330,76 @@
                                                                          ToolTip="{Binding Path=LaunchOptionsLoc}"
                                                                          >
 
-                                                    <materialDesign:PopupBox.ToggleContent>
-                                                        <Border Margin="0,0,0,0"
+                                                        <materialDesign:PopupBox.ToggleContent>
+                                                            <Border Margin="0,0,0,0"
                                                             BorderBrush="{DynamicResource PrimaryHueMidBrush}"
                                                             BorderThickness="1" 
                                                             CornerRadius="2"
                                                             >
-                                                            <Border.Effect>
-                                                                <DropShadowEffect BlurRadius="2"
+                                                                <Border.Effect>
+                                                                    <DropShadowEffect BlurRadius="2"
                                                                     Opacity="0.4"
                                                                     ShadowDepth="2"
                                                                     Direction="315"/>
-                                                            </Border.Effect>
+                                                                </Border.Effect>
 
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <materialDesign:PackIcon Kind="ChevronDoubleDown" Background="{DynamicResource PrimaryHueMidBrush}"
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <materialDesign:PackIcon Kind="ChevronDoubleDown" Background="{DynamicResource PrimaryHueMidBrush}"
                                                                  Foreground="White" Height="30" />
-                                                            </StackPanel>
+                                                                </StackPanel>
 
-                                                        </Border>
-                                                        
-
-
-                                                    </materialDesign:PopupBox.ToggleContent>
-                                                
+                                                            </Border>
 
 
-                                                <materialDesign:PopupBox.PopupContent>
-                                                        <Menu>
-                                                            
-                                                            <Menu.ItemsPanel>
-                                                                <ItemsPanelTemplate>
-                                                                    <StackPanel />
-                                                                </ItemsPanelTemplate>
-                                                            </Menu.ItemsPanel>
-                                                            <MenuItem Header="{Binding LoginRepairLoc}"
+
+                                                        </materialDesign:PopupBox.ToggleContent>
+
+
+
+                                                        <materialDesign:PopupBox.PopupContent>
+                                                            <Menu>
+
+                                                                <Menu.ItemsPanel>
+                                                                    <ItemsPanelTemplate>
+                                                                        <StackPanel />
+                                                                    </ItemsPanelTemplate>
+                                                                </Menu.ItemsPanel>
+                                                                <MenuItem Header="{Binding LoginRepairLoc}"
                                                                       Command="{Binding Path=LoginRepairCommand}" />
-                                                            <Separator/>
-                                                            <MenuItem Header="{Binding LoginNoDalamudLoc}"
+                                                                <Separator/>
+                                                                <MenuItem Header="{Binding LoginNoDalamudLoc}"
                                                                       Command="{Binding Path=LoginNoDalamudCommand}" />
-                                                            <MenuItem Header="{Binding LoginNoPluginsLoc}"
+                                                                <MenuItem Header="{Binding LoginNoPluginsLoc}"
                                                                       Command="{Binding Path=LoginNoPluginsCommand}" />
-                                                            <MenuItem Header="{Binding LoginNoThirdLoc}"
+                                                                <MenuItem Header="{Binding LoginNoThirdLoc}"
                                                                       Command="{Binding Path=LoginNoThirdCommand}" />
-                                                            <Separator/>
-                                                            <MenuItem Header="{Binding LoginNoStartLoc}"
+                                                                <Separator/>
+                                                                <MenuItem Header="{Binding LoginNoStartLoc}"
                                                                       Command="{Binding Path=LoginNoStartCommand}" />
-                                                            
-                                                            
-                                                        </Menu>
-                                                    </materialDesign:PopupBox.PopupContent>
-                                                </materialDesign:PopupBox>
-                                                <Button HorizontalAlignment="Left"
+
+
+                                                            </Menu>
+                                                        </materialDesign:PopupBox.PopupContent>
+                                                    </materialDesign:PopupBox>
+                                                    <Button HorizontalAlignment="Left"
                                                         x:Name="AccountSwitcherButton" Margin="0 0 0 0"
                                                         Background="{DynamicResource PrimaryHueMidBrush}"
                                                         BorderBrush="{DynamicResource PrimaryHueMidBrush}"
                                                         ToolTip="{Binding OpenAccountSwitcherLoc}"
                                                         Click="AccountSwitcherButton_OnClick">
-                                                    <StackPanel Orientation="Horizontal" Margin="0">
-                                                        <materialDesign:PackIcon
+                                                        <StackPanel Orientation="Horizontal" Margin="0">
+                                                            <materialDesign:PackIcon
                                                             Kind="AccountGroup" />
-                                                    </StackPanel>
-                                                </Button>
-                                            </StackPanel>
-                                        </DockPanel>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </DockPanel>
 
-                                    </materialDesign:TransitionerSlide>
+                                        </materialDesign:TransitionerSlide>
 
-                                </materialDesign:Transitioner>
-                            </materialDesign:Card>
+                                    </materialDesign:Transitioner>
+                                </materialDesign:Card>
+                            </Grid>
                         </Grid>
 
                         <materialDesign:DialogHost

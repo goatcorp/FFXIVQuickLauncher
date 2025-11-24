@@ -1289,6 +1289,8 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<bool> HandleBootCheck()
         {
+            // TC servers do not require a boot update
+            return true;
             try
             {
                 if (App.Settings.PatchPath is { Exists: false })

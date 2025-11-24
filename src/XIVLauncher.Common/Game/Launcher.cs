@@ -482,60 +482,6 @@ public class Launcher
         }
     }
     // FOR FFXIV TC
-    // private async Task<(string? Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
-    // {
-
-
-    //     if (!forceBaseVersion)
-    //         EnsureVersionSanity(gamePath, loginResult.MaxExpansion);
-
-    //     var text = await CheckVersion(gamePath);
-    //     if (string.IsNullOrEmpty(text))
-    //         return (null, LoginState.Ok, Array.Empty<PatchListEntry>());
-
-    //     Log.Verbose("Game Patching is needed... List:\n{PatchList}", text);
-
-    //     var pendingPatches = PatchListParser.Parse(text);
-    //     return (null, LoginState.NeedsPatchGame, pendingPatches);
-    // }
-
-    // // FOR FFXIV TC
-    // private async Task<string> CheckVersion(DirectoryInfo gamePath)
-    // {
-    //     // check local ver files
-    //     var localVers = new List<string>
-    //     {
-    //         Repository.Ffxiv.GetVer(gamePath),
-    //         Repository.Ex1.GetVer(gamePath),
-    //         Repository.Ex2.GetVer(gamePath),
-    //         Repository.Ex3.GetVer(gamePath),
-    //         Repository.Ex4.GetVer(gamePath),
-    //         Repository.Ex5.GetVer(gamePath),
-    //     };
-    //     localVers.RemoveAll(x => x ==  Constants.BASE_GAME_VERSION);
-    //     var contentList = localVers.Select((x, i) => $"ex{i}\t{x}").ToList();
-    //     // get latest ver files from server
-    //     var request = new HttpRequestMessage(HttpMethod.Get, $"https://user-cdn.ffxiv.com.tw/launcher/patch/v1.txt");
-    //     var resp = await this.client.SendAsync(request);
-    //     var text = await resp.Content.ReadAsStringAsync();
-    //     var lines = text.Split( ["\r\n", "\r", "\n", Environment.NewLine], StringSplitOptions.None);
-        
-    //     return await GetTCPatchList(string.Join(Environment.NewLine, contentList), gamePath);
-    // }
-
-    // private async Task<string> GetTCPatchList(string StringContent, DirectoryInfo gamePath)
-    // {
-    //     var gamever = Repository.Ffxiv.GetVer(gamePath);
-    //     var url = $"http://patch-gamever.ffxiv.com.tw/http/win32/ffxivtc_release_tc_game/{gamever}/";
-    //     // var curlArgs = $"-X POST \"{url}\" -H \"X-Hash-Check: enabled\" -H \"User-Agent: Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Orbit/1.0)\" -H \"Accept: */*\" -H \"Accept-Language: en-US,en\" -H \"Connection: keep-alive\" -H \"Content-Type: text/plain\" -d \"{stringContent.Replace(Environment.NewLine, "\\n").Replace("\t", "\\t")}\"";
-    //     var request = new HttpRequestMessage(HttpMethod.Post, url);
-    //     var content = new StringContent(StringContent, Encoding.UTF8, "text/plain");
-    //     request.Content = content;
-    //     request.Headers.AddWithoutValidation("X-Hash-Check", "enabled");
-    //     var resp = await this.client.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-    //     return await resp.Content.ReadAsStringAsync();
-    // }
-
     private async Task<(string? Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
     {
         var request = new HttpRequestMessage(HttpMethod.Post,
