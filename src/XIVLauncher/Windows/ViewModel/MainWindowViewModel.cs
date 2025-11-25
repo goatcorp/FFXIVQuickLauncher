@@ -1289,7 +1289,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<bool> HandleBootCheck()
         {
-            // TC servers do not require a boot update
+            // TC Region skip boot version check
             return true;
             try
             {

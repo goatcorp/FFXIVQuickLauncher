@@ -58,8 +58,8 @@ dotnet build src\XIVLauncher\XIVLauncher.csproj -c Release
 ## TODO
 
 ### 高優先級
-- [v] 最新消息版面嵌入 [參考連結](https://user-cdn.ffxiv.com.tw/news/251115/launcher_left.html)
-    - [v] 考慮調整CSS讓風格一致化。 ***直接白底保留原本樣式。***
-- [v] boot更新流程 *繁中服boot並沒有提供其他工具，略過boot的更新* **即使使用國際服的boot版本也無傷大雅**
+- [*] 最新消息版面嵌入 [參考連結](https://user-cdn.ffxiv.com.tw/news/251115/launcher_left.html)
+    - [*] 考慮調整CSS讓風格一致化。 ***直接白底保留原本樣式。***
+- [*] boot更新流程 *繁中服boot並沒有提供其他工具，略過boot的更新* **即使使用國際服的boot版本也無傷大雅**
 - [ ] Launcher更新流程 *建立更新伺服器有點難度，考慮手動build版提供下載*
 - [ ] Dalamud注入驗證 *目前還使用國際服版本的更新流程，但版本會不匹配，暫時無效*

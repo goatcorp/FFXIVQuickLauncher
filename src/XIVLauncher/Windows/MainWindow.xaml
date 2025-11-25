@@ -164,6 +164,7 @@
                                 Margin="30,220,0,0">
                                 <Button
                                     x:Name="QueueButton"
+                                    IsEnabled="False"
                                     Style="{DynamicResource MaterialDesignFlatButton}" HorizontalAlignment="Left"
                                     Focusable="False"
                                     ToolTip="{Binding MaintenanceQueue}"
@@ -178,6 +179,7 @@
 
                                 <Button
                                     Style="{DynamicResource MaterialDesignFlatButton}"
+                                    IsEnabled="False"
                                     HorizontalAlignment="Left"
                                     Focusable="False"
                                     ToolTip="{Binding WorldStatusLoc}"
@@ -307,12 +309,12 @@
                                                             <ContextMenu x:Name="LoginContextMenu">
                                                                 <MenuItem Header="{Binding LoginRepairLoc}"
                                                                       Command="{Binding Path=LoginRepairCommand}" />
-                                                                <Separator/>
-                                                                <MenuItem Header="{Binding LoginNoDalamudLoc}"
+                                                                <Separator Visibility="Collapsed"/>
+                                                                <MenuItem Header="{Binding LoginNoDalamudLoc}" Visibility="Collapsed"
                                                                       Command="{Binding Path=LoginNoDalamudCommand}" />
-                                                                <MenuItem Header="{Binding LoginNoPluginsLoc}"
+                                                                <MenuItem Header="{Binding LoginNoPluginsLoc}" Visibility="Collapsed"
                                                                       Command="{Binding Path=LoginNoPluginsCommand}" />
-                                                                <MenuItem Header="{Binding LoginNoThirdLoc}"
+                                                                <MenuItem Header="{Binding LoginNoThirdLoc}" Visibility="Collapsed"
                                                                       Command="{Binding Path=LoginNoThirdCommand}" />
                                                                 <Separator/>
                                                                 <MenuItem Header="{Binding LoginNoStartLoc}"
@@ -366,12 +368,12 @@
                                                                 </Menu.ItemsPanel>
                                                                 <MenuItem Header="{Binding LoginRepairLoc}"
                                                                       Command="{Binding Path=LoginRepairCommand}" />
-                                                                <Separator/>
-                                                                <MenuItem Header="{Binding LoginNoDalamudLoc}"
+                                                                <Separator Visibility="Collapsed"/>
+                                                                <MenuItem Header="{Binding LoginNoDalamudLoc}" Visibility="Collapsed"
                                                                       Command="{Binding Path=LoginNoDalamudCommand}" />
-                                                                <MenuItem Header="{Binding LoginNoPluginsLoc}"
+                                                                <MenuItem Header="{Binding LoginNoPluginsLoc}" Visibility="Collapsed"
                                                                       Command="{Binding Path=LoginNoPluginsCommand}" />
-                                                                <MenuItem Header="{Binding LoginNoThirdLoc}"
+                                                                <MenuItem Header="{Binding LoginNoThirdLoc}" Visibility="Collapsed"
                                                                       Command="{Binding Path=LoginNoThirdCommand}" />
                                                                 <Separator/>
                                                                 <MenuItem Header="{Binding LoginNoStartLoc}"

@@ -41,6 +41,26 @@ namespace XIVLauncher.Windows
             FaqButton.Click += SupportLinks.OpenFaq;
             DataContext = new SettingsControlViewModel();
 
+            // Remove the launcher settings tab if it's hidden in XAML
+            try
+            {
+                if (LauncherSettingsTab.Visibility == Visibility.Collapsed || LauncherSettingsTab.Visibility == Visibility.Hidden)
+                {
+                    SettingsTabControl.Items.Remove(LauncherSettingsTab);
+                    SettingsTabControl.FixedHeaderCount = Math.Max(0, SettingsTabControl.FixedHeaderCount - 1);
+                }
+
+                if (DalamudTab.Visibility == Visibility.Collapsed || DalamudTab.Visibility == Visibility.Hidden)
+                {
+                    SettingsTabControl.Items.Remove(DalamudTab);
+                    SettingsTabControl.FixedHeaderCount = Math.Max(0, SettingsTabControl.FixedHeaderCount - 1);
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+
             ReloadSettings();
         }
 
@@ -108,9 +128,10 @@ namespace XIVLauncher.Windows
 
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             // Keep the notice visible if LauncherLanguage has changed
-            if (App.Settings.LauncherLanguage == (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex)
-                LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
-            App.Settings.LauncherLanguage = (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex;
+            //if (App.Settings.LauncherLanguage == (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex)
+            //    LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
+            //App.Settings.LauncherLanguage = (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex;
+            App.Settings.LauncherLanguage = LauncherLanguage.TraditionalChinese; // TC Regin lock
 
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
@@ -118,7 +139,7 @@ namespace XIVLauncher.Windows
             App.Settings.PatchAcquisitionMethod = (AcquisitionMethod) PatchAcquisitionComboBox.SelectedIndex;
             App.Settings.AutoStartSteam = AutoStartSteamCheckBox.IsChecked == true;
 
-            App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
+            App.Settings.InGameAddonEnabled = false; // EnableHooksCheckBox.IsChecked == true; // TC 暫時禁用 Dalamud 功能
 
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
 

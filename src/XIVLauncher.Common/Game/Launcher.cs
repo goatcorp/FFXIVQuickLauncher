@@ -351,7 +351,7 @@ public class Launcher
 
     private static string GetVersionReport(DirectoryInfo gamePath, int exLevel, bool forceBaseVersion)
     {
-        var verReport = $"{GetBootVersionHash(gamePath)}\n";
+        var verReport =  string.Empty;  //$"{GetBootVersionHash(gamePath)}\n";  // TC Region skip boot version check
 
         if (exLevel >= 1)
             verReport += $"ex1\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex1.GetVer(gamePath))}\n";
