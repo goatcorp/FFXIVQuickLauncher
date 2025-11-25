@@ -1289,16 +1289,16 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<bool> HandleBootCheck()
         {
+            if (App.Settings.PatchPath is { Exists: false })
+            {
+                App.Settings.PatchPath = null;
+            }
+
+            App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(App.Settings.GamePath.FullName, "patches"));
             // TC Region skip boot version check
             return true;
             try
             {
-                if (App.Settings.PatchPath is { Exists: false })
-                {
-                    App.Settings.PatchPath = null;
-                }
-
-                App.Settings.PatchPath ??= new DirectoryInfo(Path.Combine(Paths.RoamingPath, "patches"));
 
                 PatchListEntry[] bootPatches = null;
 
