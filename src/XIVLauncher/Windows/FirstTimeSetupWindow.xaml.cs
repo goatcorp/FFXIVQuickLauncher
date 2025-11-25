@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using CheapLoc;
@@ -73,12 +73,16 @@ namespace XIVLauncher.Windows
                         return;
                     }
                 }
+
+                // Skip language selection, go directly to hooks
+                SetupTabControl.SelectedIndex = 2;
+                return;
             }
 
             if (SetupTabControl.SelectedIndex == 2)
             {
                 App.Settings.GamePath = new DirectoryInfo(GamePathEntry.Text);
-                App.Settings.Language = (ClientLanguage) LanguageComboBox.SelectedIndex;
+                App.Settings.Language = ClientLanguage.English;  // Set default language
                 App.Settings.InGameAddonEnabled = HooksCheckBox.IsChecked == true;
 
                 App.Settings.AddonList = new List<AddonEntry>();

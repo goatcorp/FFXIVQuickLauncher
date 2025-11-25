@@ -1,4 +1,4 @@
-﻿using XIVLauncher.Common.Util;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common
 {
@@ -7,33 +7,24 @@ namespace XIVLauncher.Common
         Japanese,
         English,
         German,
-        French
+        French,
+        TraditionalChinese,
     }
 
     public static class ClientLanguageExtensions
     {
         public static string GetLangCode(this ClientLanguage language, bool forceNa = false)
         {
-            switch (language)
+            return language switch
             {
-                case ClientLanguage.Japanese:
-                    return "ja";
-
-                case ClientLanguage.English when GameHelpers.IsRegionNorthAmerica() || forceNa:
-                    return "en-us";
-
-                case ClientLanguage.English:
-                    return "en-gb";
-
-                case ClientLanguage.German:
-                    return "de";
-
-                case ClientLanguage.French:
-                    return "fr";
-
-                default:
-                    return "en-gb";
-            }
+                ClientLanguage.Japanese => "ja",
+                ClientLanguage.English when GameHelpers.IsRegionNorthAmerica() || forceNa => "en-us",
+                ClientLanguage.English => "en-gb",
+                ClientLanguage.German => "de",
+                ClientLanguage.French => "fr",
+                ClientLanguage.TraditionalChinese => "zh",
+                _ => "en-gb",
+            };
         }
 
         public static string GetLangCodeLodestone(this ClientLanguage language, bool forceNa = false)

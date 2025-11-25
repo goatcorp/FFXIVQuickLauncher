@@ -1,4 +1,4 @@
-﻿<Window x:Class="XIVLauncher.Windows.FirstTimeSetup"
+<Window x:Class="XIVLauncher.Windows.FirstTimeSetup"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -39,7 +39,7 @@
                             HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click" />
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Language">
+            <TabItem Header="Language" Visibility="Collapsed">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
                         <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"
