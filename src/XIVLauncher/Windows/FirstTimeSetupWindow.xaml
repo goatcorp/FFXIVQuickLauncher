@@ -30,9 +30,9 @@
                                             Margin="0,0,0,40" Width="400" VerticalAlignment="Center"
                                             HorizontalAlignment="Left"
                                             Foreground="{DynamicResource MaterialDesignBody}" />
-                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,10" Visibility="Collapsed"
                                Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding FirstTimeSteamNoticeLoc}"/>
-                    <CheckBox x:Name="SteamCheckBox" Content="{Binding FirstTimeSteamCheckBoxLoc}"
+                    <CheckBox x:Name="SteamCheckBox" Content="{Binding FirstTimeSteamCheckBoxLoc}" Visibility="Collapsed"
                               HorizontalAlignment="Left" Margin="0,0,0,15"
                               Foreground="{DynamicResource MaterialDesignBody}" />
                     <Button Content="{Binding NextLoc}" Width="79" VerticalAlignment="Bottom"
@@ -57,7 +57,7 @@
                             HorizontalAlignment="Right" Margin="0,0,10,10" Click="NextButton_Click" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Hooks">
+            <TabItem Header="Hooks" Visibility="Collapsed">
                 <Grid>
                     <StackPanel Margin="10,10,10,0">
                         <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -65,7 +65,7 @@
 
                         <CheckBox x:Name="HooksCheckBox" Content="{Binding FirstTimeDalamudCheckBoxLoc}"
                                   HorizontalAlignment="Left" Margin="0,25,0,50"
-                                  Foreground="{DynamicResource MaterialDesignBody}" IsChecked="True" />
+                                  Foreground="{DynamicResource MaterialDesignBody}" IsChecked="False" />
 
                     </StackPanel>
                     <Button Content="{Binding NextLoc}" Width="79" VerticalAlignment="Bottom"
