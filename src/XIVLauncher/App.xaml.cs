@@ -370,7 +370,7 @@ namespace XIVLauncher
             {
                 if (App.Settings.LauncherLanguage == null)
                 {
-                    var currentUiLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                    var currentUiLang = "tw"; //CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
                     App.Settings.LauncherLanguage = App.Settings.LauncherLanguage.GetLangFromTwoLetterIso(currentUiLang);
                 }
 
