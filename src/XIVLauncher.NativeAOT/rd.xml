@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
+	<Application>
+        <Assembly Name="System.Diagnostics.Process"  >
+            <Type Name="System.Diagnostics.Process" />
+        </Assembly>
+        <Assembly Name="XIVLauncher.Common" >
+            <Type Name="XIVLauncher.Common.Encryption.LegacyBlowfish"  />
+        </Assembly>
+	</Application>
+</Directives>

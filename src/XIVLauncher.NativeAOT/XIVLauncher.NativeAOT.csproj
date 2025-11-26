@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishAot>true</PublishAot>
+    <NativeLib>Shared</NativeLib>
+    <LangVersion>10.0</LangVersion>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <StripSymbols>false</StripSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <StripSymbols>true</StripSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XIVLauncher.Common.Unix\XIVLauncher.Common.Unix.csproj" />
+    <ProjectReference Include="..\XIVLauncher.Common.Windows\XIVLauncher.Common.Windows.csproj" />
+    <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Microsoft.DotNet.ILCompiler" />
+    <None Remove="Microsoft.CodeAnalysis.BannedApiAnalyzers" />
+    <None Remove="Microsoft.CodeAnalysis.NetAnalyzers" />
+    <None Remove="mscorlib" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4-beta1.23055.4" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0-*" />
+  </ItemGroup>
+  <ItemGroup>
+    <RdXmlFile Include="rd.xml" />
+  </ItemGroup>
+</Project>
