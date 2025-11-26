@@ -724,12 +724,11 @@ public class Launcher
         var hashString = Environment.MachineName + Environment.UserName + Environment.OSVersion +
                          Environment.ProcessorCount;
 
-        using var sha1 = HashAlgorithm.Create("SHA1");
+        using var sha1 = SHA1.Create();
 
         var bytes = new byte[5];
 
-        Debug.Assert(sha1 != null, nameof(sha1) + " != null");
-        Array.Copy(sha1!.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
+        Array.Copy(sha1.ComputeHash(Encoding.Unicode.GetBytes(hashString)), 0, bytes, 1, 4);
 
         var checkSum = (byte)-(bytes[1] + bytes[2] + bytes[3] + bytes[4]);
         bytes[0] = checkSum;
