@@ -120,6 +120,10 @@ namespace XIVLauncher.Common.Dalamud
                     break;
             }
 
+            // Can be null for custom runners
+            if (this.updater.ResolvedBranch != null)
+                environment.Add("DALAMUD_BRANCH", this.updater.ResolvedBranch.Track);
+
             var process = this.runner.Run(this.updater.Runner, this.fakeLogin, this.noPlugin, this.noThirdPlugin, gameExe, gameArgs, environment, this.loadMethod, startInfo);
 
             this.updater.CloseOverlay();
