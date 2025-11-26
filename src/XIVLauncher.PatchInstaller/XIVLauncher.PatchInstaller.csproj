@@ -15,6 +15,7 @@
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
     
   <!-- Release builds: Use windows subsystem to hide console window -->
