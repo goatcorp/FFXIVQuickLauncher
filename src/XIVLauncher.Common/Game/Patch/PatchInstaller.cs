@@ -42,7 +42,7 @@ namespace XIVLauncher.Common.Game.Patch
                 this.rpc = new SharedMemoryRpc(rpcName);
                 this.rpc.MessageReceived += RemoteCallHandler;
 
-                var path = Path.Combine(AppContext.BaseDirectory, "patcher", "XIVLauncher.PatchInstaller.exe");
+                var path = Path.Combine(AppContext.BaseDirectory, "XIVLauncher.PatchInstaller.exe");
 
                 var startInfo = new ProcessStartInfo(path);
                 startInfo.UseShellExecute = true;
