@@ -247,7 +247,8 @@ public class Launcher
                               .Append("DEV.TestSID", tcSessionId)
                               .Append("SYS.resetConfig", "0")
                               .Append("DEV.SaveDataBankHost", "config-dl.ffxiv.com.tw")
-                              .Append("resetConfig", "0");
+                              .Append("resetConfig", "0")
+                              .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
         if (isSteamServiceAccount)
         {
