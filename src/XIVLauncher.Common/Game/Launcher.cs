@@ -473,12 +473,22 @@ public class Launcher
     {
         // This is needed to be able to access the login site correctly
         var request = new HttpRequestMessage(HttpMethod.Get, url);
-        request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-        request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(this.settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English)));
-        request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
+
+        request.Headers.AddWithoutValidation("Host", request.RequestUri.Host);
+        request.Headers.AddWithoutValidation("sec-ch-ua", "\"Microsoft Edge WebView2\";v=\"135\", \"Chromium\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Microsoft Edge\";v=\"135\"");
+        request.Headers.AddWithoutValidation("sec-ch-ua-mobile", "?0");
+        request.Headers.AddWithoutValidation("sec-ch-ua-platform", "\"Windows\"");
+        request.Headers.AddWithoutValidation("Upgrade-Insecure-Requests", "1");
         request.Headers.AddWithoutValidation("User-Agent", this.userAgent);
-        request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
+        request.Headers.AddWithoutValidation("Accept", "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Site", "cross-site");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Mode", "navigate");
+        request.Headers.AddWithoutValidation("Sec-Fetch-User", "?1");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Dest", "iframe");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Storage-Access", "active");
+        request.Headers.AddWithoutValidation("Referer", "https://launcher.finalfantasyxiv.com/");
+        request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate, br, zstd");
+        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
         request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
         var reply = await this.client.SendAsync(request);
@@ -563,15 +573,25 @@ public class Launcher
         var request = new HttpRequestMessage(HttpMethod.Post,
                                              "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
 
-        request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-        request.Headers.AddWithoutValidation("Referer", topUrl);
-        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
-        request.Headers.AddWithoutValidation("User-Agent", this.userAgent);
+        // NOTE: HttpClient seems to automatically add Connection and Content-Type, declaring it here will add it twice!
+        request.Headers.AddWithoutValidation("Host", request.RequestUri.Host);
+        request.Headers.AddWithoutValidation("Cache-Control", "max-age=0");
+        request.Headers.AddWithoutValidation("sec-ch-ua", "\"Microsoft Edge WebView2\";v=\"135\", \"Chromium\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Microsoft Edge\";v=\"135\"");
+        request.Headers.AddWithoutValidation("sec-ch-ua-mobile", "?0");
+        request.Headers.AddWithoutValidation("sec-ch-ua-platform", "\"Windows\"");
+        request.Headers.AddWithoutValidation("Origin", "https://ffxiv-login.square-enix.com");
         //request.Headers.AddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
+        request.Headers.AddWithoutValidation("Upgrade-Insecure-Requests", "1");
+        request.Headers.AddWithoutValidation("User-Agent", this.userAgent);
+        request.Headers.AddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Site", "same-origin");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Mode", "navigate");
+        request.Headers.AddWithoutValidation("Sec-Fetch-User", "?1");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Dest", "iframe");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Storage-Access", "active");
+        request.Headers.AddWithoutValidation("Referer", topUrl);
         request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-        request.Headers.AddWithoutValidation("Host", "ffxiv-login.square-enix.com");
-        request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
-        request.Headers.AddWithoutValidation("Cache-Control", "no-cache");
+        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
         request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
 
         if (isSteam)
@@ -683,6 +703,8 @@ public class Launcher
     {
         var request = new HttpRequestMessage(HttpMethod.Get, url);
 
+        request.Headers.AddWithoutValidation("Host", request.RequestUri.Host);
+        request.Headers.AddWithoutValidation("sec-ch-ua-platform", "\"Windows\"");
         request.Headers.AddWithoutValidation("User-Agent", this.userAgent);
 
         if (!string.IsNullOrEmpty(contentType))
@@ -690,24 +712,18 @@ public class Launcher
             request.Headers.AddWithoutValidation("Accept", contentType);
         }
 
-        request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
-
+        request.Headers.AddWithoutValidation("sec-ch-ua", "\"Microsoft Edge WebView2\";v=\"135\", \"Chromium\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Microsoft Edge\";v=\"135\"");
+        request.Headers.AddWithoutValidation("sec-ch-ua-mobile", "?0");
         request.Headers.AddWithoutValidation("Origin", "https://launcher.finalfantasyxiv.com");
-
-        request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(language));
-        request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Site", "cross-site");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Mode", "cors");
+        request.Headers.AddWithoutValidation("Sec-Fetch-Dest", "empty");
+        request.Headers.AddWithoutValidation("Referer", "https://launcher.finalfantasyxiv.com/");
+        request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate, br, zstd");
+        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
 
         var resp = await this.client.SendAsync(request);
         return await resp.Content.ReadAsByteArrayAsync();
-    }
-
-    private string GenerateFrontierReferer(ClientLanguage language)
-    {
-        var langCode = language.GetLangCode().Replace("-", "_");
-        var formattedTime = GetLauncherFormattedTimeLong();
-
-        return string.Format(this.frontierUrlTemplate, langCode, formattedTime);
     }
 
     // Used to be used for frontier top, they now use the un-rounded long timestamp
