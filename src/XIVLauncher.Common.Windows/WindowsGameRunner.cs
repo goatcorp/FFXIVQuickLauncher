@@ -30,6 +30,7 @@ public class WindowsGameRunner : IGameRunner
                 _ => throw new ArgumentOutOfRangeException()
             };
             environment.Add("__COMPAT_LAYER", compat);
+            environment.Add("XL_PLATFORM", "Windows");
 
             return this.dalamudLauncher.Run(new FileInfo(path), arguments, environment);
         }
