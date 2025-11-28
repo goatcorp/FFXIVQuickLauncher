@@ -9,8 +9,8 @@ namespace XIVLauncher.Common
 
         public const uint STEAM_APP_ID = 39210;
         public const uint STEAM_FT_APP_ID = 312060;
-
-        public static string PatcherUserAgent => GetPatcherUserAgent(PlatformHelpers.GetPlatform());
+        // TC only support Windows platform
+        public static string PatcherUserAgent => GetPatcherUserAgent(Platform.Win32);
 
         private static string GetPatcherUserAgent(Platform platform)
         {
