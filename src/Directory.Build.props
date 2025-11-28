@@ -3,6 +3,10 @@
   <PropertyGroup Label="C#">
     <LangVersion>8.0</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+      
+    <!-- Disable Intel CET. Causes crashes on unpatched Windows 10 systems. -->
+    <!-- https://github.com/dotnet/runtime/issues/108589 -->
+    <CETCompat>false</CETCompat>
   </PropertyGroup>
   <!--
   <PropertyGroup>
