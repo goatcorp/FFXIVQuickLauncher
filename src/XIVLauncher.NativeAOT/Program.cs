@@ -48,6 +48,9 @@ public class Program
     private const uint STEAM_APP_ID = 39210;
     private const uint STEAM_APP_ID_FT = 312060;
 
+    // Temporary disable Dalamud auto-update due to compatibility issues
+    private static bool isDalamudAutoUpdateDisabled = true;
+
     [UnmanagedCallersOnly(EntryPoint = "initXL")]
     public static void Init(nint appName, nint storagePath, bool verboseLogging, nint frontierUrl)
     {
@@ -98,7 +101,10 @@ public class Program
         {
             Overlay = dalamudLoadInfo
         };
-        DalamudUpdater.Run(null, null, true);
+        if (!isDalamudAutoUpdateDisabled)
+        {
+            DalamudUpdater.Run(null, null, true);
+        }
 
         UniqueIdCache = new CommonUniqueIdCache(Storage.GetFile("uidCache.json"));
         Launcher = new Launcher(steam: null,UniqueIdCache, CommonSettings, FrontierUrl);
