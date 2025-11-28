@@ -60,6 +60,12 @@
                         </Button>
                     </StackPanel>
 
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBox Width="500" VerticalAlignment="Center"
+                                 HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
+                                 Margin="0,4,0,0" x:Name="OtpShellArgsTextBox" materialDesign:HintAssist.Hint="{Binding OtpShellArgsLoc}" materialDesign:HintAssist.IsFloating="True"/>
+                    </StackPanel>
+
                     <CheckBox Foreground="{DynamicResource MaterialDesignBody}"
                             x:Name="OtpAlwaysOnTopCheckBox" Margin="0,3,0,0" Content="{Binding OtpAlwaysOnTopCheckBoxLoc}" ToolTip="{Binding OtpAlwaysOnTopTooltipLoc}" />
 
