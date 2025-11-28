@@ -571,8 +571,8 @@
     "message": "다른 XIVLauncher가 실행 중이고, 패치를 진행하고 있습니다. 다른 XIVLauncher 창이 아직 열려 있는지 확인하십시오.",
     "description": "<RepairGame>d__25.MoveNext"
   },
-  "DalamudVc2019RedistError": {
-    "message": "XIVLauncher 인게임 애드온을 사용하려면 Microsoft Visual C++ 2015-2019 재배포 가능 패키지가 설치되어 있어야 합니다.\nMicrosoft 공식 홈페이지에서 다운로드하여 설치하십시오.",
+  "DalamudVc2022RedistError": {
+    "message": "XIVLauncher 인게임 애드온을 사용하려면 Microsoft Visual C++ 2015-2022 재배포 가능 패키지가 설치되어 있어야 합니다.\nMicrosoft 공식 홈페이지에서 다운로드하여 설치하십시오.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {
