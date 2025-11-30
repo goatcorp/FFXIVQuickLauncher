@@ -107,8 +107,9 @@ public class Program
         }
 
         UniqueIdCache = new CommonUniqueIdCache(Storage.GetFile("uidCache.json"));
-        Launcher = new Launcher(steam: null,UniqueIdCache, CommonSettings, FrontierUrl);
-        LaunchServices.EnsureLauncherAffinity((XIVLauncher.NativeAOT.Configuration.License)Config!.License!);
+        Launcher = new Launcher(steam: null, UniqueIdCache, CommonSettings, FrontierUrl);
+        // TC Region: force set to windows
+        LaunchServices.EnsureLauncherAffinity(License.Windows);
     }
 
     [UnmanagedCallersOnly(EntryPoint = "addEnvironmentVariable")]
@@ -182,7 +183,7 @@ public class Program
     public static void FakeLogin()
     {
         // TODO: TC伺服器遊戲啟動確認 - 遊戲啟動模擬
-        LaunchServices.EnsureLauncherAffinity((XIVLauncher.NativeAOT.Configuration.License)Config!.License!);
+        LaunchServices.EnsureLauncherAffinity(License.Windows);
         IGameRunner gameRunner;
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             gameRunner = new WindowsGameRunner(null, false);
