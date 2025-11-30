@@ -104,6 +104,7 @@ namespace XIVLauncher.Common.Addon.Implementations
                     FileName = Path,
                     Arguments = CommandLine,
                     WorkingDirectory = System.IO.Path.GetDirectoryName(Path),
+                    UseShellExecute = true,
                 },
             };
 
@@ -147,6 +148,7 @@ namespace XIVLauncher.Common.Addon.Implementations
         {
             ps.WindowStyle = ProcessWindowStyle.Hidden;
             ps.CreateNoWindow = true;
+            ps.UseShellExecute = true;
 
             if (RunAsAdmin)
                 // Vista or higher check
