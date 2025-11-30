@@ -69,8 +69,8 @@ public static class LaunchServices
         {
             var enableUidCache = Program.Config?.IsUidCacheEnabled ?? false;
             var gamePath = Program.Config!.GamePath;
-
-            EnsureLauncherAffinity((License)Program.Config.License);
+            // TC Region don't need check launcher affinity, force set to Windows license
+            EnsureLauncherAffinity(License.Windows);
             if (action == LoginAction.Repair)
                 return await Program.Launcher!.Login(username, password, otp, recaptchaToken, false, false, gamePath, true, Program.Config.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
             else
