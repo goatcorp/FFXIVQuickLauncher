@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Serilog;
 using Serilog.Events;
 using XIVLauncher.Common.Dalamud.Rpc;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.LinkHandler;
 
@@ -37,7 +38,6 @@ public static class Program
         };
 
         rootCommand.SetHandler(async (link, searchPath) => { await HandleLinkAsync(link, searchPath); }, linkArgument, searchPathOption);
-
         return await rootCommand.InvokeAsync(args);
     }
 
@@ -57,7 +57,7 @@ public static class Program
         {
             await foreach (var client in discoveryService.SearchAsync())
             {
-                Log.Information("Discovered client: {ClientId}", client.HelloResponse.ClientIdentifier);
+                Log.Information("Discovered client: {ClientId}", client.HelloResponse.ProcessId);
                 discoveredClients.Add(client);
             }
 
@@ -76,7 +76,7 @@ public static class Program
             {
                 try
                 {
-                    Log.Information("Sending link to client: {ClientId}", selectedClient.HelloResponse.ClientIdentifier);
+                    Log.Information("Sending link to client: {ClientId}", selectedClient.HelloResponse.ProcessId);
                     await selectedClient.Client.Proxy.HandleLinkAsync(link);
                     Log.Information("Link sent successfully");
                     return 0;
@@ -186,6 +186,7 @@ public static class Program
 
         thread.SetApartmentState(System.Threading.ApartmentState.STA);
         thread.Start();
+        thread.Join();
 
         return tcs.Task;
     }
@@ -193,7 +194,29 @@ public static class Program
     private static string GetClientDisplayText(DiscoveredClient client)
     {
         var response = client.HelloResponse;
-        return $"Client: {response.ClientIdentifier ?? "Missing Client Identifier!"}\n";
+        var displayText = "";
+
+        if (response.ClientState != null)
+        {
+            displayText += $"{response.ClientState}";
+        }
+        else
+        {
+            displayText += "Unidentified Client";
+
+            if (response.ProcessId != null)
+            {
+                displayText += $" (PID: {response.ProcessId})";
+            }
+        }
+
+        if (response.ProcessStartTime != null)
+        {
+            var startedAgo = DateTimeOffset.Now - DateTimeOffset.FromUnixTimeSeconds(response.ProcessStartTime.Value);
+            displayText += $" - Started {startedAgo.ToFriendlyString()}";
+        }
+
+        return displayText;
     }
 
     private static void ShowErrorDialog(string title, string message, TaskDialogIcon? icon = null)

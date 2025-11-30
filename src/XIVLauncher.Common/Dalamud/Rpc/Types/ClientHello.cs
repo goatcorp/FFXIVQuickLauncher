@@ -33,7 +33,17 @@ public record ClientHelloResponse
     public string? GameVersion { get; init; }
 
     /// <summary>
+    /// Gets the process ID of this client.
+    /// </summary>
+    public int? ProcessId { get; init; }
+
+    /// <summary>
+    /// Gets the time this process started.
+    /// </summary>
+    public long? ProcessStartTime { get; init; }
+
+    /// <summary>
     /// Gets an identifier for this client.
     /// </summary>
-    public string? ClientIdentifier { get; init; }
+    public string? ClientState { get; init; }
 }

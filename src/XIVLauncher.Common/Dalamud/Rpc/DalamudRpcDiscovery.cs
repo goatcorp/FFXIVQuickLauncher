@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using XIVLauncher.Common.Dalamud.Rpc.Types;
 
 namespace XIVLauncher.Common.Dalamud.Rpc;
@@ -26,6 +27,7 @@ public class DalamudRpcDiscovery(string? searchPath = null, int connectionTimeou
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            Log.Information("Found candidate socket: {SocketPath}", socketPath);
             var discoveredClient = await this.TryConnectClientAsync(socketPath, cancellationToken).ConfigureAwait(false);
 
             if (discoveredClient != null)
@@ -45,8 +47,9 @@ public class DalamudRpcDiscovery(string? searchPath = null, int connectionTimeou
 
             var helloRequest = new ClientHelloRequest();
             var response = await HelloWithTimeoutAsync(client.Proxy, helloRequest, connectionTimeoutMs, cancellationToken).ConfigureAwait(false);
+            Log.Debug("Received hello response from socket {SocketPath}: {@Response}", socketPath, response);
 
-            if (!string.IsNullOrEmpty(response.ClientIdentifier))
+            if (!string.IsNullOrEmpty(response.ClientState))
             {
                 var discoveredClient = new DiscoveredClient(response, client);
                 client = null;
@@ -60,9 +63,9 @@ public class DalamudRpcDiscovery(string? searchPath = null, int connectionTimeou
         {
             throw;
         }
-        catch
+        catch (Exception ex)
         {
-            // Invalid client - nothing we can really do, just null it out.
+            Log.Debug(ex, "Failed to attach to socket: {SocketPath}", socketPath);
             return null;
         }
         finally
