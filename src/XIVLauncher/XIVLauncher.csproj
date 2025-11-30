@@ -73,6 +73,19 @@
     <Copy SourceFiles="@(PatcherFiles)" DestinationFolder="$(PatcherTargetDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
     
+  <Target Name="CopyLinkHandlerBin" AfterTargets="Build" Condition="'$(DeployOnBuild)' != 'true'">
+    <Message Importance="high" Text="[LinkHandlerBin] Copying LinkHandler bin to patcher directory..." />
+    <PropertyGroup>
+        <LinkHandlerBinDir>..\XIVLauncher.LinkHandler\bin\$(Configuration)\</LinkHandlerBinDir>
+        <LauncherBinDir>$(OutputPath)</LauncherBinDir>
+        <LinkHandlerTargetDir>$(LauncherBinDir)linkhandler\</LinkHandlerTargetDir>
+    </PropertyGroup>
+    <ItemGroup>
+        <LinkHandlerFiles Include="$(LinkHandlerBinDir)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LinkHandlerFiles)" DestinationFolder="$(LinkHandlerTargetDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+    
   <ItemGroup>
     <PackageReference Include="AdysTech.CredentialManager" Version="1.8.0" />
     <PackageReference Include="CheapLoc" Version="1.1.6" />

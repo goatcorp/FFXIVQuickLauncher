@@ -86,8 +86,10 @@ namespace XIVLauncher.Common.Dalamud
             Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1})", this.gamePath.FullName, this.language);
 
             var ingamePluginPath = Path.Combine(this.configDirectory.FullName, "installedPlugins");
-
             Directory.CreateDirectory(ingamePluginPath);
+
+            var tempDir = Path.Combine(Path.GetTempPath(), "XIVLauncher");
+            Directory.CreateDirectory(tempDir);
 
             var startInfo = new DalamudStartInfo
             {
@@ -98,6 +100,7 @@ namespace XIVLauncher.Common.Dalamud
                 AssetDirectory = this.updater.AssetDirectory.FullName,
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 WorkingDirectory = this.updater.Runner.Directory?.FullName,
+                TempDirectory = tempDir,
                 DelayInitializeMs = this.injectionDelay,
                 TroubleshootingPackData = this.troubleshootingData,
             };

@@ -11,6 +11,7 @@ namespace XIVLauncher.Common.Dalamud
 
         public string PluginDirectory;
         public string AssetDirectory;
+        public string TempDirectory;
         public ClientLanguage Language;
         public int DelayInitializeMs;
 
