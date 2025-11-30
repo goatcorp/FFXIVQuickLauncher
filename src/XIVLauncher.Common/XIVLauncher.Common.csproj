@@ -34,7 +34,7 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>net9.0;netstandard2.0</TargetFrameworks>
+        <TargetFramework>net9.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -50,6 +50,7 @@
         <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
         <PackageReference Include="SharedMemory" Version="2.3.2" />
+        <PackageReference Include="StreamJsonRpc" Version="2.22.23" />
         <PackageReference Include="System.Memory" Version="4.6.0" />
         <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
         <PackageReference Include="System.Text.Json" Version="9.0.2" />

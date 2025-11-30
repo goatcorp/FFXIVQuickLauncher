@@ -15,6 +15,7 @@ namespace XIVLauncher.Common.Dalamud
         public static string ConfigurationPath(string path) => $"--dalamud-configuration-path=\"{path}\"";
         public static string PluginDirectory(string path) => $"--dalamud-plugin-directory=\"{path}\"";
         public static string AssetDirectory(string path) => $"--dalamud-asset-directory=\"{path}\"";
+        public static string TempDirectory(string path) => $"--dalamud-temp-directory=\"{path}\"";
         public static string ClientLanguage(int language) => $"--dalamud-client-language={language}";
         public static string DelayInitialize(int delay) => $"--dalamud-delay-initialize={delay}";
         public static string TsPackB64(string data) => $"--dalamud-tspack-b64={data}";

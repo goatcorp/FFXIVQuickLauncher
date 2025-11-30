@@ -46,6 +46,7 @@ public class WindowsDalamudRunner : IDalamudRunner
             DalamudInjectorArgs.LoggingPath(dalamudStartInfo.LoggingPath),
             DalamudInjectorArgs.PluginDirectory(dalamudStartInfo.PluginDirectory),
             DalamudInjectorArgs.AssetDirectory(dalamudStartInfo.AssetDirectory),
+            DalamudInjectorArgs.TempDirectory(dalamudStartInfo.TempDirectory),
             DalamudInjectorArgs.ClientLanguage((int)dalamudStartInfo.Language),
             DalamudInjectorArgs.DelayInitialize(dalamudStartInfo.DelayInitializeMs),
             DalamudInjectorArgs.TsPackB64(Convert.ToBase64String(Encoding.UTF8.GetBytes(dalamudStartInfo.TroubleshootingPackData))),
