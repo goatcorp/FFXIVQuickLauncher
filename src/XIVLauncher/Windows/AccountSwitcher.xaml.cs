@@ -181,11 +181,9 @@ namespace XIVLauncher.Windows
 
             var file = (IPersistFile)link;
             var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            var fileName = $"XIVLauncher - {selectedEntry.Account.UserName} {(selectedEntry.Account.UseSteamServiceAccount ? "(Steam)" : "")}.lnk";
-            var invalid = Path.GetInvalidFileNameChars();
-            fileName = string.Join("_", fileName.Split(invalid, StringSplitOptions.RemoveEmptyEntries));
-            var path = Path.Combine(desktopPath, fileName);
-            file.Save(path, false);
+            var fileName = $"XIVLauncher - {selectedEntry.Account.UserName}{(selectedEntry.Account.UseSteamServiceAccount ? " (Steam)" : "")}.lnk";
+            fileName = string.Join("_", fileName.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));
+            file.Save(Path.Combine(desktopPath, fileName), false);
         }
 
         private void RemoveAccount_OnClick(object sender, RoutedEventArgs e)
