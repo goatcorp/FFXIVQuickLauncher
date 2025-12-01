@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Serilog;
 using XIVLauncher.Common.Http;
+using XIVLauncher.Common.Shell;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
 
@@ -25,6 +27,7 @@ namespace XIVLauncher.Windows
 
         private OtpInputDialogViewModel ViewModel => DataContext as OtpInputDialogViewModel;
 
+        private CancellationTokenSource cts;
         private OtpListener _otpListener;
         private bool _ignoreCurrentOtp;
 
@@ -44,9 +47,14 @@ namespace XIVLauncher.Windows
 
         public new bool? ShowDialog()
         {
+            cts = new CancellationTokenSource();
             OtpTextBox.Focus();
 
-            if (App.Settings.OtpServerEnabled)
+            if (App.Settings.OtpShellEnabled)
+            {
+                var receiver = new OtpShellReceiver(App.Settings.OtpShellCommand);
+                this.GetOneTimePassword(receiver, cts.Token).ConfigureAwait(false);
+            } else if (App.Settings.OtpServerEnabled)
             {
                 _otpListener = new OtpListener("legacy-" + AppUtil.GetAssemblyVersion());
                 _otpListener.OnOtpReceived += TryAcceptOtp;
@@ -66,12 +74,41 @@ namespace XIVLauncher.Windows
             return base.ShowDialog();
         }
 
+        private async Task GetOneTimePassword(OtpShellReceiver receiver, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var res = await receiver.TryGetOneTimePasswordAsync(cts.Token);
+                if (res.wasGotten)
+                {
+                    TryAcceptOtp(res.oneTimePassword);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to get OTP.");
+            }
+        }
+
         public void Reset()
         {
             OtpInputPrompt.Text = ViewModel.OtpInputPromptLoc;
             OtpInputPrompt.Foreground = _otpInputPromptDefaultBrush;
             OtpTextBox.Text = "";
             OtpTextBox.Focus();
+            if (cts != null)
+            {
+                cts.Cancel();
+                try
+                {
+                    cts.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+
+                }
+            }
+            cts = new CancellationTokenSource();
         }
 
         public void IgnoreCurrentResult(string reason)
