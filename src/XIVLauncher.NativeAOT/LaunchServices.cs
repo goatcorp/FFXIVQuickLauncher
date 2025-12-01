@@ -254,17 +254,18 @@ public static class LaunchServices
 
         Log.Verbose("Game has exited");
 
-        try
-        {
-            if (Program.Steam?.IsValid ?? false)
-            {
-                Program.Steam?.Shutdown();
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Could not shut down Steam");
-        }
+        // Note(Kulimi) Skip steam shutdown since I remove steam startup
+        // try
+        // {
+        //     if (Program.Steam?.IsValid ?? false)
+        //     {
+        //         Program.Steam?.Shutdown();
+        //     }
+        // }
+        // catch (Exception ex)
+        // {
+        //     Log.Error(ex, "Could not shut down Steam");
+        // }
 
         return process.ExitCode;
     }
