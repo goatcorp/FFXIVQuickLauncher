@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -180,8 +180,12 @@ namespace XIVLauncher.Windows
             link.SetIconLocation(thumbnailPath, 0);
 
             var file = (IPersistFile)link;
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            file.Save(Path.Combine(desktopPath, $@"\XIVLauncher - {selectedEntry.Account.UserName} {(selectedEntry.Account.UseSteamServiceAccount ? "(Steam)" : "")}.lnk"), false);
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var fileName = $"XIVLauncher - {selectedEntry.Account.UserName} {(selectedEntry.Account.UseSteamServiceAccount ? "(Steam)" : "")}.lnk";
+            var invalid = Path.GetInvalidFileNameChars();
+            fileName = string.Join("_", fileName.Split(invalid, StringSplitOptions.RemoveEmptyEntries));
+            var path = Path.Combine(desktopPath, fileName);
+            file.Save(path, false);
         }
 
         private void RemoveAccount_OnClick(object sender, RoutedEventArgs e)
