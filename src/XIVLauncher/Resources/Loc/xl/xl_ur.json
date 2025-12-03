@@ -571,8 +571,8 @@
     "message": "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open.",
     "description": "<RepairGame>d__25.MoveNext"
   },
-  "DalamudVc2019RedistError": {
-    "message": "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2019 redistributable to be installed to continue. Please install it from the Microsoft homepage.",
+  "DalamudVc2022RedistError": {
+    "message": "The XIVLauncher in-game addon needs the Microsoft Visual C++ 2015-2022 redistributable to be installed to continue. Please install it from the Microsoft homepage.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {
