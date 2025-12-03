@@ -158,8 +158,18 @@ public class CompatibilityTools
 
         var wineEnviromentVariables = new Dictionary<string, string>();
         wineEnviromentVariables.Add("WINEPREFIX", Settings.Prefix.FullName);
-        // DXVK on macOS uses Wine's builtin dxgi.dll, only d3d11 is native
-        wineEnviromentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d10core,dxgi={(wineD3D ? "b" : "b")};d3d11={(wineD3D ? "b" : "n")}");
+        
+        // DXMT requires d3d11=n,dxgi=n (both native)
+        // DXVK requires d3d11=n,dxgi=b (native d3d11, builtin dxgi)
+        // Re-read environment variable each time to catch backend changes
+        string xlDxmtValue = Environment.GetEnvironmentVariable("XL_DXMT_ENABLED") ?? "0";
+        bool dxmtEnabled = xlDxmtValue == "1";
+        string dxgiOverride = wineD3D ? "b" : (dxmtEnabled ? "n" : "b");
+        string d3d11Override = wineD3D ? "b" : "n";  // Always use native d3d11 for DXMT/DXVK
+        
+        Log.Information($"[DXMT Debug] XL_DXMT_ENABLED={xlDxmtValue}, dxmtEnabled={dxmtEnabled}, wineD3D={wineD3D}, d3d11Override={d3d11Override}, dxgiOverride={dxgiOverride}");
+        
+        wineEnviromentVariables.Add("WINEDLLOVERRIDES", $"msquic=,mscoree=n,b;d3d9,d3d10core={d3d11Override};d3d11={d3d11Override};dxgi={dxgiOverride}");
 
         if (!string.IsNullOrEmpty(Settings.DebugVars))
         {
@@ -169,13 +179,9 @@ public class CompatibilityTools
         wineEnviromentVariables.Add("XL_WINEONLINUX", "true");
         string ldPreload = Environment.GetEnvironmentVariable("LD_PRELOAD") ?? "";
 
-        string dxvkHud = hudType switch
-        {
-            Dxvk.DxvkHudType.None => "0",
-            Dxvk.DxvkHudType.Fps => "fps",
-            Dxvk.DxvkHudType.Full => "full",
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        // Read DXVK_HUD from environment variable set by Swift (Wine.setup())
+        // This allows the user to configure HUD options in the settings UI
+        string dxvkHud = Environment.GetEnvironmentVariable("DXVK_HUD") ?? "0";
 
         if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
         {
@@ -183,7 +189,11 @@ public class CompatibilityTools
         }
 
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
-        wineEnviromentVariables.Add("DXVK_ASYNC", dxvkAsyncOn);
+        // Read DXVK_ASYNC and DXVK_FRAME_RATE from environment (set by Swift Wine.setup())
+        string dxvkAsync = Environment.GetEnvironmentVariable("DXVK_ASYNC") ?? "0";
+        string dxvkFrameRate = Environment.GetEnvironmentVariable("DXVK_FRAME_RATE") ?? "0";
+        wineEnviromentVariables.Add("DXVK_ASYNC", dxvkAsync);
+        wineEnviromentVariables.Add("DXVK_FRAME_RATE", dxvkFrameRate);
         wineEnviromentVariables.Add("WINEESYNC", Settings.EsyncOn);
         wineEnviromentVariables.Add("WINEFSYNC", Settings.FsyncOn);
 
