@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -290,12 +290,33 @@ namespace XIVLauncher.Game
         {
             // Create a randomly-named file in the game's user data folder and make sure we don't
             // get a permissions error.
-            var myGames = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "my games");
-            if (!Directory.Exists(myGames))
-                return true;
+            var targetPath = string.Empty;
+            var userPathOverride = string.Empty;
 
-            var targetPath = Directory.GetDirectories(myGames).FirstOrDefault(x => Path.GetDirectoryName(x)?.Length == 34);
-            if (targetPath == null)
+            // I pray we never have to support multiple variable overrides here
+            // Because this one allows spaces
+            if (App.Settings.AdditionalLaunchArgs.Contains("UserPath="))
+            {
+                userPathOverride = App.Settings.AdditionalLaunchArgs.Split("UserPath=")[1];
+            }
+
+            if (userPathOverride != null && userPathOverride != string.Empty)
+            {
+                // We'll test the folder the user set their override to
+                targetPath = userPathOverride;
+            }
+            else
+            {
+                // We'll test the default location
+                var myGames = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games");
+                if (!Directory.Exists(myGames))
+                    return true;
+
+                var gameConfigPath = "FINAL FANTASY XIV - A Realm Reborn";
+                targetPath = Path.Combine(myGames, gameConfigPath);
+            }
+
+            if (!Directory.Exists(targetPath)) // FFXIV will make it if possible
                 return true;
 
             var tempFile = Path.Combine(targetPath, Guid.NewGuid().ToString());
@@ -308,6 +329,11 @@ namespace XIVLauncher.Game
             }
             catch (UnauthorizedAccessException)
             {
+                return false;
+            }
+            catch (FileNotFoundException)
+            {
+                // we shouldn't ever reach this, but it's useful for testing
                 return false;
             }
             catch (Exception)
