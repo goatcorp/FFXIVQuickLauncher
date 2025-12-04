@@ -22,12 +22,36 @@ public class OauthLoginException : Exception
     {
         var matches = errorMessageRegex.Matches(document);
 
-        if (matches.Count is 0 or > 1)
+        if (matches.Count == 1)
         {
-            Log.Error("Could not get login error\n{Doc}", document);
-            return null;
+            return matches[0].Groups["errorMessage"].Value;
         }
 
-        return matches[0].Groups["errorMessage"].Value;
+        // If regex doesn't match, try to extract error from common patterns
+        Log.Error("Could not get login error\n{Doc}", document);
+        
+        // Try to extract from "Login failed: message" or "server returned error: message" patterns
+        var patterns = new[] { "Login failed:", "server returned error:", "Error:", "Failed:" };
+        foreach (var pattern in patterns)
+        {
+            var index = document.IndexOf(pattern, StringComparison.OrdinalIgnoreCase);
+            if (index >= 0)
+            {
+                var startIndex = index + pattern.Length;
+                var message = document.Substring(startIndex).Trim();
+                // Extract until newline or end of string
+                var endIndex = message.IndexOfAny(new[] { '\r', '\n' });
+                if (endIndex > 0)
+                {
+                    message = message.Substring(0, endIndex).Trim();
+                }
+                if (!string.IsNullOrEmpty(message))
+                {
+                    return message;
+                }
+            }
+        }
+        
+        return null;
     }
 }
