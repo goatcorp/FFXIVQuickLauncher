@@ -297,7 +297,7 @@ namespace XIVLauncher.Windows
 
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(ViewModel.GamePath) || !GameHelpers.IsValidGamePath(ViewModel.GamePath))
+            if (string.IsNullOrEmpty(ViewModel.GamePath) || !GameHelpers.PathHasExistingInstall(ViewModel.GamePath))
                 return;
 
             try

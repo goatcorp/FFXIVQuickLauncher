@@ -56,7 +56,7 @@ namespace XIVLauncher.Windows
                     return;
                 }
 
-                if (!GameHelpers.IsValidGamePath(GamePathEntry.Text))
+                if (!GameHelpers.PathHasExistingInstall(GamePathEntry.Text))
                 {
                     if (CustomMessageBox.Show(Loc.Localize("GamePathInvalidConfirm", "The folder you selected has no installation of the game.\nXIVLauncher will install the game the first time you log in.\nContinue?"), "XIVLauncher",
                             MessageBoxButton.YesNo, MessageBoxImage.Information, parentWindow: this) != MessageBoxResult.Yes)

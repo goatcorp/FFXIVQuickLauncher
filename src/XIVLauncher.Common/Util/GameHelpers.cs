@@ -16,7 +16,7 @@ public static class GameHelpers
         return RegionInfo.CurrentRegion.TwoLetterISORegionName is "US" or "MX" or "CA";
     }
 
-    public static bool IsValidGamePath(string path)
+    public static bool PathHasExistingInstall(string path)
     {
         if (string.IsNullOrEmpty(path))
             return false;
