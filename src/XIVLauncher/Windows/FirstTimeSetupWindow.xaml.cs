@@ -73,6 +73,15 @@ namespace XIVLauncher.Windows
                         return;
                     }
                 }
+
+                if (new DirectoryInfo(GamePathEntry.Text).Parent == null)
+                {
+                    if (CustomMessageBox.Show(Loc.Localize("GamePathRootConfirm", "You have selected a root directory as your game path. This is not recommended.\nAre you sure you want to continue?"), "XIVLauncher",
+                            MessageBoxButton.YesNo, MessageBoxImage.Warning, parentWindow: this) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
             }
 
             if (SetupTabControl.SelectedIndex == 2)

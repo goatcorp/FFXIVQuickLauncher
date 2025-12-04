@@ -1,2 +1,3 @@
 * Fixed an issue wherein auto-launch applications may not have started together with the game under certain conditions.
 * Fixed an issue wherein it was impossible to create desktop shortcuts for accounts from the account switcher menu.
+* Fixed an issue wherein the launcher would not be able to install game patches if the chosen game directory was a root directory.
