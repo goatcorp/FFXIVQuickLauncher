@@ -237,7 +237,7 @@ namespace XIVLauncher
 
         private static void GenerateIntegrity(string path)
         {
-            var result = IntegrityCheck.RunIntegrityCheckAsync(new DirectoryInfo(path), null).GetAwaiter().GetResult();
+            var result = IntegrityCheck.GenerateIntegrityReport(new DirectoryInfo(path), null);
             string saveIntegrityPath = Path.Combine(Paths.RoamingPath, $"{result.GameVersion}.json");
 
             File.WriteAllText(saveIntegrityPath, JsonConvert.SerializeObject(result));

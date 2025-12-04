@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Game
@@ -13,16 +14,16 @@ namespace XIVLauncher.Common.Game
     {
         public const string INTEGRITY_CHECK_BASE_URL = "https://goatcorp.github.io/integrity/";
 
-        public class IntegrityCheckResult
+        public class IntegrityCheckData
         {
-            public Dictionary<string, string> Hashes { get; set; }
-            public string GameVersion { get; set; }
-            public string LastGameVersion { get; set; }
+            public Dictionary<string, string> Hashes { get; set; } = null!;
+            public string GameVersion { get; set; } = null!;
+            public string LastGameVersion { get; set; } = null!;
         }
 
         public class IntegrityCheckProgress
         {
-            public string CurrentFile { get; set; }
+            public string CurrentFile { get; set; } = null!;
         }
 
         public enum CompareResult
@@ -33,81 +34,114 @@ namespace XIVLauncher.Common.Game
             ReferenceFetchFailure,
         }
 
-        public static async Task<(CompareResult compareResult, string report, IntegrityCheckResult remoteIntegrity)>
+        public static async Task<(CompareResult compareResult, string? report, IntegrityCheckData? remoteIntegrity)>
             CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress, DirectoryInfo gamePath, bool onlyIndex = false)
         {
-            IntegrityCheckResult remoteIntegrity;
+            IntegrityCheckData remoteIntegrity;
 
             try
             {
-                remoteIntegrity = DownloadIntegrityCheckForVersion(Repository.Ffxiv.GetVer(gamePath));
+                remoteIntegrity = await DownloadIntegrityCheckForVersion(Repository.Ffxiv.GetVer(gamePath));
             }
             catch (WebException e)
             {
                 if (e.Response is HttpWebResponse resp && resp.StatusCode == HttpStatusCode.NotFound)
                     return (CompareResult.ReferenceNotFound, null, null);
+
                 return (CompareResult.ReferenceFetchFailure, null, null);
             }
 
-            var localIntegrity = await RunIntegrityCheckAsync(gamePath, progress, onlyIndex).ConfigureAwait(false);
-
-            var report = "";
+            var reportBuilder = new StringBuilder();
             var failed = false;
 
-            foreach (var hashEntry in remoteIntegrity.Hashes)
+            await Task.Run(() =>
             {
-                if (onlyIndex && (!hashEntry.Key.EndsWith(".index", StringComparison.Ordinal) && !hashEntry.Key.EndsWith(".index2", StringComparison.Ordinal)))
-                    continue;
-
-                if (localIntegrity.Hashes.Any(h => h.Key == hashEntry.Key))
+                foreach (var hashEntry in remoteIntegrity.Hashes)
                 {
-                    if (localIntegrity.Hashes.First(h => h.Key == hashEntry.Key).Value != hashEntry.Value)
+                    var relativePath = hashEntry.Key;
+
+                    if (onlyIndex && (!relativePath.EndsWith(".index", StringComparison.Ordinal) && !relativePath.EndsWith(".index2", StringComparison.Ordinal)))
+                        continue;
+
+                    // Normalize to platform path separators and drop a leading backslash if present
+                    var normalized = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+                    if (normalized.StartsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+                        normalized = normalized.Substring(1);
+
+                    // Combine with gamePath
+                    var fullPath = Path.Combine(gamePath.FullName, normalized);
+                    var fileInfo = new FileInfo(fullPath);
+
+                    if (!fileInfo.Exists)
                     {
-                        report += $"Mismatch: {hashEntry.Key}\n";
+                        reportBuilder.AppendLine($"Missing: {relativePath}");
+                        failed = true;
+                        continue;
+                    }
+
+                    try
+                    {
+                        using (var sha1 = SHA1.Create())
+                        using (var stream = new BufferedStream(fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite), 1200000))
+                        {
+                            var hash = sha1.ComputeHash(stream);
+                            var localHash = BitConverter.ToString(hash).Replace('-', ' ');
+
+                            // report progress on the calling thread
+                            progress?.Report(new IntegrityCheckProgress { CurrentFile = relativePath });
+
+                            if (!string.Equals(localHash, hashEntry.Value, StringComparison.Ordinal))
+                            {
+                                reportBuilder.AppendLine($"Mismatch: {relativePath}");
+                                failed = true;
+                            }
+                        }
+                    }
+                    catch (IOException)
+                    {
+                        reportBuilder.AppendLine($"Error reading: {relativePath}");
                         failed = true;
                     }
                 }
-                else
-                {
-                    report += $"Missing: {hashEntry.Key}\n";
-                }
-            }
+            });
 
-            return (failed ? CompareResult.Invalid : CompareResult.Valid, report, remoteIntegrity);
+            return (failed ? CompareResult.Invalid : CompareResult.Valid, reportBuilder.ToString(), remoteIntegrity);
         }
 
-        public static IntegrityCheckResult DownloadIntegrityCheckForVersion(string gameVersion)
+        public static async Task<IntegrityCheckData> DownloadIntegrityCheckForVersion(string gameVersion)
         {
-            using (var client = new WebClient())
+            using (var client = new HttpClient())
             {
-                return JsonSerializer.Deserialize<IntegrityCheckResult>(
-                    client.DownloadString(INTEGRITY_CHECK_BASE_URL + gameVersion + ".json"));
+                var json = await client.GetStringAsync(INTEGRITY_CHECK_BASE_URL + gameVersion + ".json");
+                var result = JsonSerializer.Deserialize<IntegrityCheckData>(json);
+                return result ?? throw new InvalidOperationException("Failed to deserialize integrity JSON");
             }
         }
 
-        public static async Task<IntegrityCheckResult> RunIntegrityCheckAsync(DirectoryInfo gamePath,
-                                                                              IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
+        public static IntegrityCheckData GenerateIntegrityReport(
+            DirectoryInfo gamePath, IProgress<IntegrityCheckProgress>? progress, bool onlyIndex = false)
         {
             var hashes = new Dictionary<string, string>();
 
             using (var sha1 = SHA1.Create())
             {
-                CheckDirectory(gamePath, sha1, gamePath.FullName, ref hashes, progress, onlyIndex);
+                CrawlDirectory(gamePath, sha1, gamePath, ref hashes, progress, onlyIndex);
             }
 
-            return new IntegrityCheckResult
+            return new IntegrityCheckData
             {
                 GameVersion = Repository.Ffxiv.GetVer(gamePath),
                 Hashes = hashes
             };
         }
 
-        private static void CheckDirectory(DirectoryInfo directory, SHA1 sha1, string rootDirectory,
-                                           ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress> progress, bool onlyIndex = false)
+        private static void CrawlDirectory(
+            DirectoryInfo directory, SHA1 sha1, DirectoryInfo rootDirectory,
+            ref Dictionary<string, string> results, IProgress<IntegrityCheckProgress>? progress, bool onlyIndex = false)
         {
             foreach (var file in directory.GetFiles())
             {
-                var relativePath = file.FullName.Substring(rootDirectory.Length);
+                var relativePath = file.FullName.Substring(rootDirectory.FullName.Length);
 
                 // for unix compatibility with windows-generated integrity files.
                 relativePath = relativePath.Replace("/", "\\");
@@ -145,7 +179,7 @@ namespace XIVLauncher.Common.Game
             foreach (var dir in directory.GetDirectories())
             {
                 if (!dir.FullName.ToLower().Contains("shade")) //skip gshade directories. They just waste cpu
-                    CheckDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
+                    CrawlDirectory(dir, sha1, rootDirectory, ref results, progress, onlyIndex);
             }
         }
     }

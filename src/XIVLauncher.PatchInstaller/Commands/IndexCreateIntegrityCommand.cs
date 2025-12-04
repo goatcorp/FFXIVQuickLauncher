@@ -89,7 +89,7 @@ public class IndexCreateIntegrityCommand
 
         var tasks = new HashSet<Task<Tuple<string, string>>>();
 
-        var result = new IntegrityCheck.IntegrityCheckResult { Hashes = new() };
+        var result = new IntegrityCheck.IntegrityCheckData { Hashes = new() };
 
         try
         {

@@ -268,7 +268,11 @@ namespace XIVLauncher.Windows
 
         private void IntegrityReportButton_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(Path.Combine(Paths.RoamingPath, "integrityreport.txt"));
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(Paths.RoamingPath, "integrityreport.txt"),
+                UseShellExecute = true,
+            });
         }
 
         private void NewGitHubIssueButton_OnClick(object sender, RoutedEventArgs e)
