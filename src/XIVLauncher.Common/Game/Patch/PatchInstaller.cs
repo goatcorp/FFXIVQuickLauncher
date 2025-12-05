@@ -90,13 +90,17 @@ namespace XIVLauncher.Common.Game.Patch
             switch (envelope.OpCode)
             {
                 case PatcherIpcOpCode.Hello:
-                    //_client.Initialize(_clientPort);
                     Log.Information("[PATCHERIPC] GOT HELLO");
                     State = InstallerState.Ready;
                     break;
 
                 case PatcherIpcOpCode.InstallOk:
                     Log.Information("[PATCHERIPC] INSTALL OK");
+                    State = InstallerState.Ready;
+                    break;
+
+                case PatcherIpcOpCode.Finish:
+                    Log.Information("[PATCHERIPC] INSTALL FINISH");
                     State = InstallerState.Ready;
                     break;
 
@@ -154,13 +158,28 @@ namespace XIVLauncher.Common.Game.Patch
             });
         }
 
-        public void FinishInstall(DirectoryInfo gameDirectory)
+        public void FinalizeAndWait(DirectoryInfo gameDirectory)
         {
+            State = InstallerState.Busy;
             this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.Finish,
                 Data = gameDirectory
             });
+
+            var cts = new CancellationTokenSource(5000);
+
+            while (this.State != InstallerState.Ready)
+            {
+                Thread.Sleep(100);
+
+                if (cts.Token.IsCancellationRequested)
+                {
+                    Log.Error("Timeout waiting for installer to finish after finishing install.");
+                    OnFail?.Invoke();
+                    break;
+                }
+            }
         }
 
         public void Dispose()

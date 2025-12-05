@@ -2,3 +2,4 @@
 * Fixed an issue wherein it was impossible to create desktop shortcuts for accounts from the account switcher menu.
 * Fixed an issue wherein the launcher would not be able to install game patches if the chosen game directory was a root directory.
 * Fixed an issue wherein confusing warning messages may have appeared when detecting badly set-up save data folder permissions (by reiichi001)
+* Fixed an issue wherein the launcher may not have correctly written all necessary files when patching the game. The files are not critical will be corrected during the next patch.

@@ -75,40 +75,58 @@ public class RemotePatchInstaller
 
     private void RemoteCallHandler(PatcherIpcEnvelope envelope)
     {
-        switch (envelope.OpCode)
+        try
         {
-            case PatcherIpcOpCode.Bye:
-                Task.Run(() =>
-                {
-                    Thread.Sleep(3000);
-                    IsDone = true;
-                });
-                break;
-
-            case PatcherIpcOpCode.StartInstall:
-
-                var installData = (PatcherIpcStartInstall)envelope.Data;
-                this.queuedInstalls.Enqueue(installData);
-                break;
-
-            case PatcherIpcOpCode.Finish:
-                var path = (DirectoryInfo)envelope.Data;
-
-                try
-                {
-                    VerToBck(path);
-                    Log.Information("VerToBck done");
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "VerToBck failed");
-                    this.rpc.SendMessage(new PatcherIpcEnvelope
+            switch (envelope.OpCode)
+            {
+                case PatcherIpcOpCode.Bye:
+                    Task.Run(() =>
                     {
-                        OpCode = PatcherIpcOpCode.InstallFailed
+                        Thread.Sleep(3000);
+                        IsDone = true;
                     });
-                }
+                    break;
 
-                break;
+                case PatcherIpcOpCode.StartInstall:
+
+                    var installData = (PatcherIpcStartInstall)envelope.Data;
+                    this.queuedInstalls.Enqueue(installData);
+                    break;
+
+                case PatcherIpcOpCode.Finish:
+                    var path = new DirectoryInfo((string)envelope.Data);
+
+                    try
+                    {
+                        VerToBck(path);
+                        Log.Information("[PATCHER] VerToBck done");
+                        this.rpc.SendMessage(new PatcherIpcEnvelope
+                        {
+                            OpCode = PatcherIpcOpCode.Finish
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "[PATCHER] VerToBck failed");
+                        this.rpc.SendMessage(new PatcherIpcEnvelope
+                        {
+                            OpCode = PatcherIpcOpCode.InstallFailed
+                        });
+                    }
+
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(envelope.OpCode), $"Unknown RPC opcode {envelope.OpCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[PATCHER] RemoteCallHandler encountered an error");
+            this.rpc.SendMessage(new PatcherIpcEnvelope
+            {
+                OpCode = PatcherIpcOpCode.InstallFailed
+            });
         }
     }
 

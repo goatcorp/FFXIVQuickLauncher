@@ -456,8 +456,9 @@ namespace XIVLauncher.Common.Game.Patch
                 CurrentInstallIndex++;
             }
 
-            Log.Information("PATCHING finish");
-            this.installer.FinishInstall(this.gamePath);
+            Log.Information("Now finalize install");
+            this.installer.FinalizeAndWait(this.gamePath);
+            Log.Information("RunApplyQueue done");
         }
 
         private enum HashCheckResult
