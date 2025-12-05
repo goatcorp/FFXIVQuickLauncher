@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Game
@@ -35,13 +36,13 @@ namespace XIVLauncher.Common.Game
         }
 
         public static async Task<(CompareResult compareResult, string? report, IntegrityCheckData? remoteIntegrity)>
-            CompareIntegrityAsync(IProgress<IntegrityCheckProgress> progress, DirectoryInfo gamePath, bool onlyIndex = false)
+            CompareIntegrityAsync(IProgress<IntegrityCheckProgress>? progress, DirectoryInfo gamePath, bool onlyIndex = false, CancellationToken cancellationToken = default)
         {
             IntegrityCheckData remoteIntegrity;
 
             try
             {
-                remoteIntegrity = await DownloadIntegrityCheckForVersion(Repository.Ffxiv.GetVer(gamePath));
+                remoteIntegrity = await DownloadIntegrityCheckForVersion(Repository.Ffxiv.GetVer(gamePath), cancellationToken);
             }
             catch (WebException e)
             {
@@ -62,6 +63,9 @@ namespace XIVLauncher.Common.Game
 
                     if (onlyIndex && (!relativePath.EndsWith(".index", StringComparison.Ordinal) && !relativePath.EndsWith(".index2", StringComparison.Ordinal)))
                         continue;
+
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
 
                     // Normalize to platform path separators and drop a leading backslash if present
                     var normalized = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
@@ -103,19 +107,19 @@ namespace XIVLauncher.Common.Game
                         failed = true;
                     }
                 }
-            });
+            }, cancellationToken);
 
             return (failed ? CompareResult.Invalid : CompareResult.Valid, reportBuilder.ToString(), remoteIntegrity);
         }
 
-        public static async Task<IntegrityCheckData> DownloadIntegrityCheckForVersion(string gameVersion)
+        public static async Task<IntegrityCheckData> DownloadIntegrityCheckForVersion(string gameVersion, CancellationToken cancellationToken = default)
         {
-            using (var client = new HttpClient())
-            {
-                var json = await client.GetStringAsync(INTEGRITY_CHECK_BASE_URL + gameVersion + ".json");
-                var result = JsonSerializer.Deserialize<IntegrityCheckData>(json);
-                return result ?? throw new InvalidOperationException("Failed to deserialize integrity JSON");
-            }
+            using var client = new HttpClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, INTEGRITY_CHECK_BASE_URL + gameVersion + ".json");
+            var response = await client.SendAsync(request, cancellationToken);
+            var result = JsonSerializer.Deserialize<IntegrityCheckData>(await response.Content.ReadAsStringAsync());
+            return result ?? throw new InvalidOperationException("Failed to deserialize integrity JSON");
         }
 
         public static IntegrityCheckData GenerateIntegrityReport(

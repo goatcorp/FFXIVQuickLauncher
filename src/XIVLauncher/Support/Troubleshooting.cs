@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common;
@@ -52,18 +53,20 @@ namespace XIVLauncher.Support
         internal static string GetTroubleshootingJson()
         {
             var gamePath = App.Settings.GamePath;
-
             var integrity = TroubleshootingPayload.IndexIntegrityResult.Success;
 
             try
             {
-                if (!gamePath.Exists || !gamePath.GetDirectories().Any(x => x.Name == "game"))
+                if (!gamePath.Exists || gamePath.GetDirectories().All(x => x.Name != "game"))
                 {
                     integrity = TroubleshootingPayload.IndexIntegrityResult.NoGame;
                 }
                 else
                 {
-                    var result = IntegrityCheck.CompareIntegrityAsync(null, gamePath, true).Result;
+                    // Cancel eagerly, this is just for logging and support anyway
+                    var tokenSource = new System.Threading.CancellationTokenSource(TimeSpan.FromMilliseconds(300));
+                    var result = Task.Run(() => IntegrityCheck.CompareIntegrityAsync(null, gamePath, true, tokenSource.Token), tokenSource.Token)
+                        .GetAwaiter().GetResult();
 
                     integrity = result.compareResult switch
                     {
