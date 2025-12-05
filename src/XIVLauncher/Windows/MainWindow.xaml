@@ -284,64 +284,41 @@
                                                     Content="{Binding LoginLoc}"
                                                     Command="{Binding Path=StartLoginCommand}"
                                                     Margin="0,0,0,0" Width="84"
-                                                    ToolTip="{Binding LoginTooltipLoc}">
+                                                    ToolTip="{Binding LoginTooltipLoc}"
+                                                    MouseRightButtonUp="LoginButton_OnMouseRightButtonUp"/>
 
-                                                    <Button.ContextMenu>
-                                                        <ContextMenu x:Name="LoginContextMenu">
-                                                            <MenuItem Header="{Binding LoginRepairLoc}"
-                                                                      Command="{Binding Path=LoginRepairCommand}" />
-                                                            <Separator/>
-                                                            <MenuItem Header="{Binding LoginNoDalamudLoc}"
-                                                                      Command="{Binding Path=LoginNoDalamudCommand}" />
-                                                            <MenuItem Header="{Binding LoginNoPluginsLoc}"
-                                                                      Command="{Binding Path=LoginNoPluginsCommand}" />
-                                                            <MenuItem Header="{Binding LoginNoThirdLoc}"
-                                                                      Command="{Binding Path=LoginNoThirdCommand}" />
-                                                            <Separator/>
-                                                            <MenuItem Header="{Binding LoginNoStartLoc}"
-                                                                      Command="{Binding Path=LoginNoStartCommand}" />
-                                                        </ContextMenu>
-                                                    </Button.ContextMenu>
-
-                                                </Button>
-                                                <materialDesign:PopupBox PopupMode="Click"
+                                                <materialDesign:PopupBox x:Name="LaunchOptionsPopupBox"
+                                                                         PopupMode="Click"
                                                                          PlacementMode="BottomAndAlignCentres"
                                                                          StaysOpen="False"
                                                                          HorizontalAlignment="Left"
                                                                          VerticalAlignment="Center"
                                                                          Margin="0,0,7,0"
-                                                                         ToolTip="{Binding Path=LaunchOptionsLoc}"
-                                                                         >
+                                                                         ToolTip="{Binding Path=LaunchOptionsLoc}">
 
                                                     <materialDesign:PopupBox.ToggleContent>
                                                         <Border Margin="0,0,0,0"
-                                                            BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-                                                            BorderThickness="1" 
-                                                            CornerRadius="2"
-                                                            >
+                                                                BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                                                                BorderThickness="1"
+                                                                CornerRadius="2">
                                                             <Border.Effect>
                                                                 <DropShadowEffect BlurRadius="2"
-                                                                    Opacity="0.4"
-                                                                    ShadowDepth="2"
-                                                                    Direction="315"/>
+                                                                        Opacity="0.4"
+                                                                        ShadowDepth="2"
+                                                                        Direction="315" />
                                                             </Border.Effect>
 
                                                             <StackPanel Orientation="Horizontal">
-                                                                <materialDesign:PackIcon Kind="ChevronDoubleDown" Background="{DynamicResource PrimaryHueMidBrush}"
-                                                                 Foreground="White" Height="30" />
+                                                                <materialDesign:PackIcon Kind="ChevronDoubleDown"
+                                                                        Background="{DynamicResource PrimaryHueMidBrush}"
+                                                                        Foreground="White" Height="30" />
                                                             </StackPanel>
-
                                                         </Border>
-                                                        
-
-
                                                     </materialDesign:PopupBox.ToggleContent>
-                                                
 
-
-                                                <materialDesign:PopupBox.PopupContent>
+                                                    <materialDesign:PopupBox.PopupContent>
                                                         <Menu>
-                                                            
+
                                                             <Menu.ItemsPanel>
                                                                 <ItemsPanelTemplate>
                                                                     <StackPanel />
@@ -349,18 +326,16 @@
                                                             </Menu.ItemsPanel>
                                                             <MenuItem Header="{Binding LoginRepairLoc}"
                                                                       Command="{Binding Path=LoginRepairCommand}" />
-                                                            <Separator/>
+                                                            <Separator />
                                                             <MenuItem Header="{Binding LoginNoDalamudLoc}"
                                                                       Command="{Binding Path=LoginNoDalamudCommand}" />
                                                             <MenuItem Header="{Binding LoginNoPluginsLoc}"
                                                                       Command="{Binding Path=LoginNoPluginsCommand}" />
                                                             <MenuItem Header="{Binding LoginNoThirdLoc}"
                                                                       Command="{Binding Path=LoginNoThirdCommand}" />
-                                                            <Separator/>
+                                                            <Separator />
                                                             <MenuItem Header="{Binding LoginNoStartLoc}"
                                                                       Command="{Binding Path=LoginNoStartCommand}" />
-                                                            
-                                                            
                                                         </Menu>
                                                     </materialDesign:PopupBox.PopupContent>
                                                 </materialDesign:PopupBox>
