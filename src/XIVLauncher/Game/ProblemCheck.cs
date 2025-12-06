@@ -289,13 +289,13 @@ namespace XIVLauncher.Game
         private static bool CheckMyGamesWriteAccess()
         {
             // Create a randomly-named file in the game's user data folder and make sure we don't
-            // get a permissions error.
+            // get a permission error.
             var targetPath = string.Empty;
             var userPathOverride = string.Empty;
 
             // I pray we never have to support multiple variable overrides here
             // Because this one allows spaces
-            if (App.Settings.AdditionalLaunchArgs.Contains("UserPath="))
+            if (App.Settings.AdditionalLaunchArgs?.Contains("UserPath=") == true)
             {
                 userPathOverride = App.Settings.AdditionalLaunchArgs.Split("UserPath=")[1];
             }
