@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Windows;
 using Serilog;
 using Serilog.Events;
@@ -7,6 +8,7 @@ using Velopack;
 using Velopack.Logging;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Support;
+using XIVLauncher.Common.Windows.Shell;
 using XIVLauncher.Support;
 
 namespace XIVLauncher;
@@ -36,9 +38,15 @@ public static class Program
         {
             var serilogLogger = new VelopackSerilogLogger();
 
-            VelopackApp.Build()
-                       .SetLogger(serilogLogger)
-                       .Run();
+            var velopackApp = VelopackApp.Build();
+            velopackApp.SetLogger(serilogLogger);
+
+            if (OperatingSystem.IsWindows())
+            {
+                VelopackWindowsSetup(velopackApp);
+            }
+
+            velopackApp.Run();
         }
         catch (Exception ex)
         {
@@ -57,6 +65,14 @@ public static class Program
             return;
 
         Troubleshooting.LogException(e.Exception, e.Line);
+    }
+
+    [SupportedOSPlatform("windows")]
+    private static void VelopackWindowsSetup(VelopackApp app)
+    {
+        app.OnFirstRun(_ => WindowsAssociationManager.InstallAssociations());
+        app.OnAfterUpdateFastCallback(_ => WindowsAssociationManager.InstallAssociations());
+        app.OnBeforeUninstallFastCallback(_ => WindowsAssociationManager.UninstallAssociations());
     }
 
     private class VelopackSerilogLogger : IVelopackLogger
