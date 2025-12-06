@@ -65,7 +65,7 @@ public static class Program
             {
                 Log.Warning("No Dalamud clients found");
                 ShowErrorDialog("No Running Game Instances",
-                    "No running instances of FINAL FANTASY XIV with a Dalamud capable of handling links were found.",
+                    "No running instances of FINAL FANTASY XIV with a Dalamud capable of handling links were found.\n\nPlease make sure the game is running and that Dalamud is working.",
                     TaskDialogIcon.Warning);
                 return 1;
             }

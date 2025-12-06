@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Product>XIVLauncher Link Handler</Product>
-        <AssemblyTitle>XIVLauncher Link HAndler</AssemblyTitle>
+        <AssemblyTitle>XIVLauncher RPC Link Handler</AssemblyTitle>
         <Description>
             This application handles Dalamud URI links and passes them on to running instances of the game.
         </Description>
