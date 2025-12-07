@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using CheapLoc;
 
 namespace XIVLauncher.Windows.ViewModel
@@ -70,6 +71,7 @@ namespace XIVLauncher.Windows.ViewModel
             SteamCheckBoxLoc = Loc.Localize("FirstTimeSteamCheckBox", "Enable Steam integration");
             OtpServerCheckBoxLoc = Loc.Localize("OtpServerCheckBox", "Enable XL Authenticator app/OTP macro support");
             OtpServerTooltipLoc = Loc.Localize("OtpServerTooltip", "This will allow you to send your OTP code to XIVLauncher directly from your phone.\nClick \"Learn more\" to see how to set this up.");
+            OtpShellArgsLoc = Loc.Localize("OtpShellArgsLoc", "The arguments to use to fetch your OTP code");
             LearnMoreLoc = Loc.Localize("LearnMore", "Learn More");
             OtpLearnMoreTooltipLoc = Loc.Localize("OtpLearnMoreTooltipLoc", "Open a guide in your web browser.");
             OtpAlwaysOnTopCheckBoxLoc = Loc.Localize("OtpAlwaysOnTopCheckBox", "Keep the OTP Window Always on Top");
@@ -161,6 +163,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string SteamCheckBoxLoc { get; private set; }
         public string OtpServerCheckBoxLoc { get; private set; }
         public string OtpServerTooltipLoc { get; private set; }
+        public string OtpShellArgsLoc { get; private set; }
         public string LearnMoreLoc { get; private set; }
         public string OtpLearnMoreTooltipLoc { get; private set; }
         public string OtpAlwaysOnTopCheckBoxLoc { get; private set; }
