@@ -12,7 +12,7 @@
     "description": "<>c__DisplayClass20_1.<Run>b__2"
   },
   "updatefailureerror": {
-    "message": "XIVLauncherの更新チェックに失敗しました。GitHubへの接続が原因の可能性があります。数分待ってからもう一度試してみてください。\nVPN を利用している場合はそれを無効にしてください。\n数分経っても失敗する場合は、GitHubにリンクされているDiscordに参加してサポートを受けてください。",
+    "message": "XIVLauncherの更新チェックに失敗しました。GitHubへの接続が原因の可能性があります。数分待ってからもう一度試してみてください。\nVPN を利用している場合はそれを無効にしてください。また、XIVLauncherをウイルス対策ソフトから除外してください。\n数分経っても失敗する場合は、GitHubにリンクされているDiscordに参加してサポートを受けてください。",
     "description": "<Run>d__20.MoveNext"
   },
   "RunOfficialLauncherNotPresentError": {
@@ -24,7 +24,7 @@
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "RunOfficialLauncherSteamError": {
-    "message": "Steamの動作を検出することができませんでした。直接SteamからFFXIVを起動してください。",
+    "message": "Steamの動作を検出することができませんでした。Steamから直接FFXIVを起動してください。",
     "description": "CustomMessageBox.OfficialLauncherButton_Click"
   },
   "ErrorAssertionFailed": {
@@ -32,7 +32,7 @@
     "description": "CustomMessageBox.AssertOrShowError"
   },
   "ErrorExplanation": {
-    "message": "XIVLauncher でエラーが発生しました。FAQ をご参照下さい。この問題が解決しない場合は、\n下のボタンをクリックし、ボックス内のテキストをコピーして GitHub で報告してください。",
+    "message": "XIVLauncher でエラーが発生しました。FAQ を参照して下さい。この問題が解決しない場合は、\n下のボタンをクリックし、ボックス内のテキストをコピーして GitHub で報告してください。",
     "description": "CustomMessageBox..cctor"
   },
   "Restart": {
@@ -72,7 +72,7 @@
     "description": "<>c__DisplayClass2_0.<SetStep>b__0"
   },
   "GamePathEmptyError": {
-    "message": "ゲームパスを選択してください。",
+    "message": "ゲームをインストールしたフォルダを選択してください。",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathSafeguardError": {
@@ -80,7 +80,7 @@
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathInvalidConfirm": {
-    "message": "選択したフォルダにはFFXIVがインストールされていません。\nXIVLauncherは初回ログイン時にFFXIVをインストールします。\n続けますか？",
+    "message": "選択したフォルダにFFXIVがインストールされていません。\nXIVLauncherは初回ログイン時にFFXIVをインストールします。\n続けますか？",
     "description": "FirstTimeSetup.NextButton_Click"
   },
   "GamePathRegionConfirm": {
@@ -96,11 +96,11 @@
     "description": "MainWindow.<SetupHeadlines>b__13_3"
   },
   "MaintenanceQueueBootPatch": {
-    "message": "A patch for the official launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in.",
+    "message": "公式のFFXIVランチャーにパッチが検出されました。\nこれは通常、ゲームにパッチがあることを意味します。\n\nこれでログインします。",
     "description": "<OnMaintenanceQueueTimerEvent>d__22.MoveNext"
   },
   "SettingsGamePatchPathError": {
-    "message": "ゲームとパッチのダウンロード保存先は同じにはできません。\nゲームとパッチのダウンロード保存先を別々に選択してください。",
+    "message": "ゲームとパッチのダウンロード先フォルダを同じ場所にすることは出来ません。\nゲームとパッチのダウンロード先フォルダは別の場所に保存して、その保存先を別々に選択してください。",
     "description": "SettingsControl.AcceptButton_Click"
   },
   "LaunchAsSteam": {
@@ -400,7 +400,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoStartLogin": {
-    "message": "開始せずに更新",
+    "message": "ゲームを起動しないで更新する",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxRepairLogin": {
@@ -412,11 +412,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoPluginLogin": {
-    "message": "Start w/o any Plugins",
+    "message": "全てのプラグインを無効にして起動する",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Custom Repo Plugins",
+    "message": "カスタムリポジトリのプラグインを無効にして起動する",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -424,7 +424,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLaunchOptions": {
-    "message": "Additional launch options",
+    "message": "追加の起動オプション",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
@@ -488,7 +488,7 @@
     "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
   },
   "GateUnreachable": {
-    "message": "ログインサーバーに接続できませんでした。 ゲームはメンテナンス中であるか、ログインサーバーへの接続が不安定である可能性が高いです。\n\n後でもう一度お試しください。",
+    "message": "ログインサーバーに接続できませんでした。 ゲームはメンテナンス中であるか、ログインサーバーへの接続が不安定である可能性が高いです。\n\nしばらく待ってからもう一度お試しください。",
     "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "GateClosed": {
@@ -496,7 +496,7 @@
     "description": "<CheckGateStatus>d__22.MoveNext"
   },
   "CheckBootVersionError": {
-    "message": "XIVLauncherは選択したファイルのブートバージョンをチェックできませんでした。現在メンテナンスが行われている場合や、バージョンチェックサーバーへの接続ができない場合に起こります。公式ランチャーではログインできても、XIVLauncherではログインできない場合、このエラーを報告してください。",
+    "message": "XIVLauncherは選択したファイルのブートバージョンをチェックできませんでした。これは現在メンテナンスが行われている場合や、バージョンチェックサーバーへの接続ができない場合に起こります。公式ランチャーではログインできても、XIVLauncherではログインできない場合、このエラーを報告してください。",
     "description": "<HandleBootCheck>d__33.MoveNext"
   },
   "BootPatchFailure": {
@@ -504,7 +504,7 @@
     "description": "<HandleBootCheck>d__33.MoveNext"
   },
   "KillswitchText": {
-    "message": "XIVLauncher cannot start the game at this time, as there were changes to the login process during a recent patch.\nWe need to adjust to these changes and verify that our adjustments are safe before we can re-enable the launcher. Please try again later.\n\nWe apologize for these circumstances.\n\nYou can use the \"Official Launcher\" button below to start the official launcher.\n",
+    "message": "最近のパッチでスクウェア・エニックスがログイン方法を変更したことで、現在XIVLauncherでゲームを起動することができません。\nXIVLauncherチームは、安全にXIVLauncherを再有効化する前に、調整を行う必要があります。後ほど、再度お試しください。\n\nこのような状況になってしまい、誠に申し訳ございません。\n\n下の「公式ランチャー」ボタンから、公式ランチャーを起動することができます。\n",
     "description": "<Login>d__21.MoveNext"
   },
   "EmptyUsernameError": {
@@ -520,7 +520,7 @@
     "description": "<Login>d__21.MoveNext"
   },
   "UidCacheInstallError": {
-    "message": "You enabled the UID cache in the patcher settings.\nThis setting does not allow you to reinstall the game.\n\nIf you want to reinstall the game, please take care to disable it first.",
+    "message": "UIDキャッシュの設定が有効です。\nこの設定によりFFXIVを再インストールすることができません。\n\nFFXIVを再インストールする場合は最初にUIDキャッシュの無効化を行ってください。",
     "description": "<Login>d__21.MoveNext"
   },
   "GameRepairSuccess0": {
@@ -532,7 +532,7 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessPlural": {
-    "message": "XIVLauncherは {0} のゲームファイルを正常に修復しました。",
+    "message": "XIVLauncherは {0} 個のゲームファイルを正常に修復しました。",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
@@ -876,7 +876,7 @@
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoStartSteam": {
-    "message": "Start Steam when starting XIVLauncher",
+    "message": "XIVLauncherを起動したときにSteamを起動する",
     "description": "SettingsControlViewModel.SetupLoc"
   },
   "AutoStartSteamTooltip": {
@@ -1108,11 +1108,11 @@
     "description": "ProblemCheck.RunCheck"
   },
   "MacTypeNag": {
-    "message": "MacType was detected on this PC.\nIt will cause problems with the game; both on the official launcher and XIVLauncher.\n\nPlease exclude XIVLauncher, ffxivboot, ffxivlauncher, ffxivupdater and ffxiv_dx11 from MacType.",
+    "message": "PCでMacTypeを検出しました。\nMacTypeは公式ランチャーとXIVLauncherに問題を引き起こします。\n\nXIVLauncherとffxivboot、ffxivlauncher、ffxivupdater、ffxiv_dx11は、MacTypeから除いてください。",
     "description": "ProblemCheck.RunCheck"
   },
   "MyGamesWriteAccessNag": {
-    "message": "You do not have permission to write to the game's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions.",
+    "message": "FFXIVのMy Gamesフォルダへの書き込み権限がありません。\nこれにより、スクリーンショットや一部のキャラクターデータの保存ができなくなります。\n\nこれは、ウイルス対策ソフトか、権限のエラーが原因と思われます。My Gamesフォルダのアクセス許可を確認してください。",
     "description": "ProblemCheck.RunCheck"
   },
   "GShadeSymlinks": {

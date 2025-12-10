@@ -8,7 +8,7 @@
     "description": "AppUtil.TryYellOnGameFilesBeingOpen"
   },
   "UninstallQuestion": {
-    "message": "Sorry to see you go!\nDo you want to delete all of your saved settings, plugins and passwords?",
+    "message": "Ci dispiace vederti andartene!\nVuoi eliminare tutte le impostazioni salvate, i plugin e le password?",
     "description": "<>c__DisplayClass20_1.<Run>b__2"
   },
   "updatefailureerror": {
@@ -412,11 +412,11 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoPluginLogin": {
-    "message": "Start w/o any Plugins",
+    "message": "Avvia senza plugin",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxNoThirdLogin": {
-    "message": "Start w/o Custom Repo Plugins",
+    "message": "Avvia senza plugin custom",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLoginTooltip": {
@@ -424,7 +424,7 @@
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxLaunchOptions": {
-    "message": "Additional launch options",
+    "message": "Parametri di lancio aggiuntivi",
     "description": "MainWindowViewModel.SetupLoc"
   },
   "LoginBoxWaitingForMaint": {
@@ -536,11 +536,11 @@
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMoved1": {
-    "message": "Additionally, 1 file that did not come with the original game installation has been moved to {0}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "Inoltre, 1 file che non è presente nell'installazione del gioco originale è stato spostato in {0}.\nSe stai usando ReShade, dovrai reinstallarlo.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccessMovedPlural": {
-    "message": "Additionally, {0} files that did not come with the original game installation have been moved to {1}.\nIf you were using ReShade, you will have to reinstall it.",
+    "message": "Inoltre, i file {0} che non sono presenti nell'installazione di gioco originale sono stati spostati in {1}.\nSe stai usando ReShade, dovrai reinstallarlo.",
     "description": "<RepairGame>d__25.MoveNext"
   },
   "GameRepairSuccess_LaunchGame": {
@@ -624,7 +624,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamNullTicket": {
-    "message": "Steam did not authenticate you. This is likely a temporary issue with Steam and you may just have to try again in a few minutes.\n\nIf the issue persists, please make sure that Steam is running and that you are logged in with the account tied to your SE ID.\nIf you play using the Free Trial, please check the \"Using Free Trial account\" checkbox in the \"Game Settings\" tab of the XIVLauncher settings.",
+    "message": "Steam non ti ha autenticato. Questo è probabilmente un problema temporaneo con Steam e potresti dover solo riprovare tra qualche minuto.\n\nSe il problema persiste, assicurati che Steam sia in esecuzione e che tu abbia effettuato l'accesso con l'account legato al tuo ID SE.\nSe si gioca utilizzando la prova gratuita, si prega di controllare la casella \"Uso account prova gratuita\" nella scheda \"Impostazioni di gioco\" delle impostazioni di XIVLauncher.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamIssue": {
@@ -632,7 +632,7 @@
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamWrongAccount": {
-    "message": "The account you are logging in to is not the one that is linked to the Steam account on your PC. You can only log in with the account tied to your SE ID while using this Steam account.\n\nPlease log into matching accounts. The account that is linked to Steam is \"{0}\" - make sure there are no typos.",
+    "message": "L'account a cui stai accedendo non è quello collegato all'account Steam sul tuo PC. Puoi accedere solo con l'account legato al tuo ID SE mentre usi questo account Steam.\n\nPer favore accedi agli account corrispondenti. L'account collegato a Steam è \"{0}\" - assicurati che non ci siano errori di battitura.",
     "description": "<TryLoginToGame>d__23.MoveNext"
   },
   "LoginSteamLinkNeeded": {
@@ -732,7 +732,7 @@
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "GameExitedPrematurelyErrorAV": {
-    "message": "\nThis issue could also be caused by your Antivirus program mistakenly marking XIVLauncher as malicious. You may have to add exclusions to its settings - please check our FAQ for more information.",
+    "message": "\nQuesto problema potrebbe anche essere causato dal tuo programma antivirus che contrassegna erroneamente XIVLauncher come dannoso. Potrebbe essere necessario aggiungere esclusioni alle sue impostazioni - Controllare le FAQ(solo in Inglese) per ulteriori informazioni.",
     "description": "<TryProcessLoginResult>d__24.MoveNext"
   },
   "BinaryNotPresentErrorSummary": {
@@ -760,7 +760,7 @@
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PasteButton": {
-    "message": "Click here to paste from the clipboard.",
+    "message": "Clicca qui per incollare dagli appunti.",
     "description": "OtpInputDialogViewModel.SetupLoc"
   },
   "PatchPreparing": {
