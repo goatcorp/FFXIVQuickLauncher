@@ -164,7 +164,7 @@ namespace XIVLauncher.Common.Game.Patch
             this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.Finish,
-                Data = gameDirectory
+                Data = gameDirectory.ToString()
             });
 
             var cts = new CancellationTokenSource(5000);
