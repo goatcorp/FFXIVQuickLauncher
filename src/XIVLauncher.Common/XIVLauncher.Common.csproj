@@ -7,10 +7,6 @@
         <Nullable>enable</Nullable>
 
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-
-        <IsWindows Condition="'$(RuntimeIdentifier)' == 'win-x64'">true</IsWindows>
-        <IsOSX Condition="'$(RuntimeIdentifier)' == 'osx-x64'">true</IsOSX>
-        <IsLinux Condition="'$(RuntimeIdentifier)' == 'linux-x64'">true</IsLinux>
     </PropertyGroup>
 
     <PropertyGroup>
