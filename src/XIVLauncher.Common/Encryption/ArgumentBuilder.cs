@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using Serilog;
 using XIVLauncher.Common.Util;
-#if LINUX || OSX
+#if !WINDOWS
 using System.Runtime.InteropServices;
 #endif
 
@@ -96,14 +96,22 @@ namespace XIVLauncher.Common.Encryption
             return BuildEncrypted(key);
         }
 
-#if WIN32
+#if WINDOWS
         private uint GetRawTickCount()
         {
             return (uint)Environment.TickCount;
         }
-#endif
+#elif MACOS // Could be MACCATALYST but not sure
+        private uint GetRawTickCount()
+        {
+            [DllImport("c")]
+            static extern ulong clock_gettime_nsec_np(int clock_id);
 
-#if LINUX
+            const int CLOCK_MONOTONIC_RAW = 4;
+            var rawTickCount = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) / 1000000;
+            return (uint)rawTickCount;
+        }
+#else
         [StructLayout(LayoutKind.Sequential)]
         private struct timespec
         {
@@ -120,18 +128,6 @@ namespace XIVLauncher.Common.Encryption
             timespec ts;
             clock_gettime(CLOCK_MONOTONIC_RAW, out ts);
             var rawTickCount = (ulong)((ts.tv_sec * 1000) + (ts.tv_nsec / 1000000));
-            return (uint)rawTickCount;
-        }
-#endif
-
-#if OSX
-        private uint GetRawTickCount()
-        {
-            [DllImport("c")]
-            static extern ulong clock_gettime_nsec_np(int clock_id);
-
-            const int CLOCK_MONOTONIC_RAW = 4;
-            var rawTickCount = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) / 1000000;
             return (uint)rawTickCount;
         }
 #endif
