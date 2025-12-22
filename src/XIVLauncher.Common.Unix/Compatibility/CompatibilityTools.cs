@@ -4,9 +4,9 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Util;
 
 #if FLATPAK
@@ -88,7 +88,7 @@ public class CompatibilityTools
 
     private async Task DownloadTool(DirectoryInfo tempPath)
     {
-        using var client = new HttpClient();
+        var client = HappyHttpClient.SharedClient;
         var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
 
         await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false)).ConfigureAwait(false);

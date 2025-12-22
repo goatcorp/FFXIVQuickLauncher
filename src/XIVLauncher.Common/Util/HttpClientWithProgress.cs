@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Http.HappyEyeballs;
 
 namespace XIVLauncher.Common.Util;
 
@@ -25,7 +26,7 @@ public class HttpClientDownloadWithProgress : IDisposable
     public async Task Download(TimeSpan? timeout = null)
     {
         timeout ??= TimeSpan.FromDays(1);
-        this.httpClient = new HttpClient { Timeout = timeout.Value };
+        this.httpClient = new HappyHttpClient { Timeout = timeout.Value };
 
         using var response = await this.httpClient.GetAsync(this.downloadUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         await this.DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common.Game.Exceptions;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 using XIVLauncher.Common.Patching.Util;
 using XIVLauncher.Common.PlatformAbstractions;
@@ -142,7 +143,7 @@ namespace XIVLauncher.Common.Game.Patch
         public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, TimeSpan progressUpdateInterval, int maxExpansion, bool external = true)
         {
             this._settings = settings;
-            _client = new HttpClient();
+            _client = new HappyHttpClient();
             ProgressUpdateInterval = progressUpdateInterval;
             _maxExpansionToCheck = maxExpansion;
             _external = external;

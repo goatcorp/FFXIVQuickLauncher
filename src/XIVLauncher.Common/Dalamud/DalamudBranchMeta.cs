@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Http.HappyEyeballs;
 
 namespace XIVLauncher.Common.Dalamud;
 
@@ -55,7 +55,7 @@ public static class DalamudBranchMeta
 
     public static async Task<IEnumerable<Branch>> FetchBranchesAsync()
     {
-        using var client = new HttpClient();
+        var client = HappyHttpClient.SharedClient;
         var json = await client.GetStringAsync("https://kamori.goats.dev/Dalamud/Release/Meta");
         var dict = JsonSerializer.Deserialize<Dictionary<string, Branch>>(json);
         return dict == null ? throw new Exception("Failed to deserialize branch metadata.") : dict.Values;

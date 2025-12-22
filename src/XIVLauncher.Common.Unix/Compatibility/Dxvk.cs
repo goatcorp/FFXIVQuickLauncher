@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Serilog;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Unix.Compatibility;
@@ -32,7 +32,7 @@ public static class Dxvk
 
     private static async Task DownloadDxvk(DirectoryInfo installDirectory)
     {
-        using var client = new HttpClient();
+        var client = HappyHttpClient.SharedClient;
         var tempPath = PlatformHelpers.GetTempFileName();
 
         File.WriteAllBytes(tempPath, await client.GetByteArrayAsync(DXVK_DOWNLOAD));

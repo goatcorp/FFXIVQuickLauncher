@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common.Http.HappyEyeballs;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria.JsonRpc
 {
@@ -18,7 +19,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria.JsonRpc
         public JsonRpcHttpClient(string endpoint)
         {
             _endpoint = endpoint;
-            _client = new HttpClient
+            _client = new HappyHttpClient
             {
                 Timeout = new TimeSpan(0, 5, 0)
             };

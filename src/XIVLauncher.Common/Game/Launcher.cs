@@ -22,6 +22,7 @@ using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Encryption;
 using XIVLauncher.Common.Game.Exceptions;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
 
@@ -46,9 +47,10 @@ public class Launcher
 
         ServicePointManager.Expect100Continue = false;
 
-        var handler = new HttpClientHandler
+        var handler = new SocketsHttpHandler
         {
             UseCookies = false,
+            ConnectCallback = HappyHttpClient.SharedCallback.ConnectCallback
         };
 
         this.client = new HttpClient(handler);

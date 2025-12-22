@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Http.HappyEyeballs;
 
 namespace XIVLauncher.Common.Game
 {
@@ -114,7 +115,7 @@ namespace XIVLauncher.Common.Game
 
         public static async Task<IntegrityCheckData> DownloadIntegrityCheckForVersion(string gameVersion, CancellationToken cancellationToken = default)
         {
-            using var client = new HttpClient();
+            var client = HappyHttpClient.SharedClient;
 
             var request = new HttpRequestMessage(HttpMethod.Get, INTEGRITY_CHECK_BASE_URL + gameVersion + ".json");
             var response = await client.SendAsync(request, cancellationToken);

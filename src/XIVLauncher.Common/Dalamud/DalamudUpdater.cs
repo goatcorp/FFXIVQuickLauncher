@@ -4,13 +4,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
 
@@ -181,10 +181,8 @@ namespace XIVLauncher.Common.Dalamud
 
         private async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(string? betaKind, string? betaKey)
         {
-            using var client = new HttpClient
-            {
-                Timeout = this.defaultTimeout,
-            };
+            using var client = new HappyHttpClient();
+            client.Timeout = this.defaultTimeout;
 
             client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
@@ -510,7 +508,7 @@ namespace XIVLauncher.Common.Dalamud
 
                 try
                 {
-                    using var client = new HttpClient();
+                    var client = HappyHttpClient.SharedClient;
                     runtimeHashes = await client.GetStringAsync($"https://kamori.goats.dev/Dalamud/Release/Runtime/Hashes/{version}").ConfigureAwait(false);
                 }
                 catch (Exception ex)

@@ -16,6 +16,7 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 using XIVLauncher.Common.Patching.ZiPatch;
 using XIVLauncher.Common.Patching.ZiPatch.Util;
@@ -58,10 +59,11 @@ public class IndexUpdateCommand
     private readonly bool noVerifyOldPatchHash;
     private readonly bool noVerifyNewPatchHash;
 
-    private static readonly HttpClient Client = new(new HttpClientHandler
+    private static readonly HttpClient Client = new(new SocketsHttpHandler
     {
         UseCookies = false,
         MaxConnectionsPerServer = 65535,
+        ConnectCallback = HappyHttpClient.SharedCallback.ConnectCallback
     });
 
     private IndexUpdateCommand(ParseResult parseResult)

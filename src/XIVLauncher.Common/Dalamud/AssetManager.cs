@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Dalamud
@@ -44,10 +45,8 @@ namespace XIVLauncher.Common.Dalamud
 
         public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(DalamudUpdater updater, DirectoryInfo baseDir)
         {
-            using var metaClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromMinutes(30),
-            };
+            using var metaClient = new HappyHttpClient();
+            metaClient.Timeout = TimeSpan.FromMinutes(30);
 
             metaClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {

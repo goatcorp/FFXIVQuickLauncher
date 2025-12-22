@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Media;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
@@ -8,6 +7,7 @@ using System.Windows.Media;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Serilog;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
 
@@ -99,7 +99,7 @@ namespace XIVLauncher.Windows
         {
             try
             {
-                using var client = new HttpClient();
+                var client = HappyHttpClient.SharedClient;
                 var response = JsonConvert.DeserializeObject<ReleaseMeta>(await client.GetStringAsync(META_URL));
 
                 var text = _prerelease ? response.PrereleaseVersion?.Changelog : response.ReleaseVersion?.Changelog;

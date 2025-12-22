@@ -16,6 +16,7 @@ using Serilog;
 using Velopack;
 using Velopack.Sources;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows;
 
@@ -158,13 +159,8 @@ namespace XIVLauncher
 
         private static async Task<UpdateResult> LeaseUpdateManager(bool prerelease)
         {
-            using var client = new HttpClient
-            {
-                DefaultRequestHeaders =
-                {
-                    UserAgent = { new ProductInfoHeaderValue("XIVLauncher", AppUtil.GetGitHash()) }
-                }
-            };
+            using var client = new HappyHttpClient();
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("XIVLauncher", AppUtil.GetGitHash()));
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-Track", prerelease ? TRACK_PRERELEASE : TRACK_RELEASE);
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-LV", "0");
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-HaveVersion", AppUtil.GetAssemblyVersion());
@@ -209,7 +205,7 @@ namespace XIVLauncher
             {
                 const string NEWS_URL = "https://gist.githubusercontent.com/goaaats/5968072474f79b066a60854d38b95280/raw/xl-news.txt";
 
-                using var client = new HttpClient();
+                using var client = new HappyHttpClient();
                 client.Timeout = TimeSpan.FromSeconds(10);
 
                 var text = await client.GetStringAsync(NEWS_URL).ConfigureAwait(false);
