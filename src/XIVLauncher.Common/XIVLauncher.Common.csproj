@@ -34,7 +34,7 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>net9.0;netstandard2.0</TargetFrameworks>
+        <TargetFramework>net9.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
