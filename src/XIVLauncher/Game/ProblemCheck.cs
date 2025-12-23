@@ -78,14 +78,6 @@ namespace XIVLauncher.Game
                 Environment.Exit(-1);
             }
 
-            if (!CheckMyGamesWriteAccess())
-            {
-                CustomMessageBox.Show(
-                    Loc.Localize("MyGamesWriteAccessNag",
-                        "You do not have permission to write to the game's My Games folder.\nThis will prevent screenshots and some character data from being saved.\n\nThis may be caused by either your antivirus or a permissions error. Please check your My Games folder permissions."),
-                    "XIVLauncher Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, parentWindow: parentWindow);
-            }
-
             if (App.Settings.GamePath == null)
                 return;
 
@@ -284,64 +276,6 @@ namespace XIVLauncher.Game
             }
 
             process.WaitForExit();
-        }
-
-        private static bool CheckMyGamesWriteAccess()
-        {
-            // Create a randomly-named file in the game's user data folder and make sure we don't
-            // get a permission error.
-            var targetPath = string.Empty;
-            var userPathOverride = string.Empty;
-
-            // I pray we never have to support multiple variable overrides here
-            // Because this one allows spaces
-            if (App.Settings.AdditionalLaunchArgs?.Contains("UserPath=") == true)
-            {
-                userPathOverride = App.Settings.AdditionalLaunchArgs.Split("UserPath=")[1];
-            }
-
-            if (userPathOverride != null && userPathOverride != string.Empty)
-            {
-                // We'll test the folder the user set their override to
-                targetPath = userPathOverride;
-            }
-            else
-            {
-                // We'll test the default location
-                var myGames = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Games");
-                if (!Directory.Exists(myGames))
-                    return true;
-
-                var gameConfigPath = "FINAL FANTASY XIV - A Realm Reborn";
-                targetPath = Path.Combine(myGames, gameConfigPath);
-            }
-
-            if (!Directory.Exists(targetPath)) // FFXIV will make it if possible
-                return true;
-
-            var tempFile = Path.Combine(targetPath, Guid.NewGuid().ToString());
-
-            try
-            {
-                var file = File.Create(tempFile);
-                file.Dispose();
-                File.Delete(tempFile);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return false;
-            }
-            catch (FileNotFoundException)
-            {
-                // we shouldn't ever reach this, but it's useful for testing
-                return false;
-            }
-            catch (Exception)
-            {
-                return true;
-            }
-
-            return true;
         }
 
         private static bool CheckSymlinkValid(FileInfo file)
