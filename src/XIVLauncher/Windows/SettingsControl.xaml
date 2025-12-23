@@ -236,14 +236,6 @@
                               Content="{Binding KeepPatchesLoc}"
                               HorizontalAlignment="Left" Margin="10,10,0,15"
                               Foreground="{DynamicResource MaterialDesignBody}" />
-
-                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 20, 0, 0"
-                               Foreground="{DynamicResource MaterialDesignBody}" Text="{Binding ChoosePatchAcquisitionMethodLoc}" />
-                    <ComboBox SelectedIndex="1" Margin="10, 3, 600, 0" x:Name="PatchAcquisitionComboBox"
-                              Foreground="{DynamicResource MaterialDesignBody}">
-                        <ComboBoxItem>.NET(HTTP)</ComboBoxItem>
-                        <ComboBoxItem>ARIA(HTTP)</ComboBoxItem>
-                    </ComboBox>
                 </StackPanel>
 
             </TabItem>

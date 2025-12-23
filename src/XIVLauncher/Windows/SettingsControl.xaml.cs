@@ -14,7 +14,6 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Addon.Implementations;
 using XIVLauncher.Common.Dalamud;
-using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Support;
 using XIVLauncher.Windows.ViewModel;
@@ -69,7 +68,6 @@ namespace XIVLauncher.Windows
             AddonListView.ItemsSource = App.Settings.AddonList ??= new List<AddonEntry>();
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
-            PatchAcquisitionComboBox.SelectedIndex = (int) App.Settings.PatchAcquisitionMethod.GetValueOrDefault(AcquisitionMethod.Aria);
             AutoStartSteamCheckBox.IsChecked = App.Settings.AutoStartSteam;
 
             // Prevent raising events...
@@ -115,7 +113,6 @@ namespace XIVLauncher.Windows
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
             App.Settings.KeepPatches = KeepPatchesCheckBox.IsChecked == true;
-            App.Settings.PatchAcquisitionMethod = (AcquisitionMethod) PatchAcquisitionComboBox.SelectedIndex;
             App.Settings.AutoStartSteam = AutoStartSteamCheckBox.IsChecked == true;
 
             App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;

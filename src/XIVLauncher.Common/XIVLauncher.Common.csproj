@@ -34,8 +34,6 @@
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFrameworks>net9.0;netstandard2.0</TargetFrameworks>
-        <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
@@ -55,5 +53,9 @@
         <PackageReference Include="System.Text.Json" Version="9.0.2" />
         <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\XIVLauncher.Aria\XIVLauncher.Aria.csproj" />
     </ItemGroup>
 </Project>

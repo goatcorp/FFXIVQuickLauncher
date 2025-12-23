@@ -34,7 +34,6 @@ namespace XIVLauncher.Settings
         bool? HasComplainedAboutGShadeDxgi { get; set; }
         bool? HasComplainedAboutNoOtp { get; set; }
         string LastVersion { get; set; }
-        AcquisitionMethod? PatchAcquisitionMethod { get; set; }
         bool? HasShownAutoLaunchDisclaimer { get; set; }
         string AcceptLanguage { get; set; }
         DpiAwareness? DpiAwareness { get; set; }

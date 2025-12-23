@@ -22,6 +22,7 @@ using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Game.Patch.Acquisition;
+using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
@@ -1068,33 +1069,6 @@ namespace XIVLauncher.Windows.ViewModel
             return TryHandlePatchAsync(Repository.Ffxiv, loginResult.PendingPatches, loginResult.UniqueId);
         }
 
-        private void PatcherOnFail(PatchListEntry patch, string context)
-        {
-            var dlFailureLoc = Loc.Localize("PatchManDlFailure",
-                                            "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\n"
-                                            + "This usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
-            CustomMessageBox.Show(string.Format(dlFailureLoc, context, patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
-        }
-
-        private void InstallerOnFail()
-        {
-            try
-            {
-                // Reset UID cache, we need users to log in again
-                App.UniqueIdCache.Reset();
-            }
-            catch
-            {
-                // ignored
-            }
-
-            CustomMessageBox.Show(
-                Loc.Localize("PatchInstallerInstallFailed", "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher."),
-                "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-            Environment.Exit(0);
-        }
-
         public async Task<Process> StartGameAndAddon(Launcher.LoginResult loginResult, bool isSteam, bool forceNoDalamud, bool noThird, bool noPlugins)
         {
             var dalamudLauncher = new DalamudLauncher(new WindowsDalamudRunner(App.DalamudUpdater.Runtime), App.DalamudUpdater, App.Settings.InGameAddonLoadMethod.GetValueOrDefault(DalamudLoadMethod.DllInject),
@@ -1370,14 +1344,43 @@ namespace XIVLauncher.Windows.ViewModel
                 return false;
 
             using var installer = new PatchInstaller(App.Settings.GamePath, App.Settings.KeepPatches ?? false);
-            var patcher = new PatchManager(App.Settings.PatchAcquisitionMethod ?? AcquisitionMethod.Aria, App.Settings.SpeedLimitBytes,
-                                           repository, pendingPatches, App.Settings.GamePath, App.Settings.PatchPath, installer, this.Launcher, sid);
-            patcher.OnFail += this.PatcherOnFail;
-            installer.OnFail += this.InstallerOnFail;
+            using var acquisition = new AriaPatchAcquisition(new FileInfo(Path.Combine(Paths.RoamingPath, "aria2.log")));
+            var patcher = new PatchManager(acquisition, App.Settings.SpeedLimitBytes,
+                repository, pendingPatches, App.Settings.GamePath, App.Settings.PatchPath, installer, this.Launcher, sid);
+
+            void PatcherOnFail(PatchListEntry patch, string context)
+            {
+                var dlFailureLoc = Loc.Localize("PatchManDlFailure",
+                    "XIVLauncher could not verify the downloaded game files. Please restart and try again.\n\n"
+                    + "This usually indicates a problem with your internet connection.\nIf this error persists, try using a VPN set to Japan.\n\nContext: {0}\n{1}");
+                CustomMessageBox.Show(string.Format(dlFailureLoc, context, patch.VersionId), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
+            }
+
+            void InstallerOnFail()
+            {
+                try
+                {
+                    // Reset UID cache, we need users to log in again
+                    App.UniqueIdCache.Reset();
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                CustomMessageBox.Show(
+                    Loc.Localize("PatchInstallerInstallFailed", "The patch installer ran into an error.\nPlease report this error.\n\nPlease try again or use the official launcher."),
+                    "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                patcher.StartCancellation();
+            }
+
+            patcher.OnFail += PatcherOnFail;
+            installer.OnFail += InstallerOnFail;
 
             Hide();
 
-            PatchDownloadDialog progressDialog = _window.Dispatcher.Invoke(() =>
+            var progressDialog = _window.Dispatcher.Invoke(() =>
             {
                 var d = new PatchDownloadDialog(patcher);
                 if (_window.IsVisible)
@@ -1389,7 +1392,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             try
             {
-                return await patcher.PatchAsync(new FileInfo(Path.Combine(Paths.RoamingPath, "aria2.log"))).ConfigureAwait(false);
+                return await patcher.PatchAsync().ConfigureAwait(false);
             }
             catch (PatchInstallerException ex)
             {

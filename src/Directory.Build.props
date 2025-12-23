@@ -1,7 +1,8 @@
 <!-- Contains required properties for XIVLauncher projects. -->
 <Project>
   <PropertyGroup Label="C#">
-    <LangVersion>8.0</LangVersion>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
       
     <!-- Disable Intel CET. Causes crashes on unpatched Windows 10 systems. -->

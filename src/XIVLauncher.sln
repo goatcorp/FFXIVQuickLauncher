@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common.Windows"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common.Unix", "XIVLauncher.Common.Unix\XIVLauncher.Common.Unix.csproj", "{08CE4E78-7C47-43D6-98CB-68655DEAF66A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Aria", "XIVLauncher.Aria\XIVLauncher.Aria.csproj", "{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,12 @@ Global
 		{08CE4E78-7C47-43D6-98CB-68655DEAF66A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08CE4E78-7C47-43D6-98CB-68655DEAF66A}.ReleaseNoUpdate|Any CPU.ActiveCfg = Debug|Any CPU
 		{08CE4E78-7C47-43D6-98CB-68655DEAF66A}.ReleaseNoUpdate|Any CPU.Build.0 = Debug|Any CPU
+		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.ReleaseNoUpdate|Any CPU.ActiveCfg = Debug|Any CPU
+		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.ReleaseNoUpdate|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

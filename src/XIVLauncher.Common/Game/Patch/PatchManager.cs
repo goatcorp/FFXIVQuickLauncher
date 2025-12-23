@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using XIVLauncher.Common.Game.Patch.Acquisition;
-using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Patching.ZiPatch;
 using XIVLauncher.Common.Util;
@@ -37,7 +36,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         private readonly CancellationTokenSource _cancelTokenSource = new();
 
-        private readonly AcquisitionMethod acquisitionMethod;
+        private readonly IPatchAcquisition acquisition;
         private readonly Repository repo;
         private readonly DirectoryInfo gamePath;
         private readonly DirectoryInfo patchStore;
@@ -49,7 +48,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public readonly IReadOnlyList<PatchDownload> Downloads;
 
-        private long speedLimitBytes;
+        private long speedLimitBps;
 
         public int CurrentInstallIndex { get; private set; }
 
@@ -64,7 +63,7 @@ namespace XIVLauncher.Common.Game.Patch
         public readonly double[] Speeds = new double[MAX_DOWNLOADS_AT_ONCE];
         public readonly PatchDownload?[] Actives = new PatchDownload[MAX_DOWNLOADS_AT_ONCE];
         public readonly SlotState[] Slots = new SlotState[MAX_DOWNLOADS_AT_ONCE];
-        public readonly PatchAcquisition?[] Acquisitions = new PatchAcquisition[MAX_DOWNLOADS_AT_ONCE];
+        public readonly PatchAcquisitionTask?[] AcquisitionTasks = new PatchAcquisitionTask[MAX_DOWNLOADS_AT_ONCE];
 
         public bool IsInstallerBusy { get; private set; }
 
@@ -76,14 +75,14 @@ namespace XIVLauncher.Common.Game.Patch
 
         private bool hasError = false;
 
-        public event Action<PatchListEntry, string> OnFail;
+        public event Action<PatchListEntry, string>? OnFail;
 
-        public PatchManager(AcquisitionMethod acquisitionMethod, long speedLimitBytes, Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, Launcher launcher, string sid)
+        public PatchManager(IPatchAcquisition acquisition, long speedLimitBps, Repository repo, IEnumerable<PatchListEntry> patches, DirectoryInfo gamePath, DirectoryInfo patchStore, PatchInstaller installer, Launcher launcher, string sid)
         {
-            Debug.Assert(patches != null, "patches != null ASSERTION FAILED");
+            Debug.Assert(patches != null);
 
-            this.acquisitionMethod = acquisitionMethod;
-            this.speedLimitBytes = speedLimitBytes;
+            this.acquisition = acquisition;
+            this.speedLimitBps = speedLimitBps;
             this.repo = repo;
             this.gamePath = gamePath;
             this.patchStore = patchStore;
@@ -94,7 +93,7 @@ namespace XIVLauncher.Common.Game.Patch
             if (!this.patchStore.Exists)
                 this.patchStore.Create();
 
-            Downloads = patches.Select(patchListEntry => new PatchDownload {Patch = patchListEntry, State = PatchState.Nothing}).ToList().AsReadOnly();
+            Downloads = patches.Select(patchListEntry => new PatchDownload { Patch = patchListEntry, State = PatchState.Nothing }).ToList().AsReadOnly();
 
             // All dl slots are available at the start
             for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
@@ -103,7 +102,7 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
-        public async Task<bool> PatchAsync(FileInfo aria2LogFile, bool external = true)
+        public async Task<bool> PatchAsync(bool external = true)
         {
             if (!EnvironmentSettings.IsIgnoreSpaceRequirements)
             {
@@ -134,20 +133,13 @@ namespace XIVLauncher.Common.Game.Patch
             this.installer.StartIfNeeded(external);
             this.installer.WaitOnHello();
 
-            await InitializeAcquisition(aria2LogFile).ConfigureAwait(false);
+            await this.acquisition.StartIfNeededAsync(this.speedLimitBps);
 
-            try
+            await Task.WhenAll(new[]
             {
-                await Task.WhenAll(new Task[] {
-                    Task.Run(RunDownloadQueue, _cancelTokenSource.Token),
-                    Task.Run(RunApplyQueue, _cancelTokenSource.Token),
-                }).ConfigureAwait(false);
-            }
-            finally
-            {
-                // Only PatchManager uses Aria (or Torrent), so it's safe to shut it down here.
-                await UnInitializeAcquisition().ConfigureAwait(false);
-            }
+                Task.Run(RunDownloadQueue, _cancelTokenSource.Token),
+                Task.Run(RunApplyQueue, _cancelTokenSource.Token),
+            }).ConfigureAwait(false);
 
             return !this.IsCancelling;
         }
@@ -160,51 +152,8 @@ namespace XIVLauncher.Common.Game.Patch
 
         public async Task SetSpeedLimitAsync(long bytesPerSecond)
         {
-            this.speedLimitBytes = bytesPerSecond;
-
-            switch (this.acquisitionMethod)
-            {
-                case AcquisitionMethod.NetDownloader:
-                    // ignored
-                    break;
-
-                case AcquisitionMethod.Aria:
-                    await AriaHttpPatchAcquisition.SetDownloadSpeedLimit(this.speedLimitBytes);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private async Task InitializeAcquisition(FileInfo aria2LogFile)
-        {
-            // TODO: Come up with a better pattern for initialization. This sucks.
-            switch (this.acquisitionMethod)
-            {
-                case AcquisitionMethod.NetDownloader:
-                    // ignored
-                    break;
-
-                case AcquisitionMethod.Aria:
-                    await AriaHttpPatchAcquisition.InitializeAsync(this.speedLimitBytes, aria2LogFile);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private static async Task UnInitializeAcquisition()
-        {
-            try
-            {
-                await AriaHttpPatchAcquisition.UnInitializeAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Could not uninitialize patch acquisition.");
-            }
+            this.speedLimitBps = bytesPerSecond;
+            await this.acquisition.SetGlobalSpeedLimitAsync(bytesPerSecond);
         }
 
         private async Task DownloadPatchAsync(PatchDownload download, int index)
@@ -212,6 +161,7 @@ namespace XIVLauncher.Common.Game.Patch
             var outFile = GetPatchFile(download.Patch);
 
             var realUrl = download.Patch.Url;
+
             if (this.repo != Repository.Boot && false) // Disabled for now, waiting on SE to patch this
             {
                 realUrl = await this.launcher.GenPatchToken(download.Patch.Url, this.sid);
@@ -229,25 +179,14 @@ namespace XIVLauncher.Common.Game.Patch
                 return;
             }
 
-            PatchAcquisition acquisition;
-
-            switch (this.acquisitionMethod)
-            {
-                case AcquisitionMethod.Aria:
-                    acquisition = new AriaHttpPatchAcquisition();
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            acquisition.ProgressChanged += (sender, args) =>
+            var acquisitionTask = this.acquisition.MakeTask(realUrl, outFile);
+            acquisitionTask.ProgressChanged += (_, args) =>
             {
                 Progresses[index] = args.Progress;
                 Speeds[index] = args.BytesPerSecondSpeed;
             };
 
-            acquisition.Complete += (sender, args) =>
+            acquisitionTask.Complete += (_, args) =>
             {
                 void HandleError(string context)
                 {
@@ -258,20 +197,6 @@ namespace XIVLauncher.Common.Game.Patch
 
                     CancelAllDownloads();
                     OnFail?.Invoke(download.Patch, context);
-
-                    Task.Run(async () => await UnInitializeAcquisition(), new CancellationTokenSource(5000).Token).GetAwaiter().GetResult();
-
-                    try
-                    {
-                        outFile.Delete();
-                    }
-                    catch (Exception ex)
-                    {
-                        // This is fine. We will catch it next try.
-                        Log.Error(ex, "Could not delete patch file");
-                    }
-
-                    Environment.Exit(0);
                 }
 
                 if (args == AcquisitionResult.Error)
@@ -315,23 +240,23 @@ namespace XIVLauncher.Common.Game.Patch
                 this.downloadFinalizationLock.ReleaseMutex();
             };
 
-            this.Acquisitions[index] = acquisition;
+            this.AcquisitionTasks[index] = acquisitionTask;
 
-            await acquisition.StartDownloadAsync(realUrl, outFile);
+            await acquisitionTask.StartAsync();
         }
 
         private void CancelAllDownloads()
         {
-            foreach (var downloadService in this.Acquisitions)
+            foreach (var task in this.AcquisitionTasks)
             {
-                if (downloadService == null)
+                if (task == null)
                     continue;
 
                 try
                 {
                     Task.Run(async () =>
                     {
-                        await downloadService.CancelAsync();
+                        await task.CancelAsync();
                     }, new CancellationTokenSource(5000).Token).GetAwaiter().GetResult();
                     Thread.Sleep(200);
                 }
@@ -386,25 +311,18 @@ namespace XIVLauncher.Common.Game.Patch
 
         private void CheckIsDone()
         {
-            Log.Information("CheckIsDone!!");
-
             if (!Downloads.Any(x => x.State is PatchState.Nothing or PatchState.IsDownloading))
             {
                 Log.Information("All patches downloaded.");
 
                 DownloadsDone = true;
 
-                for (var j = 0; j < Progresses.Length; j++)
+                for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
                 {
-                    Progresses[j] = 0;
+                    Slots[i] = SlotState.Done;
+                    Progresses[i] = 0;
+                    Speeds[i] = 0;
                 }
-
-                for (var j = 0; j < Speeds.Length; j++)
-                {
-                    Speeds[j] = 0;
-                }
-
-                return;
             }
         }
 
@@ -512,12 +430,12 @@ namespace XIVLauncher.Common.Game.Patch
                 return HashCheckResult.BadLength;
             }
 
-            var parts = (int) Math.Ceiling((double) patchListEntry.Length / patchListEntry.HashBlockSize);
+            var parts = (int)Math.Ceiling((double)patchListEntry.Length / patchListEntry.HashBlockSize);
             var block = new byte[patchListEntry.HashBlockSize];
 
             for (var i = 0; i < parts; i++)
             {
-                var read = stream.Read(block, 0, (int) patchListEntry.HashBlockSize);
+                var read = stream.Read(block, 0, (int)patchListEntry.HashBlockSize);
 
                 if (read < patchListEntry.HashBlockSize)
                 {
@@ -526,7 +444,7 @@ namespace XIVLauncher.Common.Game.Patch
                     block = trimmedBlock;
                 }
 
-                using var sha1 = new SHA1Managed();
+                using var sha1 = SHA1.Create();
 
                 var hash = sha1.ComputeHash(block);
                 var sb = new StringBuilder(hash.Length * 2);
@@ -548,12 +466,13 @@ namespace XIVLauncher.Common.Game.Patch
         private FileInfo GetPatchFile(PatchListEntry patch)
         {
             var file = new FileInfo(Path.Combine(this.patchStore.FullName, patch.GetFilePath()));
-            file.Directory.Create();
+            file.Directory!.Create();
 
             return file;
         }
 
         private long GetDownloadLength() => GetDownloadLength(Downloads.Count);
 
-        private long GetDownloadLength(int takeAmount) => Downloads.Take(takeAmount).Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();    }
+        private long GetDownloadLength(int takeAmount) => Downloads.Take(takeAmount).Where(x => x.State == PatchState.Nothing || x.State == PatchState.IsDownloading).Sum(x => x.Patch.Length) - Progresses.Sum();
+    }
 }

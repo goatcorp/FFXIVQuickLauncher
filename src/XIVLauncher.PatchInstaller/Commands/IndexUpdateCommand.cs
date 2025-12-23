@@ -437,7 +437,6 @@ public class IndexUpdateCommand
         public bool? KeepPatches => true;
         public DirectoryInfo PatchPath { get; }
         public DirectoryInfo GamePath => this.PatchPath;
-        public AcquisitionMethod? PatchAcquisitionMethod => AcquisitionMethod.NetDownloader;
         public long SpeedLimitBytes { get; set; }
         public int DalamudInjectionDelayMs => 0;
     }

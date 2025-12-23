@@ -64,22 +64,22 @@ namespace XIVLauncher.Common.Tests
             Assert.AreEqual("ffxiv", testPatch.GetRepoName());
         }
 
-        private async Task TestPatchDownload(PatchAcquisition acquisition)
+        private async Task TestPatchDownload(PatchAcquisitionTask acquisitionTask)
         {
             var completeSignal = new ManualResetEvent(false);
 
-            acquisition.Complete += (sender, args) =>
+            acquisitionTask.Complete += (sender, args) =>
             {
-                Debug.WriteLine($"[{acquisition.GetType().FullName}] Download completed!");
+                Debug.WriteLine($"[{acquisitionTask.GetType().FullName}] Download completed!");
                 completeSignal.Set();
             };
 
-            acquisition.ProgressChanged += (sender, progress) =>
+            acquisitionTask.ProgressChanged += (sender, progress) =>
             {
-                Debug.WriteLine($"[{acquisition.GetType().FullName}] recv: {progress.Progress} - speed: {MathHelpers.BytesToString(progress.BytesPerSecondSpeed)}");
+                Debug.WriteLine($"[{acquisitionTask.GetType().FullName}] recv: {progress.Progress} - speed: {MathHelpers.BytesToString(progress.BytesPerSecondSpeed)}");
             };
 
-            await acquisition.StartDownloadAsync(testPatch.Url, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch")));
+            await acquisitionTask.StartAsync();
 
             completeSignal.WaitOne();
         }
@@ -87,8 +87,9 @@ namespace XIVLauncher.Common.Tests
         [TestMethod]
         public async Task TestAriaDownload()
         {
-            await AriaHttpPatchAcquisition.InitializeAsync(0, new FileInfo("aria2.log"));
-            await TestPatchDownload(new AriaHttpPatchAcquisition());
+            var acquisition = new AriaPatchAcquisition(new FileInfo("aria2.log"));
+            await acquisition.StartIfNeededAsync(0);
+            await TestPatchDownload(acquisition.MakeTask(testPatch.Url, new FileInfo(Path.Combine(Environment.CurrentDirectory, "a.patch"))));
         }
     }
 }

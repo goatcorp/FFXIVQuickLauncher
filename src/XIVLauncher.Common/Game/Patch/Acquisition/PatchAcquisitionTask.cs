@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition
 {
-    public abstract class PatchAcquisition
+    public abstract class PatchAcquisitionTask
     {
-        public abstract Task StartDownloadAsync(string url, FileInfo outFile);
+        public abstract Task StartAsync();
         public abstract Task CancelAsync();
 
         public event EventHandler<AcquisitionProgress> ProgressChanged;
