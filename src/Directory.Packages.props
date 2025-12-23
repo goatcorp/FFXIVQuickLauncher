@@ -1,0 +1,40 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="CommandLineParser" Version="2.9.1" />
+        <PackageVersion Include="AdysTech.CredentialManager" Version="1.8.0" />
+        <PackageVersion Include="CheapLoc" Version="1.1.6" />
+        <PackageVersion Include="Config.Net.Json" Version="4.14.23" />
+        <PackageVersion Include="Dragablz" Version="0.0.3.234" />
+        <PackageVersion Include="Extended.Wpf.Toolkit" Version="4.7.25103.5738" />
+        <PackageVersion Include="MaterialDesignThemes" Version="5.2.1" />
+        <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageVersion Include="Serilog" Version="4.2.0" />
+        <PackageVersion Include="Serilog.Sinks.Async" Version="2.1.0" />
+        <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
+        <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+        <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageVersion Include="Serilog.Enrichers.Sensitive" Version="1.7.3" />
+        <PackageVersion Include="System.Collections.Immutable" Version="9.0.2" />
+        <PackageVersion Include="System.Drawing.Common" Version="9.0.2" />
+        <PackageVersion Include="System.Text.Encodings.Web" Version="9.0.2" />
+        <PackageVersion Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+        <PackageVersion Include="System.Threading.Channels" Version="9.0.2" />
+        <PackageVersion Include="System.Text.Json" Version="9.0.2" />
+        <PackageVersion Include="System.Memory" Version="4.6.0" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
+        <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
+        <PackageVersion Include="Velopack" Version="0.0.1298" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+        <PackageVersion Include="MSTest.TestAdapter" Version="3.8.2" />
+        <PackageVersion Include="MSTest.TestFramework" Version="3.8.2" />
+        <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+        <PackageVersion Include="goaaats.Steamworks" Version="2.3.4" />
+        <PackageVersion Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+        <PackageVersion Include="PInvoke.Kernel32" Version="0.7.124" />
+        <PackageVersion Include="SharedMemory" Version="2.3.2" />
+    </ItemGroup>
+</Project>

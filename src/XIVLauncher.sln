@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		XIVLauncher.sln.DotSettings = XIVLauncher.sln.DotSettings
 		CodeAnalysis\xl.ruleset = CodeAnalysis\xl.ruleset
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common.Tests", "XIVLauncher.Common.Tests\XIVLauncher.Common.Tests.csproj", "{FE0EAE21-4812-4565-8766-856AE9F9E99B}"

@@ -36,12 +36,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+        <PackageReference Include="Microsoft.Win32.Registry" />
 
-        <!-- Custom steamworks, based on the chippy branch of Facepunch.Steamworks -->
-        <PackageReference Include="goaaats.Steamworks" Version="2.3.4" />
-        <PackageReference Include="PInvoke.Kernel32" Version="0.7.124" />
-        <PackageReference Update="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
-        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" />
+        <PackageReference Include="goaaats.Steamworks" />
+        <PackageReference Include="PInvoke.Kernel32" />
     </ItemGroup>
 </Project>
