@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -61,6 +62,8 @@ namespace XIVLauncher
 
             [CommandLine.Option("clientlang", Required = false, HelpText = "Client language to use.")]
             public ClientLanguage? ClientLanguage { get; set; }
+            [CommandLine.Option("ignore-elevated", Required = false, HelpText = "Ignore elevated check.")]
+            public bool IgnoreElevated { get; set; }
 
             // We don't care about these, just need it so that the parser doesn't error
             [CommandLine.Option("squirrel-updated", Hidden = true)]
@@ -323,6 +326,21 @@ namespace XIVLauncher
                 }
 
                 CommandLine = result.Value ?? new CmdLineOptions();
+
+                // Check if running elevated
+                if ((new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator))
+                {
+                    if (CommandLine.IgnoreElevated)
+                    {
+                        Log.Warning("XIVLauncher is running elevated, but the user has chosen to ignore this.");
+                    } else
+                    {
+                        Log.Fatal("XIVLauncher should not be run elevated. Please run normally.");
+                        MessageBox.Show("XIVLauncher should not be run elevated. Please run normally.", "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Environment.Exit(0);
+                        return;
+                    }
+                }
 
                 if (!string.IsNullOrEmpty(CommandLine.RoamingPath))
                 {
