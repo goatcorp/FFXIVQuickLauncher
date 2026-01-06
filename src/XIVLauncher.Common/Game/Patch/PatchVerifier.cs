@@ -15,7 +15,6 @@ using Serilog;
 using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 using XIVLauncher.Common.Patching.Util;
-using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Game.Patch
@@ -43,7 +42,8 @@ namespace XIVLauncher.Common.Game.Patch
             new Regex(@"^repair_recycler/.*$", RegexOptions.IgnoreCase),
         };
 
-        private readonly ISettings _settings;
+        private readonly DirectoryInfo _gamePath;
+        private readonly DirectoryInfo _patchPath;
         private readonly int _maxExpansionToCheck;
         private readonly bool _external;
         private HttpClient _client;
@@ -139,11 +139,12 @@ namespace XIVLauncher.Common.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
 
-        public PatchVerifier(ISettings settings, Launcher.LoginResult loginResult, TimeSpan progressUpdateInterval, int maxExpansion, bool external = true)
+        public PatchVerifier(DirectoryInfo gamePath, DirectoryInfo patchPath, Launcher.LoginResult loginResult, TimeSpan progressUpdateInterval, int maxExpansion, bool external = true)
         {
-            this._settings = settings;
             _client = new HttpClient();
             ProgressUpdateInterval = progressUpdateInterval;
+            _gamePath = gamePath;
+            this._patchPath = patchPath;
             _maxExpansionToCheck = maxExpansion;
             _external = external;
             _currentLoginResult = loginResult;
@@ -196,7 +197,7 @@ namespace XIVLauncher.Common.Game.Patch
 
                 _patchSources.Add($"{repoName}:{Path.GetFileName(patch.GetFilePath())}", new PatchSource()
                 {
-                    FileInfo = new FileInfo(Path.Combine(_settings.PatchPath.FullName, patch.GetFilePath())),
+                    FileInfo = new FileInfo(Path.Combine(this._patchPath.FullName, patch.GetFilePath())),
                     Uri = new Uri(patch.Url),
                 });
             }
@@ -296,7 +297,7 @@ namespace XIVLauncher.Common.Game.Patch
             LastException = null;
             IIndexedZiPatchIndexInstaller indexedZiPatchIndexInstaller = null;
 
-            var needElevation = PlatformHelpers.IsElevationRequiredForWrite(_settings.GamePath);
+            var needElevation = PlatformHelpers.IsElevationRequiredForWrite(_gamePath);
 
             try
             {
@@ -355,8 +356,8 @@ namespace XIVLauncher.Common.Game.Patch
 
                             HashSet<string> targetRelativePaths = new();
 
-                            var bootPath = Path.Combine(_settings.GamePath.FullName, "boot");
-                            var gamePath = Path.Combine(_settings.GamePath.FullName, "game");
+                            var bootPath = Path.Combine(_gamePath.FullName, "boot");
+                            var gamePath = Path.Combine(_gamePath.FullName, "game");
 
                             foreach (var meta in _repoMetaPaths)
                             {
@@ -566,7 +567,7 @@ namespace XIVLauncher.Common.Game.Patch
             Total = 32 * 1048576;
             Progress = 0;
 
-            var version = repo.GetVer(_settings.GamePath);
+            var version = repo.GetVer(_gamePath);
 
             // TODO: We should not assume that this always has a "D". We should just store them by the patchlist VersionId instead.
             var repoShorthand = repo == Repository.Ffxiv ? "game" : repo.ToString().ToLower();

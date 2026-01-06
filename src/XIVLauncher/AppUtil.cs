@@ -11,7 +11,6 @@ using XIVLauncher.Common;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
-using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Windows;
 
 namespace XIVLauncher
@@ -179,7 +178,7 @@ namespace XIVLauncher
                 while (true)
                 {
                     using var restartManager = new WindowsRestartManager();
-                    restartManager.Register(files: PatchVerifier.GetRelevantFiles(Path.Combine(CommonSettings.Instance.GamePath.FullName, "game")));
+                    restartManager.Register(files: PatchVerifier.GetRelevantFiles(Path.Combine(App.Settings.GamePath.FullName, "game")));
                     List<WindowsRestartManager.RmProcessInfo> programs = restartManager.GetInterferingProcesses(out _);
 
                     if (!programs.Any())

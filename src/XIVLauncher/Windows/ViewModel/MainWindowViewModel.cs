@@ -27,7 +27,6 @@ using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Game;
-using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;
 using XIVLauncher.Xaml;
 
@@ -82,8 +81,8 @@ namespace XIVLauncher.Windows.ViewModel
 #endif
 
             Launcher = App.GlobalSteamTicket == null
-                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, frontierUrl)
-                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, frontierUrl);
+                ? new(App.Steam, App.UniqueIdCache, frontierUrl, App.Settings.AcceptLanguage)
+                : new(App.GlobalSteamTicket, App.UniqueIdCache, frontierUrl, App.Settings.AcceptLanguage);
 
             // Tried and failed to get this from the theme
             var worldStatusBrushOk = new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xf3));
@@ -439,20 +438,20 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 if (action == AfterLoginAction.Repair)
-                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
-                else
-                    return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false), App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ConfigureAwait(false);
+
+                return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false), App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "StartGame failed... (LoginStatus={0})", loginStatus);
 
                 var msgbox = new CustomMessageBox.Builder()
-                             .WithCaption(Loc.Localize("LoginNoOauthTitle", "Login issue"))
-                             .WithImage(MessageBoxImage.Error)
-                             .WithShowHelpLinks(true)
-                             .WithShowDiscordLink(true)
-                             .WithParentWindow(_window);
+                    .WithCaption(Loc.Localize("LoginNoOauthTitle", "Login issue"))
+                    .WithImage(MessageBoxImage.Error)
+                    .WithShowHelpLinks(true)
+                    .WithShowDiscordLink(true)
+                    .WithParentWindow(_window);
 
                 bool disableAutoLogin = false;
 
@@ -930,7 +929,7 @@ namespace XIVLauncher.Windows.ViewModel
                     }))
                     return false;
 
-                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
+                using var verify = new PatchVerifier(App.Settings.GamePath, App.Settings.PatchPath, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
 
                 Hide();
                 IsEnabled = false;

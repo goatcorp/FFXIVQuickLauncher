@@ -1,5 +1,3 @@
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,11 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-
-#if NET6_0_OR_GREATER && !WIN32
-using System.Net.Security;
-#endif
-
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -32,19 +25,17 @@ public class Launcher
     private readonly ISteam? steam;
     private readonly byte[]? overriddenSteamTicket;
     private readonly IUniqueIdCache uniqueIdCache;
-    private readonly ISettings settings;
     private readonly HttpClient client;
     private readonly string frontierUrlTemplate;
+    private readonly string acceptLanguage;
 
-    public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, ISettings settings, string frontierUrl)
+    public Launcher(ISteam? steam, IUniqueIdCache uniqueIdCache, string frontierUrl, string acceptLanguage)
     {
         this.steam = steam;
         this.uniqueIdCache = uniqueIdCache;
-        this.settings = settings;
 
         this.frontierUrlTemplate = frontierUrl ?? throw new Exception("Frontier URL template is null, this is now required");
-
-        ServicePointManager.Expect100Continue = false;
+        this.acceptLanguage = acceptLanguage;
 
         var handler = new HttpClientHandler
         {
@@ -54,8 +45,8 @@ public class Launcher
         this.client = new HttpClient(handler);
     }
 
-    public Launcher(byte[] overriddenSteamTicket, IUniqueIdCache uniqueIdCache, ISettings settings, string frontierUrl)
-        : this(steam: null, uniqueIdCache, settings, frontierUrl)
+    public Launcher(byte[] overriddenSteamTicket, IUniqueIdCache uniqueIdCache, string frontierUrl, string acceptLanguage)
+        : this(steam: null, uniqueIdCache, frontierUrl, acceptLanguage)
     {
         this.overriddenSteamTicket = overriddenSteamTicket;
     }
@@ -90,7 +81,7 @@ public class Launcher
         public string? UniqueId { get; set; }
     }
 
-    public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial)
+    public async Task<LoginResult> Login(string userName, string password, string otp, bool isSteam, bool useCache, DirectoryInfo gamePath, bool forceBaseVersion, bool isFreeTrial, ClientLanguage language)
     {
         string? uid;
         var pendingPatches = Array.Empty<PatchListEntry>();
@@ -164,13 +155,13 @@ public class Launcher
 
         if (!useCache || !this.uniqueIdCache.TryGet(userName, out var cached))
         {
-            oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket);
+            oauthLoginResult = await OauthLogin(userName, password, otp, isFreeTrial, isSteam, 3, steamTicket, language);
 
             Log.Information("OAuth login successful - playable:{IsPlayable} terms:{TermsAccepted} region:{Region} ex:{MaxExpansion}",
-                            oauthLoginResult.Playable,
-                            oauthLoginResult.TermsAccepted,
-                            oauthLoginResult.Region,
-                            oauthLoginResult.MaxExpansion);
+                oauthLoginResult.Playable,
+                oauthLoginResult.TermsAccepted,
+                oauthLoginResult.Region,
+                oauthLoginResult.MaxExpansion);
 
             if (!oauthLoginResult.Playable)
             {
@@ -469,14 +460,14 @@ public class Launcher
         return await resp.Content.ReadAsStringAsync();
     }
 
-    private async Task<(string Stored, string? SteamLinkedId)> GetOauthTop(string url, bool isSteam)
+    private async Task<(string Stored, string? SteamLinkedId)> GetOauthTop(string url, bool isSteam, ClientLanguage language)
     {
         // This is needed to be able to access the login site correctly
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-        request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(this.settings.ClientLanguage.GetValueOrDefault(ClientLanguage.English)));
+        request.Headers.AddWithoutValidation("Referer", GenerateFrontierReferer(language));
         request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
+        request.Headers.AddWithoutValidation("Accept-Language", this.acceptLanguage);
         request.Headers.AddWithoutValidation("User-Agent", this.userAgent);
         request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
         request.Headers.AddWithoutValidation("Cookie", "_rsid=\"\"");
@@ -552,20 +543,20 @@ public class Launcher
         return url;
     }
 
-    private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket)
+    private async Task<OauthLoginResult> OauthLogin(string userName, string password, string otp, bool isFreeTrial, bool isSteam, int region, Ticket? steamTicket, ClientLanguage language)
     {
         if (isSteam && steamTicket == null)
             throw new ArgumentNullException(nameof(steamTicket), "isSteam, but steamTicket == null");
 
         var topUrl = GetOauthTopUrl(region, isFreeTrial, isSteam, steamTicket);
-        var topResult = await GetOauthTop(topUrl, isSteam);
+        var topResult = await GetOauthTop(topUrl, isSteam, language);
 
         var request = new HttpRequestMessage(HttpMethod.Post,
-                                             "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
+            "https://ffxiv-login.square-enix.com/oauth/ffxivarr/login/login.send");
 
         request.Headers.AddWithoutValidation("Accept", "image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
         request.Headers.AddWithoutValidation("Referer", topUrl);
-        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
+        request.Headers.AddWithoutValidation("Accept-Language", this.acceptLanguage);
         request.Headers.AddWithoutValidation("User-Agent", this.userAgent);
         //request.Headers.AddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
         request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
@@ -691,7 +682,7 @@ public class Launcher
         }
 
         request.Headers.AddWithoutValidation("Accept-Encoding", "gzip, deflate");
-        request.Headers.AddWithoutValidation("Accept-Language", this.settings.AcceptLanguage);
+        request.Headers.AddWithoutValidation("Accept-Language", this.acceptLanguage);
 
         request.Headers.AddWithoutValidation("Origin", "https://launcher.finalfantasyxiv.com");
 
