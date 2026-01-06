@@ -3,7 +3,7 @@ using System.IO;
 
 namespace XIVLauncher.Common
 {
-    public class Paths
+    public static class Paths
     {
         static Paths()
         {

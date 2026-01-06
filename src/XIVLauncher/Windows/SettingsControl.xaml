@@ -239,6 +239,40 @@
                 </StackPanel>
 
             </TabItem>
+            <TabItem Header="Backup">
+                <Grid>
+                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="600">
+                            <TextBlock Text="Backup and restore your launcher settings, plugins and plugin settings." 
+                                       HorizontalAlignment="Center" TextAlignment="Center"
+                                       Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,5" />
+                            <TextBlock Text="Some data for plugins that store files externally may not be included in this backup." 
+                                       HorizontalAlignment="Center" TextAlignment="Center"
+                                       Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,20" />
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="200" Height="120" Margin="0,0,20,0" Click="CreateBackup_OnClick">
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <materialDesign:PackIcon Kind="Upload" Height="48" Width="48" />
+                                        <TextBlock Text="Create" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="200" Height="120" Click="RestoreBackup_OnClick">
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <materialDesign:PackIcon Kind="Download" Height="48" Width="48" />
+                                        <TextBlock Text="Restore" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                            <CheckBox x:Name="BackupIncludeGameSettingsCheckBox" Margin="0,20,0,0" HorizontalAlignment="Center"
+                                      Foreground="{DynamicResource MaterialDesignBody}"
+                                      Content="Also include game settings and character files" ToolTip="Include game settings and character files in the backup."/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
             <TabItem Header="{Binding SettingsAboutLoc}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid>

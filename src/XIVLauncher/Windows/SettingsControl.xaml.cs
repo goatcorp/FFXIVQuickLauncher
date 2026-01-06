@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using CheapLoc;
 using MaterialDesignThemes.Wpf.Transitions;
+using Microsoft.Win32;
 using Serilog;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common;
@@ -456,6 +457,83 @@ namespace XIVLauncher.Windows
         {
             var asw = new AdvancedSettingsWindow();
             asw.ShowDialog();
+        }
+
+        public static DirectoryInfo GetGameUserDirectory()
+        {
+            var argumentPath = App.Settings.AdditionalLaunchArgs;
+
+            if (string.IsNullOrEmpty(argumentPath) || !argumentPath.Contains("UserPath="))
+            {
+                var myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var savedGames = Path.Combine(myDocuments, "My Games");
+                var defaultPath = Path.Combine(savedGames, "FINAL FANTASY XIV - A Realm Reborn");
+
+                return new DirectoryInfo(defaultPath);
+            }
+
+            var userPath = argumentPath.Split("UserPath=")[1].Trim('"');
+            return new DirectoryInfo(userPath);
+        }
+
+        private void CreateBackup_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog();
+            var parent = Window.GetWindow(this);
+
+            dlg.Multiselect = false;
+            dlg.Title = "Select a location to save the backup file";
+            dlg.Filter = $"XIVLauncher Backup File (*{Backup.BackupExtension})|*{Backup.BackupExtension}";
+            dlg.ValidateNames = false;
+            dlg.CheckFileExists = false;
+            dlg.CheckPathExists = true;
+            dlg.FileName = $"xiv_{DateTime.Now:M_d_yy_HH_MM}" + Backup.BackupExtension;
+
+            if (!dlg.ShowDialog(parent).GetValueOrDefault(false))
+                return;
+
+            Backup.CreateBackup(
+                new DirectoryInfo(Paths.RoamingPath),
+                this.BackupIncludeGameSettingsCheckBox.IsChecked == true ? GetGameUserDirectory() : null,
+                new FileInfo(dlg.FileName));
+        }
+
+        private void RestoreBackup_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog();
+            var parent = Window.GetWindow(this);
+
+            dlg.Multiselect = false;
+            dlg.Title = "Select a backup to import";
+            dlg.Filter = $"XIVLauncher Backup File (*{Backup.BackupExtension})|*{Backup.BackupExtension}";
+            dlg.ValidateNames = true;
+            dlg.CheckFileExists = true;
+            dlg.CheckPathExists = true;
+
+            if (dlg.ShowDialog(parent) != true)
+                return;
+
+            var doRestoreUserFiles = false;
+
+            if (Backup.BackupHasUserFiles(new FileInfo(dlg.FileName)))
+            {
+                var result = CustomMessageBox.Builder
+                    .NewFrom(Loc.Localize("BackupRestoreUserFilesPrompt", "This backup contains game and character settings files.\nDo you want to restore them as well?"))
+                    .WithButtons(MessageBoxButton.YesNoCancel)
+                    .WithImage(MessageBoxImage.Question)
+                    .WithParentWindow(parent)
+                    .Show();
+
+                if (result == MessageBoxResult.Cancel)
+                    return;
+
+                doRestoreUserFiles = result == MessageBoxResult.Yes;
+            }
+
+            Backup.RestoreBackup(
+                new DirectoryInfo(Paths.RoamingPath),
+                doRestoreUserFiles ? GetGameUserDirectory() : null,
+                new FileInfo(dlg.FileName));
         }
     }
 }
