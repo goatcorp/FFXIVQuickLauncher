@@ -31,11 +31,11 @@ public class UnixDalamudRunner : IDalamudRunner
         Parallel.Invoke(
             () => { gameExePath = compatibility.UnixToWinePath(gameExe.FullName); },
             () => { dotnetRuntimePath = compatibility.UnixToWinePath(dotnetRuntime.FullName); },
-            () => { startInfo.LoggingPath = compatibility.UnixToWinePath(startInfo.LoggingPath); },
-            () => { startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory); },
-            () => { startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath); },
-            () => { startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory); },
-            () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory); }
+            () => { startInfo.LoggingPath = compatibility.UnixToWinePath(startInfo.LoggingPath) ?? throw new Exception("Invalid logging path"); },
+            () => { startInfo.WorkingDirectory = compatibility.UnixToWinePath(startInfo.WorkingDirectory) ?? throw new Exception("Invalid working directory"); },
+            () => { startInfo.ConfigurationPath = compatibility.UnixToWinePath(startInfo.ConfigurationPath) ?? throw new Exception("Invalid config path"); },
+            () => { startInfo.PluginDirectory = compatibility.UnixToWinePath(startInfo.PluginDirectory) ?? throw new Exception("Invalid plugin directory"); },
+            () => { startInfo.AssetDirectory = compatibility.UnixToWinePath(startInfo.AssetDirectory) ?? throw new Exception("Invalid asset directory"); }
         );
 
         environment.Add("DALAMUD_RUNTIME", dotnetRuntimePath);
@@ -73,27 +73,26 @@ public class UnixDalamudRunner : IDalamudRunner
         launchArguments.Add(gameArgs);
 
         var dalamudProcess = compatibility.RunInPrefix(string.Join(" ", launchArguments), environment: environment, redirectOutput: true, writeLog: true);
-        var output = dalamudProcess.StandardOutput.ReadLine();
+        var dalamudOutput = dalamudProcess.StandardOutput.ReadLine();
 
-        if (output == null)
+        if (dalamudOutput == null)
             throw new DalamudRunnerException("An internal Dalamud error has occured");
 
-        Console.WriteLine(output);
+        Log.Information("[DALAMUD] {Log}", dalamudOutput);
 
         new Thread(() =>
         {
             while (!dalamudProcess.StandardOutput.EndOfStream)
             {
-                var output = dalamudProcess.StandardOutput.ReadLine();
-                if (output != null)
-                    Console.WriteLine(output);
+                var logOutput = dalamudProcess.StandardOutput.ReadLine();
+                if (logOutput != null)
+                    Log.Information("[DALAMUD] {Log}", logOutput);
             }
-
         }).Start();
 
         try
         {
-            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
+            var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(dalamudOutput) ?? throw new Exception("Deserialized Dalamud output was null");
             var unixPid = compatibility.GetUnixProcessId(dalamudConsoleOutput.Pid);
 
             if (unixPid == 0)
@@ -108,7 +107,7 @@ public class UnixDalamudRunner : IDalamudRunner
         }
         catch (JsonReaderException ex)
         {
-            Log.Error(ex, $"Couldn't parse Dalamud output: {output}");
+            Log.Error(ex, $"Couldn't parse Dalamud output: {dalamudOutput}");
             return null;
         }
     }

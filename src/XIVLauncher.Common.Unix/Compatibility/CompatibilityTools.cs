@@ -116,7 +116,7 @@ public class CompatibilityTools
         RunInPrefix("cmd /c dir %userprofile%/Documents > nul").WaitForExit();
     }
 
-    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
+    public Process RunInPrefix(string command, string workingDirectory = "", IDictionary<string, string>? environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
         var psi = new ProcessStartInfo(Wine64Path);
         psi.Arguments = command;
@@ -125,7 +125,7 @@ public class CompatibilityTools
         return RunInPrefix(psi, workingDirectory, environment, redirectOutput, writeLog, wineD3D);
     }
 
-    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string> environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
+    public Process RunInPrefix(string[] args, string workingDirectory = "", IDictionary<string, string>? environment = null, bool redirectOutput = false, bool writeLog = false, bool wineD3D = false)
     {
         var psi = new ProcessStartInfo(Wine64Path);
         foreach (var arg in args)
@@ -149,7 +149,7 @@ public class CompatibilityTools
         }
     }
 
-    private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string> environment, bool redirectOutput, bool writeLog, bool wineD3D)
+    private Process RunInPrefix(ProcessStartInfo psi, string workingDirectory, IDictionary<string, string>? environment, bool redirectOutput, bool writeLog, bool wineD3D)
     {
         psi.RedirectStandardOutput = redirectOutput;
         psi.RedirectStandardError = writeLog;
@@ -176,9 +176,9 @@ public class CompatibilityTools
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        if (this.gamemodeOn == true && !ldPreload.Contains("libgamemodeauto.so.0"))
+        if (this.gamemodeOn && !ldPreload.Contains("libgamemodeauto.so.0"))
         {
-            ldPreload = ldPreload.Equals("") ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
+            ldPreload = string.IsNullOrWhiteSpace(ldPreload) ? "libgamemodeauto.so.0" : ldPreload + ":libgamemodeauto.so.0";
         }
 
         wineEnviromentVariables.Add("DXVK_HUD", dxvkHud);
@@ -189,7 +189,7 @@ public class CompatibilityTools
         wineEnviromentVariables.Add("LD_PRELOAD", ldPreload);
 
         MergeDictionaries(psi.EnvironmentVariables, wineEnviromentVariables);
-        MergeDictionaries(psi.EnvironmentVariables, environment);
+        MergeDictionaries(psi.EnvironmentVariables, environment ?? new Dictionary<string, string>());
 
 #if FLATPAK_NOTRIGHTNOW
         psi.FileName = "flatpak-spawn";
@@ -259,13 +259,13 @@ public class CompatibilityTools
         var output = wineDbg.StandardOutput.ReadToEnd();
         if (output.Contains("syntax error\n"))
             return 0;
-        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(
-            l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
+
+        var matchingLines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries).Skip(1).Where(l => int.Parse(l.Substring(1, 8), System.Globalization.NumberStyles.HexNumber) == winePid);
         var unixPids = matchingLines.Select(l => int.Parse(l.Substring(10, 8), System.Globalization.NumberStyles.HexNumber)).ToArray();
         return unixPids.FirstOrDefault();
     }
 
-    public string UnixToWinePath(string unixPath)
+    public string? UnixToWinePath(string unixPath)
     {
         var launchArguments = new string[] { "winepath", "--windows", unixPath };
         var winePath = RunInPrefix(launchArguments, redirectOutput: true);

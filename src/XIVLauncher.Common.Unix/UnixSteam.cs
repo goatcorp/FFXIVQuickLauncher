@@ -76,6 +76,6 @@ namespace XIVLauncher.Common.Unix
             SteamFriends.OpenWebOverlay(url, modal);
         }
 
-        public event Action<bool> OnGamepadTextInputDismissed;
+        public event Action<bool>? OnGamepadTextInputDismissed;
     }
 }
