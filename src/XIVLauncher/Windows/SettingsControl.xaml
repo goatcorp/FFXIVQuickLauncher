@@ -24,7 +24,7 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <dragablz:TabablzControl IsEnabled="True" FixedHeaderCount="7" Style="{StaticResource MaterialDesignTabablzControlStyle}"
+        <dragablz:TabablzControl x:Name="SettingsTabControl" IsEnabled="True" FixedHeaderCount="7" Style="{StaticResource MaterialDesignTabablzControlStyle}"
         ItemContainerStyle="{StaticResource WhiteIndicatorTabItemStyle}" BorderThickness="0">
             <TabItem Header="{Binding SettingsGameLoc}">
                 <StackPanel Margin="10,10,0,0">
@@ -251,18 +251,24 @@
                                        Foreground="{DynamicResource MaterialDesignBody}" Margin="0,0,0,20" />
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="200" Height="120" Margin="0,0,20,0" Click="CreateBackup_OnClick">
-                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <materialDesign:PackIcon Kind="Upload" Height="48" Width="48" />
-                                        <TextBlock Text="Create" HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                                    </StackPanel>
+                                <Button x:Name="CreateBackupButton" Style="{StaticResource MaterialDesignRaisedButton}" Width="200" Height="120" Margin="0,0,20,0" Click="CreateBackup_OnClick">
+                                    <Grid>
+                                        <StackPanel x:Name="CreateBackupContent" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="Upload" Height="48" Width="48" />
+                                            <TextBlock Text="Create" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="CreateBackupSpinner" IsIndeterminate="True" Visibility="Collapsed" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="White" />
+                                    </Grid>
                                 </Button>
 
-                                <Button Style="{StaticResource MaterialDesignRaisedButton}" Width="200" Height="120" Click="RestoreBackup_OnClick">
-                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <materialDesign:PackIcon Kind="Download" Height="48" Width="48" />
-                                        <TextBlock Text="Restore" HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                                    </StackPanel>
+                                <Button x:Name="RestoreBackupButton" Style="{StaticResource MaterialDesignRaisedButton}" Width="200" Height="120" Click="RestoreBackup_OnClick">
+                                    <Grid>
+                                        <StackPanel x:Name="RestoreBackupContent" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="Download" Height="48" Width="48" />
+                                            <TextBlock Text="Restore" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                        </StackPanel>
+                                        <ProgressBar x:Name="RestoreBackupSpinner" IsIndeterminate="True" Visibility="Collapsed" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource MaterialDesignCircularProgressBar}" />
+                                    </Grid>
                                 </Button>
                             </StackPanel>
 
@@ -357,7 +363,7 @@
         </Button>
 
         <!-- Used to have Command="{x:Static materialDesign:Transitioner.MoveNextCommand}" but now invoked in AcceptButton_Click -->
-        <Button Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+        <Button x:Name="AcceptSettingsButton" Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
                 ToolTip="{Binding SaveSettingsLoc}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,10,10"
                 Click="AcceptButton_Click">
             <materialDesign:PackIcon Kind="Check" Height="24" Width="24" />

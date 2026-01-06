@@ -119,15 +119,15 @@ namespace XIVLauncher
 #endif
         }
 
-        private void SetupSettings()
+        public static void SetupSettings()
         {
             Settings = new ConfigurationBuilder<ILauncherSettingsV3>()
-                       .UseCommandLineArgs()
-                       .UseJsonFile(GetConfigPath("launcher"))
-                       .UseTypeParser(new DirectoryInfoParser())
-                       .UseTypeParser(new AddonListParser())
-                       .UseTypeParser(new CommonJsonParser<PreserveWindowPosition.WindowPlacement>())
-                       .Build();
+                .UseCommandLineArgs()
+                .UseJsonFile(GetConfigPath("launcher"))
+                .UseTypeParser(new DirectoryInfoParser())
+                .UseTypeParser(new AddonListParser())
+                .UseTypeParser(new CommonJsonParser<PreserveWindowPosition.WindowPlacement>())
+                .Build();
 
             if (string.IsNullOrEmpty(Settings.AcceptLanguage))
             {
