@@ -17,7 +17,6 @@ public static class Backup
     [
         "pluginConfigs",
         "installedPlugins",
-        "backups",
         "dalamudVfs.db",
         "dalamudConfig.json",
         "dalamudUI.ini",
@@ -160,13 +159,7 @@ public static class Backup
         var entry = archive.CreateEntry(normalized, CompressionLevel.Optimal);
 
         // Clear attributes/permissions - ExternalAttributes controls these bits
-        try
-        {
-            entry.ExternalAttributes = 0;
-        }
-        catch
-        {
-        }
+        entry.ExternalAttributes = 0;
 
         // To avoid preserving timestamps/ownership, set a consistent LastWriteTime
         entry.LastWriteTime = DateTimeOffset.UtcNow;
