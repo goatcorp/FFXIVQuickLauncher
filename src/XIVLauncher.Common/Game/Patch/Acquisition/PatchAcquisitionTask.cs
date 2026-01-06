@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Game.Patch.Acquisition

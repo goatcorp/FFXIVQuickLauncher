@@ -1,5 +1,4 @@
 using System.IO;
-using XIVLauncher.Common.Game.Patch.Acquisition;
 
 namespace XIVLauncher.Common.PlatformAbstractions;
 
