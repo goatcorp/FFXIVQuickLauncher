@@ -18,6 +18,8 @@ public class WindowsRestartManager : IDisposable
 {
     public delegate void RmWriteStatusCallback(uint percentageCompleted);
 
+    // ReSharper disable InconsistentNaming
+
     private const int RM_SESSION_KEY_LEN = 16; // sizeof GUID
     private const int CCH_RM_SESSION_KEY = RM_SESSION_KEY_LEN * 2;
     private const int CCH_RM_MAX_APP_NAME = 255;
@@ -25,6 +27,8 @@ public class WindowsRestartManager : IDisposable
     private const int RM_INVALID_TS_SESSION = -1;
     private const int RM_INVALID_PROCESS = -1;
     private const int ERROR_MORE_DATA = 234;
+
+    // ReSharper restore InconsistentNaming
 
     [StructLayout(LayoutKind.Sequential)]
     public struct RmUniqueProcess
@@ -130,14 +134,14 @@ public class WindowsRestartManager : IDisposable
         [MarshalAs(UnmanagedType.Bool)]
         public bool bRestartable;
 
-        public Process Process
+        public Process? Process
         {
             get
             {
                 try
                 {
-                    Process process = Process.GetProcessById(UniqueProcess.dwProcessId);
-                    long fileTime = process.StartTime.ToFileTime();
+                    var process = Process.GetProcessById(UniqueProcess.dwProcessId);
+                    var fileTime = process.StartTime.ToFileTime();
 
                     if ((uint)UniqueProcess.ProcessStartTime.dwLowDateTime != (uint)(fileTime & uint.MaxValue))
                         return null;
@@ -162,19 +166,20 @@ public class WindowsRestartManager : IDisposable
     private static extern int RmEndSession(int dwSessionHandle);
 
     [DllImport("rstrtmgr")]
-    private static extern int RmShutdown(int dwSessionHandle, RmShutdownType lAtionFlags, RmWriteStatusCallback fnStatus);
+    private static extern int RmShutdown(int dwSessionHandle, RmShutdownType lAtionFlags, RmWriteStatusCallback? fnStatus);
 
     [DllImport("rstrtmgr")]
-    private static extern int RmRestart(int dwSessionHandle, int dwRestartFlags, RmWriteStatusCallback fnStatus);
+    private static extern int RmRestart(int dwSessionHandle, int dwRestartFlags, RmWriteStatusCallback? fnStatus);
 
     [DllImport("rstrtmgr")]
     private static extern int RmGetList(int dwSessionHandle, out int nProcInfoNeeded, ref int nProcInfo, [In, Out] RmProcessInfo[] rgAffectedApps, out RmRebootReason dwRebootReasons);
 
     [DllImport("rstrtmgr", CharSet = CharSet.Unicode)]
-    private static extern int RmRegisterResources(int dwSessionHandle,
-                                                  int nFiles, string[] rgsFileNames,
-                                                  int nApplications, RmUniqueProcess[] rgApplications,
-                                                  int nServices, string[] rgsServiceNames);
+    private static extern int RmRegisterResources(
+        int dwSessionHandle,
+        int nFiles, string[] rgsFileNames,
+        int nApplications, RmUniqueProcess[] rgApplications,
+        int nServices, string[] rgsServiceNames);
 
     private readonly int sessionHandle;
     private readonly string sessionKey;
@@ -186,10 +191,10 @@ public class WindowsRestartManager : IDisposable
         sessionKey = sessKey.ToString();
     }
 
-    public void Register(IEnumerable<FileInfo> files = null, IEnumerable<Process> processes = null, IEnumerable<string> serviceNames = null)
+    public void Register(IEnumerable<FileInfo>? files = null, IEnumerable<Process>? processes = null, IEnumerable<string>? serviceNames = null)
     {
-        string[] filesArray = files?.Select(f => f.FullName).ToArray() ?? Array.Empty<string>();
-        RmUniqueProcess[] processesArray = processes?.Select(f => new RmUniqueProcess
+        var filesArray = files?.Select(f => f.FullName).ToArray() ?? Array.Empty<string>();
+        var processesArray = processes?.Select(f => new RmUniqueProcess
         {
             dwProcessId = f.Id,
             ProcessStartTime = new FILETIME
@@ -198,19 +203,19 @@ public class WindowsRestartManager : IDisposable
                 dwHighDateTime = (int)(f.StartTime.ToFileTime() >> 32),
             }
         }).ToArray() ?? Array.Empty<RmUniqueProcess>();
-        string[] servicesArray = serviceNames?.ToArray() ?? Array.Empty<string>();
+        var servicesArray = serviceNames?.ToArray() ?? Array.Empty<string>();
         ThrowOnFailure(RmRegisterResources(sessionHandle,
             filesArray.Length, filesArray,
             processesArray.Length, processesArray,
             servicesArray.Length, servicesArray));
     }
 
-    public void Shutdown(bool forceShutdown = true, bool shutdownOnlyRegistered = false, RmWriteStatusCallback cb = null)
+    public void Shutdown(bool forceShutdown = true, bool shutdownOnlyRegistered = false, RmWriteStatusCallback? cb = null)
     {
         ThrowOnFailure(RmShutdown(sessionHandle, (forceShutdown ? RmShutdownType.RmForceShutdown : 0) | (shutdownOnlyRegistered ? RmShutdownType.RmShutdownOnlyRegistered : 0), cb));
     }
 
-    public void Restart(RmWriteStatusCallback cb = null)
+    public void Restart(RmWriteStatusCallback? cb = null)
     {
         ThrowOnFailure(RmRestart(sessionHandle, 0, cb));
     }
@@ -223,7 +228,7 @@ public class WindowsRestartManager : IDisposable
 
         for (var i = 0; i < 16; i++)
         {
-            err = RmGetList(sessionHandle, out int needed, ref count, infos, out rebootReason);
+            err = RmGetList(sessionHandle, out var needed, ref count, infos, out rebootReason);
 
             switch (err)
             {
