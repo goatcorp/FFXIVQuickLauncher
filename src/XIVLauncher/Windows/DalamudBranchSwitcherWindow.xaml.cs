@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -19,8 +20,24 @@ namespace XIVLauncher.Windows
 
         private async void DalamudBranchSwitcherWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Model.AppliedBetaKey = App.Settings.DalamudBetaKey;
-            await Model.FetchBranchesAsync();
+            try
+            {
+                this.Model.AppliedBetaKey = App.Settings.DalamudBetaKey;
+                await this.Model.FetchBranchesAsync();
+            }
+            catch (Exception ex)
+            {
+                new CustomMessageBox.Builder()
+                    .WithCaption("XIVLauncher - Dalamud Branch Switcher")
+                    .WithText("An error occurred while fetching the available Dalamud branches")
+                    .WithDescription(ex.ToString())
+                    .WithImage(MessageBoxImage.Error)
+                    .WithButtons(MessageBoxButton.OK)
+                    .Show();
+
+                this.DialogResult = false;
+                this.Close();
+            }
         }
 
         private void SwitchBranchButton_Click(object sender, RoutedEventArgs e)
