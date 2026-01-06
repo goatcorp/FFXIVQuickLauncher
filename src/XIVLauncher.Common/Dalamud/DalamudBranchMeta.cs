@@ -39,18 +39,9 @@ public static class DalamudBranchMeta
         public string SupportedGameVer { get; set; }
 
         [JsonPropertyName("isApplicableForCurrentGameVer")]
-        public bool IsApplicableForCurrentGameVer { get; set; }
+        public bool? IsApplicableForCurrentGameVer { get; set; }
 
-        public string DisplayNameWithAvailability
-        {
-            get
-            {
-                if (!IsApplicableForCurrentGameVer)
-                    return $"{DisplayName} (unavailable)";
-
-                return DisplayName;
-            }
-        }
+        public string DisplayNameWithAvailability => !this.IsApplicableForCurrentGameVer.GetValueOrDefault(false) ? $"{this.DisplayName} (unavailable)" : this.DisplayName;
     }
 
     public static async Task<IEnumerable<Branch>> FetchBranchesAsync()
