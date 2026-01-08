@@ -55,6 +55,53 @@ namespace XIVLauncher.Windows.ViewModel
             }
         }
 
+        private static List<string> LauncherLanguageStrings { get; } =
+        [
+            "日本語",
+            "English",
+            "Deutsch",
+            "Français",
+            "Italiano",
+            "Español",
+            "Português",
+            "한국어",
+            "Norsk",
+            "русский",
+            "简体中文",
+            "繁體中文",
+            "svenska"
+        ];
+
+        public List<GenericCombinedData<LauncherLanguage>> LauncherLanguageList { get; } = LauncherLanguageStrings
+            .Zip(Enum.GetValues(typeof(LauncherLanguage)).Cast<LauncherLanguage>())
+            .Select(pair => new GenericCombinedData<LauncherLanguage>() { Display = pair.First, Value = pair.Second })
+            .ToList();
+
+        private LauncherLanguage _launcherLanguage = LauncherLanguage.Japanese;
+
+        public LauncherLanguage LauncherLanguage
+        {
+            get => _launcherLanguage;
+            set
+            {
+                LauncherLanguageNoticeVisiable = App.Settings.LauncherLanguage == value ? Visibility.Hidden : Visibility.Visible;
+                _launcherLanguage = value;
+                OnPropertyChanged(nameof(LauncherLanguage));
+            }
+        }
+
+        public Visibility _launcherLanguageNoticeVisiable = Visibility.Hidden;
+
+        public Visibility LauncherLanguageNoticeVisiable
+        {
+            get => _launcherLanguageNoticeVisiable;
+            set
+            {
+                _launcherLanguageNoticeVisiable = value;
+                OnPropertyChanged(nameof(LauncherLanguageNoticeVisiable));
+            }
+        }
+
         private void SetupLoc()
         {
             OpenPluginsFolderLoc = Loc.Localize("OpenPluginsFolder", "Open Plugins Folder");
@@ -222,5 +269,22 @@ namespace XIVLauncher.Windows.ViewModel
         public string OpenDalamudBranchSwitcherTipLoc { get; private set; }
 
         public string PluginDisabledTagLoc { get; private set; }
+    }
+
+    /// <summary>
+    /// Generic combined data class.
+    /// </summary>
+    /// <typeparam name="TValueType">The type of value.</typeparam>
+    public class GenericCombinedData<TValueType>
+    {
+        /// <summary>
+        /// Gets or sets the name displayed.
+        /// </summary>
+        public string Display { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value.
+        /// </summary>
+        public TValueType Value { get; set; }
     }
 }

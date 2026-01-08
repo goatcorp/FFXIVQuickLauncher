@@ -64,8 +64,8 @@ namespace XIVLauncher.Windows
                 ViewModel.PatchPath = App.Settings.PatchPath.FullName;
 
             LanguageComboBox.SelectedIndex = (int) App.Settings.Language.GetValueOrDefault(ClientLanguage.English);
-            LauncherLanguageComboBox.SelectedIndex = (int) App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
-            LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
+            ViewModel.LauncherLanguage = App.Settings.LauncherLanguage.GetValueOrDefault(LauncherLanguage.English);
+            ViewModel.LauncherLanguageNoticeVisiable = Visibility.Hidden;
             AddonListView.ItemsSource = App.Settings.AddonList ??= new List<AddonEntry>();
             AskBeforePatchingCheckBox.IsChecked = App.Settings.AskBeforePatchInstall;
             KeepPatchesCheckBox.IsChecked = App.Settings.KeepPatches;
@@ -107,9 +107,7 @@ namespace XIVLauncher.Windows
 
             App.Settings.Language = (ClientLanguage)LanguageComboBox.SelectedIndex;
             // Keep the notice visible if LauncherLanguage has changed
-            if (App.Settings.LauncherLanguage == (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex)
-                LauncherLanguageNoticeTextBlock.Visibility = Visibility.Hidden;
-            App.Settings.LauncherLanguage = (LauncherLanguage)LauncherLanguageComboBox.SelectedIndex;
+            App.Settings.LauncherLanguage = ViewModel.LauncherLanguage;
 
             App.Settings.AddonList = (List<AddonEntry>)AddonListView.ItemsSource;
             App.Settings.AskBeforePatchInstall = AskBeforePatchingCheckBox.IsChecked == true;
@@ -283,14 +281,6 @@ namespace XIVLauncher.Windows
             });
 
             window.ShowDialog();
-        }
-
-        private void LauncherLanguageCombo_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            if (LauncherLanguageNoticeTextBlock != null)
-            {
-                LauncherLanguageNoticeTextBlock.Visibility = Visibility.Visible;
-            }
         }
 
         private void EnableHooksCheckBox_OnChecked(object sender, RoutedEventArgs e)
