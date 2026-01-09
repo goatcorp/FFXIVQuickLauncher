@@ -18,6 +18,7 @@ namespace XIVLauncher.Common.Game
         private static class PInvoke
         {
             #region Constants
+
             public const UInt32 STANDARD_RIGHTS_ALL = 0x001F0000;
             public const UInt32 SPECIFIC_RIGHTS_ALL = 0x0000FFFF;
             public const UInt32 PROCESS_VM_WRITE = 0x0020;
@@ -35,7 +36,6 @@ namespace XIVLauncher.Common.Game
 
             public const UInt32 SE_PRIVILEGE_ENABLED = 0x00000002;
             public const UInt32 SE_PRIVILEGE_REMOVED = 0x00000004;
-
 
             public enum MULTIPLE_TRUSTEE_OPERATION
             {
@@ -81,6 +81,7 @@ namespace XIVLauncher.Common.Game
                 SE_WMIGUID_OBJECT,
                 SE_REGISTRY_WOW64_32KEY
             }
+
             public enum SECURITY_INFORMATION
             {
                 OWNER_SECURITY_INFORMATION = 1,
@@ -91,10 +92,11 @@ namespace XIVLauncher.Common.Game
                 UNPROTECTED_DACL_SECURITY_INFORMATION = 0x20000000,
                 PROTECTED_SACL_SECURITY_INFORMATION = 0x40000000
             }
+
             #endregion
 
-
             #region Structures
+
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 0)]
             public struct TRUSTEE : IDisposable
             {
@@ -108,8 +110,6 @@ namespace XIVLauncher.Common.Game
                 {
                     if (ptstrName != IntPtr.Zero) Marshal.Release(ptstrName);
                 }
-
-                public string Name { get { return Marshal.PtrToStringAuto(ptstrName); } }
             }
 
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 0)]
@@ -185,6 +185,7 @@ namespace XIVLauncher.Common.Game
             {
                 public UInt32 PrivilegeCount;
                 public UInt32 Control;
+
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
                 public LUID_AND_ATTRIBUTES[] Privilege;
             }
@@ -199,13 +200,15 @@ namespace XIVLauncher.Common.Game
             public struct TOKEN_PRIVILEGES
             {
                 public UInt32 PrivilegeCount;
+
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
                 public LUID_AND_ATTRIBUTES[] Privileges;
             }
+
             #endregion
 
-
             #region Methods
+
             [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Auto)]
             public static extern void BuildExplicitAccessWithName(
                 ref EXPLICIT_ACCESS pExplicitAccess,
@@ -235,16 +238,16 @@ namespace XIVLauncher.Common.Game
 
             [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
             public static extern bool CreateProcess(
-               string lpApplicationName,
-               string lpCommandLine,
-               ref SECURITY_ATTRIBUTES lpProcessAttributes,
-               IntPtr lpThreadAttributes,
-               bool bInheritHandles,
-               UInt32 dwCreationFlags,
-               IntPtr lpEnvironment,
-               string lpCurrentDirectory,
-               [In] ref STARTUPINFO lpStartupInfo,
-               out PROCESS_INFORMATION lpProcessInformation);
+                string? lpApplicationName,
+                string lpCommandLine,
+                ref SECURITY_ATTRIBUTES lpProcessAttributes,
+                IntPtr lpThreadAttributes,
+                bool bInheritHandles,
+                UInt32 dwCreationFlags,
+                IntPtr lpEnvironment,
+                string lpCurrentDirectory,
+                [In] ref STARTUPINFO lpStartupInfo,
+                out PROCESS_INFORMATION lpProcessInformation);
 
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool CloseHandle(IntPtr hObject);
@@ -259,7 +262,7 @@ namespace XIVLauncher.Common.Game
                 out IntPtr TokenHandle);
 
             [DllImport("advapi32.dll", SetLastError = true)]
-            public static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, ref LUID lpLuid);
+            public static extern bool LookupPrivilegeValue(string? lpSystemName, string lpName, ref LUID lpLuid);
 
             [DllImport("advapi32.dll", SetLastError = true)]
             public static extern bool PrivilegeCheck(
@@ -299,12 +302,13 @@ namespace XIVLauncher.Common.Game
 
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern IntPtr GetCurrentProcess();
+
             #endregion
         }
 
         public static Process LaunchGame(string workingDir, string exePath, string arguments, IDictionary<string, string> envVars, DpiAwareness dpiAwareness, Action<Process> beforeResume)
         {
-            Process process = null;
+            Process? process = null;
 
             var userName = Environment.UserName;
 
@@ -321,9 +325,7 @@ namespace XIVLauncher.Common.Game
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
-            var secDesc = new PInvoke.SECURITY_DESCRIPTOR();
-
-            if (!PInvoke.InitializeSecurityDescriptor(out secDesc, PInvoke.SECURITY_DESCRIPTOR_REVISION))
+            if (!PInvoke.InitializeSecurityDescriptor(out var secDesc, PInvoke.SECURITY_DESCRIPTOR_REVISION))
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
@@ -463,7 +465,7 @@ namespace XIVLauncher.Common.Game
             {
                 Marshal.FreeHGlobal(psecDesc);
 
-                if (!IntPtr.Equals(lpEnvironment, IntPtr.Zero))
+                if (lpEnvironment != IntPtr.Zero)
                 {
                     Marshal.FreeHGlobal(lpEnvironment);
                 }
@@ -482,6 +484,7 @@ namespace XIVLauncher.Common.Game
             }
 
             var luidDebugPrivilege = new PInvoke.LUID();
+
             if (!PInvoke.LookupPrivilegeValue(null, "SeDebugPrivilege", ref luidDebugPrivilege))
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());

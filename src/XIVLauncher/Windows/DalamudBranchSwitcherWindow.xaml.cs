@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using XIVLauncher.Windows.ViewModel;
 
 namespace XIVLauncher.Windows
@@ -19,18 +20,33 @@ namespace XIVLauncher.Windows
 
         private async void DalamudBranchSwitcherWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            Model.AppliedBetaKey = App.Settings.DalamudBetaKey;
-            await Model.FetchBranchesAsync();
+            try
+            {
+                this.Model.AppliedBetaKey = App.Settings.DalamudBetaKey;
+                await this.Model.FetchBranchesAsync();
+            }
+            catch (Exception ex)
+            {
+                new CustomMessageBox.Builder()
+                    .WithCaption("XIVLauncher - Dalamud Branch Switcher")
+                    .WithText("An error occurred while fetching the available Dalamud branches")
+                    .WithDescription(ex.ToString())
+                    .WithImage(MessageBoxImage.Error)
+                    .WithButtons(MessageBoxButton.OK)
+                    .Show();
+
+                this.DialogResult = false;
+                this.Close();
+            }
         }
 
         private void SwitchBranchButton_Click(object sender, RoutedEventArgs e)
         {
             if (Model.SelectedBranch != null)
             {
-                if (!Model.SelectedBranch.IsApplicableForCurrentGameVer && Model.SelectedBranch.Track != "release")
+                if (!Model.SelectedBranch.IsApplicableForCurrentGameVer.GetValueOrDefault(false))
                 {
-                    MessageBox.Show("This branch is not available for the current game version.\nDalamud needs to be updated after patches, which may take a while.", "Unavailable Branch", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    MessageBox.Show("This branch is not available for the current game version.\nDalamud needs to be updated after patches, which may take a while.", "Unavailable Branch", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
 
                 App.Settings.DalamudBetaKind = Model.SelectedBranch.Track;

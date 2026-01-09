@@ -4,7 +4,7 @@
         <AssemblyTitle>XIVLauncher.Common.Unix</AssemblyTitle>
         <Description>Shared XIVLauncher platform-specific implementations for Unix-like systems.</Description>
         <VersionPrefix>1.0.0</VersionPrefix>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup>

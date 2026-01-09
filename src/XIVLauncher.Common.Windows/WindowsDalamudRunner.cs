@@ -202,6 +202,9 @@ public class WindowsDalamudRunner : IDalamudRunner
                 Log.Verbose("=> Dalamud.Injector output: {Output}", output);
                 var dalamudConsoleOutput = JsonConvert.DeserializeObject<DalamudConsoleOutput>(output);
 
+                if (dalamudConsoleOutput == null)
+                    throw new Exception("Deserialized Dalamud output was null");
+
                 if (dalamudConsoleOutput.Handle == 0)
                 {
                     Log.Warning($"=> Dalamud returned NULL process handle, attempting to recover by creating a new one from pid {dalamudConsoleOutput.Pid}...");
@@ -277,7 +280,7 @@ public class WindowsDalamudRunner : IDalamudRunner
             envDict.Add((string)entry.Key, (string?)entry.Value);
         }
 
-        return envDict;
+        return envDict!;
     }
 
     // https://github.com/dotnet/runtime/blob/2c62994efb2495dcaef2312de3ab25ea4792b23a/src/libraries/System.Diagnostics.Process/src/System/Collections/Specialized/DictionaryWrapper.cs#L8
@@ -460,7 +463,7 @@ public class WindowsDalamudRunner : IDalamudRunner
         [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle,
         DuplicateOptions dwOptions);
 
-    private static Process GetInheritableCurrentProcessHandle()
+    private static Process? GetInheritableCurrentProcessHandle()
     {
         if (!DuplicateHandle(Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, Process.GetCurrentProcess().Handle, out var inheritableCurrentProcessHandle, 0, true, DuplicateOptions.SameAccess))
         {

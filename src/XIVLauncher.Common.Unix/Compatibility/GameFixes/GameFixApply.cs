@@ -8,11 +8,11 @@ public class GameFixApply
 
     public delegate void UpdateProgressDelegate(string loadingText, bool hasProgress, float progress);
 
-    public event UpdateProgressDelegate UpdateProgress;
+    public event UpdateProgressDelegate? UpdateProgress;
 
     public GameFixApply(DirectoryInfo gameDirectory, DirectoryInfo configDirectory, DirectoryInfo winePrefixDirectory, DirectoryInfo tempDirectory)
     {
-        this.fixes = new GameFix[] { };
+        this.fixes = [];
     }
 
     public void Run()

@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using CheapLoc;
 using MaterialDesignThemes.Wpf.Transitions;
+using Microsoft.Win32;
 using Serilog;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common;
@@ -460,6 +461,212 @@ namespace XIVLauncher.Windows
         {
             var asw = new AdvancedSettingsWindow();
             asw.ShowDialog();
+        }
+
+        public static DirectoryInfo GetGameUserDirectory()
+        {
+            var argumentPath = App.Settings.AdditionalLaunchArgs;
+
+            if (string.IsNullOrEmpty(argumentPath) || !argumentPath.Contains("UserPath="))
+            {
+                var myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var savedGames = Path.Combine(myDocuments, "My Games");
+                var defaultPath = Path.Combine(savedGames, "FINAL FANTASY XIV - A Realm Reborn");
+
+                return new DirectoryInfo(defaultPath);
+            }
+
+            var userPath = argumentPath.Split("UserPath=")[1].Trim('"');
+            return new DirectoryInfo(userPath);
+        }
+
+        private void CreateBackup_OnClick(object sender, RoutedEventArgs e)
+        {
+            _ = CreateBackupAsync();
+        }
+
+        private async Task CreateBackupAsync()
+        {
+            var parent = Window.GetWindow(this);
+
+            if (GameHelpers.CheckIsGameOpen())
+            {
+                CustomMessageBox.Show(Loc.Localize("CreateBackupGameOpenError", "Please close the game before creating a backup."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                return;
+            }
+
+            var dlg = new OpenFileDialog
+            {
+                Multiselect = false,
+                Title = "Select a location to save the backup file",
+                Filter = $"XIVLauncher Backup File (*{Backup.BackupExtension})|*{Backup.BackupExtension}",
+                ValidateNames = false,
+                CheckFileExists = false,
+                CheckPathExists = true,
+                FileName = $"xiv_{DateTime.Now:M_d_yy_HH_MM}" + Backup.BackupExtension
+            };
+
+            if (!dlg.ShowDialog(parent).GetValueOrDefault(false))
+                return;
+
+            // Disable UI and show spinner
+            SetBackupUiBusy(true, isCreating: true);
+
+            try
+            {
+                var includeUserFiles = this.BackupIncludeGameSettingsCheckBox.IsChecked == true;
+                await Task.Run(() => Backup.CreateBackup(
+                    new DirectoryInfo(Paths.RoamingPath),
+                    includeUserFiles ? GetGameUserDirectory() : null,
+                    new FileInfo(dlg.FileName)));
+
+                CustomMessageBox.Show(Loc.Localize("BackupCreateSuccess", "Backup created successfully."), "XIVLauncher", parentWindow: parent);
+            }
+            catch (BackupFileException ex)
+            {
+                var msg = Loc.Localize("BackupCreateFailed", "Could not create backup for the file:") + "\n" + ex.FilePath + "\n\n" + ex.Message;
+                CustomMessageBox.Show(msg, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                Log.Error(ex, "CreateBackup failed for file {File}", ex.FilePath);
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show(Loc.Localize("BackupCreateFailedGeneric", "Failed to create backup."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                Log.Error(ex, "CreateBackup failed");
+            }
+            finally
+            {
+                SetBackupUiBusy(false);
+            }
+        }
+
+        private void RestoreBackup_OnClick(object sender, RoutedEventArgs e)
+        {
+            _ = RestoreBackupAsync();
+        }
+
+        private async Task RestoreBackupAsync()
+        {
+            var parent = Window.GetWindow(this);
+
+            if (GameHelpers.CheckIsGameOpen())
+            {
+                CustomMessageBox.Show(Loc.Localize("RestoreBackupGameOpenError", "Please close the game before restoring a backup."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                return;
+            }
+
+            var dlg = new OpenFileDialog
+            {
+                Multiselect = false,
+                Title = "Select a backup to import",
+                Filter = $"XIVLauncher Backup File (*{Backup.BackupExtension})|*{Backup.BackupExtension}",
+                ValidateNames = true,
+                CheckFileExists = true,
+                CheckPathExists = true
+            };
+
+            if (dlg.ShowDialog(parent) != true)
+                return;
+
+            var doRestoreUserFiles = false;
+
+            try
+            {
+                // check for user files, wrap in Task.Run because it opens the archive
+                var hasUser = await Task.Run(() => Backup.BackupHasUserFiles(new FileInfo(dlg.FileName)));
+
+                if (hasUser)
+                {
+                    var result = CustomMessageBox.Builder
+                        .NewFrom(Loc.Localize("BackupRestoreUserFilesPrompt", "This backup contains game and character settings files.\nDo you want to restore them as well?"))
+                        .WithButtons(MessageBoxButton.YesNoCancel)
+                        .WithImage(MessageBoxImage.Question)
+                        .WithParentWindow(parent)
+                        .Show();
+
+                    if (result == MessageBoxResult.Cancel)
+                        return;
+
+                    doRestoreUserFiles = result == MessageBoxResult.Yes;
+                }
+            }
+            catch (BackupFileException ex)
+            {
+                CustomMessageBox.Show(Loc.Localize("BackupOpenFailed", "Could not restore file in backup. The file may be unreadable.\n\nFile path:") + ex.FilePath, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                return;
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show(Loc.Localize("BackupOpenFailedGeneric", "Failed to open backup file."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                Log.Error(ex, "Backup open failed");
+                return;
+            }
+
+            SetBackupUiBusy(true, isCreating: false);
+
+            try
+            {
+                await Task.Run(() => Backup.RestoreBackup(
+                    new DirectoryInfo(Paths.RoamingPath),
+                    doRestoreUserFiles ? GetGameUserDirectory() : null,
+                    new FileInfo(dlg.FileName)));
+
+                App.SetupSettings();
+                this.ReloadSettings();
+
+                CustomMessageBox.Show(Loc.Localize("BackupRestoreSuccess", "Backup restored successfully."), "XIVLauncher", parentWindow: parent);
+            }
+            catch (BackupFileException ex)
+            {
+                var msg = Loc.Localize("BackupRestoreFailed", "Could not restore file:") + "\n" + ex.FilePath + "\n\n" + ex.Message;
+                CustomMessageBox.Show(msg, "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                Log.Error(ex, "RestoreBackup failed for file {File}", ex.FilePath);
+            }
+            catch (Exception ex)
+            {
+                CustomMessageBox.Show(Loc.Localize("BackupRestoreFailedGeneric", "Failed to restore backup."), "XIVLauncher Error", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: parent);
+                Log.Error(ex, "RestoreBackup failed");
+            }
+            finally
+            {
+                SetBackupUiBusy(false);
+            }
+        }
+
+        private void SetBackupUiBusy(bool busy, bool isCreating = false)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                SettingsTabControl.IsEnabled = !busy;
+                AcceptSettingsButton.IsEnabled = !busy;
+
+                if (busy)
+                {
+                    if (isCreating)
+                    {
+                        CreateBackupContent.Visibility = Visibility.Collapsed;
+                        CreateBackupSpinner.Visibility = Visibility.Visible;
+                        CreateBackupButton.IsEnabled = false;
+                        RestoreBackupButton.IsEnabled = false;
+                    }
+                    else
+                    {
+                        RestoreBackupContent.Visibility = Visibility.Collapsed;
+                        RestoreBackupSpinner.Visibility = Visibility.Visible;
+                        RestoreBackupButton.IsEnabled = false;
+                        CreateBackupButton.IsEnabled = false;
+                    }
+                }
+                else
+                {
+                    CreateBackupContent.Visibility = Visibility.Visible;
+                    CreateBackupSpinner.Visibility = Visibility.Collapsed;
+                    CreateBackupButton.IsEnabled = true;
+
+                    RestoreBackupContent.Visibility = Visibility.Visible;
+                    RestoreBackupSpinner.Visibility = Visibility.Collapsed;
+                    RestoreBackupButton.IsEnabled = true;
+                }
+            });
         }
     }
 }

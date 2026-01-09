@@ -13,7 +13,7 @@ namespace XIVLauncher.Common.Windows
 {
     public class WindowsSteam : ISteam
     {
-        private const int MAX_INIT_TRIES_AFTER_START = 15;
+        private const int MaxInitTriesAfterStart = 15;
 
         public Task? AsyncStartTask { get; private set; }
 
@@ -36,7 +36,7 @@ namespace XIVLauncher.Common.Windows
             if (!Process.GetProcessesByName("steam").Any())
                 StartSteam();
 
-            for (var i = 0; i < MAX_INIT_TRIES_AFTER_START; i++)
+            for (var i = 0; i < MaxInitTriesAfterStart; i++)
             {
                 await Task.Delay(1000).ConfigureAwait(false);
 
@@ -170,6 +170,6 @@ namespace XIVLauncher.Common.Windows
             SteamFriends.OpenWebOverlay(url, modal);
         }
 
-        public event Action<bool> OnGamepadTextInputDismissed;
+        public event Action<bool>? OnGamepadTextInputDismissed;
     }
 }

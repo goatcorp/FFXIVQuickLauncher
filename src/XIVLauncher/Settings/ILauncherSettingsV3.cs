@@ -3,7 +3,6 @@ using System.IO;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Addon;
 using XIVLauncher.Common.Dalamud;
-using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Xaml;
 
 namespace XIVLauncher.Settings

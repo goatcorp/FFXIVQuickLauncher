@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -21,14 +20,12 @@ using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
 using XIVLauncher.Common.Game.Exceptions;
 using XIVLauncher.Common.Game.Patch;
-using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.Game;
-using XIVLauncher.PlatformAbstractions;
 using XIVLauncher.Support;
 using XIVLauncher.Xaml;
 
@@ -83,8 +80,8 @@ namespace XIVLauncher.Windows.ViewModel
 #endif
 
             Launcher = App.GlobalSteamTicket == null
-                ? new(App.Steam, App.UniqueIdCache, CommonSettings.Instance, frontierUrl)
-                : new(App.GlobalSteamTicket, App.UniqueIdCache, CommonSettings.Instance, frontierUrl);
+                ? new(App.Steam, App.UniqueIdCache, frontierUrl, App.Settings.AcceptLanguage)
+                : new(App.GlobalSteamTicket, App.UniqueIdCache, frontierUrl, App.Settings.AcceptLanguage);
 
             // Tried and failed to get this from the theme
             var worldStatusBrushOk = new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xf3));
@@ -440,20 +437,20 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 if (action == AfterLoginAction.Repair)
-                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
-                else
-                    return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false)).ConfigureAwait(false);
+                    return await this.Launcher.Login(username, password, otp, isSteam, false, gamePath, true, App.Settings.IsFt.GetValueOrDefault(false), App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ConfigureAwait(false);
+
+                return await this.Launcher.Login(username, password, otp, isSteam, enableUidCache, gamePath, false, App.Settings.IsFt.GetValueOrDefault(false), App.Settings.Language.GetValueOrDefault(ClientLanguage.English)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "StartGame failed... (LoginStatus={0})", loginStatus);
 
                 var msgbox = new CustomMessageBox.Builder()
-                             .WithCaption(Loc.Localize("LoginNoOauthTitle", "Login issue"))
-                             .WithImage(MessageBoxImage.Error)
-                             .WithShowHelpLinks(true)
-                             .WithShowDiscordLink(true)
-                             .WithParentWindow(_window);
+                    .WithCaption(Loc.Localize("LoginNoOauthTitle", "Login issue"))
+                    .WithImage(MessageBoxImage.Error)
+                    .WithShowHelpLinks(true)
+                    .WithShowDiscordLink(true)
+                    .WithParentWindow(_window);
 
                 bool disableAutoLogin = false;
 
@@ -912,10 +909,10 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<bool> RepairGame(Launcher.LoginResult loginResult)
         {
+            using var mutex = new GlobalMutex($"{App.Settings.GamePath}{App.Settings.PatchPath}");
             var doLogin = false;
-            var mutex = new Mutex(false, "XivLauncherIsPatching");
 
-            if (mutex.WaitOne(0, false))
+            if (mutex.IsOwned)
             {
                 Debug.Assert(loginResult.PendingPatches != null, "loginResult.PendingPatches != null");
                 Debug.Assert(loginResult.PendingPatches.Length != 0, "loginResult.PendingPatches.Length != 0");
@@ -931,7 +928,7 @@ namespace XIVLauncher.Windows.ViewModel
                     }))
                     return false;
 
-                using var verify = new PatchVerifier(CommonSettings.Instance, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
+                using var verify = new PatchVerifier(App.Settings.GamePath, App.Settings.PatchPath, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
 
                 Hide();
                 IsEnabled = false;
@@ -992,10 +989,12 @@ namespace XIVLauncher.Windows.ViewModel
                                     doLogin = doVerify = false;
                                     break;
                             }
+
                             break;
 
                         case PatchVerifier.VerifyState.Error:
                             doLogin = false;
+
                             if (verify.LastException is NoVersionReferenceException)
                             {
                                 doVerify = CustomMessageBox.Builder
@@ -1012,16 +1011,16 @@ namespace XIVLauncher.Windows.ViewModel
                             else if (verify.LastException != null && verify.LastException.ToString().Contains("Data error"))
                             {
                                 doVerify = new CustomMessageBox.Builder()
-                                           .WithText(Loc.Localize("GameRepairError_DataError", "Your hard drive reported an error while checking game files. XIVLauncher cannot repair this installation, as the error may indicate a physical issue with your hard drive.\nPlease check your drive's health, or try to update its firmware.\nReinstalling the game in a new location may solve this issue temporarily."))
-                                           .WithExitOnClose(CustomMessageBox.ExitOnCloseModes.DontExitOnClose)
-                                           .WithImage(MessageBoxImage.Error)
-                                           .WithShowHelpLinks(true)
-                                           .WithShowDiscordLink(true)
-                                           .WithShowNewGitHubIssue(false)
-                                           .WithButtons(MessageBoxButton.OKCancel)
-                                           .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
-                                           .WithParentWindow(_window)
-                                           .Show() == MessageBoxResult.OK;
+                                    .WithText(Loc.Localize("GameRepairError_DataError", "Your hard drive reported an error while checking game files. XIVLauncher cannot repair this installation, as the error may indicate a physical issue with your hard drive.\nPlease check your drive's health, or try to update its firmware.\nReinstalling the game in a new location may solve this issue temporarily."))
+                                    .WithExitOnClose(CustomMessageBox.ExitOnCloseModes.DontExitOnClose)
+                                    .WithImage(MessageBoxImage.Error)
+                                    .WithShowHelpLinks(true)
+                                    .WithShowDiscordLink(true)
+                                    .WithShowNewGitHubIssue(false)
+                                    .WithButtons(MessageBoxButton.OKCancel)
+                                    .WithOkButtonText(Loc.Localize("GameRepairSuccess_TryAgain", "_Try again"))
+                                    .WithParentWindow(_window)
+                                    .Show() == MessageBoxResult.OK;
                             }
                             else
                             {
@@ -1035,6 +1034,7 @@ namespace XIVLauncher.Windows.ViewModel
                                     .WithParentWindow(_window)
                                     .Show() == MessageBoxResult.OK;
                             }
+
                             break;
 
                         case PatchVerifier.VerifyState.Cancelled:
@@ -1044,8 +1044,6 @@ namespace XIVLauncher.Windows.ViewModel
                 }
 
                 progressDialog.Dispatcher.Invoke(progressDialog.Close);
-                mutex.Close();
-                mutex = null;
             }
             else
             {
@@ -1307,9 +1305,9 @@ namespace XIVLauncher.Windows.ViewModel
 
         private async Task<bool> TryHandlePatchAsync(Repository repository, PatchListEntry[] pendingPatches, string sid)
         {
-            using var mutex = new Mutex(false, "XivLauncherIsPatching");
+            using var mutex = new GlobalMutex($"{App.Settings.GamePath}{App.Settings.PatchPath}");
 
-            if (!mutex.WaitOne(0, false))
+            if (!mutex.IsOwned)
             {
                 CustomMessageBox.Show(Loc.Localize("PatcherAlreadyInProgress", "XIVLauncher is already patching your game in another instance. Please check if XIVLauncher is still open."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window);
                 Environment.Exit(0);
@@ -1321,14 +1319,14 @@ namespace XIVLauncher.Windows.ViewModel
                 while (GameHelpers.CheckIsGameOpen())
                 {
                     if (CustomMessageBox
-                        .Builder
-                        .NewFrom(Loc.Localize("GameIsOpenError",
-                            "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."))
-                        .WithImage(MessageBoxImage.Exclamation)
-                        .WithButtons(MessageBoxButton.OKCancel)
-                        .WithOkButtonText(Loc.Localize("Refresh", "_Refresh"))
-                        .WithDefaultResult(MessageBoxResult.OK)
-                        .Show() == MessageBoxResult.Cancel)
+                            .Builder
+                            .NewFrom(Loc.Localize("GameIsOpenError",
+                                "The game and/or the official launcher are open. XIVLauncher cannot patch the game if this is the case.\nPlease close the official launcher and try again."))
+                            .WithImage(MessageBoxImage.Exclamation)
+                            .WithButtons(MessageBoxButton.OKCancel)
+                            .WithOkButtonText(Loc.Localize("Refresh", "_Refresh"))
+                            .WithDefaultResult(MessageBoxResult.OK)
+                            .Show() == MessageBoxResult.Cancel)
                     {
                         return false;
                     }

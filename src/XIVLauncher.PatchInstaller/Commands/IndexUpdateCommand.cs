@@ -14,7 +14,6 @@ using Newtonsoft.Json;
 using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Game;
-using XIVLauncher.Common.Game.Patch.Acquisition;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Patching.IndexedZiPatch;
 using XIVLauncher.Common.Patching.ZiPatch;
@@ -51,7 +50,7 @@ public class IndexUpdateCommand
         Command.SetHandler(x => new IndexUpdateCommand(x.ParseResult).Handle(x.GetCancellationToken()));
     }
 
-    private readonly TempSettings settings;
+    private DirectoryInfo rootPath;
     private readonly string? username;
     private readonly string? password;
     private readonly string? otp;
@@ -66,7 +65,7 @@ public class IndexUpdateCommand
 
     private IndexUpdateCommand(ParseResult parseResult)
     {
-        this.settings = new(
+        rootPath = new(
             new(parseResult.GetValueForOption(PatchRootPathOption)
                 ?? Path.Combine(Path.GetTempPath(), "XIVLauncher.PatchInstaller")));
         this.username = parseResult.GetValueForOption(UserNameOption);
@@ -78,26 +77,26 @@ public class IndexUpdateCommand
 
     private async Task<int> Handle(CancellationToken cancellationToken)
     {
-        var la = new Launcher((ISteam?)null, new CommonUniqueIdCache(null), this.settings, "https://launcher.finalfantasyxiv.com/v650/index.html?rc_lang={0}&time={1}");
+        var la = new Launcher((ISteam?)null, new CommonUniqueIdCache(null), "https://launcher.finalfantasyxiv.com/v650/index.html?rc_lang={0}&time={1}", "en-US");
 
-        var bootPatchListFile = new FileInfo(Path.Combine(this.settings.GamePath.FullName, "bootlist.json"));
+        var bootPatchListFile = new FileInfo(Path.Combine(this.rootPath.FullName, "bootlist.json"));
 
         if (!TryReadPatchListEntries(bootPatchListFile, out var bootPatchList) || bootPatchListFile.LastWriteTime < DateTime.Now - TimeSpan.FromHours(1))
         {
             Log.Information("Downloading boot patch information.");
-            bootPatchList = await la.CheckBootVersion(this.settings.PatchPath, true);
+            bootPatchList = await la.CheckBootVersion(this.rootPath, true);
             File.WriteAllText(bootPatchListFile.FullName, JsonConvert.SerializeObject(bootPatchList, Formatting.Indented));
         }
 
         await ApplyBootPatch(bootPatchList, cancellationToken);
 
-        var gamePatchListFile = new FileInfo(Path.Combine(this.settings.GamePath.FullName, "gamelist.json"));
+        var gamePatchListFile = new FileInfo(Path.Combine(this.rootPath.FullName, "gamelist.json"));
         PatchListEntry[] gamePatchList;
 
         if (this.username is not null && this.password is not null)
         {
             Log.Information("Logging in and fetching game patch information.");
-            var lr = await la.Login(this.username, this.password, this.otp ?? "", false, false, this.settings.GamePath, true, false);
+            var lr = await la.Login(this.username, this.password, this.otp ?? "", false, false, this.rootPath, true, false, ClientLanguage.English);
             gamePatchList = lr.PendingPatches;
             File.WriteAllText(gamePatchListFile.FullName, JsonConvert.SerializeObject(gamePatchList, Formatting.Indented));
         }
@@ -129,7 +128,7 @@ public class IndexUpdateCommand
     {
         using var zpStore = new SqexFileStreamStore();
 
-        var zpConfig = new ZiPatchConfig(Path.Combine(this.settings.GamePath.FullName, "boot")) { Store = zpStore };
+        var zpConfig = new ZiPatchConfig(Path.Combine(this.rootPath.FullName, "boot")) { Store = zpStore };
         var bootVerPath = Path.Combine(zpConfig.GamePath, "ffxivboot.ver");
         var bootBckPath = Path.Combine(zpConfig.GamePath, "ffxivboot.bck");
         var bootVerExpected = Path.GetFileNameWithoutExtension(bootPatchList.Last().Url).Substring(1);
@@ -142,7 +141,7 @@ public class IndexUpdateCommand
             cancellationToken.ThrowIfCancellationRequested();
             var patch = bootPatchList[i];
             var uri = new Uri(patch.Url);
-            var localPath = new FileInfo(Path.Combine(this.settings.GamePath.FullName, EnsureRelativePath(uri.LocalPath)));
+            var localPath = new FileInfo(Path.Combine(this.rootPath.FullName, EnsureRelativePath(uri.LocalPath)));
 
             if (!localPath.Exists || localPath.Length != patch.Length)
             {
@@ -184,7 +183,7 @@ public class IndexUpdateCommand
 
             var patch = gamePatchList[i];
             var uri = new Uri(patch.Url);
-            var localPath = new FileInfo(Path.Combine(this.settings.GamePath.FullName, EnsureRelativePath(uri.LocalPath)));
+            var localPath = new FileInfo(Path.Combine(this.rootPath.FullName, EnsureRelativePath(uri.LocalPath)));
 
             if (patch.HashType != "sha1")
                 throw new NotSupportedException($"HashType \"{patch.HashType}\" is not supported for: {uri}");
@@ -238,7 +237,7 @@ public class IndexUpdateCommand
                 0 => "ffxiv",
                 _ => $"ex{expac}",
             };
-            var patchFilePaths = patches.Select(x => Path.Combine(this.settings.GamePath.FullName, EnsureRelativePath(new Uri(x.Url).LocalPath))).ToList();
+            var patchFilePaths = patches.Select(x => Path.Combine(this.rootPath.FullName, EnsureRelativePath(new Uri(x.Url).LocalPath))).ToList();
             var firstPatchFileIndex = patchFilePaths.Count - 1;
             IndexedZiPatchIndex? patchIndex = null;
 
@@ -423,21 +422,5 @@ public class IndexUpdateCommand
 
             return path;
         }
-    }
-
-    private class TempSettings : ISettings
-    {
-        public TempSettings(DirectoryInfo patchPath)
-        {
-            this.PatchPath = patchPath;
-        }
-
-        public string AcceptLanguage => "en-US";
-        public ClientLanguage? ClientLanguage => Common.ClientLanguage.English;
-        public bool? KeepPatches => true;
-        public DirectoryInfo PatchPath { get; }
-        public DirectoryInfo GamePath => this.PatchPath;
-        public long SpeedLimitBytes { get; set; }
-        public int DalamudInjectionDelayMs => 0;
     }
 }
