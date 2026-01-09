@@ -1148,6 +1148,7 @@ namespace XIVLauncher.Windows.ViewModel
                 loginResult.OauthLogin.MaxExpansion,
                 isSteam,
                 App.Settings.AdditionalLaunchArgs,
+                App.Settings.AdditionalInjectorArgs,
                 App.Settings.GamePath,
                 App.Settings.Language.GetValueOrDefault(ClientLanguage.English),
                 App.Settings.EncryptArguments.GetValueOrDefault(false),

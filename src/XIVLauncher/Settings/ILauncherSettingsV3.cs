@@ -17,6 +17,7 @@ namespace XIVLauncher.Settings
         List<AddonEntry> AddonList { get; set; }
         bool UniqueIdCacheEnabled { get; set; }
         string AdditionalLaunchArgs { get; set; }
+        string AdditionalInjectorArgs { get; set; }
         bool InGameAddonEnabled { get; set; }
         DalamudLoadMethod? InGameAddonLoadMethod { get; set; }
         bool OtpServerEnabled { get; set; }
