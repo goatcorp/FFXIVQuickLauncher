@@ -179,36 +179,38 @@ namespace XIVLauncher
                 {
                     using var restartManager = new WindowsRestartManager();
                     restartManager.Register(files: PatchVerifier.GetRelevantFiles(Path.Combine(App.Settings.GamePath.FullName, "game")));
-                    List<WindowsRestartManager.RmProcessInfo> programs = restartManager.GetInterferingProcesses(out _);
+                    var programs = restartManager.GetInterferingProcesses(out _)
+                        .Where(x => !x.AppName.Contains("XIVLauncher"))
+                        .ToList();
 
-                    if (!programs.Any())
+                    if (programs.Count == 0)
                         break;
 
                     switch (CustomMessageBox
-                            .Builder
-                            .NewFrom(messageGenerator(programs.Count))
-                            .WithDescription(string.Join("\n",
-                                programs
-                                    .Select(x =>
-                                    {
-                                        var process = x.Process;
-                                        if (process == null)
-                                            return $"{x.AppName} ({x.UniqueProcess.dwProcessId})";
+                                .Builder
+                                .NewFrom(messageGenerator(programs.Count))
+                                .WithDescription(string.Join("\n",
+                                    programs
+                                        .Select(x =>
+                                        {
+                                            var process = x.Process;
+                                            if (process == null)
+                                                return $"{x.AppName} ({x.UniqueProcess.dwProcessId})";
 
-                                        string exeName = process.MainModule?.ModuleName ?? "??";
-                                        string title = process.MainWindowTitle;
-                                        if (string.IsNullOrEmpty(title) || title == x.AppName)
-                                            return $"{x.AppName} ({x.UniqueProcess.dwProcessId}: {exeName})";
+                                            var exeName = process.MainModule?.ModuleName ?? "??";
+                                            var title = process.MainWindowTitle;
+                                            if (string.IsNullOrEmpty(title) || title == x.AppName)
+                                                return $"{x.AppName} ({x.UniqueProcess.dwProcessId}: {exeName})";
 
-                                        return $"{x.AppName} ({x.UniqueProcess.dwProcessId}: {exeName}, \"{title}\")";
-                                    })))
-                            .WithImage(MessageBoxImage.Information)
-                            .WithButtons(MessageBoxButton.YesNoCancel)
-                            .WithYesButtonText(Loc.Localize("Refresh", "_Refresh"))
-                            .WithNoButtonText(Loc.Localize("Ignore", "_Ignore"))
-                            .WithDefaultResult(MessageBoxResult.Yes)
-                            .WithParentWindow(parentWindow)
-                            .Show())
+                                            return $"{x.AppName} ({x.UniqueProcess.dwProcessId}: {exeName}, \"{title}\")";
+                                        })))
+                                .WithImage(MessageBoxImage.Information)
+                                .WithButtons(MessageBoxButton.YesNoCancel)
+                                .WithYesButtonText(Loc.Localize("Refresh", "_Refresh"))
+                                .WithNoButtonText(Loc.Localize("Ignore", "_Ignore"))
+                                .WithDefaultResult(MessageBoxResult.Yes)
+                                .WithParentWindow(parentWindow)
+                                .Show())
                     {
                         case MessageBoxResult.Yes:
                             break;
