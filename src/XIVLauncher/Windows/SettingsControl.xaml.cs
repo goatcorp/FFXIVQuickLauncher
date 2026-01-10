@@ -495,11 +495,11 @@ namespace XIVLauncher.Windows
             {
                 Multiselect = false,
                 Title = "Select a location to save the backup file",
-                Filter = $"XIVLauncher Backup File (*{Backup.BackupExtension})|*{Backup.BackupExtension}",
+                Filter = $"XIVLauncher Backup File (*{Backup.BACKUP_EXTENSION})|*{Backup.BACKUP_EXTENSION}",
                 ValidateNames = false,
                 CheckFileExists = false,
                 CheckPathExists = true,
-                FileName = $"xiv_{DateTime.Now:M_d_yy_HH_MM}" + Backup.BackupExtension
+                FileName = $"xiv_{DateTime.Now:M_d_yy_HH_MM}" + Backup.BACKUP_EXTENSION
             };
 
             if (!dlg.ShowDialog(parent).GetValueOrDefault(false))
@@ -554,7 +554,7 @@ namespace XIVLauncher.Windows
             {
                 Multiselect = false,
                 Title = "Select a backup to import",
-                Filter = $"XIVLauncher Backup File (*{Backup.BackupExtension})|*{Backup.BackupExtension}",
+                Filter = $"XIVLauncher Backup File (*{Backup.BACKUP_EXTENSION})|*{Backup.BACKUP_EXTENSION}",
                 ValidateNames = true,
                 CheckFileExists = true,
                 CheckPathExists = true

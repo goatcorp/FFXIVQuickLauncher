@@ -32,7 +32,7 @@ public static class Backup
         "cfgcpy"
     ];
 
-    public static string BackupExtension = ".xivlauncher_backup";
+    public const string BACKUP_EXTENSION = ".xivlauncher_backup";
 
     public static void CreateBackup(DirectoryInfo roamingPath, DirectoryInfo? userPath, FileInfo targetFile)
     {

@@ -267,7 +267,7 @@
                                             <materialDesign:PackIcon Kind="Download" Height="48" Width="48" />
                                             <TextBlock Text="Restore" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                                         </StackPanel>
-                                        <ProgressBar x:Name="RestoreBackupSpinner" IsIndeterminate="True" Visibility="Collapsed" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource MaterialDesignCircularProgressBar}" />
+                                        <ProgressBar x:Name="RestoreBackupSpinner" IsIndeterminate="True" Visibility="Collapsed" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource MaterialDesignCircularProgressBar}" Foreground="White" />
                                     </Grid>
                                 </Button>
                             </StackPanel>
