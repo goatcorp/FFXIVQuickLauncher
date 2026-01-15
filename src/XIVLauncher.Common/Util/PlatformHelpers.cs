@@ -169,7 +169,7 @@ public static class PlatformHelpers
         return ((IPEndPoint)socket.LocalEndPoint).Port;
     }
 
-#if WIN32
+#if WINDOWS
     /*
      * WINE: The APIs DriveInfo uses are buggy on Wine. Let's just use the kernel32 API instead.
      */

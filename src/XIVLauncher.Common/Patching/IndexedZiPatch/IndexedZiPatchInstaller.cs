@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-#if WIN32
+#if WINDOWS
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -54,7 +54,7 @@ public class IndexedZiPatchInstaller : IDisposable
     // Definitions taken from PInvoke.net (with some changes)
     // ReSharper disable InconsistentNaming
 
-#if WIN32
+#if WINDOWS
     private static class PInvoke
     {
         #region Constants
@@ -346,7 +346,7 @@ public class IndexedZiPatchInstaller : IDisposable
             stream.Seek(file.FileSize, SeekOrigin.Begin);
             stream.SetLength(file.FileSize);
 
-#if WIN32
+#if WINDOWS
             if (useSetFileValidData
                 && stream.SafeFileHandle is { } sfh
                 && !PInvoke.SetFileValidData(sfh.DangerousGetHandle(), file.FileSize))
@@ -378,7 +378,7 @@ public class IndexedZiPatchInstaller : IDisposable
     {
         Dispose();
 
-#if WIN32
+#if WINDOWS
         var useSetFileValidData = true;
 
         try
