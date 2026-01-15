@@ -7,7 +7,6 @@
         <Nullable>enable</Nullable>
 
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-        <NoWarn>CA1416</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup>
