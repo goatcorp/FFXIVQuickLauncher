@@ -571,8 +571,8 @@
     "message": "XIVLauncher 正在另一個進程中為您更新遊戲。請檢查您是否啟動了兩個 XIVLauncher。",
     "description": "<RepairGame>d__25.MoveNext"
   },
-  "DalamudVc2019RedistError": {
-    "message": "XIVLauncher 遊戲內組件需要安裝 Microsoft Visual C++ 2015-2019 Redistributable 才能啟用。請在微軟官網下載並安裝。",
+  "DalamudVc2022RedistError": {
+    "message": "XIVLauncher 遊戲內組件需要安裝 Microsoft Visual C++ 2015-2022 Redistributable 才能啟用。請在微軟官網下載並安裝。",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {

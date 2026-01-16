@@ -571,7 +571,7 @@
     "message": "他インスタンスでXIVLauncherはもうアップデートを適用しています。他インスタンスをチェックしてください。",
     "description": "<RepairGame>d__25.MoveNext"
   },
-  "DalamudVc2019RedistError": {
+  "DalamudVc2022RedistError": {
     "message": "XIVLauncher のin-gameアドオンを利用するには「 Visual Studio 2015、2017、および 2019 用 Microsoft Visual C++ 再頒布可能パッケージ」をインストールする必要があります。続行するには、Microsoft のホームページからインストールしてください。",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
