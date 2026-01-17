@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using XIVLauncher.Common;
@@ -15,7 +15,7 @@ namespace XIVLauncher.Accounts
         public XivAccount Account { get; set; }
         public ImageSource ProfileImage { get; set; } = DefaultImage;
 
-        public void UpdateProfileImage()
+        public async Task UpdateProfileImage()
         {
             if (string.IsNullOrEmpty(Account.ThumbnailUrl))
                 return;
@@ -34,11 +34,7 @@ namespace XIVLauncher.Accounts
             }
             else
             {
-                using (var client = new WebClient())
-                {
-                    imageBytes = client.DownloadData(uri);
-                }
-
+                imageBytes = await App.HttpClient.GetByteArrayAsync(uri);
                 File.WriteAllBytes(cacheFile, imageBytes);
             }
 
