@@ -52,12 +52,12 @@ namespace XIVLauncher.Windows
                     Account = accountManagerAccount
                 };
 
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     if (string.IsNullOrEmpty(accountManagerAccount.ThumbnailUrl))
                         accountManagerAccount.ThumbnailUrl = accountManagerAccount.FindCharacterThumb();
 
-                    entry.UpdateProfileImage();
+                    await entry.UpdateProfileImage();
                 });
 
                 accountEntries.Add(entry);
