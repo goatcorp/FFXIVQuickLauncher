@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using Serilog;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Dalamud;
 using XIVLauncher.Common.Game;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Common.Windows;
 using XIVLauncher.PlatformAbstractions;
@@ -169,6 +171,15 @@ namespace XIVLauncher
             {
                 Log.Error(ex, "Could not apply settings overrides from command line");
             }
+        }
+
+        private void SetupHttpClient()
+        {
+            HttpClient = new HttpClient(new SocketsHttpHandler
+            {
+                AutomaticDecompression = DecompressionMethods.All,
+                ConnectCallback = new HappyEyeballsCallback().ConnectCallback,
+            });
         }
 
         private void OnUpdateCheckFinished(bool finishUp)
@@ -364,7 +375,7 @@ namespace XIVLauncher
                 SetupSettings();
             }
 
-            HttpClient = new HttpClient();
+            SetupHttpClient();
 
 #if !XL_LOC_FORCEFALLBACKS
             try
