@@ -60,7 +60,6 @@ namespace XIVLauncher
         {
             None = 0,
             GlobalDisableDalamud = 1,
-            ForceProxyDalamudAndAssets = 1 << 1,
         }
 
 #pragma warning disable CS8618
@@ -158,13 +157,8 @@ namespace XIVLauncher
 
         private static async Task<UpdateResult> LeaseUpdateManager(bool prerelease)
         {
-            using var client = new HttpClient
-            {
-                DefaultRequestHeaders =
-                {
-                    UserAgent = { new ProductInfoHeaderValue("XIVLauncher", AppUtil.GetGitHash()) }
-                }
-            };
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("XIVLauncher", AppUtil.GetGitHash()));
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-Track", prerelease ? TRACK_PRERELEASE : TRACK_RELEASE);
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-LV", "0");
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-HaveVersion", AppUtil.GetAssemblyVersion());

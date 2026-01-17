@@ -36,13 +36,13 @@ namespace XIVLauncher.Common.Game
         }
 
         public static async Task<(CompareResult compareResult, string? report, IntegrityCheckData? remoteIntegrity)>
-            CompareIntegrityAsync(IProgress<IntegrityCheckProgress>? progress, DirectoryInfo gamePath, bool onlyIndex = false, CancellationToken cancellationToken = default)
+            CompareIntegrityAsync(HttpClient client, IProgress<IntegrityCheckProgress>? progress, DirectoryInfo gamePath, bool onlyIndex = false, CancellationToken cancellationToken = default)
         {
             IntegrityCheckData remoteIntegrity;
 
             try
             {
-                remoteIntegrity = await DownloadIntegrityCheckForVersion(Repository.Ffxiv.GetVer(gamePath), cancellationToken);
+                remoteIntegrity = await DownloadIntegrityCheckForVersion(client, Repository.Ffxiv.GetVer(gamePath), cancellationToken);
             }
             catch (WebException e)
             {
@@ -112,13 +112,11 @@ namespace XIVLauncher.Common.Game
             return (failed ? CompareResult.Invalid : CompareResult.Valid, reportBuilder.ToString(), remoteIntegrity);
         }
 
-        public static async Task<IntegrityCheckData> DownloadIntegrityCheckForVersion(string gameVersion, CancellationToken cancellationToken = default)
+        public static async Task<IntegrityCheckData> DownloadIntegrityCheckForVersion(HttpClient client, string gameVersion, CancellationToken cancellationToken = default)
         {
-            using var client = new HttpClient();
-
             var request = new HttpRequestMessage(HttpMethod.Get, INTEGRITY_CHECK_BASE_URL + gameVersion + ".json");
             var response = await client.SendAsync(request, cancellationToken);
-            var result = JsonSerializer.Deserialize<IntegrityCheckData>(await response.Content.ReadAsStringAsync());
+            var result = JsonSerializer.Deserialize<IntegrityCheckData>(await response.Content.ReadAsStringAsync(cancellationToken));
             return result ?? throw new InvalidOperationException("Failed to deserialize integrity JSON");
         }
 

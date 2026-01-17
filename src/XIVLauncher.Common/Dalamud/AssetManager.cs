@@ -42,14 +42,9 @@ namespace XIVLauncher.Common.Dalamud
             }
         }
 
-        public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(DalamudUpdater updater, DirectoryInfo baseDir)
+        public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(HttpClient client, DalamudUpdater updater, DirectoryInfo baseDir)
         {
-            using var metaClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromMinutes(30),
-            };
-
-            metaClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true,
             };
@@ -58,9 +53,7 @@ namespace XIVLauncher.Common.Dalamud
 
             Log.Verbose("[DASSET] Starting asset download");
 
-            var (isRefreshNeeded, info) = await CheckAssetRefreshNeeded(metaClient, baseDir);
-
-            // NOTE(goat): We should use a junction instead of copying assets to a new folder. There is no C# API for junctions in .NET Framework.
+            var (isRefreshNeeded, info) = await CheckAssetRefreshNeeded(client, baseDir);
 
             var currentDir = new DirectoryInfo(Path.Combine(baseDir.FullName, info.Version.ToString()));
             var devDir = new DirectoryInfo(Path.Combine(baseDir.FullName, "dev"));
@@ -118,7 +111,7 @@ namespace XIVLauncher.Common.Dalamud
                 if (File.Exists(tempPath))
                     File.Delete(tempPath);
 
-                await updater.DownloadFile(packageUrl, tempPath, TimeSpan.FromMinutes(4));
+                await updater.DownloadFile(packageUrl, tempPath);
 
                 using (var packageStream = File.OpenRead(tempPath))
                 using (var packageArc = new ZipArchive(packageStream, ZipArchiveMode.Read))
@@ -165,6 +158,7 @@ namespace XIVLauncher.Common.Dalamud
         ///     Check if an asset update is needed. When this fails, just return false - the route to github
         ///     might be bad, don't wanna just bail out in that case
         /// </summary>
+        /// <param name="client"><see cref="HttpClient"/> to use for download</param>
         /// <param name="baseDir">Base directory for assets</param>
         /// <returns>Update state</returns>
         private static async Task<(bool isRefreshNeeded, AssetInfo info)> CheckAssetRefreshNeeded(HttpClient client, DirectoryInfo baseDir)
@@ -184,6 +178,8 @@ namespace XIVLauncher.Common.Dalamud
             }
 
             var remoteVer = JsonSerializer.Deserialize<AssetInfo>(await client.GetStringAsync(ASSET_STORE_URL));
+            if (remoteVer == null)
+                throw new Exception("Could not get remote asset info");
 
             Log.Verbose("[DASSET] Ver check - local:{0} remote:{1}", localVer, remoteVer.Version);
 

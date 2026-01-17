@@ -6,6 +6,7 @@ using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Threading;
@@ -67,13 +68,15 @@ public class CheckIntegrityCommand
 
     private async Task<int> Handle(CancellationToken cancellationToken)
     {
+        using var client = new HttpClient();
+
         IntegrityCheck.IntegrityCheckData icr;
 
         if (string.IsNullOrWhiteSpace(this.integrityFilePath))
         {
             var gameVersion = File.ReadAllText($@"{this.gameRootPath}\game\ffxivgame.ver");
             Log.Information("Downloading integrity check file for version: {verison}", gameVersion);
-            icr = await IntegrityCheck.DownloadIntegrityCheckForVersion(gameVersion);
+            icr = await IntegrityCheck.DownloadIntegrityCheckForVersion(client, gameVersion, cancellationToken);
         }
         else
         {

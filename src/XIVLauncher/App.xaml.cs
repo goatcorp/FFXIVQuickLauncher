@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -91,8 +92,10 @@ namespace XIVLauncher
 
         public static CmdLineOptions CommandLine { get; private set; }
 
-        private FileInfo _dalamudRunnerOverride = null;
-        private MainWindow _mainWindow;
+        public static HttpClient HttpClient { get; private set; }
+
+        private FileInfo dalamudRunnerOverride = null;
+        private MainWindow mainWindow;
 
         public static bool GlobalIsDisableAutologin { get; private set; }
         public static byte[] GlobalSteamTicket { get; private set; }
@@ -184,22 +187,22 @@ namespace XIVLauncher
                 if (!finishUp)
                     return;
 
-                _mainWindow = new MainWindow();
-                _mainWindow.Initialize();
+                this.mainWindow = new MainWindow();
+                this.mainWindow.Initialize();
 
                 try
                 {
-                    DalamudUpdater = new DalamudUpdater(new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon")),
+                    DalamudUpdater = new DalamudUpdater(HttpClient, new DirectoryInfo(Path.Combine(Paths.RoamingPath, "addon")),
                         new DirectoryInfo(Path.Combine(Paths.RoamingPath, "runtime")),
                         new DirectoryInfo(Path.Combine(Paths.RoamingPath, "dalamudAssets")),
                         UniqueIdCache,
                         Settings.DalamudRolloutBucket);
 
-                    _mainWindow.SettingsControl.SetUpdater(DalamudUpdater);
+                    this.mainWindow.SettingsControl.SetUpdater(DalamudUpdater);
 
-                    if (this._dalamudRunnerOverride != null)
+                    if (this.dalamudRunnerOverride != null)
                     {
-                        DalamudUpdater.RunnerOverride = this._dalamudRunnerOverride;
+                        DalamudUpdater.RunnerOverride = this.dalamudRunnerOverride;
                     }
 
                     Settings.DalamudRolloutBucket = DalamudUpdater.RolloutBucket;
@@ -214,8 +217,7 @@ namespace XIVLauncher
 
                     DalamudUpdater.Run(
                         Settings.DalamudBetaKind,
-                        Settings.DalamudBetaKey,
-                        Updates.HaveFeatureFlag(Updates.LeaseFeatureFlags.ForceProxyDalamudAndAssets));
+                        Settings.DalamudBetaKey);
                 }
                 catch (Exception ex)
                 {
@@ -277,9 +279,9 @@ namespace XIVLauncher
                 if (this.useFullExceptionHandler)
                 {
                     CustomMessageBox.Builder
-                                    .NewFrom((Exception)e.ExceptionObject, "Unhandled", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
-                                    .WithAppendText("\n\nError during early initialization. Please report this error.\n\n" + e.ExceptionObject)
-                                    .Show();
+                        .NewFrom((Exception)e.ExceptionObject, "Unhandled", CustomMessageBox.ExitOnCloseModes.ExitOnClose)
+                        .WithAppendText("\n\nError during early initialization. Please report this error.\n\n" + e.ExceptionObject)
+                        .Show();
                 }
                 else
                 {
@@ -331,7 +333,7 @@ namespace XIVLauncher
 
                 if (!string.IsNullOrEmpty(CommandLine.DalamudRunnerOverride))
                 {
-                    this._dalamudRunnerOverride = new FileInfo(CommandLine.DalamudRunnerOverride);
+                    this.dalamudRunnerOverride = new FileInfo(CommandLine.DalamudRunnerOverride);
                 }
 
                 if (CommandLine.NoAutoLogin)
@@ -364,6 +366,8 @@ namespace XIVLauncher
                 File.Delete(GetConfigPath("launcher"));
                 SetupSettings();
             }
+
+            HttpClient = new HttpClient();
 
 #if !XL_LOC_FORCEFALLBACKS
             try
@@ -447,7 +451,7 @@ namespace XIVLauncher
 
             try
             {
-                if (App.Settings.LauncherLanguage == LauncherLanguage.Russian)
+                if (Settings.LauncherLanguage == LauncherLanguage.Russian)
                 {
                     var dict = new ResourceDictionary
                     {

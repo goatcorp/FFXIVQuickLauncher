@@ -92,14 +92,13 @@ namespace XIVLauncher.Windows
 
         private void LoadChangelog()
         {
-            var _ = Task.Run(this.FetchChangelogAsync);
+            var _ = Task.Run(() => this.FetchChangelogAsync(App.HttpClient));
         }
 
-        private async Task FetchChangelogAsync()
+        private async Task FetchChangelogAsync(HttpClient client)
         {
             try
             {
-                using var client = new HttpClient();
                 var response = JsonConvert.DeserializeObject<ReleaseMeta>(await client.GetStringAsync(META_URL));
 
                 var text = _prerelease ? response.PrereleaseVersion?.Changelog : response.ReleaseVersion?.Changelog;

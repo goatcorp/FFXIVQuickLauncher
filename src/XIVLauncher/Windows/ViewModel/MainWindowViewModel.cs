@@ -928,7 +928,7 @@ namespace XIVLauncher.Windows.ViewModel
                     }))
                     return false;
 
-                using var verify = new PatchVerifier(App.Settings.GamePath, App.Settings.PatchPath, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
+                using var verify = new PatchVerifier(App.HttpClient, App.Settings.GamePath, App.Settings.PatchPath, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
 
                 Hide();
                 IsEnabled = false;

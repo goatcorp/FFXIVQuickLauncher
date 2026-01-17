@@ -54,8 +54,7 @@ namespace XIVLauncher.Windows
 
                 App.DalamudUpdater.Run(
                     App.Settings.DalamudBetaKind,
-                    App.Settings.DalamudBetaKey,
-                    Updates.HaveFeatureFlag(Updates.LeaseFeatureFlags.ForceProxyDalamudAndAssets));
+                    App.Settings.DalamudBetaKey);
 
                 this.DialogResult = true;
                 this.Close();

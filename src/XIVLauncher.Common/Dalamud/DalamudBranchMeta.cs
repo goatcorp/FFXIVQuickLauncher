@@ -44,9 +44,8 @@ public static class DalamudBranchMeta
         public string DisplayNameWithAvailability => !this.IsApplicableForCurrentGameVer.GetValueOrDefault(false) ? $"{this.DisplayName} (unavailable)" : this.DisplayName;
     }
 
-    public static async Task<IEnumerable<Branch>> FetchBranchesAsync()
+    public static async Task<IEnumerable<Branch>> FetchBranchesAsync(HttpClient client)
     {
-        using var client = new HttpClient();
         var json = await client.GetStringAsync("https://kamori.goats.dev/Dalamud/Release/Meta");
         var dict = JsonSerializer.Deserialize<Dictionary<string, Branch>>(json);
         return dict == null ? throw new Exception("Failed to deserialize branch metadata.") : dict.Values;

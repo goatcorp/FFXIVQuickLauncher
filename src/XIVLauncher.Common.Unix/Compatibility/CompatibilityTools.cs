@@ -43,13 +43,15 @@ public class CompatibilityTools
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
+    private readonly HttpClient client;
     private readonly Dxvk.DxvkHudType hudType;
     private readonly bool gamemodeOn;
     private readonly string dxvkAsyncOn;
 
-    public CompatibilityTools(WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
+    public CompatibilityTools(HttpClient client, WineSettings wineSettings, Dxvk.DxvkHudType hudType, bool? gamemodeOn, bool? dxvkAsyncOn, DirectoryInfo toolsFolder)
     {
         this.Settings = wineSettings;
+        this.client = client;
         this.hudType = hudType;
         this.gamemodeOn = gamemodeOn ?? false;
         this.dxvkAsyncOn = (dxvkAsyncOn ?? false) ? "1" : "0";
@@ -81,14 +83,13 @@ public class CompatibilityTools
         }
 
         EnsurePrefix();
-        await Dxvk.InstallDxvk(Settings.Prefix, dxvkDirectory).ConfigureAwait(false);
+        await Dxvk.InstallDxvk(this.client, Settings.Prefix, dxvkDirectory).ConfigureAwait(false);
 
         IsToolReady = true;
     }
 
     private async Task DownloadTool(DirectoryInfo tempPath)
     {
-        using var client = new HttpClient();
         var tempFilePath = Path.Combine(tempPath.FullName, $"{Guid.NewGuid()}");
 
         await File.WriteAllBytesAsync(tempFilePath, await client.GetByteArrayAsync(WINE_XIV_RELEASE_URL).ConfigureAwait(false)).ConfigureAwait(false);

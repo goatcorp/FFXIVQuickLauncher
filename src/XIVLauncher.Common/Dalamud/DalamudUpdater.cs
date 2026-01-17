@@ -14,8 +14,6 @@ using Serilog;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
 
-#nullable enable
-
 namespace XIVLauncher.Common.Dalamud
 {
     public class DalamudUpdater
@@ -23,11 +21,7 @@ namespace XIVLauncher.Common.Dalamud
         private readonly DirectoryInfo addonDirectory;
         private readonly DirectoryInfo assetRootDirectory;
         private readonly IUniqueIdCache? cache;
-
-        private readonly TimeSpan defaultTimeout = TimeSpan.FromMinutes(15);
-
-        private bool forceProxy = false;
-        private DalamudVersionInfo? resolvedBranch;
+        private readonly HttpClient client;
 
         public DownloadState State { get; private set; } = DownloadState.Unknown;
         public bool IsStaging { get; private set; } = false;
@@ -62,17 +56,17 @@ namespace XIVLauncher.Common.Dalamud
 
         public DalamudVersionInfo? ResolvedBranch
         {
-            get => resolvedBranch;
+            get;
             private set
             {
-                if (resolvedBranch == value)
+                if (field == value)
                     return;
 
-                resolvedBranch = value;
+                field = value;
 
                 try
                 {
-                    ResolvedBranchChanged?.Invoke(resolvedBranch);
+                    ResolvedBranchChanged?.Invoke(field);
                 }
                 catch
                 {
@@ -89,10 +83,11 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity, // fail with error message
         }
 
-        public DalamudUpdater(DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetRootDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
+        public DalamudUpdater(HttpClient client, DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetRootDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
         {
             this.addonDirectory = addonDirectory;
             this.assetRootDirectory = assetRootDirectory;
+            this.client = client;
 
             this.Runtime = runtimeDirectory;
             this.AssetDirectory = null;
@@ -127,12 +122,10 @@ namespace XIVLauncher.Common.Dalamud
             Overlay!.ReportProgress(size, downloaded, progress);
         }
 
-        public void Run(string? betaKind, string? betaKey, bool overrideForceProxy = false)
+        public void Run(string? betaKind, string? betaKey)
         {
-            Log.Information("[DUPDATE] Starting... (forceProxy: {ForceProxy})", overrideForceProxy);
+            Log.Information("[DUPDATE] Starting...");
             this.State = DownloadState.Running;
-
-            this.forceProxy = overrideForceProxy;
 
             this.ResolvedBranch = null;
 
@@ -154,7 +147,6 @@ namespace XIVLauncher.Common.Dalamud
                     {
                         Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries, MAX_TRIES);
                         this.EnsurementException = ex;
-                        this.forceProxy = true;
                     }
                 }
 
@@ -181,25 +173,22 @@ namespace XIVLauncher.Common.Dalamud
 
         private async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(string? betaKind, string? betaKey)
         {
-            using var client = new HttpClient
+            var message = new HttpRequestMessage(HttpMethod.Get, DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}");
+            message.Headers.CacheControl = new CacheControlHeaderValue
             {
-                Timeout = this.defaultTimeout,
+                NoCache = true
             };
 
-            client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true,
-            };
+            var versionInfoResponse = await this.client.SendAsync(message).ConfigureAwait(false);
+            versionInfoResponse.EnsureSuccessStatusCode();
 
-            var versionInfoJsonRelease = await client.GetStringAsync(DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}").ConfigureAwait(false);
-
-            DalamudVersionInfo versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(versionInfoJsonRelease);
+            var versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoResponse.Content.ReadAsStringAsync());
 
             DalamudVersionInfo? versionInfoStaging = null;
 
-            if (!string.IsNullOrEmpty(betaKey))
+            if (!string.IsNullOrEmpty(betaKey) && !string.IsNullOrEmpty(betaKind))
             {
-                var versionInfoJsonStaging = await client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(betaKind)).ConfigureAwait(false);
+                var versionInfoJsonStaging = await this.client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(betaKind)).ConfigureAwait(false);
 
                 if (versionInfoJsonStaging.StatusCode != HttpStatusCode.BadRequest)
                     versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoJsonStaging.Content.ReadAsStringAsync().ConfigureAwait(false));
@@ -210,9 +199,6 @@ namespace XIVLauncher.Common.Dalamud
 
         private async Task UpdateDalamud(string? betaKind, string? betaKey)
         {
-            // GitHub requires TLS 1.2, we need to hardcode this for Windows 7
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
             var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(betaKind, betaKey).ConfigureAwait(false);
 
             var remoteVersionInfo = versionInfoRelease;
@@ -310,13 +296,13 @@ namespace XIVLauncher.Common.Dalamud
 
             Log.Verbose("[DUPDATE] Now ensure assets...");
 
-            var assetVer = 0;
+            int assetVer;
 
             try
             {
                 this.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Assets);
                 this.ReportOverlayProgress(null, 0, null);
-                var assetResult = await AssetManager.EnsureAssets(this, this.assetRootDirectory).ConfigureAwait(true);
+                var assetResult = await AssetManager.EnsureAssets(this.client, this, this.assetRootDirectory).ConfigureAwait(true);
                 AssetDirectory = assetResult.AssetDir;
                 assetVer = assetResult.Version;
             }
@@ -393,6 +379,11 @@ namespace XIVLauncher.Common.Dalamud
 
                 var hashes = JsonConvert.DeserializeObject<Dictionary<string, string>>(hashesJson);
 
+                if (hashes == null)
+                {
+                    throw new Exception("Hashes deserialized to null");
+                }
+
                 foreach (var hash in hashes)
                 {
                     var file = Path.Combine(directory.FullName, hash.Key.Replace("\\", "/"));
@@ -450,20 +441,17 @@ namespace XIVLauncher.Common.Dalamud
         private async Task DownloadDalamud(DirectoryInfo addonPath, DalamudVersionInfo version)
         {
             // Ensure directory exists
-            if (!addonPath.Exists)
-                addonPath.Create();
-            else
-            {
+            if (addonPath.Exists)
                 addonPath.Delete(true);
-                addonPath.Create();
-            }
+
+            addonPath.Create();
 
             var downloadPath = PlatformHelpers.GetTempFileName();
 
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            await this.DownloadFile(version.DownloadUrl, downloadPath, this.defaultTimeout).ConfigureAwait(false);
+            await this.DownloadFile(version.DownloadUrl, downloadPath).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
 
             File.Delete(downloadPath);
@@ -502,7 +490,7 @@ namespace XIVLauncher.Common.Dalamud
         private async Task<bool> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
         {
             var hashesFile = new FileInfo(Path.Combine(runtimePath.FullName, $"hashes-{version}.json"));
-            string? runtimeHashes = null;
+            string? runtimeHashes;
 
             if (!hashesFile.Exists)
             {
@@ -510,8 +498,7 @@ namespace XIVLauncher.Common.Dalamud
 
                 try
                 {
-                    using var client = new HttpClient();
-                    runtimeHashes = await client.GetStringAsync($"https://kamori.goats.dev/Dalamud/Release/Runtime/Hashes/{version}").ConfigureAwait(false);
+                    runtimeHashes = await this.client.GetStringAsync($"https://kamori.goats.dev/Dalamud/Release/Runtime/Hashes/{version}").ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -553,36 +540,23 @@ namespace XIVLauncher.Common.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            await this.DownloadFile(dotnetUrl, downloadPath, this.defaultTimeout).ConfigureAwait(false);
+            await this.DownloadFile(dotnetUrl, downloadPath).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
-            await this.DownloadFile(desktopUrl, downloadPath, this.defaultTimeout).ConfigureAwait(false);
+            await this.DownloadFile(desktopUrl, downloadPath).ConfigureAwait(false);
             ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
 
             File.Delete(downloadPath);
         }
 
-        public async Task DownloadFile(string url, string path, TimeSpan timeout)
+        public async Task DownloadFile(string url, string path)
         {
-            if (this.forceProxy && url.Contains("/File/Get/"))
-            {
-                url = url.Replace("/File/Get/", "/File/GetProxy/");
-            }
-
-            using var downloader = new HttpClientDownloadWithProgress(url, path);
+            using var downloader = new HttpClientDownloadWithProgress(this.client, url, path);
             downloader.ProgressChanged += this.ReportOverlayProgress;
 
-            await downloader.Download(timeout).ConfigureAwait(false);
+            await downloader.Download().ConfigureAwait(false);
         }
     }
 
-    public class DalamudIntegrityException : Exception
-    {
-        public DalamudIntegrityException(string msg, Exception? inner = null)
-            : base(msg, inner)
-        {
-        }
-    }
+    public class DalamudIntegrityException(string msg, Exception? inner = null) : Exception(msg, inner);
 }
-
-#nullable restore

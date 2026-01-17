@@ -139,12 +139,12 @@ namespace XIVLauncher.Common.Game.Patch
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
 
-        public PatchVerifier(DirectoryInfo gamePath, DirectoryInfo patchPath, Launcher.LoginResult loginResult, TimeSpan progressUpdateInterval, int maxExpansion, bool external = true)
+        public PatchVerifier(HttpClient client, DirectoryInfo gamePath, DirectoryInfo patchPath, Launcher.LoginResult loginResult, TimeSpan progressUpdateInterval, int maxExpansion, bool external = true)
         {
-            _client = new HttpClient();
+            _client = client;
             ProgressUpdateInterval = progressUpdateInterval;
             _gamePath = gamePath;
-            this._patchPath = patchPath;
+            _patchPath = patchPath;
             _maxExpansionToCheck = maxExpansion;
             _external = external;
             _currentLoginResult = loginResult;

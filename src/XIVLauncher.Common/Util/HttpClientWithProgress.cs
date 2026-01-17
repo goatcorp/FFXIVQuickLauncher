@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Util;
@@ -9,25 +10,24 @@ public class HttpClientDownloadWithProgress : IDisposable
 {
     private readonly string downloadUrl;
     private readonly string destinationFilePath;
-
-    private HttpClient httpClient;
+    private readonly HttpClient httpClient;
 
     public delegate void ProgressChangedHandler(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage);
 
-    public event ProgressChangedHandler ProgressChanged;
+    public event ProgressChangedHandler? ProgressChanged;
 
-    public HttpClientDownloadWithProgress(string downloadUrl, string destinationFilePath)
+    public HttpClientDownloadWithProgress(HttpClient client, string downloadUrl, string destinationFilePath)
     {
         this.downloadUrl = downloadUrl;
         this.destinationFilePath = destinationFilePath;
+
+        this.httpClient = client;
     }
 
     public async Task Download(TimeSpan? timeout = null)
     {
-        timeout ??= TimeSpan.FromDays(1);
-        this.httpClient = new HttpClient { Timeout = timeout.Value };
-
-        using var response = await this.httpClient.GetAsync(this.downloadUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+        var cts = new CancellationTokenSource(timeout ?? Timeout.InfiniteTimeSpan);
+        using var response = await this.httpClient.GetAsync(this.downloadUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false);
         await this.DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);
     }
 

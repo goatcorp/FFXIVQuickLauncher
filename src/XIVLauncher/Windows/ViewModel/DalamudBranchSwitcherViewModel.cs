@@ -43,7 +43,7 @@ namespace XIVLauncher.Windows.ViewModel
         public async Task FetchBranchesAsync()
         {
             Branches.Clear();
-            var allBranches = await DalamudBranchMeta.FetchBranchesAsync();
+            var allBranches = await DalamudBranchMeta.FetchBranchesAsync(App.HttpClient);
 
             foreach (var branch in allBranches)
             {

@@ -242,7 +242,7 @@ namespace XIVLauncher.Windows
                 return;
             }
 
-            Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(progress, gamePath)).ContinueWith(task =>
+            Task.Run(async () => await IntegrityCheck.CompareIntegrityAsync(App.HttpClient, progress, gamePath)).ContinueWith(task =>
             {
                 window.Dispatcher.Invoke(() => window.Close());
 
@@ -405,6 +405,7 @@ namespace XIVLauncher.Windows
         {
 #if DEBUG
             var result = MessageBox.Show("Yes: FTS\nNo: Save troubleshooting\nCancel: Cancel", "XIVLauncher Expert Debugging Interface", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
             switch (result)
             {
                 case MessageBoxResult.Yes:
@@ -415,9 +416,11 @@ namespace XIVLauncher.Windows
 
                     this.ReloadSettings();
                     break;
+
                 case MessageBoxResult.No:
                     MessageBox.Show(PackGenerator.SavePack());
                     break;
+
                 case MessageBoxResult.Cancel:
                     return;
             }

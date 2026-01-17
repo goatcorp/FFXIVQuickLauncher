@@ -65,7 +65,7 @@ namespace XIVLauncher.Support
                 {
                     // Cancel eagerly, this is just for logging and support anyway
                     var tokenSource = new System.Threading.CancellationTokenSource(TimeSpan.FromMilliseconds(300));
-                    var result = Task.Run(() => IntegrityCheck.CompareIntegrityAsync(null, gamePath, true, tokenSource.Token), tokenSource.Token)
+                    var result = Task.Run(() => IntegrityCheck.CompareIntegrityAsync(App.HttpClient, null, gamePath, true, tokenSource.Token), tokenSource.Token)
                         .GetAwaiter().GetResult();
 
                     integrity = result.compareResult switch
