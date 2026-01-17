@@ -15,6 +15,7 @@ using Serilog;
 using XIVLauncher.Common.Game.Patch.PatchList;
 using XIVLauncher.Common.Encryption;
 using XIVLauncher.Common.Game.Exceptions;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.PlatformAbstractions;
 using XIVLauncher.Common.Util;
 
@@ -37,9 +38,10 @@ public class Launcher
         this.frontierUrlTemplate = frontierUrl ?? throw new Exception("Frontier URL template is null, this is now required");
         this.acceptLanguage = acceptLanguage;
 
-        var handler = new HttpClientHandler
+        var handler = new SocketsHttpHandler
         {
             UseCookies = false,
+            ConnectCallback = new HappyEyeballsCallback().ConnectCallback,
         };
 
         this.client = new HttpClient(handler);
@@ -218,21 +220,21 @@ public class Launcher
         bool encryptArguments, DpiAwareness dpiAwareness)
     {
         Log.Information("XivGame::LaunchGame(steamServiceAccount:{IsSteam}, args:{AdditionalArguments})",
-                        isSteamServiceAccount,
-                        additionalArguments);
+            isSteamServiceAccount,
+            additionalArguments);
 
         var exePath = Path.Combine(gamePath.FullName, "game", "ffxiv_dx11.exe");
         var environment = new Dictionary<string, string>();
 
         var argumentBuilder = new ArgumentBuilder()
-                              .Append("DEV.DataPathType", "1")
-                              .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
-                              .Append("DEV.TestSID", sessionId)
-                              .Append("DEV.UseSqPack", "1")
-                              .Append("SYS.Region", region.ToString())
-                              .Append("language", ((int)language).ToString())
-                              .Append("resetConfig", "0")
-                              .Append("ver", Repository.Ffxiv.GetVer(gamePath));
+            .Append("DEV.DataPathType", "1")
+            .Append("DEV.MaxEntitledExpansionID", expansionLevel.ToString())
+            .Append("DEV.TestSID", sessionId)
+            .Append("DEV.UseSqPack", "1")
+            .Append("SYS.Region", region.ToString())
+            .Append("language", ((int)language).ToString())
+            .Append("resetConfig", "0")
+            .Append("ver", Repository.Ffxiv.GetVer(gamePath));
 
         if (isSteamServiceAccount)
         {
@@ -255,8 +257,8 @@ public class Launcher
         var workingDir = Path.Combine(gamePath.FullName, "game");
 
         var arguments = encryptArguments
-                            ? argumentBuilder.BuildEncrypted()
-                            : argumentBuilder.Build();
+            ? argumentBuilder.BuildEncrypted()
+            : argumentBuilder.Build();
 
         return runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
     }
@@ -397,7 +399,7 @@ public class Launcher
     private async Task<(string? Uid, LoginState result, PatchListEntry[] PendingGamePatches)> RegisterSession(OauthLoginResult loginResult, DirectoryInfo gamePath, bool forceBaseVersion)
     {
         var request = new HttpRequestMessage(HttpMethod.Post,
-                                             $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{loginResult.SessionId}");
+            $"https://patch-gamever.ffxiv.com/http/win32/ffxivneo_release_game/{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ffxiv.GetVer(gamePath))}/{loginResult.SessionId}");
 
         request.Headers.AddWithoutValidation("Connection", "Keep-Alive");
         request.Headers.AddWithoutValidation("User-Agent", Constants.PatcherUserAgent);

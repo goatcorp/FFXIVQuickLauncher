@@ -16,6 +16,7 @@ using Serilog;
 using Velopack;
 using Velopack.Sources;
 using XIVLauncher.Common;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows;
 
@@ -87,13 +88,13 @@ namespace XIVLauncher
 
         private class FakeSquirrelFileDownloader : IFileDownloader
         {
+            private readonly HttpClient client;
             private readonly Lease lease;
-            private readonly HttpClient client = new();
 
-            public FakeSquirrelFileDownloader(Lease lease, bool prerelease)
+            public FakeSquirrelFileDownloader(HttpClient client, Lease lease, bool prerelease)
             {
+                this.client = client;
                 this.lease = lease;
-                client.DefaultRequestHeaders.AddWithoutValidation("X-XL-Track", prerelease ? TRACK_PRERELEASE : TRACK_RELEASE);
             }
 
             public async Task DownloadFile(string url, string targetFile, Action<int> progress, IDictionary<string, string>? headers = null, double timeout = 30, CancellationToken cancelToken = new CancellationToken())
@@ -157,7 +158,12 @@ namespace XIVLauncher
 
         private static async Task<UpdateResult> LeaseUpdateManager(bool prerelease)
         {
-            using var client = new HttpClient();
+            using var client = new HttpClient(new SocketsHttpHandler()
+            {
+                ConnectCallback = new HappyEyeballsCallback().ConnectCallback
+            });
+
+            client.Timeout = TimeSpan.FromMinutes(60);
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("XIVLauncher", AppUtil.GetGitHash()));
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-Track", prerelease ? TRACK_PRERELEASE : TRACK_RELEASE);
             client.DefaultRequestHeaders.AddWithoutValidation("X-XL-LV", "0");
@@ -180,7 +186,7 @@ namespace XIVLauncher
             if (leaseData == null || !leaseData.Success)
                 throw new LeaseAcquisitionException(leaseData?.Message ?? "No lease data");
 
-            var fakeDownloader = new FakeSquirrelFileDownloader(leaseData, prerelease);
+            var fakeDownloader = new FakeSquirrelFileDownloader(client, leaseData, prerelease);
             var source = new SimpleWebSource(FAKE_URL_PREFIX, fakeDownloader);
 
             // Velopack bug: Delta updates are not reliable at the moment
@@ -233,9 +239,9 @@ namespace XIVLauncher
                 try
                 {
                     var flags = string.Join(", ", Enum.GetValues(typeof(LeaseFeatureFlags))
-                                                      .Cast<LeaseFeatureFlags>()
-                                                      .Where(f => UpdateLease.Flags.HasFlag(f))
-                                                      .Select(f => f.ToString()));
+                        .Cast<LeaseFeatureFlags>()
+                        .Where(f => UpdateLease.Flags.HasFlag(f))
+                        .Select(f => f.ToString()));
 
                     Log.Information("Feature flags: {Flags}", flags);
                 }
