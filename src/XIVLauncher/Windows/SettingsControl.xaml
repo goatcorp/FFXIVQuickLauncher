@@ -183,6 +183,10 @@
                                            Text="{Binding InGameAddonCommandHintLoc}" />
                             </StackPanel>
                             
+                            <TextBox Width="500" VerticalAlignment="Center"
+                                     HorizontalAlignment="Left" Foreground="{DynamicResource MaterialDesignBody}"
+                                     Margin="0,4,0,0" x:Name="InjectorArgsTextBox" materialDesign:HintAssist.Hint="{Binding AdditionalInjectorArgumentsLoc}" materialDesign:HintAssist.IsFloating="True"/>
+
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0"
                                        Foreground="{DynamicResource MaterialDesignBody}"
                                        Text="{Binding InGameAddonBranchSwitcherDescriptionLoc}" />
