@@ -97,21 +97,14 @@ namespace XIVLauncher.Windows
             if (EnvironmentSettings.IsDisableUpdates)
 #endif
             {
-                Title += " - UNSUPPORTED VERSION - NO UPDATES - COULD DO BAD THINGS";
+                Title += " - NO UPDATES";
             }
 
-#if DEBUG
-            Title += " - Debugging";
-#endif
+            if (DebugHelpers.IsDebugBuild)
+                Title += " - Debug Build";
 
             if (EnvironmentSettings.IsWine)
                 Title += " - Wine on Linux";
-
-            if (App.Settings.LauncherLanguage == LauncherLanguage.Russian)
-            {
-                AccountSwitcherButton.Background = App.UaBrush;
-                AccountSwitcherButton.BorderBrush = App.UaBrush;
-            }
         }
 
         private async Task SetupHeadlines()
@@ -122,11 +115,13 @@ namespace XIVLauncher.Windows
 
                 await Headlines.GetWorlds(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English));
                 _banners = await Headlines.GetBanners(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false))
-                                          .ConfigureAwait(false);
+                    .ConfigureAwait(false);
+
                 await Headlines.GetMessage(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false))
-                               .ConfigureAwait(false);
+                    .ConfigureAwait(false);
+
                 _headlines = await Headlines.GetNews(_launcher, App.Settings.Language.GetValueOrDefault(ClientLanguage.English), App.Settings.ForceNorthAmerica.GetValueOrDefault(false))
-                                            .ConfigureAwait(false);
+                    .ConfigureAwait(false);
 
                 _bannerBitmaps = new BitmapImage[_banners.Count];
                 _bannerDotList = new();
@@ -265,16 +260,17 @@ namespace XIVLauncher.Windows
 
         public void Initialize()
         {
-#if DEBUG
-            var fakeStartMenuItem = new MenuItem
+            if (DebugHelpers.IsDebugBuild || App.CommandLine.AllowFakeStart)
             {
-                Header = "Fake start"
-            };
-            fakeStartMenuItem.Click += FakeStart_OnClick;
+                var fakeStartMenuItem = new MenuItem
+                {
+                    Header = "Fake start"
+                };
+                fakeStartMenuItem.Click += FakeStart_OnClick;
 
-            var popupContent = LaunchOptionsPopupBox.PopupContent as Menu;
-            popupContent!.Items.Add(fakeStartMenuItem);
-#endif
+                var popupContent = LaunchOptionsPopupBox.PopupContent as Menu;
+                popupContent!.Items.Add(fakeStartMenuItem);
+            }
 
             this.SetDefaults();
 

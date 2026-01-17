@@ -348,6 +348,7 @@ namespace XIVLauncher.Windows
                     .WithAppendDescription("\nContext: " + context)
                     .WithAppendDescription("\nOS: " + Environment.OSVersion)
                     .WithAppendDescription("\n64bit? " + Environment.Is64BitProcess);
+
                 if (App.Settings != null)
                 {
                     this.WithAppendDescription("\nAddons Enabled? " + App.Settings.InGameAddonEnabled)
@@ -357,14 +358,14 @@ namespace XIVLauncher.Windows
                         .WithAppendDescription("\nGame path: " + App.Settings.GamePath);
                 }
 
-#if DEBUG
-                this.WithAppendDescription("\nDebugging");
-#endif
+                if (DebugHelpers.IsDebugBuild)
+                    this.WithAppendDescription("\nDebug Build");
 
                 return this;
             }
 
             public static Builder NewFrom(string text) => new Builder().WithText(text);
+
             public static Builder NewFrom(Exception exc, string context, ExitOnCloseModes exitOnCloseMode = ExitOnCloseModes.DontExitOnClose)
             {
                 var builder = new Builder()
@@ -442,6 +443,7 @@ namespace XIVLauncher.Windows
             public MessageBoxResult Show()
             {
                 MessageBoxResult result;
+
                 if (ParentWindow != null)
                 {
                     if (System.Windows.Threading.Dispatcher.CurrentDispatcher == ParentWindow.Dispatcher)

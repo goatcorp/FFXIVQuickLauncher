@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Util;
 
 #nullable enable
 
@@ -34,10 +35,13 @@ public class IndexedZiPatchIndexRemoteInstaller : IIndexedZiPatchIndexInstaller
             this.workerProcess.StartInfo.UseShellExecute = true;
             this.workerProcess.StartInfo.Verb = asAdmin ? "runas" : "open";
             this.workerProcess.StartInfo.Arguments = $"index-rpc {Process.GetCurrentProcess().Id} {rpcChannelName}";
-#if !DEBUG
+
+            if (!DebugHelpers.IsDebugBuild)
+            {
                 this.workerProcess.StartInfo.CreateNoWindow = true;
                 this.workerProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-#endif
+            }
+
             this.workerProcess.Start();
         }
         else

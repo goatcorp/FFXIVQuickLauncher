@@ -74,9 +74,8 @@ public static class GameHelpers
 
     public static bool CheckIsGameOpen()
     {
-#if DEBUG
-        return false;
-#endif
+        if (DebugHelpers.IsDebugBuild)
+            return false;
 
         var procs = Process.GetProcesses();
 

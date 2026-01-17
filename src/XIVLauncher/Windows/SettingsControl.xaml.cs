@@ -246,10 +246,9 @@ namespace XIVLauncher.Windows
             {
                 window.Dispatcher.Invoke(() => window.Close());
 
-                string saveIntegrityPath = Path.Combine(Paths.RoamingPath, "integrityreport.txt");
-#if DEBUG
-                Log.Information("Saving integrity to " + saveIntegrityPath);
-#endif
+                var saveIntegrityPath = Path.Combine(Paths.RoamingPath, "integrityreport.txt");
+
+                Log.Information("Saving integrity report to {Path}", saveIntegrityPath);
                 File.WriteAllText(saveIntegrityPath, task.Result.report);
 
                 this.Dispatcher.Invoke(() =>
@@ -403,34 +402,37 @@ namespace XIVLauncher.Windows
 
         private void Logo_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-#if DEBUG
-            var result = MessageBox.Show("Yes: FTS\nNo: Save troubleshooting\nCancel: Cancel", "XIVLauncher Expert Debugging Interface", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-
-            switch (result)
+            if (DebugHelpers.IsDebugBuild)
             {
-                case MessageBoxResult.Yes:
-                    var fts = new FirstTimeSetup();
-                    fts.ShowDialog();
+                var result = MessageBox.Show("Yes: FTS\nNo: Save troubleshooting\nCancel: Cancel", "XIVLauncher Expert Debugging Interface", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
-                    Log.Debug($"WasCompleted: {fts.WasCompleted}");
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        var fts = new FirstTimeSetup();
+                        fts.ShowDialog();
 
-                    this.ReloadSettings();
-                    break;
+                        Log.Debug($"WasCompleted: {fts.WasCompleted}");
 
-                case MessageBoxResult.No:
-                    MessageBox.Show(PackGenerator.SavePack());
-                    break;
+                        this.ReloadSettings();
+                        break;
 
-                case MessageBoxResult.Cancel:
-                    return;
+                    case MessageBoxResult.No:
+                        MessageBox.Show(PackGenerator.SavePack());
+                        break;
+
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+
+                return;
             }
-#else
+
             if (_hasTriggeredLogo)
                 return;
 
             Process.Start("explorer.exe", $"/select, \"{PackGenerator.SavePack()}\"");
             _hasTriggeredLogo = true;
-#endif
         }
 
         private void VersionLabel_OnMouseUp(object sender, MouseButtonEventArgs e)

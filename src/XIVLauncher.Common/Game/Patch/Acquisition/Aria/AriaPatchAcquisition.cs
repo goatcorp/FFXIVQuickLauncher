@@ -57,12 +57,14 @@ public class AriaPatchAcquisition(FileInfo logFile) : IPatchAcquisition, IDispos
 
             var startInfo = new ProcessStartInfo(ariaPath, ariaArgs)
             {
-#if !DEBUG
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-#endif
                 UseShellExecute = false,
             };
+
+            if (!DebugHelpers.IsDebugBuild)
+            {
+                startInfo.CreateNoWindow = true;
+                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            }
 
             ariaProcess = Process.Start(startInfo);
 

@@ -375,7 +375,6 @@ namespace XIVLauncher.Windows.ViewModel
         {
             bool? loginStatus = null;
 
-#if !DEBUG
             try
             {
                 if (refetchLoginStatus)
@@ -398,28 +397,29 @@ namespace XIVLauncher.Windows.ViewModel
             if (loginStatus == null)
             {
                 CustomMessageBox.Builder.NewFrom(Loc.Localize("GateUnreachable", "The login servers could not be reached. This usually indicates that the game is under maintenance, or that your connection to the login servers is unstable.\n\nPlease try again later."))
-                                .WithImage(MessageBoxImage.Asterisk)
-                                .WithButtons(MessageBoxButton.OK)
-                                .WithShowHelpLinks(true)
-                                .WithCaption("XIVLauncher")
-                                .WithParentWindow(_window)
-                                .Show();
+                    .WithImage(MessageBoxImage.Asterisk)
+                    .WithButtons(MessageBoxButton.OK)
+                    .WithShowHelpLinks(true)
+                    .WithCaption("XIVLauncher")
+                    .WithParentWindow(_window)
+                    .Show();
 
-                return null;
+                if (!DebugHelpers.IsDebugBuild)
+                    return null;
             }
 
             if (loginStatus == false)
             {
                 CustomMessageBox.Builder.NewFrom(Loc.Localize("GateClosed", "The game is currently under maintenance. Please try again later or see official sources for more information."))
-                                .WithImage(MessageBoxImage.Asterisk)
-                                .WithButtons(MessageBoxButton.OK)
-                                .WithCaption("XIVLauncher")
-                                .WithParentWindow(_window)
-                                .Show();
+                    .WithImage(MessageBoxImage.Asterisk)
+                    .WithButtons(MessageBoxButton.OK)
+                    .WithCaption("XIVLauncher")
+                    .WithParentWindow(_window)
+                    .Show();
 
-                return null;
+                if (!DebugHelpers.IsDebugBuild)
+                    return null;
             }
-#endif
 
             try
             {
@@ -668,10 +668,8 @@ namespace XIVLauncher.Windows.ViewModel
             if (CustomMessageBox.AssertOrShowError(loginResult.State == Launcher.LoginState.Ok, "TryProcessLoginResult: loginResult.State should have been Launcher.LoginState.Ok", parentWindow: _window))
                 return false;
 
-#if !DEBUG
-            if (!await CheckGateStatus().ConfigureAwait(false))
+            if (!await CheckGateStatus().ConfigureAwait(false) && !DebugHelpers.IsDebugBuild)
                 return false;
-#endif
 
             Hide();
 

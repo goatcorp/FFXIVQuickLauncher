@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using CommandLine;
 using Serilog;
 using Serilog.Enrichers.Sensitive;
+using XIVLauncher.Common.Util;
 
 namespace XIVLauncher.Common.Support;
 
@@ -29,13 +30,12 @@ public static class LogInit
         }
         catch
         {
-#if DEBUG
-            throw;
-#endif
+            if (DebugHelpers.IsDebugBuild)
+                throw;
         }
 
         var config = new LoggerConfiguration()
-                     .WriteTo.Sink(SerilogEventSink.Instance);
+            .WriteTo.Sink(SerilogEventSink.Instance);
 
         var parsed = result?.Value ?? new LogOptions();
 
@@ -54,12 +54,15 @@ public static class LogInit
             });
         }
 
-#if DEBUG
-        config.WriteTo.Debug();
-        config.MinimumLevel.Verbose();
-#else
-        config.MinimumLevel.Information();
-#endif
+        if (DebugHelpers.IsDebugBuild)
+        {
+            config.WriteTo.Debug();
+            config.MinimumLevel.Verbose();
+        }
+        else
+        {
+            config.MinimumLevel.Information();
+        }
 
         config.Enrich.WithSensitiveDataMasking(o =>
         {

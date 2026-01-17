@@ -54,6 +54,9 @@ namespace XIVLauncher
             [CommandLine.Option("gen-integrity", Required = false, HelpText = "Generate integrity files. Provide a game path.")]
             public string DoGenerateIntegrity { get; set; }
 
+            [CommandLine.Option("allow-fake-start", Required = false, HelpText = "Allow fake start.")]
+            public bool AllowFakeStart { get; set; }
+
             [CommandLine.Option("account", Required = false, HelpText = "Account name to use.")]
             public string AccountName { get; set; }
 
@@ -101,25 +104,20 @@ namespace XIVLauncher
         public static byte[] GlobalSteamTicket { get; private set; }
         public static DalamudUpdater DalamudUpdater { get; private set; }
 
-        public static Brush UaBrush = new LinearGradientBrush(new GradientStopCollection()
-        {
-            new(Color.FromArgb(0xFF, 0x00, 0x57, 0xB7), 0.5f),
-            new(Color.FromArgb(0xFF, 0xFF, 0xd7, 0x00), 0.5f),
-        }, 0.7f);
-
         public App()
         {
-#if !DEBUG
-            try
+            if (!DebugHelpers.IsDebugBuild)
             {
-                AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
-                TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+                try
+                {
+                    AppDomain.CurrentDomain.UnhandledException += EarlyInitExceptionHandler;
+                    TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+                }
+                catch
+                {
+                    // ignored
+                }
             }
-            catch
-            {
-                // ignored
-            }
-#endif
         }
 
         public static void SetupSettings()
@@ -180,8 +178,7 @@ namespace XIVLauncher
                 this.useFullExceptionHandler = true;
 
 #if !XL_NOAUTOUPDATE
-                if (_updateWindow != null)
-                    _updateWindow.Hide();
+                this._updateWindow?.Hide();
 #endif
 
                 if (!finishUp)
@@ -448,27 +445,6 @@ namespace XIVLauncher
                 }
             }
 #endif
-
-            try
-            {
-                if (Settings.LauncherLanguage == LauncherLanguage.Russian)
-                {
-                    var dict = new ResourceDictionary
-                    {
-                        { "PrimaryHueLightBrush", UaBrush },
-                        //{"PrimaryHueLightForegroundBrush", uaBrush},
-                        { "PrimaryHueMidBrush", UaBrush },
-                        //{"PrimaryHueMidForegroundBrush", uaBrush},
-                        { "PrimaryHueDarkBrush", UaBrush },
-                        //{"PrimaryHueDarkForegroundBrush", uaBrush},
-                    };
-                    this.Resources.MergedDictionaries.Add(dict);
-                }
-            }
-            catch
-            {
-                // ignored
-            }
 
             if (EnvironmentSettings.IsDisableUpdates)
             {
