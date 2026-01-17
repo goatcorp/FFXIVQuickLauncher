@@ -79,7 +79,7 @@ namespace XIVLauncher.Windows
             OtpServerCheckBox.IsChecked = App.Settings.OtpServerEnabled;
 
             OtpAlwaysOnTopCheckBox.IsChecked = App.Settings.OtpAlwaysOnTopEnabled;
-
+            OtpShellArgsTextBox.Text = App.Settings.OtpShellCommand;
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
 
             DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
@@ -119,6 +119,9 @@ namespace XIVLauncher.Windows
             App.Settings.InGameAddonEnabled = EnableHooksCheckBox.IsChecked == true;
 
             App.Settings.OtpServerEnabled = OtpServerCheckBox.IsChecked == true;
+
+            App.Settings.OtpShellEnabled = !string.IsNullOrWhiteSpace(OtpShellArgsTextBox.Text);
+            App.Settings.OtpShellCommand = OtpShellArgsTextBox.Text;
 
             App.Settings.OtpAlwaysOnTopEnabled = OtpAlwaysOnTopCheckBox.IsChecked == true;
 
