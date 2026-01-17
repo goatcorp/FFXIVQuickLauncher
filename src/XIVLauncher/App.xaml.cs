@@ -457,7 +457,7 @@ namespace XIVLauncher
             }
 #endif
 
-            if (EnvironmentSettings.IsDisableUpdates)
+            if (AppUtil.IsDisableUpdates)
             {
                 OnUpdateCheckFinished(true);
                 return;

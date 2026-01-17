@@ -74,10 +74,14 @@ namespace XIVLauncher.Windows.ViewModel
             LoginRepairCommand = new SyncCommand(GetLoginFunc(AfterLoginAction.Repair), () => !IsLoggingIn);
 
             var frontierUrl = Updates.UpdateLease?.FrontierUrl;
-#if DEBUG || RELEASENOUPDATE
-            // FALLBACK
-            frontierUrl ??= "https://launcher.finalfantasyxiv.com/v650/index.html?rc_lang={0}&time={1}";
-#endif
+
+            if (string.IsNullOrEmpty(frontierUrl) && AppUtil.IsDisableUpdates)
+            {
+                frontierUrl = DebugHelpers.GetFrontierUrlForDebugAsync(App.HttpClient).GetAwaiter().GetResult();
+            }
+
+            if (frontierUrl == null)
+                throw new InvalidOperationException("Could not determine Frontier URL for launcher.");
 
             Launcher = App.GlobalSteamTicket == null
                 ? new(App.Steam, App.UniqueIdCache, frontierUrl, App.Settings.AcceptLanguage)

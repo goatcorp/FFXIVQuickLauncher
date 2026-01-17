@@ -1,5 +1,8 @@
 using System;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Util;
 
@@ -12,7 +15,7 @@ public static class DebugHelpers
     /// <param name="offset">The offset in the byte array to start at.</param>
     /// <param name="bytesPerLine">The amount of bytes to display per line.</param>
     /// <returns>The generated hexdump in string form.</returns>
-    public static string ByteArrayToHex(byte[] bytes, int offset = 0, int bytesPerLine = 16)
+    public static string ByteArrayToHex(byte[]? bytes, int offset = 0, int bytesPerLine = 16)
     {
         if (bytes == null) return string.Empty;
 
@@ -71,9 +74,22 @@ public static class DebugHelpers
         return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
     }
 
+    public static async Task<string> GetFrontierUrlForDebugAsync(HttpClient client)
+    {
+        const string API_ENDPOINT = "https://kamori.goats.dev/Launcher/GetLauncherClientConfig";
+
+        var response = await client.GetFromJsonAsync<LauncherClientConfigResponse>(API_ENDPOINT).ConfigureAwait(false);
+        return response!.FrontierUrl;
+    }
+
 #if DEBUG
     public static bool IsDebugBuild => true;
 #else
     public static bool IsDebugBuild => false;
 #endif
+
+    private class LauncherClientConfigResponse
+    {
+        public string FrontierUrl { get; set; } = string.Empty;
+    }
 }

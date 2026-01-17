@@ -230,5 +230,11 @@ namespace XIVLauncher
 
             return true;
         }
+
+#if DEBUG || RELEASENOUPDATE
+        public static bool IsDisableUpdates => true;
+#else
+        public static bool IsDisableUpdates => EnvironmentSettings.CheckEnvBool("XL_NOAUTOUPDATE");
+#endif
     }
 }
