@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CommandLine;
@@ -70,6 +71,7 @@ public static class LogInit
             {
                 new SeEncryptedArgsMaskingOperator(),
                 new SeTestSidMaskingOperator(),
+                new UsernameMaskingOperator(),
             };
         });
 
@@ -79,15 +81,10 @@ public static class LogInit
         Log.Logger = config.CreateLogger();
     }
 
-    private class SeTestSidMaskingOperator : RegexMaskingOperator
+    private class SeTestSidMaskingOperator() : RegexMaskingOperator(TestSidPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled)
     {
-        private const string TEST_SID_PATTERN =
-            "(?:DEV\\.TestSID=\\S+)";
-
-        public SeTestSidMaskingOperator()
-            : base(TEST_SID_PATTERN, RegexOptions.IgnoreCase | RegexOptions.Compiled)
-        {
-        }
+        private const string TestSidPattern =
+            @"(?:DEV\.TestSID=\S+)";
 
         protected override bool ShouldMaskInput(string input)
         {
@@ -95,14 +92,29 @@ public static class LogInit
         }
     }
 
-    private class SeEncryptedArgsMaskingOperator : RegexMaskingOperator
+    private class SeEncryptedArgsMaskingOperator() : RegexMaskingOperator(EncryptedArgsPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled)
     {
-        private const string ENCRYPTED_ARGS_PATTERN =
-            "(?:\\/\\/\\*\\*sqex[0-9]+\\S+\\/\\/)";
+        private const string EncryptedArgsPattern =
+            @"(?:\/\/\*\*sqex[0-9]+\S+\/\/)";
+    }
 
-        public SeEncryptedArgsMaskingOperator()
-            : base(ENCRYPTED_ARGS_PATTERN, RegexOptions.IgnoreCase | RegexOptions.Compiled)
+    private class UsernameMaskingOperator() : RegexMaskingOperator(UsernamePattern, RegexOptions.IgnoreCase | RegexOptions.Compiled)
+    {
+        private const string UsernamePattern =
+            @"(?<=\\Users\\|/home/)[^\\\/\s]+";
+
+        protected override bool ShouldMaskInput(string input)
         {
+            try
+            {
+                var current = Environment.UserName;
+                return !string.IsNullOrEmpty(current) &&
+                       string.Equals(input, current, StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
