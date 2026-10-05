@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -49,6 +49,9 @@ namespace XIVLauncher
 
             [CommandLine.Option("noautologin", Required = false, HelpText = "Disable autologin.")]
             public bool NoAutoLogin { get; set; }
+
+            [CommandLine.Option("autologin", Required = false, HelpText = "Enable autologin.")]
+            public bool AutoLogin { get; set; }
 
             [CommandLine.Option("gen-localizable", Required = false, HelpText = "Generate localizable files.")]
             public bool DoGenerateLocalizables { get; set; }
@@ -101,6 +104,7 @@ namespace XIVLauncher
         private MainWindow mainWindow;
 
         public static bool GlobalIsDisableAutologin { get; private set; }
+        public static bool GlobalIsAutologin { get; private set; }
         public static byte[] GlobalSteamTicket { get; private set; }
         public static DalamudUpdater DalamudUpdater { get; private set; }
 
@@ -343,6 +347,11 @@ namespace XIVLauncher
                 if (CommandLine.NoAutoLogin)
                 {
                     GlobalIsDisableAutologin = true;
+                }
+
+                if (CommandLine.AutoLogin)
+                {
+                    GlobalIsAutologin = true;
                 }
 
                 if (!string.IsNullOrEmpty(CommandLine.DoGenerateIntegrity))
