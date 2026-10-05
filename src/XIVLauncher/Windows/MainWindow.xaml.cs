@@ -145,7 +145,7 @@ namespace XIVLauncher.Windows
                     this.BannerDot.ItemsSource = this._bannerDotList;
                 }));
 
-                _bannerChangeTimer = new Timer {Interval = 5000};
+                _bannerChangeTimer = new Timer { Interval = 5000 };
 
                 _bannerChangeTimer.Elapsed += (o, args) =>
                 {
@@ -178,7 +178,7 @@ namespace XIVLauncher.Windows
                 Log.Error(ex, "Could not get news");
                 _ = Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    NewsListView.ItemsSource = new List<News> {new News {Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError"}};
+                    NewsListView.ItemsSource = new List<News> { new News { Title = Loc.Localize("NewsDlFailed", "Could not download news data."), Tag = "DlError" } };
                 }));
             }
         }
@@ -537,7 +537,10 @@ namespace XIVLauncher.Windows
             Model.IsAutoLogin = App.Settings.AutologinEnabled;
 
             if (account.SavePassword)
-                LoginPassword.Password = account.Password;
+            {
+                this.LoginPassword.Password = account.Password;
+                this.LoginPasswordVisible.Text = account.Password;
+            }
 
             if (saveAsCurrent)
             {
@@ -571,6 +574,38 @@ namespace XIVLauncher.Windows
         {
             if (this.DataContext != null)
                 ((MainWindowViewModel)this.DataContext).Password = ((PasswordBox)sender).Password;
+
+            if (this.LoginPassword.Visibility == Visibility.Visible)
+                this.LoginPasswordVisible.Text = this.LoginPassword.Password;
+        }
+        private void LoginPasswordVisible_OnTextChanged(object sender, RoutedEventArgs e)
+        {
+            if (this.LoginPasswordVisible.Visibility == Visibility.Visible)
+            {
+                this.LoginPassword.Password = this.LoginPasswordVisible.Text;
+
+                if (this.DataContext != null)
+                    ((MainWindowViewModel)this.DataContext).Password = this.LoginPasswordVisible.Text;
+            }
+        }
+
+        private void LoginPasswordReveal_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.LoginPasswordVisible.Text = this.LoginPassword.Password;
+            this.LoginPasswordVisible.Visibility = Visibility.Visible;
+            this.LoginPassword.Visibility = Visibility.Collapsed;
+            this.LoginPasswordRevealIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.EyeOff;
+
+            this.LoginPasswordVisible.Focus();
+            this.LoginPasswordVisible.CaretIndex = this.LoginPasswordVisible.Text.Length;
+        }
+        private void LoginPasswordReveal_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            this.LoginPassword.Password = this.LoginPasswordVisible.Text;
+            this.LoginPasswordVisible.Visibility = Visibility.Collapsed;
+            this.LoginPassword.Visibility = Visibility.Visible;
+            this.LoginPasswordRevealIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Eye;
+            this.LoginPassword.Focus();
         }
 
         private void RadioButton_MouseEnter(object sender, MouseEventArgs e)

@@ -383,6 +383,10 @@
     "message": "Contraseña",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxPasswordReveal": {
+    "message": "Mostrar contraseña",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxAutoLogin": {
     "message": "Iniciar sesión automáticamente",
     "description": "MainWindowViewModel.SetupLoc"

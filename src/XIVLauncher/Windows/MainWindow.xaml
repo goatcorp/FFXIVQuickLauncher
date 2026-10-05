@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="XIVLauncher.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -242,15 +242,50 @@
                                                 VerticalAlignment="Top"
                                                 materialDesign:HintAssist.Hint="{Binding LoginUsernameLoc}"
                                                 Text="{Binding Username}" />
-                                            <PasswordBox
-                                                DockPanel.Dock="Top"
-                                                x:Name="LoginPassword"
-                                                HorizontalAlignment="Stretch"
-                                                Height="24"
-                                                Margin="0,4,0,0"
-                                                VerticalAlignment="Top"
-                                                PasswordChanged="LoginPassword_OnPasswordChanged"
-                                                materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}" />
+
+                                            <!-- Password Field -->
+                                            <Grid DockPanel.Dock="Top" Margin="0,8,0,0">
+                                                <!-- Masked Password Field -->
+                                                <PasswordBox
+                                                    x:Name="LoginPassword"
+                                                    HorizontalAlignment="Stretch"
+                                                    Height="24"
+                                                    Margin="0,4,0,0"
+                                                    VerticalAlignment="Top"
+                                                    PasswordChanged="LoginPassword_OnPasswordChanged"
+                                                    materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}" />
+
+                                                <!-- Visible Password Field -->
+                                                <TextBox
+                                                    x:Name="LoginPasswordVisible"
+                                                    HorizontalAlignment="Stretch"
+                                                    Height="24"
+                                                    Margin="0,4,0,0"
+                                                    VerticalAlignment="Top"
+                                                    Visibility="Collapsed"
+                                                    TextChanged="LoginPasswordVisible_OnTextChanged"
+                                                    materialDesign:HintAssist.Hint="{Binding LoginPasswordLoc}" />
+
+                                                <!-- Reveal Password Button -->
+                                                <Button
+                                                    x:Name="LoginPasswordReveal"
+                                                    Style="{DynamicResource MaterialDesignFlatButton}"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Width="22"
+                                                    Height="22"
+                                                    Padding="0"
+                                                    Margin="0,0,0,0"
+                                                    PreviewMouseDown="LoginPasswordReveal_OnMouseDown"
+                                                    PreviewMouseUp="LoginPasswordReveal_OnMouseUp"
+                                                    ToolTip="{Binding LoginPasswordRevealLoc}">
+                                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                        <materialDesign:PackIcon
+                                                            x:Name="LoginPasswordRevealIcon"
+                                                            Kind="Eye" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </Grid>
 
                                             <CheckBox
                                                 DockPanel.Dock="Top"
