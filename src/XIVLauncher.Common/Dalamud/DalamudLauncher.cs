@@ -81,7 +81,7 @@ namespace XIVLauncher.Common.Dalamud
             return DalamudInstallState.Ok;
         }
 
-        public Process Run(FileInfo gameExe, string gameArgs, IDictionary<string, string> environment)
+        public Process Run(FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, string additionalInjectorArgs)
         {
             Log.Information("[HOOKS] DalamudLauncher::Run(gp:{0}, cl:{1})", this.gamePath.FullName, this.language);
 
@@ -124,7 +124,7 @@ namespace XIVLauncher.Common.Dalamud
             if (this.updater.ResolvedBranch != null)
                 environment.Add("DALAMUD_BRANCH", this.updater.ResolvedBranch.Track);
 
-            var process = this.runner.Run(this.updater.Runner, this.fakeLogin, this.noPlugin, this.noThirdPlugin, gameExe, gameArgs, environment, this.loadMethod, startInfo);
+            var process = this.runner.Run(this.updater.Runner, this.fakeLogin, this.noPlugin, this.noThirdPlugin, gameExe, gameArgs, additionalInjectorArgs, environment, this.loadMethod, startInfo);
 
             this.updater.CloseOverlay();
 

@@ -23,7 +23,7 @@ public class WindowsDalamudRunner : IDalamudRunner
         this.dotnetRuntimePath = dotnetRuntimePath;
     }
 
-    public unsafe Process? Run(FileInfo runner, bool fakeLogin, bool noPlugins, bool noThirdPlugins, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo dalamudStartInfo)
+    public unsafe Process? Run(FileInfo runner, bool fakeLogin, bool noPlugins, bool noThirdPlugins, FileInfo gameExe, string gameArgs, string additionalInjectorArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo dalamudStartInfo)
     {
         var inheritableCurrentProcess = GetInheritableCurrentProcessHandle();
 
@@ -68,6 +68,9 @@ public class WindowsDalamudRunner : IDalamudRunner
 
         if (noThirdPlugins)
             launchArguments.Add(DalamudInjectorArgs.NO_THIRD_PARTY);
+
+        if (additionalInjectorArgs.Length > 0)
+            launchArguments.Add(additionalInjectorArgs);
 
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);

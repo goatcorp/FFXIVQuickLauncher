@@ -215,7 +215,7 @@ public class Launcher
 
     public Process? LaunchGame(
         IGameRunner runner, string sessionId, int region, int expansionLevel,
-        bool isSteamServiceAccount, string additionalArguments,
+        bool isSteamServiceAccount, string additionalArguments, string additionalInjectorArgs,
         DirectoryInfo gamePath, ClientLanguage language,
         bool encryptArguments, DpiAwareness dpiAwareness)
     {
@@ -260,7 +260,7 @@ public class Launcher
             ? argumentBuilder.BuildEncrypted()
             : argumentBuilder.Build();
 
-        return runner.Start(exePath, workingDir, arguments, environment, dpiAwareness);
+        return runner.Start(exePath, workingDir, arguments, environment, dpiAwareness, additionalInjectorArgs);
     }
 
     private static string GetVersionReport(DirectoryInfo gamePath, int exLevel, bool forceBaseVersion)

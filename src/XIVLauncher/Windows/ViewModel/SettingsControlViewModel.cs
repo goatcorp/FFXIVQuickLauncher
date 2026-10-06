@@ -75,6 +75,7 @@ namespace XIVLauncher.Windows.ViewModel
             OtpAlwaysOnTopCheckBoxLoc = Loc.Localize("OtpAlwaysOnTopCheckBox", "Keep the OTP Window Always on Top");
             OtpAlwaysOnTopTooltipLoc = Loc.Localize("OtpAlwaysOnTopTooltip", "This will keep the One Time Password Popup ontop of any window, even if it looses focus.");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
+            AdditionalInjectorArgumentsLoc = Loc.Localize("AdditionalInjectorArguments", "Additional injector arguments");
             ChooseDpiAwarenessLoc = Loc.Localize("ChooseDpiAwareness", "Game DPI Awareness");
             DpiAwarenessAwareLoc = Loc.Localize("DpiAwarenessAware", "Aware");
             DpiAwarenessUnawareLoc = Loc.Localize("DpiAwarenessUnaware", "Unaware");
@@ -166,6 +167,7 @@ namespace XIVLauncher.Windows.ViewModel
         public string OtpAlwaysOnTopCheckBoxLoc { get; private set; }
         public string OtpAlwaysOnTopTooltipLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
+        public string AdditionalInjectorArgumentsLoc { get; private set; }
         public string ChooseDpiAwarenessLoc { get; private set; }
         public string ChooseDpiAwarenessHintLoc { get; private set; }
         public string DpiAwarenessAwareLoc { get; private set; }
