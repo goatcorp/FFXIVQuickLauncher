@@ -8,10 +8,11 @@
     </Description>
     <VersionPrefix>1.4.0</VersionPrefix>
     <Nullable>enable</Nullable>
+    <Platforms>Win-x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

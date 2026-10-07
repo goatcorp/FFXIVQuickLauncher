@@ -7,6 +7,15 @@
         <Nullable>enable</Nullable>
 
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+        <Platforms>Win-x64;Linux-x64</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Platform)'=='Win-x64'">
+        <TargetFramework>net9.0-windows</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Platform)'=='Linux-x64'">
+        <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup>

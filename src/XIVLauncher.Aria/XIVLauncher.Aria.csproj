@@ -3,6 +3,7 @@
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
+        <Platforms>Win-x64;Linux-x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

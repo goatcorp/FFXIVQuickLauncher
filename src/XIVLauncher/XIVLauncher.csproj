@@ -13,6 +13,7 @@
     <Deterministic>true</Deterministic>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <StartupObject>XIVLauncher.Program</StartupObject>
+    <Platforms>Win-x64</Platforms>
   </PropertyGroup>
 
   <!-- Assets -->

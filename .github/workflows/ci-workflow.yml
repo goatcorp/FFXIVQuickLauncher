@@ -22,11 +22,11 @@ jobs:
       - name: Publish XIVLauncher
         run: |
           cd src/XIVLauncher
-          dotnet publish --self-contained -r win-x64 -o publish
+          dotnet publish --self-contained -p:Platform=Win-x64 -o publish
       - name: Publish XIVLauncher.Patcher
         run: |
           cd src/XIVLauncher.PatchInstaller
-          dotnet publish --self-contained -r win-x64 -o ../XIVLauncher/publish/patcher
+          dotnet publish --self-contained -p:Platform=Win-x64 -o ../XIVLauncher/publish/patcher
       - name: Generate Hashes File
         run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish
       - name: Attest Artifacts
@@ -108,11 +108,11 @@ jobs:
       - name: Publish XIVLauncher
         run: |
           cd src/XIVLauncher
-          dotnet publish --self-contained -r win-x64 -o publish
+          dotnet publish --self-contained -p:Platform=Win-x64 -o publish
       - name: Publish XIVLauncher.Patcher
         run: |
           cd src/XIVLauncher.PatchInstaller
-          dotnet publish --self-contained -r win-x64 -o ../XIVLauncher/publish/patcher
+          dotnet publish --self-contained -p:Platform=Win-x64 -o ../XIVLauncher/publish/patcher
       - name: Generate Hashes File
         run: ./scripts/CreateHashList.ps1 ./src/XIVLauncher/publish/
       - name: Attest Artifacts
