@@ -1,0 +1,601 @@
+{
+  "updatefailureerror": {
+    "message": "XIVLauncher ma setax jiċċekja għal ha updejts. Din jistajkun minħabba problema ta konnettivita ma GitHub. Stenna ftit minuti u erġa prova.\nItfi il-VPN, jekk għandek. Jistajkun trid teksludi XIVLauncher minn programmi antivirus.\n Jekk tibqa tesperjenza il problema wara numru ta minuti, iccekja l-FAQ. ",
+    "description": "<Run>d__3.MoveNext"
+  },
+  "RunOfficialLauncherNotPresentError": {
+    "message": "Mghandekx il-logħoba FFXIV installata. XIVLauncher ma jistax jibda il-launcher ufficjali",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherConfirmSteam": {
+    "message": "Għandek il-kont tal-logħoba assoċjat ma kont ta Steam? Jekk iva, Steam irid ikun installat biex tkompli.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "RunOfficialLauncherSteamError": {
+    "message": "Steam ma setax jinxtel. Jekk jgħoġbok ixel FFXIV dirett minn Steam.",
+    "description": "CustomMessageBox.OfficialLauncherButton_Click"
+  },
+  "ErrorAssertionFailed": {
+    "message": "Ġara xi ħaga li mhux suppost jiġri.",
+    "description": "CustomMessageBox.AssertOrShowError"
+  },
+  "ErrorExplanation": {
+    "message": "Kien ħemm problema b'XIVLauncher. Jekk jgħoġbok iċċekja l-FAQ. Jekk din il problema tibqa tigri,\r\nirrappurtha fuq GiHub billi tafas il-buttuna hawn isfel, waqt li tispjega il problema u tikkopja il-messaġġ ta' ġol-kaxxa.",
+    "description": "CustomMessageBox..cctor"
+  },
+  "Restart": {
+    "message": "_Restart",
+    "description": "Builder.NewFrom"
+  },
+  "Exit": {
+    "message": "_Oħrog",
+    "description": "Builder.NewFrom"
+  },
+  "UnexpectedErrorSummary": {
+    "message": "Kien hawn problema mhux mistennijja. ({0})",
+    "description": "Builder.NewFromUnexpectedException"
+  },
+  "UnexpectedErrorActionable": {
+    "message": "Jekk jgħoġbok irrapporta din il-problema.",
+    "description": "Builder.NewFromUnexpectedException"
+  },
+  "DalamudUpdateDalamud": {
+    "message": "Affarijiet ċentrali qed jigu updated...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUpdateAssets": {
+    "message": "Riżorsi qed jigu updated...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUpdateRuntime": {
+    "message": "Runtime qed jigi updated...",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "DalamudUnavailable": {
+    "message": "Plugins mhumiex aċċessibbli bħalissa\nminħabba update tal-logħoba.",
+    "description": "<>c__DisplayClass2_0.<SetStep>b__0"
+  },
+  "GamePathEmptyError": {
+    "message": "Jekk jgħoġbok għazel fejn installajt il-logħoba.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathSafeguardError": {
+    "message": "Tgħazilx il-fowlders \"game\" jew \"boot\" ta' l-installazzjoni ta' FFXIV, iżda għażel il-fowlder ta fuqhom minflok.",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathInvalidConfirm": {
+    "message": "Il-fowlder li għazilt ma fiehx FFXIV installata.\nXIVLauncher ħa jinstalla FFXIV l-ewwel darba li tgħamel log in.\nKompli?",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "GamePathRegionConfirm": {
+    "message": "Il-fowlder li għazel jistajkun ta' installazzjoni biċ-Ċiniz jew Korean. XIVLauncher jista jintuza biss ma' installazzjoni internazzjonali tal-logħoba.\nIl-fowlder li għazilt huwa ta installazzjoni internazzjonali?",
+    "description": "FirstTimeSetup.NextButton_Click"
+  },
+  "NewsLoading": {
+    "message": "Lowding...",
+    "description": "MainWindow..ctor"
+  },
+  "NewsDlFailed": {
+    "message": "L-aħbarijiet ma setawx jitniżżlu.",
+    "description": "MainWindow.<SetupHeadlines>b__10_3"
+  },
+  "MaintenanceQueueBootPatch": {
+    "message": "Hemm patch għal FFXIV Launcher.\nDan normalment ifisser li hemm patch għal-logħoba ukoll.\n\nĦa tkun logged in.",
+    "description": "<OnMaintenanceQueueTimerEvent>d__19.MoveNext"
+  },
+  "SettingsGamePatchPathError": {
+    "message": "Il-lokazzjoni tal logħoba u il-patch ma jistawx ikuun listess.\nJekk jogħoġbok għazel lokazzjoniet differenti biex tniżżel.",
+    "description": "SettingsControl.AcceptButton_Click"
+  },
+  "LaunchAsSteam": {
+    "message": "Ixel bħala kont ta Steam?",
+    "description": "SettingsControl.OriginalLauncherButton_OnClick"
+  },
+  "IntegrityCheckBase": {
+    "message": "Il-logħoba mhux installata fejn speċifikajt.\nJekk jogħoġbok installha qabel ma tipproċedi bi-ċekk tal-integrita.",
+    "description": "SettingsControl.RunIntegrityCheck_OnClick"
+  },
+  "DalamudIncompatible": {
+    "message": "Dalamud għadu mhux updajted għal verzjoni ta FFXIV tieghek.\nDin ħaga normali wara patches. Nitolbuk tieħu paċenzja jew issaqsi fuq Discord għal update fuq il-proċess.!",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "DalamudCompatCheckFailed": {
+    "message": "Ma setax jiġi ikkuntatjat is-server biex inġibu il-verzjoni kompatibbli ta FFXIV ma Dalamud. Dan jistajkun ifisser li l-installazjoni ta' .NET tiegħek antika wisq.\nJekk jgħoġbok iċċekja fuq Discrod għal iktar infromazzjoni.",
+    "description": "SettingsControl.EnableHooksCheckBox_OnChecked"
+  },
+  "PluginPathNotFound": {
+    "message": "Ma instabitx il-lokazzjoni tal-plugins.",
+    "description": "SettingsControl.TogglePlugin_OnClick"
+  },
+  "GameIsOpenPluginLocked": {
+    "message": "Il-logħoba miftuha. Jekk jogħoġbok għalaqha u erġa ipprova.",
+    "description": "SettingsControl.DeletePlugin_OnClick"
+  },
+  "DisabledPlugin": {
+    "message": " (mitfi)",
+    "description": "SettingsControl.ReloadPluginList"
+  },
+  "IntegrityCheckImpossible": {
+    "message": "Għad mhemmx rapport ta referenza għal din il-verzjoni tal-logħoba. Jekk jogħoġbok ipprova iktar tard.",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckNetworkError": {
+    "message": "Ma setawx jinzlu id-dokumenti ta' referenza biex tiġi iċċekjata l-integrita. Iċċekja l-konnssjoni tiegħek ma' l-Internet u erġa ipprova.",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckFailed": {
+    "message": "Xi files tal-logħoba ġew imbabsa jew tħassru. \n\nJekk tuza mods TexTools, dan riżultat mistenni.\n\nJekk ma tużax mods, right click fuq il-buttuna \"Login\" ta il-paġna prinċipali ta XIVLauncher u għazel \"Sewwi il-logħoba\".",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "IntegrityCheckValid": {
+    "message": "L-installazzjoni tal-logħoba tidher valida.",
+    "description": "<>c__DisplayClass18_1.<RunIntegrityCheck_OnClick>b__4"
+  },
+  "AccountSwitcherSetProfilePic": {
+    "message": "Għazel stampa għal-profil.",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherCreateShortcut": {
+    "message": "Krea shortcut fuq id-desktop.",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "Remove": {
+    "message": "Neħħi",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "AccountSwitcherDontSavePassword": {
+    "message": "Tiftakarx il-password",
+    "description": "AccountSwitcherViewModel.SetupLoc"
+  },
+  "UpdateNotice": {
+    "message": "XIVLauncher ġie updated għal version {0}.",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoading": {
+    "message": "Lista tat-tibdil qed tiġi illowdjata ...",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogLoadingError": {
+    "message": "Lista tat-tibdil ma setatx tigi illowdjata. Iċċekja fuq GitHub jew Discord minflok!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "JoinDiscord": {
+    "message": "Irreġistra fuq Discrod",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "SendEmail": {
+    "message": "Ibgħat Email",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "EmailInfo": {
+    "message": "XIVLauncher huwa bxejn u software open-source - ma juzax lebda telemetria jew għodda ta analiżi biex jiġbor l-informazzjoni tiegħek, imma tgħin ħafna jekk tista tibgħat email bl-Operating System, għala tuża XIVLauncher u, jekk hemm bżonn, feedback jew affarijiet li jistgħu isiru aħjar. L-email tiegħek jithassar immedjatament wara evaluazzjoni u qatt mhu ha nikkuntatjak.\n\nGrazzi talli użajt XIVLauncher!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChangelogThanks": {
+    "message": "XIVLauncher huwa bxejn u software open-source mgħejun minn varjeta ta nies madwar id-dinja kollha.\nGrazzi talli għadek hawn!",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "OK": {
+    "message": "OK",
+    "description": "ChangeLogWindowViewModel.SetupLoc"
+  },
+  "ChatChannelSetupTitle": {
+    "message": "Issetja iċ-chat channel",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "ChatChannelSetupDescription": {
+    "message": "Jekk jogħoġbok dahhal jekk XIVLauncher jitfax post fuq channel ġo server, jew lil user messaġġ dirett,\r\n u l-IDs taħhom.",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "HowToHint": {
+    "message": "Kif nissetja dan il-programm?",
+    "description": "ChatChannelSetupViewModel.SetupLoc"
+  },
+  "StartOfficialLauncher": {
+    "message": "Launcher Ufficjali",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "OpenIntegrityReport": {
+    "message": "Iftaħ rapport ta l-integrita.",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "OpenFaq": {
+    "message": "Iftaħ FAQ",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "ReportError": {
+    "message": "Irrapporta problema",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Yes": {
+    "message": "_Iva",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "No": {
+    "message": "_Le",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Cancel": {
+    "message": "_Ikkancella",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "Copy": {
+    "message": "_Ikkopja",
+    "description": "CustomMessageBoxViewModel.SetupLoc"
+  },
+  "DalamudUpdate": {
+    "message": "Dalamud qed jiġi updated...",
+    "description": "DalamudLoadingOverlayViewModel.SetupLoc"
+  },
+  "ChooseGamePathFTS": {
+    "message": "Jekk jogħoġbok għażel il-fowlder li hemm fiħ hemm il-logħoba installata.\r\nIrid ikun fieh il-fowlders \"game\" u \"boot\".",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamNotice": {
+    "message": "Għażel din il-kaxxa jekk normalment tixel il-logħoba minn Steam.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeSteamCheckBox": {
+    "message": "Attiva integrazzjoni ma Steam",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseDirectXFTS": {
+    "message": "Jekk jogħoġbok għazel liem verzjoni ta DirectX tixtieq tuza.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "DirectX9NoticeFTS": {
+    "message": "DirectX9 mgħadux supported. Jixgħel, imma mhux ser ikollok għajnuna minn SE għal problemi tekniċi, u funzjoni żeja ta XIVLauncher bħal Rich Presence u Dalamud mhux ser jaħdmu.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "ChooseLanguageFTS": {
+    "message": "Għazel liem lingwa trid tuża fil-logħoba",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunch": {
+    "message": "Advanced Combat Tracker huwa installat fuq il-kompjuter.\r\nTrid tixgħelhu awtomatikament meta tixgħel il-logħoba?",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeActLaunchCheckBox": {
+    "message": "Ixel ACT Auto-Launch",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "Next": {
+    "message": "Li Jmiss",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudNotice": {
+    "message": "Trid tattiva Dalamud?\r\nDan ħa jżid funzjonalita żejda mal-logħoba tiegħek, bħal tneħħija ta RMT miċ-chat u notifikazzjonijiet fuq Discord għal messaġġi jew meta jitla Duty Finder.\r\n\r\nBiex tirranġa dawn is-settings, jekk jogħoġbok uża il-menu tas-settings f'XIVLauncher u aqleb għal-paġna \"Dalamud\".\r\nJekk tixhel dan imma, jistajkun jikkawza posittiv falz fis-software ta l-antivurs tiegħek u jkollok bzonn tirranġalu il-lista ta eskluzjonijiet biex ma jkollokx problemi.",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "FirstTimeDalamudCheckBox": {
+    "message": "Ixel Dalamud",
+    "description": "FirstTimeSetupViewModel.SetupLoc"
+  },
+  "NowDownloadingMeta": {
+    "message": "Il-files tal-metadata qed jinżlu...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowVerifying": {
+    "message": "Nivverifikaw il-files tal-logħoba...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairing": {
+    "message": "Insewwu il-files tal-logħoba...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingConnecting": {
+    "message": "Nikkreaw Konnsejoni...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingReattemptWaiting": {
+    "message": "Nistennew qabel nerġaw nippruvaw...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "NowRepairingFinishing": {
+    "message": "Inlestu...",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "SpeedUnitPerSecLoc": {
+    "message": "{0}/s",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDuration": {
+    "message": "fadal {0:00}:{1:00}",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "EstimatedRemainingDurationWithHours": {
+    "message": "fadal {0:00}:{1:00}:{2:00}",
+    "description": "GameRepairProgressWindowViewModel.SetupLoc"
+  },
+  "GenericAddonSetupTitle": {
+    "message": "Immodifika Auto-Start",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "GenericAddonSetupDescription": {
+    "message": "Għażel l-applikazzjoni li suppost tinxtel, u parametri addizzjonali u \r\njekk iridx jintuża kont administrattiv.",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "CommandLineParameters": {
+    "message": "Parametri tal-command line",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "RunAsAdminLoc": {
+    "message": "Ixel bħala kont amministrattiv",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "RunOnCloseLoc": {
+    "message": "Ixel meta tgħalaq il-logħoba",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "KillAfterCloseLoc": {
+    "message": "Għalaq meta tgħalaq il-logħoba",
+    "description": "GenericAddonSetupWindowViewModel.SetupLoc"
+  },
+  "IntegrityCheckRunning": {
+    "message": "Qed nivverifikaw l-integrita...",
+    "description": "IntegrityCheckProgressWindowViewModel.SetupLoc"
+  },
+  "LoginWebExceptionContent": {
+    "message": "XIVLauncher ma setax jiftaħ konnsejoni mas-servers tal-logħoba.\n\nDan jistajkun problema temporanja, jew problema bil-konnesjoni ma' l-internet. Jekk jogħoġbok erġa ipprova iktar tard.",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
+  "LoginNoOauthTitle": {
+    "message": "Problema waqt Login",
+    "description": "MainWindowViewModel.ShowInternetError"
+  },
+  "PatchManDlFailure": {
+    "message": "XIVLauncher ma setax jivverifika il-files tal-logħoba li ġew imnizzla. Jekk jogħoġbok itfi u ixel u erġa ipprova.\n\nDan normalment ifisser li hemm problema bil-konnessjoni ma l-internet.\nJekk jibqa ikun hemm problem, ipprova uza VPN konness ma Japan.\n\nKuntest: {0}\n{1}",
+    "description": "MainWindowViewModel.PatcherOnFail"
+  },
+  "PatchInstallerInstallFailed": {
+    "message": "L-installatur tal-patch kellu problema.\nJekk jogħoġbok irrapporta din il-problema.\n\nErġa ipprova jew uża il-launcher ufficjali.",
+    "description": "MainWindowViewModel.InstallerOnFail"
+  },
+  "LoginBoxUsername": {
+    "message": "ID ta Square Enix",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxPassword": {
+    "message": "Password",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxAutoLogin": {
+    "message": "Idħol awtomatikament",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxOtp": {
+    "message": "Uża password ta' użu singolari",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxSteam": {
+    "message": "Uża kont ta Steam",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLogin": {
+    "message": "Idħol",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoStartLogin": {
+    "message": "Updateja mingħajr ma tixel",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxRepairLogin": {
+    "message": "Sewwi files tal-logħoba",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxNoDalamudLogin": {
+    "message": "Ixel mingħajr Dalamud",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxLoginTooltip": {
+    "message": "Idġol bil kredenzjali provduti",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoginBoxWaitingForMaint": {
+    "message": "Qed nistennew li il-mantenuzjoni titlesta...",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "CancelWithShortcut": {
+    "message": "_Ikkanċella",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "OpenAccountSwitcher": {
+    "message": "Iftaħ is-selezzjoni tal-kont",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "Settings": {
+    "message": "Konfigurazjoni",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "WorldStatus": {
+    "message": "Stat tad-Dinja",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "MaintenanceQueue": {
+    "message": "Stenna li titlesta il-manetunazzjoni",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "LoadingDialogIsLoggingIn": {
+    "message": "Dieħel...",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
+  "DuplicateOtpAfterSuccess": {
+    "message": "Din il-password ta' użu singolari diġa intuzat.\nJistajkun tieħu sa 30 sekondi biex iġġib waħda ġdida.",
+    "description": "MainWindowViewModel.<Login>b__21_0"
+  },
+  "AutoLoginIntro": {
+    "message": "Qed tattiva Login-Awtomatiku.\nDan ifisser li XIVLauncher dejjem ħa idaħħlek b'dan il-kont u mhux ser tara din il-window.\n\nBiex tbiddel din il-konfigurazzjoni u kont, trid izzomm il buttuna shift fuq il-keyboard waqt li tafas l-icon ta XIVLauncher.",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GameIsOpenRepairError": {
+    "message": "Il logħoba u/jew il-launcher uffiċjali miftuhin. XIVLauncher ma jistax isewwi il-logħoba f'dan il kas.\nJekk jogħoġbok għalaqhom u erġa ipprova.",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GameRepairDisclaimer": {
+    "message": "XIVLauncher ħa jipprova isib il-files tal-logħoba korrotti u jipprova jsewwihom.\nJekk tuża mods TexTools, dan ħa jnehhihom u jerġa iqiegħed il-logħoba fl-istat inizjali.\n\nKompli?",
+    "description": "<>c__DisplayClass19_0.<GetLoginFunc>b__0"
+  },
+  "GateUnreachable": {
+    "message": "M'hemmx kunnessjoni mas-servers biex tidhol. Dan normalment ifisser li il-logħoba qedha tiġi mantenuta, jew li il-konnessjoni tiegħek miehiex stabbli\n\nErġa ipprova iktar tard.",
+    "description": "<CheckGateStatus>d__23.MoveNext"
+  },
+  "GateClosed": {
+    "message": "FFXIV qedha tiġi mantenuta. Erġa ipprova iktar tard jew ara aġġornament uffiċjali għal iktar informazzjoni.",
+    "description": "<CheckGateStatus>d__23.MoveNext"
+  },
+  "CheckBootVersionError": {
+    "message": "XIVLauncher ma setax jiċċekja il-verzjoni tal-boot għal-logħoba installata. Dan jista jigri jekk hemm manetuzjoni għaddejja jew jekk il-konnezzjoni mas-server mhux disponibbli. Jekk tista tidhol bil-launcher uffiċjali u mhux b'XIVLauncher irrapporta din il-problema.",
+    "description": "<HandleBootCheck>d__34.MoveNext"
+  },
+  "BootPatchFailure": {
+    "message": "Ma setatx tiġi applikata il-patch fuq boot.",
+    "description": "<HandleBootCheck>d__34.MoveNext"
+  },
+  "EmptyUsernameError": {
+    "message": "Daħħal isem tal-kont.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmailUsernameError": {
+    "message": "Daħħal l-isem tal-kont ta SE tiegħek, mhux l-indirizz elettroniku.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "EmptyPasswordError": {
+    "message": "Daħħal il-password.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "UidCacheInstallError": {
+    "message": "Xegħelt il-cache tal-UID fil-konfigurazzjoni tal-patcher.\nDan ma jħallikx terġa tinstalla FFXIV.\n\nJekk trid tinstalla FFXIV, kun cert li titfiha qabel.",
+    "description": "<Login>d__21.MoveNext"
+  },
+  "GameRepairSuccess0": {
+    "message": "Il-files kollha tal-logħoba jidru validi.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess1": {
+    "message": "XIVLauncher irnexxielu jirranga file tal-logħoba.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccessPlural": {
+    "message": "XIVLauncher irnexxielu jirranga {0} files tal-logħoba.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_LaunchGame": {
+    "message": "_Ixel il-logħoba",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_VerifyAgain": {
+    "message": "_Erġa ivverifika",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_Close": {
+    "message": "_Għalaq",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "NoVersionReferenceError": {
+    "message": "Din il-verzjoni tal-logħoba ma tista tissewwa b'XIVLauncher s'issa, għax għad mhemmx informazzjoni ta' referenza disponibbli.\nErġa ipprova iktar tard.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairSuccess_TryAgain": {
+    "message": "_Erġa ipprova",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "GameRepairError": {
+    "message": "Kien hemm problema waqt li nsewwu il-files tal-logħoba.\nJistajkun trid terġa tinstalla il-logħoba.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "PatcherAlreadyInProgress": {
+    "message": "XIVLauncher diġa qed jippatchja il-logħoba f'instanzjoni ohra. Iċċekja jekk XIVLauncher għadux miftuh.",
+    "description": "<RepairGame>d__26.MoveNext"
+  },
+  "DalamudVc2019RedistError": {
+    "message": "L-addon ta gol-logħoba ta XIVLauncher għandha bżonn id-distribuzzjoni ta Microsoft Visual C++ 2015-2019 biex tkun installata. Installha mil-paġna ta' Microsoft biex tkompli.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "DalamudArchError": {
+    "message": "Dalamud ma jistax jixel fuq l-arkitettura tal-kompjuter tiegħek. Kun ċert li qed tixhel fuq verzjoni ta' Windows 64-bit.\nJekk qed tuża Windows fuq ARM, kun cert li emulazzjoni ta x64 mixewla għal XIVLauncher.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "DalamudRunnerError": {
+    "message": "Ma setax jinxtel Dalamud. Din jistajkun minhabba l-antivirus tiegħek.\nBiex tipprevjenhi dan, żid esklużjoni għal-fowlder \"%AppData%\\XIVLauncher\\\\addons\",",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "DalamudEnsurementError": {
+    "message": "Ma setawx jinżlu il-files neċessarji biex tuża Dalamud u il-plugins.\nDin probabbli problema bil-konnesjoni tiegħek ma l-internet - il-logħoba ha tixel, imma mhux ser tkun tista tuża plugins.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "AddonLoadError": {
+    "message": "Dan jistajkun ikkawżat minn l-antivirus, iċċekja il-logs u żid l-esklużjonijiet li hemm bżonn.",
+    "description": "<StartGameAndAddon>d__30.MoveNext"
+  },
+  "GameIsOpenError": {
+    "message": "Il-logħoba u/jew il-launcher uffiċjali huma miftuhin. XIVLauncher ma jista jipaptchja il-logħoba f'dan il-kaz.\nGħalaq il-launcher uffiċjali u erġa ipprova. ",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "PatchManNoInstaller": {
+    "message": "L-installatur tal-patch ma setax jixhel.\n{0}\n\nJekk ma tgħajtux aċċess, erġa ipprova. Jekk tibqa bi problema, ikkuntatjanha fuq Discord",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "FreeSpaceError": {
+    "message": "Mhemmx biżżejjed spazju fuq id-drive biex jinżlu xi patches.\n\nTista tbiddel fejn jiżlu il-patches fil-konfigurazzjoni.\n\nHemm bżonn:{0}\nDisponibbli:{1}",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "FreeSpaceErrorAll": {
+    "message": "Mhemmx biżżejjed spazju fuq id-drive biex jinżlu il-patches kollha.\n\nTista tbiddel fejn jiżlu il-patches fil-konfigurazzjoni.\n\nHemm bżonn:{0}\nDisponibbli:{1}",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "FreeSpaceGameError": {
+    "message": "Mhemmx biżżejjed spazju fuq id-drive biex jiġu installati xi patches.\n\nTista tbiddel fejn tiġi installatha il-logħoba fil-konfigurazzjoni.\n\nHemm bżonn:{0}\nDisponibbli:{1}",
+    "description": "<TryHandlePatchAsync>d__35.MoveNext"
+  },
+  "LoginIoErrorSummary": {
+    "message": "Ma instabux il-files tal-logħoba.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginIoErrorActionable": {
+    "message": "Dan jista ifisser li il-path tal-logħoba li ġie miżjud f'XIVLauncher mhuiex preżenti, ez. fuq drive li mhiex konnessa jew fuq network mhux imqabbad. Iċċekja il-path fil-konfigurazzjoni ta XIVLauncher.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginInvalidVersionFiles": {
+    "message": "Ma instetax tinqabar l-informazzjoni fuq il-verzjoni mil-files tal-logħoba.\n\nTrid terġa tinstalla jew issewwi il-logħoba.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginSteamIssue": {
+    "message": "Ma stajniex nawtentikaw ma Steam. Kun ċert li Steam mixewl u li int logged in bil kont assoċċjat ma l-SE ID tiegħek.\nJekk tilgħab bil-Prova Bxejn ta' FFXIV, għażel \"Free Trial mode\" fil-paġna \"About\" tal-konfigurazzjoni ta' XIVLauncher.\n\nKuntest: {0}",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginSteamWrongAccount": {
+    "message": "Il-kont li qed tipprova tidħol bieh MHUIEX listess wieħed miżmhuż mal-kont ta Steam fuq il-PC. Tista biss tidħol bil kont miżmhuż ma l-ID ta' SE waqt li tuza kont ta' Steam.\n\nIdħol b'kont li jaqbel.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginSteamLinkNeeded": {
+    "message": "Qabel tixhel il-logħoba b'dan il-kont, trid tgħemzhu mal-kont ta Steam bil-launcher uffiċjali.\nErġa ipprova wara li tgħhemeż il-kont. Tista tgħamel dan billi tafas il-buttuna \"Launcher Uffiċjali\".",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericError": {
+    "message": "Ma stajtx tidhol fil-kont ta SE tiegħek.\nIkkonferma l-isem tal-kont u il-password.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericErrorCheckOtpUse": {
+    "message": "Jekk qiegħed tuża password ta' użu singolari, għafas fuq il-kaxxa \"{0}\" u erġa ipprova.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericErrorCheckOtp": {
+    "message": "Erga iċċekja jekk l-arloġġ tal-magna tal-passwords ta użu singolari huiex tajjeb.\nJekk mhilekx li dħalt, erġa ipprova wara 30 sekonda.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginGenericServerIssue": {
+    "message": "Is-server bgħad risposta invalida. Dan jiġri waqt qtuħ ta' servizzi jew meta is-servers ikunu taħt stress kbir.\nErġa ipprova wara ftit ħin, jew uża il-launcher uffiċjali.\n\nTista issir taf iktar fuq qtuħ ta servizzi minn Loadstone.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "CheckLoginInfoNotAdditionally": {
+    "message": "Iċċekja l-informażżjoni biex tidħol u erġa ipprova.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginNoOauthAutologinHint": {
+    "message": "\n\nDħul-Awtomatiku huwa mitfi.",
+    "description": "<TryLoginToGame>d__24.MoveNext"
+  },
+  "LoginNoServiceMessage": {
+    "message": "Dan il-kont ta Square Enix ma jistax jilgħab FINAL FANTASY XIV. Kun ċert li għandek soskrizzjoni attiva li hi mħallsha.\n\nJekk xtrajt FINAL FANTASY XIV fuq Steam, kun ċert li tgħażel il-kaxxa \"Uża kont ta Steam\" waqt li tidħol.\nJekk Dħul-awtomatiku mixewlha, żomm shift waqt li tixhel biex taċċessa konfigurazzjoni.",
+    "description": "<TryProcessLoginResult>d__25.MoveNext"
+  },
