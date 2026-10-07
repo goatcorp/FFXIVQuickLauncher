@@ -571,8 +571,8 @@
     "message": "XIVLauncher håller redan på att uppdatera ditt spel någon annanstans. Kolla om XIVLauncher fortfarande är öppet.",
     "description": "<RepairGame>d__25.MoveNext"
   },
-  "DalamudVc2019RedistError": {
-    "message": "XIVLaunchers speltillägg behöver de omfördelbara paketen för Microsoft Visual C++ 2015-2019 att vara installerade för att fortsätta. Var god installera dem från Microsofts hemsida.",
+  "DalamudVc2022RedistError": {
+    "message": "XIVLaunchers speltillägg behöver de omfördelbara paketen för Microsoft Visual C++ 2015-2022 att vara installerade för att fortsätta. Var god installera dem från Microsofts hemsida.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {

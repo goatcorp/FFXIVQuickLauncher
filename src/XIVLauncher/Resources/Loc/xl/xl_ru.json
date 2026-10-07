@@ -571,8 +571,8 @@
     "message": "XIVLauncher уже обновляет Вашу игру в другом экземпляре. Пожалуйста, проверьте, открыт ли ещё один XIVLauncher.",
     "description": "<RepairGame>d__25.MoveNext"
   },
-  "DalamudVc2019RedistError": {
-    "message": "Для работы внутриигровых дополнений XIVLauncher необходимо установить Microsoft Visual C++ 2015-2019. Пожалуйста, установите его с домашней страницы Microsoft.",
+  "DalamudVc2022RedistError": {
+    "message": "Для работы внутриигровых дополнений XIVLauncher необходимо установить Microsoft Visual C++ 2015-2022. Пожалуйста, установите его с домашней страницы Microsoft.",
     "description": "<StartGameAndAddon>d__29.MoveNext"
   },
   "DalamudArchError": {
