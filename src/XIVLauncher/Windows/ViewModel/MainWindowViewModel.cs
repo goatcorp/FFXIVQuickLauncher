@@ -37,6 +37,8 @@ namespace XIVLauncher.Windows.ViewModel
 
         private readonly Task<GateStatus> loginStatusTask;
         private bool refetchLoginStatus = false;
+        private bool otpProviderDisarmed;
+        private bool otpProviderUsedForCurrentAttempt;
 
         public bool IsLoggingIn;
 
@@ -194,6 +196,46 @@ namespace XIVLauncher.Windows.ViewModel
             });
         }
 
+        private async Task<string> GetOtpAsync(string username)
+        {
+            otpProviderUsedForCurrentAttempt = false;
+
+            var providerId = App.Settings.OtpProviderId;
+
+            if (!otpProviderDisarmed && !string.IsNullOrEmpty(providerId))
+            {
+                var otp = await App.OtpProviderManager
+                    .GetOtpAsync(providerId, username)
+                    .ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(otp))
+                {
+                    if (AccountManager.CurrentAccount == null ||
+                        AccountManager.CurrentAccount.LastSuccessfulOtp != otp)
+                    {
+                        otpProviderUsedForCurrentAttempt = true;
+                        return otp;
+                    }
+
+                    Log.Warning(
+                        "OTP provider {ProviderId} returned the previously used OTP.",
+                        providerId);
+                }
+            }
+
+            return OtpInputDialog.AskForOtp((otpDialog, result) =>
+            {
+                if (AccountManager.CurrentAccount != null &&
+                    result != null &&
+                    AccountManager.CurrentAccount.LastSuccessfulOtp == result)
+                {
+                    otpDialog.IgnoreCurrentResult(
+                        Loc.Localize(
+                            "DuplicateOtpAfterSuccess",
+                            "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
+                }
+            }, _window);
+        }
         private async Task Login(string username, string password, bool isOtp, bool isSteam, bool doingAutoLogin, AfterLoginAction action)
         {
             ProblemCheck.RunCheck(_window);
@@ -279,14 +321,7 @@ namespace XIVLauncher.Windows.ViewModel
 
             if (isOtp && (!hasValidCache || action == AfterLoginAction.Repair))
             {
-                otp = OtpInputDialog.AskForOtp((otpDialog, result) =>
-                {
-                    if (AccountManager.CurrentAccount != null && result != null && AccountManager.CurrentAccount.LastSuccessfulOtp == result)
-                    {
-                        otpDialog.IgnoreCurrentResult(Loc.Localize("DuplicateOtpAfterSuccess",
-                                                                   "This OTP has been already used.\nIt may take up to 30 seconds for a new one."));
-                    }
-                }, _window);
+                otp = await GetOtpAsync(username).ConfigureAwait(false);
             }
 
             if (otp == null)
@@ -528,12 +563,27 @@ namespace XIVLauncher.Windows.ViewModel
 
                     msgbox.WithAppendText("\n\n");
                     if (otp == string.Empty)
+                    {
                         msgbox.WithAppendTextFormatted(Loc.Localize("LoginGenericErrorCheckOtpUse",
                             "If you're using OTP, then tick on \"{0}\" checkbox and try again."), OtpLoc);
+                    }
                     else
+                    {
                         msgbox.WithAppendText(Loc.Localize("LoginGenericErrorCheckOtp",
                             "Double check whether your OTP device's clock is correct.\nIf you have recently logged in, then try logging in again in 30 seconds."));
+                    }
+
+                    if (otpProviderUsedForCurrentAttempt)
+                    {
+                        otpProviderDisarmed = true;
+                        otpProviderUsedForCurrentAttempt = false;
+                        msgbox.WithAppendText(
+                            Loc.Localize(
+                                "OtpProviderLoginFailed",
+                                "\n\nThis login attempt used the configured OTP provider. The provider will be bypassed for the next attempt; please enter your OTP manually and verify the provider configuration if the problem continues."));
+                    }
                 }
+
                 // If GateStatus is not set (even gate server could not be contacted) or GateStatus is true (gate server says everything's fine but could not contact login servers)
                 else if (ex is HttpRequestException || ex is TaskCanceledException || ex is WebException)
                 {

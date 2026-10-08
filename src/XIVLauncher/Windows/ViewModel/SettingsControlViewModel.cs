@@ -74,6 +74,11 @@ namespace XIVLauncher.Windows.ViewModel
             OtpLearnMoreTooltipLoc = Loc.Localize("OtpLearnMoreTooltipLoc", "Open a guide in your web browser.");
             OtpAlwaysOnTopCheckBoxLoc = Loc.Localize("OtpAlwaysOnTopCheckBox", "Keep the OTP Window Always on Top");
             OtpAlwaysOnTopTooltipLoc = Loc.Localize("OtpAlwaysOnTopTooltip", "This will keep the One Time Password Popup ontop of any window, even if it looses focus.");
+            OpenOtpProviderFolderLoc = Loc.Localize("OpenOtpProviderFolder", "Open OTP Provider Folder");
+            OpenOtpProviderFolderTooltipLoc = Loc.Localize("OpenOtpProviderFolderTooltip", "Open the folder used for external OTP provider DLLs. Restart XIVLauncher after adding or removing providers.");
+            OtpProviderLoc = Loc.Localize("OtpProvider", "OTP Provider");
+            OtpProviderTooltipLoc = Loc.Localize("OtpProviderTooltip", "Select the OTP provider XIVLauncher should use. If no provider is selected, OTPs are entered manually.");
+            ManualOtpProviderLoc = Loc.Localize("ManualOtpProvider", "Manual");
             AdditionalArgumentsLoc = Loc.Localize("AdditionalArguments", "Additional launch arguments");
             ChooseDpiAwarenessLoc = Loc.Localize("ChooseDpiAwareness", "Game DPI Awareness");
             DpiAwarenessAwareLoc = Loc.Localize("DpiAwarenessAware", "Aware");
@@ -165,6 +170,11 @@ namespace XIVLauncher.Windows.ViewModel
         public string OtpLearnMoreTooltipLoc { get; private set; }
         public string OtpAlwaysOnTopCheckBoxLoc { get; private set; }
         public string OtpAlwaysOnTopTooltipLoc { get; private set; }
+        public string OpenOtpProviderFolderLoc { get; private set; }
+        public string OpenOtpProviderFolderTooltipLoc { get; private set; }
+        public string OtpProviderLoc { get; private set; }
+        public string ManualOtpProviderLoc { get; private set; }
+        public string OtpProviderTooltipLoc { get; private set; }
         public string AdditionalArgumentsLoc { get; private set; }
         public string ChooseDpiAwarenessLoc { get; private set; }
         public string ChooseDpiAwarenessHintLoc { get; private set; }

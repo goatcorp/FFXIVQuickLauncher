@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher", "XIVLauncher\XIVLauncher.csproj", "{BEB33308-6E15-41F7-ACC8-86BB786E2E56}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -27,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Common.Unix", "XIVLauncher.Common.Unix\XIVLauncher.Common.Unix.csproj", "{08CE4E78-7C47-43D6-98CB-68655DEAF66A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.Aria", "XIVLauncher.Aria\XIVLauncher.Aria.csproj", "{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVLauncher.OtpProviders.Abstractions", "XIVLauncher.OtpProviders.Abstractions\XIVLauncher.OtpProviders.Abstractions.csproj", "{F5131D28-F5A0-4AC0-8C6B-B4C53FB197A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,10 @@ Global
 		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{807F8B3E-B728-4F80-A60F-5EA0352CFCC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5131D28-F5A0-4AC0-8C6B-B4C53FB197A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5131D28-F5A0-4AC0-8C6B-B4C53FB197A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5131D28-F5A0-4AC0-8C6B-B4C53FB197A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5131D28-F5A0-4AC0-8C6B-B4C53FB197A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
