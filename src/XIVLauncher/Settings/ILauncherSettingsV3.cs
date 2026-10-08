@@ -18,6 +18,8 @@ namespace XIVLauncher.Settings
         string AdditionalLaunchArgs { get; set; }
         bool InGameAddonEnabled { get; set; }
         DalamudLoadMethod? InGameAddonLoadMethod { get; set; }
+        bool OtpShellEnabled { get; set; }
+        string OtpShellCommand { get; set; }
         bool OtpServerEnabled { get; set; }
         bool OtpAlwaysOnTopEnabled { get; set; }
         ClientLanguage? Language { get; set; }
