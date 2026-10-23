@@ -316,7 +316,7 @@ namespace XIVLauncher
                 }
                 else
                 {
-                    CustomMessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nDisable your VPN, if you have one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ."),
+                    CustomMessageBox.Show(Loc.Localize("updatefailureerror", "XIVLauncher failed to check for updates. This may be caused by internet connectivity issues. Wait a few minutes and try again.\nTry using a VPN if you aren't already or disabling your VPN if you currently are on one. You may also have to exclude XIVLauncher from your antivirus.\nIf this continues to fail after several minutes, please check out the FAQ."),
                         "XIVLauncher",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error, showOfficialLauncher: true);
