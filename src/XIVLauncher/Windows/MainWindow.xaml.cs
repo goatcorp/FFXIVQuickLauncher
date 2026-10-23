@@ -289,7 +289,7 @@ namespace XIVLauncher.Windows
                 App.Settings.AutologinEnabled = false;
             }
 
-            if (App.Settings.AutologinEnabled && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            if ((App.Settings.AutologinEnabled || App.GlobalIsAutologin) && !App.GlobalIsDisableAutologin && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Log.Information("Engaging Autologin...");
                 Model.TryLogin(savedAccount.UserName, savedAccount.Password,
