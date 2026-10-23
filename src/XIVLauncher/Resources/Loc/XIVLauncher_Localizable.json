@@ -383,6 +383,10 @@
     "message": "Password",
     "description": "MainWindowViewModel.SetupLoc"
   },
+  "LoginBoxPasswordReveal": {
+    "message": "Show password",
+    "description": "MainWindowViewModel.SetupLoc"
+  },
   "LoginBoxAutoLogin": {
     "message": "Log in automatically",
     "description": "MainWindowViewModel.SetupLoc"

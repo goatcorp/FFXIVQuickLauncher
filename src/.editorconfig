@@ -144,3 +144,7 @@ dotnet_style_parentheses_in_other_operators = always_for_clarity:silent
 indent_style = space
 indent_size = 2
 tab_width = 2
+
+[*.{json}]
+indent_style = space
+indent_size = 2

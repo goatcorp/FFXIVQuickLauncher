@@ -922,12 +922,12 @@ namespace XIVLauncher.Windows.ViewModel
                 Log.Information("STARTING REPAIR");
 
                 if (!AppUtil.TryYellOnGameFilesBeingOpen(_window, n => n switch
-                    {
-                        1 => Loc.Localize("GameRepairProcessExitRequired1",
-                            "Close the following application to repair the game."),
-                        _ => string.Format(Loc.Localize("GameRepairProcessExitRequiredPlural",
-                            "Close the following applications to repair the game.")),
-                    }))
+                {
+                    1 => Loc.Localize("GameRepairProcessExitRequired1",
+                        "Close the following application to repair the game."),
+                    _ => string.Format(Loc.Localize("GameRepairProcessExitRequiredPlural",
+                        "Close the following applications to repair the game.")),
+                }))
                     return false;
 
                 using var verify = new PatchVerifier(App.HttpClient, App.Settings.GamePath, App.Settings.PatchPath, loginResult, TimeSpan.FromMilliseconds(100), loginResult.OauthLogin.MaxExpansion);
@@ -1335,12 +1335,12 @@ namespace XIVLauncher.Windows.ViewModel
             }
 
             if (!AppUtil.TryYellOnGameFilesBeingOpen(_window, n => n switch
-                {
-                    1 => Loc.Localize("GameUpdateExitRequired1",
-                        "Close the following application to patch the game."),
-                    _ => string.Format(Loc.Localize("GameUpdateExitRequiredPlural",
-                        "Close the following applications to patch the game.")),
-                }))
+            {
+                1 => Loc.Localize("GameUpdateExitRequired1",
+                    "Close the following application to patch the game."),
+                _ => string.Format(Loc.Localize("GameUpdateExitRequiredPlural",
+                    "Close the following applications to patch the game.")),
+            }))
                 return false;
 
             using var installer = new PatchInstaller(App.Settings.GamePath, App.Settings.KeepPatches ?? false);
@@ -1580,6 +1580,7 @@ namespace XIVLauncher.Windows.ViewModel
         {
             LoginUsernameLoc = Loc.Localize("LoginBoxUsername", "Username");
             LoginPasswordLoc = Loc.Localize("LoginBoxPassword", "Password");
+            LoginPasswordRevealLoc = Loc.Localize("LoginBoxPasswordReveal", "Show password");
             AutoLoginLoc = Loc.Localize("LoginBoxAutoLogin", "Log in automatically");
             OtpLoc = Loc.Localize("LoginBoxOtp", "Use One-Time-Passwords");
             SteamLoc = Loc.Localize("LoginBoxSteam", "Use Steam service account");
@@ -1602,6 +1603,7 @@ namespace XIVLauncher.Windows.ViewModel
 
         public string LoginUsernameLoc { get; private set; }
         public string LoginPasswordLoc { get; private set; }
+        public string LoginPasswordRevealLoc { get; private set; }
         public string AutoLoginLoc { get; private set; }
         public string OtpLoc { get; private set; }
         public string SteamLoc { get; private set; }
