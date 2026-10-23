@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace XIVLauncher.Common;
 
@@ -9,13 +10,13 @@ public class Storage
 
     public Storage(string appName, string? overridePath = null)
     {
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             this.Root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName));
         }
         else
         {
-            this.Root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $".{appName}"));
+            this.Root = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appName));
         }
 
         if (!string.IsNullOrEmpty(overridePath))
