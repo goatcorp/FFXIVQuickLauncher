@@ -5,11 +5,19 @@
         <Description>Shared XIVLauncher platform-specific implementations for Unix-like systems.</Description>
         <VersionPrefix>1.0.0</VersionPrefix>
         <Nullable>enable</Nullable>
+        <Platforms>Win-x64;Linux-x64</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Platform)'=='Win-x64'">
+        <TargetFramework>net9.0-windows</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Platform)'=='Linux-x64'">
+        <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup>
         <OutputType>Library</OutputType>
-        <TargetFramework>net9.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Deterministic>true</Deterministic>
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
