@@ -19,7 +19,7 @@ public class WindowsGameRunner : IGameRunner
         this.dalamudOk = dalamudOk;
     }
 
-    public Process Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness)
+    public Process Start(string path, string workingDirectory, string arguments, IDictionary<string, string> environment, DpiAwareness dpiAwareness, string injectorArgs)
     {
         if (dalamudOk)
         {
@@ -31,7 +31,7 @@ public class WindowsGameRunner : IGameRunner
             };
             environment.Add("__COMPAT_LAYER", compat);
 
-            return this.dalamudLauncher.Run(new FileInfo(path), arguments, environment);
+            return this.dalamudLauncher.Run(new FileInfo(path), arguments, environment, injectorArgs);
         }
         else
         {
