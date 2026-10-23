@@ -268,7 +268,7 @@ namespace XIVLauncher.Windows
 
             this.SetDefaults();
 
-            _accountManager = new AccountManager(App.Settings);
+            _accountManager = Model.AccountManager;
 
             var savedAccount = _accountManager.CurrentAccount;
 
