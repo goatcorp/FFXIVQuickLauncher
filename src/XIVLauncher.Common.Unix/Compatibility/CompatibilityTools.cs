@@ -38,8 +38,24 @@ public class CompatibilityTools
     private string WineBinPath => Settings.StartupType == WineStartupType.Managed ?
                                     Path.Combine(toolDirectory.FullName, WINE_XIV_RELEASE_NAME, "bin") :
                                     Settings.CustomBinPath;
-    private string Wine64Path => Path.Combine(WineBinPath, "wine64");
+
+    // Legacy builds ship a separate wine64 binary. Current Wine, Proton and Arch-based
+    // packages (including CachyOS) provide only "wine" as the 64-bit loader.
+    private string Wine64Path => ResolveWineBinaryPath();
     private string WineServerPath => Path.Combine(WineBinPath, "wineserver");
+
+    private string ResolveWineBinaryPath()
+    {
+        var wine64Path = Path.Combine(WineBinPath, "wine64");
+        if (File.Exists(wine64Path))
+            return wine64Path;
+
+        var winePath = Path.Combine(WineBinPath, "wine");
+        if (File.Exists(winePath))
+            return winePath;
+
+        return wine64Path;
+    }
 
     public bool IsToolDownloaded => File.Exists(Wine64Path) && Settings.Prefix.Exists;
 
