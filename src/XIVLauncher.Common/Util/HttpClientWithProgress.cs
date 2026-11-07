@@ -24,24 +24,36 @@ public class HttpClientDownloadWithProgress
         this.httpClient = client;
     }
 
-    public async Task Download(TimeSpan? timeout = null)
+    // Max time without receiving bytes
+    private static readonly TimeSpan DefaultIdleTimeout = TimeSpan.FromSeconds(60);
+
+    public async Task Download(TimeSpan? idleTimeout = null)
     {
-        var cts = new CancellationTokenSource(timeout ?? Timeout.InfiniteTimeSpan);
-        using var response = await this.httpClient.GetAsync(this.downloadUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token).ConfigureAwait(false);
-        await this.DownloadFileFromHttpResponseMessage(response).ConfigureAwait(false);
+        var timeout = idleTimeout ?? DefaultIdleTimeout;
+        using var idleCts = new CancellationTokenSource(timeout);
+
+        try
+        {
+            using var response = await this.httpClient.GetAsync(this.downloadUrl, HttpCompletionOption.ResponseHeadersRead, idleCts.Token).ConfigureAwait(false);
+            await this.DownloadFileFromHttpResponseMessage(response, idleCts, timeout).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (idleCts.IsCancellationRequested)
+        {
+            throw new TimeoutException($"Download stalled for {timeout.TotalSeconds}s: {this.downloadUrl}");
+        }
     }
 
-    private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response)
+    private async Task DownloadFileFromHttpResponseMessage(HttpResponseMessage response, CancellationTokenSource idleCts, TimeSpan idleTimeout)
     {
         response.EnsureSuccessStatusCode();
 
         var totalBytes = response.Content.Headers.ContentLength;
 
-        using var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-        await this.ProcessContentStream(totalBytes, contentStream).ConfigureAwait(false);
+        using var contentStream = await response.Content.ReadAsStreamAsync(idleCts.Token).ConfigureAwait(false);
+        await this.ProcessContentStream(totalBytes, contentStream, idleCts, idleTimeout).ConfigureAwait(false);
     }
 
-    private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream)
+    private async Task ProcessContentStream(long? totalDownloadSize, Stream contentStream, CancellationTokenSource idleCts, TimeSpan idleTimeout)
     {
         var totalBytesRead = 0L;
         var readCount = 0L;
@@ -52,7 +64,8 @@ public class HttpClientDownloadWithProgress
 
         do
         {
-            var bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
+            idleCts.CancelAfter(idleTimeout);
+            var bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, idleCts.Token).ConfigureAwait(false);
 
             if (bytesRead == 0)
             {
@@ -70,6 +83,11 @@ public class HttpClientDownloadWithProgress
                 this.TriggerProgressChanged(totalDownloadSize, totalBytesRead);
         }
         while (isMoreToRead);
+
+        if (totalDownloadSize.HasValue && totalBytesRead != totalDownloadSize.Value)
+        {
+            throw new IOException($"Download incomplete, got {totalBytesRead}/{totalDownloadSize.Value} bytes: {this.downloadUrl}");
+        }
     }
 
     private void TriggerProgressChanged(long? totalDownloadSize, long totalBytesRead)

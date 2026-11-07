@@ -29,6 +29,8 @@ public class AdvancedSettingsViewModel
                                                                      "This method uses Entry-Point rewriting to load Dalamud, which may be more compatible with certain other software, like anti-virus tools.");
         InGameAddonLoadMethodDllInjectDescriptionLoc = Loc.Localize("InGameAddonLoadMethodDllInjectDescriptionLoc",
                                                                     "This method loads Dalamud via DLL-injection, which may be more stable on certain systems.");
+
+        AdditionalInjectorArgumentsLoc = Loc.Localize("AdditionalInjectorArguments", "Additional injector arguments");
     }
 
     public string AdvancedSettingsTitleLoc { get; private set; }
@@ -51,4 +53,6 @@ public class AdvancedSettingsViewModel
     public string InGameAddonLoadMethodDllInjectLoc { get; private set; }
     public string InGameAddonLoadMethodEntryPointDescriptionLoc { get; private set; }
     public string InGameAddonLoadMethodDllInjectDescriptionLoc { get; private set; }
+
+    public string AdditionalInjectorArgumentsLoc { get; private set; }
 }

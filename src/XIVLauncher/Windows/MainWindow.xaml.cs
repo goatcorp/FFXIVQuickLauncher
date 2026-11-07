@@ -46,6 +46,7 @@ namespace XIVLauncher.Windows
         private ObservableCollection<BannerDotInfo> _bannerDotList;
 
         private Timer _maintenanceQueueTimer;
+        private int _isMaintenanceQueueChecking;
 
         private AccountManager _accountManager;
 
@@ -289,7 +290,7 @@ namespace XIVLauncher.Windows
                 App.Settings.AutologinEnabled = false;
             }
 
-            if ((App.Settings.AutologinEnabled || App.GlobalIsAutologin) && !App.GlobalIsDisableAutologin && savedAccount != null && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            if ((App.Settings.AutologinEnabled || App.GlobalIsAutologin) && !App.GlobalIsDisableAutologin && savedAccount is { SavePassword: true } && !Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             {
                 Log.Information("Engaging Autologin...");
                 Model.TryLogin(savedAccount.UserName, savedAccount.Password,
@@ -437,6 +438,32 @@ namespace XIVLauncher.Windows
 
         private async void OnMaintenanceQueueTimerEvent(Object source, System.Timers.ElapsedEventArgs e)
         {
+            if (!_maintenanceQueueTimer.Enabled)
+            {
+                return;
+            }
+
+            if (Interlocked.Exchange(ref _isMaintenanceQueueChecking, 1) == 1)
+            {
+                return;
+            }
+
+            try
+            {
+                await CheckMaintenanceQueue();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not check maintenance queue");
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _isMaintenanceQueueChecking, 0);
+            }
+        }
+
+        private async Task CheckMaintenanceQueue()
+        {
             var bootPatches = await _launcher.CheckBootVersion(App.Settings.GamePath);
 
             var gateStatus = false;
@@ -450,6 +477,11 @@ namespace XIVLauncher.Windows
                 // ignored
             }
 
+            if (!_maintenanceQueueTimer.Enabled)
+            {
+                return;
+            }
+
             var hasBootPatch = bootPatches.Length > 0;
             if (gateStatus || hasBootPatch)
             {
@@ -459,12 +491,23 @@ namespace XIVLauncher.Windows
                         "A patch for the official launcher was detected.\nThis usually means that there is a patch for the game as well.\n\nYou will now be logged in."), "XIVLauncher", parentWindow: this);
                 }
 
-                Dispatcher.Invoke(() =>
+                var isStillQueued = Dispatcher.Invoke(() =>
                 {
+                    if (!_maintenanceQueueTimer.Enabled)
+                    {
+                        return false;
+                    }
+
                     QuitMaintenanceQueueButton_OnClick(null, null);
 
                     Model.TryLogin(Model.Username, LoginPassword.Password, Model.IsOtp, Model.IsSteam, false, MainWindowViewModel.AfterLoginAction.Start);
+                    return true;
                 });
+
+                if (!isStillQueued)
+                {
+                    return;
+                }
 
                 Console.Beep(523, 150);
                 Thread.Sleep(25);
@@ -536,8 +579,7 @@ namespace XIVLauncher.Windows
             Model.IsSteam = account.UseSteamServiceAccount;
             Model.IsAutoLogin = App.Settings.AutologinEnabled;
 
-            if (account.SavePassword)
-                LoginPassword.Password = account.Password;
+            LoginPassword.Password = account.SavePassword ? account.Password : string.Empty;
 
             if (saveAsCurrent)
             {

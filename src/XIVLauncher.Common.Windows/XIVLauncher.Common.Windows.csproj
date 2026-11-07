@@ -3,7 +3,6 @@
         <Product>XIVLauncher.Common.Windows</Product>
         <AssemblyTitle>XIVLauncher.Common.Windows</AssemblyTitle>
         <Description>Shared XIVLauncher platform-specific implementations for Windows.</Description>
-        <TargetFramework>net9.0</TargetFramework>
         <VersionPrefix>1.0.0</VersionPrefix>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -18,6 +17,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.Versioning.SupportedOSPlatformAttribute">
+            <_Parameter1>windows</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 
     <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">

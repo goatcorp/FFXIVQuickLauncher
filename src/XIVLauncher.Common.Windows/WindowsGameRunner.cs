@@ -38,4 +38,9 @@ public class WindowsGameRunner : IGameRunner
             return NativeAclFix.LaunchGame(workingDirectory, path, arguments, environment, dpiAwareness, process => { });
         }
     }
+
+    public uint GetTickCount()
+    {
+        return (uint)Environment.TickCount;
+    }
 }

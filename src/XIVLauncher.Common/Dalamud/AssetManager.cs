@@ -44,11 +44,6 @@ namespace XIVLauncher.Common.Dalamud
 
         public static async Task<(DirectoryInfo AssetDir, int Version)> EnsureAssets(HttpClient client, DalamudUpdater updater, DirectoryInfo baseDir)
         {
-            client.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true,
-            };
-
             using var sha1 = SHA1.Create();
 
             Log.Verbose("[DASSET] Starting asset download");
@@ -99,6 +94,11 @@ namespace XIVLauncher.Common.Dalamud
 
             if (isRefreshNeeded)
             {
+                if (currentDir.Exists && GameHelpers.CheckIsGameOpen())
+                {
+                    throw new DalamudIntegrityException("Cannot replace assets while the game is running");
+                }
+
                 PlatformHelpers.DeleteAndRecreateDirectory(currentDir);
 
                 // Wait for it to be gone
@@ -111,12 +111,19 @@ namespace XIVLauncher.Common.Dalamud
                 if (File.Exists(tempPath))
                     File.Delete(tempPath);
 
-                await updater.DownloadFile(packageUrl, tempPath);
-
-                using (var packageStream = File.OpenRead(tempPath))
-                using (var packageArc = new ZipArchive(packageStream, ZipArchiveMode.Read))
+                try
                 {
-                    packageArc.ExtractToDirectory(currentDir.FullName);
+                    await updater.DownloadFile(packageUrl, tempPath);
+
+                    using (var packageStream = File.OpenRead(tempPath))
+                    using (var packageArc = new ZipArchive(packageStream, ZipArchiveMode.Read))
+                    {
+                        packageArc.ExtractToDirectory(currentDir.FullName);
+                    }
+                }
+                finally
+                {
+                    PlatformHelpers.DeleteTempFile(tempPath);
                 }
 
                 try
@@ -128,8 +135,6 @@ namespace XIVLauncher.Common.Dalamud
                 {
                     Log.Error(ex, "[DASSET] Could not copy to dev dir");
                 }
-
-                File.Delete(tempPath);
             }
 
             if (isRefreshNeeded)
@@ -155,9 +160,9 @@ namespace XIVLauncher.Common.Dalamud
         }
 
         /// <summary>
-        ///     Check if an asset update is needed. When this fails, just return false - the route to github
-        ///     might be bad, don't wanna just bail out in that case
+        ///     Check if an asset update is needed.
         /// </summary>
+        /// <exception cref="Exception">The remote asset info could not be fetched or parsed.</exception>
         /// <param name="client"><see cref="HttpClient"/> to use for download</param>
         /// <param name="baseDir">Base directory for assets</param>
         /// <returns>Update state</returns>
@@ -177,7 +182,16 @@ namespace XIVLauncher.Common.Dalamud
                 Log.Error(ex, "[DASSET] Could not read asset.ver");
             }
 
-            var remoteVer = JsonSerializer.Deserialize<AssetInfo>(await client.GetStringAsync(ASSET_STORE_URL));
+            using var message = new HttpRequestMessage(HttpMethod.Get, ASSET_STORE_URL);
+            message.Headers.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
+            };
+
+            using var response = await client.SendAsync(message);
+            response.EnsureSuccessStatusCode();
+
+            var remoteVer = JsonSerializer.Deserialize<AssetInfo>(await response.Content.ReadAsStringAsync());
             if (remoteVer == null)
                 throw new Exception("Could not get remote asset info");
 
@@ -213,7 +227,7 @@ namespace XIVLauncher.Common.Dalamud
             {
                 if (toDelete.Name != devDir.Name && toDelete.Name != currentDir.Name)
                 {
-                    toDelete.Delete(true);
+                    PlatformHelpers.ForceDeleteDirectory(toDelete);
                     Log.Verbose("[DASSET] Cleaned out {Path}", toDelete.FullName);
                 }
             }

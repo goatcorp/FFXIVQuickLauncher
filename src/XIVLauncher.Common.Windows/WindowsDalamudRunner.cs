@@ -69,7 +69,7 @@ public class WindowsDalamudRunner : IDalamudRunner
         if (noThirdPlugins)
             launchArguments.Add(DalamudInjectorArgs.NO_THIRD_PARTY);
 
-        if (additionalInjectorArgs.Length > 0)
+        if (!string.IsNullOrWhiteSpace(additionalInjectorArgs))
             launchArguments.Add(additionalInjectorArgs);
 
         launchArguments.Add("--");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -14,6 +15,7 @@ using CheapLoc;
 using Newtonsoft.Json;
 using Serilog;
 using Velopack;
+using Velopack.Exceptions;
 using Velopack.Sources;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Http.HappyEyeballs;
@@ -38,6 +40,13 @@ namespace XIVLauncher
 
         private const string TrackRelease = "Release";
         private const string TrackPrerelease = "Prerelease";
+
+        private const int MaxTries = 3;
+        private const int CopyBufferSize = 81920;
+
+        private static readonly TimeSpan RetryBackoff = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan RequestTimeout = TimeSpan.FromMinutes(1);
+        private static readonly TimeSpan StallTimeout = TimeSpan.FromMinutes(5);
 
         public static Lease? UpdateLease { get; private set; }
 
@@ -90,27 +99,56 @@ namespace XIVLauncher
         {
             private readonly HttpClient client;
             private readonly Lease lease;
+            private readonly IReadOnlyDictionary<string, string> leaseHeaders;
 
-            public FakeSquirrelFileDownloader(HttpClient client, Lease lease, bool prerelease)
+            public FakeSquirrelFileDownloader(HttpClient client, Lease lease, IReadOnlyDictionary<string, string> leaseHeaders)
             {
                 this.client = client;
                 this.lease = lease;
+                this.leaseHeaders = leaseHeaders;
             }
 
             public async Task DownloadFile(string url, string targetFile, Action<int> progress, IDictionary<string, string>? headers = null, double timeout = 30, CancellationToken cancelToken = new CancellationToken())
             {
                 Log.Verbose("FakeSquirrel: DownloadFile from {Url} to {Target}", url, targetFile);
-                var fileNeeded = url.Substring(FakeUrlPrefix.Length);
 
-                using var response = await client.GetAsync($"{LeaseFileUrl}/{fileNeeded}", HttpCompletionOption.ResponseHeadersRead, cancelToken).ConfigureAwait(false);
+                if (!url.StartsWith(FakeUrlPrefix, StringComparison.Ordinal))
+                {
+                    throw new ArgumentException($"DownloadFile called for unknown url: {url}");
+                }
+
+                var fileNeeded = url.Substring(FakeUrlPrefix.Length);
+                var numBytes = await Retry(() => this.Download(fileNeeded, targetFile, cancelToken), cancelToken).ConfigureAwait(false);
+
+                Log.Verbose("FakeSquirrel: OK, downloaded {NumBytes}b for {File}", numBytes, fileNeeded);
+            }
+
+            private async Task<long> Download(string fileNeeded, string targetFile, CancellationToken cancelToken)
+            {
+                using var request = CreateLeaseRequest($"{LeaseFileUrl}/{fileNeeded}", this.leaseHeaders);
+                using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancelToken).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
                 using var contentStream = await response.Content.ReadAsStreamAsync(cancelToken).ConfigureAwait(false);
 
                 using Stream fileStream = File.Open(targetFile, FileMode.Create);
-                await contentStream.CopyToAsync(fileStream, cancelToken).ConfigureAwait(false);
-                fileStream.Close();
 
-                Log.Verbose("FakeSquirrel: OK, downloaded {NumBytes}b for {File}", response.Content.Headers.ContentLength, fileNeeded);
+                using var stallCts = CancellationTokenSource.CreateLinkedTokenSource(cancelToken);
+                var buffer = new byte[CopyBufferSize];
+                long numBytes = 0;
+
+                while (true)
+                {
+                    stallCts.CancelAfter(StallTimeout);
+                    var read = await contentStream.ReadAsync(buffer, stallCts.Token).ConfigureAwait(false);
+
+                    if (read == 0)
+                    {
+                        return numBytes;
+                    }
+
+                    await fileStream.WriteAsync(buffer.AsMemory(0, read), cancelToken).ConfigureAwait(false);
+                    numBytes += read;
+                }
             }
 
             public Task<byte[]> DownloadBytes(string url, IDictionary<string, string>? headers = null, double timeout = 30)
@@ -156,37 +194,25 @@ namespace XIVLauncher
             public Lease Lease { get; private set; } = lease;
         }
 
-        private static async Task<UpdateResult> LeaseUpdateManager(bool prerelease)
+        private static async Task<UpdateResult> LeaseUpdateManager(HttpClient client, bool prerelease)
         {
-            using var client = new HttpClient(new SocketsHttpHandler()
+            var leaseHeaders = new Dictionary<string, string>
             {
-                ConnectCallback = new HappyEyeballsCallback().ConnectCallback
-            });
+                ["X-XL-Track"] = prerelease ? TrackPrerelease : TrackRelease,
+                ["X-XL-LV"] = "0",
+                ["X-XL-HaveVersion"] = AppUtil.GetAssemblyVersion(),
+                ["X-XL-HaveAddon"] = App.Settings.InGameAddonEnabled ? "yes" : "no",
+                ["X-XL-FirstStart"] = App.Settings.VersionUpgradeLevel == 0 ? "yes" : "no",
+                ["X-XL-HaveWine"] = EnvironmentSettings.IsWine ? "yes" : "no",
+            };
 
-            client.Timeout = TimeSpan.FromMinutes(60);
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("XIVLauncher", AppUtil.GetGitHash()));
-            client.DefaultRequestHeaders.AddWithoutValidation("X-XL-Track", prerelease ? TrackPrerelease : TrackRelease);
-            client.DefaultRequestHeaders.AddWithoutValidation("X-XL-LV", "0");
-            client.DefaultRequestHeaders.AddWithoutValidation("X-XL-HaveVersion", AppUtil.GetAssemblyVersion());
-            client.DefaultRequestHeaders.AddWithoutValidation("X-XL-HaveAddon", App.Settings.InGameAddonEnabled ? "yes" : "no");
-            client.DefaultRequestHeaders.AddWithoutValidation("X-XL-FirstStart", App.Settings.VersionUpgradeLevel == 0 ? "yes" : "no");
-            client.DefaultRequestHeaders.AddWithoutValidation("X-XL-HaveWine", EnvironmentSettings.IsWine ? "yes" : "no");
-
-            var response = await client.GetAsync(LeaseMetaUrl).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-
-            if (response.Headers.TryGetValues("X-XL-Canary", out var values) &&
-                values.FirstOrDefault() == "yes")
-            {
-                Log.Information("Updates: Received canary track lease!");
-            }
-
-            var leaseData = JsonConvert.DeserializeObject<Lease>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+            var leaseJson = await Retry(() => GetLease(client, leaseHeaders), CancellationToken.None).ConfigureAwait(false);
+            var leaseData = JsonConvert.DeserializeObject<Lease>(leaseJson);
 
             if (leaseData == null || !leaseData.Success)
                 throw new LeaseAcquisitionException(leaseData?.Message ?? "No lease data");
 
-            var fakeDownloader = new FakeSquirrelFileDownloader(client, leaseData, prerelease);
+            var fakeDownloader = new FakeSquirrelFileDownloader(client, leaseData, leaseHeaders);
             var source = new SimpleWebSource(FakeUrlPrefix, fakeDownloader);
 
             // Velopack bug: Delta updates are not reliable at the moment
@@ -200,6 +226,58 @@ namespace XIVLauncher
 
             return new UpdateResult(manager, leaseData);
         }
+
+        private static HttpRequestMessage CreateLeaseRequest(string url, IReadOnlyDictionary<string, string> leaseHeaders)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.UserAgent.Add(new ProductInfoHeaderValue("XIVLauncher", AppUtil.GetGitHash()));
+
+            foreach (var (key, value) in leaseHeaders)
+            {
+                request.Headers.AddWithoutValidation(key, value);
+            }
+
+            return request;
+        }
+
+        private static async Task<string> GetLease(HttpClient client, IReadOnlyDictionary<string, string> leaseHeaders)
+        {
+            using var request = CreateLeaseRequest(LeaseMetaUrl, leaseHeaders);
+            using var response = await client.SendAsync(request).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+
+            if (response.Headers.TryGetValues("X-XL-Canary", out var values) &&
+                values.FirstOrDefault() == "yes")
+            {
+                Log.Information("Updates: Received canary track lease!");
+            }
+
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        }
+
+        private static async Task<T> Retry<T>(Func<Task<T>> action, CancellationToken cancelToken)
+        {
+            for (var tries = 1;; tries++)
+            {
+                try
+                {
+                    return await action().ConfigureAwait(false);
+                }
+                catch (Exception ex) when (tries < MaxTries && !cancelToken.IsCancellationRequested && IsTransient(ex))
+                {
+                    Log.Warning(ex, "Updates: Request failed, try {TryCnt}/{MaxTries}", tries, MaxTries);
+                }
+
+                await Task.Delay(RetryBackoff, cancelToken).ConfigureAwait(false);
+            }
+        }
+
+        private static bool IsTransient(Exception ex) => ex switch
+        {
+            HttpRequestException { StatusCode: { } status } => status == HttpStatusCode.TooManyRequests || status >= HttpStatusCode.InternalServerError,
+            HttpRequestException or IOException or OperationCanceledException => true,
+            _ => false,
+        };
 
         public static async Task<ErrorNewsData?> GetErrorNews()
         {
@@ -232,7 +310,15 @@ namespace XIVLauncher
         {
             try
             {
-                var updateResult = await LeaseUpdateManager(downloadPrerelease).ConfigureAwait(false);
+                using var client = new HttpClient(new SocketsHttpHandler()
+                {
+                    ConnectCallback = new HappyEyeballsCallback().ConnectCallback
+                })
+                {
+                    Timeout = RequestTimeout,
+                };
+
+                var updateResult = await LeaseUpdateManager(client, downloadPrerelease).ConfigureAwait(false);
                 UpdateLease = updateResult.Lease;
 
                 // Log feature flags
@@ -273,7 +359,7 @@ namespace XIVLauncher
                     if (changelogWindow == null)
                     {
                         Log.Error("changelogWindow was null");
-                        updateManager.ApplyUpdatesAndRestart(updateInfo);
+                        Apply(updateManager, updateInfo);
                         return;
                     }
 
@@ -285,22 +371,33 @@ namespace XIVLauncher
                             changelogWindow.Show();
                             changelogWindow.Closed += (_, _) =>
                             {
-                                updateManager.ApplyUpdatesAndRestart(updateInfo);
+                                Apply(updateManager, updateInfo);
                             };
                         });
-
-                        OnUpdateCheckFinished?.Invoke(false);
                     }
                     catch (Exception ex)
                     {
                         Log.Error(ex, "Could not show changelog window");
-                        updateManager.ApplyUpdatesAndRestart(updateInfo);
+                        Apply(updateManager, updateInfo);
+                        return;
                     }
+
+                    OnUpdateCheckFinished?.Invoke(false);
                 }
                 else
                 {
                     OnUpdateCheckFinished?.Invoke(true);
                 }
+            }
+            catch (AcquireLockFailedException ex)
+            {
+                Log.Error(ex, "Update failed, another instance is updating");
+                CustomMessageBox.Show(Loc.Localize("updatelockerror", "Another XIVLauncher window is currently installing an update or your antivirus is blocking the installation.\n\nIf this issue persists, please report it."),
+                    "XIVLauncher",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Asterisk);
+
+                Environment.Exit(1);
             }
             catch (Exception ex)
             {
@@ -321,6 +418,25 @@ namespace XIVLauncher
                         MessageBoxButton.OK,
                         MessageBoxImage.Error, showOfficialLauncher: true);
                 }
+
+                Environment.Exit(1);
+            }
+        }
+
+        private static void Apply(UpdateManager manager, UpdateInfo info)
+        {
+            try
+            {
+                var restartArgs = Environment.GetCommandLineArgs().Skip(1).ToArray();
+                manager.ApplyUpdatesAndRestart(info, restartArgs);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not apply update");
+                CustomMessageBox.Show(Loc.Localize("updateapplyerror", "XIVLauncher could not install a pending update. Please restart XIVLauncher to try again.\nYou may have to exclude XIVLauncher from your antivirus.\n\nIf this error persists, please report it."),
+                    "XIVLauncher",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error, showOfficialLauncher: true);
 
                 Environment.Exit(1);
             }

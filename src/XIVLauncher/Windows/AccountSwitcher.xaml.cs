@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CheapLoc;
 using XIVLauncher.Accounts;
 using XIVLauncher.Common;
 using XIVLauncher.Common.Windows;
@@ -69,6 +70,8 @@ namespace XIVLauncher.Windows
         }
 
         private bool _closing = false;
+        private bool _isShowingDialog;
+        private bool _isSyncingSavePasswordCheck;
 
         private void AccountListView_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -85,13 +88,19 @@ namespace XIVLauncher.Windows
 
         private void AccountListViewContext_Opened(object sender, RoutedEventArgs e)
         {
-            var selectedEntry = AccountListView.SelectedItem as AccountSwitcherEntry;
+            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+            {
+                return;
+            }
+
+            _isSyncingSavePasswordCheck = true;
             AccountEntrySavePasswordCheck.IsChecked = !selectedEntry.Account.SavePassword;
+            _isSyncingSavePasswordCheck = false;
         }
 
         private void AccountSwitcher_OnDeactivated(object sender, EventArgs e)
         {
-            if (!_closing)
+            if (!_closing && !_isShowingDialog)
                 Close();
         }
 
@@ -191,9 +200,18 @@ namespace XIVLauncher.Windows
             if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
                 return;
 
+            var sharesPassword = _accountManager.SharesSavedPassword(selectedEntry.Account);
+
             _accountManager.RemoveAccount(selectedEntry.Account);
 
             RefreshEntries();
+
+            if (sharesPassword)
+            {
+                ShowInfo(string.Format(Loc.Localize("AccountSwitcherSharedPasswordKept",
+                        "Passwords are saved per username, so the saved password was kept for your other accounts with the username \"{0}\"."),
+                    selectedEntry.Account.UserName));
+            }
         }
 
         private void SetProfilePicture_OnClick(object sender, RoutedEventArgs e)
@@ -214,17 +232,52 @@ namespace XIVLauncher.Windows
 
         private void DontSavePassword_OnChecked(object sender, RoutedEventArgs e)
         {
+            if (_isSyncingSavePasswordCheck)
+            {
+                return;
+            }
+
             if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
                 return;
 
             var account = _accountManager.Accounts.First(a => a.Id == selectedEntry.Account.Id);
+            var sharesPassword = _accountManager.SharesSavedPassword(account);
+
             account.SavePassword = false;
             account.Password = string.Empty;
             _accountManager.Save();
+
+            if (!sharesPassword)
+            {
+                return;
+            }
+
+            ShowInfo(string.Format(Loc.Localize("AccountSwitcherSharedPasswordRemoved",
+                    "Passwords are saved per username, so the saved password of your other accounts with the username \"{0}\" has been removed as well."),
+                account.UserName));
+        }
+
+        private void ShowInfo(string text)
+        {
+            _isShowingDialog = true;
+
+            CustomMessageBox.Builder
+                .NewFrom(text)
+                .WithImage(MessageBoxImage.Information)
+                .WithButtons(MessageBoxButton.OK)
+                .WithParentWindow(this)
+                .Show();
+
+            _isShowingDialog = false;
         }
 
         private void DontSavePassword_OnUnchecked(object sender, RoutedEventArgs e)
         {
+            if (_isSyncingSavePasswordCheck)
+            {
+                return;
+            }
+
             if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
                 return;
 

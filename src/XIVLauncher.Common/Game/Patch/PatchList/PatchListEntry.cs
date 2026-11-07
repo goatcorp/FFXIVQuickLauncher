@@ -46,6 +46,9 @@ namespace XIVLauncher.Common.Game.Patch.PatchList
             if (Url.Contains("ex5"))
                 return Repository.Ex5;
 
+            if (Url.Contains("ex6"))
+                return Repository.Ex6;
+
             return Repository.Ffxiv;
         }
 

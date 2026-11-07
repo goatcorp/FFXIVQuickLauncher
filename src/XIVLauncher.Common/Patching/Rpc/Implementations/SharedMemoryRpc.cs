@@ -25,10 +25,17 @@ public class SharedMemoryRpc : IRpc, IDisposable
         MessageReceived?.Invoke(msg);
     }
 
-    public void SendMessage(PatcherIpcEnvelope envelope)
+    public bool SendMessage(PatcherIpcEnvelope envelope)
     {
         var json = IpcHelpers.Base64Encode(JsonConvert.SerializeObject(envelope, IpcHelpers.JsonSettings));
-        this.rpcBuffer.RemoteRequest(Encoding.ASCII.GetBytes(json));
+        var response = this.rpcBuffer.RemoteRequest(Encoding.ASCII.GetBytes(json));
+
+        if (!response.Success)
+        {
+            Log.Error("[SHMEMRPC] {OpCode} was not acknowledged", envelope.OpCode);
+        }
+
+        return response.Success;
     }
 
     public event Action<PatcherIpcEnvelope> MessageReceived;

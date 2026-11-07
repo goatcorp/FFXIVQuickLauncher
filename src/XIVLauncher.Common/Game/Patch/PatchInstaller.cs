@@ -18,6 +18,12 @@ namespace XIVLauncher.Common.Game.Patch
 
         private RemotePatchInstaller? internalPatchInstaller;
 
+        private Process? process;
+
+        private readonly object stateLock = new();
+
+        private bool isStopping;
+
         public enum InstallerState
         {
             NotStarted,
@@ -67,13 +73,15 @@ namespace XIVLauncher.Common.Game.Patch
 
                 try
                 {
-                    Process.Start(startInfo);
+                    this.process = Process.Start(startInfo);
                 }
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Could not launch Patch Installer");
                     throw new PatchInstallerException("Start failed.", ex);
                 }
+
+                WatchProcess();
             }
             else
             {
@@ -85,31 +93,130 @@ namespace XIVLauncher.Common.Game.Patch
             }
         }
 
+        private void WatchProcess()
+        {
+            if (this.process == null)
+            {
+                return;
+            }
+
+            try
+            {
+                this.process.Exited += OnProcessExited;
+                this.process.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[PATCHERIPC] Could not watch patcher process");
+            }
+        }
+
+        private void OnProcessExited(object? sender, EventArgs e)
+        {
+            // Exiting is fine if we asked for it
+            if (this.isStopping || State is InstallerState.NotStarted or InstallerState.NotReady)
+            {
+                return;
+            }
+
+            Log.Error("[PATCHERIPC] Patcher exited unexpectedly");
+            Fail();
+        }
+
+        private void Fail()
+        {
+            lock (this.stateLock)
+            {
+                if (State == InstallerState.Failed)
+                {
+                    return;
+                }
+
+                State = InstallerState.Failed;
+            }
+
+            OnFail?.Invoke();
+        }
+
+        // This should only ever be called last-resort style, since it can leave patches half-installed
+        internal void Abort()
+        {
+            Log.Error("[PATCHERIPC] Aborting patcher");
+
+            try
+            {
+                this.process?.Kill();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[PATCHERIPC] Could not kill patcher");
+            }
+
+            Fail();
+        }
+
+        private bool HasProcessExited()
+        {
+            try
+            {
+                return this.process is { HasExited: true };
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[PATCHERIPC] Could not query patcher process");
+                return false;
+            }
+        }
+
+        private bool TrySetBusy()
+        {
+            lock (this.stateLock)
+            {
+                if (State == InstallerState.Failed)
+                {
+                    return false;
+                }
+
+                State = InstallerState.Busy;
+                return true;
+            }
+        }
+
+        private void TrySetReady()
+        {
+            lock (this.stateLock)
+            {
+                if (State == InstallerState.Failed)
+                {
+                    return;
+                }
+
+                State = InstallerState.Ready;
+            }
+        }
+
         private void RemoteCallHandler(PatcherIpcEnvelope envelope)
         {
             switch (envelope.OpCode)
             {
                 case PatcherIpcOpCode.Hello:
                     Log.Information("[PATCHERIPC] GOT HELLO");
-                    State = InstallerState.Ready;
+                    TrySetReady();
                     break;
 
                 case PatcherIpcOpCode.InstallOk:
                     Log.Information("[PATCHERIPC] INSTALL OK");
-                    State = InstallerState.Ready;
+                    TrySetReady();
                     break;
 
                 case PatcherIpcOpCode.Finish:
                     Log.Information("[PATCHERIPC] INSTALL FINISH");
-                    State = InstallerState.Ready;
+                    TrySetReady();
                     break;
 
                 case PatcherIpcOpCode.InstallFailed:
-                    State = InstallerState.Failed;
-                    OnFail?.Invoke();
-
-                    Stop();
-                    Environment.Exit(0);
+                    Log.Error("[PATCHERIPC] INSTALL FAILED");
+                    Fail();
                     break;
 
                 default:
@@ -135,6 +242,12 @@ namespace XIVLauncher.Common.Game.Patch
             if (State == InstallerState.NotReady || State == InstallerState.NotStarted || State == InstallerState.Busy)
                 return;
 
+            if (HasProcessExited())
+            {
+                return;
+            }
+
+            this.isStopping = true;
             this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.Bye
@@ -143,8 +256,12 @@ namespace XIVLauncher.Common.Game.Patch
 
         public void StartInstall(DirectoryInfo gameDirectory, FileInfo file, PatchListEntry patch)
         {
-            State = InstallerState.Busy;
-            this.rpc.SendMessage(new PatcherIpcEnvelope
+            if (!TrySetBusy())
+            {
+                return;
+            }
+
+            var sent = this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.StartInstall,
                 Data = new PatcherIpcStartInstall
@@ -156,27 +273,43 @@ namespace XIVLauncher.Common.Game.Patch
                     KeepPatch = keepPatches,
                 }
             });
+
+            if (!sent)
+            {
+                Fail();
+            }
         }
 
         public void FinalizeAndWait(DirectoryInfo gameDirectory)
         {
-            State = InstallerState.Busy;
-            this.rpc.SendMessage(new PatcherIpcEnvelope
+            if (!TrySetBusy())
+            {
+                return;
+            }
+
+            var sent = this.rpc.SendMessage(new PatcherIpcEnvelope
             {
                 OpCode = PatcherIpcOpCode.Finish,
                 Data = gameDirectory.ToString()
             });
 
+            if (!sent)
+            {
+                Fail();
+                return;
+            }
+
             var cts = new CancellationTokenSource(5000);
 
-            while (this.State != InstallerState.Ready)
+            while (this.State == InstallerState.Busy)
             {
                 Thread.Sleep(100);
 
                 if (cts.Token.IsCancellationRequested)
                 {
+                    // Fail() instead of only OnFail: leaving Busy made Stop() skip Bye, so the patcher lingered
                     Log.Error("Timeout waiting for installer to finish after finishing install.");
-                    OnFail?.Invoke();
+                    Fail();
                     break;
                 }
             }

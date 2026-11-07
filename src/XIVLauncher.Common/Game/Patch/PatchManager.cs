@@ -34,6 +34,9 @@ namespace XIVLauncher.Common.Game.Patch
     {
         public const int MAX_DOWNLOADS_AT_ONCE = 4;
 
+        private static readonly TimeSpan CancelDownloadsTimeout = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan CancelInstallTimeout = TimeSpan.FromMinutes(15);
+
         private readonly CancellationTokenSource _cancelTokenSource = new();
 
         private readonly IPatchAcquisition acquisition;
@@ -44,7 +47,7 @@ namespace XIVLauncher.Common.Game.Patch
         private readonly Launcher launcher;
         private readonly string sid;
 
-        private readonly Mutex downloadFinalizationLock = new Mutex();
+        private readonly object downloadFinalizationLock = new();
 
         public readonly IReadOnlyList<PatchDownload> Downloads;
 
@@ -73,7 +76,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         public long AllDownloadsLength => GetDownloadLength();
 
-        private bool hasError = false;
+        private int hasError;
 
         public event Action<PatchListEntry, string>? OnFail;
 
@@ -137,17 +140,31 @@ namespace XIVLauncher.Common.Game.Patch
 
             await Task.WhenAll(new[]
             {
-                Task.Run(RunDownloadQueue, _cancelTokenSource.Token),
-                Task.Run(RunApplyQueue, _cancelTokenSource.Token),
+                Task.Run(() => RunQueue(RunDownloadQueue), _cancelTokenSource.Token),
+                Task.Run(() => RunQueue(RunApplyQueue), _cancelTokenSource.Token),
             }).ConfigureAwait(false);
 
-            return !this.IsCancelling;
+            return !this.IsCancelling && this.installer.State != PatchInstaller.InstallerState.Failed;
+        }
+
+        private void RunQueue(Action queue)
+        {
+            try
+            {
+                queue();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Patch queue failed");
+                StartCancellation();
+                throw;
+            }
         }
 
         public void StartCancellation()
         {
-            this.CancelAllDownloads();
             this.IsCancelling = true;
+            this.CancelAllDownloads();
         }
 
         public async Task SetSpeedLimitAsync(long bytesPerSecond)
@@ -171,11 +188,17 @@ namespace XIVLauncher.Common.Game.Patch
 
             Actives[index] = download;
 
+            // Skip this patch immediately if it's already downloaded and checks out
             if (outFile.Exists && CheckPatchValidity(download.Patch, outFile) == HashCheckResult.Pass)
             {
-                download.State = PatchState.Downloaded;
-                Slots[index] = SlotState.Done;
-                Progresses[index] = download.Patch.Length;
+                lock (this.downloadFinalizationLock)
+                {
+                    download.State = PatchState.Downloaded;
+                    Slots[index] = SlotState.Done;
+                    Progresses[index] = 0;
+                    this.CheckIsDone();
+                }
+
                 return;
             }
 
@@ -188,21 +211,10 @@ namespace XIVLauncher.Common.Game.Patch
 
             acquisitionTask.Complete += (_, args) =>
             {
-                void HandleError(string context)
-                {
-                    if (this.hasError)
-                        return;
-
-                    this.hasError = true;
-
-                    CancelAllDownloads();
-                    OnFail?.Invoke(download.Patch, context);
-                }
-
                 if (args == AcquisitionResult.Error)
                 {
                     Log.Error("Download failed for {VersionId}", download.Patch.VersionId);
-                    HandleError("Download");
+                    HandleError(download.Patch, "Download");
                     return;
                 }
 
@@ -215,55 +227,74 @@ namespace XIVLauncher.Common.Game.Patch
                 }
 
                 // Indicate "Checking..."
-                Slots[index] = SlotState.Checking;
+                lock (this.downloadFinalizationLock)
+                {
+                    Slots[index] = SlotState.Checking;
+                }
 
                 var checkResult = CheckPatchValidity(download.Patch, outFile);
-
-                this.downloadFinalizationLock.WaitOne();
 
                 // Let's just bail for now, need better handling of this later
                 if (checkResult != HashCheckResult.Pass)
                 {
                     Log.Error("CheckPatchValidity failed with {Result} for {VersionId} after DL", checkResult, download.Patch.VersionId);
-                    HandleError($"ValidityCheck ({checkResult})");
+                    HandleError(download.Patch, $"ValidityCheck ({checkResult})");
                     return;
                 }
 
-                download.State = PatchState.Downloaded;
-                Slots[index] = SlotState.Done;
-                Progresses[index] = 0;
-                Speeds[index] = 0;
+                lock (this.downloadFinalizationLock)
+                {
+                    download.State = PatchState.Downloaded;
+                    Slots[index] = SlotState.Done;
+                    Progresses[index] = 0;
+                    Speeds[index] = 0;
 
-                Log.Information("Patch at {0} downloaded completely", download.Patch.Url);
+                    Log.Information("Patch at {0} downloaded completely", download.Patch.Url);
 
-                this.CheckIsDone();
-                this.downloadFinalizationLock.ReleaseMutex();
+                    this.CheckIsDone();
+                }
             };
 
             this.AcquisitionTasks[index] = acquisitionTask;
 
+            if (this.IsCancelling)
+            {
+                Log.Information("Patching cancelled, not starting download of {VersionId}", download.Patch.VersionId);
+                return;
+            }
+
             await acquisitionTask.StartAsync();
+        }
+
+        private void HandleError(PatchListEntry patch, string context)
+        {
+            if (Interlocked.Exchange(ref this.hasError, 1) == 1)
+            {
+                return;
+            }
+
+            this.IsCancelling = true;
+            CancelAllDownloads();
+            OnFail?.Invoke(patch, context);
         }
 
         private void CancelAllDownloads()
         {
-            foreach (var task in this.AcquisitionTasks)
-            {
-                if (task == null)
-                    continue;
+            var cancels = this.AcquisitionTasks
+                .Where(task => task != null)
+                .Select(task => Task.Run(task!.CancelAsync))
+                .ToArray();
 
-                try
+            try
+            {
+                if (!Task.WaitAll(cancels, CancelDownloadsTimeout))
                 {
-                    Task.Run(async () =>
-                    {
-                        await task.CancelAsync();
-                    }, new CancellationTokenSource(5000).Token).GetAwaiter().GetResult();
-                    Thread.Sleep(200);
+                    Log.Error("Timed out cancelling downloads");
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Could not cancel download.");
-                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not cancel download.");
             }
         }
 
@@ -281,17 +312,26 @@ namespace XIVLauncher.Common.Game.Patch
 
                 for (var i = 0; i < MAX_DOWNLOADS_AT_ONCE; i++)
                 {
-                    if (Slots[i] != SlotState.Done)
-                        continue;
+                    PatchDownload? toDl;
 
-                    Slots[i] = SlotState.InProgress;
+                    lock (this.downloadFinalizationLock)
+                    {
+                        if (Slots[i] != SlotState.Done)
+                        {
+                            continue;
+                        }
 
-                    var toDl = Downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
+                        toDl = Downloads.FirstOrDefault(x => x.State == PatchState.Nothing);
 
-                    if (toDl == null)
-                        return;
+                        if (toDl == null)
+                        {
+                            return;
+                        }
 
-                    toDl.State = PatchState.IsDownloading;
+                        Slots[i] = SlotState.InProgress;
+                        toDl.State = PatchState.IsDownloading;
+                    }
+
                     var curIndex = i;
                     Task.Run(async () =>
                     {
@@ -302,7 +342,7 @@ namespace XIVLauncher.Common.Game.Patch
                         catch (Exception ex)
                         {
                             Log.Error(ex, "Exception in DownloadPatchAsync");
-                            throw;
+                            HandleError(toDl.Patch, $"Exception ({ex.GetType().Name})");
                         }
                     });
                 }
@@ -357,14 +397,35 @@ namespace XIVLauncher.Common.Game.Patch
 
                 this.installer.StartInstall(this.gamePath, GetPatchFile(toInstall.Patch), toInstall.Patch);
 
-                while (this.installer.State != PatchInstaller.InstallerState.Ready)
+                var cancelWait = new Stopwatch();
+
+                while (this.installer.State == PatchInstaller.InstallerState.Busy)
                 {
                     Thread.Sleep(100);
+
+                    if (!this.IsCancelling)
+                    {
+                        continue;
+                    }
+
+                    if (!cancelWait.IsRunning)
+                    {
+                        cancelWait.Start();
+                    }
+
+                    if (cancelWait.Elapsed > CancelInstallTimeout)
+                    {
+                        Log.Error("Install of {VersionId} did not finish after cancelling", toInstall.Patch.VersionId);
+                        this.installer.Abort();
+                    }
                 }
 
-                // TODO need to handle this better
+                // Stop the download queue to make sure that PatchAsync completes
                 if (this.installer.State == PatchInstaller.InstallerState.Failed)
+                {
+                    this.IsCancelling = true;
                     return;
+                }
 
                 Log.Information($"Patch at {CurrentInstallIndex} installed");
 
@@ -387,6 +448,7 @@ namespace XIVLauncher.Common.Game.Patch
             CannotParse,
             CrcMismatch,
             UnknownHashType,
+            BadHashList,
         }
 
         private static HashCheckResult CheckPatchValidity(PatchListEntry patchListEntry, FileInfo path)
@@ -430,23 +492,31 @@ namespace XIVLauncher.Common.Game.Patch
                 return HashCheckResult.BadLength;
             }
 
-            var parts = (int)Math.Ceiling((double)patchListEntry.Length / patchListEntry.HashBlockSize);
-            var block = new byte[patchListEntry.HashBlockSize];
+            // Boot patches don't have hashes but they never get here because they don't set a hash type
+            if (patchListEntry.HashBlockSize <= 0 || patchListEntry.Hashes == null)
+            {
+                Log.Error("Patch list has no hashes for {VersionId}", patchListEntry.VersionId);
+                return HashCheckResult.BadHashList;
+            }
+
+            var blockSize = (int)patchListEntry.HashBlockSize;
+            var parts = (int)Math.Ceiling((double)patchListEntry.Length / blockSize);
+
+            if (patchListEntry.Hashes.Length != parts)
+            {
+                Log.Error("Patch list has {Count} hashes for {Parts} blocks of {VersionId}", patchListEntry.Hashes.Length, parts, patchListEntry.VersionId);
+                return HashCheckResult.BadHashList;
+            }
+
+            var block = new byte[blockSize];
 
             for (var i = 0; i < parts; i++)
             {
-                var read = stream.Read(block, 0, (int)patchListEntry.HashBlockSize);
-
-                if (read < patchListEntry.HashBlockSize)
-                {
-                    var trimmedBlock = new byte[read];
-                    Array.Copy(block, 0, trimmedBlock, 0, read);
-                    block = trimmedBlock;
-                }
+                var read = stream.ReadAtLeast(block, blockSize, throwOnEndOfStream: false);
 
                 using var sha1 = SHA1.Create();
 
-                var hash = sha1.ComputeHash(block);
+                var hash = sha1.ComputeHash(block, 0, read);
                 var sb = new StringBuilder(hash.Length * 2);
 
                 foreach (var b in hash)

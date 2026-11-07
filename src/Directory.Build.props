@@ -1,7 +1,7 @@
 <!-- Contains required properties for XIVLauncher projects. -->
 <Project>
   <PropertyGroup Label="C#">
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
       

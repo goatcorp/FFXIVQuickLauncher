@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using Serilog;
 using XIVLauncher.Common.PlatformAbstractions;
 
@@ -51,24 +50,27 @@ namespace XIVLauncher.Common.Dalamud
         {
             Log.Information("[HOOKS] DalamudLauncher::HoldForUpdate(gp:{0})", gamePath.FullName);
 
+            if (this.updater.State == DalamudUpdater.DownloadState.Unknown)
+            {
+                throw new DalamudRunnerException("Updater was never started.");
+            }
+
             if (this.updater.State != DalamudUpdater.DownloadState.Done)
                 this.updater.ShowOverlay();
 
-            while (this.updater.State != DalamudUpdater.DownloadState.Done)
-            {
-                if (this.updater.State == DalamudUpdater.DownloadState.NoIntegrity)
-                {
-                    this.updater.CloseOverlay();
-                    throw new DalamudRunnerException("Updater returned no integrity.", this.updater.EnsurementException);
-                }
+            this.updater.WaitForUpdate();
 
-                Thread.Yield();
+            if (this.updater.State == DalamudUpdater.DownloadState.NoIntegrity)
+            {
+                this.updater.CloseOverlay();
+                throw new DalamudRunnerException("Updater returned no integrity.", this.updater.EnsurementException);
             }
 
             if (!this.updater.Runner.Exists)
                 throw new DalamudRunnerException("Runner did not exist.");
 
             var applicable = this.updater.ReCheckVersion(gamePath) ?? throw new DalamudRunnerException("ReCheckVersion returned null.");
+
             if (!applicable)
             {
                 this.updater.SetOverlayProgress(IDalamudLoadingOverlay.DalamudUpdateStep.Unavailable);

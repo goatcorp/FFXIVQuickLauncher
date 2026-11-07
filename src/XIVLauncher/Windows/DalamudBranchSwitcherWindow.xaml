@@ -49,14 +49,30 @@
                 <DataGridTextColumn Header="Version" Binding="{Binding AssemblyVersion}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
+        <Border Grid.Row="1" Margin="10" Background="{DynamicResource MaterialDesignPaper}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" IsIndeterminate="True" Height="35" Width="35" Margin="0,0,0,10" />
+                <TextBlock Text="Downloading data..." HorizontalAlignment="Center" Foreground="DarkGray" FontSize="13" />
+            </StackPanel>
+        </Border>
         <Grid Margin="10" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Content="Have a beta key?" Height="32" Width="160" Grid.Column="0" HorizontalAlignment="Left" Click="BetaKeyButton_Click" />
+            <Button Content="Have a beta key?" Height="32" Width="160" Grid.Column="0" HorizontalAlignment="Left" Click="BetaKeyButton_Click" IsEnabled="{Binding CanInteract}" />
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
-                <Button Content="Switch Branch" Width="150" Height="32" Margin="0,0,10,0" Click="SwitchBranchButton_Click" />
+                <Button Content="Switch Branch" Width="150" Height="32" Margin="0,0,10,0" Click="SwitchBranchButton_Click" IsEnabled="{Binding CanInteract}" />
                 <Button Content="Cancel" Style="{StaticResource MaterialDesignRaisedCancelButton}" Width="150" Height="32" Click="NeverMindButton_Click" />
             </StackPanel>
         </Grid>

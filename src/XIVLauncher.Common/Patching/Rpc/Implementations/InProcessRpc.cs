@@ -23,7 +23,7 @@ public class InProcessRpc : IRpc, IDisposable
         instanceList.Add(this);
     }
 
-    public void SendMessage(PatcherIpcEnvelope envelope)
+    public bool SendMessage(PatcherIpcEnvelope envelope)
     {
         var list = instanceMapping[this.channelName];
 
@@ -36,6 +36,8 @@ public class InProcessRpc : IRpc, IDisposable
 
             otherInstance.Dispatch(envelope);
         }
+
+        return true;
     }
 
     private void Dispatch(PatcherIpcEnvelope envelope)

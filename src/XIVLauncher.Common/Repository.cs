@@ -13,6 +13,7 @@ namespace XIVLauncher.Common
         Ex3,
         Ex4,
         Ex5,
+        Ex6
     }
 
     public static class RepoExtensions
@@ -35,6 +36,8 @@ namespace XIVLauncher.Common
                     return new DirectoryInfo(Path.Combine(gamePath.FullName, "game", "sqpack", "ex4"));
                 case Repository.Ex5:
                     return new DirectoryInfo(Path.Combine(gamePath.FullName, "game", "sqpack", "ex5"));
+                case Repository.Ex6:
+                    return new DirectoryInfo(Path.Combine(gamePath.FullName, "game", "sqpack", "ex6"));
                 default:
                     throw new ArgumentOutOfRangeException(nameof(repo), repo, null);
             }
@@ -59,6 +62,8 @@ namespace XIVLauncher.Common
                     return new FileInfo(Path.Combine(repoPath, "ex4" + (isBck ? ".bck" : ".ver")));
                 case Repository.Ex5:
                     return new FileInfo(Path.Combine(repoPath, "ex5" + (isBck ? ".bck" : ".ver")));
+                case Repository.Ex6:
+                    return new FileInfo(Path.Combine(repoPath, "ex6" + (isBck ? ".bck" : ".ver")));
                 default:
                     throw new ArgumentOutOfRangeException(nameof(repo), repo, null);
             }

@@ -4,9 +4,6 @@ using System.Text;
 using System.Linq;
 using Serilog;
 using XIVLauncher.Common.Util;
-#if !WINDOWS
-using System.Runtime.InteropServices;
-#endif
 
 namespace XIVLauncher.Common.Encryption
 {
@@ -68,19 +65,19 @@ namespace XIVLauncher.Common.Encryption
         public string Build()
         {
             return this.arguments.Aggregate(new StringBuilder(),
-                           (whole, part) => whole.Append($" {part.Key}={part.Value}"))
-                       .ToString();
+                    (whole, part) => whole.Append($" {part.Key}={part.Value}"))
+                .ToString();
         }
 
         public string BuildEncrypted(uint key)
         {
-            var arguments = this.arguments.Aggregate(new StringBuilder(),
+            var aggregatedArgs = this.arguments.Aggregate(new StringBuilder(),
                                     // Yes, they do have a space prepended even for the first argument.
                                     (whole, part) => whole.Append($" /{EscapeValue(part.Key)} ={EscapeValue(part.Value)}"))
-                                .ToString();
+                .ToString();
 
             var blowfish = new LegacyBlowfish(GetKeyBytes(key));
-            var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(arguments));
+            var ciphertext = blowfish.Encrypt(Encoding.UTF8.GetBytes(aggregatedArgs));
             var base64Str = GameHelpers.ToMangledSeBase64(ciphertext);
             var checksum = DeriveChecksum(key);
 
@@ -89,52 +86,15 @@ namespace XIVLauncher.Common.Encryption
             return $"//**sqex{version:D04}{base64Str}{checksum}**//";
         }
 
-        public string BuildEncrypted()
+        public string BuildEncryptedFromTicks(uint rawTickCount)
         {
-            var key = DeriveKey();
+            var key = DeriveKey(rawTickCount);
 
             return BuildEncrypted(key);
         }
 
-#if WINDOWS
-        private uint GetRawTickCount()
+        private uint DeriveKey(uint rawTickCount)
         {
-            return (uint)Environment.TickCount;
-        }
-#elif MACOS // Could be MACCATALYST but not sure
-        private uint GetRawTickCount()
-        {
-            [DllImport("c")]
-            static extern ulong clock_gettime_nsec_np(int clock_id);
-
-            const int CLOCK_MONOTONIC_RAW = 4;
-            var rawTickCount = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW) / 1000000;
-            return (uint)rawTickCount;
-        }
-#else
-        [StructLayout(LayoutKind.Sequential)]
-        private struct timespec
-        {
-            public long tv_sec;
-            public long tv_nsec;
-        }
-
-        private uint GetRawTickCount()
-        {
-            [DllImport("c")]
-            static extern int clock_gettime(int clock_id, out timespec ts);
-
-            const int CLOCK_MONOTONIC_RAW = 4;
-            timespec ts;
-            clock_gettime(CLOCK_MONOTONIC_RAW, out ts);
-            var rawTickCount = (ulong)((ts.tv_sec * 1000) + (ts.tv_nsec / 1000000));
-            return (uint)rawTickCount;
-        }
-#endif
-
-        private uint DeriveKey()
-        {
-            var rawTickCount = GetRawTickCount();
             var ticks = rawTickCount & 0xFFFF_FFFFu;
             var key = ticks & 0xFFFF_0000u;
 

@@ -150,37 +150,50 @@ public class RemotePatchInstaller
 
     private bool RunInstallQueue()
     {
-        if (this.queuedInstalls.TryDequeue(out var installData))
+        if (this.queuedInstalls.TryPeek(out var installData))
         {
-            EnsureGameDirectories(installData.GameDirectory);
-
             try
             {
-                InstallPatch(installData.PatchFile.FullName,
-                    Path.Combine(installData.GameDirectory.FullName,
-                        installData.Repo == Repository.Boot ? "boot" : "game"));
+                EnsureGameDirectories(installData.GameDirectory);
 
                 try
                 {
-                    installData.Repo.SetVer(installData.GameDirectory, installData.VersionId);
-                    this.rpc.SendMessage(new PatcherIpcEnvelope
-                    {
-                        OpCode = PatcherIpcOpCode.InstallOk
-                    });
+                    InstallPatch(installData.PatchFile.FullName,
+                        Path.Combine(installData.GameDirectory.FullName,
+                            installData.Repo == Repository.Boot ? "boot" : "game"));
 
                     try
                     {
-                        if (!installData.KeepPatch)
-                            installData.PatchFile.Delete();
+                        installData.Repo.SetVer(installData.GameDirectory, installData.VersionId);
+                        this.rpc.SendMessage(new PatcherIpcEnvelope
+                        {
+                            OpCode = PatcherIpcOpCode.InstallOk
+                        });
+
+                        try
+                        {
+                            if (!installData.KeepPatch)
+                                installData.PatchFile.Delete();
+                        }
+                        catch (Exception exception)
+                        {
+                            Log.Error(exception, "Could not delete patch file");
+                        }
                     }
-                    catch (Exception exception)
+                    catch (Exception ex)
                     {
-                        Log.Error(exception, "Could not delete patch file");
+                        Log.Error(ex, "Could not set ver file");
+                        this.rpc.SendMessage(new PatcherIpcEnvelope
+                        {
+                            OpCode = PatcherIpcOpCode.InstallFailed
+                        });
+
+                        return false;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Could not set ver file");
+                    Log.Error(ex, "[PATCHER] Patch install failed");
                     this.rpc.SendMessage(new PatcherIpcEnvelope
                     {
                         OpCode = PatcherIpcOpCode.InstallFailed
@@ -189,15 +202,9 @@ public class RemotePatchInstaller
                     return false;
                 }
             }
-            catch (Exception ex)
+            finally
             {
-                Log.Error(ex, "[PATCHER] Patch install failed");
-                this.rpc.SendMessage(new PatcherIpcEnvelope
-                {
-                    OpCode = PatcherIpcOpCode.InstallFailed
-                });
-
-                return false;
+                this.queuedInstalls.TryDequeue(out _);
             }
         }
 

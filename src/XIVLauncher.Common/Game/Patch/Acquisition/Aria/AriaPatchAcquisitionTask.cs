@@ -11,6 +11,7 @@ namespace XIVLauncher.Common.Game.Patch.Acquisition.Aria;
 public class AriaPatchAcquisitionTask(AriaManager manager, string url, FileInfo target) : PatchAcquisitionTask
 {
     private readonly CancellationTokenSource cts = new();
+    private readonly object gidLock = new();
     private string? gid;
 
     public override async Task StartAsync()
@@ -33,9 +34,21 @@ public class AriaPatchAcquisitionTask(AriaManager manager, string url, FileInfo 
                 return;
             }
 
-            this.gid = t.Result;
+            bool cancelled;
+
+            lock (this.gidLock)
+            {
+                this.gid = t.Result;
+                cancelled = this.cts.IsCancellationRequested;
+            }
 
             Log.Verbose("[ARIA] GID# {Gid} for {Url}", this.gid, url);
+
+            if (cancelled)
+            {
+                _ = PauseAsync(this.gid);
+                return;
+            }
 
             _ = Task.Run(async () =>
             {
@@ -90,11 +103,27 @@ public class AriaPatchAcquisitionTask(AriaManager manager, string url, FileInfo 
 
     public override async Task CancelAsync()
     {
-        this.cts.Cancel();
+        string? gidToPause;
 
+        lock (this.gidLock)
+        {
+            this.cts.Cancel();
+            gidToPause = this.gid;
+        }
+
+        if (gidToPause == null)
+        {
+            return;
+        }
+
+        await PauseAsync(gidToPause);
+    }
+
+    private async Task PauseAsync(string gidToPause)
+    {
         try
         {
-            await manager.PauseTask(this.gid);
+            await manager.PauseTask(gidToPause);
         }
         catch
         {

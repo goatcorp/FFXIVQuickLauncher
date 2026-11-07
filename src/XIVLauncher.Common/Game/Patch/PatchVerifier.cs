@@ -23,6 +23,9 @@ namespace XIVLauncher.Common.Game.Patch
     {
         private const string REPAIR_RECYCLER_DIRECTORY = "repair_recycler";
 
+        // UAC prompt was declined
+        private const int ERROR_CANCELLED = 1223;
+
         private static readonly Regex[] GameIgnoreUnnecessaryFilePatterns = new Regex[]
         {
             // Base game version files.
@@ -135,6 +138,12 @@ namespace XIVLauncher.Common.Game.Patch
 
             [JsonProperty("ex5Revision")]
             public int Ex5Revision { get; set; }
+
+            [JsonProperty("ex6")]
+            public string Ex6 { get; set; }
+
+            [JsonProperty("ex6Revision")]
+            public int Ex6Revision { get; set; }
         }
 
         public VerifyState State { get; private set; } = VerifyState.NotStarted;
@@ -489,7 +498,7 @@ namespace XIVLauncher.Common.Game.Patch
                     State = VerifyState.Cancelled;
                 else if (_cancellationTokenSource.IsCancellationRequested)
                     State = VerifyState.Cancelled;
-                else if (ex is Win32Exception winex && (uint)winex.HResult == 0x80004005u)  // The operation was canceled by the user (UAC dialog cancellation)
+                else if (ex is Win32Exception { NativeErrorCode: ERROR_CANCELLED })
                     State = VerifyState.Cancelled;
                 else
                 {
@@ -512,7 +521,7 @@ namespace XIVLauncher.Common.Game.Patch
 
         private async Task GetPatchMeta()
         {
-            PatchSetCount = 6;
+            PatchSetCount = 7;
             PatchSetIndex = 0;
 
             _repoMetaPaths.Clear();
@@ -523,7 +532,7 @@ namespace XIVLauncher.Common.Game.Patch
             CurrentFile = "latest.json";
             Total = Progress = 0;
 
-            var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json").ConfigureAwait(false);
+            var latestVersionJson = await _client.GetStringAsync(BASE_URL + "latest.json", _cancellationTokenSource.Token).ConfigureAwait(false);
             _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             var latestVersion = JsonConvert.DeserializeObject<VerifyVersions>(latestVersionJson);
@@ -558,6 +567,11 @@ namespace XIVLauncher.Common.Game.Patch
             _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             PatchSetIndex++;
+            if (_maxExpansionToCheck >= 6)
+                await this.GetRepoMeta(Repository.Ex6, latestVersion.Ex6, metaFolder, latestVersion.Ex6Revision).ConfigureAwait(false);
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            PatchSetIndex++;
         }
 
         private async Task GetRepoMeta(Repository repo, string latestVersion, string baseDir, int patchIndexFileRevision)
@@ -579,7 +593,7 @@ namespace XIVLauncher.Common.Game.Patch
 
             if (!File.Exists(filePath))
             {
-                var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", HttpCompletionOption.ResponseHeadersRead, _cancellationTokenSource.Token).ConfigureAwait(false);
+                using var request = await _client.GetAsync($"{BASE_URL}{repoShorthand}/{fileName}", HttpCompletionOption.ResponseHeadersRead, _cancellationTokenSource.Token).ConfigureAwait(false);
                 if (request.StatusCode == HttpStatusCode.NotFound)
                     throw new NoVersionReferenceException(repo, latestVersion);
 

@@ -1,18 +1,15 @@
 ﻿using Serilog;
 using System;
 using System.Collections.Generic;
-
-#if WINDOWS
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-#endif
-
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using XIVLauncher.Common.Http.HappyEyeballs;
 using XIVLauncher.Common.Patching.Util;
 
 #nullable enable
@@ -54,7 +51,6 @@ public class IndexedZiPatchInstaller : IDisposable
     // Definitions taken from PInvoke.net (with some changes)
     // ReSharper disable InconsistentNaming
 
-#if WINDOWS
     private static class PInvoke
     {
         #region Constants
@@ -170,7 +166,6 @@ public class IndexedZiPatchInstaller : IDisposable
         #endregion
     }
     // ReSharper restore once InconsistentNaming
-#endif
 
     public IndexedZiPatchInstaller(IndexedZiPatchIndex def)
     {
@@ -346,14 +341,13 @@ public class IndexedZiPatchInstaller : IDisposable
             stream.Seek(file.FileSize, SeekOrigin.Begin);
             stream.SetLength(file.FileSize);
 
-#if WINDOWS
             if (useSetFileValidData
+                && OperatingSystem.IsWindows()
                 && stream.SafeFileHandle is { } sfh
                 && !PInvoke.SetFileValidData(sfh.DangerousGetHandle(), file.FileSize))
             {
                 Log.Information($"Unable to apply SetFileValidData on file {fileInfo.FullName} (error code {Marshal.GetLastWin32Error()})");
             }
-#endif
         }
 
         this.targetStreams[targetIndex] = stream;
@@ -378,21 +372,7 @@ public class IndexedZiPatchInstaller : IDisposable
     {
         Dispose();
 
-#if WINDOWS
-        var useSetFileValidData = true;
-
-        try
-        {
-            PInvoke.SetCurrentPrivilege("SeManageVolumePrivilege", true);
-        }
-        catch (Win32Exception e)
-        {
-            Log.Information(e, "Unable to obtain SeManageVolumePrivilege; not using SetFileValidData.");
-            useSetFileValidData = false;
-        }
-#else
-            var useSetFileValidData = false;
-#endif
+        var useSetFileValidData = OperatingSystem.IsWindows() && TryEnableManageVolume();
 
         for (var i = 0; i < Index.Length; i++)
         {
@@ -402,6 +382,20 @@ public class IndexedZiPatchInstaller : IDisposable
             var file = Index[i];
             var fileInfo = new FileInfo(Path.Combine(rootPath, file.RelativePath));
             SetTargetStreamForWriteFromFile(i, fileInfo, useSetFileValidData);
+        }
+    }
+
+    private static bool TryEnableManageVolume()
+    {
+        try
+        {
+            PInvoke.SetCurrentPrivilege("SeManageVolumePrivilege", true);
+            return true;
+        }
+        catch (Win32Exception e)
+        {
+            Log.Information(e, "Unable to obtain SeManageVolumePrivilege; not using SetFileValidData.");
+            return false;
         }
     }
 
@@ -484,8 +478,13 @@ public class IndexedZiPatchInstaller : IDisposable
         private static readonly int[] ReattemptWait = [0, 500, 1000, 2000, 3000, 5000, 10000, 15000, 20000, 25000, 30000, 45000, 60000];
         private const int MergedGapDownload = 512;
 
+        private static readonly HttpClient Client = new(new SocketsHttpHandler
+        {
+            UseCookies = false,
+            ConnectCallback = new HappyEyeballsCallback().ConnectCallback,
+        });
+
         public readonly string SourceUrl;
-        private readonly HttpClient client = new();
         private readonly List<long> targetPartOffsets;
         private readonly string? sid;
 
@@ -546,7 +545,7 @@ public class IndexedZiPatchInstaller : IDisposable
 
             try
             {
-                var resp = await this.client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                var resp = await Client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 this.multipartResponse = new(resp);
             }
             catch (HttpRequestException e)
@@ -625,7 +624,6 @@ public class IndexedZiPatchInstaller : IDisposable
         public override void Dispose()
         {
             this.multipartResponse?.Dispose();
-            this.client.Dispose();
             base.Dispose();
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using XIVLauncher.Common.Util;
@@ -33,6 +34,8 @@ public static class Backup
     ];
 
     public const string BACKUP_EXTENSION = ".xivlauncher_backup";
+
+    private const string UserEntryPrefix = "user";
 
     public static void CreateBackup(DirectoryInfo roamingPath, DirectoryInfo? userPath, FileInfo targetFile)
     {
@@ -122,33 +125,69 @@ public static class Backup
             using var fs = new FileStream(targetFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var archive = new ZipArchive(fs, ZipArchiveMode.Read);
 
+            // Resolve all targets before writing so that we can detect bad entries
+            var targets = new List<(ZipArchiveEntry Entry, FileInfo OutFile)>();
+
             foreach (var entry in archive.Entries)
             {
-                // Normalize entry name separators
-                var entryName = entry.FullName.Replace('/', Path.DirectorySeparatorChar);
+                var outFile = GetRestoreTarget(entry, roamingPath, userPath);
 
-                if (entryName.StartsWith("user" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                if (outFile == null)
                 {
-                    // user files
-                    if (userPath == null)
-                        continue; // skip user files if no destination provided
+                    continue;
+                }
 
-                    var relative = entryName.Substring(("user" + Path.DirectorySeparatorChar).Length);
-                    var outFile = new FileInfo(Path.Combine(userPath.FullName, relative));
-                    ExtractEntryToFile(entry, outFile);
-                }
-                else
-                {
-                    // roaming files go to roamingPath root
-                    var outFile = new FileInfo(Path.Combine(roamingPath.FullName, entryName));
-                    ExtractEntryToFile(entry, outFile);
-                }
+                targets.Add((entry, outFile));
+            }
+
+            foreach (var (entry, outFile) in targets)
+            {
+                ExtractEntryToFile(entry, outFile);
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             throw new BackupFileException(targetFile.FullName, ex);
         }
+    }
+
+    // Map an entry to its restore destination and reject directories we never want to restore to
+    private static FileInfo? GetRestoreTarget(ZipArchiveEntry entry, DirectoryInfo roamingPath, DirectoryInfo? userPath)
+    {
+        var entryName = entry.FullName.Replace('/', Path.DirectorySeparatorChar);
+        var userPrefix = UserEntryPrefix + Path.DirectorySeparatorChar;
+
+        if (entryName.StartsWith(userPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            if (userPath == null)
+            {
+                return null;
+            }
+
+            return ResolveInside(userPath, entryName[userPrefix.Length..], entry.FullName);
+        }
+
+        var topLevel = entryName.Split(Path.DirectorySeparatorChar)[0];
+
+        if (!IncludedRoamingFilesAndFolders.Contains(topLevel, StringComparer.OrdinalIgnoreCase))
+        {
+            throw new InvalidDataException($"Unexpected backup entry: {entry.FullName}");
+        }
+
+        return ResolveInside(roamingPath, entryName, entry.FullName);
+    }
+
+    private static FileInfo ResolveInside(DirectoryInfo root, string relativePath, string entryName)
+    {
+        var rootFull = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root.FullName)) + Path.DirectorySeparatorChar;
+        var fullPath = Path.GetFullPath(Path.Combine(rootFull, relativePath));
+
+        if (!fullPath.StartsWith(rootFull, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidDataException($"Backup entry escapes target directory: {entryName}");
+        }
+
+        return new FileInfo(fullPath);
     }
 
     // Helper: add single file to archive with given entry name

@@ -57,12 +57,22 @@ public class HappyEyeballsCallback : IDisposable
     /// <returns>Returns a Stream for consumption by HttpClient.</returns>
     public async ValueTask<Stream> ConnectCallback(SocketsHttpConnectionContext context, CancellationToken token)
     {
-        var sortedRecords = await this.GetSortedAddresses(context.DnsEndPoint.Host, token);
+        var sortedRecords = await this.GetSortedAddresses(context.DnsEndPoint.Host, token).ConfigureAwait(false);
+
+        // DNS resolve failed
+        if (sortedRecords.Count == 0)
+        {
+            throw new SocketException((int)SocketError.HostNotFound);
+        }
 
         var linkedToken = CancellationTokenSource.CreateLinkedTokenSource(token);
         var tasks = new List<Task<NetworkStream>>();
 
+        var tokenSources = new List<CancellationTokenSource> { linkedToken };
+        var continuations = new List<Task>();
+
         var delayCts = CancellationTokenSource.CreateLinkedTokenSource(linkedToken.Token);
+        tokenSources.Add(delayCts);
 
         for (var i = 0; i < sortedRecords.Count; i++)
         {
@@ -74,19 +84,54 @@ public class HappyEyeballsCallback : IDisposable
             tasks.Add(task);
 
             var nextDelayCts = CancellationTokenSource.CreateLinkedTokenSource(linkedToken.Token);
-            _ = task.ContinueWith(_ => { nextDelayCts.Cancel(); }, TaskContinuationOptions.OnlyOnFaulted);
+            tokenSources.Add(nextDelayCts);
+            continuations.Add(task.ContinueWith(_ => { nextDelayCts.Cancel(); }, TaskContinuationOptions.OnlyOnFaulted));
             delayCts = nextDelayCts;
         }
 
-        var stream = await AsyncUtils.FirstSuccessfulTask(tasks).ConfigureAwait(false);
-        Log.Verbose("Established connection to {Host} at {SocketRemoteEndPoint}", context.DnsEndPoint.Host, stream.Socket.RemoteEndPoint);
+        NetworkStream? stream = null;
 
-        // If we're here, it means we have a successful connection. A failure to connect would have caused the above
-        // line to explode, so we're safe to clean everything up.
-        linkedToken.Cancel();
-        tasks.ForEach(task => { task.ContinueWith(this.CleanupConnectionTask, token); });
+        try
+        {
+            stream = await AsyncUtils.FirstSuccessfulTask(tasks).ConfigureAwait(false);
+            Log.Verbose("Established connection to {Host} at {SocketRemoteEndPoint}", context.DnsEndPoint.Host, stream.Socket.RemoteEndPoint);
 
-        return stream;
+            // If we're here, it means we have a successful connection. A failure to connect would have caused the above
+            // line to explode, so we're safe to clean everything up.
+            linkedToken.Cancel();
+
+            return stream;
+        }
+        finally
+        {
+            _ = this.CleanupConnections(tasks, continuations, tokenSources, stream);
+        }
+    }
+
+    // Observe exceptions and clean up after we're done
+    private async Task CleanupConnections(List<Task<NetworkStream>> tasks, List<Task> continuations, List<CancellationTokenSource> tokenSources, NetworkStream? winner)
+    {
+        try
+        {
+            await Task.WhenAll(tasks.Concat(continuations)).ConfigureAwait(false);
+        }
+        catch
+        {
+            // ignored
+        }
+
+        foreach (var task in tasks)
+        {
+            this.CleanupConnectionTask(task);
+
+            // Close sockets that didn't win
+            if (task.IsCompletedSuccessfully && task.Result != winner)
+            {
+                task.Result.Dispose();
+            }
+        }
+
+        tokenSources.ForEach(cts => cts.Dispose());
     }
 
     private async Task<NetworkStream> AttemptConnection(IPAddress address, int port, CancellationToken token, CancellationToken delayToken)
@@ -117,7 +162,7 @@ public class HappyEyeballsCallback : IDisposable
         // the order the system wants to use. GroupBy will return its groups *in the order they're discovered*. Meaning,
         // the first group created will always be the preferred group, and all other groups are in preference order.
         // This means a straight zipper merge is nice and clean and gives us most -> least preferred, repeating.
-        var dnsRecords = await Dns.GetHostAddressesAsync(hostname, this.forcedAddressFamily, token);
+        var dnsRecords = await Dns.GetHostAddressesAsync(hostname, this.forcedAddressFamily, token).ConfigureAwait(false);
 
         var groups = dnsRecords
             .GroupBy(a => a.AddressFamily)

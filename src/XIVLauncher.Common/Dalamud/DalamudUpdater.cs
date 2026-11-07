@@ -23,7 +23,51 @@ namespace XIVLauncher.Common.Dalamud
         private readonly IUniqueIdCache? cache;
         private readonly HttpClient client;
 
-        public DownloadState State { get; private set; } = DownloadState.Unknown;
+        private readonly ManualResetEventSlim updateFinished = new(false);
+
+        private static readonly TimeSpan RetryBackoff = TimeSpan.FromSeconds(10);
+
+        private readonly object runLock = new();
+        private bool isRunning;
+
+        private (string? BetaKind, string? BetaKey)? pendingRun;
+
+        public event Action<DownloadState>? StateChanged;
+
+        public event Action? PendingRunChanged;
+
+        public string? PendingBetaKind
+        {
+            get
+            {
+                lock (this.runLock)
+                {
+                    return this.pendingRun?.BetaKind;
+                }
+            }
+        }
+
+        public DownloadState State
+        {
+            get;
+            private set
+            {
+                if (field == value)
+                    return;
+
+                field = value;
+
+                try
+                {
+                    StateChanged?.Invoke(field);
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+        } = DownloadState.Unknown;
+
         public bool IsStaging { get; private set; } = false;
 
         public Exception? EnsurementException { get; private set; }
@@ -83,6 +127,13 @@ namespace XIVLauncher.Common.Dalamud
             NoIntegrity, // fail with error message
         }
 
+        private enum RuntimeIntegrity
+        {
+            Valid,
+            Invalid,
+            Unknown, // hashes unavailable, can't tell
+        }
+
         public DalamudUpdater(HttpClient client, DirectoryInfo addonDirectory, DirectoryInfo runtimeDirectory, DirectoryInfo assetRootDirectory, IUniqueIdCache? cache, string? dalamudRolloutBucket)
         {
             this.addonDirectory = addonDirectory;
@@ -122,36 +173,123 @@ namespace XIVLauncher.Common.Dalamud
             Overlay!.ReportProgress(size, downloaded, progress);
         }
 
+        /// <summary>
+        /// Start updating to the given branch. While an update runs, the request is buffered and started once that update ends.
+        /// </summary>
         public void Run(string? betaKind, string? betaKey)
         {
-            Log.Information("[DUPDATE] Starting...");
-            this.State = DownloadState.Running;
+            var isQueued = false;
 
-            this.ResolvedBranch = null;
-
-            Task.Run(async () =>
+            lock (this.runLock)
             {
-                const int MAX_TRIES = 10;
-
-                var isUpdated = false;
-
-                for (var tries = 0; tries < MAX_TRIES; tries++)
+                if (this.isRunning)
                 {
-                    try
+                    Log.Information("[DUPDATE] Update running, queueing {Kind}", betaKind);
+                    this.pendingRun = (betaKind, betaKey);
+                    isQueued = true;
+                }
+                else
+                {
+                    Log.Information("[DUPDATE] Starting...");
+                    this.isRunning = true;
+                    this.State = DownloadState.Running;
+                    this.updateFinished.Reset();
+                }
+            }
+
+            if (isQueued)
+            {
+                this.RaisePendingRunChanged();
+                return;
+            }
+
+            Task.Run(() => this.RunQueue(betaKind, betaKey));
+        }
+
+        private void RaisePendingRunChanged()
+        {
+            try
+            {
+                PendingRunChanged?.Invoke();
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private async Task RunQueue(string? betaKind, string? betaKey)
+        {
+            while (true)
+            {
+                this.ResolvedBranch = null;
+                this.IsStaging = false;
+                this.EnsurementException = null;
+
+                var isUpdated = await this.TryUpdate(betaKind, betaKey).ConfigureAwait(false);
+
+                lock (this.runLock)
+                {
+                    if (this.pendingRun is not { } next)
                     {
-                        await UpdateDalamud(betaKind, betaKey).ConfigureAwait(true);
-                        isUpdated = true;
-                        break;
+                        this.isRunning = false;
+                        this.State = isUpdated ? DownloadState.Done : DownloadState.NoIntegrity;
+                        this.updateFinished.Set();
+                        return;
                     }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries, MAX_TRIES);
-                        this.EnsurementException = ex;
-                    }
+
+                    this.pendingRun = null;
+                    (betaKind, betaKey) = next;
                 }
 
-                this.State = isUpdated ? DownloadState.Done : DownloadState.NoIntegrity;
-            });
+                Log.Information("[DUPDATE] Starting queued update for {Kind}", betaKind);
+                this.RaisePendingRunChanged();
+            }
+        }
+
+        private async Task<bool> TryUpdate(string? betaKind, string? betaKey)
+        {
+            const int MAX_TRIES = 10;
+
+            for (var tries = 0; tries < MAX_TRIES; tries++)
+            {
+                try
+                {
+                    await UpdateDalamud(betaKind, betaKey).ConfigureAwait(true);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[DUPDATE] Update failed, try {TryCnt}/{MaxTries}...", tries + 1, MAX_TRIES);
+                    this.EnsurementException = ex;
+                }
+
+                if (this.HasPendingRun())
+                {
+                    return false;
+                }
+
+                // No wait after the last try
+                if (tries < MAX_TRIES - 1)
+                {
+                    await Task.Delay(RetryBackoff).ConfigureAwait(false);
+                }
+            }
+
+            return false;
+        }
+
+        private bool HasPendingRun()
+        {
+            lock (this.runLock)
+            {
+                return this.pendingRun != null;
+            }
+        }
+
+        public void WaitForUpdate()
+        {
+            this.updateFinished.Wait();
         }
 
         public bool? ReCheckVersion(DirectoryInfo gamePath)
@@ -171,15 +309,15 @@ namespace XIVLauncher.Common.Dalamud
         private static string GetBetaTrackName(string betaKind) =>
             string.IsNullOrEmpty(betaKind) ? "staging" : betaKind;
 
-        private async Task<(DalamudVersionInfo release, DalamudVersionInfo? staging)> GetVersionInfo(string? betaKind, string? betaKey)
+        private async Task<(DalamudVersionInfo? release, DalamudVersionInfo? staging)> GetVersionInfo(string? betaKind, string? betaKey)
         {
-            var message = new HttpRequestMessage(HttpMethod.Get, DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}");
+            using var message = new HttpRequestMessage(HttpMethod.Get, DalamudLauncher.REMOTE_BASE + $"release&bucket={this.RolloutBucket}");
             message.Headers.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true
             };
 
-            var versionInfoResponse = await this.client.SendAsync(message).ConfigureAwait(false);
+            using var versionInfoResponse = await this.client.SendAsync(message).ConfigureAwait(false);
             versionInfoResponse.EnsureSuccessStatusCode();
 
             var versionInfoRelease = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoResponse.Content.ReadAsStringAsync());
@@ -188,10 +326,16 @@ namespace XIVLauncher.Common.Dalamud
 
             if (!string.IsNullOrEmpty(betaKey) && !string.IsNullOrEmpty(betaKind))
             {
-                var versionInfoJsonStaging = await this.client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(betaKind)).ConfigureAwait(false);
+                using var versionInfoJsonStaging = await this.client.GetAsync(DalamudLauncher.REMOTE_BASE + GetBetaTrackName(betaKind)).ConfigureAwait(false);
 
-                if (versionInfoJsonStaging.StatusCode != HttpStatusCode.BadRequest)
+                if (versionInfoJsonStaging.IsSuccessStatusCode)
+                {
                     versionInfoStaging = JsonConvert.DeserializeObject<DalamudVersionInfo>(await versionInfoJsonStaging.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+                else if (versionInfoJsonStaging.StatusCode != HttpStatusCode.BadRequest)
+                {
+                    Log.Warning("[DUPDATE] Could not get version info for track {Track}: {StatusCode}", GetBetaTrackName(betaKind), versionInfoJsonStaging.StatusCode);
+                }
             }
 
             return (versionInfoRelease, versionInfoStaging);
@@ -200,6 +344,9 @@ namespace XIVLauncher.Common.Dalamud
         private async Task UpdateDalamud(string? betaKind, string? betaKey)
         {
             var (versionInfoRelease, versionInfoStaging) = await GetVersionInfo(betaKind, betaKey).ConfigureAwait(false);
+
+            if (versionInfoRelease == null)
+                throw new Exception("Release Dalamud version info deserialized to null");
 
             var remoteVersionInfo = versionInfoRelease;
 
@@ -260,14 +407,14 @@ namespace XIVLauncher.Common.Dalamud
                 if (!this.Runtime.Exists)
                     Directory.CreateDirectory(this.Runtime.FullName);
 
-                var isRuntimeIntegrity = false;
+                var runtimeIntegrity = RuntimeIntegrity.Unknown;
 
                 // Only check runtime hashes if we don't need to update it
                 if (!runtimeNeedsUpdate)
                 {
                     try
                     {
-                        isRuntimeIntegrity = await CheckRuntimeHashes(Runtime, localVersion).ConfigureAwait(false);
+                        runtimeIntegrity = await CheckRuntimeHashes(Runtime, localVersion).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -275,7 +422,7 @@ namespace XIVLauncher.Common.Dalamud
                     }
                 }
 
-                if (runtimePaths.Any(p => !p.Exists) || runtimeNeedsUpdate || !isRuntimeIntegrity)
+                if (runtimePaths.Any(p => !p.Exists) || runtimeNeedsUpdate || runtimeIntegrity == RuntimeIntegrity.Invalid)
                 {
                     Log.Information("[DUPDATE] Not found, outdated or no integrity: {LocalVer} - {RemoteVer}", localVersion, remoteVersionInfo.RuntimeVersion);
 
@@ -285,13 +432,28 @@ namespace XIVLauncher.Common.Dalamud
                     {
                         Log.Verbose("[DUPDATE] Now download runtime...");
                         await DownloadRuntime(this.Runtime, remoteVersionInfo.RuntimeVersion).ConfigureAwait(false);
+
                         File.WriteAllText(versionFile.FullName, remoteVersionInfo.RuntimeVersion);
+
+                        var downloadIntegrity = await CheckRuntimeHashes(this.Runtime, remoteVersionInfo.RuntimeVersion).ConfigureAwait(false);
+
+                        if (downloadIntegrity == RuntimeIntegrity.Invalid)
+                        {
+                            throw new DalamudIntegrityException("No runtime integrity after download");
+                        }
+
+                        if (downloadIntegrity == RuntimeIntegrity.Unknown)
+                        {
+                            Log.Warning("[DUPDATE] Could not verify runtime {Version}, rechecking on next launch", remoteVersionInfo.RuntimeVersion);
+                        }
                     }
                     catch (Exception ex)
                     {
                         throw new DalamudIntegrityException("Could not ensure runtime", ex);
                     }
                 }
+
+                CleanUpOldRuntimes(runtimePaths);
             }
 
             Log.Verbose("[DUPDATE] Now ensure assets...");
@@ -424,11 +586,44 @@ namespace XIVLauncher.Common.Dalamud
 
                 try
                 {
-                    directory.Delete(true);
+                    PlatformHelpers.ForceDeleteDirectory(directory);
                 }
                 catch
                 {
                     // ignored
+                }
+            }
+        }
+
+        private static void CleanUpOldRuntimes(DirectoryInfo[] currentRuntimePaths)
+        {
+            if (GameHelpers.CheckIsGameOpen())
+            {
+                return;
+            }
+
+            foreach (var current in currentRuntimePaths)
+            {
+                if (current.Parent is not { Exists: true } versionsDir)
+                {
+                    continue;
+                }
+
+                foreach (var directory in versionsDir.GetDirectories())
+                {
+                    if (directory.Name == current.Name)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        PlatformHelpers.ForceDeleteDirectory(directory);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning(ex, "[DUPDATE] Could not clean up old runtime {Path}", directory.FullName);
+                    }
                 }
             }
         }
@@ -442,7 +637,14 @@ namespace XIVLauncher.Common.Dalamud
         {
             // Ensure directory exists
             if (addonPath.Exists)
-                addonPath.Delete(true);
+            {
+                if (GameHelpers.CheckIsGameOpen())
+                {
+                    throw new DalamudIntegrityException("Cannot replace Dalamud while the game is running");
+                }
+
+                PlatformHelpers.ForceDeleteDirectory(addonPath);
+            }
 
             addonPath.Create();
 
@@ -451,10 +653,15 @@ namespace XIVLauncher.Common.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            await this.DownloadFile(version.DownloadUrl, downloadPath).ConfigureAwait(false);
-            ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
-
-            File.Delete(downloadPath);
+            try
+            {
+                await this.DownloadFile(version.DownloadUrl, downloadPath).ConfigureAwait(false);
+                ZipFile.ExtractToDirectory(downloadPath, addonPath.FullName);
+            }
+            finally
+            {
+                PlatformHelpers.DeleteTempFile(downloadPath);
+            }
 
             try
             {
@@ -487,7 +694,7 @@ namespace XIVLauncher.Common.Dalamud
             return localVersion;
         }
 
-        private async Task<bool> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
+        private async Task<RuntimeIntegrity> CheckRuntimeHashes(DirectoryInfo runtimePath, string version)
         {
             var hashesFile = new FileInfo(Path.Combine(runtimePath.FullName, $"hashes-{version}.json"));
             string? runtimeHashes;
@@ -503,7 +710,13 @@ namespace XIVLauncher.Common.Dalamud
                 catch (Exception ex)
                 {
                     Log.Error(ex, "[DUPDATE] Could not download hashes for runtime v{Version}", version);
-                    return false;
+                    return RuntimeIntegrity.Unknown;
+                }
+
+                if (!IsValidHashes(runtimeHashes))
+                {
+                    Log.Error("[DUPDATE] Invalid hashes for runtime v{Version}", version);
+                    return RuntimeIntegrity.Unknown;
                 }
 
                 File.WriteAllText(hashesFile.FullName, runtimeHashes);
@@ -513,7 +726,19 @@ namespace XIVLauncher.Common.Dalamud
                 runtimeHashes = File.ReadAllText(hashesFile.FullName);
             }
 
-            return CheckIntegrity(runtimePath, runtimeHashes);
+            return CheckIntegrity(runtimePath, runtimeHashes) ? RuntimeIntegrity.Valid : RuntimeIntegrity.Invalid;
+        }
+
+        private static bool IsValidHashes(string hashesJson)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(hashesJson) is { Count: > 0 };
+            }
+            catch (JsonException)
+            {
+                return false;
+            }
         }
 
         private async Task DownloadRuntime(DirectoryInfo runtimePath, string version)
@@ -523,14 +748,18 @@ namespace XIVLauncher.Common.Dalamud
             {
                 runtimePath.Create();
             }
+            else if (GameHelpers.CheckIsGameOpen())
+            {
+                Log.Information("[DUPDATE] Installing runtime {Version} side by side", version);
+            }
             else
             {
-                runtimePath.Delete(true);
+                PlatformHelpers.ForceDeleteDirectory(runtimePath);
                 runtimePath.Create();
             }
 
             // Wait for it to be gone, thanks Windows
-            Thread.Sleep(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
 
             var dotnetUrl = $"https://kamori.goats.dev/Dalamud/Release/Runtime/DotNet/{version}";
             var desktopUrl = $"https://kamori.goats.dev/Dalamud/Release/Runtime/WindowsDesktop/{version}";
@@ -540,13 +769,18 @@ namespace XIVLauncher.Common.Dalamud
             if (File.Exists(downloadPath))
                 File.Delete(downloadPath);
 
-            await this.DownloadFile(dotnetUrl, downloadPath).ConfigureAwait(false);
-            ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
+            try
+            {
+                await this.DownloadFile(dotnetUrl, downloadPath).ConfigureAwait(false);
+                ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName, overwriteFiles: true);
 
-            await this.DownloadFile(desktopUrl, downloadPath).ConfigureAwait(false);
-            ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName);
-
-            File.Delete(downloadPath);
+                await this.DownloadFile(desktopUrl, downloadPath).ConfigureAwait(false);
+                ZipFile.ExtractToDirectory(downloadPath, runtimePath.FullName, overwriteFiles: true);
+            }
+            finally
+            {
+                PlatformHelpers.DeleteTempFile(downloadPath);
+            }
         }
 
         public async Task DownloadFile(string url, string path)

@@ -1,9 +1,11 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
+using Serilog;
 using XIVLauncher.Common.Game.Patch;
 using XIVLauncher.Common.Util;
 using XIVLauncher.Windows.ViewModel;
@@ -79,14 +81,14 @@ namespace XIVLauncher.Windows
                     if (_manager.Slots[i] == PatchManager.SlotState.Checking)
                     {
                         SetPatchProgress(i,
-                                         $"{activePatch.Patch} ({ViewModel.PatchCheckingLoc})", 100f, true);
+                            $"{activePatch.Patch} ({ViewModel.PatchCheckingLoc})", 100f, true);
                     }
                     else
                     {
                         var pct = Math.Round((double)(100 * _manager.Progresses[i]) / activePatch.Patch.Length, 2);
                         SetPatchProgress(i,
-                                         $"{activePatch.Patch} ({pct:#0.0}%, {MathHelpers.BytesToString(_manager.Speeds[i])}/s)",
-                                         pct, false);
+                            $"{activePatch.Patch} ({pct:#0.0}%, {MathHelpers.BytesToString(_manager.Speeds[i])}/s)",
+                            pct, false);
                     }
                 }
 
@@ -103,8 +105,8 @@ namespace XIVLauncher.Windows
 
         public void SetGeneralProgress(int curr, int final, bool busy, bool cancelling)
         {
-            PatchProgressText.Text = busy ? string.Format(ViewModel.PatchInstallingFormattedLoc, curr) :
-                                     _manager.DownloadsDone ? string.Empty : ViewModel.PatchInstallingIdleLoc;
+            PatchProgressText.Text = busy ? string.Format(ViewModel.PatchInstallingFormattedLoc, curr + 1) :
+                _manager.DownloadsDone ? string.Empty : ViewModel.PatchInstallingIdleLoc;
             InstallingText.Text = string.Format(ViewModel.PatchGeneralStatusLoc, $"{curr}/{final}");
             TotalProgress.Value = final == 0 ? 100 : (double)(100 * curr) / final;
 
@@ -194,12 +196,12 @@ namespace XIVLauncher.Windows
 
         private void PatchDownloadDialog_OnClosing(object sender, CancelEventArgs e)
         {
-            e.Cancel = true; // We can't cancel patching yet, big TODO
+            e.Cancel = Visibility == Visibility.Visible;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            _manager?.StartCancellation();
+            Task.Run(() => _manager?.StartCancellation());
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -217,12 +219,20 @@ namespace XIVLauncher.Windows
             contextMenu.IsOpen = true;
         }
 
-        private void SpeedLimitSpinBox_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private async void SpeedLimitSpinBox_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             var newValue = e.NewValue;
 
-            App.Settings.SpeedLimitBytes = (long)(newValue * MathHelpers.BYTES_TO_MB);
-            _manager.SetSpeedLimitAsync(App.Settings.SpeedLimitBytes).ConfigureAwait(false);
+            // This is fine usually, PatchManager stores it and sets it properly once we know we can talk to aria2
+            try
+            {
+                App.Settings.SpeedLimitBytes = (long)(newValue * MathHelpers.BYTES_TO_MB);
+                await _manager.SetSpeedLimitAsync(App.Settings.SpeedLimitBytes);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Could not apply speed limit");
+            }
         }
 
         private void SettingsContextMenu_OnOpened(object sender, RoutedEventArgs e)
@@ -231,7 +241,7 @@ namespace XIVLauncher.Windows
             if (e.OriginalSource is System.Windows.Controls.ContextMenu menu)
             {
                 var speedLimitSpinBoxItem = menu.Items.OfType<System.Windows.Controls.MenuItem>()
-                                                .FirstOrDefault(i => i.Name == "SpeedLimitMenuItem");
+                    .FirstOrDefault(i => i.Name == "SpeedLimitMenuItem");
 
                 if (speedLimitSpinBoxItem?.Items[0] is SpeedSpinBox speedSpinBox)
                 {

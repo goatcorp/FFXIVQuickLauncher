@@ -44,15 +44,44 @@ namespace XIVLauncher.Windows
             ReloadSettings();
         }
 
-        private void OnResolvedBranchChanged(DalamudVersionInfo? branch)
+        private void UpdateBranchText(DalamudUpdater updater)
         {
-            this.Dispatcher.Invoke(() => { this.DalamudBranchTextBlock.Text = branch == null ? "Transmitting..." : $"{branch.DisplayName} ({branch.Track})"; });
+            _ = this.Dispatcher.InvokeAsync(() =>
+            {
+                var branch = updater.ResolvedBranch;
+                var state = updater.State;
+
+                if (branch == null)
+                {
+                    this.DalamudBranchTextBlock.Text = state == DalamudUpdater.DownloadState.NoIntegrity ? "Unknown (update failed)" : "Transmitting...";
+                }
+                else
+                {
+                    this.DalamudBranchTextBlock.Text = $"{branch.DisplayName} ({branch.Track})";
+
+                    if (state == DalamudUpdater.DownloadState.Running)
+                    {
+                        this.DalamudBranchTextBlock.Text += " - updating...";
+                    }
+                    else if (state == DalamudUpdater.DownloadState.NoIntegrity)
+                    {
+                        this.DalamudBranchTextBlock.Text += " - update failed";
+                    }
+                }
+
+                if (updater.PendingBetaKind is { } pending)
+                {
+                    this.DalamudBranchTextBlock.Text += $" - switching to {(string.IsNullOrEmpty(pending) ? "release" : pending)} next";
+                }
+            });
         }
 
         public void SetUpdater(DalamudUpdater updater)
         {
-            updater.ResolvedBranchChanged += OnResolvedBranchChanged;
-            OnResolvedBranchChanged(updater.ResolvedBranch);
+            updater.ResolvedBranchChanged += _ => UpdateBranchText(updater);
+            updater.StateChanged += _ => UpdateBranchText(updater);
+            updater.PendingRunChanged += () => UpdateBranchText(updater);
+            UpdateBranchText(updater);
         }
 
         public void ReloadSettings()
@@ -81,8 +110,6 @@ namespace XIVLauncher.Windows
             OtpAlwaysOnTopCheckBox.IsChecked = App.Settings.OtpAlwaysOnTopEnabled;
 
             LaunchArgsTextBox.Text = App.Settings.AdditionalLaunchArgs;
-
-            InjectorArgsTextBox.Text = App.Settings.AdditionalInjectorArgs;
 
             DpiAwarenessComboBox.SelectedIndex = (int) App.Settings.DpiAwareness.GetValueOrDefault(DpiAwareness.Unaware);
 
@@ -125,8 +152,6 @@ namespace XIVLauncher.Windows
             App.Settings.OtpAlwaysOnTopEnabled = OtpAlwaysOnTopCheckBox.IsChecked == true;
 
             App.Settings.AdditionalLaunchArgs = LaunchArgsTextBox.Text;
-
-            App.Settings.AdditionalInjectorArgs = this.InjectorArgsTextBox.Text;
 
             App.Settings.DpiAwareness = (DpiAwareness) DpiAwarenessComboBox.SelectedIndex;
 
@@ -281,6 +306,12 @@ namespace XIVLauncher.Windows
                             CustomMessageBox.Show(Loc.Localize("IntegrityCheckValid", "Your game install seems to be valid."), "XIVLauncher", MessageBoxButton.OK,
                                 MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
                             break;
+
+                        case IntegrityCheck.CompareResult.ValidMissingExpansions:
+                            CustomMessageBox.Show(Loc.Localize("IntegrityCheckValidMissingExpansions",
+                                    "Your game install seems to be valid.\n\nSome expansions are not installed and were not checked."),
+                                "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Asterisk, parentWindow: Window.GetWindow(this));
+                            break;
                     }
                 });
             });
@@ -300,6 +331,11 @@ namespace XIVLauncher.Windows
         {
             if (string.IsNullOrEmpty(ViewModel.GamePath) || !GameHelpers.PathHasExistingInstall(ViewModel.GamePath))
                 return;
+
+            if (App.DalamudUpdater.State == DalamudUpdater.DownloadState.Running)
+            {
+                return;
+            }
 
             try
             {
@@ -383,14 +419,6 @@ namespace XIVLauncher.Windows
 
         private void OpenDalamudBranchSwitcher_OnClick(object sender, RoutedEventArgs e)
         {
-            // TODO: Queue this?
-            if (App.DalamudUpdater.State == DalamudUpdater.DownloadState.Running)
-            {
-                CustomMessageBox.Show(Loc.Localize("DalamudBranchSwitcherBusy", "Cannot switch Dalamud branches while an update is in progress.\nPlease wait a little while before trying again."),
-                    "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Warning, parentWindow: Window.GetWindow(this));
-                return;
-            }
-
             var window = new DalamudBranchSwitcherWindow
             {
                 Owner = Window.GetWindow(this)

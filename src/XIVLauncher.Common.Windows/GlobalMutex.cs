@@ -2,6 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace XIVLauncher.Common.Windows;
 
@@ -11,7 +12,8 @@ namespace XIVLauncher.Common.Windows;
 /// </summary>
 public sealed class GlobalMutex : IDisposable
 {
-    private readonly Mutex? mutex;
+    private readonly Thread ownerThread;
+    private readonly ManualResetEventSlim releaseSignal = new();
     private bool disposed;
 
     /// <summary>
@@ -33,35 +35,58 @@ public sealed class GlobalMutex : IDisposable
 
         var mutexName = GenerateMutexName(identifier);
 
+        var acquired = new TaskCompletionSource<bool>();
+
+        this.ownerThread = new Thread(() =>
+        {
+            Mutex mutex;
+            bool owned;
+
+            try
+            {
+                mutex = new Mutex(true, mutexName, out var createdNew);
+                owned = createdNew || TryAcquire(mutex);
+            }
+            catch (Exception ex)
+            {
+                acquired.SetException(ex);
+                return;
+            }
+
+            acquired.SetResult(owned);
+
+            if (!owned)
+            {
+                mutex.Dispose();
+                return;
+            }
+
+            this.releaseSignal.Wait();
+            mutex.ReleaseMutex();
+            mutex.Dispose();
+        })
+        {
+            IsBackground = true,
+            Name = "GlobalMutex owner",
+        };
+
+        this.ownerThread.Start();
+
+        // This rethrows
+        this.IsOwned = acquired.Task.GetAwaiter().GetResult();
+    }
+
+    private static bool TryAcquire(Mutex mutex)
+    {
+        // Mutex already exists, try to acquire it with zero timeout
         try
         {
-            // Try to create the mutex with initial ownership
-            this.mutex = new Mutex(true, mutexName, out var createdNew);
-
-            if (createdNew)
-            {
-                // We created and own the mutex
-                this.IsOwned = true;
-            }
-            else
-            {
-                // Mutex already exists, try to acquire it with zero timeout
-                try
-                {
-                    this.IsOwned = this.mutex.WaitOne(0, false);
-                }
-                catch (AbandonedMutexException)
-                {
-                    // Previous owner terminated without releasing - we now own it
-                    this.IsOwned = true;
-                }
-            }
+            return mutex.WaitOne(0, false);
         }
-        catch (Exception)
+        catch (AbandonedMutexException)
         {
-            // If anything goes wrong, clean up and rethrow
-            this.mutex?.Dispose();
-            throw;
+            // Previous owner terminated without releasing - we now own it
+            return true;
         }
     }
 
@@ -89,19 +114,11 @@ public sealed class GlobalMutex : IDisposable
             return;
         }
 
-        if (this.IsOwned && this.mutex != null)
-        {
-            try
-            {
-                this.mutex.ReleaseMutex();
-            }
-            catch (ApplicationException)
-            {
-                // Mutex was already released or not owned - safe to ignore
-            }
-        }
-
-        this.mutex?.Dispose();
         this.disposed = true;
+
+        // Wait for release
+        this.releaseSignal.Set();
+        this.ownerThread.Join();
+        this.releaseSignal.Dispose();
     }
 }

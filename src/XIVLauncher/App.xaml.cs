@@ -215,13 +215,13 @@ namespace XIVLauncher
 
                     Settings.DalamudRolloutBucket = DalamudUpdater.RolloutBucket;
 
-                    var dalamudWindowThread = new Thread(DalamudOverlayThreadStart);
+                    var overlayReady = new ManualResetEventSlim(false);
+                    var dalamudWindowThread = new Thread(() => DalamudOverlayThreadStart(overlayReady));
                     dalamudWindowThread.SetApartmentState(ApartmentState.STA);
                     dalamudWindowThread.IsBackground = true;
                     dalamudWindowThread.Start();
 
-                    while (DalamudUpdater.Overlay == null)
-                        Thread.Yield();
+                    overlayReady.Wait();
 
                     DalamudUpdater.Run(
                         Settings.DalamudBetaKind,
@@ -235,12 +235,13 @@ namespace XIVLauncher
         }
 
         // We need this because the main dispatcher is blocked by the main window/login task.
-        private static void DalamudOverlayThreadStart()
+        private static void DalamudOverlayThreadStart(ManualResetEventSlim overlayReady)
         {
             var overlay = new DalamudLoadingOverlay();
             overlay.Hide();
 
             DalamudUpdater.Overlay = overlay;
+            overlayReady.Set();
 
             System.Windows.Threading.Dispatcher.Run();
         }

@@ -27,17 +27,23 @@ namespace XIVLauncher.Windows
             }
             catch (Exception ex)
             {
-                new CustomMessageBox.Builder()
-                    .WithCaption("XIVLauncher - Dalamud Branch Switcher")
-                    .WithText("An error occurred while fetching the available Dalamud branches")
-                    .WithDescription(ex.ToString())
-                    .WithImage(MessageBoxImage.Error)
-                    .WithButtons(MessageBoxButton.OK)
-                    .Show();
+                ShowFetchError(ex);
 
                 this.DialogResult = false;
                 this.Close();
             }
+        }
+
+        private void ShowFetchError(Exception ex)
+        {
+            new CustomMessageBox.Builder()
+                .WithCaption("XIVLauncher - Dalamud Branch Switcher")
+                .WithText("An error occurred while fetching the available Dalamud branches")
+                .WithDescription(ex.ToString())
+                .WithImage(MessageBoxImage.Error)
+                .WithButtons(MessageBoxButton.OK)
+                .WithParentWindow(this)
+                .Show();
         }
 
         private void SwitchBranchButton_Click(object sender, RoutedEventArgs e)
@@ -69,10 +75,22 @@ namespace XIVLauncher.Windows
         {
             var dialog = new BetaKeyDialog { Owner = this };
 
-            if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.BetaKey))
+            if (dialog.ShowDialog() != true || string.IsNullOrWhiteSpace(dialog.BetaKey))
             {
-                Model.AppliedBetaKey = dialog.BetaKey;
+                return;
+            }
+
+            var previousKey = Model.AppliedBetaKey;
+            Model.AppliedBetaKey = dialog.BetaKey;
+
+            try
+            {
                 await Model.FetchBranchesAsync();
+            }
+            catch (Exception ex)
+            {
+                Model.AppliedBetaKey = previousKey;
+                ShowFetchError(ex);
             }
         }
 

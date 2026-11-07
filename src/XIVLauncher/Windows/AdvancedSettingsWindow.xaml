@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModel="clr-namespace:XIVLauncher.Windows.ViewModel"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="{Binding AdvancedSettingsTitleLoc}" SizeToContent="Height" Width="650" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Resources/dalamud_icon.ico" ResizeMode="NoResize"
@@ -59,6 +60,10 @@
                 <Label Foreground="DarkGray"
                        Content="ms" ToolTip="{Binding InGameAddonInjectionDelayDescriptionLoc}"/>
             </StackPanel>
+
+            <TextBox x:Name="InjectorArgsTextBox" Width="500" HorizontalAlignment="Left" Margin="0,15,0,0"
+                     Foreground="DarkGray"
+                     materialDesign:HintAssist.Hint="{Binding AdditionalInjectorArgumentsLoc}" materialDesign:HintAssist.IsFloating="True" />
         </StackPanel>
         
         <Button Content="{Binding CloseLoc}" Width="79" VerticalAlignment="Bottom"

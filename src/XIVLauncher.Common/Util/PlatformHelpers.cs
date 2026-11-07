@@ -1,10 +1,13 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Threading;
+using Serilog;
 
 namespace XIVLauncher.Common.Util;
 
@@ -34,6 +37,22 @@ public static class PlatformHelpers
         return Path.Combine(Path.GetTempPath(), "xivlauncher_" + Guid.NewGuid());
     }
 
+    /// <summary>
+    ///     Deletes a temporary file without throwing, for use in finally blocks.
+    /// </summary>
+    /// <param name="path">The file to delete. May not exist.</param>
+    public static void DeleteTempFile(string path)
+    {
+        try
+        {
+            File.Delete(path);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Could not delete temp file {Path}", path);
+        }
+    }
+
     public static void DeleteAndRecreateDirectory(DirectoryInfo dir)
     {
         if (!dir.Exists)
@@ -42,8 +61,56 @@ public static class PlatformHelpers
         }
         else
         {
-            dir.Delete(true);
+            ForceDeleteDirectory(dir);
             dir.Create();
+        }
+    }
+
+    private const int DeleteTries = 3;
+    private static readonly TimeSpan DeleteRetryDelay = TimeSpan.FromSeconds(1);
+
+    internal static void ForceDeleteDirectory(DirectoryInfo dir)
+    {
+        for (var tries = 1;; tries++)
+        {
+            dir.Refresh();
+
+            if (!dir.Exists)
+            {
+                return;
+            }
+
+            try
+            {
+                ClearReadOnly(dir);
+                dir.Delete(true);
+                return;
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or IOException && tries < DeleteTries)
+            {
+                Log.Warning(ex, "Could not delete {Path}, try {Try}/{MaxTries}", dir.FullName, tries, DeleteTries);
+                Thread.Sleep(DeleteRetryDelay);
+            }
+        }
+    }
+
+    private static void ClearReadOnly(DirectoryInfo dir)
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var entries = dir.EnumerateFileSystemInfos("*", SearchOption.AllDirectories).Append(dir);
+
+        foreach (var entry in entries)
+        {
+            if (!entry.Attributes.HasFlag(FileAttributes.ReadOnly))
+            {
+                continue;
+            }
+
+            entry.Attributes &= ~FileAttributes.ReadOnly;
         }
     }
 
@@ -83,17 +150,17 @@ public static class PlatformHelpers
 
     public static bool IsElevated()
     {
-        switch (Environment.OSVersion.Platform)
+        if (OperatingSystem.IsWindows())
         {
-            case PlatformID.Win32NT:
-                return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-
-            case PlatformID.Unix:
-                return geteuid() == 0;
-
-            default:
-                return false;
+            return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         }
+
+        if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            return geteuid() == 0;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -169,7 +236,6 @@ public static class PlatformHelpers
         return ((IPEndPoint)socket.LocalEndPoint).Port;
     }
 
-#if WINDOWS
     /*
      * WINE: The APIs DriveInfo uses are buggy on Wine. Let's just use the kernel32 API instead.
      */
@@ -188,6 +254,11 @@ public static class PlatformHelpers
             throw new ArgumentNullException(nameof(info));
         }
 
+        if (!OperatingSystem.IsWindows())
+        {
+            return new DriveInfo(info.FullName).AvailableFreeSpace;
+        }
+
         ulong dummy = 0;
 
         if (!GetDiskFreeSpaceEx(info.FullName, out ulong freeSpace, out dummy, out dummy))
@@ -197,17 +268,4 @@ public static class PlatformHelpers
 
         return (long)freeSpace;
     }
-#else
-        public static long GetDiskFreeSpace(DirectoryInfo info)
-        {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            DriveInfo drive = new DriveInfo(info.FullName);
-
-            return drive.AvailableFreeSpace;
-        }
-#endif
 }

@@ -257,7 +257,7 @@ public class Launcher
         var workingDir = Path.Combine(gamePath.FullName, "game");
 
         var arguments = encryptArguments
-            ? argumentBuilder.BuildEncrypted()
+            ? argumentBuilder.BuildEncryptedFromTicks(runner.GetTickCount())
             : argumentBuilder.Build();
 
         return runner.Start(exePath, workingDir, arguments, environment, dpiAwareness, additionalInjectorArgs);
@@ -281,6 +281,9 @@ public class Launcher
 
         if (exLevel >= 5)
             verReport += $"ex5\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex5.GetVer(gamePath))}\n";
+
+        if (exLevel >= 6)
+            verReport += $"ex6\t{(forceBaseVersion ? Constants.BASE_GAME_VERSION : Repository.Ex6.GetVer(gamePath))}\n";
 
         return verReport;
     }
@@ -323,6 +326,12 @@ public class Launcher
         {
             failed |= IsBadVersionSanity(gamePath, Repository.Ex5);
             failed |= IsBadVersionSanity(gamePath, Repository.Ex5, true);
+        }
+
+        if (exLevel >= 6)
+        {
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex6);
+            failed |= IsBadVersionSanity(gamePath, Repository.Ex6, true);
         }
 
         if (failed)

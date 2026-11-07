@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -46,9 +47,23 @@ namespace XIVLauncher.Accounts
 
         public void UpdateLastSuccessfulOtp(XivAccount account, string lastOtp)
         {
-            var existingAccount = Accounts.FirstOrDefault(a => a.Id == account.Id);
+            var existingAccount = account == null ? null : Accounts.FirstOrDefault(a => a.Id == account.Id);
+
+            if (existingAccount == null)
+            {
+                Log.Warning("UpdateLastSuccessfulOtp() called for unknown account {Id}", account?.Id);
+                return;
+            }
+
             existingAccount.LastSuccessfulOtp = lastOtp;
             Save();
+        }
+
+        public bool SharesSavedPassword(XivAccount account)
+        {
+            return Accounts.Any(a => a.Id != account.Id &&
+                                     a.SavePassword &&
+                                     string.Equals(a.UserName, account.UserName, StringComparison.OrdinalIgnoreCase));
         }
 
         public void AddAccount(XivAccount account)
@@ -72,7 +87,11 @@ namespace XIVLauncher.Accounts
 
         public void RemoveAccount(XivAccount account)
         {
-            account.Password = string.Empty;
+            if (!SharesSavedPassword(account))
+            {
+                account.Password = string.Empty;
+            }
+
             Accounts.Remove(account);
         }
 

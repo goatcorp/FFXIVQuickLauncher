@@ -23,7 +23,7 @@ public class UnixDalamudRunner : IDalamudRunner
         this.dotnetRuntime = dotnetRuntime;
     }
 
-    public Process? Run(FileInfo runner, bool fakeLogin, bool noPlugins, bool noThirdPlugins, FileInfo gameExe, string gameArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo startInfo)
+    public Process? Run(FileInfo runner, bool fakeLogin, bool noPlugins, bool noThirdPlugins, FileInfo gameExe, string gameArgs, string additionalInjectorArgs, IDictionary<string, string> environment, DalamudLoadMethod loadMethod, DalamudStartInfo startInfo)
     {
         var gameExePath = "";
         var dotnetRuntimePath = "";
@@ -68,6 +68,11 @@ public class UnixDalamudRunner : IDalamudRunner
 
         if (noThirdPlugins)
             launchArguments.Add(DalamudInjectorArgs.NO_THIRD_PARTY);
+
+        if (!string.IsNullOrWhiteSpace(additionalInjectorArgs))
+        {
+            launchArguments.Add(additionalInjectorArgs);
+        }
 
         launchArguments.Add("--");
         launchArguments.Add(gameArgs);

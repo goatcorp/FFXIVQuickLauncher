@@ -11,29 +11,38 @@ namespace XIVLauncher.Windows.ViewModel
     {
         public ObservableCollection<DalamudBranchMeta.Branch> Branches { get; set; } = [];
 
-        private DalamudBranchMeta.Branch selectedBranch;
-
         public DalamudBranchMeta.Branch SelectedBranch
         {
-            get => selectedBranch;
+            get;
             set
             {
-                selectedBranch = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-
-        private string appliedBetaKey;
 
         public string AppliedBetaKey
         {
-            get => this.appliedBetaKey;
+            get;
             set
             {
-                this.appliedBetaKey = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
+
+        public bool IsLoading
+        {
+            get;
+            private set
+            {
+                field = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CanInteract));
+            }
+        }
+
+        public bool CanInteract => !this.IsLoading;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -42,17 +51,27 @@ namespace XIVLauncher.Windows.ViewModel
 
         public async Task FetchBranchesAsync()
         {
-            Branches.Clear();
-            var allBranches = await DalamudBranchMeta.FetchBranchesAsync(App.HttpClient);
+            IsLoading = true;
 
-            foreach (var branch in allBranches)
+            try
             {
-                if (!branch.Hidden || (branch.Hidden && branch.Key == this.AppliedBetaKey))
-                    Branches.Add(branch);
-            }
+                var allBranches = await DalamudBranchMeta.FetchBranchesAsync(App.HttpClient);
 
-            SelectedBranch = this.Branches.FirstOrDefault(x => x.Track == App.Settings.DalamudBetaKind && x.Key == App.Settings.DalamudBetaKey) ??
-                             this.Branches.FirstOrDefault(x => x.Track == "release");
+                Branches.Clear();
+
+                foreach (var branch in allBranches)
+                {
+                    if (!branch.Hidden || (branch.Hidden && branch.Key == this.AppliedBetaKey))
+                        Branches.Add(branch);
+                }
+
+                SelectedBranch = this.Branches.FirstOrDefault(x => x.Track == App.Settings.DalamudBetaKind && x.Key == App.Settings.DalamudBetaKey) ??
+                                 this.Branches.FirstOrDefault(x => x.Track == "release");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 }

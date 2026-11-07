@@ -198,6 +198,22 @@ namespace XIVLauncher.Windows.ViewModel
         {
             ProblemCheck.RunCheck(_window);
 
+            if (App.Settings.GamePath == null || !Directory.Exists(App.Settings.GamePath.FullName))
+            {
+                CustomMessageBox.Builder
+                    .NewFrom(Loc.Localize("GamePathNotFoundError", "The game folder set in XIVLauncher could not be found or could not be accessed.\n\n"
+                                                                   + "If it is on an external or network drive, please make sure that it is connected. Otherwise, please check the game path in the XIVLauncher settings."))
+                    .WithDescription(App.Settings.GamePath?.FullName)
+                    .WithImage(MessageBoxImage.Error)
+                    .WithButtons(MessageBoxButton.OK)
+                    .WithShowHelpLinks()
+                    .WithCaption("XIVLauncher")
+                    .WithParentWindow(_window)
+                    .Show();
+
+                return;
+            }
+
             var bootRes = await HandleBootCheck().ConfigureAwait(false);
 
             if (!bootRes)
@@ -300,13 +316,19 @@ namespace XIVLauncher.Windows.ViewModel
             if (loginResult == null)
                 return;
 
-            if (otp != null)
+            try
+            {
                 AccountManager.UpdateLastSuccessfulOtp(AccountManager.CurrentAccount, otp);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Could not save last successful OTP");
+            }
 
             Log.Verbose("[LR] {State} {NumPatches} {Playable}",
-                        loginResult.State,
-                        loginResult.PendingPatches.Length,
-                        loginResult.OauthLogin?.Playable);
+                loginResult.State,
+                loginResult.PendingPatches.Length,
+                loginResult.OauthLogin?.Playable);
 
             if (await TryProcessLoginResult(loginResult, isSteam, action).ConfigureAwait(false))
             {
@@ -538,14 +560,16 @@ namespace XIVLauncher.Windows.ViewModel
                 else if (ex is HttpRequestException || ex is TaskCanceledException || ex is WebException)
                 {
                     msgbox.WithText(Loc.Localize("LoginWebExceptionContent",
-                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later."));
+                        "XIVLauncher could not establish a connection to the game servers.\n\nThis may be a temporary issue, or a problem with your internet connection. Please try again later.\n\nYou can learn more about outages on the Lodestone."))
+                        .WithShowOfficialLauncher();
                 }
                 else if (ex is InvalidResponseException iex)
                 {
                     Log.Error("Invalid response from server! Context: {Message}\n{Document}", ex.Message, iex.Document);
 
                     msgbox.WithText(Loc.Localize("LoginGenericServerIssue",
-                        "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."));
+                        "The server has sent an invalid response. This is known to occur during outages or when servers are under heavy load.\nPlease wait a minute and try again, or try using the official launcher.\n\nYou can learn more about outages on the Lodestone."))
+                        .WithShowOfficialLauncher();
                 }
                 // Actual unexpected error; show error details
                 else
@@ -817,7 +841,7 @@ namespace XIVLauncher.Windows.ViewModel
                         case IOException:
                             summaries.Add(Loc.Localize("LoginIoErrorSummary",
                                 "Could not locate game data files."));
-                            summaries.Add(Loc.Localize("LoginIoErrorActionable",
+                            actionables.Add(Loc.Localize("LoginIoErrorActionable",
                                 "This may mean that the game path set in XIVLauncher isn't preset, e.g. on a disconnected drive or network storage. Please check the game path in the XIVLauncher settings."));
                             descriptions.Add(exception.ToString());
                             break;
@@ -826,7 +850,7 @@ namespace XIVLauncher.Windows.ViewModel
                             summaries.Add(string.Format(
                                 Loc.Localize("UnexpectedErrorSummary",
                                     "Unexpected error has occurred. ({0})"),
-                                $"0x{(uint)win32Exception.HResult:X8}: {win32Exception.Message}"));
+                                $"0x{(uint)win32Exception.NativeErrorCode:X8}: {win32Exception.Message}"));
                             actionables.Add(Loc.Localize("UnexpectedErrorActionable",
                                 "Please report this error."));
                             descriptions.Add(exception.ToString());
@@ -1148,7 +1172,7 @@ namespace XIVLauncher.Windows.ViewModel
                 loginResult.OauthLogin.MaxExpansion,
                 isSteam,
                 App.Settings.AdditionalLaunchArgs,
-                App.Settings.AdditionalInjectorArgs,
+                App.Settings.AdditionalInjectorArgs ?? string.Empty,
                 App.Settings.GamePath,
                 App.Settings.Language.GetValueOrDefault(ClientLanguage.English),
                 App.Settings.EncryptArguments.GetValueOrDefault(false),
@@ -1225,17 +1249,11 @@ namespace XIVLauncher.Windows.ViewModel
         {
             try
             {
-                if (AccountManager.CurrentAccount != null && AccountManager.CurrentAccount.UserName.Equals(username, StringComparison.Ordinal) &&
-                    AccountManager.CurrentAccount.Password != password &&
-                    AccountManager.CurrentAccount.SavePassword)
-                    AccountManager.UpdatePassword(AccountManager.CurrentAccount, password);
-
                 if (AccountManager.CurrentAccount == null ||
                     AccountManager.CurrentAccount.Id != $"{username}-{IsOtp}-{IsSteam}")
                 {
                     var accountToSave = new XivAccount(username)
                     {
-                        Password = password,
                         SavePassword = true,
                         UseOtp = IsOtp,
                         UseSteamServiceAccount = IsSteam
@@ -1245,18 +1263,37 @@ namespace XIVLauncher.Windows.ViewModel
 
                     AccountManager.CurrentAccount = accountToSave;
                 }
+
+                var currentAccount = AccountManager.CurrentAccount;
+
+                if (currentAccount.SavePassword && currentAccount.Password != password)
+                {
+                    AccountManager.UpdatePassword(currentAccount, password);
+                }
             }
             catch (Win32Exception ex)
             {
                 CustomMessageBox.Builder
-                                .NewFrom(Loc.Localize("PersistAccountError",
-                                                      "XIVLauncher could not save your account information. This is likely caused by having too many saved accounts in the Windows Credential Manager.\nPlease try removing some of them."))
-                                .WithAppendDescription(ex.ToString())
-                                .WithShowHelpLinks()
-                                .WithImage(MessageBoxImage.Warning)
-                                .WithButtons(MessageBoxButton.OK)
-                                .WithParentWindow(_window)
-                                .Show();
+                    .NewFrom(Loc.Localize("PersistPasswordError",
+                        "XIVLauncher could not save your password. This is likely caused by having too many saved accounts in the Windows Credential Manager.\nPlease try removing some of them. Your account was saved, but you will have to enter your password again next time."))
+                    .WithAppendDescription(ex.ToString())
+                    .WithShowHelpLinks()
+                    .WithImage(MessageBoxImage.Warning)
+                    .WithButtons(MessageBoxButton.OK)
+                    .WithParentWindow(_window)
+                    .Show();
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                CustomMessageBox.Builder
+                    .NewFrom(Loc.Localize("PersistAccountListError",
+                        "XIVLauncher could not save your account list. You may have to enter your account information again next time.\nPlease make sure that XIVLauncher can write to its settings folder."))
+                    .WithAppendDescription(ex.ToString())
+                    .WithShowHelpLinks()
+                    .WithImage(MessageBoxImage.Warning)
+                    .WithButtons(MessageBoxButton.OK)
+                    .WithParentWindow(_window)
+                    .Show();
             }
         }
 
@@ -1280,7 +1317,12 @@ namespace XIVLauncher.Windows.ViewModel
                 catch (Exception ex)
                 {
                     Log.Error(ex, "Unable to check boot version");
-                    CustomMessageBox.Show(Loc.Localize("CheckBootVersionError", "XIVLauncher was not able to check the boot version for the select game installation. This can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher."), "XIVLauncher", MessageBoxButton.OK, MessageBoxImage.Error, parentWindow: _window, showOfficialLauncher: true);
+                    CustomMessageBox.Show(Loc.Localize("CheckBootVersionError", "XIVLauncher was not able to check the version for the select game installation.\n\nThis can happen if a maintenance is currently in progress or if your connection to the version check server is not available. Please report this error if you are able to login with the official launcher, but not XIVLauncher.\n\nYou can learn more about outages on the Lodestone."),
+                        "XIVLauncher",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error,
+                        parentWindow: _window,
+                        showOfficialLauncher: true);
 
                     return false;
                 }

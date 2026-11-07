@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -14,6 +15,8 @@ namespace XIVLauncher.Common.Game
     public static class IntegrityCheck
     {
         public const string INTEGRITY_CHECK_BASE_URL = "https://goatcorp.github.io/integrity/";
+
+        private const string ExpansionDirPrefix = "ex";
 
         public class IntegrityCheckData
         {
@@ -30,6 +33,7 @@ namespace XIVLauncher.Common.Game
         public enum CompareResult
         {
             Valid,
+            ValidMissingExpansions,
             Invalid,
             ReferenceNotFound,
             ReferenceFetchFailure,
@@ -44,16 +48,32 @@ namespace XIVLauncher.Common.Game
             {
                 remoteIntegrity = await DownloadIntegrityCheckForVersion(client, Repository.Ffxiv.GetVer(gamePath), cancellationToken);
             }
-            catch (WebException e)
+            catch (HttpRequestException e)
             {
-                if (e.Response is HttpWebResponse resp && resp.StatusCode == HttpStatusCode.NotFound)
+                if (e.StatusCode == HttpStatusCode.NotFound)
+                {
                     return (CompareResult.ReferenceNotFound, null, null);
+                }
 
                 return (CompareResult.ReferenceFetchFailure, null, null);
             }
 
             var reportBuilder = new StringBuilder();
             var failed = false;
+
+            var missingExpansions = remoteIntegrity.Hashes.Keys
+                .Select(key => GetExpansionDir(NormalizePath(key)))
+                .OfType<string>()
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Where(dir => !Directory.Exists(Path.Combine(gamePath.FullName, dir)))
+                .ToList();
+
+            var skippedPrefixes = missingExpansions.Select(dir => dir + Path.DirectorySeparatorChar).ToList();
+
+            foreach (var dir in missingExpansions)
+            {
+                reportBuilder.AppendLine($"Not installed: {Path.GetFileName(dir)}");
+            }
 
             await Task.Run(() =>
             {
@@ -67,10 +87,12 @@ namespace XIVLauncher.Common.Game
                     if (cancellationToken.IsCancellationRequested)
                         break;
 
-                    // Normalize to platform path separators and drop a leading backslash if present
-                    var normalized = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
-                    if (normalized.StartsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
-                        normalized = normalized.Substring(1);
+                    var normalized = NormalizePath(relativePath);
+
+                    if (skippedPrefixes.Any(prefix => normalized.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
 
                     // Combine with gamePath
                     var fullPath = Path.Combine(gamePath.FullName, normalized);
@@ -109,13 +131,48 @@ namespace XIVLauncher.Common.Game
                 }
             }, cancellationToken);
 
-            return (failed ? CompareResult.Invalid : CompareResult.Valid, reportBuilder.ToString(), remoteIntegrity);
+            if (failed)
+            {
+                return (CompareResult.Invalid, reportBuilder.ToString(), remoteIntegrity);
+            }
+
+            var result = missingExpansions.Count > 0 ? CompareResult.ValidMissingExpansions : CompareResult.Valid;
+            return (result, reportBuilder.ToString(), remoteIntegrity);
+        }
+
+        private static string NormalizePath(string relativePath)
+        {
+            var normalized = relativePath.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+            if (normalized.StartsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+                normalized = normalized.Substring(1);
+
+            return normalized;
+        }
+
+        // "game\sqpack\ex5\0c0500.win32.index" to "game\sqpack\ex5"
+        private static string? GetExpansionDir(string normalizedPath)
+        {
+            var parts = normalizedPath.Split(Path.DirectorySeparatorChar);
+            if (parts.Length < 4)
+            {
+                return null;
+            }
+
+            var isSqpack = parts[0].Equals("game", StringComparison.OrdinalIgnoreCase) && parts[1].Equals("sqpack", StringComparison.OrdinalIgnoreCase);
+            if (!isSqpack || !parts[2].StartsWith(ExpansionDirPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            return Path.Combine(parts[0], parts[1], parts[2]);
         }
 
         public static async Task<IntegrityCheckData> DownloadIntegrityCheckForVersion(HttpClient client, string gameVersion, CancellationToken cancellationToken = default)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, INTEGRITY_CHECK_BASE_URL + gameVersion + ".json");
-            var response = await client.SendAsync(request, cancellationToken);
+            using var request = new HttpRequestMessage(HttpMethod.Get, INTEGRITY_CHECK_BASE_URL + gameVersion + ".json");
+            using var response = await client.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
             var result = JsonSerializer.Deserialize<IntegrityCheckData>(await response.Content.ReadAsStringAsync(cancellationToken));
             return result ?? throw new InvalidOperationException("Failed to deserialize integrity JSON");
         }

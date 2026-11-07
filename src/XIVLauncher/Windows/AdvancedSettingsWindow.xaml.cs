@@ -27,6 +27,7 @@ namespace XIVLauncher.Windows
             ForceNorthAmericaCheckbox.IsChecked = App.Settings.ForceNorthAmerica ?? false;
 
             InjectionDelayUpDown.Value = App.Settings.DalamudInjectionDelayMs;
+            InjectorArgsTextBox.Text = App.Settings.AdditionalInjectorArgs ?? string.Empty;
 
             if (App.Settings.InGameAddonLoadMethod == DalamudLoadMethod.DllInject)
                 DllInjectDalamudLoadMethodRadioButton.IsChecked = true;
@@ -43,6 +44,8 @@ namespace XIVLauncher.Windows
 
             if (InjectionDelayUpDown.Value.HasValue)
                 App.Settings.DalamudInjectionDelayMs = InjectionDelayUpDown.Value.Value;
+
+            App.Settings.AdditionalInjectorArgs = InjectorArgsTextBox.Text ?? string.Empty;
 
             App.Settings.InGameAddonLoadMethod = this.DllInjectDalamudLoadMethodRadioButton.IsChecked == true ?
                                                      DalamudLoadMethod.DllInject :
