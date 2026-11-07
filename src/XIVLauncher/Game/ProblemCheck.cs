@@ -285,9 +285,13 @@ namespace XIVLauncher.Game
 
             try
             {
-                file.OpenRead();
+                file.OpenRead().Dispose();
             }
             catch (IOException)
+            {
+                return false;
+            }
+            catch (UnauthorizedAccessException)
             {
                 return false;
             }
