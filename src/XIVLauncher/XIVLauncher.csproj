@@ -68,7 +68,7 @@
     <PackageReference Include="AdysTech.CredentialManager" />
     <PackageReference Include="CheapLoc" />
     <PackageReference Include="Config.Net.Json" />
-    <PackageReference Include="CommandLineParser"/>
+    <PackageReference Include="CommandLineParser" />
     <PackageReference Include="Dragablz" />
     <PackageReference Include="Extended.Wpf.Toolkit" />
     <PackageReference Include="MaterialDesignThemes" />
@@ -86,6 +86,7 @@
   <ItemGroup>
     <ProjectReference Include="..\XIVLauncher.Common.Windows\XIVLauncher.Common.Windows.csproj" />
     <ProjectReference Include="..\XIVLauncher.Common\XIVLauncher.Common.csproj" />
+    <ProjectReference Include="..\XIVLauncher.OtpProviders.Abstractions\XIVLauncher.OtpProviders.Abstractions.csproj" />
   </ItemGroup>
 
   <!-- Git -->

@@ -25,6 +25,7 @@ using XIVLauncher.Settings;
 using XIVLauncher.Settings.Parsers;
 using XIVLauncher.Windows;
 using XIVLauncher.Xaml;
+using XIVLauncher.OtpProviders;
 
 namespace XIVLauncher
 {
@@ -93,6 +94,7 @@ namespace XIVLauncher
         public static ILauncherSettingsV3 Settings;
         public static WindowsSteam Steam;
         public static CommonUniqueIdCache UniqueIdCache;
+        public static OtpProviderManager OtpProviderManager;
 
         private UpdateLoadingDialog updateWindow;
 
@@ -173,6 +175,14 @@ namespace XIVLauncher
             {
                 Log.Error(ex, "Could not apply settings overrides from command line");
             }
+        }
+
+        private static void SetupOtpProviders()
+        {
+            var providerDirectory = OtpProviderPaths.EnsureProviderDirectoryExists();
+            var providers = OtpProviderLoader.LoadProviders(providerDirectory);
+            OtpProviderManager = new OtpProviderManager(providers);
+            Log.Information("Loaded {ProviderCount} OTP provider(s)", OtpProviderManager.Providers.Count);
         }
 
         private void SetupHttpClient()
@@ -381,6 +391,7 @@ namespace XIVLauncher
                 SetupSettings();
             }
 
+            SetupOtpProviders();
             SetupHttpClient();
 
 #if !XL_LOC_FORCEFALLBACKS

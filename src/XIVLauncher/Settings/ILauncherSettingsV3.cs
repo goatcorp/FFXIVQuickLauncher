@@ -47,6 +47,7 @@ namespace XIVLauncher.Settings
 
         string? DalamudBetaKind { get; set; }
         string? DalamudBetaKey { get; set; }
+        string OtpProviderId { get; set; }
 
         PreserveWindowPosition.WindowPlacement? MainWindowPlacement { get; set; }
 
