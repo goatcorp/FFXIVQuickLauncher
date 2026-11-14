@@ -78,7 +78,8 @@ namespace XIVLauncher.Windows
             if (e.ChangedButton != MouseButton.Left)
                 return;
 
-            var selectedEntry = AccountListView.SelectedItem as AccountSwitcherEntry;
+            if (!(AccountListView.SelectedItem is AccountSwitcherEntry selectedEntry))
+                return;
 
             OnAccountSwitchedEventHandler?.Invoke(this, selectedEntry.Account);
 
